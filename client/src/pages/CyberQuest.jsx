@@ -682,30 +682,31 @@ export default function CyberQuest() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="max-w-xl w-full text-center space-y-8 bg-white/[0.02] backdrop-blur-2xl border border-emerald-500/20 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(0,240,255,0.15)] relative overflow-hidden"
+                            className="max-w-xl w-full text-center space-y-8 backdrop-blur-2xl rounded-[3rem] p-12 relative overflow-hidden"
+                            style={{ background: '#041a0e', border: '1px solid rgba(16,185,129,0.4)', boxShadow: '0 30px 100px rgba(16,185,129,0.2)' }}
                         >
-                            <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(16,185,129,0.12), transparent)' }} />
                             
                             <div className="relative z-10 space-y-6">
-                                <div className="w-24 h-24 rounded-full border-2 border-emerald-500 bg-emerald-500/10 flex items-center justify-center mx-auto text-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+                                <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto" style={{ border: '2px solid #10b981', background: 'rgba(16,185,129,0.1)', color: '#34d399', boxShadow: '0 0 40px rgba(16,185,129,0.4)' }}>
                                     <Trophy size={48} />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                                    <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter" style={{ color: '#10b981', textShadow: '0 0 30px rgba(16,185,129,0.7), 0 0 60px rgba(16,185,129,0.3)' }}>
                                         QUEST CHAMPION!
                                     </h2>
-                                    <p className="text-slate-300 font-bold uppercase tracking-[0.2em] text-[10px]">You have successfully conquered all {totalLevels} security matrix grids</p>
+                                    <p className="font-bold uppercase tracking-[0.2em] text-[11px]" style={{ color: '#e2e8f0' }}>You have successfully conquered all {totalLevels} security matrix grids</p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto my-6">
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                                        <p className="text-[10px] text-slate-300 font-black uppercase tracking-wider">Final Points</p>
-                                        <p className="text-2xl font-mono font-black text-emerald-400 mt-1">{score}</p>
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#94a3b8' }}>Final Points</p>
+                                        <p className="text-2xl font-mono font-black mt-1" style={{ color: '#34d399' }}>{score}</p>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                                        <p className="text-[10px] text-slate-300 font-black uppercase tracking-wider">Completed</p>
-                                        <p className="text-2xl font-mono font-black text-white mt-1">{totalLevels} / {totalLevels}</p>
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#94a3b8' }}>Completed</p>
+                                        <p className="text-2xl font-mono font-black mt-1" style={{ color: '#ffffff' }}>{totalLevels} / {totalLevels}</p>
                                     </div>
                                 </div>
 
@@ -714,15 +715,15 @@ export default function CyberQuest() {
                                         <>
                                             <button
                                                 onClick={() => navigate(`/report/${quizId}`)}
-                                                className="flex-1 h-14 rounded-2xl bg-emerald-500 font-black text-xs italic uppercase tracking-wider border border-emerald-400 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.35)] cursor-pointer"
-                                                style={{ color: '#000000' }}
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider hover:scale-[1.03] active:scale-95 transition-all cursor-pointer"
+                                                style={{ background: '#10b981', color: '#000000', border: '1px solid #34d399', boxShadow: '0 10px 25px rgba(16,185,129,0.4)' }}
                                             >
                                                 View Report
                                             </button>
                                             <button
                                                 onClick={() => navigate('/assessments')}
-                                                className="flex-1 h-14 rounded-2xl bg-slate-700 border border-slate-500 font-black text-xs italic uppercase tracking-wider hover:bg-slate-600 active:scale-95 transition-all cursor-pointer shadow-md"
-                                                style={{ color: '#ffffff' }}
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider active:scale-95 transition-all cursor-pointer hover:opacity-90"
+                                                style={{ background: '#334155', color: '#ffffff', border: '1px solid #475569', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}
                                             >
                                                 Games Arena
                                             </button>
@@ -731,15 +732,15 @@ export default function CyberQuest() {
                                         <>
                                             <button
                                                 onClick={handleReset}
-                                                className="flex-1 h-14 rounded-2xl bg-emerald-500 font-black text-md italic uppercase tracking-wider border border-emerald-400 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(16,185,129,0.35)] cursor-pointer"
-                                                style={{ color: '#000000' }}
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider hover:scale-[1.03] active:scale-95 transition-all cursor-pointer"
+                                                style={{ background: '#10b981', color: '#000000', border: '1px solid #34d399', boxShadow: '0 10px 25px rgba(16,185,129,0.4)' }}
                                             >
                                                 Play Again
                                             </button>
                                             <button
                                                 onClick={() => navigate('/student-dashboard')}
-                                                className="flex-1 h-14 rounded-2xl bg-slate-700 border border-slate-500 font-black text-md italic uppercase tracking-wider hover:bg-slate-600 active:scale-95 transition-all cursor-pointer shadow-md"
-                                                style={{ color: '#ffffff' }}
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider active:scale-95 transition-all cursor-pointer hover:opacity-90"
+                                                style={{ background: '#334155', color: '#ffffff', border: '1px solid #475569', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}
                                             >
                                                 Dashboard
                                             </button>
@@ -757,30 +758,31 @@ export default function CyberQuest() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="max-w-xl w-full text-center space-y-8 bg-[#1a0a0a]/90 backdrop-blur-2xl border border-red-500/30 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(239,68,68,0.2)] relative overflow-hidden"
+                            className="max-w-xl w-full text-center space-y-8 backdrop-blur-2xl rounded-[3rem] p-12 relative overflow-hidden"
+                            style={{ background: '#1a0505', border: '1px solid rgba(239,68,68,0.4)', boxShadow: '0 30px 100px rgba(239,68,68,0.25)' }}
                         >
-                            <div className="absolute inset-0 bg-gradient-to-b from-red-500/10 to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(239,68,68,0.12), transparent)' }} />
                             
                             <div className="relative z-10 space-y-6">
-                                <div className="w-24 h-24 rounded-full border-2 border-red-500 bg-red-500/10 flex items-center justify-center mx-auto text-red-400 shadow-[0_0_40px_rgba(239,68,68,0.3)] animate-pulse">
+                                <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto animate-pulse" style={{ border: '2px solid #ef4444', background: 'rgba(239,68,68,0.1)', color: '#f87171', boxShadow: '0 0 40px rgba(239,68,68,0.4)' }}>
                                     <AlertTriangle size={48} />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+                                    <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter" style={{ color: '#ff4444', textShadow: '0 0 30px rgba(239,68,68,0.7), 0 0 60px rgba(239,68,68,0.3)' }}>
                                         SYSTEM CRASH!
                                     </h2>
-                                    <p className="font-bold uppercase tracking-[0.2em] text-[10px]" style={{ color: '#cbd5e1' }}>Your neural matrix connection has collapsed</p>
+                                    <p className="font-bold uppercase tracking-[0.2em] text-[11px]" style={{ color: '#e2e8f0' }}>Your neural matrix connection has collapsed</p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto my-6">
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                                        <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: '#cbd5e1' }}>Acquired Score</p>
-                                        <p className="text-2xl font-mono font-black text-red-400 mt-1">{score}</p>
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#94a3b8' }}>Acquired Score</p>
+                                        <p className="text-2xl font-mono font-black mt-1" style={{ color: '#f87171' }}>{score}</p>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                                        <p className="text-[10px] font-black uppercase tracking-wider" style={{ color: '#cbd5e1' }}>Highest Level</p>
-                                        <p className="text-2xl font-mono font-black text-white mt-1">Level {currentLevel}</p>
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#94a3b8' }}>Highest Level</p>
+                                        <p className="text-2xl font-mono font-black mt-1" style={{ color: '#ffffff' }}>Level {currentLevel}</p>
                                     </div>
                                 </div>
 
@@ -789,15 +791,15 @@ export default function CyberQuest() {
                                         <>
                                             <button
                                                 onClick={() => navigate(`/report/${quizId}`)}
-                                                className="flex-1 h-14 rounded-2xl bg-red-500 font-black text-xs italic uppercase tracking-wider border border-red-400 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.35)] cursor-pointer"
-                                                style={{ color: '#ffffff' }}
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider hover:scale-[1.03] active:scale-95 transition-all cursor-pointer"
+                                                style={{ background: '#ef4444', color: '#ffffff', border: '1px solid #f87171', boxShadow: '0 10px 25px rgba(239,68,68,0.4)' }}
                                             >
                                                 View Report
                                             </button>
                                             <button
                                                 onClick={() => navigate('/assessments')}
-                                                className="flex-1 h-14 rounded-2xl bg-slate-700 border border-slate-500 font-black text-xs italic uppercase tracking-wider hover:bg-slate-600 active:scale-95 transition-all cursor-pointer shadow-md"
-                                                style={{ color: '#ffffff' }}
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider active:scale-95 transition-all cursor-pointer hover:opacity-90"
+                                                style={{ background: '#334155', color: '#ffffff', border: '1px solid #475569', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}
                                             >
                                                 Games Arena
                                             </button>
@@ -806,15 +808,15 @@ export default function CyberQuest() {
                                         <>
                                             <button
                                                 onClick={handleReset}
-                                                className="flex-1 h-14 rounded-2xl bg-red-500 font-black text-md italic uppercase tracking-wider border border-red-400 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(239,68,68,0.35)] cursor-pointer"
-                                                style={{ color: '#ffffff' }}
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider hover:scale-[1.03] active:scale-95 transition-all cursor-pointer"
+                                                style={{ background: '#ef4444', color: '#ffffff', border: '1px solid #f87171', boxShadow: '0 10px 25px rgba(239,68,68,0.4)' }}
                                             >
                                                 Retry Quest
                                             </button>
                                             <button
                                                 onClick={() => navigate('/student-dashboard')}
-                                                className="flex-1 h-14 rounded-2xl bg-slate-700 border border-slate-500 font-black text-md italic uppercase tracking-wider hover:bg-slate-600 active:scale-95 transition-all cursor-pointer shadow-md"
-                                                style={{ color: '#ffffff' }}
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider active:scale-95 transition-all cursor-pointer hover:opacity-90"
+                                                style={{ background: '#334155', color: '#ffffff', border: '1px solid #475569', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}
                                             >
                                                 Dashboard
                                             </button>

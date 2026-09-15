@@ -602,38 +602,39 @@ export default function MatchUpArena() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="max-w-2xl w-full mx-auto text-center space-y-8 bg-white/[0.02] backdrop-blur-2xl border border-purple-500/20 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(168,85,247,0.15)] relative overflow-hidden"
+                            className="max-w-2xl w-full mx-auto text-center space-y-8 backdrop-blur-2xl rounded-[3rem] p-12 relative overflow-hidden"
+                            style={{ background: '#120726', border: '1px solid rgba(168,85,247,0.4)', boxShadow: '0 30px 100px rgba(168,85,247,0.2)' }}
                         >
-                            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(168,85,247,0.12), transparent)' }} />
                             
                             <div className="relative z-10 space-y-6">
-                                <div className="w-20 h-20 rounded-full border-2 border-purple-500 bg-purple-500/10 flex items-center justify-center mx-auto text-purple-400 shadow-[0_0_40px_rgba(168,85,247,0.35)]">
+                                <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto" style={{ border: '2px solid #a855f7', background: 'rgba(168,85,247,0.1)', color: '#c084fc', boxShadow: '0 0 40px rgba(168,85,247,0.45)' }}>
                                     <Trophy size={40} />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h2 className="text-3xl sm:text-4xl font-black italic uppercase tracking-tighter text-purple-400">
+                                    <h2 className="text-3xl sm:text-4xl font-black italic uppercase tracking-tighter" style={{ color: '#c084fc', textShadow: '0 0 30px rgba(168,85,247,0.8), 0 0 60px rgba(168,85,247,0.4)' }}>
                                         🎉 Arena Resolved!
                                     </h2>
-                                    <p className="text-slate-400 font-bold uppercase tracking-[0.25em] text-[9px]">All memory matrices paired successfully</p>
+                                    <p className="font-bold uppercase tracking-[0.25em] text-[10px]" style={{ color: '#e2e8f0' }}>All memory matrices paired successfully</p>
                                 </div>
 
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto my-6">
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <p className="text-[9px] text-slate-500 font-black uppercase tracking-wider">Final Points</p>
-                                        <p className="text-xl font-mono font-black text-purple-400 mt-1">{finalScore} pts</p>
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#94a3b8' }}>Final Points</p>
+                                        <p className="text-xl font-mono font-black mt-1" style={{ color: '#c084fc' }}>{finalScore} pts</p>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <p className="text-[9px] text-slate-500 font-black uppercase tracking-wider">Time Taken</p>
-                                        <p className="text-xl font-mono font-black text-white mt-1">{formatTime(timer)}</p>
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#94a3b8' }}>Time Taken</p>
+                                        <p className="text-xl font-mono font-black mt-1" style={{ color: '#ffffff' }}>{formatTime(timer)}</p>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <p className="text-[9px] text-slate-500 font-black uppercase tracking-wider">Total Moves</p>
-                                        <p className="text-xl font-mono font-black text-cyan-400 mt-1">{moves}</p>
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#94a3b8' }}>Total Moves</p>
+                                        <p className="text-xl font-mono font-black mt-1" style={{ color: '#22d3ee' }}>{moves}</p>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <p className="text-[9px] text-slate-500 font-black uppercase tracking-wider">Matches Found</p>
-                                        <p className="text-xl font-mono font-black text-emerald-400 mt-1">{correctMatches}</p>
+                                    <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#94a3b8' }}>Matches Found</p>
+                                        <p className="text-xl font-mono font-black mt-1" style={{ color: '#34d399' }}>{correctMatches}</p>
                                     </div>
                                 </div>
 
@@ -642,13 +643,15 @@ export default function MatchUpArena() {
                                         <>
                                             <button
                                                 onClick={() => navigate(`/report/${quizId}`)}
-                                                className="flex-1 h-14 rounded-2xl bg-purple-600 text-white font-black text-xs italic uppercase tracking-wider border border-purple-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(168,85,247,0.25)] cursor-pointer flex items-center justify-center gap-1.5"
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider hover:scale-[1.03] active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                                                style={{ background: '#9333ea', color: '#ffffff', border: '1px solid #c084fc', boxShadow: '0 10px 25px rgba(168,85,247,0.45)' }}
                                             >
                                                 View Report
                                             </button>
                                             <button
                                                 onClick={() => navigate('/assessments')}
-                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider active:scale-95 transition-all cursor-pointer hover:opacity-90"
+                                                style={{ background: '#334155', color: '#ffffff', border: '1px solid #475569', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}
                                             >
                                                 Games Arena
                                             </button>
@@ -657,13 +660,15 @@ export default function MatchUpArena() {
                                         <>
                                             <button
                                                 onClick={handleReset}
-                                                className="flex-1 h-14 rounded-2xl bg-purple-600 text-white font-black text-md italic uppercase tracking-wider border border-purple-500 hover:scale-[1.03] active:scale-95 transition-all shadow-[0_10px_20px_rgba(168,85,247,0.25)] cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider hover:scale-[1.03] active:scale-95 transition-all cursor-pointer"
+                                                style={{ background: '#9333ea', color: '#ffffff', border: '1px solid #c084fc', boxShadow: '0 10px 25px rgba(168,85,247,0.45)' }}
                                             >
                                                 <RotateCw size={14} className="inline mr-2" /> Play Again
                                             </button>
                                             <button
                                                 onClick={() => navigate('/student-dashboard')}
-                                                className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                className="flex-1 h-14 rounded-2xl font-black text-sm italic uppercase tracking-wider active:scale-95 transition-all cursor-pointer hover:opacity-90"
+                                                style={{ background: '#334155', color: '#ffffff', border: '1px solid #475569', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}
                                             >
                                                 Dashboard
                                             </button>
