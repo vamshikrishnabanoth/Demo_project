@@ -123,7 +123,8 @@ ${evidenceContext}
       prompt: userPrompt,
       systemPrompt: systemPrompt,
       temperature: 0.2,
-      model: fastModel
+      model: fastModel,
+      sessionId: evidencePackage?.sessionId
     });
 
     let parsedMCQ;
@@ -136,7 +137,8 @@ ${evidenceContext}
           prompt: `The previous output had syntax issues:\n"${responseText.substring(0, 400)}"\nConvert it into strictly valid JSON for:\nTarget: ${target.concept}\nInstruction: ${target.instruction}`,
           systemPrompt: 'You are a JSON repair specialist. Output ONLY the raw JSON object matching the required schema starting with { and ending with }. No commentary or markdown formatting.',
           temperature: 0.1,
-          model: fastModel
+          model: fastModel,
+          sessionId: evidencePackage?.sessionId
         });
         parsedMCQ = safeParseJson(repairResponse);
       } catch (repairErr) {

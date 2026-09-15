@@ -32,9 +32,9 @@ class LLMRouter {
 
   /**
    * Route completion request to active LLM provider with intelligent failover.
-   * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model }
+   * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model, sessionId }
    */
-  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null }) {
+  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null }) {
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
     }
@@ -57,7 +57,8 @@ class LLMRouter {
           systemPrompt,
           temperature,
           primaryModel,
-          fallbackModel: null // No silent downgrade across tiers
+          fallbackModel: null, // No silent downgrade across tiers
+          sessionId
         });
       } catch (err) {
         errors.push(`Groq (${err.message})`);
@@ -67,7 +68,7 @@ class LLMRouter {
 
     // 2. Try Local Ollama / FastAPI AI service
     try {
-      return await this._callOllama({ prompt, systemPrompt, temperature, model: model || 'quiz-expert' });
+      return await this._callOllama({ prompt, systemPrompt, temperature, model: model || 'quiz-expert', sessionId });
     } catch (err) {
       errors.push(`Local Ollama (${err.message})`);
     }
@@ -75,7 +76,7 @@ class LLMRouter {
     // 3. Try Local vLLM if configured
     if (this.vllmUrl) {
       try {
-        return await this._callVLLM({ prompt, systemPrompt, temperature });
+        return await this._callVLLM({ prompt, systemPrompt, temperature, sessionId });
       } catch (err) {
         errors.push(`vLLM (${err.message})`);
       }
@@ -96,7 +97,7 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel }) {
+  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null }) {
     const key = this.groqApiKey || process.env.GROQ_API_KEY;
     if (!key) throw new Error('GROQ_API_KEY is missing');
 
@@ -129,7 +130,23 @@ class LLMRouter {
             }
           );
 
-          return response.data.choices[0].message.content;
+          const content = response.data.choices[0].message.content;
+
+          if (sessionId) {
+            try {
+              const telemetryLedger = require('../observability/telemetryLedger');
+              telemetryLedger.recordCallUsage(sessionId, {
+                prompt,
+                completion: content,
+                usage: response.data.usage,
+                requestId: response.data.id,
+                model: currentModel,
+                provider: 'groq'
+              });
+            } catch (_) {}
+          }
+
+          return content;
         } catch (err) {
           lastErr = err;
           const status = err.response?.status;
@@ -150,7 +167,7 @@ class LLMRouter {
   }
 
   /** Call local FastAPI / Ollama backend */
-  async _callOllama({ prompt, systemPrompt, temperature, model }) {
+  async _callOllama({ prompt, systemPrompt, temperature, model, sessionId = null }) {
     try {
       const resp = await axios.post(`${this.aiServiceUrl}/generate_quiz`, {
         topic: prompt,
@@ -159,7 +176,14 @@ class LLMRouter {
       }, { timeout: 3000 });
 
       if (resp.data && resp.data.questions) {
-        return JSON.stringify(resp.data.questions);
+        const text = JSON.stringify(resp.data.questions);
+        if (sessionId) {
+          try {
+            const telemetryLedger = require('../observability/telemetryLedger');
+            telemetryLedger.recordCallUsage(sessionId, { prompt, completion: text, model: model || 'quiz-expert', provider: 'fastapi' });
+          } catch (_) {}
+        }
+        return text;
       }
     } catch (e) {
       const fullPrompt = `${systemPrompt}\n\n${prompt}`;
@@ -171,21 +195,35 @@ class LLMRouter {
       }, { timeout: 4000 });
 
       if (resp.data && resp.data.response) {
-        return resp.data.response;
+        const text = resp.data.response;
+        if (sessionId) {
+          try {
+            const telemetryLedger = require('../observability/telemetryLedger');
+            telemetryLedger.recordCallUsage(sessionId, { prompt: fullPrompt, completion: text, model: model || 'quiz-expert', provider: 'ollama' });
+          } catch (_) {}
+        }
+        return text;
       }
       throw e;
     }
   }
 
   /** Call local vLLM API */
-  async _callVLLM({ prompt, systemPrompt, temperature }) {
+  async _callVLLM({ prompt, systemPrompt, temperature, sessionId = null }) {
     if (!this.vllmUrl) throw new Error('VLLM_URL is missing');
     const resp = await axios.post(`${this.vllmUrl}/v1/completions`, {
       prompt: `${systemPrompt}\n\n${prompt}`,
       temperature: temperature,
       max_tokens: 1024
     }, { timeout: 10000 });
-    return resp.data.choices[0].text;
+    const text = resp.data.choices[0].text;
+    if (sessionId) {
+      try {
+        const telemetryLedger = require('../observability/telemetryLedger');
+        telemetryLedger.recordCallUsage(sessionId, { prompt, completion: text, model: 'vllm-local', provider: 'vllm' });
+      } catch (_) {}
+    }
+    return text;
   }
 
   /** Deterministic Mock Response ONLY for unit testing */

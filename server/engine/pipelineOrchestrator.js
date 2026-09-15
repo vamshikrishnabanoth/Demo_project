@@ -73,6 +73,7 @@ class PipelineOrchestrator {
       // ──────────────────────────────────────────────────────────────────────────
       const t1 = Date.now();
       evidencePackage = evidencePackager.packageSessionEvidence(sessionInputs);
+      evidencePackage.sessionId = sessionId;
       const voiceEmphasis = evidencePackage.voiceEmphasis || {};
 
       await trace.recordStage({
@@ -591,7 +592,7 @@ class PipelineOrchestrator {
         validation: { status: 'FAIL', errors: [failureReason] }
       });
 
-      const finalTraceData = await trace.finalize([], plan?.tcScore || null, evidencePackage, plan);
+      const finalTraceData = await trace.finalize([], plan?.tcScore || null, evidencePackage, plan, 'FAILED');
 
       return {
         sessionId: sessionId,

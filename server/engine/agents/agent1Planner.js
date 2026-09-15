@@ -125,7 +125,8 @@ ${rawContent.substring(0, 25000)}
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.2,
-        model: process.env.AGENT1_MODEL || 'openai/gpt-oss-120b'
+        model: process.env.AGENT1_MODEL || 'openai/gpt-oss-120b',
+        sessionId: evidencePackage?.sessionId
       });
 
       let parsed = safeParseJson(responseText);

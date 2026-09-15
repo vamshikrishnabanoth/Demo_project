@@ -72,7 +72,8 @@ ${evidenceContext}
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.1,
-        model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b'
+        model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
+        sessionId: evidencePackage?.sessionId
       });
 
       const parsed = safeParseJson(responseText);

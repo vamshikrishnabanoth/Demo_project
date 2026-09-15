@@ -128,6 +128,24 @@ class SessionTrace {
 
     await debugRecorder.recordFinalTrace(this.sessionId, finalTraceData);
 
+    // 0. Operational Telemetry Ledger (JSONL append)
+    try {
+      const telemetryLedger = require('./telemetryLedger');
+      telemetryLedger.recordJob({
+        job_id: this.sessionId,
+        stage: 'OVERALL',
+        start_time: this.startTime,
+        end_time: endTime,
+        duration_ms: metrics.totalDurationMs,
+        status: pipelineStatus,
+        grounding_score: metrics.avgGroundingScore,
+        retries: Math.max(0, (this.totalAttempts || passingQuestions.length) - passingQuestions.length),
+        error_code: pipelineStatus === 'FAILED' ? 'PIPELINE_ERROR' : 'NONE'
+      });
+    } catch (ledgerErr) {
+      console.warn('⚠️ [SessionTrace] Could not record to telemetryLedger:', ledgerErr.message);
+    }
+
     // 1. Distributions
     const cogDist = {};
     const conceptDist = {};
