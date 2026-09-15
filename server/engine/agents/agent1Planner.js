@@ -11,6 +11,7 @@
 'use strict';
 
 const llmRouter = require('../adapter/llmRouter');
+const { safeParseJson } = require('../utils/jsonParser');
 
 class Agent1Planner {
   /**
@@ -117,7 +118,7 @@ ${rawContent.substring(0, 50000)}
         model: 'llama-3.3-70b-versatile'
       });
 
-      let parsed = JSON.parse(responseText);
+      let parsed = safeParseJson(responseText);
       if (parsed.assessmentPlan) parsed = parsed.assessmentPlan;
       if (parsed.plan) parsed = parsed.plan;
 

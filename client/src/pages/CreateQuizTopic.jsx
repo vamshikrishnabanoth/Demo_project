@@ -133,6 +133,7 @@ export default function CreateQuizTopic() {
     }, [recording, requestWakeLock]);
 
     const fileInputRef = useRef(null);
+    const lectureFileInputRef = useRef(null);
 
     // Dropdown & Modal states
     const [showDropdown, setShowDropdown] = useState(false);
@@ -322,6 +323,65 @@ export default function CreateQuizTopic() {
                 }
             }
         }
+        e.target.value = '';
+    };
+
+    // Handle Lecture File Upload (.mp3, .wav, .m4a, .webm, .ogg, .txt)
+    const handleLectureFileUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const ext = file.name.split('.').pop().toLowerCase();
+        const isAudio = ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac'].includes(ext);
+        const isTxt = ext === 'txt';
+
+        if (isTxt) {
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const text = event.target.result;
+                if (!text || text.trim().length < 10) {
+                    toast.error('Lecture transcript file is too short.');
+                    return;
+                }
+                setInputs(prev => [...prev, {
+                    id: Math.random().toString(),
+                    type: 'voice',
+                    content: text,
+                    source_name: `Lecture Transcript (${file.name})`
+                }]);
+                toast.success(`Added lecture transcript "${file.name}"`);
+            };
+            reader.readAsText(file);
+        } else if (isAudio) {
+            const toastId = toast.loading(`Transcribing "${file.name}"...`);
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const transcribeRes = await api.post('/quiz/transcribe', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    timeout: 180000
+                });
+
+                if (transcribeRes.data && transcribeRes.data.text) {
+                    setInputs(prev => [...prev, {
+                        id: Math.random().toString(),
+                        type: 'voice',
+                        content: transcribeRes.data.text,
+                        source_name: `Lecture Audio (${file.name})`
+                    }]);
+                    toast.success(`Lecture transcribed and added to docket!`, { id: toastId });
+                } else {
+                    toast.error('Could not extract transcription from audio.', { id: toastId });
+                }
+            } catch (err) {
+                console.error('Lecture transcription failed:', err);
+                toast.error(`Transcription failed: ${err.response?.data?.msg || err.message}`, { id: toastId });
+            }
+        } else {
+            toast.error('Unsupported lecture file format. Use .mp3, .wav, .m4a, .webm, .ogg, or .txt');
+        }
+
         e.target.value = '';
     };
 
@@ -975,6 +1035,17 @@ export default function CreateQuizTopic() {
                                         type="button"
                                         onClick={() => {
                                             setShowDropdown(false);
+                                            lectureFileInputRef.current.click();
+                                        }}
+                                        className="w-full px-5 py-3.5 text-left text-xs font-black text-[var(--text-primary)] hover:bg-[var(--bg-primary)] uppercase transition-all flex items-center gap-3 border-b border-[var(--border-color)]/50 cursor-pointer"
+                                    >
+                                        <Mic size={16} className="text-amber-600" /> Upload Lecture (.mp3, .wav, .m4a, .webm, .ogg, .txt)
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowDropdown(false);
                                             setTextModalType('context');
                                             setTextInputContent('');
                                             setShowTextModal(true);
@@ -994,6 +1065,14 @@ export default function CreateQuizTopic() {
                             onChange={handleFileUpload} 
                             className="hidden"
                             accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
+                        />
+
+                        <input 
+                            type="file" 
+                            ref={lectureFileInputRef}
+                            onChange={handleLectureFileUpload} 
+                            className="hidden"
+                            accept=".mp3,.wav,.m4a,.webm,.ogg,.aac,.flac,.txt"
                         />
 
                         {/* 3. SOURCE MATERIAL DOCKET LIST (Compact Empty State py-5) */}

@@ -10,6 +10,7 @@
 
 const llmRouter = require('../adapter/llmRouter');
 const deterministicValidator = require('../validators/deterministicValidator');
+const { safeParseJson } = require('../utils/jsonParser');
 
 class Agent3Evaluator {
   /**
@@ -71,7 +72,7 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 3000)}
         model: 'llama-3.3-70b-versatile'
       });
 
-      const parsed = JSON.parse(responseText);
+      const parsed = safeParseJson(responseText);
 
       // Hard enforcement on unsupported foreign tier or low student answerability on foundational
       if (parsed.tier === 'UNSUPPORTED_FOREIGN') {

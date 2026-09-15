@@ -442,9 +442,34 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             count: parseInt(count)
         };
 
-        const result = await pipelineOrchestrator.runPipeline(sessionInputs);
+        const stageLabelMap = {
+            'INGESTION': { stage: 0, label: 'Ingesting & Analyzing Material' },
+            'EVIDENCE_PACKAGE': { stage: 1, label: 'Packaging Evidence & Knowledge Graph' },
+            'AGENT_1_PLANNING': { stage: 2, label: 'Assessment Planning & TC Analysis' },
+            'QUESTION_GENERATION': { stage: 3, label: 'Generating Questions via AI' },
+            'DETERMINISTIC_PRECHECK': { stage: 4, label: 'Validating Options & Deterministic Schema' },
+            'DETERMINISTIC_DUPLICATE_CHECK': { stage: 4, label: 'Validating Options & Deterministic Schema' },
+            'AGENT_3_QUESTION_EVAL': { stage: 5, label: 'Auditing Derivability & Pedagogical Quality' },
+            'AGENT_3_QUIZ_EVAL': { stage: 6, label: 'Reviewing Balance & Curriculum Coverage' },
+            'DETERMINISTIC_POSTCHECKS': { stage: 7, label: 'Grounding Gate & Final Audit' },
+            'FINAL_GROUNDING_GATE': { stage: 7, label: 'Grounding Gate & Final Audit' }
+        };
+
+        const progressCallback = (event) => {
+            if (taskId && event && event.stage) {
+                const mapped = stageLabelMap[event.stage];
+                if (mapped) {
+                    updateTaskStage(taskId, mapped.stage, mapped.label);
+                }
+            }
+        };
+
+        const result = await pipelineOrchestrator.runPipeline(sessionInputs, progressCallback);
         if (result && result.questions && result.questions.length > 0) {
             console.log(`✅ [Baseline v1.0] 3-Agent Pipeline delivered ${result.questions.length} questions.`);
+            if (taskId) {
+                updateTaskStage(taskId, 7, 'Grounding Gate & Final Audit');
+            }
             return result.questions;
         }
         if (result && result.pipelineStatus === 'FAILED') {
@@ -2137,6 +2162,34 @@ exports.generateQuizQuestions = async (req, res) => {
                         const ext = path.extname(file.originalname).toLowerCase();
                         const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };
                         
+                        const isAudio = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
+                        if (isAudio) {
+                            console.log(`🎙️ Transcribing uploaded lecture audio: ${file.originalname}`);
+                            updateTaskStage(taskId, 0, 'Ingesting & Analyzing Material');
+                            const transcript = await transcribeAudio(filePath);
+                            if (transcript && transcript.trim().length > 0) {
+                                parsedInputs.push({
+                                    type: 'voice',
+                                    content: transcript,
+                                    source_name: file.originalname
+                                });
+                            }
+                            try { fs.unlinkSync(filePath); } catch (_) {}
+                            continue;
+                        }
+
+                        const isTxt = ext === '.txt';
+                        if (isTxt) {
+                            const textContent = fs.readFileSync(filePath, 'utf8');
+                            parsedInputs.push({
+                                type: 'voice',
+                                content: textContent,
+                                source_name: file.originalname
+                            });
+                            try { fs.unlinkSync(filePath); } catch (_) {}
+                            continue;
+                        }
+
                         let textContent = "";
                         const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
                         let isHandwrittenScan = isImage;
@@ -2559,7 +2612,7 @@ exports.generateQuizQuestions = async (req, res) => {
             }
 
             console.log(`\n[Generator Started] type=${sourceType} topic="${topic ? topic.substring(0, 30) : ''}..." count=${questionCount}`);
-            updateTaskStage(taskId, 0, 'Generating Questions');
+            updateTaskStage(taskId, 0, 'Ingesting & Analyzing Material');
             
             const { getTask: getTaskFromMgr } = require('../services/taskManager');
             const taskObj = getTaskFromMgr(taskId);
@@ -2599,7 +2652,7 @@ exports.generateQuizQuestions = async (req, res) => {
             console.log(`✅ [Baseline v1.0] Questions delivered directly from Architecture Baseline v1.0 Pipeline (Count: ${finalQuestions.length}).`);
 
             console.log(`\n[Final Validation] Running final quiz validator...`);
-            updateTaskStage(taskId, 3, 'Preparing Final Quiz');
+            updateTaskStage(taskId, 7, 'Grounding Gate & Final Audit');
             const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
 
             const finalTaskObj = getTaskFromMgr(taskId);

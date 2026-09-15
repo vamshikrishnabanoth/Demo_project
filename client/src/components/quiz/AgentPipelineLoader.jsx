@@ -1,37 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const AGENT_STAGES = [
-    { label: 'Agent 1: Ingestion & Noise Filtering', sub: 'Sanitizing text, removing boilerplate…',   icon: '🧹' },
-    { label: 'Agent 2: Knowledge Graph & Evidence', sub: 'Extracting key concepts & quotes…',         icon: '🕸️' },
-    { label: 'Agent 3: 5D Quiz Planning',          sub: 'Designing Bloom taxonomy blueprint…',        icon: '📐' },
-    { label: 'Agent 4: Prompt Architect',           sub: 'Formulating zero-leakage prompts…',           icon: '✍️' },
-    { label: 'Agent 5: LLM Gateway Execution',      sub: 'Generating candidate questions…',             icon: '⚡' },
-    { label: 'Agent 6: Quality & Grounding Validator', sub: 'Checking distractors & grounding…',      icon: '🛡️' },
-    { label: 'Agent 7: Self-Healing Repair',        sub: 'Repairing any flawed items…',                icon: '🔧' },
-    { label: 'Agent 8: Portfolio Assembly',         sub: 'Finalizing quiz studio…',                    icon: '🚀' },
-];
-
-const VOICE_STAGES = [
-    { label: 'Agent 1: Ingestion & Noise Filtering', sub: 'Transcribing voice & cleaning audio…', icon: '🎙️' },
-    { label: 'Agent 2: Knowledge Graph & Evidence', sub: 'Extracting key concepts & quotes…',     icon: '🕸️' },
-    { label: 'Agent 3: 5D Quiz Planning',          sub: 'Designing Bloom taxonomy blueprint…',    icon: '📐' },
-    { label: 'Agent 4: Prompt Architect',           sub: 'Formulating zero-leakage prompts…',       icon: '✍️' },
-    { label: 'Agent 5: LLM Gateway Execution',      sub: 'Generating candidate questions…',         icon: '⚡' },
-    { label: 'Agent 6: Quality & Grounding Validator', sub: 'Checking distractors & grounding…',  icon: '🛡️' },
-    { label: 'Agent 7: Self-Healing Repair',        sub: 'Repairing any flawed items…',            icon: '🔧' },
-    { label: 'Agent 8: Portfolio Assembly',         sub: 'Finalizing quiz studio…',                icon: '🚀' },
+const PIPELINE_STAGES = [
+    { label: 'Ingesting & Analyzing Material',             sub: 'Verifying inputs, removing noise, and validating content structure…',     icon: '📥' },
+    { label: 'Packaging Evidence & Knowledge Graph',        sub: 'Extracting concepts, key claims, formulas, and artifacts…',              icon: '🕸️' },
+    { label: 'Assessment Planning & TC Analysis',           sub: 'Calibrating depth, cognitive levels, and planning targets…',             icon: '📐' },
+    { label: 'Generating Questions via AI',                 sub: 'Formulating grounded candidate questions via AI gateway…',              icon: '⚡' },
+    { label: 'Validating Options & Deterministic Schema',   sub: 'Enforcing 4 distinct options and multi-factor anti-redundancy checks…',  icon: '🛡️' },
+    { label: 'Auditing Derivability & Pedagogical Quality', sub: 'Auditing 5-tier derivability, student answerability, and distractors…', icon: '🔍' },
+    { label: 'Reviewing Balance & Curriculum Coverage',     sub: 'Reviewing cognitive distribution, cluster balance, and curriculum…',     icon: '⚖️' },
+    { label: 'Grounding Gate & Final Audit',                sub: 'Verifying source evidence citations and assembling final quiz…',         icon: '🚀' },
 ];
 
 const STAGE_MAP = {
-    'Generating Questions': 4,
-    'Reviewing Questions':  5,
-    'Improving Questions':   6,
-    'Preparing Final Quiz':  7,
+    'Ingesting & Analyzing Material': 0,
+    'Packaging Evidence & Knowledge Graph': 1,
+    'Assessment Planning & TC Analysis': 2,
+    'Generating Questions via AI': 3,
+    'Validating Options & Deterministic Schema': 4,
+    'Auditing Derivability & Pedagogical Quality': 5,
+    'Reviewing Balance & Curriculum Coverage': 6,
+    'Grounding Gate & Final Audit': 7,
+    'Generating Questions': 3,
+    'Reviewing Questions': 5,
+    'Improving Questions': 6,
+    'Preparing Final Quiz': 7,
 };
-
-// Advance auto stage every 3.5 seconds if prop stage is not updated from server
-const STAGE_INTERVAL_MS = 3500;
 
 const NODES = [
     { x: 50, y: 50 },
@@ -45,26 +39,24 @@ const CONNECTIONS = [
 ];
 
 export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0 }) {
-    const stageList = isVoice ? VOICE_STAGES : AGENT_STAGES;
+    const stageList = PIPELINE_STAGES;
 
-    const [activeStage, setActiveStage] = useState(stage);
+    const [activeStage, setActiveStage] = useState(() => {
+        if (stageLabel && STAGE_MAP[stageLabel] !== undefined) {
+            return STAGE_MAP[stageLabel];
+        }
+        return typeof stage === 'number' ? Math.min(Math.max(0, stage), stageList.length - 1) : 0;
+    });
 
     useEffect(() => {
         let resolvedStage = stage;
         if (stageLabel && STAGE_MAP[stageLabel] !== undefined) {
             resolvedStage = STAGE_MAP[stageLabel];
         }
-        if (resolvedStage > activeStage) {
+        if (typeof resolvedStage === 'number' && resolvedStage >= 0) {
             setActiveStage(Math.min(resolvedStage, stageList.length - 1));
         }
     }, [stage, stageLabel, stageList.length]);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setActiveStage(s => Math.min(s + 1, stageList.length - 1));
-        }, STAGE_INTERVAL_MS);
-        return () => clearInterval(timer);
-    }, [stageList.length]);
 
     const pct = Math.round(((activeStage + 1) / stageList.length) * 100);
 
@@ -182,7 +174,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                 {/* Stage Badge */}
                 <div className="mt-2 px-3 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
                     <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-accent)]">
-                        Multi-Agent Pipeline · Agent {activeStage + 1} of {stageList.length}
+                        Multi-Agent Pipeline · Stage {activeStage + 1} of {stageList.length}
                     </p>
                 </div>
             </motion.div>

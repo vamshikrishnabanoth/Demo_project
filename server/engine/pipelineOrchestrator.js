@@ -189,9 +189,42 @@ class PipelineOrchestrator {
           attempts++;
           totalAttempts++;
           const targetStartTime = Date.now();
+          if (attempts === 1) {
+            await trace.recordStage({
+              stageOrder: `04_T${currentTarget.targetId}_GEN`,
+              stageName: 'QUESTION_GENERATION',
+              input: { targetId: currentTarget.targetId, concept: currentTarget.concept },
+              processing: { operations: ['Prompt formulation', 'LLM generation via Gateway'] },
+              decisions: [`Generating candidate MCQ for Target ${currentTarget.targetId} ("${currentTarget.concept}")`],
+              rulesApplied: ['Scenario Transformation & Cognitive Dimension Alignment'],
+              evidenceUsed: [currentTarget.targetId],
+              output: { targetId: currentTarget.targetId },
+              validation: { status: 'PASS' }
+            });
+          }
 
-          // 4A. Agent 2 Generation
-          const candidateMCQ = await agent2Generator.generateQuestion(currentTarget, evidencePackage, repairInstruction);
+          let candidateMCQ;
+          try {
+            // 4A. Agent 2 Generation
+            candidateMCQ = await agent2Generator.generateQuestion(currentTarget, evidencePackage, repairInstruction);
+          } catch (genErr) {
+            console.warn(`⚠️ [Orchestrator] Generation attempt ${attempts} failed for target ${currentTarget.targetId}: ${genErr.message}`);
+            await trace.recordStage({
+              stageOrder: `04_T${currentTarget.targetId}_att${attempts}`,
+              stageName: 'GENERATION_ERROR',
+              input: { targetId: currentTarget.targetId, attempt: attempts },
+              processing: { operations: ['LLM generation / parsing'] },
+              decisions: [`Generation attempt ${attempts} failed: ${genErr.message}`],
+              rulesApplied: ['Error recovery & retry rule'],
+              evidenceUsed: [currentTarget.targetId],
+              errors: [genErr.message],
+              output: { isValid: false },
+              validation: { status: 'FAIL', errors: [genErr.message] },
+              durationMs: Date.now() - targetStartTime
+            });
+            repairInstruction = `Fix previous failure (${genErr.message}). Output strictly raw JSON starting with { and ending with }.`;
+            continue;
+          }
 
           // 4B. Deterministic Pre-Checks (Schema & 4 Options)
           const preCheck = deterministicValidator.runPreChecks(candidateMCQ);

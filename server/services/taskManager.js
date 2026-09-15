@@ -39,7 +39,7 @@ function createTask() {
         id,
         status: 'RUNNING',
         stage: 0,
-        stageLabel: 'Generating Questions',
+        stageLabel: 'Ingesting & Analyzing Material',
         createdAt: Date.now(),
     });
     return id;
@@ -48,7 +48,7 @@ function createTask() {
 /**
  * Advance the pipeline stage for a running task.
  * @param {string} taskId
- * @param {number} stage  0-3
+ * @param {number} stage  0-7
  * @param {string} label  Human-readable label
  */
 function updateTaskStage(taskId, stage, label) {
@@ -67,8 +67,8 @@ function completeTask(taskId, result) {
     const task = tasks.get(taskId);
     if (!task) return;
     task.status = 'COMPLETED';
-    task.stage = 3;
-    task.stageLabel = 'Preparing Final Quiz';
+    task.stage = 7;
+    task.stageLabel = 'Grounding Gate & Final Audit';
     task.completedAt = Date.now();
     task.result = result;
 }

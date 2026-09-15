@@ -11,6 +11,7 @@
 
 const llmRouter = require('../adapter/llmRouter');
 const calculationEngine = require('../validators/calculationEngine');
+const { safeParseJson } = require('../utils/jsonParser');
 
 class Agent2Generator {
   /**
@@ -45,10 +46,11 @@ JSON SCHEMA:
 }
 
 STRICT CONSTRAINTS:
-1. Output MUST be valid JSON starting with { and ending with }.
-2. Exactly 4 distinct options.
-3. If transforming scenario: preserve concept, but change surface entities. DO NOT introduce un-taught domain knowledge.
-4. ${repairInstruction ? 'REPAIR INSTRUCTION: ' + repairInstruction : ''}`;
+1. Output MUST be strictly raw JSON starting with { and ending with }.
+2. Absolutely NO markdown asterisks, bullet points, definitions, conversational commentary, or headers outside the JSON.
+3. Exactly 4 distinct options.
+4. If transforming scenario: preserve concept, but change surface entities. DO NOT introduce un-taught domain knowledge.
+5. ${repairInstruction ? 'REPAIR INSTRUCTION: ' + repairInstruction : ''}`;
 
     const userPrompt = `
 [ASSESSMENT TARGET]
@@ -83,8 +85,27 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 16000)}
       });
     }
 
-    const cleanJson = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
-    const parsedMCQ = JSON.parse(cleanJson);
+    let parsedMCQ;
+    try {
+      parsedMCQ = safeParseJson(responseText);
+    } catch (parseErr) {
+      console.warn(`⚠️ [Agent 2] Initial JSON parse notice: ${parseErr.message}. Retrying with repair prompt...`);
+      try {
+        const repairResponse = await llmRouter.complete({
+          prompt: `The previous output had syntax issues:\n"${responseText.substring(0, 400)}"\nConvert it into strictly valid JSON for:\nTarget: ${target.concept}\nInstruction: ${target.instruction}`,
+          systemPrompt: 'You are a JSON repair specialist. Output ONLY the raw JSON object matching the required schema starting with { and ending with }. No commentary or markdown formatting.',
+          temperature: 0.1,
+          model: 'llama-3.1-8b-instant'
+        });
+        parsedMCQ = safeParseJson(repairResponse);
+      } catch (repairErr) {
+        console.error(`❌ [Agent 2] JSON repair failed for target ${target.targetId}: ${repairErr.message}`);
+        const fatalJsonErr = new Error(`AGENT2_JSON_PARSE_FAILED: ${parseErr.message}`);
+        fatalJsonErr.code = 'JSON_PARSE_ERROR';
+        fatalJsonErr.targetId = target.targetId;
+        throw fatalJsonErr;
+      }
+    }
 
     // Enforce calculated answer if arithmetic target
     if (calculatedData && calculatedData.expectedAnswer) {
