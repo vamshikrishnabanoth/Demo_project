@@ -350,7 +350,7 @@ export default function SprintArena() {
     const accuracy = attemptedTotal > 0 ? Math.round((correctAnswers / attemptedTotal) * 100) : 0;
 
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] text-white font-inter relative overflow-hidden flex flex-col justify-between py-6">
+        <div className="min-h-screen bg-[#0B0F17] text-white font-inter relative overflow-hidden flex flex-col justify-between py-6 selection:bg-pink-500 selection:text-white">
             
             {/* Cyber Warning / Ambient Overlays */}
             <AnimatePresence>
@@ -479,19 +479,19 @@ export default function SprintArena() {
                         <motion.div
                             animate={shakeCard ? { x: [-8, 8, -8, 8, 0] } : {}}
                             transition={{ duration: 0.35 }}
-                            className="bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col justify-between shadow-xl relative overflow-hidden group"
+                            className="bg-[#121626]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-6 md:p-10 flex flex-col justify-between shadow-[0_25px_80px_rgba(0,0,0,0.6)] relative overflow-hidden group"
                         >
-                            <div className="flex justify-between items-center border-b border-white/5 pb-4 mb-6">
-                                <span className="bg-pink-600/10 text-pink-400 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-md border border-pink-500/20 shadow-[0_0_10px_rgba(219,39,119,0.1)]">
-                                    Question {currentQuestion + 1} of {questions.length}
+                            <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-6">
+                                <span className="bg-pink-600/20 text-pink-300 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-lg border border-pink-500/30 shadow-[0_0_12px_rgba(219,39,119,0.2)] flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-ping" /> Question {currentQuestion + 1} of {questions.length}
                                 </span>
                                 <div className="flex items-center gap-3">
-                                    <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Sprint Score</span>
-                                    <span className="font-mono text-lg font-black text-pink-500 drop-shadow-[0_0_10px_rgba(219,39,119,0.2)]">{score} pts</span>
+                                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Sprint Score</span>
+                                    <span className="font-mono text-xl font-black text-pink-400 drop-shadow-[0_0_12px_rgba(219,39,119,0.3)]">{score} pts</span>
                                 </div>
                             </div>
 
-                            <div className="my-6 min-h-[70px]">
+                            <div className="my-6 min-h-[75px] flex items-center">
                                 <FormattedQuestionText
                                     questionText={activeQuestion.questionText}
                                     textClassName="text-xl sm:text-2xl font-black leading-snug text-white tracking-tight"
@@ -511,7 +511,7 @@ export default function SprintArena() {
                                             animate={{ opacity: 0, y: -90, scale: 1.4 }}
                                             exit={{ opacity: 0 }}
                                             transition={{ duration: 0.85, ease: 'easeOut' }}
-                                            className={`absolute inset-0 flex items-center justify-center pointer-events-none z-50 text-4xl italic tracking-tighter ${f.color}`}
+                                            className={`absolute inset-0 flex items-center justify-center pointer-events-none z-50 text-5xl italic font-black tracking-tighter ${f.color}`}
                                         >
                                             {f.text}
                                         </motion.div>
@@ -522,13 +522,13 @@ export default function SprintArena() {
                                     const isSelected = selectedOption === option;
                                     const isCorrectChoice = option === activeQuestion.correctAnswer;
 
-                                    let cardStyle = 'border-white/10 bg-white/[0.04] hover:border-white/30 text-white hover:bg-white/10';
+                                    let cardStyle = 'border-white/10 bg-[#191f33] hover:border-pink-500/50 hover:bg-[#222a45] text-white shadow-md hover:shadow-lg';
                                     if (feedbackType === 'correct') {
-                                        if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.25)] font-bold';
-                                        else if (isSelected) cardStyle = 'border-white/5 bg-white/[0.01] opacity-30 text-white/50';
+                                        if (isCorrectChoice) cardStyle = 'border-emerald-400 bg-emerald-500/20 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.3)] font-black scale-[1.01]';
+                                        else if (isSelected) cardStyle = 'border-white/5 bg-white/[0.02] opacity-30 text-white/40';
                                     } else if (feedbackType === 'wrong') {
-                                        if (isCorrectChoice) cardStyle = 'border-emerald-500 bg-emerald-500/20 text-emerald-300 font-bold';
-                                        else if (isSelected) cardStyle = 'border-pink-500 bg-pink-500/20 text-pink-300 shadow-[0_0_15px_rgba(219,39,119,0.25)] font-bold';
+                                        if (isCorrectChoice) cardStyle = 'border-emerald-400 bg-emerald-500/20 text-emerald-300 font-bold';
+                                        else if (isSelected) cardStyle = 'border-pink-500 bg-pink-500/20 text-pink-300 shadow-[0_0_20px_rgba(219,39,119,0.3)] font-bold';
                                     }
 
                                     return (

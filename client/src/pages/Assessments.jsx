@@ -92,6 +92,10 @@ export default function Assessments() {
         const startStr = startTime ? startTime.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '';
         const endStr = endTime ? endTime.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '';
 
+        if (quiz.isAttempted) {
+            return navigate(`/report/${quiz.id}`);
+        }
+
         if (startTime && now < startTime) {
             return royalAlert.fire({
                 icon: 'info',
@@ -366,10 +370,19 @@ export default function Assessments() {
                                                 )}
                                                 <button
                                                     onClick={() => handleAttemptClick(quiz)}
-                                                    className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-md"
+                                                    className={`${quiz.isAttempted ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)]'} text-white px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-md`}
                                                 >
-                                                    <Play size={14} fill="currentColor" aria-hidden="true" />
-                                                    {quiz.isAttempted ? 'Retake Assessment' : 'Start Assessment'}
+                                                    {quiz.isAttempted ? (
+                                                        <>
+                                                            <Trophy size={14} aria-hidden="true" />
+                                                            View Report
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Play size={14} fill="currentColor" aria-hidden="true" />
+                                                            Start Assessment
+                                                        </>
+                                                    )}
                                                 </button>
                                             </div>
                                         </div>

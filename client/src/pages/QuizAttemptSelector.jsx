@@ -29,6 +29,12 @@ export default function QuizAttemptSelector() {
 
     useEffect(() => {
         if (quiz && !quiz.isLive) {
+            // Check if assessment has already been completed by student
+            const isCompleted = quiz.isAlreadyCompleted || (quiz.isAssessment && quiz.previousResult?.status === 'completed');
+            if (isCompleted) {
+                return; // Do not auto-navigate into game arenas if already completed
+            }
+
             const statePayload = { questions: quiz.questions, title: quiz.title, quizId: quiz.id };
             const gType = quiz.gameType || 'cyber_quest';
             
@@ -64,7 +70,59 @@ export default function QuizAttemptSelector() {
 
     if (quiz.isLive) {
         return <AttemptQuiz />;
-    } else if (quiz.gameType === 'standard') {
+    }
+
+    const isCompleted = quiz.isAlreadyCompleted || (quiz.isAssessment && quiz.previousResult?.status === 'completed');
+    if (isCompleted) {
+        return (
+            <div className="min-h-screen bg-[#07090e] text-white flex flex-col items-center justify-center p-6 text-center font-inter relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[160px] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[160px] pointer-events-none" />
+
+                <div className="max-w-lg w-full bg-white/[0.02] backdrop-blur-2xl border border-emerald-500/20 rounded-[2.5rem] p-10 shadow-[0_30px_100px_rgba(16,185,129,0.15)] relative z-10 space-y-6">
+                    <div className="w-20 h-20 bg-emerald-500/10 border-2 border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(16,185,129,0.2)] font-black text-2xl">
+                        ✓
+                    </div>
+
+                    <div className="space-y-2">
+                        <span className="px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                            Single Attempt Assessment
+                        </span>
+                        <h2 className="text-3xl font-black italic uppercase tracking-tight text-white mt-2">
+                            Assessment Completed
+                        </h2>
+                        <p className="text-slate-400 font-bold uppercase tracking-wider text-xs max-w-sm mx-auto leading-relaxed">
+                            You have already submitted your official attempt for <span className="text-emerald-400">{quiz.title}</span>. Multi-attempts are restricted for this assessment.
+                        </p>
+                    </div>
+
+                    {quiz.previousResult && (
+                        <div className="p-4 rounded-2xl bg-white/5 border border-white/5 max-w-xs mx-auto text-center">
+                            <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Achieved Score</p>
+                            <p className="text-3xl font-mono font-black text-emerald-400 mt-1">{quiz.previousResult.score} pts</p>
+                        </div>
+                    )}
+
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                        <button
+                            onClick={() => navigate(`/report/${quiz.id}`)}
+                            className="flex-1 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-widest transition-all shadow-[0_10px_25px_rgba(16,185,129,0.25)] cursor-pointer"
+                        >
+                            View Assessment Report
+                        </button>
+                        <button
+                            onClick={() => navigate('/assessments')}
+                            className="flex-1 py-4 px-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-black text-xs uppercase tracking-widest transition-all cursor-pointer"
+                        >
+                            Back to Arena
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (quiz.gameType === 'standard') {
         return <AssessmentAttempt />;
     } else {
         return <WaitingRoomLoader message="Entering Game Arena..." />;

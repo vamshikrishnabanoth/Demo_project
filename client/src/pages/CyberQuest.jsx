@@ -392,11 +392,11 @@ export default function CyberQuest() {
     };
 
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] text-white font-inter relative overflow-hidden flex flex-col justify-between py-6">
+        <div className="min-h-screen bg-[#060913] text-white font-inter relative overflow-hidden flex flex-col justify-between py-6 selection:bg-cyan-500 selection:text-black">
             
             {/* Cyber Glows */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -mr-64 -mt-64" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none -ml-64 -mb-64" />
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[160px] pointer-events-none -mr-64 -mt-64" />
+            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[160px] pointer-events-none -ml-64 -mb-64" />
 
             {/* HEADER BAR */}
             <header className="max-w-7xl mx-auto w-full px-6 flex justify-between items-center border-b border-white/5 pb-4 relative z-50">
@@ -489,7 +489,7 @@ export default function CyberQuest() {
                             <div className="lg:col-span-3 flex flex-col justify-between gap-6">
                                 
                                 {/* Question Card */}
-                                <div className="bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-3xl p-6 md:p-8 flex-1 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+                                <div className="bg-[#0e1424]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-6 md:p-10 flex-1 flex flex-col justify-between shadow-[0_25px_80px_rgba(0,0,0,0.6)] relative overflow-hidden group">
                                     <div className="flex justify-between items-center border-b border-white/5 pb-4 mb-6">
                                         <div className="flex items-center gap-2">
                                             <span className="bg-[var(--bg-accent)]/10 text-[var(--text-accent)] font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-md border border-[var(--bg-accent)]/20 shadow-[0_0_10px_rgba(0,240,255,0.1)]">

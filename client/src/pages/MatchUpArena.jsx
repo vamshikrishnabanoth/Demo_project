@@ -346,7 +346,7 @@ export default function MatchUpArena() {
     };
 
     return (
-        <div className="min-h-screen bg-[var(--bg-primary)] text-white font-inter relative overflow-hidden flex flex-col justify-between py-6">
+        <div className="min-h-screen bg-[#090714] text-white font-inter relative overflow-hidden flex flex-col justify-between py-6 selection:bg-purple-500 selection:text-white">
             
             {/* Ambient Cyberglows */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[140px] pointer-events-none -mr-64 -mt-64" />
@@ -490,13 +490,13 @@ export default function MatchUpArena() {
                                         const isFlipped = isSelected || isMatched || isStartRevealActive;
 
                                         // Glow/Border Style Math
-                                        let borderGlowClass = 'border-white/5 bg-white/[0.02] hover:border-white/20';
+                                        let borderGlowClass = 'border-white/10 bg-[#161226] hover:border-purple-500/50 hover:bg-[#201a38] text-white';
                                         if (isMatched) {
-                                            borderGlowClass = 'border-emerald-500 bg-emerald-500/10 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.15)] opacity-80 cursor-default';
+                                            borderGlowClass = 'border-emerald-400 bg-emerald-500/20 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.3)] opacity-90 cursor-default font-bold';
                                         } else if (isMismatched) {
-                                            borderGlowClass = 'border-red-500 bg-red-500/10 text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.15)]';
+                                            borderGlowClass = 'border-pink-500 bg-pink-500/20 text-pink-300 shadow-[0_0_20px_rgba(236,72,153,0.3)] font-bold';
                                         } else if (isSelected) {
-                                            borderGlowClass = 'border-cyan-400 bg-cyan-400/5 text-cyan-200 shadow-[0_0_15px_rgba(6,182,212,0.15)] scale-[1.03]';
+                                            borderGlowClass = 'border-cyan-400 bg-cyan-500/20 text-cyan-200 shadow-[0_0_20px_rgba(6,182,212,0.3)] scale-[1.03] font-bold';
                                         }
 
                                         return (
@@ -514,7 +514,7 @@ export default function MatchUpArena() {
                                                 >
                                                     {/* CARD BACK SIDE (Face Down) */}
                                                     <div 
-                                                        className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-white/[0.01] border-white/5"
+                                                        className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-[#161226] border border-white/10"
                                                         style={{ 
                                                             transform: 'rotateY(0deg)',
                                                             WebkitTransform: 'rotateY(0deg)',
@@ -523,14 +523,14 @@ export default function MatchUpArena() {
                                                             transition: 'opacity 0.2s ease-in-out'
                                                         }}
                                                     >
-                                                        <span className="text-5xl font-black uppercase tracking-widest text-purple-500/25 select-none">
+                                                        <span className="text-5xl font-black uppercase tracking-widest text-purple-400/30 select-none">
                                                             {card.type === 'question' ? 'Q' : 'A'}
                                                         </span>
                                                     </div>
 
                                                     {/* CARD FRONT SIDE (Face Up - text rotated by 180 degrees to display correctly) */}
                                                     <div 
-                                                        className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-white/[0.03] p-4 text-xs font-semibold overflow-y-auto leading-relaxed select-none"
+                                                        className="absolute inset-0 w-full h-full rounded-2xl flex flex-col items-center justify-center bg-[#1d1733] p-4 text-xs font-semibold overflow-y-auto leading-relaxed select-none text-white"
                                                         style={{ 
                                                             transform: 'rotateY(180deg)',
                                                             WebkitTransform: 'rotateY(180deg)',

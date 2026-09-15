@@ -1410,10 +1410,13 @@ exports.getQuizById = async (req, res) => {
             }
         }
 
+        const isAlreadyCompleted = quiz.isAssessment && previousResult?.status === 'completed' && !isCreator && !isAdmin;
+
         res.json({
             ...safeQuiz,
             questions: normalizedQuestions,
-            previousResult: safePreviousResult
+            previousResult: safePreviousResult,
+            isAlreadyCompleted: Boolean(isAlreadyCompleted)
         });
     } catch (err) {
         console.error(err.message);
@@ -1522,6 +1525,12 @@ exports.submitQuiz = async (req, res) => {
 
             let result;
             if (existingForUpsert) {
+                if (quiz.isAssessment && existingForUpsert.status === 'completed' && req.user.role === 'student') {
+                    return res.status(403).json({
+                        msg: 'This assessment has already been submitted and cannot be retaken.',
+                        alreadySubmitted: true
+                    });
+                }
                 // Update existing record with new attempt's results
                 result = await prisma.result.update({
                     where: { id: existingForUpsert.id },
