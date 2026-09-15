@@ -116,7 +116,7 @@ export default function AssessmentAttempt() {
     }, [id, handleFinalSubmit, navigate]);
 
     const { isFullscreen, requestFullscreenMode, isTerminated } = useExamProctoring({
-        enabled: !loading && !submitting && !isTerminated && !!quiz,
+        enabled: !loading && !submitting && !!quiz,
         quizId: id,
         userId: authUser?.id,
         maxTabSwitches: 2,
