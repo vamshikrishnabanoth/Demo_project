@@ -415,28 +415,28 @@ export default function SprintArena() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="w-full text-center space-y-8 bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(0,0,0,0.5)] relative overflow-hidden"
+                        className="w-full text-center space-y-8 bg-[#131726]/95 backdrop-blur-2xl border border-pink-500/30 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(0,0,0,0.8)] relative overflow-hidden max-w-xl mx-auto"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-b from-pink-500/5 to-transparent pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-pink-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
                         
                         <div className="relative z-10 space-y-6">
                             <motion.div
                                 animate={{ scale: [1, 1.05, 1] }}
                                 transition={{ duration: 1.8, repeat: Infinity }}
-                                className="w-24 h-24 rounded-full border-2 border-pink-500 bg-pink-500/10 flex items-center justify-center mx-auto text-pink-400 shadow-[0_0_40px_rgba(219,39,119,0.25)]"
+                                className="w-24 h-24 rounded-full border-2 border-pink-500 bg-pink-500/10 flex items-center justify-center mx-auto text-pink-400 shadow-[0_0_40px_rgba(219,39,119,0.35)]"
                             >
                                 <Zap size={48} />
                             </motion.div>
                             
                             <div className="space-y-2">
                                 <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter">
-                                    Sprint <span className="text-pink-500 drop-shadow-[0_0_20px_rgba(219,39,119,0.3)]">Arena</span>
+                                    <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">SPRINT</span> <span className="text-pink-500 drop-shadow-[0_0_25px_rgba(219,39,119,0.5)]">ARENA</span>
                                 </h2>
-                                <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">High-Speed Time Attack Survival Mode</p>
+                                <p className="text-slate-300 font-bold uppercase tracking-[0.3em] text-xs">High-Speed Time Attack Survival Mode</p>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-left text-xs leading-relaxed text-slate-300 max-w-sm mx-auto space-y-2">
-                                <p className="font-bold text-center uppercase tracking-wider text-pink-400 mb-1">🎮 Game Manual</p>
+                            <div className="p-5 rounded-2xl bg-[#191f33] border border-white/10 text-left text-xs leading-relaxed text-slate-200 max-w-sm mx-auto space-y-3">
+                                <p className="font-black text-center uppercase tracking-wider text-pink-400 text-sm mb-1">🎮 Game Manual</p>
                                 <p>⚡ <b>Initial Timer:</b> You start with 45 seconds.</p>
                                 <p>✅ <b>Correct Answer:</b> Grants +5 seconds and score increase.</p>
                                 <p>❌ <b>Incorrect Answer:</b> Deducts -3 seconds immediately.</p>
@@ -445,7 +445,7 @@ export default function SprintArena() {
 
                             <button
                                 onClick={() => { setGameStatus('playing'); playSound('correct'); }}
-                                className="w-full h-16 rounded-2xl bg-pink-600 text-white font-black text-xl italic uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(219,39,119,0.25)] border border-pink-500 hover:scale-[1.03] active:scale-95 transition-all"
+                                className="w-full h-16 rounded-2xl bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 text-white font-black text-xl italic uppercase tracking-[0.2em] shadow-[0_15px_35px_rgba(219,39,119,0.35)] border border-pink-400/50 hover:scale-[1.03] active:scale-95 transition-all cursor-pointer"
                             >
                                 Launch Sprint
                             </button>

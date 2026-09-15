@@ -683,10 +683,7 @@ export default function QuizAnalytics() {
                                     <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[80px]" style={{ color: '#334155' }}>Q.No</th>
                                     <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest min-w-[350px] max-w-[900px] w-auto" style={{ color: '#334155' }}>Question Text</th>
                                     {isStudent ? (
-                                        <>
-                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[130px] text-center" style={{ color: '#334155' }}>Time Taken</th>
-                                            <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[140px] text-center" style={{ color: '#334155' }}>Result</th>
-                                        </>
+                                        <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[140px] text-center" style={{ color: '#334155' }}>Result</th>
                                     ) : (
                                         <>
                                             <th className="p-4 text-[11px] font-black text-[#334155] uppercase tracking-widest w-[130px]" style={{ color: '#334155' }}>Difficulty</th>
@@ -745,14 +742,8 @@ export default function QuizAnalytics() {
                                                     </div>
                                                 </td>
                                                 {isStudent ? (
-                                                    <>
-                                                        <td className="p-4 text-center">
-                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-slate-100 border border-slate-300 text-slate-800 shadow-xs">
-                                                                <Clock size={12} className="text-slate-500" /> {studentTime}
-                                                            </span>
-                                                        </td>
-                                                        <td className="p-4 text-center">
-                                                            {isAnswered ? (
+                                                    <td className="p-4 text-center">
+                                                        {isAnswered ? (
                                                                 isCorrect ? (
                                                                     <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-emerald-100 border border-emerald-400 text-emerald-800 shadow-xs">
                                                                         <CheckCircle2 size={12} /> Correct
@@ -768,7 +759,6 @@ export default function QuizAnalytics() {
                                                                 </span>
                                                             )}
                                                         </td>
-                                                    </>
                                                 ) : (
                                                     <>
                                                         <td className="p-4">

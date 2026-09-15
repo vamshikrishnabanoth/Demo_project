@@ -440,27 +440,27 @@ export default function CyberQuest() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="max-w-xl w-full text-center space-y-8 bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(0,0,0,0.5)] relative overflow-hidden"
+                            className="max-w-xl w-full text-center space-y-8 bg-[#0e1424]/95 backdrop-blur-2xl border border-cyan-500/30 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(0,0,0,0.8)] relative overflow-hidden"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-accent)]/5 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 via-transparent to-purple-600/10 pointer-events-none" />
                             <div className="relative z-10 space-y-6">
                                 <motion.div
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                                    className="w-24 h-24 rounded-full border-2 border-dashed border-[var(--bg-accent)] flex items-center justify-center mx-auto text-[var(--text-accent)] shadow-[0_0_40px_rgba(0,240,255,0.25)]"
+                                    className="w-24 h-24 rounded-full border-2 border-cyan-400 bg-cyan-500/10 flex items-center justify-center mx-auto text-cyan-400 shadow-[0_0_40px_rgba(6,182,212,0.4)]"
                                 >
                                     <Trophy size={48} />
                                 </motion.div>
                                 
                                 <div className="space-y-2">
                                     <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter">
-                                        Cyber <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">Quest</span>
+                                        <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">CYBER</span> <span className="text-cyan-400 drop-shadow-[0_0_25px_rgba(6,182,212,0.6)]">QUEST</span>
                                     </h2>
-                                    <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">The Ultimate Progressive MCQ Battle</p>
+                                    <p className="text-slate-300 font-bold uppercase tracking-[0.3em] text-xs">The Ultimate Progressive MCQ Battle</p>
                                 </div>
 
-                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-left text-xs leading-relaxed text-slate-300 max-w-sm mx-auto space-y-2">
-                                    <p className="font-bold text-center uppercase tracking-wider text-[var(--text-accent)] mb-1">🎮 Game Manual</p>
+                                <div className="p-5 rounded-2xl bg-[#13192b] border border-white/10 text-left text-xs leading-relaxed text-slate-200 max-w-sm mx-auto space-y-3">
+                                    <p className="font-black text-center uppercase tracking-wider text-cyan-400 text-sm mb-1">🎮 Game Manual</p>
                                     <p>🛡 <b>10 Progressive Levels:</b> Harder questions mean more points.</p>
                                     <p>🚫 <b>One Mistake Ends the Game:</b> UNLESS you activate the Shield.</p>
                                     <p>💡 <b>3 Cyber Lifelines:</b> 50:50, Shield, and Skip can be used once each.</p>
@@ -468,7 +468,7 @@ export default function CyberQuest() {
 
                                 <button
                                     onClick={() => { setGameStatus('playing'); playSound('levelUp'); }}
-                                    className="w-full h-16 rounded-2xl bg-[var(--bg-accent)] text-[var(--text-on-accent)] font-black text-xl italic uppercase tracking-[0.2em] shadow-[0_15px_30px_var(--bg-accent-glow)] border border-[var(--bg-accent)] hover:scale-[1.03] active:scale-95 transition-all"
+                                    className="w-full h-16 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white font-black text-xl italic uppercase tracking-[0.2em] shadow-[0_15px_40px_rgba(6,182,212,0.4)] border border-cyan-400/50 hover:scale-[1.03] active:scale-95 transition-all cursor-pointer"
                                 >
                                     Start Cyber Quest
                                 </button>

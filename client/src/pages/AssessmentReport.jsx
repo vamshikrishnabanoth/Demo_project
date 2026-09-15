@@ -427,7 +427,6 @@ const AssessmentReport = () => {
                                                 <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest min-w-[200px] max-w-xs">Your Input</th>
                                                 <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest min-w-[200px] max-w-xs">Correct Target</th>
                                                 <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest text-center w-32">Status</th>
-                                                <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest w-20">Latency</th>
                                                 <th className="px-6 py-4 text-[10px] font-black text-[#334155] uppercase tracking-widest text-right w-24">{uiTerminology.arenaReview}</th>
                                             </tr>
                                         </thead>
@@ -517,11 +516,6 @@ const AssessmentReport = () => {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                        </td>
-
-                                                        {/* Latency */}
-                                                        <td className="px-6 py-5 text-[#334155] font-mono text-xs font-bold align-top pt-6">
-                                                            {ans.timeTaken}s
                                                         </td>
 
                                                         {/* Action / Arena Review */}

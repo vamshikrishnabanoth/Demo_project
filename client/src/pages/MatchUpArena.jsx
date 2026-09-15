@@ -394,29 +394,29 @@ export default function MatchUpArena() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="max-w-xl w-full mx-auto text-center space-y-8 bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(0,0,0,0.5)] relative overflow-hidden"
+                            className="max-w-xl w-full mx-auto text-center space-y-8 bg-[#130f29]/95 backdrop-blur-2xl border border-purple-500/30 rounded-[3rem] p-12 shadow-[0_30px_100px_rgba(0,0,0,0.8)] relative overflow-hidden"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
                             
                             <div className="relative z-10 space-y-6">
                                 <motion.div
                                     animate={{ scale: [1, 1.05, 1] }}
                                     transition={{ duration: 2, repeat: Infinity }}
-                                    className="w-24 h-24 rounded-full border-2 border-purple-500 bg-purple-500/10 flex items-center justify-center mx-auto text-purple-400 shadow-[0_0_40px_rgba(168,85,247,0.25)]"
+                                    className="w-24 h-24 rounded-full border-2 border-purple-500 bg-purple-500/10 flex items-center justify-center mx-auto text-purple-400 shadow-[0_0_40px_rgba(168,85,247,0.35)]"
                                 >
                                     <Layers size={48} />
                                 </motion.div>
                                 
                                 <div className="space-y-2">
                                     <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter">
-                                        Match-Up <span className="text-purple-400 drop-shadow-[0_0_20px_rgba(168,85,247,0.3)]">Arena</span>
+                                        <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">MATCH-UP</span> <span className="text-purple-400 drop-shadow-[0_0_25px_rgba(168,85,247,0.5)]">ARENA</span>
                                     </h2>
-                                    <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">Visual Cognitive Terminology Matcher</p>
+                                    <p className="text-slate-300 font-bold uppercase tracking-[0.3em] text-xs">Visual Cognitive Terminology Matcher</p>
                                 </div>
 
                                 {/* Difficulty selector */}
                                 <div className="space-y-3 max-w-xs mx-auto">
-                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest text-center">Select Grid Complexity</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest text-center">Select Grid Complexity</p>
                                     <div className="flex gap-2">
                                         {['easy', 'medium', 'hard'].map((d) => (
                                             <button
@@ -424,15 +424,15 @@ export default function MatchUpArena() {
                                                 onClick={() => setDifficulty(d)}
                                                 className={`flex-1 py-2.5 rounded-xl font-bold uppercase text-[10px] tracking-wider transition-all border ${
                                                     difficulty === d
-                                                        ? 'bg-purple-600 border-purple-500 text-white font-black shadow-[0_0_15px_rgba(168,85,247,0.3)]'
-                                                        : 'bg-white/5 border-white/5 text-slate-400 hover:text-white'
+                                                        ? 'bg-purple-600 border-purple-400 text-white font-black shadow-[0_0_15px_rgba(168,85,247,0.4)]'
+                                                        : 'bg-white/5 border-white/10 text-slate-300 hover:text-white'
                                                 }`}
                                             >
                                                 {d}
                                             </button>
                                         ))}
                                     </div>
-                                    <p className="text-[9px] text-slate-500 text-center font-bold">
+                                    <p className="text-[9px] text-slate-400 text-center font-bold">
                                         {difficulty === 'easy' && '4x4 Grid (8 pairs / 8 questions)'}
                                         {difficulty === 'medium' && '5x4 Grid (10 pairs / 10 questions)'}
                                         {difficulty === 'hard' && '6x4 Grid (12 pairs / 12 questions)'}
@@ -441,7 +441,7 @@ export default function MatchUpArena() {
 
                                 <button
                                     onClick={handleStartGame}
-                                    className="w-full h-16 rounded-2xl bg-purple-600 text-white font-black text-xl italic uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(168,85,247,0.25)] border border-purple-500 hover:scale-[1.03] active:scale-95 transition-all"
+                                    className="w-full h-16 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 text-white font-black text-xl italic uppercase tracking-[0.2em] shadow-[0_15px_35px_rgba(168,85,247,0.35)] border border-purple-400/50 hover:scale-[1.03] active:scale-95 transition-all cursor-pointer"
                                 >
                                     Launch Match-Up
                                 </button>
