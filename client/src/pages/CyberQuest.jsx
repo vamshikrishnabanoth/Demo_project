@@ -10,18 +10,19 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 
-const LADDER = [
-    { level: 10, points: 5000, label: 'Level 10' },
-    { level: 9, points: 4000, label: 'Level 9' },
-    { level: 8, points: 3200, label: 'Level 8' },
-    { level: 7, points: 2500, label: 'Level 7' },
-    { level: 6, points: 1800, label: 'Level 6' },
-    { level: 5, points: 1200, label: 'Level 5' },
-    { level: 4, points: 800, label: 'Level 4' },
-    { level: 3, points: 500, label: 'Level 3' },
-    { level: 2, points: 200, label: 'Level 2' },
-    { level: 1, points: 100, label: 'Level 1' }
-];
+// Dynamically generate the ladder based on total levels (question count)
+function buildLadder(totalLevels) {
+    const basePoints = [100, 200, 500, 800, 1200, 1800, 2500, 3200, 4000, 5000];
+    return Array.from({ length: totalLevels }, (_, i) => {
+        const level = totalLevels - i; // descending
+        // Scale points evenly if fewer than 10 questions, otherwise use base
+        const pointIdx = totalLevels <= 10
+            ? Math.round(i * (basePoints.length - 1) / Math.max(totalLevels - 1, 1))
+            : i;
+        const points = basePoints[Math.min(pointIdx, basePoints.length - 1)];
+        return { level, points, label: `Level ${level}` };
+    });
+}
 
 const FALLBACK_QUESTIONS = [
     {
@@ -114,13 +115,19 @@ export default function CyberQuest() {
     const rawQuestions = location.state?.questions || FALLBACK_QUESTIONS;
     const topicTitle = location.state?.title || 'System Core Matrix';
 
-    // ── Normalize questions ──────────────────────────────────────────────────
-    const questions = rawQuestions.slice(0, 10).map((q) => ({
+    // ── Normalize questions (no arbitrary cap — use all teacher-provided questions) ──
+    const questions = rawQuestions.map((q) => ({
         questionText: q.questionText || '',
         options: Array.isArray(q.options) ? q.options : ['Option A', 'Option B', 'Option C', 'Option D'],
         correctAnswer: q.correctAnswer || '',
         explanation: q.explanation || 'No concept description supplied.'
     }));
+
+    // Total number of levels = total number of questions
+    const totalLevels = questions.length;
+
+    // Dynamic score ladder based on actual question count
+    const LADDER = buildLadder(totalLevels);
 
     // ── GAME STATE ───────────────────────────────────────────────────────────
     const [gameStatus, setGameStatus] = useState('start'); // 'start' | 'playing' | 'victory' | 'gameover'
@@ -128,7 +135,7 @@ export default function CyberQuest() {
         return crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).substring(2, 15) + Date.now().toString(36));
     });
     const hasSubmitted = useRef(false);
-    const [currentLevel, setCurrentLevel] = useState(1);  // 1 to 10
+    const [currentLevel, setCurrentLevel] = useState(1);
     const [score, setScore] = useState(0);
 
     // Lifeline Tracking
@@ -154,13 +161,13 @@ export default function CyberQuest() {
     useEffect(() => {
         if ((gameStatus === 'victory' || gameStatus === 'gameover') && !hasSubmitted.current) {
             hasSubmitted.current = true;
-            const answeredCorrectly = gameStatus === 'victory' ? 10 : Math.max(0, currentLevel - 1);
+            const answeredCorrectly = gameStatus === 'victory' ? totalLevels : Math.max(0, currentLevel - 1);
             
             // 1. Submit gamification score
             api.post('/students/game-score', {
                 gameType: 'cyber_quest',
                 correctAnswers: answeredCorrectly,
-                totalQuestions: 10,
+                totalQuestions: totalLevels,
                 duration: 0, // CyberQuest is untimed
                 sessionId: sessionId
             }).catch(err => console.error('Failed to save score:', err));
@@ -277,13 +284,14 @@ export default function CyberQuest() {
             setTimeout(() => {
                 setScore(prev => prev + currentPoints);
                 
-                if (currentLevel === 5) {
-                    // Level 5 Milestone Confetti
+                // Midpoint milestone confetti
+                const midpoint = Math.ceil(totalLevels / 2);
+                if (currentLevel === midpoint) {
                     confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
                     playSound('levelUp');
                 }
 
-                if (currentLevel < 10) {
+                if (currentLevel < totalLevels) {
                     setCurrentLevel(prev => prev + 1);
                     // Reset single question state
                     setSelectedOption(null);
@@ -359,7 +367,7 @@ export default function CyberQuest() {
         setTimeout(() => {
             setScore(prev => prev + currentPoints);
             
-            if (currentLevel < 10) {
+            if (currentLevel < totalLevels) {
                 setCurrentLevel(prev => prev + 1);
                 setSelectedOption(null);
                 setFeedbackState(null);
@@ -461,7 +469,7 @@ export default function CyberQuest() {
 
                                 <div className="p-5 rounded-2xl bg-[#13192b] border border-white/10 text-left text-xs leading-relaxed text-slate-200 max-w-sm mx-auto space-y-3">
                                     <p className="font-black text-center uppercase tracking-wider text-cyan-400 text-sm mb-1">🎮 Game Manual</p>
-                                    <p>🛡 <b>10 Progressive Levels:</b> Harder questions mean more points.</p>
+                                    <p>🛡 <b>{totalLevels} Progressive Levels:</b> Harder questions mean more points.</p>
                                     <p>🚫 <b>One Mistake Ends the Game:</b> UNLESS you activate the Shield.</p>
                                     <p>💡 <b>3 Cyber Lifelines:</b> 50:50, Shield, and Skip can be used once each.</p>
                                 </div>
@@ -684,20 +692,20 @@ export default function CyberQuest() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-emerald-400">
-                                        Quest Champion!
+                                    <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                                        QUEST CHAMPION!
                                     </h2>
-                                    <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">You have successfully conquered all 10 security matrix grids</p>
+                                    <p className="text-slate-300 font-bold uppercase tracking-[0.2em] text-[10px]">You have successfully conquered all {totalLevels} security matrix grids</p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto my-6">
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Final Points</p>
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                                        <p className="text-[10px] text-slate-300 font-black uppercase tracking-wider">Final Points</p>
                                         <p className="text-2xl font-mono font-black text-emerald-400 mt-1">{score}</p>
                                     </div>
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Completed</p>
-                                        <p className="text-2xl font-mono font-black text-white mt-1">10 / 10</p>
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                                        <p className="text-[10px] text-slate-300 font-black uppercase tracking-wider">Completed</p>
+                                        <p className="text-2xl font-mono font-black text-white mt-1">{totalLevels} / {totalLevels}</p>
                                     </div>
                                 </div>
 
