@@ -18,6 +18,7 @@ const { resolveCorrectOptionText } = require('../utils/grading');
 const documentStore = require('../storage/documentStore');
 const { expandShortTopicDescription } = require('../engine/documentAnalyzer/topicExpander');
 const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
+const { chunkMp3 } = require('../utils/audioChunker');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -68,24 +69,18 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         console.log('ℹ️ Local timestamp transcription unavailable. Falling back to Groq Cloud Whisper...');
     }
 
-    // 2. Cloud fallback to Groq Whisper API (whisper-large-v3) via official Groq SDK
+    // 2. Production STT: Whisper Large-v3 (Sole Research & Production Model)
     const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) {
+        console.error('❌ GROQ_API_KEY is missing in environment variables. Whisper Large-v3 cannot run.');
+        return null;
+    }
+
+    const groqClient = groq || new Groq({ apiKey: groqKey });
     const stats = fs.existsSync(filePath) ? fs.statSync(filePath) : null;
     const fileSizeBytes = stats ? stats.size : 0;
-    const GROQ_MAX_BYTES = 24 * 1024 * 1024; // 24 MB safe threshold (Groq has a strict 25 MB payload limit)
-
-    const mimeMap = {
-        '.mp3': 'audio/mpeg',
-        '.wav': 'audio/wav',
-        '.m4a': 'audio/mp4',
-        '.mp4': 'audio/mp4',
-        '.webm': 'audio/webm',
-        '.ogg': 'audio/ogg',
-        '.oga': 'audio/ogg',
-        '.opus': 'audio/ogg',
-        '.flac': 'audio/flac',
-        '.aac': 'audio/aac'
-    };
+    const GROQ_MAX_BYTES = 20 * 1024 * 1024; // 20 MB safe threshold (safely under Groq's 25 MB ceiling)
+    const ext = path.extname(filePath).toLowerCase();
 
     const formatTs = (s) => {
         const total = Math.floor(Math.max(0, s || 0));
@@ -95,10 +90,10 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
     };
 
-    if (groqKey && fileSizeBytes <= GROQ_MAX_BYTES) {
+    // ── Tier A: Single Direct Pass (Files <= 20 MB) ──────────────────────────
+    if (fileSizeBytes <= GROQ_MAX_BYTES) {
         try {
-            console.log(`🎙️ Calling Groq Whisper via official SDK (size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
-            const groqClient = groq || new Groq({ apiKey: groqKey });
+            console.log(`🎙️ Transcribing with Whisper Large-v3 directly (size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
             const data = await groqClient.audio.transcriptions.create({
                 file: fs.createReadStream(filePath),
                 model: 'whisper-large-v3',
@@ -106,7 +101,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                 prompt: 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.'
             });
 
-            const fullText = data.text || '';
+            const fullText = (data.text || '').trim();
             const rawSegs = Array.isArray(data.segments) ? data.segments : [];
             const duration = data.duration || (rawSegs.length > 0 ? rawSegs[rawSegs.length - 1].end : 0);
 
@@ -120,93 +115,131 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                 speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher'
             }));
 
-            if (fullText && fullText.trim().length >= 5) {
-                console.log(`✅ Groq Whisper transcription successful (${fullText.length} chars, duration: ${duration}s)!`);
+            if (fullText.length >= 5) {
+                console.log(`✅ Whisper Large-v3 direct transcription successful (${fullText.length} chars, ${duration.toFixed(1)}s, 1 chunk)!`);
                 return {
                     text: fullText,
                     rawText: fullText,
                     segments: segments,
                     duration: duration,
                     duration_formatted: formatTs(duration),
-                    language: data.language || 'en'
+                    language: data.language || 'en',
+                    model: 'whisper-large-v3',
+                    chunks_count: 1
                 };
             }
-            console.log('ℹ️ Groq Whisper returned empty transcript. Trying Deepgram Nova-2 fallback...');
         } catch (groqErr) {
-            console.error('❌ Groq Whisper Error:', groqErr.message || groqErr);
-            console.log('ℹ️ Groq Whisper failed. Falling back to Deepgram Nova-2...');
+            console.error('❌ Whisper Large-v3 Direct Transcription Error:', groqErr.message || groqErr);
+            return null;
         }
-    } else if (fileSizeBytes > GROQ_MAX_BYTES) {
-        console.log(`ℹ️ File size is ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB (>24 MB limit for Groq). Routing directly to Deepgram Nova-2...`);
-    } else {
-        console.warn('⚠️ GROQ_API_KEY is missing in environment variables.');
     }
 
-    // 3. Fallback to Deepgram Nova-2 (super-fast, supports large audio files up to 2GB)
-    const deepgramKey = process.env.DEEPGRAM_API_KEY;
-    if (deepgramKey) {
+    // ── Tier B: MPEG-Frame Chunking Pass for Oversized Files (> 20 MB) ────────
+    if (ext === '.mp3') {
+        console.log(`🎙️ Oversized MP3 lecture (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Slicing into clean MPEG-frame chunks for Whisper Large-v3...`);
+        let chunks = [];
         try {
-            console.log(`🎙️ Calling Deepgram Nova-2 (file size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
-            const ext = path.extname(filePath).toLowerCase();
-            const buffer = fs.readFileSync(filePath);
-            const deepgramResp = await axios.post(
-                'https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&detect_language=true',
-                buffer,
-                {
-                    headers: {
-                        'Authorization': `Token ${deepgramKey}`,
-                        'Content-Type': mimeMap[ext] || 'audio/mpeg'
-                    },
-                    maxContentLength: Infinity,
-                    maxBodyLength: Infinity,
-                    timeout: 60000
+            // Target 18 MB per chunk with 2.0s boundary overlap
+            chunks = chunkMp3(filePath, {
+                targetChunkBytes: 18 * 1024 * 1024,
+                overlapSeconds: 2.0,
+                outputDir: path.dirname(filePath)
+            });
+            console.log(`📦 Sliced into ${chunks.length} clean MPEG-frame chunks for Whisper Large-v3 processing.`);
+
+            const allSegments = [];
+            const textParts = [];
+            let cumulativeDuration = 0;
+
+            for (let i = 0; i < chunks.length; i++) {
+                const chunk = chunks[i];
+                const chunkNum = i + 1;
+                console.log(`🎙️ [Whisper Large-v3] Transcribing Chunk ${chunkNum}/${chunks.length} (${(chunk.sizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
+
+                const chunkData = await groqClient.audio.transcriptions.create({
+                    file: fs.createReadStream(chunk.filePath),
+                    model: 'whisper-large-v3',
+                    response_format: 'verbose_json',
+                    prompt: i === 0 
+                        ? 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.'
+                        : `Continuing classroom lecture. Previous context: ${textParts.join(' ').slice(-200)}`
+                });
+
+                const chunkText = (chunkData.text || '').trim();
+                const chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
+                const chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : 0);
+
+                console.log(`✅ [Whisper Large-v3] Chunk ${chunkNum}/${chunks.length} transcribed: ${chunkText.length} chars, ${chunkDuration.toFixed(1)}s, ${chunkSegs.length} segments`);
+
+                // Deduplicate boundary overlap text with previous chunk
+                let filteredSegs = chunkSegs;
+                if (i > 0 && textParts.length > 0) {
+                    const prevChunkEndText = textParts[textParts.length - 1].slice(-150).toLowerCase();
+                    // If first 1-2 segments of this chunk repeat the trailing words of the previous chunk, skip them
+                    filteredSegs = chunkSegs.filter((seg, segIdx) => {
+                        if (segIdx < 3 && seg.start < 3.0) {
+                            const cleanSeg = (seg.text || '').trim().toLowerCase();
+                            if (cleanSeg.length > 8 && prevChunkEndText.includes(cleanSeg)) {
+                                console.log(`🔄 Deduplicated overlapping boundary segment in Chunk ${chunkNum}: "${seg.text}"`);
+                                return false;
+                            }
+                        }
+                        return true;
+                    });
                 }
-            );
 
-            const channel = deepgramResp.data?.results?.channels?.[0]?.alternatives?.[0];
-            const fullText = channel?.transcript || '';
-            const duration = deepgramResp.data?.metadata?.duration || 0;
+                // Offset timestamps monotonically by actual previous cumulative audio duration
+                const offsetSegs = filteredSegs.map((seg) => {
+                    const adjustedStart = Math.max(0, seg.start + cumulativeDuration);
+                    const adjustedEnd = Math.max(adjustedStart, seg.end + cumulativeDuration);
+                    return {
+                        id: `seg_${allSegments.length + 1}`,
+                        start: adjustedStart,
+                        end: adjustedEnd,
+                        timestamp: formatTs(adjustedStart),
+                        timestamp_end: formatTs(adjustedEnd),
+                        text: (seg.text || '').trim(),
+                        speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher'
+                    };
+                });
 
-            const words = channel?.words || [];
-            const segments = words.length > 0 
-                ? [{
-                    id: 'seg_1',
-                    start: 0,
-                    end: duration,
-                    timestamp: '00:00:00',
-                    timestamp_end: formatTs(duration),
-                    text: fullText,
-                    speaker: 'Teacher'
-                }]
-                : [{
-                    id: 'seg_1',
-                    start: 0,
-                    end: duration,
-                    timestamp: '00:00:00',
-                    timestamp_end: formatTs(duration),
-                    text: fullText,
-                    speaker: 'Teacher'
-                }];
+                allSegments.push(...offsetSegs);
+                if (chunkText.length > 0) {
+                    textParts.push(chunkText);
+                }
 
-            if (fullText && fullText.trim().length >= 5) {
-                console.log(`✅ Deepgram Nova-2 transcription successful (${fullText.length} chars, duration: ${duration}s)!`);
+                cumulativeDuration += chunkDuration;
+
+                // Immediate cleanup of chunk file
+                try { fs.unlinkSync(chunk.filePath); } catch (_) {}
+            }
+
+            const fullText = textParts.join(' ').trim();
+            if (fullText.length >= 5) {
+                console.log(`🎉 [Whisper Large-v3] Complete lecture reassembled: ${fullText.length} characters across ${chunks.length} chunks, total duration: ${cumulativeDuration.toFixed(1)}s (${formatTs(cumulativeDuration)})`);
                 return {
                     text: fullText,
                     rawText: fullText,
-                    segments,
-                    duration,
-                    duration_formatted: formatTs(duration),
-                    language: 'en'
+                    segments: allSegments,
+                    duration: cumulativeDuration,
+                    duration_formatted: formatTs(cumulativeDuration),
+                    language: 'en',
+                    model: 'whisper-large-v3',
+                    chunks_count: chunks.length
                 };
             }
-            console.warn(`⚠️ Deepgram returned empty transcript (transcript length: ${fullText.length}).`);
-        } catch (dgErr) {
-            console.error('❌ Deepgram Cloud Transcription Error:', dgErr.response?.data || dgErr.message);
+        } catch (chunkErr) {
+            console.error('❌ Whisper Large-v3 Chunked Transcription Error:', chunkErr.message || chunkErr);
+            // Cleanup any remaining chunk files
+            for (const c of chunks) {
+                try { if (fs.existsSync(c.filePath)) fs.unlinkSync(c.filePath); } catch (_) {}
+            }
+            return null;
         }
-    } else {
-        console.warn('⚠️ DEEPGRAM_API_KEY is missing in environment variables.');
     }
 
+    // For non-MP3 files that exceed 20MB without chunker support yet
+    console.error(`❌ File ${path.basename(filePath)} (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds Whisper provider size limit.`);
     return null;
 };
 
