@@ -867,24 +867,28 @@ export default function CreateQuizTopic() {
         formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);
 
-        const textPromptsList = textInputs.map(t => {
-            if (t.type === 'voice' || t.type === 'audio') {
-                return `Lecture Audio Transcript: ${t.source_name}\n${t.content}`;
-            }
-            if (t.type !== 'text' && t.startPage && t.endPage && t.content) {
+        const structuredPrompts = textInputs.map(t => {
+            const isVoice = (t.type === 'voice' || t.type === 'audio');
+            let content = t.content;
+            if (!isVoice && t.type !== 'text' && t.startPage && t.endPage && t.content) {
                 const lines = t.content.split('\n');
                 const totalLines = lines.length;
                 const totalPages = t.maxPages || 1;
                 const linesPerPage = Math.max(1, Math.ceil(totalLines / totalPages));
                 const s = Math.max(0, (t.startPage - 1) * linesPerPage);
                 const e = Math.min(totalLines, (t.endPage || totalPages) * linesPerPage);
-                const sliced = lines.slice(s, e).join('\n');
-                return `Document Source: ${t.source_name} (Pages ${t.startPage}-${t.endPage || totalPages})\n${sliced}`;
+                content = lines.slice(s, e).join('\n');
             }
-            return t.content;
-        }).filter(Boolean);
+            return {
+                type: isVoice ? 'voice' : (t.type || 'text'),
+                source_name: t.source_name,
+                content: content,
+                startPage: t.startPage || null,
+                endPage: t.endPage || null
+            };
+        }).filter(item => item && item.content);
 
-        formData.append('text_prompts', JSON.stringify(textPromptsList));
+        formData.append('text_prompts', JSON.stringify(structuredPrompts));
 
         try {
             const res = await api.post('/quiz/generate', formData, {

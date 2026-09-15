@@ -32,6 +32,19 @@ if (process.env.GROQ_API_KEY) {
 
 
 /**
+ * Conservative safety net sanitizer to strip verbatim Whisper system prompt echoes.
+ * Non-aggressive: only strips known verbatim instruction leaks if present at the start.
+ */
+function sanitizeTranscriptEchoes(text) {
+    if (!text || typeof text !== 'string') return text || '';
+    return text
+        .replace(/^(?:TBS\s*)?T(?:ranscribe|anscribe)\s+academic\s+instruction,\s*teacher\s+explanations,\s*and\s+student\s+questions\.?\s*/gim, '')
+        .replace(/^(?:Tendency\s+is\s+a\s+classroom\s+lecture\s+recording\.?\s*)+/gim, '')
+        .replace(/^This\s+is\s+a\s+classroom\s+lecture\s+recording\.?\s*/gim, '')
+        .trim();
+}
+
+/**
  * Transcribes audio file locally using Python faster-whisper with cloud fallback to Groq Whisper
  */
 const transcribeAudioWithTimestamps = async (filePath) => {
@@ -127,11 +140,10 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             const data = await callGroqWithRetry(() => ({
                 file: fs.createReadStream(filePath),
                 model: 'whisper-large-v3',
-                response_format: 'verbose_json',
-                prompt: 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.'
+                response_format: 'verbose_json'
             }), 2);
 
-            const fullText = (data.text || '').trim();
+            let fullText = sanitizeTranscriptEchoes((data.text || '').trim());
             const rawSegs = Array.isArray(data.segments) ? data.segments : [];
             const duration = data.duration || (rawSegs.length > 0 ? rawSegs[rawSegs.length - 1].end : 0);
 
@@ -206,13 +218,10 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                 const chunkData = await callGroqWithRetry(() => ({
                     file: fs.createReadStream(chunk.filePath),
                     model: 'whisper-large-v3',
-                    response_format: 'verbose_json',
-                    prompt: i === 0 
-                        ? 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.'
-                        : `Continuing classroom lecture. Previous context: ${textParts.join(' ').slice(-200)}`
+                    response_format: 'verbose_json'
                 }), 2);
 
-                const chunkText = (chunkData.text || '').trim();
+                const chunkText = sanitizeTranscriptEchoes((chunkData.text || '').trim());
                 const chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
                 const chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : 0);
 
@@ -2449,9 +2458,20 @@ exports.generateQuizQuestions = async (req, res) => {
                     }
                     const promptsArray = Array.isArray(prompts) ? prompts : [prompts];
                     promptsArray.forEach((p, idx) => {
-                        if (p && p.trim() !== '') {
+                        if (!p) return;
+                        if (typeof p === 'object' && p.content) {
+                            const isVoice = (p.type === 'voice' || p.type === 'audio' || p.type === 'transcript');
                             parsedInputs.push({
-                                type: 'text',
+                                type: isVoice ? 'voice' : (p.type || 'text'),
+                                content: p.content,
+                                source_name: p.source_name || (isVoice ? 'Lecture Audio Transcript' : `Text Prompt ${idx + 1}`),
+                                startPage: p.startPage || null,
+                                endPage: p.endPage || null
+                            });
+                        } else if (typeof p === 'string' && p.trim() !== '') {
+                            const isVoice = p.startsWith('Lecture Audio Transcript:');
+                            parsedInputs.push({
+                                type: isVoice ? 'voice' : 'text',
                                 content: p,
                                 source_name: `Text Prompt ${idx + 1}`
                             });
