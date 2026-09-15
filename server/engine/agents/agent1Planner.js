@@ -248,20 +248,21 @@ ${rawContent.substring(0, 25000)}
       categoryWeights,
       lectureDepth,
       assessmentTargets: targets,
-      reserveTargets: [
-        {
-          targetId: 'R01',
-          subtopic: 'Reserve Subtopic',
-          concept: 'Reserve Concept from Session',
-          dimension: 'Application',
-          cognitiveLevel: 'Apply',
+      reserveTargets: Array.from({ length: Math.max(3, Math.ceil(count * 0.4)) }, (_, idx) => {
+        const subtopic = detectedFocus[(count + idx) % (detectedFocus.length || 1)] || `Reserve Concept ${idx + 1}`;
+        return {
+          targetId: `R0${idx + 1}`,
+          subtopic: subtopic,
+          concept: `${subtopic} - Extension ${idx + 1}`,
+          dimension: dimensions[(count + idx) % dimensions.length],
+          cognitiveLevel: 'Understand',
           targetDifficulty: difficulty,
-          evidenceType: 'DOCUMENT',
+          evidenceType: 'VOICE + DOCUMENT',
           sourceChunks: ['chunk_01'],
           requiresExactArtifact: false,
-          instruction: 'Fallback reserve target'
-        }
-      ]
+          instruction: `Assess grounded understanding of ${subtopic}`
+        };
+      })
     };
   }
 }

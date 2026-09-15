@@ -2899,7 +2899,7 @@ exports.generateQuizQuestions = async (req, res) => {
                 isPartial:       (finalTaskObj && finalTaskObj.isPartial) !== undefined ? finalTaskObj.isPartial : (finalQuestions.length < questionCount),
                 requestedCount:  (finalTaskObj && finalTaskObj.requestedCount) || questionCount,
                 deliveredCount:  finalQuestions.length,
-                notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `${finalQuestions.length} grounded questions were generated from the available learning material. Additional questions were withheld to prevent hallucination without supporting evidence.` : null),
+                notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `${finalQuestions.length} evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.` : null),
                 representation_mode: (finalTaskObj && finalTaskObj.representation_mode) || null,
                 metadata: {
                     executionMessages: (finalTaskObj && finalTaskObj.executionMessages) || []

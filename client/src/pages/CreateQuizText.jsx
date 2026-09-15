@@ -383,7 +383,7 @@ export default function CreateQuizText() {
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                     <h4 className="text-xs font-black uppercase tracking-wider text-blue-300">
-                                        Evidence-Grounded Generation Policy
+                                        Evidence-Grounded Yield
                                     </h4>
                                     {requestedCount && (
                                         <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-200 text-[10px] font-bold">
@@ -392,7 +392,9 @@ export default function CreateQuizText() {
                                     )}
                                 </div>
                                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                                    {pipelineNotice}
+                                    {requestedCount && questions.length < requestedCount
+                                        ? `${questions.length} of ${requestedCount} requested questions were generated. The remaining ${requestedCount - questions.length === 1 ? 'question' : 'questions'} could not be validated against the available instructional evidence. Add more lecture content or supporting material to enable additional questions.`
+                                        : pipelineNotice}
                                 </p>
                             </div>
                         </div>

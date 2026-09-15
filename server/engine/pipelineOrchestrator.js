@@ -82,14 +82,16 @@ class PipelineOrchestrator {
       const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
 
       let representationMode = 'UNIFIED';
+      let routerReason = 'Multi-source dual authority: Voice guides instructional focus; documents/code supply exact artifacts.';
       if (hasVoice && !hasDocs && !hasCode) {
         representationMode = 'SUMMARY';
+        routerReason = 'Voice-only modality: Pure transcript narrative representation path.';
       } else if (!hasVoice && (hasDocs || hasCode)) {
         representationMode = 'BLUEPRINT';
-      } else {
-        representationMode = 'UNIFIED';
+        routerReason = hasCode ? 'Code/artifact modality: Structural blueprint schema representation path.' : 'Document-only modality: Syllabus/slide blueprint representation path.';
       }
       evidencePackage.representationMode = representationMode;
+      evidencePackage.routerReason = routerReason;
 
       await trace.recordStage({
         stageOrder: '02',
@@ -127,7 +129,8 @@ class PipelineOrchestrator {
           isAcademic: evidencePackage.isAcademic,
           lectureDepth: evidencePackage.lectureDepth,
           unifiedLength: (evidencePackage.unifiedRawContent || '').length,
-          representationMode
+          representationMode,
+          routerReason
         },
         validation: { status: 'PASS', checks: ['Evidence package assembled', 'Artifacts extracted'] },
         durationMs: Date.now() - t1
@@ -571,8 +574,9 @@ class PipelineOrchestrator {
       let notice = null;
 
       if (deliveredCount < requestedCount) {
+        const missingCount = requestedCount - deliveredCount;
         pipelineStatus = 'COMPLETED_WITH_PARTIAL_FULFILLMENT';
-        notice = `${deliveredCount} high-confidence questions were generated from the available instructional content. Additional questions would require introducing information not supported by the lecture.`;
+        notice = `${deliveredCount} evidence-grounded questions were generated from the available instructional content. ${missingCount === 1 ? 'One additional question' : `${missingCount} additional questions`} could not be validated against the available evidence.`;
       }
 
       // Finalize Session Trace & Persist final_session_trace.json
@@ -589,6 +593,8 @@ class PipelineOrchestrator {
         deliveredCount,
         notice,
         lectureDepth: evidencePackage.lectureDepth,
+        representationMode: evidencePackage.representationMode || 'UNIFIED',
+        routerReason: evidencePackage.routerReason || null,
         questions: groundingResult.validatedQuestions,
         questionDecisionLedger: groundingResult.validatedQuestions.map(q => q.metadata?.decisionLedger).filter(Boolean),
         tcScore: plan.tcScore,

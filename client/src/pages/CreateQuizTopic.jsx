@@ -905,7 +905,8 @@ export default function CreateQuizTopic() {
 
                     if (result.notice || result.isPartial || (result.questions && result.questions.length < questionCount)) {
                         const count = result.questions ? result.questions.length : 0;
-                        toast(`Generated ${count} grounded questions. Additional questions were withheld to prevent hallucination without supporting evidence.`, {
+                        const missing = questionCount - count;
+                        toast(`${count} evidence-grounded questions generated. ${missing === 1 ? 'One additional question' : `${missing} additional questions`} could not be validated against available evidence.`, {
                             icon: '🛡️',
                             duration: 7000,
                             style: {
