@@ -24,6 +24,7 @@ const FILE_SIGNATURES = {
     '.pdf':  [Buffer.from([0x25, 0x50, 0x44, 0x46])],           // %PDF
     '.docx': [Buffer.from([0x50, 0x4B, 0x03, 0x04])],           // PK (ZIP-based)
     '.pptx': [Buffer.from([0x50, 0x4B, 0x03, 0x04])],           // PK (ZIP-based)
+    '.ppt':  [Buffer.from([0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1]), Buffer.from([0xD0, 0xCF, 0x11, 0xE0])], // OLE2 Compound Document
     '.jpg':  [Buffer.from([0xFF, 0xD8, 0xFF])],                   // JFIF
     '.jpeg': [Buffer.from([0xFF, 0xD8, 0xFF])],                   // JFIF
     '.png':  [Buffer.from([0x89, 0x50, 0x4E, 0x47])],            // PNG
@@ -32,11 +33,12 @@ const FILE_SIGNATURES = {
     '.m4a':  [Buffer.from([0x00, 0x00, 0x00])],                   // ftyp (MPEG-4)
     '.webm': [Buffer.from([0x1A, 0x45, 0xDF, 0xA3])],            // EBML
     '.ogg':  [Buffer.from([0x4F, 0x67, 0x67, 0x53])],            // OggS
+    '.flac': [Buffer.from([0x66, 0x4C, 0x61, 0x43])],            // fLaC
     // .txt files don't have magic bytes — rely on extension only
 };
 
 function verifyFileMagicBytes(filePath, ext) {
-    const isAudioExt = ['.webm', '.mp3', '.wav', '.m4a', '.ogg'].includes(ext);
+    const isAudioExt = ['.webm', '.mp3', '.wav', '.m4a', '.ogg', '.aac', '.flac'].includes(ext);
     
     try {
         const fs = require('fs');
@@ -53,6 +55,28 @@ function verifyFileMagicBytes(filePath, ext) {
 
         if (matchSignature(ext)) return true;
 
+        // MP4 / M4A ftyp box detection at byte 4
+        if (ext === '.m4a' || ext === '.mp4') {
+            if (bytesRead >= 8 && buffer.slice(4, 8).toString() === 'ftyp') {
+                return true;
+            }
+        }
+
+        // MP3 frame sync detection (0xFF followed by 3 sync bits)
+        if (ext === '.mp3') {
+            if (bytesRead >= 2 && buffer[0] === 0xFF && (buffer[1] & 0xE0) === 0xE0) {
+                return true;
+            }
+        }
+
+        // AAC ADTS syncword detection (0xFFF)
+        if (ext === '.aac') {
+            if (bytesRead >= 2 && buffer[0] === 0xFF && (buffer[1] & 0xF0) === 0xF0) {
+                return true;
+            }
+        }
+
+        // WebM EBML search across first 64 bytes
         if (ext === '.webm') {
             const webmHeader = Buffer.from([0x1A, 0x45, 0xDF, 0xA3]);
             for (let i = 0; i <= bytesRead - 4; i++) {
@@ -63,7 +87,7 @@ function verifyFileMagicBytes(filePath, ext) {
         }
 
         if (isAudioExt) {
-            const audioExts = ['.webm', '.mp3', '.wav', '.m4a', '.ogg'];
+            const audioExts = ['.webm', '.mp3', '.wav', '.m4a', '.ogg', '.flac', '.aac'];
             for (const aExt of audioExts) {
                 if (matchSignature(aExt)) return true;
             }
@@ -96,7 +120,7 @@ const storage = multer.diskStorage({
 });
 
 // File upload security: Strict types, size limits, and path traversal protection
-// Voice files can be large; allow up to 50 MB for audio
+// Voice files can be large; allow up to 200 MB for audio/document
 const upload = multer({ 
     storage: storage,
     limits: {
@@ -110,8 +134,8 @@ const upload = multer({
             .replace(/\0/g, '');
 
         const allowedTypes = [
-            '.pdf', '.docx', '.pptx', '.jpg', '.jpeg', '.png', 
-            '.mp3', '.wav', '.m4a', '.webm', '.ogg', '.txt'
+            '.pdf', '.docx', '.pptx', '.ppt', '.jpg', '.jpeg', '.png', 
+            '.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac', '.txt'
         ];
         const ext = path.extname(file.originalname).toLowerCase();
         if (allowedTypes.includes(ext)) {

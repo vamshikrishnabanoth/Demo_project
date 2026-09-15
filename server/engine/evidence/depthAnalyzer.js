@@ -44,7 +44,10 @@ class DepthAnalyzer {
       'difference', 'compare', 'example', 'instance', 'step', 'phase', 'stage', 'table',
       'token', 'tokenizer', 'vector', 'neural', 'weights', 'loss', 'training', 'feature',
       'async', 'sync', 'callback', 'promise', 'event', 'listener', 'emitter', 'microtask',
-      'closure', 'scope', 'handler', 'rest', 'http', 'api', 'endpoint', 'json', 'middleware'
+      'closure', 'scope', 'handler', 'rest', 'http', 'api', 'endpoint', 'json', 'middleware',
+      'tree', 'trees', 'binary', 'bst', 'node', 'nodes', 'root', 'leaf', 'height', 'depth',
+      'traversal', 'inorder', 'preorder', 'postorder', 'graph', 'edge', 'vertex', 'vertices',
+      'recursion', 'complexity', 'search', 'sort', 'heap', 'queue', 'linked', 'list', 'dsa'
     ];
 
     const casualIndicators = [

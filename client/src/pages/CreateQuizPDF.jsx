@@ -190,19 +190,26 @@ export default function CreateQuizPDF() {
         return keywords.some(kw => fileName.includes(kw));
     }, [file]);
 
+    const isAudio = useMemo(() => {
+        if (!file) return false;
+        const ext = file.name.split('.').pop().toLowerCase();
+        return ['mp3', 'wav', 'm4a', 'webm', 'ogg', 'aac', 'flac'].includes(ext);
+    }, [file]);
+
     const isImageOrTextScan = useMemo(() => {
         if (!file) return false;
         const ext = file.name.split('.').pop().toLowerCase();
         const nameLower = file.name.toLowerCase();
-        return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt'].includes(ext) || nameLower.includes('scan') || nameLower.includes('handwritten') || nameLower.includes('handwriting');
-    }, [file]);
+        return isAudio || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'txt'].includes(ext) || nameLower.includes('scan') || nameLower.includes('handwritten') || nameLower.includes('handwriting');
+    }, [file, isAudio]);
 
     const fileLabel = useMemo(() => {
         if (!file) return "Page";
         const ext = file.name.split('.').pop().toLowerCase();
         if (ext === 'pptx' || ext === 'ppt') return "Slide";
+        if (isAudio) return "Audio";
         return "Page";
-    }, [file]);
+    }, [file, isAudio]);
 
     const handleSliderChange = (changedFlavor, newValue) => {
         const val = Math.min(100, Math.max(0, parseInt(newValue) || 0));
@@ -462,7 +469,7 @@ export default function CreateQuizPDF() {
                                     {!file && (
                                         <input
                                             type="file"
-                                            accept=".pdf,.docx,.pptx,.ppt,.txt,.jpg,.jpeg,.png,.gif,.webp"
+                                            accept=".pdf,.docx,.pptx,.ppt,.txt,.jpg,.jpeg,.png,.gif,.webp,.mp3,.wav,.m4a,.webm,.ogg,.aac,.flac,audio/*"
                                             onChange={handleFileChange}
                                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                                             required
