@@ -41,15 +41,23 @@ class LLMRouter {
 
     const errors = [];
 
-    // 1. Try Primary Groq Cloud (70B model with fallback to 8B on 429)
+    // Resolve model cleanly
+    let primaryModel = model || process.env.AGENT1_MODEL || 'openai/gpt-oss-120b';
+    if (primaryModel === 'llama-3.1-8b-instant' || primaryModel === 'quiz-expert-fast') {
+      primaryModel = process.env.AGENT2_MODEL || 'openai/gpt-oss-20b';
+    } else if (primaryModel.includes('llama') || primaryModel === 'quiz-expert') {
+      primaryModel = process.env.AGENT1_MODEL || 'openai/gpt-oss-120b';
+    }
+
+    // 1. Try Primary Groq Cloud (bounded retry on 429, no silent downgrade)
     if (this.groqApiKey) {
       try {
         return await this._callGroqWithRetry({
           prompt,
           systemPrompt,
           temperature,
-          primaryModel: (model && model !== 'quiz-expert') ? model : 'llama-3.3-70b-versatile',
-          fallbackModel: 'llama-3.1-8b-instant'
+          primaryModel,
+          fallbackModel: null // No silent downgrade across tiers
         });
       } catch (err) {
         errors.push(`Groq (${err.message})`);
@@ -87,26 +95,18 @@ class LLMRouter {
     throw fatalError;
   }
 
-  /** Call Groq Cloud API with multi-model failover and rate-limit backoff */
+  /** Call Groq Cloud API with configured model and bounded rate-limit backoff */
   async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel }) {
     const key = this.groqApiKey || process.env.GROQ_API_KEY;
     if (!key) throw new Error('GROQ_API_KEY is missing');
 
-    let modelsToTry = [primaryModel, fallbackModel, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'groq/compound'].filter(Boolean);
-    
-    // Map legacy or unavailable model names to active working Groq models
-    modelsToTry = modelsToTry.map(m => {
-      if (m.includes('llama') || m === 'quiz-expert') return 'openai/gpt-oss-120b';
-      return m;
-    });
-
-    // Deduplicate
-    modelsToTry = Array.from(new Set(modelsToTry));
+    const modelsToTry = [primaryModel, fallbackModel].filter(Boolean);
 
     let lastErr = null;
     for (const currentModel of modelsToTry) {
       let attempts = 0;
-      while (attempts < 3) {
+      const maxAttempts = 3;
+      while (attempts < maxAttempts) {
         attempts++;
         try {
           const response = await axios.post(
@@ -135,18 +135,18 @@ class LLMRouter {
           const status = err.response?.status;
           const isRateLimit = status === 429 || (err.message || '').includes('429');
 
-          if (isRateLimit) {
-            console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' rate limited (429, attempt ${attempts}/3). Sleeping 3.5s...`);
-            await this._sleep(3500);
+          if (isRateLimit && attempts < maxAttempts) {
+            const sleepMs = attempts * 2500;
+            console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' rate limited (429, attempt ${attempts}/${maxAttempts}). Sleeping ${sleepMs}ms...`);
+            await this._sleep(sleepMs);
           } else {
-            console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' failed (${status || err.message}). Switching model...`);
-            await this._sleep(500);
-            break; // Try next model
+            console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' error (${status || err.message}).`);
+            break;
           }
         }
       }
     }
-    throw lastErr || new Error('All Groq models failed');
+    throw lastErr || new Error('Configured Groq models failed');
   }
 
   /** Call local FastAPI / Ollama backend */

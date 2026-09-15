@@ -11,6 +11,49 @@
 'use strict';
 
 class DeterministicValidator {
+  normalizeCorrectAnswer(mcq) {
+    if (!mcq || !Array.isArray(mcq.options) || mcq.options.length === 0 || !mcq.correctAnswer) {
+      return;
+    }
+    const ans = String(mcq.correctAnswer).trim();
+
+    // 1. Exact match
+    if (mcq.options.includes(ans)) {
+      mcq.correctAnswer = ans;
+      return;
+    }
+
+    // 2. Letter / Index prefix: "Option A", "A", "A)", "(A)", "Option 1", "1"
+    const letterMatch = ans.match(/^(?:option\s+)?([a-d1-4])(?:\)|\.|\:|\s|$)/i);
+    if (letterMatch) {
+      const char = letterMatch[1].toUpperCase();
+      const map = { 'A': 0, '1': 0, 'B': 1, '2': 1, 'C': 2, '3': 2, 'D': 3, '4': 3 };
+      const idx = map[char];
+      if (idx !== undefined && mcq.options[idx]) {
+        mcq.correctAnswer = mcq.options[idx];
+        return;
+      }
+    }
+
+    // 3. Case-insensitive or trimmed match
+    const lowerAns = ans.toLowerCase();
+    const matchedOpt = mcq.options.find(o => (o || '').trim().toLowerCase() === lowerAns);
+    if (matchedOpt) {
+      mcq.correctAnswer = matchedOpt;
+      return;
+    }
+
+    // 4. Substring without letter prefix
+    const strippedAns = ans.replace(/^(?:option\s+[a-d1-4]|(?:[a-d1-4][\)\.\:\s]+))\s*/i, '').trim().toLowerCase();
+    if (strippedAns) {
+      const subMatch = mcq.options.find(o => (o || '').trim().toLowerCase() === strippedAns);
+      if (subMatch) {
+        mcq.correctAnswer = subMatch;
+        return;
+      }
+    }
+  }
+
   /**
    * Run Deterministic Pre-Checks on candidate MCQ.
    * @param {Object} mcq - Candidate MCQ object
@@ -22,6 +65,9 @@ class DeterministicValidator {
     if (!mcq || typeof mcq !== 'object') {
       return { isValid: false, errors: ['MCQ payload is null or not an object'] };
     }
+
+    // Normalize correctAnswer before validating
+    this.normalizeCorrectAnswer(mcq);
 
     if (!mcq.questionText || typeof mcq.questionText !== 'string' || mcq.questionText.trim().length < 10) {
       errors.push('questionText must be a string with at least 10 characters');

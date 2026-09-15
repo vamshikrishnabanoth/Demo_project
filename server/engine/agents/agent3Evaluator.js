@@ -11,6 +11,7 @@
 const llmRouter = require('../adapter/llmRouter');
 const deterministicValidator = require('../validators/deterministicValidator');
 const { safeParseJson } = require('../utils/jsonParser');
+const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelector');
 
 class Agent3Evaluator {
   /**
@@ -48,6 +49,8 @@ Return strictly valid JSON matching this schema:
   "groundingScore": 0.95
 }`;
 
+    const evidenceContext = getTargetEvidenceContext(target, evidencePackage.unifiedRawContent || '', 3500);
+
     const userPrompt = `
 [TARGET SPECIFICATION]
 Concept: ${target.concept}
@@ -61,7 +64,7 @@ Options: ${JSON.stringify(candidateMCQ.options)}
 Correct Answer: ${candidateMCQ.correctAnswer}
 
 [SESSION EVIDENCE]
-${(evidencePackage.unifiedRawContent || '').substring(0, 3000)}
+${evidenceContext}
 `;
 
     try {
@@ -69,7 +72,7 @@ ${(evidencePackage.unifiedRawContent || '').substring(0, 3000)}
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.1,
-        model: 'llama-3.3-70b-versatile'
+        model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b'
       });
 
       const parsed = safeParseJson(responseText);

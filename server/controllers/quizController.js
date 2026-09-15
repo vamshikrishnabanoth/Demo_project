@@ -447,9 +447,11 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             'EVIDENCE_PACKAGE': { stage: 1, label: 'Packaging Evidence & Knowledge Graph' },
             'AGENT_1_PLANNING': { stage: 2, label: 'Assessment Planning & TC Analysis' },
             'QUESTION_GENERATION': { stage: 3, label: 'Generating Questions via AI' },
-            'DETERMINISTIC_PRECHECK': { stage: 4, label: 'Validating Options & Deterministic Schema' },
-            'DETERMINISTIC_DUPLICATE_CHECK': { stage: 4, label: 'Validating Options & Deterministic Schema' },
-            'AGENT_3_QUESTION_EVAL': { stage: 5, label: 'Auditing Derivability & Pedagogical Quality' },
+            'DETERMINISTIC_PRECHECK': { stage: 3, label: 'Generating Questions via AI' },
+            'DETERMINISTIC_DUPLICATE_CHECK': { stage: 3, label: 'Generating Questions via AI' },
+            'AGENT_3_QUESTION_EVAL': { stage: 3, label: 'Generating Questions via AI' },
+            'VALIDATING_QUESTIONS': { stage: 4, label: 'Validating Options & Deterministic Schema' },
+            'AUDITING_QUALITY': { stage: 5, label: 'Auditing Derivability & Pedagogical Quality' },
             'AGENT_3_QUIZ_EVAL': { stage: 6, label: 'Reviewing Balance & Curriculum Coverage' },
             'DETERMINISTIC_POSTCHECKS': { stage: 7, label: 'Grounding Gate & Final Audit' },
             'FINAL_GROUNDING_GATE': { stage: 7, label: 'Grounding Gate & Final Audit' }
@@ -459,7 +461,14 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             if (taskId && event && event.stage) {
                 const mapped = stageLabelMap[event.stage];
                 if (mapped) {
-                    updateTaskStage(taskId, mapped.stage, mapped.label);
+                    let label = mapped.label;
+                    if (event.decisions && Array.isArray(event.decisions) && event.decisions.length > 0) {
+                        const firstDec = event.decisions[0];
+                        if (firstDec && (firstDec.startsWith('Generating candidate MCQ') || firstDec.startsWith('Auditing Question') || firstDec.startsWith('Target '))) {
+                            label = `${mapped.label} (${firstDec})`;
+                        }
+                    }
+                    updateTaskStage(taskId, mapped.stage, label);
                 }
             }
         };

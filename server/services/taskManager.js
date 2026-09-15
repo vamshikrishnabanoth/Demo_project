@@ -54,8 +54,13 @@ function createTask() {
 function updateTaskStage(taskId, stage, label) {
     const task = tasks.get(taskId);
     if (!task || task.status !== 'RUNNING') return;
-    task.stage = stage;
-    task.stageLabel = label;
+    // Strictly monotonic progression: never regress stage index backwards
+    if (typeof stage === 'number') {
+        task.stage = Math.max(task.stage || 0, stage);
+    }
+    if (label) {
+        task.stageLabel = label;
+    }
 }
 
 /**
