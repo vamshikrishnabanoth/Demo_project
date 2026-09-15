@@ -68,7 +68,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         console.log('ℹ️ Local timestamp transcription unavailable. Falling back to Groq Cloud Whisper...');
     }
 
-    // 2. Cloud fallback to Groq Whisper API (whisper-large-v3) with verbose_json for timestamps
+    // 2. Cloud fallback to Groq Whisper API (whisper-large-v3) via official Groq SDK
     const groqKey = process.env.GROQ_API_KEY;
     const stats = fs.existsSync(filePath) ? fs.statSync(filePath) : null;
     const fileSizeBytes = stats ? stats.size : 0;
@@ -87,48 +87,28 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         '.aac': 'audio/aac'
     };
 
+    const formatTs = (s) => {
+        const total = Math.floor(Math.max(0, s || 0));
+        const h = Math.floor(total / 3600);
+        const m = Math.floor((total % 3600) / 60);
+        const sc = total % 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
+    };
+
     if (groqKey && fileSizeBytes <= GROQ_MAX_BYTES) {
         try {
-            console.log(`🎙️ Calling Groq Cloud Whisper (whisper-large-v3, verbose_json, size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
-            const ext = path.extname(filePath).toLowerCase();
-            const validGroqExts = ['.mp3', '.mp4', '.mpeg', '.mpga', '.m4a', '.wav', '.webm', '.flac', '.ogg', '.oga'];
-            let uploadFilename = path.basename(filePath);
-            if (!validGroqExts.includes(ext)) {
-                uploadFilename = path.basename(filePath, ext) + '.mp3';
-            }
-
-            const FormData = require('form-data');
-            const form = new FormData();
-            form.append('file', fs.createReadStream(filePath), {
-                filename: uploadFilename,
-                contentType: mimeMap[ext] || 'audio/mpeg'
-            });
-            form.append('model', 'whisper-large-v3');
-            form.append('response_format', 'verbose_json');
-            form.append('prompt', 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.');
-
-            const groqResp = await axios.post('https://api.groq.com/openai/v1/audio/transcriptions', form, {
-                headers: {
-                    'Authorization': `Bearer ${groqKey}`,
-                    ...form.getHeaders()
-                },
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
-                timeout: 60000
+            console.log(`🎙️ Calling Groq Whisper via official SDK (size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
+            const groqClient = groq || new Groq({ apiKey: groqKey });
+            const data = await groqClient.audio.transcriptions.create({
+                file: fs.createReadStream(filePath),
+                model: 'whisper-large-v3',
+                response_format: 'verbose_json',
+                prompt: 'This is a classroom lecture recording. Transcribe academic instruction, teacher explanations, and student questions.'
             });
 
-            const data = groqResp.data;
             const fullText = data.text || '';
             const rawSegs = Array.isArray(data.segments) ? data.segments : [];
             const duration = data.duration || (rawSegs.length > 0 ? rawSegs[rawSegs.length - 1].end : 0);
-
-            const formatTs = (s) => {
-                const total = Math.floor(Math.max(0, s || 0));
-                const h = Math.floor(total / 3600);
-                const m = Math.floor((total % 3600) / 60);
-                const sc = total % 60;
-                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
-            };
 
             const segments = rawSegs.map((seg, idx) => ({
                 id: `seg_${idx + 1}`,
@@ -141,6 +121,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             }));
 
             if (fullText && fullText.trim().length >= 5) {
+                console.log(`✅ Groq Whisper transcription successful (${fullText.length} chars, duration: ${duration}s)!`);
                 return {
                     text: fullText,
                     rawText: fullText,
@@ -152,7 +133,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             }
             console.log('ℹ️ Groq Whisper returned empty transcript. Trying Deepgram Nova-2 fallback...');
         } catch (groqErr) {
-            console.error('❌ Groq Cloud Transcription Error:', groqErr.response?.data || groqErr.message);
+            console.error('❌ Groq Whisper Error:', groqErr.message || groqErr);
             console.log('ℹ️ Groq Whisper failed. Falling back to Deepgram Nova-2...');
         }
     } else if (fileSizeBytes > GROQ_MAX_BYTES) {
@@ -161,7 +142,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         console.warn('⚠️ GROQ_API_KEY is missing in environment variables.');
     }
 
-    // 3. Fallback to Deepgram Nova-2 (super-fast, supports large audio files up to 2GB & direct binary stream)
+    // 3. Fallback to Deepgram Nova-2 (super-fast, supports large audio files up to 2GB)
     const deepgramKey = process.env.DEEPGRAM_API_KEY;
     if (deepgramKey) {
         try {
@@ -169,7 +150,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             const ext = path.extname(filePath).toLowerCase();
             const buffer = fs.readFileSync(filePath);
             const deepgramResp = await axios.post(
-                'https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&utterances=true',
+                'https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&detect_language=true',
                 buffer,
                 {
                     headers: {
@@ -186,25 +167,17 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             const fullText = channel?.transcript || '';
             const duration = deepgramResp.data?.metadata?.duration || 0;
 
-            const formatTs = (s) => {
-                const total = Math.floor(Math.max(0, s || 0));
-                const h = Math.floor(total / 3600);
-                const m = Math.floor((total % 3600) / 60);
-                const sc = total % 60;
-                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
-            };
-
-            const utterances = deepgramResp.data?.results?.utterances || [];
-            const segments = utterances.length > 0 
-                ? utterances.map((u, idx) => ({
-                    id: `seg_${idx + 1}`,
-                    start: u.start,
-                    end: u.end,
-                    timestamp: formatTs(u.start),
-                    timestamp_end: formatTs(u.end),
-                    text: (u.transcript || '').trim(),
-                    speaker: 'Speaker ' + (u.speaker !== undefined ? u.speaker : 1)
-                }))
+            const words = channel?.words || [];
+            const segments = words.length > 0 
+                ? [{
+                    id: 'seg_1',
+                    start: 0,
+                    end: duration,
+                    timestamp: '00:00:00',
+                    timestamp_end: formatTs(duration),
+                    text: fullText,
+                    speaker: 'Teacher'
+                }]
                 : [{
                     id: 'seg_1',
                     start: 0,
@@ -216,7 +189,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                 }];
 
             if (fullText && fullText.trim().length >= 5) {
-                console.log(`✅ Deepgram Nova-2 transcription successful (${fullText.length} chars)!`);
+                console.log(`✅ Deepgram Nova-2 transcription successful (${fullText.length} chars, duration: ${duration}s)!`);
                 return {
                     text: fullText,
                     rawText: fullText,
@@ -226,6 +199,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                     language: 'en'
                 };
             }
+            console.warn(`⚠️ Deepgram returned empty transcript (transcript length: ${fullText.length}).`);
         } catch (dgErr) {
             console.error('❌ Deepgram Cloud Transcription Error:', dgErr.response?.data || dgErr.message);
         }
@@ -3747,15 +3721,16 @@ exports.transcribe = async (req, res) => {
     const isRecorded = originalName.includes('recording') || originalName.includes('blob') || ext === '.webm';
 
     try {
-        const transcript = await transcribeAudio(absolutePath);
+        const result = await transcribeAudioWithTimestamps(absolutePath);
         
         // Clean up audio file
         try { fs.unlinkSync(absolutePath); } catch (_) {}
 
+        const transcript = result ? result.text : null;
         if (!transcript || transcript.trim().length < 5) {
             const failMsg = isRecorded
                 ? 'Could not capture clear speech. Please try speaking closer to the mic.'
-                : `Could not transcribe "${originalName}". The audio may be silent, low quality, or the speech recognition service encountered an issue.`;
+                : `Could not transcribe "${originalName}". Please ensure the audio contains audible spoken English and is not silent.`;
             return res.status(422).json({ msg: failMsg });
         }
 
