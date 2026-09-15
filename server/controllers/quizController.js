@@ -132,19 +132,103 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                 speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher'
             }));
 
-            return {
-                text: fullText,
-                rawText: fullText,
-                segments: segments,
-                duration: duration,
-                duration_formatted: formatTs(duration),
-                language: data.language || 'en'
-            };
+            if (fullText && fullText.trim().length >= 5) {
+                return {
+                    text: fullText,
+                    rawText: fullText,
+                    segments: segments,
+                    duration: duration,
+                    duration_formatted: formatTs(duration),
+                    language: data.language || 'en'
+                };
+            }
+            console.log('ℹ️ Groq Whisper returned empty transcript. Trying Deepgram Nova-2 fallback...');
         } catch (groqErr) {
             console.error('❌ Groq Cloud Transcription Error:', groqErr.response?.data || groqErr.message);
+            console.log('ℹ️ Groq Whisper failed. Falling back to Deepgram Nova-2...');
         }
     } else {
         console.warn('⚠️ GROQ_API_KEY is missing in environment variables.');
+    }
+
+    // 3. Fallback to Deepgram Nova-2 (super-fast, supports large audio files & direct binary stream)
+    const deepgramKey = process.env.DEEPGRAM_API_KEY;
+    if (deepgramKey) {
+        try {
+            console.log('🎙️ Calling Deepgram Nova-2 fallback...');
+            const ext = path.extname(filePath).toLowerCase();
+            const mimeMap = {
+                '.mp3': 'audio/mpeg',
+                '.wav': 'audio/wav',
+                '.m4a': 'audio/mp4',
+                '.webm': 'audio/webm',
+                '.ogg': 'audio/ogg',
+                '.oga': 'audio/ogg',
+                '.flac': 'audio/flac',
+                '.aac': 'audio/aac'
+            };
+            const buffer = fs.readFileSync(filePath);
+            const deepgramResp = await axios.post(
+                'https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&utterances=true',
+                buffer,
+                {
+                    headers: {
+                        'Authorization': `Token ${deepgramKey}`,
+                        'Content-Type': mimeMap[ext] || 'audio/mpeg'
+                    },
+                    maxContentLength: Infinity,
+                    maxBodyLength: Infinity,
+                    timeout: 45000
+                }
+            );
+
+            const channel = deepgramResp.data?.results?.channels?.[0]?.alternatives?.[0];
+            const fullText = channel?.transcript || '';
+            const duration = deepgramResp.data?.metadata?.duration || 0;
+
+            const formatTs = (s) => {
+                const total = Math.floor(Math.max(0, s || 0));
+                const h = Math.floor(total / 3600);
+                const m = Math.floor((total % 3600) / 60);
+                const sc = total % 60;
+                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
+            };
+
+            const utterances = deepgramResp.data?.results?.utterances || [];
+            const segments = utterances.length > 0 
+                ? utterances.map((u, idx) => ({
+                    id: `seg_${idx + 1}`,
+                    start: u.start,
+                    end: u.end,
+                    timestamp: formatTs(u.start),
+                    timestamp_end: formatTs(u.end),
+                    text: (u.transcript || '').trim(),
+                    speaker: 'Speaker ' + (u.speaker !== undefined ? u.speaker : 1)
+                }))
+                : [{
+                    id: 'seg_1',
+                    start: 0,
+                    end: duration,
+                    timestamp: '00:00:00',
+                    timestamp_end: formatTs(duration),
+                    text: fullText,
+                    speaker: 'Teacher'
+                }];
+
+            if (fullText && fullText.trim().length >= 5) {
+                console.log(`✅ Deepgram Nova-2 transcription successful (${fullText.length} chars)!`);
+                return {
+                    text: fullText,
+                    rawText: fullText,
+                    segments,
+                    duration,
+                    duration_formatted: formatTs(duration),
+                    language: 'en'
+                };
+            }
+        } catch (dgErr) {
+            console.error('❌ Deepgram Cloud Transcription Error:', dgErr.response?.data || dgErr.message);
+        }
     }
 
     return null;
