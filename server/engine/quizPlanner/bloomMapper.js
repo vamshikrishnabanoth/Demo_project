@@ -7,10 +7,10 @@ function mapBloomAndDifficulty(requestedCount, userDifficulty = "Balanced") {
   const normDiff = String(userDifficulty).toUpperCase().replace(/[^A-Z_]/g, '');
   let profileKey = "BALANCED";
   
-  if (normDiff.includes("LOW")) profileKey = "LOW";
-  else if (normDiff.includes("MODERATE")) profileKey = "MODERATE";
+  if (normDiff === "EASY" || normDiff.includes("LOW")) profileKey = "LOW";
+  else if (normDiff === "MEDIUM" || normDiff.includes("MODERATE")) profileKey = "MODERATE";
   else if (normDiff.includes("VERY_HIGH") || normDiff.includes("VERYHIGH")) profileKey = "VERY_HIGH";
-  else if (normDiff.includes("HIGH")) profileKey = "HIGH";
+  else if (normDiff === "HARD" || normDiff.includes("HIGH")) profileKey = "HIGH";
   else profileKey = "BALANCED";
 
   const profile = PLANNER_CONFIG.DEPTH_PROFILES[profileKey] || PLANNER_CONFIG.DEPTH_PROFILES.BALANCED;

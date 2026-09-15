@@ -79,19 +79,95 @@ class DepthAnalyzer {
       };
     }
 
-    // 2. Extract Detected Focus Terms
-    const focusCandidates = raw.match(/\b[A-Z][a-zA-Z0-9_]{2,}\b/g) || [];
-    const technicalKeywords = [
-      'Async', 'Sync', 'Callback', 'Promise', 'EventEmitter', 'Event Loop', 'Microtask', 'EventListener',
-      'Interrupt', 'Polling', 'ISR', 'Stack', 'Register', 'Vector Table', 'Pipeline',
-      'Aggregation', 'Indexing', 'NoSQL', 'Document', 'Tokenization', 'Vocabulary', 'Schema',
-      'Recursion', 'Binary Tree', 'Dijkstra', 'Sorting', 'Graph', 'Memory', 'CPU', 'Thread',
-      'Tokenizer', 'Neural Network', 'Vector', 'Closure', 'Middleware', 'REST API'
+    // 2. Concept-Grounded Focus Extraction with Conversational Safety Filter
+    const STOPWORDS_AND_FILLERS = new Set([
+      'yeah', 'yes', 'no', 'one', 'two', 'three', 'now', 'and', 'this', 'that', 'these', 'those',
+      'here', 'there', 'today', 'tomorrow', 'yesterday', 'first', 'second', 'next', 'then',
+      'so', 'let', 'well', 'okay', 'right', 'like', 'also', 'just', 'because', 'therefore',
+      'document', 'suppose', 'consider', 'good', 'morning', 'afternoon', 'evening', 'everyone',
+      'please', 'thank', 'thanks', 'hello', 'hi', 'class', 'students', 'look', 'see', 'mean',
+      'means', 'say', 'saying', 'said', 'tell', 'talk', 'discuss', 'approach', 'problem',
+      'give', 'gives', 'take', 'takes', 'make', 'makes', 'come', 'comes', 'go', 'going',
+      'we', 'you', 'they', 'our', 'my', 'your', 'his', 'her', 'its', 'their', 'the', 'a', 'an',
+      'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'as', 'is', 'are', 'was', 'were',
+      'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'shall',
+      'should', 'can', 'could', 'may', 'might', 'must', 'something', 'anything', 'nothing'
+    ]);
+
+    const technicalPatterns = [
+      /\b(binary search)\b/gi,
+      /\b(sorted array(?:s)?)\b/gi,
+      /\b(median(?: of two sorted arrays)?)\b/gi,
+      /\b(time complexity)\b/gi,
+      /\b(space complexity)\b/gi,
+      /\b(partition(?: condition|ing)?)\b/gi,
+      /\b(logarithmic time)\b/gi,
+      /\b(binary tree(?:s)?)\b/gi,
+      /\b(binary search tree(?:s)?|bst)\b/gi,
+      /\b(dynamic programming)\b/gi,
+      /\b(depth first search|breadth first search|dfs|bfs)\b/gi,
+      /\b(merge sort|quick sort|heap sort|bubble sort)\b/gi,
+      /\b(linked list(?:s)?)\b/gi,
+      /\b(hash table(?:s)?|hash map(?:s)?)\b/gi,
+      /\b(recursion|recursive)\b/gi,
+      /\b(asymptotic analysis|big o notation)\b/gi,
+      /\b(rest api|microservice(?:s)?|database indexing)\b/gi,
+      /\b(neural network(?:s)?|tokenization|transformer)\b/gi,
+      /\b(concurrency|multithreading|deadlock|semaphore)\b/gi,
+      /\b(event loop|microtask|callback queue|promise)\b/gi,
+      /\b(memory allocation|stack pointer|interrupt vector)\b/gi
     ];
 
-    const foundTechnical = technicalKeywords.filter(k => lower.includes(k.toLowerCase()));
-    const rawFocusSet = new Set([...foundTechnical, ...focusCandidates.slice(0, 8)]);
-    const detectedFocus = Array.from(rawFocusSet).slice(0, 6);
+    const candidateScores = new Map();
+
+    // A. Match defined technical n-grams
+    for (const pattern of technicalPatterns) {
+      const matches = raw.match(pattern);
+      if (matches) {
+        const cleanTerm = matches[0].split(' ')
+          .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(' ');
+        candidateScores.set(cleanTerm, (candidateScores.get(cleanTerm) || 0) + matches.length * 4);
+      }
+    }
+
+    // B. Extract mid-sentence capitalized terms and multi-word proper terms (avoids sentence-initial words)
+    const midSentenceCapRegex = /(?:[a-z0-9,;]\s+)([A-Z][a-zA-Z0-9_]{2,}(?:\s+[A-Z][a-zA-Z0-9_]{2,})*)/g;
+    let capMatch;
+    while ((capMatch = midSentenceCapRegex.exec(raw)) !== null) {
+      const term = capMatch[1].trim();
+      const termLower = term.toLowerCase();
+      const termWords = termLower.split(/\s+/);
+      if (!termWords.some(w => STOPWORDS_AND_FILLERS.has(w)) && term.length >= 3) {
+        candidateScores.set(term, (candidateScores.get(term) || 0) + 2);
+      }
+    }
+
+    // C. Extract domain keywords from academic indicators that appear with strong frequency
+    const domainKeywords = [
+      'partition', 'median', 'algorithm', 'complexity', 'array', 'pointer',
+      'recursion', 'traversal', 'tree', 'graph', 'matrix', 'stack', 'queue',
+      'sorting', 'indexing', 'register', 'interrupt', 'pipeline', 'cache',
+      'asynchronous', 'closure', 'middleware', 'endpoint', 'schema'
+    ];
+    for (const word of domainKeywords) {
+      const regex = new RegExp(`\\b${word}\\b`, 'gi');
+      const matches = raw.match(regex);
+      if (matches && matches.length >= 1) {
+        const formatted = word.charAt(0).toUpperCase() + word.slice(1);
+        const alreadyCovered = Array.from(candidateScores.keys()).some(k => k.toLowerCase().includes(word));
+        if (!alreadyCovered) {
+          candidateScores.set(formatted, (candidateScores.get(formatted) || 0) + matches.length);
+        }
+      }
+    }
+
+    const detectedFocus = Array.from(candidateScores.entries())
+      .filter(([term]) => !STOPWORDS_AND_FILLERS.has(term.toLowerCase()))
+      .sort((a, b) => b[1] - a[1])
+      .map(([term]) => term)
+      .slice(0, 6);
+
     if (detectedFocus.length === 0) detectedFocus.push('Core Concepts');
 
     // 3. Characteristic Signals

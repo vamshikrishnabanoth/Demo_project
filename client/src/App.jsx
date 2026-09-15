@@ -100,7 +100,7 @@ function AnimatedRoutes() {
                     <Route path="/create-quiz/text"  element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizText /></ProtectedRoute></PageTransition>} />
                     <Route path="/create-quiz/pdf"   element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizPDF /></ProtectedRoute></PageTransition>} />
                     <Route path="/create-quiz/topic" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizTopic /></ProtectedRoute></PageTransition>} />
-                    <Route path="/create-quiz/voice" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizVoice /></ProtectedRoute></PageTransition>} />
+                    <Route path="/create-quiz/voice" element={<Navigate to="/create-quiz/topic" replace />} />
                     <Route path="/my-quizzes"        element={<PageTransition><ProtectedRoute roles={['teacher']}><MyQuizzes /></ProtectedRoute></PageTransition>} />
                     <Route path="/live-room-teacher/:joinCode" element={<FadeTransition><ProtectedRoute roles={['teacher']}><LiveRoomTeacher /></ProtectedRoute></FadeTransition>} />
                     <Route path="/analytics/quiz/:id" element={<PageTransition><ProtectedRoute roles={['student', 'teacher', 'admin']}><QuizAnalytics /></ProtectedRoute></PageTransition>} />

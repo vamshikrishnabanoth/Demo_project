@@ -127,100 +127,67 @@ export default function TeacherDashboard() {
                             </div>
 
                             {/* Cards Container */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
                                 {/* Card 1: AI Creation Studio */}
                                 <div
                                     onClick={() => {
                                         setShowModal(false);
                                         navigate('/create-quiz/topic');
                                     }}
-                                    className="group relative bg-gradient-to-br from-slate-50 to-white hover:from-white hover:to-white border-2 border-slate-200 hover:border-violet-500 rounded-3xl p-5 flex flex-col gap-4 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl active:scale-[0.98] select-none text-left"
+                                    className="group relative bg-gradient-to-br from-slate-50 to-white hover:from-white hover:to-white border-2 border-slate-200 hover:border-violet-500 rounded-3xl p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl active:scale-[0.98] select-none text-left"
                                 >
                                     <div className="absolute inset-0 bg-violet-600/[0.01] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
 
                                     <div className="flex items-center justify-between">
-                                        <div className="p-3 rounded-2xl bg-violet-50 border border-violet-100 text-violet-700 group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
-                                            <Sparkles size={22} />
+                                        <div className="p-3.5 rounded-2xl bg-violet-50 border border-violet-100 text-violet-700 group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
+                                            <Sparkles size={24} />
                                         </div>
-                                        <ArrowRight size={16} className="text-slate-400 group-hover:translate-x-1 group-hover:text-violet-600 transition-all" />
+                                        <ArrowRight size={18} className="text-slate-400 group-hover:translate-x-1 group-hover:text-violet-600 transition-all" />
                                     </div>
-                                    <div className="space-y-1">
-                                        <h4 className="font-extrabold text-slate-950 text-base group-hover:text-violet-700 transition-colors">
+                                    <div className="space-y-1.5">
+                                        <h4 className="font-extrabold text-slate-950 text-lg group-hover:text-violet-700 transition-colors">
                                             AI Creation Studio
                                         </h4>
                                         <p className="text-xs text-slate-500 leading-relaxed font-semibold">
-                                            Auto-generate high-quality quizzes from topics, PDFs, or mixed source material with AI.
+                                            Auto-generate high-quality quizzes from lecture audio (.mp3, .m4a), live voice recordings, topics, or PDFs with AI.
                                         </p>
                                     </div>
-                                    <div className="mt-auto pt-2 flex flex-wrap gap-1">
-                                        {['Topics', 'PDFs', 'Documents', 'Multimodal'].map((tag) => (
-                                            <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-violet-50 group-hover:text-violet-700 px-2 py-0.5 rounded-md text-slate-600 transition-colors">
+                                    <div className="mt-auto pt-3 flex flex-wrap gap-1.5">
+                                        {['Topics', 'Voice Audio', 'Lecture Uploads', 'PDFs & Docs'].map((tag) => (
+                                            <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-violet-50 group-hover:text-violet-700 px-2.5 py-1 rounded-md text-slate-600 transition-colors">
                                                 {tag}
                                             </span>
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* Card 2: Dedicated Voice & Audio Studio */}
-                                <div
-                                    onClick={() => {
-                                        setShowModal(false);
-                                        navigate('/create-quiz/voice');
-                                    }}
-                                    className="group relative bg-gradient-to-br from-slate-50 to-white hover:from-white hover:to-white border-2 border-slate-200 hover:border-amber-500 rounded-3xl p-5 flex flex-col gap-4 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl active:scale-[0.98] select-none text-left"
-                                >
-                                    <div className="absolute inset-0 bg-amber-600/[0.01] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                                    <div className="flex items-center justify-between">
-                                        <div className="p-3 rounded-2xl bg-amber-50 border border-amber-100 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
-                                            <Mic size={22} />
-                                        </div>
-                                        <ArrowRight size={16} className="text-slate-400 group-hover:translate-x-1 group-hover:text-amber-600 transition-all" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <h4 className="font-extrabold text-slate-950 text-base group-hover:text-amber-600 transition-colors">
-                                            Voice & Lecture Studio
-                                        </h4>
-                                        <p className="text-xs text-slate-500 leading-relaxed font-semibold">
-                                            Record live classroom lectures or upload audio files (.mp3, .wav, .m4a, .aac, .ogg) with STT.
-                                        </p>
-                                    </div>
-                                    <div className="mt-auto pt-2 flex flex-wrap gap-1">
-                                        {['Live Record', 'Audio Upload', 'Whisper', 'Deepgram'].map((tag) => (
-                                            <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-amber-50 group-hover:text-amber-700 px-2 py-0.5 rounded-md text-slate-600 transition-colors">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Card 3: Manual Quiz Builder */}
+                                {/* Card 2: Manual Quiz Builder */}
                                 <div
                                     onClick={() => {
                                         setShowModal(false);
                                         navigate('/create-quiz/text');
                                     }}
-                                    className="group relative bg-gradient-to-br from-slate-50 to-white hover:from-white hover:to-white border-2 border-slate-200 hover:border-emerald-500 rounded-3xl p-5 flex flex-col gap-4 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl active:scale-[0.98] select-none text-left"
+                                    className="group relative bg-gradient-to-br from-slate-50 to-white hover:from-white hover:to-white border-2 border-slate-200 hover:border-emerald-500 rounded-3xl p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl active:scale-[0.98] select-none text-left"
                                 >
                                     <div className="absolute inset-0 bg-emerald-600/[0.01] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
 
                                     <div className="flex items-center justify-between">
-                                        <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-                                            <Edit3 size={22} />
+                                        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                                            <Edit3 size={24} />
                                         </div>
-                                        <ArrowRight size={16} className="text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all" />
+                                        <ArrowRight size={18} className="text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all" />
                                     </div>
-                                    <div className="space-y-1">
-                                        <h4 className="font-extrabold text-slate-950 text-base group-hover:text-emerald-700 transition-colors">
+                                    <div className="space-y-1.5">
+                                        <h4 className="font-extrabold text-slate-950 text-lg group-hover:text-emerald-700 transition-colors">
                                             Manual Quiz Builder
                                         </h4>
                                         <p className="text-xs text-slate-500 leading-relaxed font-semibold">
                                             Build custom quizzes manually, write questions & answers, upload Aiken files, or edit templates.
                                         </p>
                                     </div>
-                                    <div className="mt-auto pt-2 flex flex-wrap gap-1">
+                                    <div className="mt-auto pt-3 flex flex-wrap gap-1.5">
                                         {['Aiken Format', 'JSON Paste', 'Manual Matrix'].map((tag) => (
-                                            <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-emerald-50 group-hover:text-emerald-700 px-2 py-0.5 rounded-md text-slate-600 transition-colors">
+                                            <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-emerald-50 group-hover:text-emerald-700 px-2.5 py-1 rounded-md text-slate-600 transition-colors">
                                                 {tag}
                                             </span>
                                         ))}
