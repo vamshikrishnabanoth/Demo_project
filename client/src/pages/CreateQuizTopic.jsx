@@ -7,7 +7,7 @@ import {
     Hash, Sparkles, Loader2, Database, 
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
-    AlertCircle, CheckCircle
+    AlertCircle, CheckCircle, Download
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
@@ -94,6 +94,7 @@ export default function CreateQuizTopic() {
     const timerWorkerRef = useRef(null);
     const wakeLockRef = useRef(null);
     const [wakeLockActive, setWakeLockActive] = useState(false);
+    const recordedBlobsRef = useRef(new Map()); // inputId -> { blob, mimeType, createdAt }
 
     // ── Screen Wake Lock API to prevent laptop lock/sleep during lecture recording ──
     const requestWakeLock = useCallback(async () => {
@@ -496,7 +497,51 @@ export default function CreateQuizTopic() {
 
     const handleRemoveInput = (id) => {
         if (isGenerating) return;
+        if (recordedBlobsRef.current.has(id)) {
+            recordedBlobsRef.current.delete(id);
+        }
         setInputs(prev => prev.filter(item => item.id !== id));
+    };
+
+    const handleDownloadRecording = (inputId, sourceName) => {
+        const entry = recordedBlobsRef.current.get(inputId);
+        if (!entry || !entry.blob) {
+            toast.error('Original recording audio is not available in browser memory.');
+            return;
+        }
+
+        const blob = entry.blob;
+        const typeStr = (blob.type || entry.mimeType || '').toLowerCase();
+        let ext = 'webm';
+        if (typeStr.includes('mp4') || typeStr.includes('m4a') || typeStr.includes('aac')) {
+            ext = 'm4a';
+        } else if (typeStr.includes('ogg')) {
+            ext = 'ogg';
+        } else if (typeStr.includes('wav')) {
+            ext = 'wav';
+        } else if (typeStr.includes('webm')) {
+            ext = 'webm';
+        }
+
+        const d = entry.createdAt ? new Date(entry.createdAt) : new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}-${pad(d.getMinutes())}-${pad(d.getSeconds())}`;
+        
+        const safePrefix = (sourceName || 'Lecture_Recording')
+            .replace(/[^a-zA-Z0-9_\-]/g, '_')
+            .replace(/_+/g, '_');
+        
+        const fileName = `${safePrefix}_${dateStr}.${ext}`;
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+        toast.success(`Downloaded "${fileName}"`);
     };
 
     // ── 4-Hour Memory-Safe & Crash-Proof Voice Recording Lifecycle ───────────────
@@ -621,13 +666,22 @@ export default function CreateQuizTopic() {
                     }
 
                     if (transcriptText && transcriptText.trim().length > 5) {
-                        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const recDate = new Date();
+                        const timeStr = recDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const inputId = Math.random().toString();
+                        recordedBlobsRef.current.set(inputId, {
+                            blob: audioBlob,
+                            mimeType: mimeType || audioBlob.type || 'audio/webm',
+                            createdAt: recDate
+                        });
                         toast.success('Speech transcribed successfully!', { id: toastId });
                         setInputs(prev => [...prev, {
-                            id: Math.random().toString(),
+                            id: inputId,
                             type: 'voice',
                             content: transcriptText,
-                            source_name: `Recording (${timeStr})`
+                            source_name: `Recording (${timeStr})`,
+                            hasRecordedBlob: true,
+                            recordedAt: recDate.toISOString()
                         }]);
                         await markSessionCompleted(newSessionId);
                         await deleteSessionRecord(newSessionId);
@@ -743,13 +797,22 @@ export default function CreateQuizTopic() {
             }
 
             if (transcriptText && transcriptText.trim().length > 5) {
-                const timeStr = new Date(sess.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const recDate = sess.createdAt ? new Date(sess.createdAt) : new Date();
+                const timeStr = recDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const inputId = Math.random().toString();
+                recordedBlobsRef.current.set(inputId, {
+                    blob: blob,
+                    mimeType: blob.type || 'audio/webm',
+                    createdAt: recDate
+                });
                 toast.success('Recovered recording transcribed successfully!', { id: toastId });
                 setInputs(prev => [...prev, {
-                    id: Math.random().toString(),
+                    id: inputId,
                     type: 'voice',
                     content: transcriptText,
-                    source_name: `Recovered Recording (${timeStr})`
+                    source_name: `Recovered Recording (${timeStr})`,
+                    hasRecordedBlob: true,
+                    recordedAt: recDate.toISOString()
                 }]);
                 await markSessionCompleted(sess.sessionId);
                 await deleteSessionRecord(sess.sessionId);
@@ -1198,15 +1261,28 @@ export default function CreateQuizTopic() {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <button 
-                                                    type="button" 
-                                                    disabled={isGenerating}
-                                                    onClick={() => handleRemoveInput(inp.id)}
-                                                    className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded-xl transition-all shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    title="Remove input"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
+                                                <div className="flex items-center gap-1 shrink-0">
+                                                    {inp.type === 'voice' && (
+                                                        <button
+                                                            type="button"
+                                                            disabled={isGenerating}
+                                                            onClick={() => handleDownloadRecording(inp.id, inp.source_name)}
+                                                            className="text-slate-500 hover:text-amber-600 p-2 hover:bg-amber-50 rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            title="Download original audio recording"
+                                                        >
+                                                            <Download size={16} />
+                                                        </button>
+                                                    )}
+                                                    <button 
+                                                        type="button" 
+                                                        disabled={isGenerating}
+                                                        onClick={() => handleRemoveInput(inp.id)}
+                                                        className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        title="Remove input"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             {inp.fetchingMetadata && (inp.type !== 'voice' && inp.type !== 'audio') && (
