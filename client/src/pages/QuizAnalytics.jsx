@@ -486,7 +486,7 @@ export default function QuizAnalytics() {
                                             TOP PERFORMERS <span className="text-[var(--text-accent)]">(LEADERBOARD)</span>
                                         </h3>
                                         <p className="text-xs text-[#334155] font-bold uppercase tracking-wider" style={{ color: '#334155' }}>
-                                            Ranked by score, accuracy & time taken
+                                            Ranked by score & accuracy
                                         </p>
                                     </div>
                                 </div>
@@ -532,12 +532,6 @@ export default function QuizAnalytics() {
                                                     <p className="font-black text-[#0f172a] text-base uppercase tracking-tight" style={{ color: '#0f172a' }}>
                                                         {student.username}
                                                     </p>
-                                                    <div className="flex items-center gap-2 mt-1">
-                                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200/80 border border-slate-300 text-[11px] font-bold text-[#334155]" style={{ color: '#334155' }}>
-                                                            <Clock size={12} className="text-[#334155]" /> 
-                                                            {Math.round(student.timeTaken / 60)}m {student.timeTaken % 60}s
-                                                        </span>
-                                                    </div>
                                                 </div>
                                             </div>
 

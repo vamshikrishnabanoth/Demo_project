@@ -573,28 +573,28 @@ export default function SprintArena() {
                             </div>
 
                             <div className="space-y-2">
-                                <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-pink-500">
-                                    Sprint Complete!
+                                <h2 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-pink-500 drop-shadow-[0_0_25px_rgba(219,39,119,0.5)]">
+                                    SPRINT COMPLETE!
                                 </h2>
-                                <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">Your survival matrix has consolidated</p>
+                                <p className="text-slate-300 font-bold uppercase tracking-[0.2em] text-[10px]">Your survival matrix has consolidated</p>
                             </div>
 
                             {/* Stat Grids */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto my-6">
                                 <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Final Score</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Final Score</p>
                                     <p className="text-2xl font-mono font-black text-pink-400 mt-1">{score} pts</p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Correct Splits</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Correct Splits</p>
                                     <p className="text-2xl font-mono font-black text-emerald-400 mt-1">{correctAnswers}</p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Wrong Splits</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Wrong Splits</p>
                                     <p className="text-2xl font-mono font-black text-red-400 mt-1">{wrongAnswers}</p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Accuracy Rate</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Accuracy Rate</p>
                                     <p className="text-2xl font-mono font-black text-white mt-1">{accuracy}%</p>
                                 </div>
                             </div>
@@ -610,7 +610,7 @@ export default function SprintArena() {
                                         </button>
                                         <button
                                             onClick={() => navigate('/assessments')}
-                                            className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                            className="flex-1 h-14 rounded-2xl bg-white/10 border border-white/20 text-white font-black text-xs italic uppercase tracking-wider hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
                                         >
                                             Games Arena
                                         </button>
@@ -625,7 +625,7 @@ export default function SprintArena() {
                                         </button>
                                         <button
                                             onClick={() => navigate('/student-dashboard')}
-                                            className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                            className="flex-1 h-14 rounded-2xl bg-white/10 border border-white/20 text-white font-black text-md italic uppercase tracking-wider hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
                                         >
                                             Dashboard
                                         </button>
