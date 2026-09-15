@@ -66,6 +66,46 @@ export default function AssessmentAttempt() {
     // Auth context for proctoring userId
     const { user: authUser } = useContext(AuthContext);
 
+    const triggerConfetti = useCallback(() => {
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#D7AC28', '#ffffff', '#B371E0']
+        });
+    }, []);
+
+    // Global Final Submission — defined before handleAutoSubmit to avoid temporal dead zone
+    const handleFinalSubmit = useCallback(async (currentAnswersList) => {
+        setSubmitting(true);
+        try {
+            // Map answers strictly to what the server expects: { selectedOption, timeTaken }
+            const payloadAnswers = quiz.questions.map((q, idx) => {
+                const ans = currentAnswersList ? currentAnswersList[idx] : answers[idx];
+                return {
+                    selectedOption: ans ? ans.selectedOption : '',
+                    timeTaken: ans ? ans.timeTaken : 0
+                };
+            });
+
+            const res = await api.post('/quiz/submit', {
+                quizId: id,
+                answers: payloadAnswers
+            });
+
+            toast.success('Campaign Concluded! Generating tactical report...');
+            triggerConfetti();
+            setTimeout(() => {
+                navigate(`/report/${id}`, { state: { reportData: res.data } });
+            }, 1500);
+        } catch (err) {
+            console.error('Submit error:', err);
+            toast.error('Submission failed. Please check your connection.');
+        } finally {
+            setSubmitting(false);
+        }
+    }, [quiz, answers, id, navigate, triggerConfetti]);
+
     // Exam Integrity — strict fullscreen, tab-switch limit (max 2), focus loss monitoring, resize heuristic
     const handleAutoSubmit = useCallback((reason) => {
         toast.error(`Exam Auto-Submitted: ${reason}. Navigating to report...`, { duration: 4000 });
@@ -124,46 +164,6 @@ export default function AssessmentAttempt() {
             };
             setAnswers(newAnswers);
             questionStartTime.current = Date.now(); // reset start timer
-        }
-    };
-
-    const triggerConfetti = () => {
-        confetti({
-            particleCount: 150,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#D7AC28', '#ffffff', '#B371E0']
-        });
-    };
-
-    // Global Final Submission
-    async function handleFinalSubmit(currentAnswersList = answers) {
-        setSubmitting(true);
-        try {
-            // Map answers strictly to what the server expects: { selectedOption, timeTaken }
-            const payloadAnswers = quiz.questions.map((q, idx) => {
-                const ans = currentAnswersList[idx];
-                return {
-                    selectedOption: ans ? ans.selectedOption : '',
-                    timeTaken: ans ? ans.timeTaken : 0
-                };
-            });
-
-            const res = await api.post('/quiz/submit', {
-                quizId: id,
-                answers: payloadAnswers
-            });
-
-            toast.success('Campaign Concluded! Generating tactical report...');
-            triggerConfetti();
-            setTimeout(() => {
-                navigate(`/report/${id}`, { state: { reportData: res.data } });
-            }, 1500);
-        } catch (err) {
-            console.error('Submit error:', err);
-            toast.error('Submission failed. Please check your connection.');
-        } finally {
-            setSubmitting(false);
         }
     };
 
@@ -368,6 +368,11 @@ export default function AssessmentAttempt() {
         timerDuration = Math.min(pqTime, maxRemaining);
         timerKey = currentIdx;
     }
+
+    const handleExit = async () => {
+        const res = await showConfirm('Leave Arena?', 'Are you sure you want to go home? Your progress will be lost.');
+        if (res.isConfirmed) navigate('/student-dashboard');
+    };
 
     return (
         <DashboardLayout role="student">
