@@ -136,9 +136,10 @@ class PipelineOrchestrator {
         durationMs: Date.now() - t1
       });
 
-      // Academic Content Gate: Honest failure if non-academic content
+      // Curricular / Academic Content Gate: Honest failure if non-academic content
       if (!evidencePackage.isAcademic) {
-        throw new Error('INSUFFICIENT_ACADEMIC_CONTENT: The provided recording or material does not contain meaningful academic instructional content.');
+        const failureReason = evidencePackage.academicFailureReason || 'INSUFFICIENT_CURRICULAR_CONTENT: The provided recording or material does not contain meaningful assessable curricular content.';
+        throw new Error(failureReason);
       }
 
       // ──────────────────────────────────────────────────────────────────────────

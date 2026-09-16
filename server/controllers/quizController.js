@@ -3866,6 +3866,8 @@ exports.transcribe = async (req, res) => {
         res.json({
             text: transcript,
             isAcademic: depthAnalysis.isAcademic,
+            isCurricular: depthAnalysis.isCurricular,
+            reason: depthAnalysis.reason,
             lectureDepth: depthAnalysis.lectureDepth,
             detectedFocus: depthAnalysis.detectedFocus
         });

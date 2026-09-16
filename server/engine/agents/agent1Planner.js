@@ -56,6 +56,9 @@ CENTRAL PRINCIPLES:
    - The teaching depth of this session is "${lectureDepth.rating}" (Score: ${lectureDepth.score}/100).
    - Calibrate difficulty to reasoning complexity over taught principles.
    - Do NOT introduce un-taught advanced algorithms if teaching depth is Introductory.
+5. CURRICULAR SUBJECT MATTER ONLY:
+   - Targets MUST assess genuine curricular knowledge (definitions, mechanisms, algorithms, rules, code traces, comparisons, formulas).
+   - NEVER create targets assessing teaching process (e.g. teaching pace, teacher's gear selection), student feelings/comfort (e.g. student anxiety, comfort level, asking boys/girls for feedback), classroom discipline (e.g. closing laptops, silence), or exam logistics.
 
 JSON SCHEMA:
 {
@@ -105,6 +108,8 @@ JSON SCHEMA:
   ]
 }`;
 
+    const assessableContent = evidencePackage.curricularContent || rawContent;
+
     const userPrompt = `
 [TEACHING EVIDENCE PACKAGE]
 Lecture Depth: ${lectureDepth.rating} (${lectureDepth.score}/100)
@@ -115,8 +120,8 @@ Evidence-Driven Category Weights: ${JSON.stringify(categoryWeights)}
 Requested Difficulty: ${requestedDifficulty}
 Requested Question Count: ${requestedCount}
 
-[SESSION CONTENT]
-${rawContent.substring(0, 25000)}
+[ASSESSABLE CURRICULAR CONTENT]
+${assessableContent.substring(0, 25000)}
 `;
 
     let planData;
@@ -166,11 +171,14 @@ ${rawContent.substring(0, 25000)}
           }));
       };
 
-      const groundedTargets = filterGrounded(rawTargets, 'T');
-      const groundedReserve = filterGrounded(rawReserve, 'R');
+      const initialTargets = filterGrounded(rawTargets, 'T');
+      const initialReserve = filterGrounded(rawReserve, 'R');
 
-      if (groundedTargets.length === 0) {
-        throw new Error('No grounded assessment targets met evidence criteria');
+      // Layer 4: Audit targets against pedagogical / administrative contamination
+      const { auditedTargets, auditedReserve, auditLog } = this._auditAssessmentTargets(initialTargets, initialReserve, requestedCount);
+
+      if (auditedTargets.length === 0) {
+        throw new Error('No grounded curricular assessment targets met evidence criteria');
       }
 
       planData = {
@@ -178,11 +186,12 @@ ${rawContent.substring(0, 25000)}
         mainTopic: parsed.mainTopic || parsed.topic || 'Core Lecture Topic',
         subtopics: parsed.subtopics || detectedFocus || [],
         teachingEmphasis: parsed.teachingEmphasis || { conceptual: 'HIGH', application: 'HIGH', syntax: 'MEDIUM', calculation: 'LOW' },
-        targetCount: groundedTargets.length,
+        targetCount: auditedTargets.length,
         categoryWeights: categoryWeights,
         lectureDepth: lectureDepth,
-        assessmentTargets: groundedTargets,
-        reserveTargets: groundedReserve
+        assessmentTargets: auditedTargets,
+        reserveTargets: auditedReserve,
+        targetAuditLog: auditLog
       };
     } catch (err) {
       console.warn(`⚠️ [Agent 1 Planner] LLM call notice: ${err.message}. Building adaptive fallback plan.`);
@@ -191,6 +200,63 @@ ${rawContent.substring(0, 25000)}
 
     planData.tcScore = tcScoreReport;
     return planData;
+  }
+
+  _auditAssessmentTargets(targets, reserve, requestedCount) {
+    const pedagogicalOrAdminPatterns = [
+      /\b(teaching (?:pace|gear)|medium gear|top gear|pace of (?:teaching|instruction))\b/i,
+      /\b(student (?:comfort|feelings|anxiety|confidence|mood)|comfort level|comfortable with (?:pace|teaching))\b/i,
+      /\b(asking (?:girls|boys)|last girl|last boy|gender interaction|gender feedback)\b/i,
+      /\b(close(?: your)? (?:laptops?|books?|lips|mouth)|silence in the (?:class|back)|roll numbers?|stand up)\b/i,
+      /\b(exam (?:hall ticket|room|location|lab 3|announcement)|mid-term logistics)\b/i,
+      /\b(teacher(?:'s)? (?:opinion|preference|statement) on (?:pace|comfort|speed))\b/i
+    ];
+
+    const auditLog = {
+      totalInput: targets.length + reserve.length,
+      rejected: [],
+      accepted: 0,
+      promotedFromReserve: 0,
+      diagnosticEntries: []
+    };
+
+    const isContaminated = (target) => {
+      const text = `${target.concept || ''} ${target.subtopic || ''} ${target.instruction || ''}`;
+      return pedagogicalOrAdminPatterns.some(pat => pat.test(text));
+    };
+
+    const cleanTargets = [];
+    for (const t of targets) {
+      if (isContaminated(t)) {
+        auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: 'Administrative or pedagogical process contamination' });
+        auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_OR_ADMINISTRATIVE', status: 'REJECTED', reason: 'Target assesses teaching process, student comfort, or classroom management instead of curricular subject matter.' });
+      } else {
+        cleanTargets.push(t);
+        auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'CURRICULAR', status: 'ACCEPTED', reason: 'Valid curricular subject matter target.' });
+      }
+    }
+
+    const cleanReserve = [];
+    for (const r of reserve) {
+      if (isContaminated(r)) {
+        auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: 'Administrative or pedagogical process contamination' });
+        auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'PEDAGOGICAL_OR_ADMINISTRATIVE', status: 'REJECTED', reason: 'Reserve target assesses teaching process or classroom management.' });
+      } else {
+        cleanReserve.push(r);
+        auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'CURRICULAR', status: 'ACCEPTED', reason: 'Valid curricular reserve target.' });
+      }
+    }
+
+    // Promote clean reserve targets if needed to fulfill requestedCount
+    while (cleanTargets.length < requestedCount && cleanReserve.length > 0) {
+      const promoted = cleanReserve.shift();
+      promoted.targetId = `T0${cleanTargets.length + 1}`;
+      cleanTargets.push(promoted);
+      auditLog.promotedFromReserve++;
+    }
+
+    auditLog.accepted = cleanTargets.length;
+    return { auditedTargets: cleanTargets, auditedReserve: cleanReserve, auditLog };
   }
 
   _computeTCScore(rawContent, voiceEmphasis, lectureDepth) {
@@ -248,6 +314,18 @@ ${rawContent.substring(0, 25000)}
       categoryWeights,
       lectureDepth,
       assessmentTargets: targets,
+      targetAuditLog: {
+        totalInput: targets.length,
+        rejected: [],
+        accepted: targets.length,
+        diagnosticEntries: targets.map(t => ({
+          targetId: t.targetId,
+          concept: t.concept,
+          classification: 'CURRICULAR',
+          status: 'ACCEPTED',
+          reason: 'Adaptive fallback target derived directly from detected curricular focus.'
+        }))
+      },
       reserveTargets: Array.from({ length: Math.max(3, Math.ceil(count * 0.4)) }, (_, idx) => {
         const subtopic = detectedFocus[(count + idx) % (detectedFocus.length || 1)] || `Reserve Concept ${idx + 1}`;
         return {

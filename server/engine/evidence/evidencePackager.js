@@ -25,10 +25,6 @@ class EvidencePackager {
     const docsText = (sessionInputs.documentTexts || []).join('\n');
     const codeText = sessionInputs.codeSnippets || '';
     const imageText = (sessionInputs.imageTexts || []).join('\n');
-
-    // Extract verbal emphasis cues from Voice
-    const voiceEmphasisSignals = this._extractVoiceEmphasis(voiceText);
-
     // Extract exact artifacts from Code / PPT / PDF / Board Images
     const exactArtifacts = this._extractExactArtifacts(codeText, docsText, imageText);
 
@@ -37,8 +33,16 @@ class EvidencePackager {
     // 1. Pedagogical Lecture Depth & Academic Content Analysis
     const depthAnalysis = depthAnalyzer.analyzeLecture(rawContent);
 
+    // Extract verbal emphasis cues from Voice and Pedagogical segments
+    const voiceEmphasisSignals = this._extractVoiceEmphasis(voiceText, depthAnalysis.pedagogicalSegments);
+
     // 2. Evidence-driven category weights with strict Hard Zero enforcement
     const categoryWeights = this._computeCategoryWeights(exactArtifacts, voiceEmphasisSignals, rawContent);
+
+    // Filtered curricular content for downstream question planning
+    const curricularContent = (depthAnalysis.curricularSegments && depthAnalysis.curricularSegments.length > 0)
+      ? depthAnalysis.curricularSegments.map(s => s.text).join('\n')
+      : rawContent;
 
     // Build structured Evidence Package
     const packageData = {
@@ -50,9 +54,14 @@ class EvidencePackager {
       voiceEmphasis: voiceEmphasisSignals,
       artifacts: exactArtifacts,
       isAcademic: depthAnalysis.isAcademic,
+      isCurricular: depthAnalysis.isCurricular,
       academicFailureReason: depthAnalysis.reason,
       lectureDepth: depthAnalysis.lectureDepth,
       detectedFocus: depthAnalysis.detectedFocus,
+      curricularSegments: depthAnalysis.curricularSegments || [],
+      pedagogicalSegments: depthAnalysis.pedagogicalSegments || [],
+      adminSegments: depthAnalysis.adminSegments || [],
+      curricularContent,
       categoryWeights: categoryWeights,
       ragChunksSummary: ragChunks.map(c => ({
         id: c.id,
@@ -106,8 +115,8 @@ class EvidencePackager {
     return weights;
   }
 
-  /** Extract verbal emphasis signals from Voice transcript */
-  _extractVoiceEmphasis(voiceText) {
+  /** Extract verbal emphasis signals from Voice transcript & pedagogical segments */
+  _extractVoiceEmphasis(voiceText = '', pedagogicalSegments = []) {
     const signals = {
       syntaxEmphasis: 'MEDIUM',
       conceptualEmphasis: 'HIGH',
@@ -127,6 +136,19 @@ class EvidencePackager {
 
     if (textLower.includes("focus on application") || textLower.includes("solve the problem")) {
       signals.conceptualEmphasis = 'HIGH';
+    }
+
+    // Process instructional intent from pedagogical segments
+    if (pedagogicalSegments && pedagogicalSegments.length > 0) {
+      for (const seg of pedagogicalSegments) {
+        const segLower = (seg.text || seg || '').toLowerCase();
+        if (segLower.includes('interview') || segLower.includes('exam')) {
+          signals.explicitInstructions.push('Instructional emphasis: concept is critical for technical assessment / interviews.');
+        }
+        if (segLower.includes('practice') || segLower.includes('takes time')) {
+          signals.explicitInstructions.push('Instructional reassurance: reinforce core conceptual mechanics.');
+        }
+      }
     }
 
     return signals;
