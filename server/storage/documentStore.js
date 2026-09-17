@@ -5,13 +5,23 @@
  */
 
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
-// In-Memory Document Store with LRU eviction and TTL cleanup
+// In-Memory & Disk-Backed Document Store with LRU eviction and TTL cleanup
 class DocumentStore {
-  constructor(maxSize = 100, ttlMs = 24 * 60 * 60 * 1000) { // 24 hours default TTL
+  constructor(maxSize = 200, ttlMs = 7 * 24 * 60 * 60 * 1000) { // 7 days TTL for resilient persistence
     this.store = new Map();
     this.maxSize = maxSize;
     this.ttlMs = ttlMs;
+    this.cacheDir = path.resolve(__dirname, '../data/cache/documents');
+    try {
+      if (!fs.existsSync(this.cacheDir)) {
+        fs.mkdirSync(this.cacheDir, { recursive: true });
+      }
+    } catch (e) {
+      console.warn('DocumentStore: Failed to initialize disk cache dir:', e.message);
+    }
   }
 
   generateDocumentId(text, filename) {
@@ -50,19 +60,56 @@ class DocumentStore {
     }
 
     this.store.set(documentId, entry);
+
+    // Persist to disk cache
+    try {
+      const diskPath = path.join(this.cacheDir, `${documentId}.json`);
+      fs.writeFileSync(diskPath, JSON.stringify(entry), 'utf8');
+    } catch (err) {
+      console.warn(`DocumentStore: Disk write failed for ${documentId}:`, err.message);
+    }
+
     return entry;
   }
 
   getDocument(documentId) {
-    if (!documentId || !this.store.has(documentId)) {
-      return null;
+    if (!documentId) return null;
+
+    // 1. Check in-memory Map
+    if (this.store.has(documentId)) {
+      const entry = this.store.get(documentId);
+      if (Date.now() > entry.expiresAt) {
+        this.store.delete(documentId);
+        try {
+          const diskPath = path.join(this.cacheDir, `${documentId}.json`);
+          if (fs.existsSync(diskPath)) fs.unlinkSync(diskPath);
+        } catch (_) {}
+        return null;
+      }
+      return entry;
     }
-    const entry = this.store.get(documentId);
-    if (Date.now() > entry.expiresAt) {
-      this.store.delete(documentId);
-      return null;
+
+    // 2. Check disk cache
+    try {
+      const diskPath = path.join(this.cacheDir, `${documentId}.json`);
+      if (fs.existsSync(diskPath)) {
+        const raw = fs.readFileSync(diskPath, 'utf8');
+        const entry = JSON.parse(raw);
+        if (entry && Date.now() <= entry.expiresAt) {
+          if (!entry.lines && entry.textContent) {
+            entry.lines = entry.textContent.split('\n');
+          }
+          this.store.set(documentId, entry);
+          return entry;
+        } else if (entry) {
+          fs.unlinkSync(diskPath);
+        }
+      }
+    } catch (err) {
+      console.warn(`DocumentStore: Disk read failed for ${documentId}:`, err.message);
     }
-    return entry;
+
+    return null;
   }
 
   getScopedText(documentId, startPage = 1, endPage = 999) {

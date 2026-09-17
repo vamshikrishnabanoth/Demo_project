@@ -279,6 +279,18 @@ router.get('/lecture-analysis/:taskId', auth, quizController.getLectureAnalysisS
 // @desc    Generate quiz from cleaned lecture concepts & transcript
 router.post('/generate-from-lecture', auth, teacherOrAdmin, quizController.generateQuizFromCleanedLecture);
 
+// @route   GET api/quiz/docket
+// @desc    Retrieve persistent user docket items
+router.get('/docket', auth, quizController.getUserDocket);
+
+// @route   POST api/quiz/docket
+// @desc    Save/sync persistent user docket items
+router.post('/docket', auth, quizController.saveUserDocket);
+
+// @route   DELETE api/quiz/docket
+// @desc    Clear user docket items
+router.delete('/docket', auth, quizController.clearUserDocket);
+
 // @route   POST api/quiz/create
 // @desc    Create a new quiz (Manual or AI generated)
 router.post('/create', auth, teacherOrAdmin, upload.single('file'), verifyUploadedFile, quizValidation, validate, quizController.createQuiz);

@@ -1,0 +1,11 @@
+{
+  "dataset_name": "Lecture-to-MCQ Evaluation Benchmark Population",
+  "total_items": 0,
+  "modality_breakdown": {
+    "VOICE_ONLY": 0,
+    "VOICE_PLUS_MATERIAL": 0,
+    "MATERIAL_ONLY": 0,
+    "EDGE_CASES": 0
+  },
+  "items": []
+}

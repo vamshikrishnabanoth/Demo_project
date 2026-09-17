@@ -22,48 +22,83 @@ import {
 import { createTimerWorker } from '../utils/timerWorker';
 
 export default function CreateQuizTopic() {
-    const { user } = useContext(AuthContext);
+    const { user, loading: authLoading } = useContext(AuthContext);
     const userId = user?.id || 'guest';
     const storageKey = `quiz_docket_inputs_${userId}`;
 
     // ── 3 Inputs Only ──────────────────────────────────────────────────────────
     // 1. Source Content (Ingested files, recordings, or text prompts)
     const [inputs, setInputs] = useState([]);
+    const [isHydrated, setIsHydrated] = useState(false);
 
+    // Load inputs on mount / user change with backend sync
     useEffect(() => {
+        if (authLoading) return; // Wait until AuthContext finishes hydration
         try {
+            let loadedInputs = [];
             const saved = localStorage.getItem(storageKey);
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    setInputs(parsed);
-                    return;
+                    loadedInputs = parsed;
                 }
+            }
+
+            // If logged in and local storage for user is empty, check if guest storage had items to migrate
+            if (loadedInputs.length === 0 && user && userId !== 'guest') {
+                const guestSaved = localStorage.getItem('quiz_docket_inputs_guest');
+                if (guestSaved) {
+                    try {
+                        const guestParsed = JSON.parse(guestSaved);
+                        if (Array.isArray(guestParsed) && guestParsed.length > 0) {
+                            loadedInputs = guestParsed;
+                            localStorage.removeItem('quiz_docket_inputs_guest');
+                        }
+                    } catch (_) {}
+                }
+            }
+
+            if (loadedInputs.length > 0) {
+                setInputs(loadedInputs);
+            } else if (user) {
+                // Fetch from server if authenticated and nothing locally
+                api.get('/quiz/docket').then(res => {
+                    if (res.data?.success && Array.isArray(res.data.inputs) && res.data.inputs.length > 0) {
+                        setInputs(res.data.inputs);
+                    }
+                }).catch(() => {});
             }
         } catch (e) {
             console.error('Failed to load docket inputs:', e);
         }
-        setInputs([]);
-    }, [storageKey]);
+        setIsHydrated(true);
+    }, [storageKey, authLoading, user, userId]);
 
+    // Persist inputs to localStorage and server whenever they change
     useEffect(() => {
-        if (!user) return;
+        if (!isHydrated || authLoading) return;
         try {
             const serializable = inputs.map(inp => {
                 const { file, ...rest } = inp;
-                if (inp.documentId) {
-                    delete rest.content;
-                }
+                // Preserve extracted text and metadata across reloads!
                 return {
                     ...rest,
                     schemaVersion: 2
                 };
             });
             localStorage.setItem(storageKey, JSON.stringify(serializable));
+
+            // Sync with backend if authenticated
+            if (user) {
+                const timer = setTimeout(() => {
+                    api.post('/quiz/docket', { inputs: serializable }).catch(() => {});
+                }, 600);
+                return () => clearTimeout(timer);
+            }
         } catch (e) {
             console.error('Failed to save docket inputs:', e);
         }
-    }, [inputs, storageKey, user]);
+    }, [inputs, storageKey, user, isHydrated, authLoading]);
 
     // 2. Difficulty Focus ("Balanced", "Easy", "Medium", "Hard")
     const [difficulty, setDifficulty] = useState('Balanced');
@@ -851,26 +886,35 @@ export default function CreateQuizTopic() {
         setSubmitting(true);
 
         const formData = new FormData();
-        // Send documents/images as raw files; voice recordings & audio are supplied via text_prompts
-        const fileInputs = inputs.filter(inp => inp.file && inp.type !== 'voice' && inp.type !== 'audio');
-        const textInputs = inputs.filter(inp => (!inp.file || inp.type === 'voice' || inp.type === 'audio') && inp.content);
-
-        fileInputs.forEach(inp => {
+        
+        // 1. Live physical files currently in memory
+        const liveFileInputs = inputs.filter(inp => inp.file && inp.type !== 'voice' && inp.type !== 'audio');
+        liveFileInputs.forEach(inp => {
             formData.append('files', inp.file);
         });
 
-        const fileConfigs = fileInputs.map(inp => ({
+        // 2. All document configurations (both live files and restored docket items)
+        const docInputs = inputs.filter(inp => inp.type !== 'voice' && inp.type !== 'audio' && (inp.file || inp.documentId || inp.content));
+        const fileConfigs = docInputs.map(inp => ({
             name: inp.source_name,
             documentId: inp.documentId,
             startPage: inp.startPage || 1,
-            endPage: inp.endPage || 999
+            endPage: inp.endPage || inp.maxPages || 999
         }));
-
         formData.append('file_configs', JSON.stringify(fileConfigs));
+
         formData.append('topic', inputs.map(i => i.source_name).join(', '));
         formData.append('questionCount', questionCount);
         formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);
+
+        // 3. Text prompts: voice transcripts, text inputs, and fallback text for restored documents without live File
+        const textInputs = inputs.filter(inp => {
+            if (inp.type === 'voice' || inp.type === 'audio') return Boolean(inp.content);
+            if (!inp.file && inp.content) return true;
+            if (inp.type === 'text' && inp.content) return true;
+            return false;
+        });
 
         const structuredPrompts = textInputs.map(t => {
             const isVoice = (t.type === 'voice' || t.type === 'audio');
@@ -887,6 +931,7 @@ export default function CreateQuizTopic() {
             return {
                 type: isVoice ? 'voice' : (t.type || 'text'),
                 source_name: t.source_name,
+                documentId: t.documentId || null,
                 content: content,
                 startPage: t.startPage || null,
                 endPage: t.endPage || null

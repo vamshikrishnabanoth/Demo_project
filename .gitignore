@@ -50,3 +50,4 @@ production_engine/observability/traces/REQ-*.json
 pipeline_experiment/results/
 scratch/
 test_assets/
+server/data/cache/

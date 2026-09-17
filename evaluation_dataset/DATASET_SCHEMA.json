@@ -1,0 +1,142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LectureToMCQEvaluationItemMetadata",
+  "description": "Standardized metadata schema for individual items in the Lecture-to-MCQ evaluation dataset.",
+  "type": "object",
+  "required": [
+    "dataset_id",
+    "subject",
+    "topic",
+    "modality",
+    "audio_file",
+    "supporting_material_files",
+    "duration",
+    "language",
+    "teaching_style",
+    "content_type",
+    "expected_academicity",
+    "expected_content_behavior",
+    "expected_representation_route",
+    "expected_usable_concepts",
+    "expected_excluded_content",
+    "special_conditions"
+  ],
+  "properties": {
+    "dataset_id": {
+      "type": "string",
+      "description": "Unique standardized item identifier (e.g., VM-TM1-001 or VO-BATCHA-002)"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Domain or subject category (e.g., Computer Science, Mathematics, English Grammar)"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Specific instructional topic or lesson title"
+    },
+    "modality": {
+      "type": "string",
+      "enum": [
+        "VOICE_ONLY",
+        "VOICE_PLUS_MATERIAL",
+        "MATERIAL_ONLY",
+        "EDGE_CASES"
+      ]
+    },
+    "audio_file": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Relative filename of primary audio recording, or null if material-only"
+    },
+    "supporting_material_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of relative filenames for slides, PDF, DOCX, TXT, or code files"
+    },
+    "duration": {
+      "type": "string",
+      "description": "Audio length formatted as MM:SS or HH:MM:SS, N/A for material-only, or UNKNOWN/TBD"
+    },
+    "language": {
+      "type": "string",
+      "description": "Spoken/written language of instruction (e.g., English, Hinglish, Telugu-English)"
+    },
+    "teaching_style": {
+      "type": "string",
+      "description": "Observed instructional style (e.g., Expository, Socratic, Board Walkthrough, Slide Voiceover, UNKNOWN/TBD)"
+    },
+    "content_type": {
+      "type": "string",
+      "description": "Nature of recording (e.g., Academic Instruction, Worked Problem, Classroom Management, Pure Motivation, Casual Banter)"
+    },
+    "expected_academicity": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "REJECT",
+        "UNKNOWN/TBD"
+      ],
+      "description": "Expected academic sufficiency gate decision"
+    },
+    "expected_content_behavior": {
+      "type": "string",
+      "enum": [
+        "instructional_only",
+        "instructional_plus_pedagogical",
+        "non_academic",
+        "administrative_only",
+        "motivation_only",
+        "ungrounded_vocabulary",
+        "insufficient_content",
+        "UNKNOWN/TBD"
+      ],
+      "description": "Target behavioral partition for assessment evidence vs context"
+    },
+    "expected_representation_route": {
+      "type": "string",
+      "enum": [
+        "SUMMARY",
+        "BLUEPRINT",
+        "UNIFIED",
+        "REJECT",
+        "UNKNOWN/TBD"
+      ],
+      "description": "Expected Architecture E route if provided by human reference; UNKNOWN/TBD during ingestion"
+    },
+    "expected_usable_concepts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Human/reference list of assessable target concepts. Empty or UNKNOWN/TBD if unannotated. Never auto-invented."
+    },
+    "expected_excluded_content": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of segments or topics that must be excluded from MCQ stems (e.g., motivation, attendance, exam dates)"
+    },
+    "special_conditions": {
+      "type": "string",
+      "description": "Audio quality, background noise, multi-speaker, dialect notes, or boundary conditions"
+    },
+    "contributor": {
+      "type": "string",
+      "description": "Teammate identifier, batch code, or source origin"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "VERIFIED"
+      ],
+      "description": "Annotation completeness and verification status"
+    }
+  },
+  "additionalProperties": true
+}

@@ -2366,15 +2366,28 @@ exports.generateQuizQuestions = async (req, res) => {
                     }
                 }
 
+                const allUploadedFiles = (req.files && req.files.length > 0) ? req.files : (req.file ? [req.file] : []);
+                const uploadedNames = new Set(allUploadedFiles.map(f => f.originalname));
+                const resolvedDocIds = new Set();
+                const resolvedNames = new Set();
+
                 if (fileConfigs && fileConfigs.length > 0) {
                     for (const cfg of fileConfigs) {
+                        // If file was re-uploaded in this exact request, let allUploadedFiles loop extract it directly
+                        if (cfg.name && uploadedNames.has(cfg.name)) {
+                            continue;
+                        }
                         if (cfg.documentId) {
                             const docData = documentStore.getScopedText(cfg.documentId, cfg.startPage, cfg.endPage);
                             if (docData && docData.scopedText) {
+                                resolvedDocIds.add(cfg.documentId);
+                                if (docData.filename) resolvedNames.add(docData.filename);
+                                if (cfg.name) resolvedNames.add(cfg.name);
+                                const docExt = path.extname(docData.filename || '').replace('.', '').toLowerCase() || 'document';
                                 parsedInputs.push({
-                                    type: docData.filename.endsWith('.pdf') ? 'pdf' : 'document',
+                                    type: docExt,
                                     content: docData.scopedText,
-                                    source_name: docData.filename,
+                                    source_name: docData.filename || cfg.name,
                                     startPage: cfg.startPage || 1,
                                     endPage: cfg.endPage || docData.totalPages
                                 });
@@ -2383,12 +2396,12 @@ exports.generateQuizQuestions = async (req, res) => {
                     }
                 }
 
-                const allUploadedFiles = (req.files && req.files.length > 0) ? req.files : (req.file ? [req.file] : []);
                 if (allUploadedFiles.length > 0) {
                     for (const file of allUploadedFiles) {
                         const filePath = path.resolve(file.path);
                         const ext = path.extname(file.originalname).toLowerCase();
                         const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };
+                        resolvedNames.add(file.originalname);
                         
                         const isAudio = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
                         if (isAudio) {
@@ -2460,6 +2473,13 @@ exports.generateQuizQuestions = async (req, res) => {
                     promptsArray.forEach((p, idx) => {
                         if (!p) return;
                         if (typeof p === 'object' && p.content) {
+                            // If this restored item was already resolved via documentStore or uploaded file, avoid duplicating
+                            if (p.documentId && resolvedDocIds.has(p.documentId)) {
+                                return;
+                            }
+                            if (p.source_name && resolvedNames.has(p.source_name) && p.type !== 'voice' && p.type !== 'audio') {
+                                return;
+                            }
                             const isVoice = (p.type === 'voice' || p.type === 'audio' || p.type === 'transcript');
                             parsedInputs.push({
                                 type: isVoice ? 'voice' : (p.type || 'text'),
@@ -3841,6 +3861,69 @@ exports.getFileMetadata = async (req, res) => {
         console.error('Error in getFileMetadata:', err);
         try { fs.unlinkSync(absolutePath); } catch (_) {}
         return res.status(500).json({ msg: 'Failed to extract file metadata' });
+    }
+};
+
+// ── Server-Side User Docket Persistence ──────────────────────────────────────
+const DOCKETS_DIR = path.resolve(__dirname, '../data/cache/dockets');
+try {
+    if (!fs.existsSync(DOCKETS_DIR)) {
+        fs.mkdirSync(DOCKETS_DIR, { recursive: true });
+    }
+} catch (e) {
+    console.warn('Failed to ensure DOCKETS_DIR:', e.message);
+}
+
+exports.getUserDocket = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) return res.status(401).json({ msg: 'Unauthorized' });
+        const docketFile = path.join(DOCKETS_DIR, `${userId}.json`);
+        if (fs.existsSync(docketFile)) {
+            const data = fs.readFileSync(docketFile, 'utf8');
+            return res.json({ success: true, inputs: JSON.parse(data) });
+        }
+        return res.json({ success: true, inputs: [] });
+    } catch (err) {
+        console.error('Error in getUserDocket:', err.message);
+        return res.status(500).json({ msg: 'Failed to retrieve docket' });
+    }
+};
+
+exports.saveUserDocket = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) return res.status(401).json({ msg: 'Unauthorized' });
+        const { inputs } = req.body;
+        if (!Array.isArray(inputs)) {
+            return res.status(400).json({ msg: 'inputs must be an array' });
+        }
+        // Sanitize inputs to ensure no non-serializable properties
+        const sanitized = inputs.map(inp => {
+            const { file, ...rest } = inp;
+            return rest;
+        });
+        const docketFile = path.join(DOCKETS_DIR, `${userId}.json`);
+        fs.writeFileSync(docketFile, JSON.stringify(sanitized), 'utf8');
+        return res.json({ success: true, count: sanitized.length });
+    } catch (err) {
+        console.error('Error in saveUserDocket:', err.message);
+        return res.status(500).json({ msg: 'Failed to save docket' });
+    }
+};
+
+exports.clearUserDocket = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) return res.status(401).json({ msg: 'Unauthorized' });
+        const docketFile = path.join(DOCKETS_DIR, `${userId}.json`);
+        if (fs.existsSync(docketFile)) {
+            fs.unlinkSync(docketFile);
+        }
+        return res.json({ success: true });
+    } catch (err) {
+        console.error('Error in clearUserDocket:', err.message);
+        return res.status(500).json({ msg: 'Failed to clear docket' });
     }
 };
 
