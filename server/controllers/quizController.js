@@ -3189,6 +3189,13 @@ exports.generateQuizFromVoice = async (req, res) => {
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const voiceTitle = `Lecture Recording (${timeStr})`;
 
+        const cleanupFiles = () => {
+            try { if (fs.existsSync(absolutePath)) fs.unlinkSync(absolutePath); } catch (_) {}
+            if (req.slidesFile && req.slidesFile.path) {
+                try { if (fs.existsSync(req.slidesFile.path)) fs.unlinkSync(req.slidesFile.path); } catch (_) {}
+            }
+        };
+
         // =========================================================================
         // Primary Path: Architecture E v2.0 Production Engine (FastAPI Service)
         // =========================================================================
@@ -3207,6 +3214,17 @@ exports.generateQuizFromVoice = async (req, res) => {
                 filename: req.file.originalname || path.basename(absolutePath),
                 contentType: req.file.mimetype || 'audio/wav'
             });
+
+            // FIX 1: Forward companion supporting material (slides/notes/PDF) to Architecture E
+            if (req.slidesFile && req.slidesFile.path && fs.existsSync(req.slidesFile.path)) {
+                const slidesAbsPath = path.resolve(req.slidesFile.path);
+                console.log(`📎 [Voice Generator] Forwarding companion supporting material: ${req.slidesFile.originalname} (${req.slidesFile.mimetype || 'application/pdf'})`);
+                form.append('slides_file', fs.createReadStream(slidesAbsPath), {
+                    filename: req.slidesFile.originalname || path.basename(slidesAbsPath),
+                    contentType: req.slidesFile.mimetype || 'application/pdf'
+                });
+            }
+
             form.append('requested_count', String(questionCount || 5));
             form.append('difficulty', (difficulty || 'MIXED').toUpperCase());
 
@@ -3253,12 +3271,18 @@ exports.generateQuizFromVoice = async (req, res) => {
                             const normalizedQuestions = (suite.questions || []).map((q, idx) => {
                                 let opts = q.options;
                                 if (!Array.isArray(opts)) {
-                                    opts = opts && typeof opts === 'object' ? Object.values(opts) : ['', '', '', ''];
+                                    if (q.option_a !== undefined || q.option_b !== undefined) {
+                                        opts = [q.option_a, q.option_b, q.option_c, q.option_d].filter(o => o !== undefined);
+                                    } else if (opts && typeof opts === 'object') {
+                                        opts = Object.values(opts);
+                                    } else {
+                                        opts = ['', '', '', ''];
+                                    }
                                 }
                                 const cleanOpts = opts.slice(0, 4).map(String);
                                 while (cleanOpts.length < 4) cleanOpts.push(`Option ${cleanOpts.length + 1}`);
 
-                                let correctVal = q.correct_answer || q.correctAnswer || '';
+                                let correctVal = q.correct_answer || q.correctAnswer || q.correct_option || '';
                                 if (['A', 'B', 'C', 'D'].includes(correctVal)) {
                                     const optIdx = correctVal.charCodeAt(0) - 65;
                                     correctVal = cleanOpts[optIdx] || cleanOpts[0];
@@ -3269,20 +3293,25 @@ exports.generateQuizFromVoice = async (req, res) => {
                                     expl = Object.entries(q.distractor_explanations).map(([k, v]) => `${k}: ${v}`).join(' ');
                                 }
 
+                                const pedPurpose = q.pedagogical_purpose || {
+                                    what_taught: q.what_taught || '',
+                                    why_assessed: q.why_assessed || ''
+                                };
+
                                 return {
                                     id: q.question_id || `q_${idx + 1}`,
-                                    questionText: q.stem || q.questionText || q.question || '',
-                                    question: q.stem || q.questionText || q.question || '',
+                                    questionText: q.stem || q.question_text || q.questionText || q.question || '',
+                                    question: q.stem || q.question_text || q.questionText || q.question || '',
                                     options: cleanOpts,
                                     correctAnswer: correctVal,
                                     explanation: expl || 'Pedagogically validated against lecture evidence.',
-                                    bloom_level: q.bloom_level || 'UNDERSTAND',
-                                    difficulty: q.difficulty || difficulty || 'Medium',
-                                    pedagogical_purpose: q.pedagogical_purpose || { what_taught: '', why_assessed: '' },
-                                    assessment_objective: q.pedagogical_purpose ? `${q.pedagogical_purpose.what_taught || ''} — ${q.pedagogical_purpose.why_assessed || ''}` : '',
-                                    difficulty_reason: q.pedagogical_purpose?.why_assessed ? [q.pedagogical_purpose.why_assessed] : [],
+                                    bloom_level: q.cognitive_level || q.bloom_level || 'UNDERSTAND',
+                                    difficulty: q.difficulty_level || q.difficulty || difficulty || 'Medium',
+                                    pedagogical_purpose: pedPurpose,
+                                    assessment_objective: `${pedPurpose.what_taught || ''}${pedPurpose.what_taught && pedPurpose.why_assessed ? ' — ' : ''}${pedPurpose.why_assessed || ''}`,
+                                    difficulty_reason: pedPurpose.why_assessed ? [pedPurpose.why_assessed] : [],
                                     evidence_refs: q.evidence_refs || (q.evidence_anchor ? [q.evidence_anchor] : []),
-                                    sourceEvidence: q.evidence_anchor ? [{ text: q.evidence_anchor }] : (q.evidence_refs ? q.evidence_refs.map(r => ({ text: r })) : []),
+                                    sourceEvidence: q.evidence_excerpt ? [{ text: q.evidence_excerpt }] : (q.evidence_refs ? q.evidence_refs.map(r => ({ text: r })) : []),
                                     points: 10,
                                     type: 'multiple-choice'
                                 };
@@ -3309,26 +3338,29 @@ exports.generateQuizFromVoice = async (req, res) => {
                                 isVoice: true,
                                 metadata: {
                                     job_id,
-                                    pipeline_version: suite.pipeline_version,
-                                    generator_model: suite.generator_model,
-                                    generator_provider: suite.generator_provider,
-                                    target_generator: suite.target_generator,
-                                    serving_mode: suite.serving_mode,
+                                    pipeline_version: suite.provenance?.pipeline_version || suite.pipeline_version || '2.0.0',
+                                    generator_model: suite.generation_metadata?.generator_model || suite.generator_model || 'openai/gpt-oss-20b',
+                                    generator_provider: suite.generation_metadata?.generator_provider || suite.generator_provider || 'groq',
+                                    target_generator: suite.generation_metadata?.target_generator || suite.target_generator || 'ft-llama-3-8b-kmit (KMIT GPU)',
+                                    serving_mode: suite.generation_metadata?.serving_mode || suite.serving_mode || 'TEMPORARY_HOSTED_DEMO',
+                                    routing_decision: suite.representation_used,
+                                    routing_rationale: suite.routing_rationale,
                                     executionMessages: [
-                                        `Architecture E v2.0 Production Engine (${suite.pipeline_version || '2.0.0'})`,
-                                        `Serving Mode: ${suite.serving_mode || 'TEMPORARY_HOSTED_DEMO'}`,
-                                        `Target Generator: ${suite.target_generator || 'ft-llama-3-8b-kmit (KMIT GPU)'}`,
-                                        `Active Generator: ${suite.generator_model || 'allam-2-7b'} (${suite.generator_provider || 'groq'})`
+                                        `Architecture E v2.0 Production Engine (${suite.provenance?.pipeline_version || suite.pipeline_version || '2.0.0'})`,
+                                        `Routing Decision: ${suite.representation_used || 'UNIFIED'}`,
+                                        `Serving Mode: ${suite.generation_metadata?.serving_mode || suite.serving_mode || 'TEMPORARY_HOSTED_DEMO'}`,
+                                        `Target Generator: ${suite.generation_metadata?.target_generator || 'ft-llama-3-8b-kmit (KMIT GPU)'}`,
+                                        `Active Generator: ${suite.generation_metadata?.generator_model || suite.generator_model || 'openai/gpt-oss-20b'} (${suite.generation_metadata?.generator_provider || suite.generator_provider || 'groq'})`
                                     ]
                                 }
                             });
 
-                            try { fs.unlinkSync(absolutePath); } catch (_) {}
+                            cleanupFiles();
                             return;
                         } else if (job.status === 'FAILED') {
                             console.error(`❌ [Architecture E v2.0] Job ${job_id} FAILED: ${job.error_message}`);
                             failTask(taskId, job.error_message || 'Assessment generation failed in Python engine');
-                            try { fs.unlinkSync(absolutePath); } catch (_) {}
+                            cleanupFiles();
                             return;
                         }
                     } catch (pollErr) {
@@ -3336,7 +3368,7 @@ exports.generateQuizFromVoice = async (req, res) => {
                     }
                 }
                 failTask(taskId, 'Assessment generation timed out after 5 minutes.');
-                try { fs.unlinkSync(absolutePath); } catch (_) {}
+                cleanupFiles();
                 return;
             }
         } catch (engineErr) {
@@ -3371,7 +3403,7 @@ exports.generateQuizFromVoice = async (req, res) => {
 
             const transcript = await transcribeAudio(absolutePath);
             if (!transcript || transcript.trim().length < 20) {
-                try { fs.unlinkSync(absolutePath); } catch (_) {}
+                cleanupFiles();
                 const origName = req.file.originalname || '';
                 const isRec = origName.includes('recording') || origName.includes('blob') || origName.endsWith('.webm');
                 const errMsg = isRec 
@@ -3383,7 +3415,7 @@ exports.generateQuizFromVoice = async (req, res) => {
 
             const moderation = await moderateContent(req.user.id, transcript, 'text');
             if (!moderation.isSafe) {
-                try { fs.unlinkSync(absolutePath); } catch (_) {}
+                cleanupFiles();
                 failTask(taskId, 'Content moderation failed: ' + moderation.reason);
                 return;
             }
@@ -3401,7 +3433,7 @@ exports.generateQuizFromVoice = async (req, res) => {
             }
 
             const questions = await generateQuestions('voice', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, blendedRatios, null, null, taskId, null, null, derivedStyle);
-            try { fs.unlinkSync(absolutePath); } catch (_) {}
+            cleanupFiles();
 
             updateTaskStage(taskId, 7, 'Preparing Final Quiz');
             const validation = finalQuizValidator(questions, difficulty || 'Medium');

@@ -60,29 +60,80 @@ class AdaptivePlanningAgent:
         }
 
         raw_candidates = []
-        if blueprint and blueprint.topics:
-            for b in blueprint.topics:
-                raw_candidates.append({
-                    "concept": b.topic,
-                    "what": f"Instructional act: {', '.join(b.instructional_acts)} | Dominant mode: {b.dominant_mode}",
-                    "why": f"Teacher specificity: {b.teacher_specificity} (Salience {b.salience_score:.2f})",
-                    "evidence_refs": b.evidence_refs
-                })
-        elif summary:
-            for c in summary.concepts_and_definitions:
-                raw_candidates.append({
-                    "concept": c,
-                    "what": c,
-                    "why": "Core curriculum definition",
-                    "evidence_refs": []
-                })
-            for m in summary.mechanisms_and_formulas:
-                raw_candidates.append({
-                    "concept": m,
-                    "what": m,
-                    "why": "Mathematical / algorithmic mechanism",
-                    "evidence_refs": []
-                })
+        if representation_type == "UNIFIED":
+            # Multimodal Fusion: Fuse teacher emphasis/pedagogical acts (WHY) from Blueprint 
+            # with technical definitions and mechanisms/formulas (WHAT) from Summary
+            if blueprint and blueprint.topics:
+                for b in blueprint.topics:
+                    raw_candidates.append({
+                        "concept": b.topic,
+                        "what": f"Instructional act: {', '.join(b.instructional_acts)} | Dominant mode: {b.dominant_mode}",
+                        "why": f"Teacher specificity: {b.teacher_specificity} (Salience {b.salience_score:.2f})",
+                        "evidence_refs": b.evidence_refs
+                    })
+            if summary:
+                for c in summary.concepts_and_definitions:
+                    raw_candidates.append({
+                        "concept": c,
+                        "what": c,
+                        "why": "Core curriculum definition",
+                        "evidence_refs": []
+                    })
+                for m in summary.mechanisms_and_formulas:
+                    raw_candidates.append({
+                        "concept": m,
+                        "what": m,
+                        "why": "Mathematical / algorithmic mechanism",
+                        "evidence_refs": []
+                    })
+        elif representation_type == "SUMMARY":
+            if summary:
+                for c in summary.concepts_and_definitions:
+                    raw_candidates.append({
+                        "concept": c,
+                        "what": c,
+                        "why": "Core curriculum definition",
+                        "evidence_refs": []
+                    })
+                for m in summary.mechanisms_and_formulas:
+                    raw_candidates.append({
+                        "concept": m,
+                        "what": m,
+                        "why": "Mathematical / algorithmic mechanism",
+                        "evidence_refs": []
+                    })
+            elif blueprint and blueprint.topics:
+                for b in blueprint.topics:
+                    raw_candidates.append({
+                        "concept": b.topic,
+                        "what": f"Instructional act: {', '.join(b.instructional_acts)} | Dominant mode: {b.dominant_mode}",
+                        "why": f"Teacher specificity: {b.teacher_specificity} (Salience {b.salience_score:.2f})",
+                        "evidence_refs": b.evidence_refs
+                    })
+        else: # Default or BLUEPRINT
+            if blueprint and blueprint.topics:
+                for b in blueprint.topics:
+                    raw_candidates.append({
+                        "concept": b.topic,
+                        "what": f"Instructional act: {', '.join(b.instructional_acts)} | Dominant mode: {b.dominant_mode}",
+                        "why": f"Teacher specificity: {b.teacher_specificity} (Salience {b.salience_score:.2f})",
+                        "evidence_refs": b.evidence_refs
+                    })
+            elif summary:
+                for c in summary.concepts_and_definitions:
+                    raw_candidates.append({
+                        "concept": c,
+                        "what": c,
+                        "why": "Core curriculum definition",
+                        "evidence_refs": []
+                    })
+                for m in summary.mechanisms_and_formulas:
+                    raw_candidates.append({
+                        "concept": m,
+                        "what": m,
+                        "why": "Mathematical / algorithmic mechanism",
+                        "evidence_refs": []
+                    })
 
         concept_candidates = []
         for cand in raw_candidates:
@@ -248,7 +299,7 @@ Generate EXACTLY {requested_count} distinct targets."""
                 cognitive_level=t_data.get("cognitive_level", "APPLY"),
                 difficulty_level=diff_val,
                 primary_evidence_id=p_eid,
-                supporting_evidence_ids=alignment_graph.get(p_eid, []),
+                supporting_evidence_ids=alignment_graph.get(p_eid, []) if alignment_graph else [],
                 plausible_misconceptions=t_data.get("plausible_misconceptions", ["Common distractor error"]),
                 assigned_key=assigned_k
             )

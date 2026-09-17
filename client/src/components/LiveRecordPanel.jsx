@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, Square, Pause, Play, AlertCircle, Hash, BarChart3, Sparkles, X as XIcon, WifiOff, RefreshCw } from 'lucide-react';
+import { Mic, Square, Pause, Play, AlertCircle, Hash, BarChart3, Sparkles, X as XIcon, WifiOff, RefreshCw, FileText, UploadCloud } from 'lucide-react';
 import api from '../utils/api';
 import AgentPipelineLoader from './loaders/AgentPipelineLoader';
 import { 
@@ -27,6 +27,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const [currentSessionId, setCurrentSessionId] = useState(null);
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
+    const [slidesFile, setSlidesFile] = useState(null);
 
     const mediaRecorderRef = useRef(null);
     const audioChunksRef   = useRef([]);
@@ -269,6 +270,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const handleConfigCancel = () => {
         setShowConfig(false);
         setPendingBlob(null);
+        setSlidesFile(null);
         if (currentSessionIdRef.current) {
             deleteSessionRecord(currentSessionIdRef.current);
         }
@@ -281,6 +283,9 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
         try {
             const formData = new FormData();
             formData.append('file', blob, 'live_lesson.webm');
+            if (slidesFile) {
+                formData.append('slides', slidesFile);
+            }
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
 
@@ -520,6 +525,41 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                                         {lvl}
                                     </button>
                                 ))}
+                            </div>
+                        </div>
+
+                        {/* Optional Companion Supporting Material */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                                    <FileText size={14} className="text-purple-400" /> Companion Slides / Notes (Optional)
+                                </label>
+                                {slidesFile && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setSlidesFile(null)}
+                                        className="text-[11px] text-red-400 hover:text-red-300 underline"
+                                    >
+                                        Remove
+                                    </button>
+                                )}
+                            </div>
+                            <div className="relative border border-dashed border-slate-700 rounded-xl p-3 bg-slate-900/50 hover:border-purple-500/50 transition-all flex items-center justify-between">
+                                <input
+                                    type="file"
+                                    accept=".pdf,.pptx,.ppt,.docx,.txt"
+                                    onChange={(e) => setSlidesFile(e.target.files[0] || null)}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                />
+                                <div className="flex items-center gap-2.5 truncate">
+                                    <UploadCloud size={18} className="text-slate-400 shrink-0" />
+                                    <span className="text-xs text-slate-200 truncate">
+                                        {slidesFile ? slidesFile.name : "Attach lecture PDF / PPT for Unified synthesis"}
+                                    </span>
+                                </div>
+                                <span className="text-[10px] uppercase font-bold px-2 py-1 bg-slate-800 text-slate-300 rounded shrink-0">
+                                    {slidesFile ? "Selected" : "Browse"}
+                                </span>
                             </div>
                         </div>
 

@@ -195,7 +195,14 @@ const verifyUploadedFile = (req, res, next) => {
 };
 
 const verifyUploadedFiles = (req, res, next) => {
-    const files = (req.files && req.files.length > 0) ? req.files : (req.file ? [req.file] : []);
+    let files = [];
+    if (Array.isArray(req.files)) {
+        files = req.files;
+    } else if (req.files && typeof req.files === 'object') {
+        files = Object.values(req.files).flat();
+    } else if (req.file) {
+        files = [req.file];
+    }
     if (files.length === 0) return next();
     
     const fs = require('fs');
@@ -204,13 +211,37 @@ const verifyUploadedFiles = (req, res, next) => {
         const filePath = path.resolve(file.path);
         
         if (!verifyFileMagicBytes(filePath, ext)) {
-            for (const f of req.files) {
+            for (const f of files) {
                 try { fs.unlinkSync(path.resolve(f.path)); } catch (_) {}
             }
             console.warn(`[SECURITY] MIME mismatch blocked: ${file.originalname} (claimed ${ext}, failed magic bytes check)`);
             return res.status(400).json({ 
                 msg: 'File rejected: file content does not match the declared file type. Possible extension spoofing detected.' 
             });
+        }
+    }
+    next();
+};
+
+// Multimodal Voice + Slides upload fields configuration
+const voiceUploadFields = upload.fields([
+    { name: 'file', maxCount: 1 },
+    { name: 'audio', maxCount: 1 },
+    { name: 'slides', maxCount: 1 },
+    { name: 'slides_file', maxCount: 1 }
+]);
+
+const normalizeVoiceUploads = (req, res, next) => {
+    if (req.files) {
+        if (req.files['file'] && req.files['file'][0]) {
+            req.file = req.files['file'][0];
+        } else if (req.files['audio'] && req.files['audio'][0]) {
+            req.file = req.files['audio'][0];
+        }
+        if (req.files['slides'] && req.files['slides'][0]) {
+            req.slidesFile = req.files['slides'][0];
+        } else if (req.files['slides_file'] && req.files['slides_file'][0]) {
+            req.slidesFile = req.files['slides_file'][0];
         }
     }
     next();
@@ -233,8 +264,8 @@ router.post('/analyze-depth', auth, quizController.analyzeDepth);
 router.post('/file-metadata', auth, upload.single('file'), verifyUploadedFile, quizController.getFileMetadata);
 
 // @route   POST api/quiz/generate-voice
-// @desc    Transcribe audio and generate quiz questions
-router.post('/generate-voice', auth, upload.single('file'), verifyUploadedFile, quizController.generateQuizFromVoice);
+// @desc    Transcribe audio (with optional companion slides/notes) and generate quiz questions via Architecture E
+router.post('/generate-voice', auth, voiceUploadFields, verifyUploadedFiles, normalizeVoiceUploads, quizController.generateQuizFromVoice);
 
 // @route   POST api/quiz/analyze-lecture
 // @desc    Two-Task Lecture Understanding: Clean non-academic content & Reconstruct pedagogical structure

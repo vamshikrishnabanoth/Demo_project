@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import LiveRecordPanel from '../components/LiveRecordPanel';
-import { Mic, UploadCloud, FileAudio, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mic, UploadCloud, FileAudio, FileText, CheckCircle, AlertCircle, X } from 'lucide-react';
 import { uiTerminology } from '../utils/uiTerminology';
 import api from '../utils/api';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
@@ -13,6 +13,7 @@ export default function CreateQuizVoice() {
     
     // File upload state
     const [audioFile, setAudioFile] = useState(null);
+    const [slidesFile, setSlidesFile] = useState(null);
     const [questionCount, setQuestionCount] = useState(5);
     const [difficulty, setDifficulty] = useState('Medium');
     const [uploading, setUploading] = useState(false);
@@ -60,6 +61,9 @@ export default function CreateQuizVoice() {
         try {
             const formData = new FormData();
             formData.append('file', audioFile);
+            if (slidesFile) {
+                formData.append('slides', slidesFile);
+            }
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
 
@@ -223,6 +227,49 @@ export default function CreateQuizVoice() {
                                                 </div>
                                             </>
                                         )}
+                                    </div>
+                                </div>
+
+                                {/* Companion Supporting Material (Optional - Enables Multimodal UNIFIED Synthesis) */}
+                                <div className="bg-white/5 border border-white/10 rounded-2xl p-5 transition-all">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="block text-[11px] font-black text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                                            <FileText size={15} className="text-[var(--bg-accent)]" />
+                                            Companion Slides / PDF <span className="text-slate-400 font-normal lowercase">(optional — enables Unified multimodal synthesis)</span>
+                                        </label>
+                                        {slidesFile && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setSlidesFile(null)}
+                                                className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 font-bold transition-colors"
+                                            >
+                                                <X size={14} /> Remove
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="relative border-2 border-dashed border-white/10 rounded-xl p-4 hover:border-[var(--bg-accent)]/40 transition-all bg-white/[0.02] flex items-center justify-between">
+                                        <input
+                                            type="file"
+                                            accept=".pdf,.pptx,.ppt,.docx,.txt"
+                                            onChange={(e) => setSlidesFile(e.target.files[0] || null)}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        />
+                                        <div className="flex items-center gap-3">
+                                            <div className={`p-2.5 rounded-xl ${slidesFile ? 'bg-[var(--bg-accent)] text-white' : 'bg-white/5 text-slate-400'}`}>
+                                                <FileText size={20} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-white">
+                                                    {slidesFile ? slidesFile.name : "Attach Lecture Slides, PDF, or Notes"}
+                                                </p>
+                                                <p className="text-xs text-slate-400 mt-0.5">
+                                                    {slidesFile ? `${(slidesFile.size / (1024 * 1024)).toFixed(2)} MB • Fuses spoken emphasis with formal definitions` : "PDF, PPTX, PPT, DOCX, TXT"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span className="text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-lg bg-white/10 text-slate-300">
+                                            {slidesFile ? "Selected" : "Browse"}
+                                        </span>
                                     </div>
                                 </div>
 
