@@ -408,7 +408,8 @@ export default function CreateQuizTopic() {
                     });
                     if (res.data) {
                         if (res.data.isAcademic === false) {
-                            toast.error(`⚠️ "${file.name}" contains no academic instructional content and was not added.`, { duration: 5000 });
+                            const failReason = res.data.reason || `"${file.name}" contains no assessable instructional content and was not added.`;
+                            toast.error(`⚠️ ${failReason}`, { duration: 5000 });
                             setInputs(prev => prev.filter(item => item.id !== id));
                             continue;
                         }
@@ -482,7 +483,8 @@ export default function CreateQuizTopic() {
         try {
             const res = await api.post('/quiz/analyze-depth', { text });
             if (res.data && res.data.isAcademic === false) {
-                toast.error('⚠️ Entered text contains no academic instructional content and was not added.', { duration: 5000 });
+                const failReason = res.data.reason || 'Entered text contains no assessable instructional content and was not added.';
+                toast.error(`⚠️ ${failReason}`, { duration: 5000 });
                 return;
             }
         } catch (_) {}
@@ -644,6 +646,7 @@ export default function CreateQuizTopic() {
 
                     let transcriptText = '';
                     let isAcademic = true;
+                    let academicFailureReason = null;
 
                     try {
                         const localRes = await api.post('http://localhost:8000/transcribe', formData, {
@@ -653,16 +656,18 @@ export default function CreateQuizTopic() {
                         transcriptText = localRes.data.text;
                         const depthRes = await api.post('/quiz/analyze-depth', { text: transcriptText });
                         isAcademic = depthRes.data?.isAcademic !== false;
+                        academicFailureReason = depthRes.data?.reason;
                     } catch (_) {
                         const transcribeRes = await api.post('/quiz/transcribe', formData, {
                             headers: { 'Content-Type': 'multipart/form-data' }
                         });
                         transcriptText = transcribeRes.data.text;
                         isAcademic = transcribeRes.data?.isAcademic !== false;
+                        academicFailureReason = transcribeRes.data?.reason;
                     }
 
                     if (!isAcademic) {
-                        toast.error('⚠️ Voice recording contains no academic instructional content and was not added.', { id: toastId, duration: 5000 });
+                        toast.error(academicFailureReason ? `⚠️ ${academicFailureReason}` : '⚠️ Voice recording contains no assessable instructional content and was not added.', { id: toastId, duration: 6000 });
                         await markSessionCompleted(newSessionId);
                         await deleteSessionRecord(newSessionId);
                         return;

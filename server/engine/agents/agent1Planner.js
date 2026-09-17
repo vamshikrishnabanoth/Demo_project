@@ -22,6 +22,10 @@ class Agent1Planner {
    * @returns {Object} AssessmentPlan JSON payload
    */
   async planAssessment(evidencePackage, requestedDifficulty = 'Medium', requestedCount = 5) {
+    if (evidencePackage && evidencePackage.isAcademic === false) {
+      throw new Error(evidencePackage.academicFailureReason || 'Cannot plan assessment: Recording contains no assessable instructional content.');
+    }
+
     const rawContent = evidencePackage.unifiedRawContent || '';
     const voiceEmphasis = evidencePackage.voiceEmphasis || {};
     const categoryWeights = evidencePackage.categoryWeights || {};
@@ -306,7 +310,7 @@ ${assessableContent.substring(0, 25000)}
     }
 
     return {
-      subject: 'Computer Science',
+      subject: (detectedFocus && detectedFocus.length > 0) ? detectedFocus[0] : 'Academic Curriculum',
       mainTopic: detectedFocus[0] || 'Core Lecture Topic',
       subtopics: detectedFocus.length > 0 ? detectedFocus : ['Core Definitions', 'Mechanism Sequence', 'Performance Impact'],
       teachingEmphasis: { conceptual: 'HIGH', application: 'HIGH', syntax: 'MEDIUM', calculation: 'LOW' },

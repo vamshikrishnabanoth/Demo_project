@@ -40,9 +40,10 @@ class EvidencePackager {
     const categoryWeights = this._computeCategoryWeights(exactArtifacts, voiceEmphasisSignals, rawContent);
 
     // Filtered curricular content for downstream question planning
-    const curricularContent = (depthAnalysis.curricularSegments && depthAnalysis.curricularSegments.length > 0)
+    // Instructional evidence is strictly isolated from motivational/pedagogical and administrative speech
+    const curricularContent = (depthAnalysis.isAcademic && depthAnalysis.curricularSegments && depthAnalysis.curricularSegments.length > 0)
       ? depthAnalysis.curricularSegments.map(s => s.text).join('\n')
-      : rawContent;
+      : (depthAnalysis.isAcademic ? rawContent : '');
 
     // Build structured Evidence Package
     const packageData = {

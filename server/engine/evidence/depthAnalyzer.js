@@ -35,9 +35,11 @@ class DepthAnalyzer {
 
   /**
    * Classify the semantic intent and curricular substance of a single segment.
+   * Uses domain-agnostic signals/features rather than a fixed technical keyword whitelist.
    */
-  classifySegment(seg) {
-    const lower = seg.toLowerCase();
+  classifySegment(seg, prevSeg = null) {
+    if (!seg) return { type: 'GENERAL_TEXT', reason: 'Empty segment', confidence: 'LOW' };
+    const lower = seg.toLowerCase().trim();
 
     // 1. Check for Administrative / Classroom Discipline / Logistics / Casual Chatter
     const adminPatterns = [
@@ -68,7 +70,7 @@ class DepthAnalyzer {
       /\b(believe in yourself|crack any interview|do not be afraid of exams|study hard and stay confident)\b/i,
       /\b(do not be (?:nervous|afraid|worried)|keep your spirits high|everyone finds it hard at first|be patient with yourselves)\b/i,
       /\b(important for (?:google|technical)? ?interviews|asked in (?:top|product) companies)\b/i,
-      /\b(you will master this with practice|recursion takes time to master)\b/i
+      /\b(you will master this with practice|takes time to master)\b/i
     ];
     for (const pat of pedagogicalMetaPatterns) {
       if (pat.test(lower)) {
@@ -80,80 +82,146 @@ class DepthAnalyzer {
       }
     }
 
-    // 3. Check for Curricular Substance Forms
-    const technicalTerms = [
-      'binary search', 'sorted array', 'search space', 'middle element', 'median', 'time complexity', 'space complexity',
-      'logarithmic', 'big o', 'algorithm', 'data structure', 'dynamic programming', 'state transition', 'profit',
-      'quick sort', 'quicksort', 'merge sort', 'partition', 'partitioning', 'pivot',
-      'deadlock', 'coffman', 'mutual exclusion', 'hold and wait', 'circular wait', 'preemption',
-      'http', 'http get', 'http post', 'idempotent', 'idempotency', 'status code', 'rest api',
-      'tree', 'binary tree', 'bst', 'node', 'nodes', 'root', 'leaf', 'graph', 'edge', 'vertex', 'vertices',
-      'recursion', 'recursive', 'base case', 'stack', 'queue', 'linked list', 'array', 'pointer',
-      'cpu', 'processor', 'memory allocation', 'register', 'registers', 'interrupt', 'operating system',
-      'compiler', 'database', 'sql', 'query', 'indexing', 'schema', 'transaction', 'acid',
-      'concurrency', 'thread', 'multithreading', 'mutex', 'semaphore',
-      'token', 'tokenizer', 'tokens', 'vector', 'neural network', 'isr', 'program counter', 'vector table',
-      'polling', 'busy-wait'
-    ];
-
-    const matchedTerms = [];
-    for (const term of technicalTerms) {
-      const regex = new RegExp(`\\b${escapeRegex(term)}\\b`, 'i');
-      if (regex.test(lower)) {
-        matchedTerms.push(term);
-      }
-    }
-
-    // Check for comma-separated noun lists (vocabulary list without teaching)
+    // 3. Check for comma-separated noun lists without explanatory predicate (ungrounded vocab list)
     const commaParts = seg.split(',').map(p => p.trim()).filter(Boolean);
     if (commaParts.length >= 4 && commaParts.every(p => p.split(/\s+/).length <= 3)) {
       return {
         type: 'UNGROUNDED_VOCAB',
-        matchedTerms,
         reason: 'Comma-separated vocabulary list without explanatory predicate or assessable teaching',
         confidence: 'HIGH'
       };
     }
 
-    // Curricular structural relations:
-    const hasDefRelation = /\b(is an?|means|defined as|refers to|represents|consists of|requires|produces|creates|modifies|guarantee(?:s|d)?|converts)\b/i.test(lower);
-    const textWithoutCompoundNouns = lower.replace(/\b(binary search|depth first search|breadth first search)\b/gi, 'NOUN_ALGO');
-    const hasMechRelation = /\b(works by|divid(?:e|es|ing|ed)|compar(?:e|es|ing|ed)|search(?:es|ing|ed)?|eliminat(?:e|es|ing|ed)|discard(?:s|ing|ed)?|partition(?:s|ing|ed)?|allocat(?:e|es|ing|ed)|execut(?:e|es|ing|ed)|select(?:s|ing|ed)?|travers(?:e|es|ing|ed)|paus(?:es|ed|ing)|transfer(?:s|red|ring)|restor(?:es|ed|ing)|resum(?:es|ed|ing)|fetch(?:es|ed|ing)|process)\b/i.test(textWithoutCompoundNouns);
-    const hasRuleRelation = /\b(if|when|condition|conditions|because|therefore|in order to|prevents?|leads to|results in|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes)\b/i.test(lower);
-    const hasComparisonRelation = /\b(in contrast|compared to|difference between|neither .* nor|whereas|while|faster than|slower than|preferred over)\b/i.test(lower);
-    const hasTraceExample = /\[[0-9,\s]+\]|\b(pivot|example|trace|step|produces)\b/i.test(lower) && matchedTerms.length > 0;
-    const hasSocraticCurricular = /\b(what happens (?:to|if)|why does|can the)\b/i.test(lower) && matchedTerms.length > 0;
+    // 4. Instructional / Content-Bearing Feature Evaluation (Domain-Agnostic across CS, Math, English, Science, etc.)
+    // Feature A: Definitional / Ontological predicates
+    const hasDefRelation = /\b(is an?|are(?: words)?|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|known as|named as|classified into|provides an?|acts as|serves as|used (?:to|as|in))\b/i.test(lower);
 
-    const hasSubstanceRelation = hasDefRelation || hasMechRelation || hasRuleRelation || hasComparisonRelation || hasTraceExample || hasSocraticCurricular;
+    // Feature B: Operational / Functional / Mechanistic verbs
+    const hasMechRelation = /\b(works by|applies|extract(?:s|ed|ing)?|transform(?:s|ed|ing)?|comput(?:es|ed|ing)?|divid(?:es|ed|ing)?|multiplie(?:s|d)?|calculat(?:es|ed|ing)?|connect(?:s|ed|ing)?|execut(?:es|ed|ing)?|process(?:es|ed|ing)?|generat(?:es|ed|ing)?|allocat(?:es|ed|ing)?|modifie(?:s|d|ying)?|conduc(?:ts|ted|ting)?|converts?|eliminat(?:es|ed|ing)?|reduc(?:es|ed|ing)?|increas(?:es|ed|ing)?|decreas(?:es|ed|ing)?|stores?|retrieves?|passes?|takes?|outputs?|returns?|handles?|implements?|travers(?:es|ed|ing)?|select(?:s|ed|ing)?|partition(?:s|ed|ing)?|discard(?:s|ed|ing)?)\b/i.test(lower);
 
-    if (matchedTerms.length > 0 && hasSubstanceRelation) {
+    // Feature C: Causal / Rule / Invariant / Conditional connectors
+    const hasRuleRelation = /\b(if|when|whenever|because|therefore|in order to|leads to|results in|prevents|causes|so that|guarantees?|ensures?|requires?|depends on|condition|conditions|properties|invariants?|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes)\b/i.test(lower);
+
+    // Feature D: Comparative / Contrastive relations
+    const hasComparisonRelation = /\b(in contrast|compared to|difference between|neither .* nor|whereas|while|faster than|slower than|preferred over|differs? from|unlike|similar to)\b/i.test(lower);
+
+    // Feature E: Observational / Demonstrative / Deictic Teaching cues
+    const hasDemonstrative = /\b(look at|notice (?:what happens|that|how)|observe (?:that|how)|see (?:what happens|that|how)|here we (?:see|have|notice)|consider (?:this|the|an?)|suppose (?:we|that)|let us (?:see|examine|trace|look)|trace (?:through|the)|given (?:an?|the)|for example|for instance)\b/i.test(lower);
+
+    // Feature F: Worked Trace / Example markers
+    const hasTraceExample = /\[[0-9,\s]+\]|\b(pivot|example|trace|step|produces)\b/i.test(lower);
+
+    // Feature G: Socratic Instructional Questions
+    const hasSocraticCurricular = /\b(what happens (?:to|if|when)|why does|why do we|how does|can the|what is the effect of)\b/i.test(lower);
+
+    // Check sentence length and substance (avoid 1-2 word conversational fillers)
+    const words = seg.split(/\s+/).filter(Boolean);
+    const hasSubstantiveLength = words.length >= 4;
+
+    const hasInstructionalSignal = hasDefRelation || hasMechRelation || hasRuleRelation || hasComparisonRelation || hasDemonstrative || hasTraceExample || hasSocraticCurricular;
+
+    if (hasInstructionalSignal && hasSubstantiveLength) {
+      const substanceType = hasDefRelation ? 'DEFINITION_OR_FACT'
+        : (hasMechRelation ? 'MECHANISM'
+        : (hasRuleRelation ? 'RULE_OR_CONDITION'
+        : (hasComparisonRelation ? 'COMPARISON'
+        : (hasDemonstrative ? 'OBSERVATION_DEMONSTRATION'
+        : (hasTraceExample ? 'WORKED_EXAMPLE' : 'SOCRATIC_INSTRUCTION')))));
+
+      const extractedConcepts = this._extractConceptsFromSegment(seg);
+
       return {
         type: 'CURRICULAR',
-        matchedTerms,
-        substanceType: hasDefRelation ? 'DEFINITION_OR_FACT'
-          : (hasMechRelation ? 'MECHANISM'
-          : (hasRuleRelation ? 'RULE_OR_CONDITION'
-          : (hasComparisonRelation ? 'COMPARISON'
-          : (hasTraceExample ? 'WORKED_EXAMPLE' : 'SOCRATIC_INSTRUCTION')))),
-        reason: 'Presents assessable subject concept with functional, causal, or structural relation',
+        substanceType,
+        matchedTerms: extractedConcepts,
+        reason: 'Presents assessable instructional content with substantive conceptual or operational predicate',
         confidence: 'HIGH'
       };
     }
 
-    if (matchedTerms.length > 0 && !hasSubstanceRelation) {
+    // Contextual continuity: If previous segment was a demonstrative cue ("Look at this graph"), and this segment describes the behavior ("Notice what happens when we increase the input"), it is curricular.
+    if (prevSeg && (prevSeg.toLowerCase().includes('look at') || prevSeg.toLowerCase().includes('notice') || prevSeg.toLowerCase().includes('observe')) && hasSubstantiveLength) {
+      const extractedConcepts = this._extractConceptsFromSegment(seg);
       return {
-        type: 'UNGROUNDED_VOCAB',
-        matchedTerms,
-        reason: 'Technical terminology mentioned without explanatory, functional, or assessable substance',
+        type: 'CURRICULAR',
+        substanceType: 'OBSERVATION_DEMONSTRATION',
+        matchedTerms: extractedConcepts,
+        reason: 'Instructional continuity following demonstrative guidance',
         confidence: 'MEDIUM'
       };
     }
 
     return {
       type: 'GENERAL_TEXT',
-      reason: 'Standard conversational text without domain curricular substance',
+      reason: 'Standard conversational text without instructional substance',
       confidence: 'MEDIUM'
     };
+  }
+
+  /**
+   * Extract key subject nouns or domain concept entities from an instructional segment.
+   * Works across CS, Mathematics, English Grammar, Sciences, and emerging topics.
+   */
+  _extractConceptsFromSegment(seg) {
+    if (!seg) return [];
+    const concepts = [];
+
+    // 1. Prominent Acronyms (e.g., MCP, CNN, HTTP, LLM, API, CPU, DNA, RNA)
+    const acronyms = seg.match(/\b[A-Z]{2,}\b/g) || [];
+    acronyms.forEach(a => {
+      if (!['THE', 'FOR', 'AND', 'ARE', 'THIS', 'THAT', 'WITH', 'NOT', 'BUT', 'FROM'].includes(a)) {
+        concepts.push(a);
+      }
+    });
+
+    // 2. Definitional Subject: "X is a Y", "X means Y", "A pronoun is used...", "MCP provides..."
+    const defMatch = seg.match(/(?:^|\b(?:a|an|the)\s+)([A-Za-z0-9\s\-]+?)\s+(?:is an?|are(?: words)?|means|refers to|stands for|provides|applies|consists of|differs from)/i);
+    if (defMatch && defMatch[1]) {
+      const rawSubject = defMatch[1].trim();
+      if (rawSubject.length > 2 && rawSubject.length < 40) {
+        const cleaned = rawSubject.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+        concepts.push(cleaned);
+      }
+    }
+
+    // 3. Technical / Subject compound noun phrases
+    const nounPhraseRegex = /\b([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(?:algorithm|layers?|filters?|protocols?|numbers?|words?|spaces?|functions?|methods?|structures?|models?|elements?|inputs?|outputs?|vectors?|graphs?|nodes?|trees?)/gi;
+    let npMatch;
+    while ((npMatch = nounPhraseRegex.exec(seg)) !== null) {
+      if (npMatch[0] && npMatch[0].length > 3 && npMatch[0].length < 40) {
+        const cleaned = npMatch[0].split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+        concepts.push(cleaned);
+      }
+    }
+
+    // 4. Prominent Capitalized Words / Quoted Terms
+    const quoted = seg.match(/['"`](.*?)['"`]/g) || [];
+    quoted.forEach(q => {
+      const strip = q.replace(/['"`]/g, '').trim();
+      if (strip.length > 2 && strip.length < 30) {
+        concepts.push(strip);
+      }
+    });
+
+    // Deduplicate and filter generic filler words
+    const stopWords = new Set(['today', 'we', 'you', 'let', 'now', 'here', 'first', 'second', 'example', 'step', 'sentence']);
+    const deduped = [];
+    for (const c of concepts) {
+      const lower = c.toLowerCase();
+      if (!stopWords.has(lower) && !deduped.some(d => d.toLowerCase() === lower)) {
+        deduped.push(c);
+      }
+    }
+
+    if (deduped.length === 0) {
+      // Fallback: take first 2 salient content words of the sentence
+      const words = seg.replace(/[^a-zA-Z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 3 && !stopWords.has(w.toLowerCase()));
+      if (words.length > 0) {
+        deduped.push(words.slice(0, 2).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '));
+      }
+    }
+
+    return deduped.slice(0, 4);
   }
 
   /**
@@ -181,10 +249,15 @@ class DepthAnalyzer {
     }
 
     const segments = this.segmentText(raw);
-    const classifiedSegments = segments.map(seg => ({
-      text: seg,
-      classification: this.classifySegment(seg)
-    }));
+    let prevSeg = null;
+    const classifiedSegments = segments.map(seg => {
+      const res = {
+        text: seg,
+        classification: this.classifySegment(seg, prevSeg)
+      };
+      prevSeg = seg;
+      return res;
+    });
 
     const curricularSegments = classifiedSegments.filter(s => s.classification.type === 'CURRICULAR');
     const pedagogicalSegments = classifiedSegments.filter(s => s.classification.type === 'PEDAGOGICAL');
@@ -199,7 +272,9 @@ class DepthAnalyzer {
         ? 'INSUFFICIENT_CURRICULAR_CONTENT: Technical vocabulary present without assessable instruction or explanation.'
         : (pedagogicalSegments.length > 0
           ? 'INSUFFICIENT_CURRICULAR_CONTENT: Pure pedagogical process, motivation, or feedback without assessable curricular concepts.'
-          : 'INSUFFICIENT_CURRICULAR_CONTENT: Non-academic or administrative content.');
+          : (adminSegments.length > 0
+            ? 'INSUFFICIENT_CURRICULAR_CONTENT: Non-academic administrative content or casual chatter.'
+            : 'INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.'));
 
       return {
         isAcademic: false,
@@ -221,13 +296,12 @@ class DepthAnalyzer {
     const focusSet = new Set();
     curricularSegments.forEach(s => {
       (s.classification.matchedTerms || []).forEach(t => {
-        const cap = t.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-        focusSet.add(cap);
+        focusSet.add(t);
       });
     });
 
     const detectedFocus = Array.from(focusSet).slice(0, 6);
-    if (detectedFocus.length === 0) detectedFocus.push('Core Concepts');
+    if (detectedFocus.length === 0) detectedFocus.push('Instructional Content');
 
     // Procedural and depth signals evaluated on curricular content
     const curricularText = curricularSegments.map(s => s.text).join(' ');
@@ -237,23 +311,23 @@ class DepthAnalyzer {
     const hasMech = curricularSegments.some(s => s.classification.substanceType === 'MECHANISM');
     const hasRule = curricularSegments.some(s => s.classification.substanceType === 'RULE_OR_CONDITION');
     const hasComp = curricularSegments.some(s => s.classification.substanceType === 'COMPARISON');
-    const hasTrace = curricularSegments.some(s => s.classification.substanceType === 'WORKED_EXAMPLE');
+    const hasTrace = curricularSegments.some(s => s.classification.substanceType === 'WORKED_EXAMPLE' || s.classification.substanceType === 'OBSERVATION_DEMONSTRATION');
 
-    // Compute characteristic dimensions required by test_adaptive_engine_v12
+    // Compute characteristic dimensions
     const conceptExp = (hasDef || hasMech) ? (curricularSegments.length > 2 ? 'Strong' : 'Moderate') : 'Developing';
-    const reasonMarkers = ['because', 'therefore', 'why', 'in order to', 'leads to', 'results in', 'prevents', 'eliminates'];
+    const reasonMarkers = ['because', 'therefore', 'why', 'in order to', 'leads to', 'results in', 'prevents', 'eliminates', 'so that'];
     const reasonCount = reasonMarkers.filter(m => lowerCurricular.includes(m)).length;
     const reasoning = reasonCount >= 2 ? 'Strong' : (reasonCount >= 1 ? 'Moderate' : 'Light');
 
-    const exampleMarkers = ['for example', 'for instance', 'consider', 'suppose', 'like when', 'example', 'trace', 'given array'];
+    const exampleMarkers = ['for example', 'for instance', 'consider', 'suppose', 'like when', 'example', 'trace', 'given array', 'notice', 'look at'];
     const hasExamples = exampleMarkers.some(m => lowerCurricular.includes(m)) || hasTrace;
     const examples = hasExamples ? 'Present' : 'Light';
 
-    const procMarkers = ['first', 'second', 'third', 'finally', 'then', 'step', 'after', 'before', 'pauses', 'transfers', 'restores', 'resumes'];
+    const procMarkers = ['first', 'second', 'third', 'finally', 'then', 'step', 'after', 'before', 'pauses', 'transfers', 'restores', 'resumes', 'next'];
     const procCount = procMarkers.filter(m => lowerCurricular.includes(m)).length;
     const procedures = procCount >= 3 ? 'Strong' : (procCount >= 1 ? 'Moderate' : 'Light');
 
-    let depthScore = 40;
+    let depthScore = 45;
     if (conceptExp === 'Strong') depthScore += 12;
     if (reasoning === 'Strong') depthScore += 12;
     else if (reasoning === 'Moderate') depthScore += 6;
@@ -262,7 +336,7 @@ class DepthAnalyzer {
     else if (procedures === 'Moderate') depthScore += 8;
     if (curricularSegments.length >= 4) depthScore += 10;
 
-    depthScore = Math.min(100, Math.max(35, depthScore));
+    depthScore = Math.min(100, Math.max(40, depthScore));
     let rating = 'Developing';
     if (depthScore < 50) rating = 'Introductory';
     else if (depthScore >= 75) rating = 'Comprehensive';
