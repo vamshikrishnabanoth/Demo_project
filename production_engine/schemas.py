@@ -50,6 +50,7 @@ class AssessmentTarget(BaseModel):
     instructional_act: InstructionalAct = "EXPLAIN"
     evidence_refs: List[str] = Field(default_factory=list, description="Associated chunk IDs and timestamps")
     plausible_misconceptions: List[str] = Field(default_factory=list, description="Common student misconceptions to target in distractors")
+    assigned_key: Optional[Literal["A", "B", "C", "D"]] = None
 
 
 class ProductionAssessmentPlan(BaseModel):
@@ -79,10 +80,15 @@ class ProductionMCQ(BaseModel):
     cognitive_level: BloomsLevel = "UNDERSTAND"
     difficulty_level: DifficultyLevel = "MEDIUM"
 
-    # Teacher-Grounding Traceability Record
+    # Teacher-Grounding & Provenance Traceability Record
+    target_id: str = Field(default="", description="Mapped target ID from planner")
+    assigned_key: Optional[Literal["A", "B", "C", "D"]] = Field(default=None, description="Steered target key from planner")
     what_taught: str = Field(default="", description="What exact technical content was taught")
     why_assessed: str = Field(default="", description="Why the teacher emphasized this concept")
     evidence_refs: List[str] = Field(default_factory=list, description="Where in the transcript/slide this appears")
+    evidence_excerpt: str = Field(default="", description="Exact transcript excerpt used to ground question")
+    representation_used: str = Field(default="", description="Representation type: BLUEPRINT or SUMMARY")
+    planner_decision: str = Field(default="", description="Planner pedagogical rationale")
     misconception_rationale: str = Field(default="", description="Why the distractors represent plausible student errors")
 
     @model_validator(mode="before")
@@ -103,6 +109,7 @@ class ValidationResult(BaseModel):
     evidence_grounding_passed: bool
     distractor_quality_passed: bool
     issues: List[str] = Field(default_factory=list)
+    is_fixable: bool = True
 
 
 class ProductionAssessmentSuite(BaseModel):

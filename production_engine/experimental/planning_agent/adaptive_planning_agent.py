@@ -53,10 +53,16 @@ class AdaptivePlanningAgent:
     ) -> AdaptiveAssessmentPlan:
         
         # 1. Gather Available Concept Evidence Base
-        concept_candidates = []
+        META_STOPLIST = {
+            "overview", "introduction", "intro", "agenda", "summary", 
+            "lecture plan", "study plan", "study tips", "course logistics", 
+            "wrap up", "conclusion", "exam tips", "administrative", "lecture segment", "core methodology"
+        }
+
+        raw_candidates = []
         if blueprint and blueprint.topics:
             for b in blueprint.topics:
-                concept_candidates.append({
+                raw_candidates.append({
                     "concept": b.topic,
                     "what": f"Instructional act: {', '.join(b.instructional_acts)} | Dominant mode: {b.dominant_mode}",
                     "why": f"Teacher specificity: {b.teacher_specificity} (Salience {b.salience_score:.2f})",
@@ -64,34 +70,45 @@ class AdaptivePlanningAgent:
                 })
         elif summary:
             for c in summary.concepts_and_definitions:
-                concept_candidates.append({
+                raw_candidates.append({
                     "concept": c,
                     "what": c,
                     "why": "Core curriculum definition",
                     "evidence_refs": []
                 })
             for m in summary.mechanisms_and_formulas:
-                concept_candidates.append({
+                raw_candidates.append({
                     "concept": m,
                     "what": m,
                     "why": "Mathematical / algorithmic mechanism",
                     "evidence_refs": []
                 })
-        else:
-            # Extract concepts from hierarchical parent chunks
-            for p in hier_store.parents[:8]:
-                concept_candidates.append({
-                    "concept": p.title,
-                    "what": p.full_text[:200],
-                    "why": "Instructional segment coverage",
-                    "evidence_refs": p.child_ids
-                })
+
+        concept_candidates = []
+        for cand in raw_candidates:
+            c_norm = cand["concept"].strip().lower()
+            if c_norm not in META_STOPLIST and not any(c_norm.startswith(m) for m in ["overview", "intro", "study plan"]):
+                concept_candidates.append(cand)
+
+        # Fallback to hierarchical parents if concept candidates are sparse
+        if len(concept_candidates) < 3 and hier_store.parents:
+            for p in hier_store.parents:
+                p_title = p.title.strip()
+                p_norm = p_title.lower()
+                if p_norm not in META_STOPLIST and not any(p_norm.startswith(m) for m in ["overview", "intro", "lecture segment"]):
+                    concept_candidates.append({
+                        "concept": p_title,
+                        "what": p.full_text[:250],
+                        "why": "Curricular technical topic",
+                        "evidence_refs": p.child_ids
+                    })
 
         if not concept_candidates:
-            concept_candidates = [{"concept": "Core Methodology", "what": canonical.title, "why": "Core topic", "misconceptions": []}]
+            # Last resort: extract from raw title or first parent text without generic overview label
+            fallback_title = canonical.title if canonical.title.lower() not in META_STOPLIST else "Curricular Mechanics"
+            concept_candidates = [{"concept": fallback_title, "what": canonical.title, "why": "Curricular topic", "evidence_refs": []}]
 
         # 2. Build Multi-Angle Facet Prompt for LLM Agent
-        # Provide the LLM with the concepts, available parent windows, and slide links
         prompt = f"""You are the Lead Pedagogical Assessment Planning Agent.
 The instructor requested {requested_count} high-quality, non-redundant assessment targets at difficulty: {requested_difficulty.upper()}.
 
@@ -101,22 +118,23 @@ AVAILABLE INSTRUCTIONAL CONCEPTS & EVIDENCE:
 AVAILABLE HIERARCHICAL PARENT SECTIONS:
 {json.dumps([{"parent_id": p.evidence_id, "title": p.title, "children": p.child_ids} for p in hier_store.parents[:10]], indent=2)}
 
-MISSION:
-Fulfill the teacher's request for exactly {requested_count} targets.
-If the number of unique concepts ({len(concept_candidates)}) is less than {requested_count}, do NOT invent unrelated topics.
-Instead, assess the available core concepts from MULTIPLE DISTINCT PEDAGOGICAL FACETS:
-1. CONCEPT_UNDERSTANDING (Fundamental definitions and mechanism mechanics)
-2. THEORETICAL_RATIONALE (Why design decisions/formulas were chosen)
-3. CODE_INTERPRETATION (API semantics, syntax, tensor manipulation)
-4. OUTPUT_PREDICTION (Tracing concrete execution and output calculation)
-5. ERROR_DIAGNOSIS (Invariant violations, bug diagnosis, condition checks)
-6. BOUNDARY_EDGE_CASE (Sentinels, empty partitions, extreme limits)
-7. PARAMETER_CHANGE (Altering dimensions, parameters, or hyperparameters)
-8. COMPLEXITY_ANALYSIS (Time/space asymptotic bounds and trade-offs)
-9. ARCHITECTURAL_COMPARISON (Contrasting two methods or paradigms)
-10. PRACTICAL_APPLICATION (Applying the method to a realistic problem)
-11. OFF_BY_ONE_ANALYSIS (Loop bounds, partition indices, integer division (+1))
-12. MISCONCEPTION_TARGETING (Targeting common student traps and false assumptions)
+CRITICAL CURRICULAR RULES:
+1. Assess ONLY genuine technical concepts, commands, formulas, mechanisms, syntax, and algorithms taught in the lecture.
+2. NEVER generate questions about lecture meta-structure, course schedule, study plans, or 'overview' segments.
+3. ANTI-COLLAPSE RULE: Distribute targets diversely across multiple distinct concepts. NEVER assign more than 2 targets to the same concept.
+4. Each target must assess a completely distinct pedagogical facet:
+- CONCEPT_UNDERSTANDING (Fundamental definitions and mechanism mechanics)
+- THEORETICAL_RATIONALE (Why design decisions/formulas were chosen)
+- CODE_INTERPRETATION (API semantics, syntax, tensor manipulation)
+- OUTPUT_PREDICTION (Tracing concrete execution and output calculation)
+- ERROR_DIAGNOSIS (Invariant violations, bug diagnosis, condition checks)
+- BOUNDARY_EDGE_CASE (Sentinels, empty partitions, extreme limits)
+- PARAMETER_CHANGE (Altering dimensions, parameters, or hyperparameters)
+- COMPLEXITY_ANALYSIS (Time/space asymptotic bounds and trade-offs)
+- ARCHITECTURAL_COMPARISON (Contrasting two methods or paradigms)
+- PRACTICAL_APPLICATION (Applying the method to a realistic problem)
+- OFF_BY_ONE_ANALYSIS (Loop bounds, partition indices, integer division (+1))
+- MISCONCEPTION_TARGETING (Targeting common student traps and false assumptions)
 
 Return a strictly valid JSON object matching this schema:
 {{
@@ -124,13 +142,13 @@ Return a strictly valid JSON object matching this schema:
   "targets": [
     {{
       "target_id": "T01",
-      "concept_name": "<Specific concept name>",
-      "assessment_facet": "<CONCEPT_UNDERSTANDING | THEORETICAL_RATIONALE | CODE_INTERPRETATION | OUTPUT_PREDICTION | ERROR_DIAGNOSIS | BOUNDARY_EDGE_CASE | PARAMETER_CHANGE | COMPLEXITY_ANALYSIS | ARCHITECTURAL_COMPARISON | PRACTICAL_APPLICATION | OFF_BY_ONE_ANALYSIS | MISCONCEPTION_TARGETING>",
+      "concept_name": "<Specific technical concept name>",
+      "assessment_facet": "<One of the 12 facets above>",
       "what_taught": "<Precise factual content taught in lecture>",
       "why_assessed": "<Pedagogical rationale for assessing this specific facet>",
       "cognitive_level": "<REMEMBER | UNDERSTAND | APPLY | ANALYZE | EVALUATE>",
       "difficulty_level": "{requested_difficulty.upper()}",
-      "primary_evidence_id": "<e.g. E_CHILD_001 or E_SLIDE_01>",
+      "primary_evidence_id": "<e.g. E_CHILD_001 or E_PARENT_01>",
       "plausible_misconceptions": ["<Misconception 1>", "<Misconception 2>"]
     }}
   ]
@@ -138,15 +156,37 @@ Return a strictly valid JSON object matching this schema:
 Generate EXACTLY {requested_count} distinct targets."""
 
         raw_response = llm.generate_text(prompt=prompt, json_mode=True)
+        # Robust JSON extraction with truncation recovery
+        cleaned = raw_response.strip()
+        if cleaned.startswith("```json"):
+            cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+        elif cleaned.startswith("```"):
+            cleaned = cleaned.split("```")[1].split("```")[0].strip()
+        
+        parsed = None
         try:
-            cleaned = raw_response.strip()
-            if cleaned.startswith("```json"):
-                cleaned = cleaned.split("```json")[1].split("```")[0].strip()
-            elif cleaned.startswith("```"):
-                cleaned = cleaned.split("```")[1].split("```")[0].strip()
             parsed = json.loads(cleaned)
         except Exception:
-            # Fallback heuristic expansion if JSON parse fails
+            # Recovery: find the last completed target object ending in "}"
+            pos = len(cleaned)
+            while pos > 0:
+                last_brace = cleaned.rfind("}", 0, pos)
+                if last_brace == -1:
+                    break
+                candidate = cleaned[:last_brace+1]
+                for t_str in [candidate + "\n]}", candidate + "]}", candidate + "\n  ]\n}"]:
+                    try:
+                        recovered = json.loads(t_str)
+                        if isinstance(recovered, dict) and "targets" in recovered and len(recovered["targets"]) > 0:
+                            parsed = recovered
+                            break
+                    except Exception:
+                        continue
+                if parsed:
+                    break
+                pos = last_brace - 1
+
+        if not parsed or not isinstance(parsed, dict):
             parsed = {"targets": [], "planning_strategy_notes": "Deterministic fallback expansion"}
 
         raw_targets = parsed.get("targets", [])
@@ -161,10 +201,28 @@ Generate EXACTLY {requested_count} distinct targets."""
         has_code_evidence = any(kw in combined_text for kw in ["def ", "class ", "return ", "while ", "for ", "import ", "len(", "[", "]", "arr[", "mid ="])
         has_math_evidence = any(kw in combined_text for kw in ["=", "+", "-", "*", "/", "O(", "log", "mu", "sigma", "z =", "%"])
 
-        for idx, t_data in enumerate(raw_targets[:requested_count]):
-            facet = t_data.get("assessment_facet", cls.FACET_POOL[idx % len(cls.FACET_POOL)])
+        KEY_ROTATION = ["C", "A", "D", "B"]
+
+        concept_allocation_counts: Dict[str, int] = {}
+
+        for idx, t_data in enumerate(raw_targets):
+            if len(allocated_targets) >= requested_count:
+                break
+
+            c_name = t_data.get("concept_name", f"Concept {idx+1}").strip()
+            c_norm = c_name.lower()
+
+            # Skip meta-pedagogical topics completely
+            if c_norm in META_STOPLIST or any(c_norm.startswith(m) for m in ["overview", "intro", "study plan", "lecture segment"]):
+                continue
+
+            # Anti-Collapse Rule: Maximum 2 targets per distinct concept
+            if concept_allocation_counts.get(c_norm, 0) >= 2:
+                continue
+
+            facet = t_data.get("assessment_facet", cls.FACET_POOL[len(allocated_targets) % len(cls.FACET_POOL)])
             if facet not in cls.FACET_POOL:
-                facet = cls.FACET_POOL[idx % len(cls.FACET_POOL)]
+                facet = cls.FACET_POOL[len(allocated_targets) % len(cls.FACET_POOL)]
 
             # Evidence-Driven Facet Gating (Prevent Artificial Quota Spam)
             if facet in ["CODE_INTERPRETATION", "OFF_BY_ONE_ANALYSIS"] and not has_code_evidence:
@@ -175,12 +233,15 @@ Generate EXACTLY {requested_count} distinct targets."""
             # Map primary evidence ID to available child or slide
             p_eid = t_data.get("primary_evidence_id", "")
             if p_eid not in hier_store.child_map and hier_store.children:
-                p_eid = hier_store.children[idx % len(hier_store.children)].evidence_id
+                p_eid = hier_store.children[len(allocated_targets) % len(hier_store.children)].evidence_id
 
-            diff_val = requested_difficulty.upper() if requested_difficulty.upper() in ["EASY", "MEDIUM", "HARD"] else ["EASY", "MEDIUM", "HARD"][idx % 3]
+            # Planned Answer-Key Steering: Round-robin balanced distribution
+            assigned_k = KEY_ROTATION[len(allocated_targets) % len(KEY_ROTATION)]
+
+            diff_val = requested_difficulty.upper() if requested_difficulty.upper() in ["EASY", "MEDIUM", "HARD"] else ["EASY", "MEDIUM", "HARD"][len(allocated_targets) % 3]
             target_obj = AdaptiveAssessmentTarget(
-                target_id=f"T{idx+1:02d}",
-                concept_name=t_data.get("concept_name", f"Concept {idx+1}"),
+                target_id=f"T{len(allocated_targets)+1:02d}",
+                concept_name=c_name,
                 assessment_facet=facet,
                 what_taught=t_data.get("what_taught", "Taught in lecture"),
                 why_assessed=t_data.get("why_assessed", "Instructional assessment"),
@@ -188,40 +249,62 @@ Generate EXACTLY {requested_count} distinct targets."""
                 difficulty_level=diff_val,
                 primary_evidence_id=p_eid,
                 supporting_evidence_ids=alignment_graph.get(p_eid, []),
-                plausible_misconceptions=t_data.get("plausible_misconceptions", ["Common distractor error"])
+                plausible_misconceptions=t_data.get("plausible_misconceptions", ["Common distractor error"]),
+                assigned_key=assigned_k
             )
             allocated_targets.append(target_obj)
+            concept_allocation_counts[c_norm] = concept_allocation_counts.get(c_norm, 0) + 1
             facet_counts[facet] = facet_counts.get(facet, 0) + 1
             cog_counts[target_obj.cognitive_level] = cog_counts.get(target_obj.cognitive_level, 0) + 1
 
-        # If LLM returned fewer than requested_count, deterministically expand with remaining facets
-        while len(allocated_targets) < requested_count:
-            idx = len(allocated_targets)
-            c_base = concept_candidates[idx % len(concept_candidates)]
-            facet = cls.FACET_POOL[idx % len(cls.FACET_POOL)]
-            p_eid = hier_store.children[idx % len(hier_store.children)].evidence_id if hier_store.children else "E_C01"
-            diff_val = requested_difficulty.upper() if requested_difficulty.upper() in ["EASY", "MEDIUM", "HARD"] else ["EASY", "MEDIUM", "HARD"][idx % 3]
+        # If LLM returned fewer targets than requested, backfill from concept candidates across distinct facets
+        if len(allocated_targets) < requested_count and concept_candidates:
+            curr_idx = 0
+            # Allow up to 2 rounds across candidates
+            max_rounds = len(concept_candidates) * 2
+            attempts = 0
+            while len(allocated_targets) < requested_count and attempts < max_rounds:
+                c_base = concept_candidates[curr_idx % len(concept_candidates)]
+                c_norm = c_base["concept"].strip().lower()
+                attempts += 1
+                curr_idx += 1
 
-            target_obj = AdaptiveAssessmentTarget(
-                target_id=f"T{idx+1:02d}",
-                concept_name=f"{c_base['concept']} ({facet.replace('_', ' ').title()})",
-                assessment_facet=facet,
-                what_taught=c_base["what"],
-                why_assessed=f"Assesses {facet.lower().replace('_', ' ')} of {c_base['concept']}",
-                cognitive_level="APPLY" if requested_difficulty == "MEDIUM" else ("ANALYZE" if requested_difficulty == "HARD" else "REMEMBER"),
-                difficulty_level=diff_val,
-                primary_evidence_id=p_eid,
-                supporting_evidence_ids=alignment_graph.get(p_eid, []),
-                plausible_misconceptions=c_base.get("misconceptions", ["Formula inversion error"])
-            )
-            allocated_targets.append(target_obj)
-            facet_counts[facet] = facet_counts.get(facet, 0) + 1
-            cog_counts[target_obj.cognitive_level] = cog_counts.get(target_obj.cognitive_level, 0) + 1
+                if c_norm in META_STOPLIST or any(c_norm.startswith(m) for m in ["overview", "intro", "study plan"]):
+                    continue
+
+                if concept_allocation_counts.get(c_norm, 0) >= 2 and len(concept_allocation_counts) < len(concept_candidates):
+                    continue
+
+                tgt_num = len(allocated_targets) + 1
+                facet = cls.FACET_POOL[tgt_num % len(cls.FACET_POOL)]
+                p_eid = hier_store.children[tgt_num % len(hier_store.children)].evidence_id if hier_store.children else "E_C01"
+                diff_val = requested_difficulty.upper() if requested_difficulty.upper() in ["EASY", "MEDIUM", "HARD"] else ["EASY", "MEDIUM", "HARD"][tgt_num % 3]
+                assigned_k = KEY_ROTATION[tgt_num % len(KEY_ROTATION)]
+
+                target_obj = AdaptiveAssessmentTarget(
+                    target_id=f"T{tgt_num:02d}",
+                    concept_name=c_base["concept"],
+                    assessment_facet=facet,
+                    what_taught=c_base["what"],
+                    why_assessed=f"Assesses foundational understanding of {c_base['concept']} ({facet})",
+                    cognitive_level="APPLY" if requested_difficulty == "MEDIUM" else ("ANALYZE" if requested_difficulty == "HARD" else "UNDERSTAND"),
+                    difficulty_level=diff_val,
+                    primary_evidence_id=p_eid,
+                    supporting_evidence_ids=alignment_graph.get(p_eid, []),
+                    plausible_misconceptions=c_base.get("misconceptions", ["Conceptual misconception"]),
+                    assigned_key=assigned_k
+                )
+                allocated_targets.append(target_obj)
+                concept_allocation_counts[c_norm] = concept_allocation_counts.get(c_norm, 0) + 1
+                facet_counts[facet] = facet_counts.get(facet, 0) + 1
+                cog_counts[target_obj.cognitive_level] = cog_counts.get(target_obj.cognitive_level, 0) + 1
+
+        defensible_capacity = len(allocated_targets)
 
         return AdaptiveAssessmentPlan(
             plan_id=f"ADAPTIVE_PLAN_{canonical.input_id}_{requested_difficulty.upper()}",
             requested_count=requested_count,
-            allocated_count=len(allocated_targets),
+            allocated_count=defensible_capacity,
             requested_difficulty=requested_difficulty.upper(),
             representation_used=representation_type,
             targets=allocated_targets,

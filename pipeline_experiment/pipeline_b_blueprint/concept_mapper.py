@@ -37,11 +37,18 @@ class DecoupledConceptMapper:
         )
 
         chunk_excerpts = []
-        for c in canonical_input.chunks:
-            chunk_excerpts.append(f"[{c.chunk_id}] {c.text[:250]}...")
+        if canonical_input.chunks:
+            for c in canonical_input.chunks:
+                chunk_excerpts.append(f"[{c.chunk_id}] {c.text[:250]}...")
+        elif canonical_input.raw_content:
+            words = canonical_input.raw_content.split()
+            step = 250
+            for i in range(0, min(len(words), 250 * 25), step):
+                chunk_text = " ".join(words[i:i+step])
+                chunk_excerpts.append(f"[C_{i//step+1:02d}] {chunk_text[:250]}...")
         chunk_text_joined = "\n".join(chunk_excerpts[:25])
 
-        topic_target = "8 to 15" if len(canonical_input.chunks) > 15 else "4 to 8"
+        topic_target = "6 to 10"
 
         prompt = (
             f"Title: {canonical_input.title}\n"
@@ -49,7 +56,9 @@ class DecoupledConceptMapper:
             f"--- [CONTENT CHUNKS] ---\n"
             + chunk_text_joined
             + "\n\n"
-            f"Task: Extract {topic_target} distinct technical topics and sub-facets (including algorithmic steps, edge cases, formulas, pointer logic, and worked examples).\n"
+            f"Task: Extract {topic_target} distinct technical curricular topics and sub-facets taught in this material.\n"
+            "CRITICAL REQUIREMENT: Focus ONLY on technical concepts, algorithms, tools, commands, mechanisms, and formulas.\n"
+            "DO NOT include generic meta-topics such as 'Overview', 'Introduction', 'Course Logistics', 'Agenda', or 'Summary'.\n"
             "Provide for each topic:\n"
             "- topic_id (e.g. 'TOP_01')\n"
             "- topic_name\n"
@@ -63,4 +72,10 @@ class DecoupledConceptMapper:
             system_prompt=system_prompt,
             temperature=0.2
         )
-        return result.topics
+
+        META_STOPLIST = {"overview", "introduction", "intro", "agenda", "summary", "lecture plan", "study plan", "study tips", "course logistics", "wrap up", "conclusion"}
+        filtered_topics = [
+            t for t in result.topics
+            if t.topic_name.strip().lower() not in META_STOPLIST and not any(t.topic_name.strip().lower().startswith(m) for m in ["overview", "intro"])
+        ]
+        return filtered_topics if filtered_topics else result.topics

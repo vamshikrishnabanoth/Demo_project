@@ -31,10 +31,17 @@ class ConventionalSummarizer:
             supporting_context = f"\n\n--- [SUPPORTING MATERIAL] ---\n{canonical_input.supporting_materials_text[:2000]}"
 
         chunk_lines = []
-        for c in canonical_input.chunks:
-            excerpt = c.text[:350] + ("..." if len(c.text) > 350 else "")
-            chunk_lines.append(f"[{c.chunk_id}] {excerpt}")
-        chunks_text = "\n\n".join(chunk_lines[:10])
+        if canonical_input.chunks:
+            for c in canonical_input.chunks:
+                excerpt = c.text[:350] + ("..." if len(c.text) > 350 else "")
+                chunk_lines.append(f"[{c.chunk_id}] {excerpt}")
+        elif canonical_input.raw_content:
+            words = canonical_input.raw_content.split()
+            step = 250
+            for i in range(0, min(len(words), 250 * 15), step):
+                chunk_text = " ".join(words[i:i+step])
+                chunk_lines.append(f"[C_{i//step+1:02d}] {chunk_text[:350]}...")
+        chunks_text = "\n\n".join(chunk_lines[:12])
 
         prompt = (
             f"Title: {canonical_input.title}\n"
@@ -42,7 +49,7 @@ class ConventionalSummarizer:
             f"--- [SOURCE CONTENT CHUNKS] ---\n{chunks_text}\n"
             f"{supporting_context}\n\n"
             "Task: Generate a structured PedagogicalSummary containing:\n"
-            "- concepts_and_definitions (List of 4-6 main terms/concepts)\n"
+            "- concepts_and_definitions (List of 4-6 technical terms/concepts; DO NOT include 'Overview', 'Intro', or 'Summary')\n"
             "- mechanisms_and_formulas (List of 2-4 mathematical equations or mechanisms)\n"
             "- examples_and_code_patterns (List of 2-4 worked examples or code syntax shown)\n"
             "- factual_summary_text (Comprehensive 2-3 paragraph synthesized summary)"

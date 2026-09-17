@@ -9,7 +9,7 @@ import time
 import json
 import re
 import requests
-from typing import Type, TypeVar, Optional
+from typing import Type, TypeVar, Optional, Dict, Any
 from pydantic import BaseModel
 import dotenv
 
@@ -39,6 +39,28 @@ class UnifiedLLMEngine:
         self.gemini_api_key = os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")
         self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
         self.ollama_model = os.getenv("OLLAMA_MODEL", "quiz-expert:latest")
+
+    # Class-level cumulative token and call counters
+    total_prompt_tokens: int = 0
+    total_completion_tokens: int = 0
+    total_tokens: int = 0
+    total_calls: int = 0
+
+    @classmethod
+    def reset_usage(cls):
+        cls.total_prompt_tokens = 0
+        cls.total_completion_tokens = 0
+        cls.total_tokens = 0
+        cls.total_calls = 0
+
+    @classmethod
+    def get_usage(cls) -> Dict[str, int]:
+        return {
+            "prompt_tokens": cls.total_prompt_tokens,
+            "completion_tokens": cls.total_completion_tokens,
+            "total_tokens": cls.total_tokens,
+            "total_calls": cls.total_calls
+        }
 
     def generate_text(
         self,
@@ -197,12 +219,14 @@ class UnifiedLLMEngine:
                 except Exception:
                     pass
                 
-                # Dynamically parse wait time from Groq error if available
+                # Dynamically parse wait time from Groq error if available (supports minutes and seconds)
                 import re
-                m_sec = re.search(r"try again in ([\d\.]+)s", err_msg, re.IGNORECASE)
+                m_min_sec = re.search(r"try again in (?:(\d+)m)?([\d\.]+)s", err_msg, re.IGNORECASE)
                 m_ms = re.search(r"try again in ([\d\.]+)ms", err_msg, re.IGNORECASE)
-                if m_sec:
-                    wait_sec = max(2.0, float(m_sec.group(1)) + 1.5)
+                if m_min_sec:
+                    mins = float(m_min_sec.group(1)) if m_min_sec.group(1) else 0.0
+                    secs = float(m_min_sec.group(2)) if m_min_sec.group(2) else 0.0
+                    wait_sec = max(2.0, (mins * 60.0) + secs + 1.5)
                 elif m_ms:
                     wait_sec = max(1.5, (float(m_ms.group(1)) / 1000.0) + 1.0)
                 else:
@@ -221,6 +245,14 @@ class UnifiedLLMEngine:
                 res.raise_for_status()
 
             data = res.json()
+            usage = data.get("usage", {})
+            p_tok = usage.get("prompt_tokens", 0)
+            c_tok = usage.get("completion_tokens", 0)
+            t_tok = usage.get("total_tokens", p_tok + c_tok)
+            UnifiedLLMEngine.total_prompt_tokens += p_tok
+            UnifiedLLMEngine.total_completion_tokens += c_tok
+            UnifiedLLMEngine.total_tokens += t_tok
+            UnifiedLLMEngine.total_calls += 1
             return data["choices"][0]["message"]["content"]
 
         raise RuntimeError("Groq failed after rate-limit backoff.")
@@ -270,7 +302,8 @@ class UnifiedLLMEngine:
         if json_mode:
             payload["format"] = "json"
 
-        res = requests.post(f"{self.ollama_base_url}/api/chat", json=payload, timeout=300)
+        timeout_val = int(os.getenv("OLLAMA_TIMEOUT", 1200))
+        res = requests.post(f"{self.ollama_base_url}/api/chat", json=payload, timeout=timeout_val)
         res.raise_for_status()
         data = res.json()
         return data["message"]["content"]

@@ -33,6 +33,7 @@ class AdaptiveAssessmentTarget(BaseModel):
     primary_evidence_id: str
     supporting_evidence_ids: List[str] = Field(default_factory=list)
     plausible_misconceptions: List[str] = Field(default_factory=list)
+    assigned_key: Optional[Literal["A", "B", "C", "D"]] = None
 
 
 class AdaptiveAssessmentPlan(BaseModel):

@@ -47,3 +47,4 @@ production_engine/outputs/checkpoints/
 production_engine/outputs/staging/
 production_engine/cache/store/
 production_engine/observability/traces/REQ-*.json
+pipeline_experiment/results/

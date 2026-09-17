@@ -41,7 +41,9 @@ class ProductionMCQGenerator:
             "common coding bug (e.g. off-by-one, integer division error, internal vs cross-array comparison), or incorrect formula calculation.\n"
             "3. UNAMBIGUOUS SINGLE KEY: Exactly one option (A, B, C, or D) must be fully correct and supported by evidence.\n"
             "4. EXPLANATION INTEGRITY: The explanation must explicitly prove the correct option and refute each distractor.\n"
-            "5. TRACEABILITY RECORD: Every question must contain: what_taught, why_assessed, evidence_refs, and misconception_rationale."
+            "5. TRACEABILITY RECORD: Every question must contain: what_taught, why_assessed, evidence_refs, and misconception_rationale.\n"
+            "6. ANSWER KEY STEERING: For each target, construct the question and options so that Option [assigned_correct_option] (A, B, C, or D) "
+            "is the uniquely correct answer. The other three options must be plausible, well-constructed distractors."
         )
 
         all_questions: List[ProductionMCQ] = []
@@ -56,6 +58,7 @@ class ProductionMCQGenerator:
                 ev = retrieved_evidence_map.get(t.target_id) if retrieved_evidence_map else None
                 ev_text = ev.retrieved_content[:300] if ev else ""
                 ev_refs = ev.evidence_ids if ev else t.evidence_refs
+                assigned_k = getattr(t, "assigned_key", None) or ["C", "A", "D", "B"][abs_idx % 4]
 
                 targets_payload.append({
                     "target_id": t.target_id or f"TGT_{abs_idx:02d}",
@@ -65,7 +68,8 @@ class ProductionMCQGenerator:
                     "cognitive_level": t.cognitive_level,
                     "misconceptions_to_target": t.plausible_misconceptions,
                     "evidence_refs": ev_refs,
-                    "retrieved_evidence_excerpt": ev_text
+                    "retrieved_evidence_excerpt": ev_text,
+                    "assigned_correct_option": assigned_k
                 })
 
             prompt_body = (
@@ -76,6 +80,7 @@ class ProductionMCQGenerator:
                 f"{json.dumps(targets_payload, indent=2)}\n\n"
                 f"INSTRUCTION:\n"
                 f"Generate exactly {len(batch_targets)} MCQs (one per target). "
+                f"For each MCQ, ensure the correct option corresponds to its target's assigned_correct_option.\n"
                 f"Output strictly valid JSON matching RawMCQListOutput schema."
             )
 
@@ -88,6 +93,7 @@ class ProductionMCQGenerator:
             if raw_output and raw_output.questions:
                 for q_idx, q in enumerate(raw_output.questions):
                     matched_target = batch_targets[q_idx] if q_idx < len(batch_targets) else batch_targets[-1]
+                    ev = retrieved_evidence_map.get(matched_target.target_id) if retrieved_evidence_map else None
                     if not q.target_concept:
                         q.target_concept = matched_target.concept_name
                     if not q.what_taught:
@@ -97,10 +103,42 @@ class ProductionMCQGenerator:
                     if not q.cognitive_level or q.cognitive_level == "UNDERSTAND":
                         q.cognitive_level = matched_target.cognitive_level
                     if not q.evidence_refs:
-                        ev = retrieved_evidence_map.get(matched_target.target_id) if retrieved_evidence_map else None
                         q.evidence_refs = ev.evidence_ids if ev else matched_target.evidence_refs
                     if not q.misconception_rationale and matched_target.plausible_misconceptions:
                         q.misconception_rationale = f"Distractors target: {', '.join(matched_target.plausible_misconceptions)}"
+                    
+                    # Provenance lineage attachment
+                    q.target_id = matched_target.target_id or f"TGT_{b_start+q_idx+1:02d}"
+                    q.assigned_key = getattr(matched_target, "assigned_key", None)
+                    q.evidence_excerpt = ev.retrieved_content[:300] if ev else ""
+                    q.representation_used = plan.representation_used
+                    q.planner_decision = f"Assessing {matched_target.concept_name} ({getattr(matched_target, 'instructional_act', 'EXPLAIN')})"
+
+                    # Safe option rotation to match target key:
+                    # Validate all options are distinct and non-empty before rotating
+                    if q.assigned_key and q.correct_option in ["A", "B", "C", "D"] and q.assigned_key in ["A", "B", "C", "D"]:
+                        if q.correct_option != q.assigned_key:
+                            curr_k = q.correct_option
+                            target_k = q.assigned_key
+                            opts = {
+                                "A": (q.option_a or "").strip(),
+                                "B": (q.option_b or "").strip(),
+                                "C": (q.option_c or "").strip(),
+                                "D": (q.option_d or "").strip()
+                            }
+                            if len(set(opts.values())) == 4 and all(len(v) > 0 for v in opts.values()):
+                                correct_val = opts[curr_k]
+                                target_val = opts[target_k]
+                                opts[target_k] = correct_val
+                                opts[curr_k] = target_val
+                                q.option_a = opts["A"]
+                                q.option_b = opts["B"]
+                                q.option_c = opts["C"]
+                                q.option_d = opts["D"]
+                                q.correct_option = target_k
+                                if f"option {curr_k.lower()}" in (q.explanation or "").lower():
+                                    q.explanation = re.sub(rf'\boption {curr_k}\b', f'Option {target_k}', q.explanation, flags=re.IGNORECASE)
+
                 all_questions.extend(raw_output.questions)
 
         return all_questions

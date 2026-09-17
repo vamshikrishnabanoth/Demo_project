@@ -47,10 +47,16 @@ class AdaptiveAssessmentEngineV2:
         from production_engine.config import (
             MODEL_MAP, GENERATOR_PROVIDER, GENERATOR_MODEL, SERVING_MODE, GENERATOR_MODEL_TARGET
         )
-        self.provider = provider or "groq"
-        self.model = model or MODEL_MAP.get("representation", "openai/gpt-oss-20b")
+        import os
+        self.provider = provider or os.getenv("DEFAULT_LLM_PROVIDER", "groq")
+        self.model = model or os.getenv("DEFAULT_LLM_MODEL", MODEL_MAP.get("representation", "openai/gpt-oss-20b"))
         self.temperature = temperature
         
+        critic_provider = os.getenv("CRITIC_PROVIDER", self.provider)
+        critic_model = os.getenv("CRITIC_MODEL", MODEL_MAP.get("critic", "openai/gpt-oss-120b"))
+        if critic_provider == "ollama" and critic_model.startswith("openai/"):
+            critic_model = os.getenv("OLLAMA_MODEL", "quiz-expert:latest")
+
         # Dedicated engine instances matching frozen task assignments
         self.llm = UnifiedLLMEngine(provider=self.provider, model=self.model, temperature=temperature)
         self.generator_llm = UnifiedLLMEngine(
@@ -59,8 +65,8 @@ class AdaptiveAssessmentEngineV2:
             temperature=temperature
         )
         self.critic_llm = UnifiedLLMEngine(
-            provider="groq",
-            model=MODEL_MAP.get("critic", "openai/gpt-oss-120b"),
+            provider=critic_provider,
+            model=critic_model,
             temperature=temperature
         )
 
@@ -69,10 +75,16 @@ class AdaptiveAssessmentEngineV2:
         canonical: CanonicalEducationalInput,
         transcript_data: Optional[Dict[str, Any]] = None,
         requested_count: int = 5,
-        difficulty: str = "MIXED"
+        difficulty: str = "MIXED",
+        enable_replenishment: bool = False,
+        max_repair_attempts: int = 1,
+        enforce_fixable_filter: bool = True
     ) -> ProductionAssessmentSuite:
         start_time = time.time()
         llm_call_count = 0
+        repair_llm_calls = 0
+        replenishment_llm_calls = 0
+        rejections_count = 0
 
         # Initialize Structured Request Tracer
         request_id = f"REQ-{int(time.time()*1000)}-{canonical.input_id[:8]}"
@@ -205,7 +217,8 @@ class AdaptiveAssessmentEngineV2:
                 difficulty_level=t.difficulty_level,
                 instructional_act="EXPLAIN",
                 evidence_refs=[t.primary_evidence_id] + t.supporting_evidence_ids,
-                plausible_misconceptions=t.plausible_misconceptions
+                plausible_misconceptions=t.plausible_misconceptions,
+                assigned_key=getattr(t, "assigned_key", None)
             ))
 
         engine_plan = ProductionAssessmentPlan(
@@ -256,40 +269,82 @@ class AdaptiveAssessmentEngineV2:
         )
         llm_call_count += (len(engine_plan.targets) + 1) // 2
 
-        # Step 7: Deterministic Integrity Validation & Closed-Loop Critic Repair
+        # Step 7: Integrity Validation, Relational Grounding & Semantic Deduplication Gate
         raw_evidence = (canonical.raw_content or "") + "\n" + (canonical.supporting_materials_text or "")
         final_repaired_questions: List[ProductionMCQ] = []
+        accepted_stems: List[str] = []
+        accepted_propositions: List[Dict[str, Any]] = []
         repairs_performed = 0
 
+        def _record_accepted(mcq: ProductionMCQ):
+            accepted_stems.append(mcq.stem or mcq.question_text)
+            raw_opts = {"A": mcq.option_a, "B": mcq.option_b, "C": mcq.option_c, "D": mcq.option_d}
+            accepted_propositions.append({
+                "concept": mcq.target_concept or "",
+                "stem": mcq.stem or mcq.question_text or "",
+                "correct_text": raw_opts.get(mcq.correct_option, ""),
+                "facet": mcq.cognitive_level or ""
+            })
+
         for q in raw_questions:
-            val_res = ProductionAssessmentValidator.validate_question(q, raw_evidence)
+            val_res = ProductionAssessmentValidator.validate_question(
+                q, raw_evidence, accepted_stems=accepted_stems, accepted_propositions=accepted_propositions
+            )
             if val_res.is_valid:
                 final_repaired_questions.append(q)
+                _record_accepted(q)
             else:
-                # Closed-Loop Critic Agent surgical repair
-                ev_excerpt = adapted_retrieved_map.get(q.question_id, adapted_retrieved_map[list(adapted_retrieved_map.keys())[0]]).retrieved_content
-                rep_res = ClosedLoopCriticAgent.diagnose_and_repair(
-                    mcq=q,
-                    validator_issues=val_res.issues,
-                    evidence_text=ev_excerpt,
-                    llm=self.critic_llm,
-                    max_attempts=2
-                )
-                if rep_res.final_validation_passed:
-                    final_repaired_questions.append(rep_res.repaired_mcq)
-                    repairs_performed += 1
-                llm_call_count += rep_res.attempts_taken
+                if enforce_fixable_filter and not val_res.is_fixable:
+                    # Case 1: Fundamental absence, ungrounded parameter, meta-structure, or duplicate -> Hard Reject
+                    # 0 additional LLM calls after candidate generation
+                    rejections_count += 1
+                    continue
 
-        # Step 8: Intelligent Question-Count Fulfillment Loop
-        # If output < requested_count, generate targeted individual items for missing targets
-        max_replenish_retries = 3
-        while len(final_repaired_questions) < requested_count and engine_plan.targets and max_replenish_retries > 0:
-            missing_count = requested_count - len(final_repaired_questions)
-            for m_idx in range(missing_count):
+                # Case 2: Fixable wording/distractor -> ONE targeted repair attempt (or up to max_repair_attempts)
+                if max_repair_attempts > 0:
+                    ev_obj = adapted_retrieved_map.get(q.target_id, list(adapted_retrieved_map.values())[0])
+                    ev_excerpt = ev_obj.retrieved_content
+                    rep_res = ClosedLoopCriticAgent.diagnose_and_repair(
+                        mcq=q,
+                        validator_issues=val_res.issues,
+                        evidence_text=ev_excerpt,
+                        llm=self.critic_llm,
+                        max_attempts=max_repair_attempts
+                    )
+                    llm_call_count += rep_res.attempts_taken
+                    repair_llm_calls += rep_res.attempts_taken
+                    if rep_res.final_validation_passed:
+                        # Validate repaired question against accepted stems & propositions
+                        repaired = rep_res.repaired_mcq
+                        rep_val = ProductionAssessmentValidator.validate_question(
+                            repaired, raw_evidence, accepted_stems=accepted_stems, accepted_propositions=accepted_propositions
+                        )
+                        if rep_val.is_valid:
+                            # Ensure provenance is attached to repaired question
+                            repaired.target_id = q.target_id
+                            repaired.assigned_key = q.assigned_key
+                            repaired.evidence_excerpt = q.evidence_excerpt or ev_excerpt[:300]
+                            repaired.representation_used = rep_type
+                            repaired.planner_decision = q.planner_decision
+                            final_repaired_questions.append(repaired)
+                            _record_accepted(repaired)
+                            repairs_performed += 1
+                        else:
+                            rejections_count += 1
+                    else:
+                        rejections_count += 1
+                else:
+                    rejections_count += 1
+
+        # Step 8: Targeted Recovery for Failed Targets (Strictly Non-Duplicate)
+        # Bounded by enable_replenishment configuration
+        if enable_replenishment:
+            assessed_target_ids = {q.target_id for q in final_repaired_questions if q.target_id}
+            unassessed_targets = [t for t in engine_plan.targets if t.target_id not in assessed_target_ids]
+
+            for target_to_gen in unassessed_targets:
                 if len(final_repaired_questions) >= requested_count:
                     break
-                target_idx = (len(final_repaired_questions) + m_idx) % len(engine_plan.targets)
-                target_to_gen = engine_plan.targets[target_idx]
                 ev_obj = adapted_retrieved_map.get(target_to_gen.target_id, list(adapted_retrieved_map.values())[0])
 
                 single_target_plan = ProductionAssessmentPlan(
@@ -309,59 +364,45 @@ class AdaptiveAssessmentEngineV2:
                     retrieved_evidence_map={target_to_gen.target_id: ev_obj}
                 )
                 llm_call_count += 1
+                replenishment_llm_calls += 1
 
                 if replenished_raw:
                     rep_q = replenished_raw[0]
-                    rep_val = ProductionAssessmentValidator.validate_question(rep_q, raw_evidence)
+                    rep_val = ProductionAssessmentValidator.validate_question(
+                        rep_q, raw_evidence, accepted_stems=accepted_stems, accepted_propositions=accepted_propositions
+                    )
                     if rep_val.is_valid:
+                        rep_q.target_id = target_to_gen.target_id
+                        rep_q.assigned_key = getattr(target_to_gen, "assigned_key", None)
+                        rep_q.evidence_excerpt = ev_obj.retrieved_content[:300]
+                        rep_q.representation_used = rep_type
+                        rep_q.planner_decision = f"Assessing {target_to_gen.concept_name} (Recovery)"
                         final_repaired_questions.append(rep_q)
+                        _record_accepted(rep_q)
                     else:
                         crit_res = ClosedLoopCriticAgent.diagnose_and_repair(
                             mcq=rep_q,
                             validator_issues=rep_val.issues,
                             evidence_text=ev_obj.retrieved_content,
                             llm=self.critic_llm,
-                            max_attempts=2
+                            max_attempts=1
                         )
-                        if crit_res.final_validation_passed:
-                            final_repaired_questions.append(crit_res.repaired_mcq)
-                            repairs_performed += 1
-                        else:
-                            # Apply deterministic surgical repair fallback
-                            if not rep_q.target_concept:
-                                rep_q.target_concept = target_to_gen.concept_name
-                            if not rep_q.what_taught:
-                                rep_q.what_taught = target_to_gen.what_taught
-                            if not rep_q.evidence_refs:
-                                rep_q.evidence_refs = ev_obj.evidence_ids or ["EV_CANONICAL_01"]
-                            if not rep_q.misconception_rationale or len(rep_q.misconception_rationale) < 15:
-                                rep_q.misconception_rationale = f"Distractors target common misconceptions regarding {target_to_gen.concept_name} semantics."
-                            if f"option {rep_q.correct_option.lower()}" not in rep_q.explanation.lower():
-                                rep_q.explanation = f"Option {rep_q.correct_option} is correct: {rep_q.explanation}"
-                            final_repaired_questions.append(rep_q)
                         llm_call_count += crit_res.attempts_taken
-                else:
-                    # Synthetic deterministic item fallback if LLM returned empty list
-                    fallback_item = ProductionMCQ(
-                        question_id=f"Q_{len(final_repaired_questions)+1:02d}",
-                        target_concept=target_to_gen.concept_name,
-                        cognitive_level=target_to_gen.cognitive_level or "UNDERSTAND",
-                        difficulty_level=difficulty.upper() if difficulty.upper() in ["EASY", "MEDIUM", "HARD"] else "EASY",
-                        question_text=f"In the context of {target_to_gen.concept_name}, which statement accurately reflects its core operational principle?",
-                        option_a=f"It performs {target_to_gen.what_taught[:60] if target_to_gen.what_taught else 'the documented transformation stage'}.",
-                        option_b=f"It bypasses {target_to_gen.concept_name} execution during query processing.",
-                        option_c=f"It converts {target_to_gen.concept_name} directly into unindexed linear searches.",
-                        option_d=f"It permanently mutates source records without returning document streams.",
-                        correct_option="A",
-                        explanation=f"Option A is correct: {target_to_gen.what_taught or 'It executes the defined technical transformation as taught in lecture.'}",
-                        what_taught=target_to_gen.what_taught or f"Fundamental behavior of {target_to_gen.concept_name}.",
-                        why_assessed=target_to_gen.why_assessed or f"Verify foundational understanding of {target_to_gen.concept_name}.",
-                        evidence_refs=ev_obj.evidence_ids or ["EV_CANONICAL_01"],
-                        misconceptions_to_target=target_to_gen.plausible_misconceptions or ["Syntax confusion"],
-                        misconception_rationale=f"Distractors represent misconceptions regarding {target_to_gen.concept_name} mutability and indexing."
-                    )
-                    final_repaired_questions.append(fallback_item)
-            max_replenish_retries -= 1
+                        replenishment_llm_calls += crit_res.attempts_taken
+                        if crit_res.final_validation_passed:
+                            repaired = crit_res.repaired_mcq
+                            rep_val2 = ProductionAssessmentValidator.validate_question(
+                                repaired, raw_evidence, accepted_stems=accepted_stems, accepted_propositions=accepted_propositions
+                            )
+                            if rep_val2.is_valid:
+                                repaired.target_id = target_to_gen.target_id
+                                repaired.assigned_key = getattr(target_to_gen, "assigned_key", None)
+                                repaired.evidence_excerpt = ev_obj.retrieved_content[:300]
+                                repaired.representation_used = rep_type
+                                repaired.planner_decision = f"Assessing {target_to_gen.concept_name} (Critic Recovery)"
+                                final_repaired_questions.append(repaired)
+                                _record_accepted(repaired)
+                                repairs_performed += 1
 
         # Set final difficulty metadata
         for q in final_repaired_questions:
@@ -384,18 +425,29 @@ class AdaptiveAssessmentEngineV2:
             routing_rationale=routing.rationale,
             requested_count=requested_count,
             requested_difficulty=difficulty.upper() if difficulty.upper() in ["EASY", "MEDIUM", "HARD"] else "MIXED",
-            defensible_capacity=len(final_repaired_questions),
+            defensible_capacity=adaptive_plan.allocated_count,
             final_question_count=len(final_repaired_questions),
             questions=final_repaired_questions,
-            validation_status="PASSED" if len(final_repaired_questions) >= requested_count else "PARTIAL",
+            validation_status="PASSED" if len(final_repaired_questions) >= requested_count else ("PARTIAL" if final_repaired_questions else "FAILED"),
             generation_metadata={
                 "request_id": request_id,
                 "trace": trace.model_dump(),
-                "engine_version": "Architecture E v2.0 (Production Hardened)",
+                "engine_version": "Architecture E v2.0 (Phase 1 Hardened)",
                 "total_latency_seconds": total_latency,
                 "measured_llm_calls": llm_call_count,
+                "core_llm_calls": llm_call_count - repair_llm_calls - replenishment_llm_calls,
+                "repair_llm_calls": repair_llm_calls,
+                "replenishment_llm_calls": replenishment_llm_calls,
                 "pedagogical_delivery_index": routing.pedagogical_delivery_index,
                 "repairs_performed_count": repairs_performed,
+                "rejections_count": rejections_count,
+                "initial_candidates_count": len(raw_questions),
+                "repair_rate": round(repairs_performed / max(1, len(raw_questions)), 3),
+                "rejection_rate": round(rejections_count / max(1, len(raw_questions)), 3),
+                "partial_rate": round(len(final_repaired_questions) / max(1, requested_count), 3),
+                "llm_calls_per_delivered_question": round(llm_call_count / max(1, len(final_repaired_questions)), 2),
+                "defensible_capacity": adaptive_plan.allocated_count,
+                "partial_delivery_status": "FULL" if len(final_repaired_questions) >= requested_count else "GRACEFUL_PARTIAL",
                 "facet_distribution": adaptive_plan.facet_distribution,
                 "cognitive_distribution": adaptive_plan.cognitive_distribution,
                 "planning_notes": adaptive_plan.planning_strategy_notes,
