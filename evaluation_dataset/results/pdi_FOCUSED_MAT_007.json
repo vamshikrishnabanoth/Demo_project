@@ -1,0 +1,327 @@
+{
+  "testId": "FOCUSED_MAT_007",
+  "condition": "CONDITION_B_PDI",
+  "round": "Focused",
+  "datasetId": "MAT_007",
+  "topic": "Digital Electronics Lecture Slides DE-31",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 70.3,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.67,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which statement correctly defines a combinational logic circuit?",
+      "options": [
+        "It is a memoryless digital logic circuit whose output at any instant depends only on the combination of its inputs.",
+        "It is a digital circuit that stores previous input values to determine its output.",
+        "It is a sequential circuit that uses clocked storage elements.",
+        "It is a circuit whose output depends on both current inputs and past states."
+      ],
+      "correctAnswer": "It is a memoryless digital logic circuit whose output at any instant depends only on the combination of its inputs.",
+      "explanation": "A combinational logic circuit is memoryless; its output at any time is determined solely by the current inputs, as stated in the definition.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "State the formal definition of a combinational logic circuit.",
+        "subtopic": "Definition of combinational logic circuit",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "State the formal definition of a combinational logic circuit.",
+          "subtopic": "Definition of combinational logic circuit",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized State the formal definition of a combinational logic circuit. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for State the formal definition of a combinational logic circuit.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "What immediate effect does a change in an input signal have on the output of a combinational logic circuit?",
+      "options": [
+        "The output remains unchanged until the next input change",
+        "The output changes after a clock cycle",
+        "The output changes instantly",
+        "The circuit stores the previous output value"
+      ],
+      "correctAnswer": "The output changes instantly",
+      "explanation": "Combinational circuits have no feedback and are memoryless, so their outputs depend solely on the current inputs; therefore any change in an input propagates to the output immediately.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Explain why combinational circuits have no feedback and what immediate effect input changes produce.",
+        "subtopic": "No feedback characteristic",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain why combinational circuits have no feedback and what immediate effect input changes produce.",
+          "subtopic": "No feedback characteristic",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain why combinational circuits have no feedback and what immediate effect input changes produce. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain why combinational circuits have no feedback and what immediate effect input changes produce.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Which of the following sets correctly lists the basic logic gates used as building blocks for combinational circuits and accurately describes each gate's primary function?",
+      "options": [
+        "AND, OR, and NOT – AND outputs high only when all inputs are high; OR outputs high when any input is high; NOT inverts its input.",
+        "NOR, XNOR, and BUFFER – NOR outputs high only when all inputs are low; XNOR outputs high when an even number of inputs are high; BUFFER copies its input.",
+        "NAND, NOR, and NOT – NAND outputs low only when all inputs are high; NOR outputs high only when all inputs are low; NOT inverts its input.",
+        "NAND, XOR, and NOT – NAND outputs low only when all inputs are high; XOR outputs high when an odd number of inputs are high; NOT inverts its input."
+      ],
+      "correctAnswer": "NAND, NOR, and NOT – NAND outputs low only when all inputs are high; NOR outputs high only when all inputs are low; NOT inverts its input.",
+      "explanation": "The evidence states that combinational logic circuits are built from NAND, NOR, or NOT gates, which serve as the fundamental building blocks. NAND produces a low output only when every input is high, NOR produces a high output only when every input is low, and NOT simply inverts its single input. The other options include gates not mentioned as basic building blocks or give incorrect functional descriptions.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Identify the basic logic gates used to build combinational circuits and describe their role as building blocks.",
+        "subtopic": "Logic gate building blocks",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Identify the basic logic gates used to build combinational circuits and describe their role as building blocks.",
+          "subtopic": "Logic gate building blocks",
+          "cognitiveDimension": "Application",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Identify the basic logic gates used to build combinational circuits and describe their role as building blocks. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Identify the basic logic gates used to build combinational circuits and describe their role as building blocks.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T17:30:07.364Z"
+}

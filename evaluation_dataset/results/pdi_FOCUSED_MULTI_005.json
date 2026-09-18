@@ -1,0 +1,327 @@
+{
+  "testId": "FOCUSED_MULTI_005",
+  "condition": "CONDITION_B_PDI",
+  "round": "Focused",
+  "datasetId": "MULTI_005",
+  "topic": "DAA - Best Time to Buy and Sell Stock (Single and Infinite Transactions)",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "UNIFIED",
+  "duration_sec": 90.4,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.67,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "What is the core greedy idea for obtaining the maximum profit with a single buy‑sell transaction?",
+      "options": [
+        "Buy at the highest price and sell at the lowest price",
+        "Buy at any price and sell at any later price",
+        "Buy and sell on the same day",
+        "Buy at the lowest price and sell at the highest price after it"
+      ],
+      "correctAnswer": "Buy at the lowest price and sell at the highest price after it",
+      "explanation": "The greedy strategy is to buy when the stock price is at its minimum seen so far and sell later at the maximum price, ensuring the largest possible profit for a single transaction.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "Define the greedy strategy used to obtain the maximum profit with a single buy‑sell transaction.",
+        "subtopic": "Greedy algorithm for maximum profit (single transaction)",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Define the greedy strategy used to obtain the maximum profit with a single buy‑sell transaction.",
+          "subtopic": "Greedy algorithm for maximum profit (single transaction)",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Define the greedy strategy used to obtain the maximum profit with a single buy‑sell transaction. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "MEDIUM"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Define the greedy strategy used to obtain the maximum profit with a single buy‑sell transaction.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "After processing the fourth day's price (value 7) in the sequence 3, 9, 1, 7, 2, 20, what are the current minimum price and the maximum profit recorded so far?",
+      "options": [
+        "Min price = 1, Max profit = 6",
+        "Min price = 3, Max profit = 6",
+        "Min price = 1, Max profit = 7",
+        "Min price = 3, Max profit = 19"
+      ],
+      "correctAnswer": "Min price = 1, Max profit = 6",
+      "explanation": "Day 1 sets min=3, profit=0. Day 2 updates profit to 6 (9-3). Day 3 lowers min to 1, profit stays 6. Day 4 price 7 gives profit 7-1=6, which does not exceed current max profit, so max profit remains 6 and min stays 1. Hence after day 4 the min price is 1 and the max profit is 6.",
+      "metadata": {
+        "dimension": "Flow / Trace",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Medium",
+        "concept": "Trace the step‑by‑step updates of min price and max profit for the array 3,9,1,7,2,20.",
+        "subtopic": "Updating minimum price and maximum profit logic",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Trace the step‑by‑step updates of min price and max profit for the array 3,9,1,7,2,20.",
+          "subtopic": "Updating minimum price and maximum profit logic",
+          "cognitiveDimension": "Flow / Trace",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + CODE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Trace the step‑by‑step updates of min price and max profit for the array 3,9,1,7,2,20. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "MEDIUM"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Flow / Trace",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Trace the step‑by‑step updates of min price and max profit for the array 3,9,1,7,2,20.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "How is profit calculated differently in the greedy solution when multiple buy/sell transactions are allowed compared to the single‑transaction greedy solution?",
+      "options": [
+        "The multiple‑transaction approach sums the profit of every upward price movement, while the single‑transaction approach takes only the maximum difference between a low price and a later high price",
+        "The multiple‑transaction approach takes only the maximum single price difference, whereas the single‑transaction approach adds up all positive day‑to‑day differences",
+        "Both approaches compute profit in the same way, but the multiple‑transaction version repeats the calculation for each day",
+        "The multiple‑transaction profit is always exactly twice the profit of the single‑transaction solution"
+      ],
+      "correctAnswer": "The multiple‑transaction approach sums the profit of every upward price movement, while the single‑transaction approach takes only the maximum difference between a low price and a later high price",
+      "explanation": "With multiple transactions you can capture profit from every rise in price (e.g., sum of (7‑3)+(9‑1)+(20‑1)=31), whereas a single transaction can only capture the best overall rise (e.g., buy at 1 and sell at 20 for profit 19).",
+      "metadata": {
+        "dimension": "Comparison / Tradeoff",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Compare the single‑transaction greedy solution with the multiple‑transaction greedy solution in terms of profit calculation.",
+        "subtopic": "Greedy algorithm for maximum profit (multiple transactions)",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Compare the single‑transaction greedy solution with the multiple‑transaction greedy solution in terms of profit calculation.",
+          "subtopic": "Greedy algorithm for maximum profit (multiple transactions)",
+          "cognitiveDimension": "Comparison / Tradeoff",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Compare the single‑transaction greedy solution with the multiple‑transaction greedy solution in terms of profit calculation. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "MEDIUM"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Compare the single‑transaction greedy solution with the multiple‑transaction greedy solution in terms of profit calculation.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T17:25:43.423Z"
+}

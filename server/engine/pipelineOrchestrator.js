@@ -13,6 +13,7 @@
 
 const SessionTrace = require('./observability/sessionTrace');
 const evidencePackager = require('./evidence/evidencePackager');
+const pdiRouter = require('./pdiRouter');
 const agent1Planner = require('./agents/agent1Planner');
 const agent2Generator = require('./agents/agent2Generator');
 const agent3Evaluator = require('./agents/agent3Evaluator');
@@ -76,20 +77,35 @@ class PipelineOrchestrator {
       evidencePackage.sessionId = sessionId;
       const voiceEmphasis = evidencePackage.voiceEmphasis || {};
 
-      // Deterministic PDI Representation Router Decision (SUMMARY vs BLUEPRINT vs UNIFIED)
-      const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
-      const hasDocs = Boolean(sessionInputs.documentTexts && sessionInputs.documentTexts.length > 0);
-      const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
-
+      // Representation Router Decision (Condition A: Modality Baseline vs Condition B: Adaptive PDI)
+      const usePdiRouter = process.env.ROUTER_MODE === 'pdi';
       let representationMode = 'UNIFIED';
-      let routerReason = 'Multi-source dual authority: Voice guides instructional focus; documents/code supply exact artifacts.';
-      if (hasVoice && !hasDocs && !hasCode) {
-        representationMode = 'SUMMARY';
-        routerReason = 'Voice-only modality: Pure transcript narrative representation path.';
-      } else if (!hasVoice && (hasDocs || hasCode)) {
-        representationMode = 'BLUEPRINT';
-        routerReason = hasCode ? 'Code/artifact modality: Structural blueprint schema representation path.' : 'Document-only modality: Syllabus/slide blueprint representation path.';
+      let routerReason = '';
+
+      if (usePdiRouter) {
+        const pdiDecision = pdiRouter.route(sessionInputs);
+        representationMode = pdiDecision.selected_representation;
+        routerReason = `[Adaptive PDI Router: PDI=${pdiDecision.pedagogical_delivery_index.toFixed(3)}] ${pdiDecision.rationale}`;
+      } else {
+        // Deterministic Modality Baseline Route
+        const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
+        const hasDocs = Boolean(sessionInputs.documentTexts && sessionInputs.documentTexts.length > 0);
+        const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
+
+        if (hasVoice && !hasDocs && !hasCode) {
+          representationMode = 'SUMMARY';
+          routerReason = 'Voice-only modality: Pure transcript narrative representation path.';
+        } else if (!hasVoice && (hasDocs || hasCode)) {
+          representationMode = 'BLUEPRINT';
+          routerReason = hasCode ? 'Code/artifact modality: Structural blueprint schema representation path.' : 'Document-only modality: Syllabus/slide blueprint representation path.';
+        } else {
+          representationMode = 'UNIFIED';
+          routerReason = 'Multi-source dual authority: Voice guides instructional focus; documents/code supply exact artifacts.';
+        }
       }
+
+      // Causal Representation Packaging: partition curricularContent for Agent 1 without changing Agent 1 code
+      evidencePackage = evidencePackager.applyRepresentationPackaging(evidencePackage, representationMode);
       evidencePackage.representationMode = representationMode;
       evidencePackage.routerReason = routerReason;
 
@@ -105,22 +121,31 @@ class PipelineOrchestrator {
             'Apply Dual-Source Authority Division',
             'Extract verbal emphasis cues from Voice transcript',
             'Extract exact artifacts & formulas from Code/PPT/PDF',
-            `PDI Router path selection: ${representationMode}`
+            `PDI Router path selection: ${representationMode}`,
+            'Construct Dual-Level Hierarchical Evidence Store (75-word child / 400-word parent)',
+            'Build Bidirectional Cross-Material Alignment Graph'
           ]
         },
         calculations: {
           voiceCharCount: (sessionInputs.voiceTranscript || '').length,
           formulasDetectedCount: (evidencePackage.artifacts?.formulasDetected || []).length,
-          explicitInstructionsCount: (voiceEmphasis.explicitInstructions || []).length
+          explicitInstructionsCount: (voiceEmphasis.explicitInstructions || []).length,
+          hierarchicalChildrenCount: evidencePackage.hierarchicalStore?.children?.length || 0,
+          hierarchicalParentsCount: evidencePackage.hierarchicalStore?.parents?.length || 0,
+          crossMaterialLinksCount: Object.keys(evidencePackage.alignmentGraph || {}).length
         },
         decisions: [
           `Voice Authority applied: Syntax emphasis = ${voiceEmphasis.syntaxEmphasis}, Conceptual emphasis = ${voiceEmphasis.conceptualEmphasis}`,
           `Material Authority applied: ${evidencePackage.artifacts?.formulasDetected?.length || 0} formulas detected, Code presence = ${evidencePackage.artifacts?.hasCode}`,
-          `PDI Representation Path selected: ${representationMode}`
+          `PDI Representation Path selected: ${representationMode}`,
+          `Hierarchical RAG: ${evidencePackage.hierarchicalStore?.children?.length || 0} children mapped to ${evidencePackage.hierarchicalStore?.parents?.length || 0} parent windows`,
+          `Cross-Material Alignment: ${Object.keys(evidencePackage.alignmentGraph || {}).length} bidirectional cross-modal nodes established`
         ],
         rulesApplied: [
           'Dual-Source Authority Division Rule: Voice rules intent/emphasis, Materials rule exact artifacts',
-          'PDI Representation Routing Rule: Map modal inputs to SUMMARY / BLUEPRINT / UNIFIED'
+          'PDI Representation Routing Rule: Map modal inputs to SUMMARY / BLUEPRINT / UNIFIED',
+          'Hierarchical Evidence Framing Rule: Precision micro-citation with macro-narrative expansion',
+          'Cross-Material Alignment Rule: Bidirectional semantic graph linking spoken concepts to formal slides/code'
         ],
         evidenceUsed: ['voice_transcript_01', 'document_chunk_01'],
         output: {
@@ -255,9 +280,9 @@ class PipelineOrchestrator {
             });
 
             const isRateLimit = genErr.code === 'NO_LLM_PROVIDER_AVAILABLE' || (genErr.message || '').includes('429') || (genErr.message || '').includes('rate-limit');
-            if (isRateLimit && passingQuestions.length > 0) {
-              console.warn(`⚠️ [Orchestrator] Provider capacity boundary reached. Delivering ${passingQuestions.length} valid grounded questions.`);
-              break;
+            if (isRateLimit) {
+              console.warn(`⏳ [Orchestrator] Provider capacity notice on target ${currentTarget.targetId} (attempt ${attempts}). Bounded cooldown (3s)...`);
+              await new Promise(r => setTimeout(r, 3000));
             }
 
             repairInstruction = `Fix previous failure (${genErr.message}). Output strictly raw JSON starting with { and ending with }.`;
@@ -431,6 +456,7 @@ class PipelineOrchestrator {
           if (reservePool.length > 0 && totalSwaps < MAX_TOTAL_SWAPS && passingQuestions.length < requestedCount) {
             totalSwaps++;
             const reserveTarget = reservePool.shift();
+            await new Promise(r => setTimeout(r, 2000));
             await trace.recordStage({
               stageOrder: `04_SWAP_${currentTarget.targetId}`,
               stageName: 'TARGET_RESERVE_SWAP',

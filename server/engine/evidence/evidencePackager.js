@@ -12,6 +12,8 @@
 'use strict';
 
 const depthAnalyzer = require('./depthAnalyzer');
+const { HierarchicalChunker } = require('./hierarchicalChunker');
+const { CrossMaterialAligner } = require('./crossMaterialAligner');
 
 class EvidencePackager {
   /**
@@ -73,6 +75,61 @@ class EvidencePackager {
       unifiedRawContent: rawContent
     };
 
+    // 3. Construct Dual-Level Hierarchical Evidence Store & Cross-Material Alignment Graph
+    try {
+      packageData.hierarchicalStore = HierarchicalChunker.buildStore(sessionInputs);
+      packageData.alignmentGraph = CrossMaterialAligner.buildAlignmentGraph(packageData.hierarchicalStore);
+    } catch (storeErr) {
+      console.warn(`⚠️ [EvidencePackager] Notice building hierarchical/alignment store: ${storeErr.message}`);
+      packageData.hierarchicalStore = null;
+      packageData.alignmentGraph = {};
+    }
+
+    return packageData;
+  }
+
+  /**
+   * Partition assessable curricular content according to the router's representation decision.
+   * - SUMMARY: Focuses on factual concepts, definitions, and exact artifacts (WHAT was taught).
+   * - BLUEPRINT: Focuses on instructional acts, demonstrative observations, rules, mechanisms, and comparisons (HOW & WHY it was taught).
+   * - UNIFIED: Synthesizes both factual definitions and instructional blueprints together.
+   */
+  applyRepresentationPackaging(packageData, representationMode = 'UNIFIED') {
+    if (!packageData || !packageData.curricularSegments) return packageData;
+
+    const segments = packageData.curricularSegments || [];
+    const artifacts = packageData.artifacts || {};
+    const mode = (representationMode || 'UNIFIED').toUpperCase();
+
+    let selectedText = '';
+    const formulaLines = (artifacts.formulasDetected || []).map(f => `[FORMULA/SYNTAX]: ${f}`).join('\n');
+    const codeLines = (artifacts.codeSnippets || []).map(c => `[CODE ARTIFACT]:\n${c}`).join('\n');
+    const artifactBlock = [formulaLines, codeLines].filter(Boolean).join('\n');
+
+    if (mode === 'SUMMARY') {
+      const summarySegs = segments.filter(s => s.classification?.substanceType === 'DEFINITION_OR_FACT');
+      const textSegs = (summarySegs.length >= 3 ? summarySegs : segments).map(s => s.text).join('\n');
+      selectedText = `--- TECHNICAL SUMMARY: CONCEPTS, DEFINITIONS & ARTIFACTS (WHAT WAS TAUGHT) ---\n${textSegs}`;
+      if (artifactBlock) {
+        selectedText += `\n\n--- EXACT ARTIFACTS ---\n${artifactBlock}`;
+      }
+    } else if (mode === 'BLUEPRINT') {
+      const blueprintSegs = segments.filter(s => {
+        const st = s.classification?.substanceType;
+        return ['OBSERVATION_DEMONSTRATION', 'RULE_OR_CONDITION', 'COMPARISON', 'WORKED_EXAMPLE', 'SOCRATIC_INSTRUCTION', 'MECHANISM'].includes(st);
+      });
+      const textSegs = (blueprintSegs.length >= 3 ? blueprintSegs : segments).map(s => s.text).join('\n');
+      selectedText = `--- INSTRUCTIONAL BLUEPRINT: PEDAGOGICAL INTENT & TEACHER EMPHASIS (HOW & WHY IT WAS TAUGHT) ---\n${textSegs}`;
+    } else { // UNIFIED
+      const allText = segments.map(s => s.text).join('\n');
+      selectedText = `--- UNIFIED REPRESENTATION: CURRICULAR CONTENT + PEDAGOGICAL BLUEPRINT ---\n${allText}`;
+      if (artifactBlock) {
+        selectedText += `\n\n--- EXACT ARTIFACTS ---\n${artifactBlock}`;
+      }
+    }
+
+    packageData.curricularContent = selectedText;
+    packageData.representationMode = mode;
     return packageData;
   }
 

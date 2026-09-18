@@ -1,0 +1,32 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Web Technologies - DOM and JavaScript",
+  "audio_file": "audio.m4a",
+  "supporting_material_files": [],
+  "language": "English",
+  "teaching_style": "pedagogical_spoken_lecture",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Audio lecture recorded in classroom",
+  "notes": "Original file: WT 18-8-26.m4a",
+  "dataset_id": "VOICE_017",
+  "modality": "VOICE_ONLY",
+  "category": "VOICE_ONLY",
+  "files": [
+    {
+      "filename": "audio.m4a",
+      "size_bytes": 86146428,
+      "sha256": "a03876d134ef7faf2befde0454983a0d1e874d0452034c4cdd2ed1b2704ebedc"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

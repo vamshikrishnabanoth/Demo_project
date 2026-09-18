@@ -1,0 +1,123 @@
+{
+  "testId": "FOCUSED_MULTI_005",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "MULTI_005",
+  "topic": "DAA - Best Time to Buy and Sell Stock (Single and Infinite Transactions)",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "requested_count": 3,
+  "delivered_count": 1,
+  "representation_mode": "UNIFIED",
+  "duration_sec": 197,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "1 evidence-grounded questions were generated from the available instructional content. 2 additional questions could not be validated against the available evidence.",
+  "average_rubric_score": 4.7,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 4,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "R02",
+      "questionText": "In graph theory, which statement correctly defines a spanning tree of a connected undirected graph?",
+      "options": [
+        "A subgraph that includes a subset of vertices and may contain cycles",
+        "A subgraph that includes all vertices but must contain at least one cycle",
+        "A subgraph that includes all vertices of the original graph and contains no cycles",
+        "A subgraph that includes all edges of the original graph regardless of cycles"
+      ],
+      "correctAnswer": "A subgraph that includes all vertices of the original graph and contains no cycles",
+      "explanation": "A spanning tree connects every vertex in the original graph with the minimum number of edges (|V|-1) and, by definition, contains no cycles, making it a tree that spans all vertices.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Balanced",
+        "concept": "A Spanning Tree - Extension 2",
+        "subtopic": "A Spanning Tree",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "R02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "A Spanning Tree - Extension 2",
+          "subtopic": "A Spanning Tree",
+          "cognitiveDimension": "Application",
+          "difficulty": "Balanced",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized A Spanning Tree - Extension 2 as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for A Spanning Tree - Extension 2."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T19:07:01.785Z"
+}

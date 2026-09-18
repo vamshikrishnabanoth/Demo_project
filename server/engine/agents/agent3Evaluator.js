@@ -49,7 +49,7 @@ Return strictly valid JSON matching this schema:
   "groundingScore": 0.95
 }`;
 
-    const evidenceContext = getTargetEvidenceContext(target, evidencePackage.unifiedRawContent || '', 3500);
+    const evidenceContext = getTargetEvidenceContext(target, evidencePackage, 2000);
 
     const userPrompt = `
 [TARGET SPECIFICATION]

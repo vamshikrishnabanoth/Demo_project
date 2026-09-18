@@ -1,0 +1,16 @@
+{
+  "testId": "FOCUSED_EDGE_001",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "EDGE_001",
+  "topic": "Classroom Humor and Casual Banter (Non-Academic)",
+  "modality": "EDGE_CASES",
+  "requested_count": 3,
+  "delivered_count": 0,
+  "duration_sec": 16,
+  "status": "COMPLETED",
+  "gate_verdict": "REJECTED_AS_EXPECTED",
+  "average_rubric_score": 5,
+  "questions": [],
+  "timestamp": "2026-09-18T18:08:02.311Z"
+}

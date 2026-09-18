@@ -1,0 +1,327 @@
+{
+  "testId": "FOCUSED_VOICE_001",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "VOICE_001",
+  "topic": "Deep Learning and Neural Network Foundations",
+  "modality": "VOICE_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 90,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.8,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 4,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 4,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.9,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.8,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following lists the three core blocks that compose a CNN as described in the lecture?",
+      "options": [
+        "Convolution, pooling, softmax",
+        "Pooling, batch normalization, activation function",
+        "Convolution, fully connected layer, dropout",
+        "Convolution, activation function, pooling"
+      ],
+      "correctAnswer": "Convolution, activation function, pooling",
+      "explanation": "The lecture repeatedly emphasized that a CNN is built from a repeating set of three steps: applying a convolution layer, then an activation function (e.g., ReLU), and finally a pooling layer. The other options include components that are not part of the core three-block pattern.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "Identify the three core blocks that compose a CNN as taught (convolution, activation, pooling).",
+        "subtopic": "CNN architecture basics",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Identify the three core blocks that compose a CNN as taught (convolution, activation, pooling).",
+          "subtopic": "CNN architecture basics",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Identify the three core blocks that compose a CNN as taught (convolution, activation, pooling). as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Identify the three core blocks that compose a CNN as taught (convolution, activation, pooling).."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "Why does using a 2×2 pooling window with a stride of 2 process the entire feature map without any overlap?",
+      "options": [
+        "Because the stride equals the window size, each move jumps exactly to the next non‑overlapping region, covering the whole map.",
+        "Because the stride value is ignored during pooling, so the window slides continuously over the map.",
+        "Because the stride is larger than the window size, leaving gaps between pooled regions.",
+        "Because the window size is larger than the stride, causing each region to overlap with the previous one."
+      ],
+      "correctAnswer": "Because the stride equals the window size, each move jumps exactly to the next non‑overlapping region, covering the whole map.",
+      "explanation": "When the stride is set to the same value as the pooling window (2), the window shifts by two pixels after each pooling operation. This shift lands the window on a new, non‑overlapping 2×2 region, ensuring that every part of the feature map is covered exactly once.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Explain how the chosen pooling window size and stride affect coverage of the feature map.",
+        "subtopic": "Pooling operations",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_02"
+            ]
+          },
+          "concept": "Explain how the chosen pooling window size and stride affect coverage of the feature map.",
+          "subtopic": "Pooling operations",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_02"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain how the chosen pooling window size and stride affect coverage of the feature map. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain how the chosen pooling window size and stride affect coverage of the feature map.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Which of the following lists the operations in the correct chronological order for forward propagation of the described two‑layer CNN, starting from image preprocessing and ending with the final dense‑layer probability output?",
+      "options": [
+        "Read image → Convert to grayscale → Resize to 28×28 → Normalize pixel values → Add channel dimension → Conv1 → ReLU → Conv2 → ReLU → Pool1 → Pool2 → Flatten → Fully connected layer → Probability prediction",
+        "Read image → Convert to grayscale → Resize to 28×28 → Normalize pixel values → Add channel dimension → Conv1 → ReLU → Pool1 → Conv2 → ReLU → Pool2 → Flatten → Fully connected layer → Probability prediction",
+        "Read image → Convert to grayscale → Resize to 28×28 → Normalize pixel values → Add channel dimension → Conv1 → Pool1 → ReLU → Conv2 → Softmax → Pool2 → Flatten → Fully connected layer → Probability prediction",
+        "Read image → Convert to grayscale → Resize to 28×28 → Normalize pixel values → Add channel dimension → Conv1 → ReLU → Pool1 → Conv2 → Softmax → Pool2 → Flatten → Fully connected layer → Probability prediction"
+      ],
+      "correctAnswer": "Read image → Convert to grayscale → Resize to 28×28 → Normalize pixel values → Add channel dimension → Conv1 → ReLU → Pool1 → Conv2 → Softmax → Pool2 → Flatten → Fully connected layer → Probability prediction",
+      "explanation": "The session describes preprocessing steps (read, grayscale, resize, normalize, add channel) followed by two convolution layers each with its own activation (ReLU for the first, Softmax for the second) and pooling. After the second pooling the feature map is flattened and fed to a fully connected layer that produces the final probability prediction. This ordering matches the evidence from both lecture segments.",
+      "metadata": {
+        "dimension": "Flow / Trace",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Hard",
+        "concept": "Trace the ordered steps performed during forward propagation for the two‑layer CNN described.",
+        "subtopic": "Forward propagation sequence",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_03"
+            ]
+          },
+          "concept": "Trace the ordered steps performed during forward propagation for the two‑layer CNN described.",
+          "subtopic": "Forward propagation sequence",
+          "cognitiveDimension": "Flow / Trace",
+          "difficulty": "Hard",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_03"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Trace the ordered steps performed during forward propagation for the two‑layer CNN described. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Flow / Trace",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Trace the ordered steps performed during forward propagation for the two‑layer CNN described.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T17:57:36.067Z"
+}

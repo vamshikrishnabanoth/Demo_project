@@ -1,0 +1,12 @@
+Metric,Condition_A_Modality_Baseline,Condition_B_PDI_Router,Condition_C_Initial_Architecture_E,Condition_C_Post_Mitigation_Retest,Interpretation
+"Runs Completed","10 / 10","10 / 10","10 / 10","10 / 10","Completed"
+"Questions Delivered","29 / 30 (96.7%)","27 / 30 (90.0%)","22 / 30 (73.3%)","19–23 / 30 (63.3%–76.7%)","Observed range across post-mitigation runs; remaining constraint was provider capacity"
+"Intentional Safety Rejections","0 / 4 (Hallucinated)","2 / 4 (Partial)","4 / 4 (100% Gated)","4 / 4 (100% Gated)","Preserved by design"
+"Answer Key Validity","100.0% (29/29)","100.0% (27/27)","100.0% (22/22)","100.0%","Maintained"
+"Foreign Contamination","0.00% (0/29)","0.00% (0/27)","0.00% (0/22)","0.00%","Zero external topic contamination"
+"Grounding Score","4.24 / 5.00","4.86 / 5.00","4.91 / 5.00 (+0.67 gain)","4.88–4.91 / 5.00","Preserved evidence alignment"
+"Technical Precision","5.00 / 5.00","5.00 / 5.00","5.00 / 5.00","5.00 / 5.00","Schema adherence maintained"
+"Teaching Alignment","5.00 / 5.00","5.00 / 5.00","5.00 / 5.00","5.00 / 5.00","Direct pedagogical focus"
+"Cognitive Alignment","4.97 / 5.00","5.00 / 5.00","5.00 / 5.00","5.00 / 5.00","Multi-level cognitive spread"
+"Distractor Quality","3.03 / 5.00","3.03 / 5.00","3.05 / 5.00","3.05 / 5.00","Decoupled (length asymmetry metric)"
+"Audited Composite Score","4.72 / 5.00","4.81 / 5.00","4.85 / 5.00","4.80–4.85 / 5.00","Highest observed in this comparison"

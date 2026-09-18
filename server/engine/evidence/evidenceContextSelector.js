@@ -2,12 +2,17 @@
  * server/engine/evidence/evidenceContextSelector.js
  *
  * Deterministically selects the relevant evidence span for a specific target.
- * Instead of blindly falling back to the first 3000 characters, it uses
- * multi-term semantic block scoring across the entire transcript to find
- * the actual region where the target concept was taught.
+ * Primary Path (Step 1 + Step 2):
+ * - Dual-Level Hierarchical Retriever (precision child scoring -> parent narrative context window)
+ * - Cross-Material Alignment Expansion (injects top-linked slide/code/voice cross-references)
+ * Fallback Path:
+ * - If no reliable hierarchical match is found, falls back gracefully to multi-term sliding window block scoring.
  */
 
 'use strict';
+
+const { HierarchicalRetriever } = require('./hierarchicalRetriever');
+const { CrossMaterialAligner } = require('./crossMaterialAligner');
 
 function tokenize(text) {
   if (!text) return [];
@@ -18,7 +23,72 @@ function tokenize(text) {
     .filter(w => w.length > 3);
 }
 
-function getTargetEvidenceContext(target = {}, rawContent = '', maxContextChars = 3500) {
+/**
+ * Deterministically selects the relevant evidence span for a specific target.
+ * @param {Object} target - AssessmentTarget
+ * @param {Object|string} evidencePackageOrContent - EvidencePackage object or raw string
+ * @param {number} maxContextChars - Maximum character budget for fallback window (default: 3500)
+ * @returns {string} Formatted evidence context
+ */
+function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', maxContextChars = 3500) {
+  const isPackage = typeof evidencePackageOrContent === 'object' && evidencePackageOrContent !== null;
+  const evidencePackage = isPackage ? evidencePackageOrContent : null;
+  const rawContent = evidencePackage ? (evidencePackage.unifiedRawContent || '') : String(evidencePackageOrContent || '');
+
+  const supporting = (target.supportingEvidence || target.evidenceSpan || '').trim();
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Primary Path: Dual-Level Hierarchical RAG + Cross-Material Alignment
+  // ──────────────────────────────────────────────────────────────────────────
+  if (evidencePackage && evidencePackage.hierarchicalStore && Array.isArray(evidencePackage.hierarchicalStore.children)) {
+    try {
+      const retrieved = HierarchicalRetriever.retrieveForTarget(evidencePackage.hierarchicalStore, target, 2);
+
+      // Verify hierarchical retrieval found a reliable match
+      if (retrieved && retrieved.retrievedContent && retrieved.retrievedContent.length > 50 && retrieved.relevanceScore > 0) {
+        let extraCrossModalContent = '';
+
+        // Cross-Material Alignment Expansion (Step 2)
+        if (evidencePackage.alignmentGraph && Object.keys(evidencePackage.alignmentGraph).length > 0) {
+          const expandedEids = CrossMaterialAligner.expandEvidenceWithAlignment(
+            evidencePackage.hierarchicalStore,
+            retrieved.matchedChildIds,
+            evidencePackage.alignmentGraph
+          );
+
+          for (const eid of expandedEids) {
+            if (!retrieved.matchedChildIds.includes(eid)) {
+              const childObj = evidencePackage.hierarchicalStore.childMap?.[eid];
+              const parentObj = childObj?.parentId ? evidencePackage.hierarchicalStore.parentMap?.[childObj.parentId] : null;
+
+              if (parentObj) {
+                extraCrossModalContent += `\n\n=== [CROSS-MATERIAL LINKED EVIDENCE: ${parentObj.title} (${eid})] ===\n${parentObj.fullText.substring(0, 1000)}`;
+              } else if (childObj) {
+                extraCrossModalContent += `\n\n=== [CROSS-MATERIAL LINKED EVIDENCE: ${eid}] ===\n${childObj.text}`;
+              }
+            }
+          }
+        }
+
+        const parts = [];
+        if (supporting) {
+          parts.push('[DIRECT TARGET EVIDENCE]\n' + supporting);
+        }
+        let fullContext = (retrieved.retrievedContent + extraCrossModalContent).trim();
+        if (fullContext.length > maxContextChars) {
+          fullContext = fullContext.substring(0, maxContextChars);
+        }
+        parts.push('[RELEVANT SESSION CONTEXT (HIERARCHICAL & ALIGNED)]\n' + fullContext);
+        return parts.join('\n\n');
+      }
+    } catch (hierErr) {
+      console.warn(`⚠️ [EvidenceContextSelector] Hierarchical retrieval notice for target ${target.targetId}: ${hierErr.message}. Falling back to sliding window.`);
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Fallback Path: Sliding-Window Keyword Matcher (Retained for 100% Resilience)
+  // ──────────────────────────────────────────────────────────────────────────
   const content = rawContent || '';
   if (content.length === 0) {
     return target.supportingEvidence || target.concept || 'No content provided.';
@@ -27,14 +97,13 @@ function getTargetEvidenceContext(target = {}, rawContent = '', maxContextChars 
   // If content is already shorter than window, return it entirely
   if (content.length <= maxContextChars) {
     const parts = [];
-    if (target.supportingEvidence) {
-      parts.push('[DIRECT TARGET EVIDENCE]\n' + target.supportingEvidence.trim());
+    if (supporting) {
+      parts.push('[DIRECT TARGET EVIDENCE]\n' + supporting);
     }
     parts.push('[RELEVANT SESSION CONTEXT]\n' + content.trim());
     return parts.join('\n\n');
   }
 
-  const supporting = (target.supportingEvidence || target.evidenceSpan || '').trim();
   const concept = (target.concept || '').trim();
   const subtopic = (target.subtopic || '').trim();
   const instruction = (target.instruction || '').trim();
@@ -51,7 +120,6 @@ function getTargetEvidenceContext(target = {}, rawContent = '', maxContextChars 
   }
 
   // 2. Semantic Block Scoring across the entire transcript
-  // If direct match failed, scan sliding blocks across the full lecture
   if (matchIndex === -1) {
     const queryTokens = new Set([
       ...tokenize(concept),

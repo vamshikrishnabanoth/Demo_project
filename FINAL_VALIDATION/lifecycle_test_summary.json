@@ -1,0 +1,28 @@
+{
+  "test": "ARCHITECTURE_E_END_TO_END_LIFECYCLE",
+  "timestamp": "2026-09-18T19:23:19.378Z",
+  "quizId": "e2405043-ec24-4e5a-9f3f-69d04c8dc013",
+  "joinCode": "317738",
+  "quizHash": "e661d495ca2f95484bb0c80f08d9bc17584a5550a141b09f4d4b2f8d1ec1f06b",
+  "teacher": "teacher4",
+  "questionsCount": 3,
+  "databasePersistence": "PostgreSQL via Prisma",
+  "studentSecurityAudit": "PASS",
+  "quizIntegrityAudit": "PASS",
+  "leaderboardCount": 2,
+  "rankings": [
+    {
+      "rank": 1,
+      "student": "25BD1A05HF",
+      "score": 30,
+      "timeSeconds": 30
+    },
+    {
+      "rank": 2,
+      "student": "25BD1A05FB",
+      "score": 20,
+      "timeSeconds": 45
+    }
+  ],
+  "status": "PASS"
+}

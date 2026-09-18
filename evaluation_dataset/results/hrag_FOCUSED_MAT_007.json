@@ -1,0 +1,123 @@
+{
+  "testId": "FOCUSED_MAT_007",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "MAT_007",
+  "topic": "Digital Electronics Lecture Slides DE-31",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 1,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 165,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "1 evidence-grounded questions were generated from the available instructional content. 2 additional questions could not be validated against the available evidence.",
+  "average_rubric_score": 4.7,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 4,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "R02",
+      "questionText": "In other words, which of the following best describes a combinational circuit?",
+      "options": [
+        "It requires a clock signal to operate.",
+        "Its output depends on both current inputs and previous outputs (memory).",
+        "Its output depends only on the current inputs, not on any previous states.",
+        "It can store data like a flip‑flop."
+      ],
+      "correctAnswer": "Its output depends only on the current inputs, not on any previous states.",
+      "explanation": "A combinational circuit produces outputs that are solely a function of the present input values; it has no memory of past inputs, unlike sequential circuits that rely on previous states or a clock.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Balanced",
+        "concept": "In Other Words - Extension 2",
+        "subtopic": "In Other Words",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "R02",
+        "attempt": 2,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "In Other Words - Extension 2",
+          "subtopic": "In Other Words",
+          "cognitiveDimension": "Application",
+          "difficulty": "Balanced",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized In Other Words - Extension 2 as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for In Other Words - Extension 2."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T19:13:07.269Z"
+}

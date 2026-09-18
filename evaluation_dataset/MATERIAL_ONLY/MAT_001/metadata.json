@@ -1,0 +1,34 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "SE Lab Week 3: Git Workflows and Merge Conflicts",
+  "audio_file": null,
+  "supporting_material_files": [
+    "material.docx"
+  ],
+  "language": "English",
+  "teaching_style": "written_curriculum",
+  "content_type": "Academic Instruction",
+  "duration": "N/A",
+  "special_conditions": "Official university learning material",
+  "notes": "Original file: 9h9k_SELAB (1).docx",
+  "dataset_id": "MAT_001",
+  "modality": "MATERIAL_ONLY",
+  "category": "MATERIAL_ONLY",
+  "files": [
+    {
+      "filename": "material.docx",
+      "size_bytes": 763997,
+      "sha256": "ea6b91c7f6846e5a88ef2d659095cabf1981f494369a7a656eb4fb19f1bfb4fd"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_only",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

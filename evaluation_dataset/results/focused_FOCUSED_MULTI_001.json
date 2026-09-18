@@ -1,0 +1,326 @@
+{
+  "testId": "FOCUSED_MULTI_001",
+  "round": "Focused",
+  "datasetId": "MULTI_001",
+  "topic": "Computer Organization and Architecture - Unit IV",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "UNIFIED",
+  "duration_sec": 158.7,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.33,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.3,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.3,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following statements correctly describes cache memory?",
+      "options": [
+        "Cache memory is a medium-sized memory of about 4 MB capacity, costing roughly 1500 ₹ per MB, and it has similar speed to main memory.",
+        "Cache memory is a small, fast memory of about 1 KB capacity, costing roughly 3000 ₹ per KB, and it is slightly faster than secondary storage.",
+        "Cache memory is a large, slow memory of about 1 GB capacity, costing roughly 300 ₹ per MB, and it is slower than main memory.",
+        "Cache memory is a small, very fast memory of about 1 MB capacity, costing roughly 3000 ₹ per MB, and it is much faster than main memory."
+      ],
+      "correctAnswer": "Cache memory is a small, very fast memory of about 1 MB capacity, costing roughly 3000 ₹ per MB, and it is much faster than main memory.",
+      "explanation": "Cache memory is a very small (≈1 MB) and extremely fast type of memory. It is much more expensive than main memory, costing about 3000 ₹ for each megabyte, and its access speed is far higher than that of main memory.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "Define cache memory and list its typical capacity, cost, and speed characteristics.",
+        "subtopic": "Cache memory",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Define cache memory and list its typical capacity, cost, and speed characteristics.",
+          "subtopic": "Cache memory",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Define cache memory and list its typical capacity, cost, and speed characteristics. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Define cache memory and list its typical capacity, cost, and speed characteristics.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "According to the session evidence, why does increasing storage capacity (e.g., from cache to hard disk) result in lower cost per unit and slower access speed?",
+      "options": [
+        "Larger-capacity devices use cheaper, slower technology, while smaller-capacity devices use fast, expensive technology",
+        "Larger-capacity devices have more transistors, which automatically reduces cost and speed",
+        "Larger-capacity devices are newer designs, so they are priced lower but are not yet optimized for speed",
+        "Larger-capacity devices consume more power, leading manufacturers to lower their price and accept slower performance"
+      ],
+      "correctAnswer": "Larger-capacity devices use cheaper, slower technology, while smaller-capacity devices use fast, expensive technology",
+      "explanation": "The evidence states that as storage capacity increases from cache (small) to hard disk (large), the cost per unit decreases because cheaper, lower‑performance technologies are used, and the access speed becomes slower because those technologies have higher latency. Smaller capacities like cache use expensive, high‑speed technology, leading to higher cost per unit but faster access.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Explain how increasing storage capacity affects cost and access speed across memory types.",
+        "subtopic": "Cost, capacity and access speed relationship",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain how increasing storage capacity affects cost and access speed across memory types.",
+          "subtopic": "Cost, capacity and access speed relationship",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain how increasing storage capacity affects cost and access speed across memory types. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain how increasing storage capacity affects cost and access speed across memory types.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "A program contains a loop that repeatedly executes the same block of instructions. Which statement best explains why the CPU moves that block from main memory to cache and what performance benefit results?",
+      "options": [
+        "Because the block is large, moving it to cache frees up main memory space, improving overall system capacity.",
+        "Because the block is rarely used, moving it to cache prevents it from being evicted by other programs.",
+        "Because the block is frequently accessed, moving it to cache reduces access latency, allowing the loop to execute faster.",
+        "Because the block contains I/O instructions, moving it to cache enables parallel I/O processing."
+      ],
+      "correctAnswer": "Because the block is frequently accessed, moving it to cache reduces access latency, allowing the loop to execute faster.",
+      "explanation": "Frequently accessed instructions are placed in cache because cache access time is much lower than main memory access time. By keeping the loop’s code in cache, the CPU fetches the instructions quickly, reducing latency and speeding up loop execution.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Given a program with frequently used instructions, determine why and how those instructions are moved to cache memory.",
+        "subtopic": "Cache usage during program execution",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Given a program with frequently used instructions, determine why and how those instructions are moved to cache memory.",
+          "subtopic": "Cache usage during program execution",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Given a program with frequently used instructions, determine why and how those instructions are moved to cache memory. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Given a program with frequently used instructions, determine why and how those instructions are moved to cache memory.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T15:02:30.027Z"
+}

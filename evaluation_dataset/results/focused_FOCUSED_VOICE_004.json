@@ -1,0 +1,326 @@
+{
+  "testId": "FOCUSED_VOICE_004",
+  "round": "Focused",
+  "datasetId": "VOICE_004",
+  "topic": "Relational Database SQL Queries and Joins",
+  "modality": "VOICE_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 118.4,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.43,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "What does SQL stand for and what is its primary purpose?",
+      "options": [
+        "Sequential Query Logic; it is used to manage operating system processes.",
+        "Standard Quick Language; it is used for file compression.",
+        "Simple Query Language; it is used to create web pages.",
+        "Structured Query Language; it is used to interact with relational databases."
+      ],
+      "correctAnswer": "Structured Query Language; it is used to interact with relational databases.",
+      "explanation": "SQL stands for Structured Query Language. It is a programming language designed to communicate with relational database management systems, allowing users to create, query, update, and delete data stored in tables.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Explain what SQL stands for and its purpose in interacting with relational databases.",
+        "subtopic": "Definition of SQL",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain what SQL stands for and its purpose in interacting with relational databases.",
+          "subtopic": "Definition of SQL",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain what SQL stands for and its purpose in interacting with relational databases. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain what SQL stands for and its purpose in interacting with relational databases.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "A user changes their password on an online banking portal. Which CRUD operation does this action represent?",
+      "options": [
+        "Create",
+        "Read",
+        "Update",
+        "Delete"
+      ],
+      "correctAnswer": "Update",
+      "explanation": "Changing a password modifies an existing record in the database, which corresponds to the Update operation in CRUD.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Identify which CRUD operation (Create, Read, Update, Delete) corresponds to a given database action scenario.",
+        "subtopic": "CRUD operations",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Identify which CRUD operation (Create, Read, Update, Delete) corresponds to a given database action scenario.",
+          "subtopic": "CRUD operations",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Identify which CRUD operation (Create, Read, Update, Delete) corresponds to a given database action scenario. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Identify which CRUD operation (Create, Read, Update, Delete) corresponds to a given database action scenario.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Which of the following is the correct SQL statement to create a database named \"classroom\"?",
+      "options": [
+        "CREATE DATABASE classroom .",
+        "CREATE DATABASE; classroom",
+        "CREATE DATABASE classroom;",
+        "CREATE DATABASE classroom"
+      ],
+      "correctAnswer": "CREATE DATABASE classroom;",
+      "explanation": "The proper syntax is the keyword CREATE DATABASE followed by the desired name and terminated with a semicolon. Hence, \"CREATE DATABASE classroom;\" is correct.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Write the correct SQL statement to create a new database, including proper use of the semicolon.",
+        "subtopic": "CREATE DATABASE syntax and statement termination",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Write the correct SQL statement to create a new database, including proper use of the semicolon.",
+          "subtopic": "CREATE DATABASE syntax and statement termination",
+          "cognitiveDimension": "Application",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Write the correct SQL statement to create a new database, including proper use of the semicolon. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Write the correct SQL statement to create a new database, including proper use of the semicolon.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T14:59:36.091Z"
+}

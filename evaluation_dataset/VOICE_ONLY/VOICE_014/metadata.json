@@ -1,0 +1,32 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Engineering Lecture Audio",
+  "audio_file": "audio.m4a",
+  "supporting_material_files": [],
+  "language": "English",
+  "teaching_style": "pedagogical_spoken_lecture",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Audio lecture recorded in classroom",
+  "notes": "Original file: New.m4a",
+  "dataset_id": "VOICE_014",
+  "modality": "VOICE_ONLY",
+  "category": "VOICE_ONLY",
+  "files": [
+    {
+      "filename": "audio.m4a",
+      "size_bytes": 58931234,
+      "sha256": "1eccee98660040ea1e8b66f8e3cd0d057b824a2acb83f2355308bfd4f7713642"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

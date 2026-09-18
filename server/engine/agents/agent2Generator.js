@@ -100,7 +100,7 @@ STRICT CONSTRAINTS:
 5. Ground the question strictly in the provided session evidence. DO NOT introduce un-taught domain knowledge.
 6. ${repairInstruction ? 'REPAIR INSTRUCTION: ' + repairInstruction : ''}`;
 
-    const evidenceContext = getTargetEvidenceContext(target, evidencePackage.unifiedRawContent || '', 3000);
+    const evidenceContext = getTargetEvidenceContext(target, evidencePackage, 2000);
 
     const userPrompt = `
 [ASSESSMENT TARGET]
@@ -117,7 +117,7 @@ ${calculatedData ? '[COMPUTED ARITHMETIC ANSWER]: ' + calculatedData.expectedAns
 ${evidenceContext}
 `;
 
-    const fastModel = process.env.AGENT2_MODEL || 'openai/gpt-oss-20b';
+    const fastModel = process.env.AGENT2_MODEL || 'openai/gpt-oss-120b';
 
     let responseText = await llmRouter.complete({
       prompt: userPrompt,

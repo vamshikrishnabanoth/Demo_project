@@ -1,0 +1,224 @@
+{
+  "testId": "R3_ASSIGNMENT_SHEET",
+  "round": "Round3",
+  "datasetId": "MAT_002",
+  "topic": "Course Assignment 1 Problems and Questions",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 5,
+  "delivered_count": 2,
+  "representation_mode": "BLUEPRINT",
+  "duration_sec": 58.3,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "2 evidence-grounded questions were generated from the available instructional content. 3 additional questions could not be validated against the available evidence.",
+  "average_rubric_score": 4.4,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which SQL query correctly returns all products whose stock is less than 20?",
+      "options": [
+        "SELECT product_id, product_name, stock, brand FROM products WHERE stock = 20;",
+        "SELECT product_id, product_name, stock, brand FROM products WHERE stock < 20;",
+        "SELECT * FROM products WHERE stock > 20;",
+        "SELECT product_id, product_name, stock, brand FROM products WHERE stock <= 20;"
+      ],
+      "correctAnswer": "SELECT product_id, product_name, stock, brand FROM products WHERE stock < 20;",
+      "explanation": "The query selects the required columns and uses the < operator to filter products with stock less than 20.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "Identify products with stock less than a given threshold",
+        "subtopic": "Numeric Filtering",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Identify products with stock less than a given threshold",
+          "subtopic": "Numeric Filtering",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Identify products with stock less than a given threshold as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Identify products with stock less than a given threshold."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T04",
+      "questionText": "When retrieving the second page of records with a page size of 10, what should the skip and limit values be?",
+      "options": [
+        "skip = 0, limit = 10",
+        "skip = 10, limit = 5",
+        "skip = 10, limit = 10",
+        "skip = 20, limit = 10"
+      ],
+      "correctAnswer": "skip = 10, limit = 10",
+      "explanation": "For page 2, the number of records to skip is (2‑1)×10 = 10. The limit is the page size, 10.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Medium",
+        "concept": "Determine which records belong to the second page of a paginated view",
+        "subtopic": "Pagination",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T04",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q4",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Determine which records belong to the second page of a paginated view",
+          "subtopic": "Pagination",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Determine which records belong to the second page of a paginated view as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Determine which records belong to the second page of a paginated view."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T05:38:38.640Z"
+}

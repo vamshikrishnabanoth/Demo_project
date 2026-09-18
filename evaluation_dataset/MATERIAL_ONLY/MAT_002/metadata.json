@@ -1,0 +1,34 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Course Assignment 1 Problems and Questions",
+  "audio_file": null,
+  "supporting_material_files": [
+    "material.docx"
+  ],
+  "language": "English",
+  "teaching_style": "written_curriculum",
+  "content_type": "Academic Instruction",
+  "duration": "N/A",
+  "special_conditions": "Official university learning material",
+  "notes": "Original file: assignment_1.docx",
+  "dataset_id": "MAT_002",
+  "modality": "MATERIAL_ONLY",
+  "category": "MATERIAL_ONLY",
+  "files": [
+    {
+      "filename": "material.docx",
+      "size_bytes": 1879874,
+      "sha256": "6a6783ed2fe965a615ba06db7b3f24a6842abb8601c3cf0a7c066162e5ac889f"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_only",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

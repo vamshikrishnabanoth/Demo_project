@@ -1,0 +1,225 @@
+{
+  "testId": "FOCUSED_EDGE_001",
+  "condition": "CONDITION_B_PDI",
+  "round": "Focused",
+  "datasetId": "EDGE_001",
+  "topic": "Classroom Humor and Casual Banter (Non-Academic)",
+  "modality": "EDGE_CASES",
+  "requested_count": 3,
+  "delivered_count": 2,
+  "representation_mode": "BLUEPRINT",
+  "duration_sec": 86.3,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "2 evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.",
+  "average_rubric_score": 4.55,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Why is basic foundational knowledge required before a learner can start writing programs?",
+      "options": [
+        "It gives the learner the necessary concepts to understand and construct code.",
+        "It allows the learner to operate the computer hardware directly.",
+        "It ensures the learner can type quickly without errors.",
+        "It guarantees the learner will write bug‑free programs."
+      ],
+      "correctAnswer": "It gives the learner the necessary concepts to understand and construct code.",
+      "explanation": "Basic knowledge such as understanding variables, control flow, and syntax provides the mental framework needed to read, write, and reason about code; without it, a learner cannot meaningfully create programs.",
+      "metadata": {
+        "dimension": "Foundational Prerequisite",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Recognize that basic foundational knowledge is required before a learner can start writing programs.",
+        "subtopic": "Basic Knowledge Prerequisite",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Recognize that basic foundational knowledge is required before a learner can start writing programs.",
+          "subtopic": "Basic Knowledge Prerequisite",
+          "cognitiveDimension": "Foundational Prerequisite",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Recognize that basic foundational knowledge is required before a learner can start writing programs. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Foundational Prerequisite",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Recognize that basic foundational knowledge is required before a learner can start writing programs.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "In the instructor's metaphor, what does the phrase \"entering into the highway\" most closely represent in the steps of program execution?",
+      "options": [
+        "Running the program in a debugger",
+        "Compiling the source code into machine code",
+        "Optimizing the program for performance",
+        "Transition from basic concepts to more complex code execution"
+      ],
+      "correctAnswer": "Transition from basic concepts to more complex code execution",
+      "explanation": "The instructor contrasts earlier \"mud roads\" with the \"highway,\" indicating a move from slower, foundational activities to a smoother, faster flow. In program execution this maps to progressing from simple, introductory steps to more advanced, streamlined execution of the program.",
+      "metadata": {
+        "dimension": "Flow / Trace",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Medium",
+        "concept": "Explain the metaphorical meaning of “entering into the highway” in the context of program execution.",
+        "subtopic": "Program Execution Flow Metaphor",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain the metaphorical meaning of “entering into the highway” in the context of program execution.",
+          "subtopic": "Program Execution Flow Metaphor",
+          "cognitiveDimension": "Flow / Trace",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain the metaphorical meaning of “entering into the highway” in the context of program execution. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Flow / Trace",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain the metaphorical meaning of “entering into the highway” in the context of program execution.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T17:31:48.692Z"
+}

@@ -1,0 +1,123 @@
+{
+  "testId": "FOCUSED_MAT_003",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "MAT_003",
+  "topic": "Design and Analysis of Algorithms - Unit II Divide and Conquer",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 1,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 161,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "1 evidence-grounded questions were generated from the available instructional content. 2 additional questions could not be validated against the available evidence.",
+  "average_rubric_score": 4.8,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 4,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.8,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T03",
+      "questionText": "Which statement correctly distinguishes a minimum spanning tree from other spanning trees of the same weighted graph?",
+      "options": [
+        "It has the smallest possible total edge weight among all spanning trees.",
+        "It contains the maximum number of edges possible.",
+        "It always includes the heaviest edge in the graph.",
+        "It must have exactly n edges where n is the number of vertices."
+      ],
+      "correctAnswer": "It has the smallest possible total edge weight among all spanning trees.",
+      "explanation": "A minimum spanning tree (MST) is defined as the spanning tree whose sum of edge weights is minimum among all spanning trees of the graph. The other options describe incorrect properties: a spanning tree always has n‑1 edges, not n; it does not aim to maximize edges or include the heaviest edge.",
+      "metadata": {
+        "dimension": "Comparison / Tradeoff",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Balanced",
+        "concept": "The Algorithm - Aspect 3",
+        "subtopic": "The Algorithm",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "The Algorithm - Aspect 3",
+          "subtopic": "The Algorithm",
+          "cognitiveDimension": "Comparison / Tradeoff",
+          "difficulty": "Balanced",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized The Algorithm - Aspect 3 as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for The Algorithm - Aspect 3."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T19:10:02.506Z"
+}

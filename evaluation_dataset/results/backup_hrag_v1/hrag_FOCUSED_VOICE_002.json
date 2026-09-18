@@ -1,0 +1,327 @@
+{
+  "testId": "FOCUSED_VOICE_002",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "VOICE_002",
+  "topic": "Containerization with Docker Architecture",
+  "modality": "VOICE_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "BLUEPRINT",
+  "duration_sec": 163,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.8,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 4,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.9,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.9,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following statements best defines Docker and its purpose for developers?",
+      "options": [
+        "Docker is a platform that uses containers to package applications and their dependencies, allowing them to run consistently across different environments.",
+        "Docker is a cloud storage service for backing up code repositories.",
+        "Docker is a programming language used to write microservices.",
+        "Docker is a hardware virtualization tool that creates full virtual machines."
+      ],
+      "correctAnswer": "Docker is a platform that uses containers to package applications and their dependencies, allowing them to run consistently across different environments.",
+      "explanation": "Docker provides containerization, letting developers bundle an app with all required libraries and settings into a lightweight, portable container that runs the same on any host system, which simplifies development, testing, and deployment.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Define Docker and explain its purpose in software development.",
+        "subtopic": "Docker concepts",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Define Docker and explain its purpose in software development.",
+          "subtopic": "Docker concepts",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Define Docker and explain its purpose in software development. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Define Docker and explain its purpose in software development.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "Which of the following options correctly lists three Docker commands discussed in the lecture and describes their primary functions?",
+      "options": [
+        "docker -v (shows Docker version), docker pull (downloads an image from Docker Hub), docker images (lists locally stored images)",
+        "docker start (starts a stopped container), docker commit (saves container changes as an image), docker rm (removes a container)",
+        "docker login (authenticates with Docker Hub), docker tag (adds a tag to an image), docker inspect (displays detailed information about an object)",
+        "docker build (creates an image from a Dockerfile), docker push (uploads an image to Docker Hub), docker exec (runs a command in a running container)"
+      ],
+      "correctAnswer": "docker -v (shows Docker version), docker pull (downloads an image from Docker Hub), docker images (lists locally stored images)",
+      "explanation": "The lecture explicitly covered the commands docker -v to display the Docker version, docker pull to fetch an image from Docker Hub, and docker images to list the images available locally.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Identify at least three important Docker commands that were covered and state their primary function.",
+        "subtopic": "Docker commands",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Identify at least three important Docker commands that were covered and state their primary function.",
+          "subtopic": "Docker commands",
+          "cognitiveDimension": "Application",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Identify at least three important Docker commands that were covered and state their primary function. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Identify at least three important Docker commands that were covered and state their primary function.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Which of the following sequences correctly outlines the Docker workflow for moving a Node.js application from machine A to machine B as described in the lecture?",
+      "options": [
+        "Create a Dockerfile, build the image on machine A, export the image as a tar file, transfer the tar to machine B, load the image, and run a container.",
+        "Package the Node.js app into a zip file, transfer it to machine B, unzip, and execute with node without using Docker.",
+        "Write a Dockerfile, copy the Node.js source to machine B, build the image on machine B, run the container directly without pushing.",
+        "Create a Dockerfile, build the image on machine A, push the image to a registry, pull the image on machine B, and run a container."
+      ],
+      "correctAnswer": "Create a Dockerfile, build the image on machine A, push the image to a registry, pull the image on machine B, and run a container.",
+      "explanation": "The lecture emphasizes bundling the application into a Docker image on machine A, sharing that image via a registry (push/pull), and then creating a container on machine B. Option 1 follows this exact sequence, whereas the other options either omit the registry step or avoid Docker entirely.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Hard",
+        "concept": "Describe the step‑by‑step process to bundle a Node.js application and its dependencies into a Docker image and deploy it from machine A to machine B.",
+        "subtopic": "Environment replication with Docker",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Describe the step‑by‑step process to bundle a Node.js application and its dependencies into a Docker image and deploy it from machine A to machine B.",
+          "subtopic": "Environment replication with Docker",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Hard",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Describe the step‑by‑step process to bundle a Node.js application and its dependencies into a Docker image and deploy it from machine A to machine B. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Describe the step‑by‑step process to bundle a Node.js application and its dependencies into a Docker image and deploy it from machine A to machine B.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T18:00:33.766Z"
+}

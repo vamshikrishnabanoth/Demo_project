@@ -1,0 +1,39 @@
+{
+  "subject": "Artificial Intelligence",
+  "topic": "Variational Autoencoders with Fashion MNIST",
+  "audio_file": "audio.mp3",
+  "supporting_material_files": [
+    "material.pdf"
+  ],
+  "language": "English",
+  "teaching_style": "lecture_walkthrough",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Hands-on ML module with companion code exercise PDF",
+  "notes": "Derived from Speech_To_Text/Audio/voice+ppt/Ashamam_VAE",
+  "dataset_id": "MULTI_003",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "category": "VOICE_PLUS_MATERIAL",
+  "files": [
+    {
+      "filename": "audio.mp3",
+      "size_bytes": 65777095,
+      "sha256": "e169d7fdb55795954eecf784972d6b1453195ea47e605a07414c39f36ecbd8eb"
+    },
+    {
+      "filename": "material.pdf",
+      "size_bytes": 626697,
+      "sha256": "48c975486e7cef9148f8bb4b300bd28a77302c631aba85c51b8c2156b49bc2e9"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

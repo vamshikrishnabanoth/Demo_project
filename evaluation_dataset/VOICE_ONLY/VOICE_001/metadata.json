@@ -1,0 +1,32 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Deep Learning and Neural Network Foundations",
+  "audio_file": "audio.mp3",
+  "supporting_material_files": [],
+  "language": "English",
+  "teaching_style": "pedagogical_spoken_lecture",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Audio lecture recorded in classroom",
+  "notes": "Original file: ashamamvoice.mp3",
+  "dataset_id": "VOICE_001",
+  "modality": "VOICE_ONLY",
+  "category": "VOICE_ONLY",
+  "files": [
+    {
+      "filename": "audio.mp3",
+      "size_bytes": 20429948,
+      "sha256": "52743f947cd9d5118ffe8ca5f1e51eee26f3143e04fc8cef9e2a65155806bd21"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

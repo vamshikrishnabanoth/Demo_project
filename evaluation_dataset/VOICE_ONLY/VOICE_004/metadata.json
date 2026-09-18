@@ -1,0 +1,32 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Relational Database SQL Queries and Joins",
+  "audio_file": "audio.mp3",
+  "supporting_material_files": [],
+  "language": "English",
+  "teaching_style": "pedagogical_spoken_lecture",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Audio lecture recorded in classroom",
+  "notes": "Original file: sql.mp3",
+  "dataset_id": "VOICE_004",
+  "modality": "VOICE_ONLY",
+  "category": "VOICE_ONLY",
+  "files": [
+    {
+      "filename": "audio.mp3",
+      "size_bytes": 31719424,
+      "sha256": "406511c57191b5c692dd43cea5b1451fe925cb1a4e7d9a58810587968c660c32"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

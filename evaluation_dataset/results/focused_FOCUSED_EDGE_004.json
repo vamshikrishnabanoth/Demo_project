@@ -1,0 +1,326 @@
+{
+  "testId": "FOCUSED_EDGE_004",
+  "round": "Focused",
+  "datasetId": "EDGE_004",
+  "topic": "MSF Unit 4 Handwritten Diagrams",
+  "modality": "EDGE_CASES",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "BLUEPRINT",
+  "duration_sec": 231,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.47,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.3,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 4,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T03",
+      "questionText": "Based on the provided session evidence, which statement correctly compares the data formats present in the excerpt?",
+      "options": [
+        "The evidence contains only image pixel data",
+        "The evidence contains both raw binary PDF data and an embedded JSON object",
+        "The evidence contains only plain text characters",
+        "The evidence contains only XML markup"
+      ],
+      "correctAnswer": "The evidence contains both raw binary PDF data and an embedded JSON object",
+      "explanation": "The excerpt shows typical PDF binary streams (e.g., \"endstream\", \"obj\", \"Length\") alongside a clear JSON snippet (\"{\\\"type\\\":\\\"Form\\\",...}\"). Therefore it includes both raw PDF binary content and an embedded JSON object.",
+      "metadata": {
+        "dimension": "Comparison / Tradeoff",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Balanced",
+        "concept": "QPN - Aspect 3",
+        "subtopic": "QPN",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "QPN - Aspect 3",
+          "subtopic": "QPN",
+          "cognitiveDimension": "Comparison / Tradeoff",
+          "difficulty": "Balanced",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized QPN - Aspect 3 as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for QPN - Aspect 3."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "R01",
+      "questionText": "Based on the PDF snippet in the document content, which object specifies the total number of pages in the document?",
+      "options": [
+        "Object 5",
+        "Object 4",
+        "Object 3",
+        "Object 2"
+      ],
+      "correctAnswer": "Object 2",
+      "explanation": "In the PDF snippet, object 2 contains the dictionary entry '/Count 65', which indicates the total page count of the document. The other objects define pages, contents, or image resources but do not specify the page count.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Balanced",
+        "concept": "QPN - Extension 1",
+        "subtopic": "QPN",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "R01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "QPN - Extension 1",
+          "subtopic": "QPN",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Balanced",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized QPN - Extension 1 as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for QPN - Extension 1."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "R02",
+      "questionText": "Based on the document content provided, which file format does the document represent?",
+      "options": [
+        "PNG",
+        "JPEG",
+        "DOCX",
+        "PDF"
+      ],
+      "correctAnswer": "PDF",
+      "explanation": "The document content begins with the string \"%PDF-1.3\", which is the standard header for a PDF file.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Balanced",
+        "concept": "FMU - Extension 2",
+        "subtopic": "FMU",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "R02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "FMU - Extension 2",
+          "subtopic": "FMU",
+          "cognitiveDimension": "Application",
+          "difficulty": "Balanced",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized FMU - Extension 2 as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for FMU - Extension 2."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T15:16:11.221Z"
+}

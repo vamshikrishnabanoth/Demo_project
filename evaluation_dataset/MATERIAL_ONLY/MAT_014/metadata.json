@@ -1,0 +1,34 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Software Engineering Week 1 Overview",
+  "audio_file": null,
+  "supporting_material_files": [
+    "material.docx"
+  ],
+  "language": "English",
+  "teaching_style": "written_curriculum",
+  "content_type": "Academic Instruction",
+  "duration": "N/A",
+  "special_conditions": "Official university learning material",
+  "notes": "Original file: WEEK 1 UPLOAD.docx",
+  "dataset_id": "MAT_014",
+  "modality": "MATERIAL_ONLY",
+  "category": "MATERIAL_ONLY",
+  "files": [
+    {
+      "filename": "material.docx",
+      "size_bytes": 5119226,
+      "sha256": "653513d86ee07da9b5ec5b7cc0def73d7db2e9ffe05adda337e81d88df940967"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_only",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

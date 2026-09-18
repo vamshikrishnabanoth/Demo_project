@@ -1,0 +1,32 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Containerization with Docker Architecture",
+  "audio_file": "audio.mp3",
+  "supporting_material_files": [],
+  "language": "English",
+  "teaching_style": "pedagogical_spoken_lecture",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Audio lecture recorded in classroom",
+  "notes": "Original file: docker.mp3",
+  "dataset_id": "VOICE_002",
+  "modality": "VOICE_ONLY",
+  "category": "VOICE_ONLY",
+  "files": [
+    {
+      "filename": "audio.mp3",
+      "size_bytes": 12685700,
+      "sha256": "2ffb5a4f69334270c0fa77f0d00d91677ff54a94138648102278f4b7c3f60812"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

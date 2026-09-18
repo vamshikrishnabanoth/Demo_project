@@ -1,0 +1,224 @@
+{
+  "testId": "FOCUSED_EDGE_001",
+  "round": "Focused",
+  "datasetId": "EDGE_001",
+  "topic": "Classroom Humor and Casual Banter (Non-Academic)",
+  "modality": "EDGE_CASES",
+  "requested_count": 3,
+  "delivered_count": 2,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 128.5,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "2 evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.",
+  "average_rubric_score": 4.4,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T03",
+      "questionText": "A class has 60 students. Based on the instructor’s statement that 75‑80% of the people will understand the program, how many students are expected to understand?",
+      "options": [
+        "50 to 54 students",
+        "42 to 45 students",
+        "48 to 50 students",
+        "45 to 48 students"
+      ],
+      "correctAnswer": "45 to 48 students",
+      "explanation": "75% of 60 = 45 students and 80% of 60 = 48 students, so the instructor’s estimate predicts that between 45 and 48 students will understand the program.",
+      "metadata": {
+        "dimension": "Prediction",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Given a group size, calculate how many participants are expected to understand a program based on the instructor’s estimated comprehension range (75‑80%).",
+        "subtopic": "Program Understanding Percentage",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Given a group size, calculate how many participants are expected to understand a program based on the instructor’s estimated comprehension range (75‑80%).",
+          "subtopic": "Program Understanding Percentage",
+          "cognitiveDimension": "Prediction",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Given a group size, calculate how many participants are expected to understand a program based on the instructor’s estimated comprehension range (75‑80%). as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Prediction",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Given a group size, calculate how many participants are expected to understand a program based on the instructor’s estimated comprehension range (75‑80%).."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "R01",
+      "questionText": "Why does the instructor give a range of \"75 to 80 or 80%\" instead of a single figure, and what implication does this have for planning the lesson?",
+      "options": [
+        "Because the instructor wants to sound confident, so the lesson should follow a rigid, unadjusted schedule regardless of student feedback.",
+        "Because the instructor acknowledges variability in student comprehension, lesson plans should incorporate flexible pacing and optional review activities.",
+        "Because the instructor is unsure of the exact figure, indicating the need to repeat the entire content verbatim for all students.",
+        "Because the instructor is using a rhetorical flourish, implying that no adjustments to teaching strategy are necessary."
+      ],
+      "correctAnswer": "Because the instructor acknowledges variability in student comprehension, lesson plans should incorporate flexible pacing and optional review activities.",
+      "explanation": "The instructor’s use of a range signals awareness that student understanding is not uniform; therefore, effective teaching should allow for adaptable pacing, checkpoints, and supplemental support to accommodate those who may fall outside the estimated 75‑80% comprehension level.",
+      "metadata": {
+        "dimension": "Evidence-Derived Inference",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Hard",
+        "concept": "Interpret the instructor’s confidence statement about audience comprehension and discuss its implications for teaching strategy.",
+        "subtopic": "Program Understanding Percentage",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "R01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Interpret the instructor’s confidence statement about audience comprehension and discuss its implications for teaching strategy.",
+          "subtopic": "Program Understanding Percentage",
+          "cognitiveDimension": "Evidence-Derived Inference",
+          "difficulty": "Hard",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Interpret the instructor’s confidence statement about audience comprehension and discuss its implications for teaching strategy. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Evidence-Derived Inference",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Interpret the instructor’s confidence statement about audience comprehension and discuss its implications for teaching strategy.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T15:12:05.178Z"
+}

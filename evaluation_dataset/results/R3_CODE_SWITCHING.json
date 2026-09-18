@@ -1,0 +1,9 @@
+{
+  "testId": "R3_CODE_SWITCHING",
+  "round": "Round3",
+  "datasetId": "MULTI_005",
+  "status": "FAILED",
+  "duration_sec": 2,
+  "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+  "timestamp": "2026-09-18T05:37:08.083Z"
+}

@@ -1,0 +1,8 @@
+{
+  "testId": "R3_OBJECT_DETECTION_COMPARE",
+  "round": "Round3",
+  "datasetId": "MAT_005",
+  "status": "RUNNING",
+  "duration_sec": 241,
+  "timestamp": "2026-09-18T05:42:42.614Z"
+}

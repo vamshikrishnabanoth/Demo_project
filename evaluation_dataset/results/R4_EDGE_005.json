@@ -1,0 +1,9 @@
+{
+  "testId": "R4_EDGE_005",
+  "round": "Round4",
+  "datasetId": "EDGE_005",
+  "status": "FAILED",
+  "duration_sec": 2,
+  "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+  "timestamp": "2026-09-18T06:47:20.352Z"
+}

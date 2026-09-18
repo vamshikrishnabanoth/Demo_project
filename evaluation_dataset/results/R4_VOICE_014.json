@@ -1,0 +1,9 @@
+{
+  "testId": "R4_VOICE_014",
+  "round": "Round4",
+  "datasetId": "VOICE_014",
+  "status": "FAILED",
+  "duration_sec": 84.4,
+  "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+  "timestamp": "2026-09-18T05:57:06.492Z"
+}

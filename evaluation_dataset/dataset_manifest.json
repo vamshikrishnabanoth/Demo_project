@@ -1,0 +1,1837 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-09-18T01:30:00Z",
+  "categories": {
+    "VOICE_ONLY": [
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Deep Learning and Neural Network Foundations",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: ashamamvoice.mp3",
+        "dataset_id": "VOICE_001",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 20429948,
+            "sha256": "52743f947cd9d5118ffe8ca5f1e51eee26f3143e04fc8cef9e2a65155806bd21"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Containerization with Docker Architecture",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: docker.mp3",
+        "dataset_id": "VOICE_002",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 12685700,
+            "sha256": "2ffb5a4f69334270c0fa77f0d00d91677ff54a94138648102278f4b7c3f60812"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Java Object-Oriented Principles and Syntax",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: java.mp3",
+        "dataset_id": "VOICE_003",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 14680064,
+            "sha256": "390437d1ab7cb03e6adb029e4f1b5228c8b432f0ec062248d0cc002d3c4f81b3"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Relational Database SQL Queries and Joins",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: sql.mp3",
+        "dataset_id": "VOICE_004",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 31719424,
+            "sha256": "406511c57191b5c692dd43cea5b1451fe925cb1a4e7d9a58810587968c660c32"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Algorithmic Complexity and Dynamic Programming",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: tapadia sir.mp3.mpeg",
+        "dataset_id": "VOICE_005",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 103800231,
+            "sha256": "3924d9b248875963dbb8136ee9ef7f6fd2de5a0c905934786953393a90a2fb75"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "System Architecture and Engineering Concepts",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: voiceOfNeilSir.mp3",
+        "dataset_id": "VOICE_006",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 19497740,
+            "sha256": "45c27bc1b5105d03d6b4b24bd52ef8a0d55d11431e6b7f35a4631bab97be04be"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Artificial Intelligence Heuristic Search",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: AI 20-8-26 unseen.m4a",
+        "dataset_id": "VOICE_007",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 48189496,
+            "sha256": "d385865b1366c8ee64c609ecfaf4c35094a40df828613a7bd1d0e9e0f60e0d39"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Median of Two Sorted Arrays via Binary Search",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: Day13-DAA-Median of two sorted array's using binary search.mp3",
+        "dataset_id": "VOICE_008",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 111537560,
+            "sha256": "f401787db4426288fc29d447cb762ec8a583db7bc0834f347c742b0190401d5b"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Data Structures Tree Traversals",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: deepa madam.mp3.mpeg",
+        "dataset_id": "VOICE_009",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 75426550,
+            "sha256": "96f9ec64d6af39fa211f8c4af1f6860c1e020c4f0b5829c1cd9864a740341848"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Machine Learning Supervised Models",
+        "audio_file": "audio.mp4",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: ML_MadhurikaMam.mp4",
+        "dataset_id": "VOICE_010",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.mp4",
+            "size_bytes": 3962480,
+            "sha256": "3ef0133cecf248a45e6ed6f53dcc225c132a0c977924b555ec92e99ebe4b1311"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Classroom Lecture Section A",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: New (1).m4a",
+        "dataset_id": "VOICE_011",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 40624084,
+            "sha256": "6b30aca681a03750fbf1fa524174f67353d4b44a1a19df7234c9499239fa456e"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Classroom Lecture Section B",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: New (2).m4a",
+        "dataset_id": "VOICE_012",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 73638388,
+            "sha256": "40baa18f5fc326665817de6b0eb5ab583c756433e631cf45570964b5368ebde0"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Technical Walkthrough Concept Review",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: New recording 37 (1).m4a",
+        "dataset_id": "VOICE_013",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 18945103,
+            "sha256": "10f6457a1848d87da072f3219dad645fb049e987e329aeff4f3b0cba0af62de0"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Engineering Lecture Audio",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: New.m4a",
+        "dataset_id": "VOICE_014",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 58931234,
+            "sha256": "1eccee98660040ea1e8b66f8e3cd0d057b824a2acb83f2355308bfd4f7713642"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming Principles Classroom Audio",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: PP.m4a",
+        "dataset_id": "VOICE_015",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 82514815,
+            "sha256": "02d54408a40fad22b702bf27481c2b5490f1cdaf19892d97bbbf62f479f11dcf"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Lecture Audio General Notes",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: Voice.m4a",
+        "dataset_id": "VOICE_016",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 58797490,
+            "sha256": "8b4467b130b01991fab3638f058b52b5e0bc4d4d1d9d643d07c413fe01954c1e"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Web Technologies - DOM and JavaScript",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: WT 18-8-26.m4a",
+        "dataset_id": "VOICE_017",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 86146428,
+            "sha256": "a03876d134ef7faf2befde0454983a0d1e874d0452034c4cdd2ed1b2704ebedc"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Web Technologies - HTTP and Server Communication",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: WT 19-8-26.m4a",
+        "dataset_id": "VOICE_018",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 68696355,
+            "sha256": "2f6c27c8d5dfa598e6c2a0cd5afb5d94b245d43399c012ca8f13c144d96cfd74"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Web Technologies - Asynchronous JavaScript and APIs",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "pedagogical_spoken_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Audio lecture recorded in classroom",
+        "notes": "Original file: WT 20-8-26.m4a",
+        "dataset_id": "VOICE_019",
+        "modality": "VOICE_ONLY",
+        "category": "VOICE_ONLY",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 66019301,
+            "sha256": "9f1b2df2f4cac7ca6e72319e83dbbd0b78e1935ba552d7152a61b472e626d44d"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      }
+    ],
+    "VOICE_PLUS_MATERIAL": [
+      {
+        "subject": "Computer Science and Engineering",
+        "topic": "Computer Organization and Architecture - Unit IV",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "interactive_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Full 355MB lecture audio with unit slides",
+        "notes": "Derived from final_tests/COA_voice+material",
+        "dataset_id": "MULTI_001",
+        "modality": "VOICE_PLUS_MATERIAL",
+        "category": "VOICE_PLUS_MATERIAL",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 372549165,
+            "sha256": "446933531a934aa288dfda192e5dd2629b9221844884fd6a1aaf625d7d82f76a"
+          },
+          {
+            "filename": "material.pdf",
+            "size_bytes": 2784705,
+            "sha256": "e7404de57c2421ba706d7768a29fdfd47ed5f5bddac888afac3a94ddf6e3f8d3"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science and Engineering",
+        "topic": "Operating Systems - Unit 3 Memory Management and Synchronization",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "interactive_lecture",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Full 303MB lecture audio with unit notes",
+        "notes": "Derived from final_tests/OS_voice+material",
+        "dataset_id": "MULTI_002",
+        "modality": "VOICE_PLUS_MATERIAL",
+        "category": "VOICE_PLUS_MATERIAL",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 318253485,
+            "sha256": "771b073e0877b3fe1ed7166963bfec29f72940b1b5c5ce682c593ef7583d5a6d"
+          },
+          {
+            "filename": "material.pdf",
+            "size_bytes": 1246692,
+            "sha256": "a65d89ed92dd63bdab9bfe2ad630e8feb4e7e8e33add28f3edb9a4c4bf2d487e"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Artificial Intelligence",
+        "topic": "Variational Autoencoders with Fashion MNIST",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "lecture_walkthrough",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Hands-on ML module with companion code exercise PDF",
+        "notes": "Derived from Speech_To_Text/Audio/voice+ppt/Ashamam_VAE",
+        "dataset_id": "MULTI_003",
+        "modality": "VOICE_PLUS_MATERIAL",
+        "category": "VOICE_PLUS_MATERIAL",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 65777095,
+            "sha256": "e169d7fdb55795954eecf784972d6b1453195ea47e605a07414c39f36ecbd8eb"
+          },
+          {
+            "filename": "material.pdf",
+            "size_bytes": 626697,
+            "sha256": "48c975486e7cef9148f8bb4b300bd28a77302c631aba85c51b8c2156b49bc2e9"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Data Structures",
+        "topic": "Binary Trees and Different Types of Trees",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [
+          "slides.pptx"
+        ],
+        "language": "English",
+        "teaching_style": "slides_expository",
+        "content_type": "Academic Instruction",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Classroom lecture paired with PPTX slides",
+        "notes": "Derived from Speech_To_Text/Audio/voice+ppt/deepamam_binarytrees_lecture1",
+        "dataset_id": "MULTI_004",
+        "modality": "VOICE_PLUS_MATERIAL",
+        "category": "VOICE_PLUS_MATERIAL",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 46403551,
+            "sha256": "fb55cd3c9292139649d44442d053cb02d3481d350e9426d045c859c7d0cf97d4"
+          },
+          {
+            "filename": "slides.pptx",
+            "size_bytes": 616968,
+            "sha256": "15b88b605867f1b31c6dc4a24925758021e35ed9ead5b93f414ff52bff69cb9b"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Algorithms",
+        "topic": "DAA - Best Time to Buy and Sell Stock (Single and Infinite Transactions)",
+        "audio_file": "audio.mp3",
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "code_problem_solving",
+        "content_type": "Worked Problem",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Deep dynamic programming walkthrough with C++ code snippet PDF",
+        "notes": "Derived from Speech_To_Text/Audio/voice+ppt/tapadiasir_buyandsellstock_lecture2",
+        "dataset_id": "MULTI_005",
+        "modality": "VOICE_PLUS_MATERIAL",
+        "category": "VOICE_PLUS_MATERIAL",
+        "files": [
+          {
+            "filename": "audio.mp3",
+            "size_bytes": 99383725,
+            "sha256": "3f36286f9471287b25456f6fab109fefeb24c2bdea91d7ac49f296810b83c716"
+          },
+          {
+            "filename": "material.pdf",
+            "size_bytes": 120039,
+            "sha256": "5d9d56bf8c70e4f3103f26998b50b46581dfd84b968ac02c478fd9f28a9798d3"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_plus_pedagogical",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      }
+    ],
+    "MATERIAL_ONLY": [
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "SE Lab Week 3: Git Workflows and Merge Conflicts",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.docx"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: 9h9k_SELAB (1).docx",
+        "dataset_id": "MAT_001",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.docx",
+            "size_bytes": 763997,
+            "sha256": "ea6b91c7f6846e5a88ef2d659095cabf1981f494369a7a656eb4fb19f1bfb4fd"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Course Assignment 1 Problems and Questions",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.docx"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: assignment_1.docx",
+        "dataset_id": "MAT_002",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.docx",
+            "size_bytes": 1879874,
+            "sha256": "6a6783ed2fe965a615ba06db7b3f24a6842abb8601c3cf0a7c066162e5ac889f"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Design and Analysis of Algorithms - Unit II Divide and Conquer",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: DAA UNIT-II.pdf",
+        "dataset_id": "MAT_003",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 2283546,
+            "sha256": "cfc9c2f6c6fcbc8f1aaecbef371fd86f9fa135d2f38ae4b6b87083b6e59a8966"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Data Structures Lab Programs Manual",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.docx"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: DS Lab Programs(KR24)II-II.docx",
+        "dataset_id": "MAT_004",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.docx",
+            "size_bytes": 2445996,
+            "sha256": "343510b19733b4a1e8cdb4fd5f857b39f3f20c95b14cd419e03d32759bc7a84a"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "CNN Object Detection: Fast R-CNN vs YOLO Architecture",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: EX2-CNN-OBJECT DETECTION-FASTRCNN VS YOLO-.pdf",
+        "dataset_id": "MAT_005",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 1313286,
+            "sha256": "b627a5e273e6f8918e5320e74d88eb795604d23d5ff9bc5bcad08bd211c6eda4"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "MongoDB Query Syntax and Shell Operations",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.txt"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: MongoDB COmmands.txt",
+        "dataset_id": "MAT_006",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.txt",
+            "size_bytes": 16056,
+            "sha256": "42197678cb42a243249802f8b9e6d57559d9ea320b39a8042828b94dec16cb5e"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Digital Electronics Lecture Slides DE-31",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pptx"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: DE-31.pptx",
+        "dataset_id": "MAT_007",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pptx",
+            "size_bytes": 3306755,
+            "sha256": "f31a716ebacac1bc11401316714b41e18758ebe70a47f2a523167fee0c00a4ea"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Digital Electronics - Unit 1 Logic Gates and Boolean Algebra",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: DE-UNIT-1.pdf",
+        "dataset_id": "MAT_008",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 7584233,
+            "sha256": "7d29af24b7b41d7e7cb47c82edd7526a4420719bf413cd47c96cf22a2a7d0f4d"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Digital Electronics - Unit 2 Combinational Logic Design",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: DE-UNIT-2.pdf",
+        "dataset_id": "MAT_009",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 5680172,
+            "sha256": "48712421b5d06c592af49691ace75cc62ec40fdea8b0dad5765aa7fb77b7b342"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Engineering Workshop Practice Manual",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: EWS Manual 2024 Batch.pdf",
+        "dataset_id": "MAT_010",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 4316372,
+            "sha256": "a432898f655afccc50f8ed788a6d34867dae6805dab42ace5d6e6fbf8328b63c"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Operating Systems Lab Experiment 1: Process Creation",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: OS-LAB-EXPERIMENT-1.pdf",
+        "dataset_id": "MAT_011",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 1689852,
+            "sha256": "46322165446e0cec2c619a0abda769ff6412500833cdb0ed995f8cf8c3be9cd0"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Docker Specifications and Single Container Deployment",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.docx"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: Docker file, Single containerization.docx",
+        "dataset_id": "MAT_012",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.docx",
+            "size_bytes": 863706,
+            "sha256": "e6e43b1b8daab2cfa41ecb3219d6d03672f8885c936eb2311891a45b5402e904"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Software Engineering Environment Setup and Tools",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.docx"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: INSTALLATIONS OF SE.docx",
+        "dataset_id": "MAT_013",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.docx",
+            "size_bytes": 1267587,
+            "sha256": "0c3db9d578f464ccd42becacd8644e2f58bfcdd212bc526fa7631851d60c36f5"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Software Engineering Week 1 Overview",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.docx"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: WEEK 1 UPLOAD.docx",
+        "dataset_id": "MAT_014",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.docx",
+            "size_bytes": 5119226,
+            "sha256": "653513d86ee07da9b5ec5b7cc0def73d7db2e9ffe05adda337e81d88df940967"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming Bootcamp Day 1 Basics",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: Day-1-material.pdf",
+        "dataset_id": "MAT_015",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 1311201,
+            "sha256": "39f65f633e0ba39c25a4f05dc7a5dd68fce380b15ddf1cca88328f13e1788df1"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming Bootcamp Day 2 Control Structures",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: Day-2 material.pdf",
+        "dataset_id": "MAT_016",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 7183950,
+            "sha256": "feda63be310978001f4bf34809e29e879a67e2823e47c33212e79aec4c18c141"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming Bootcamp Day 3 Functions and Pointers",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: Day-3-material.pdf",
+        "dataset_id": "MAT_017",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 11178071,
+            "sha256": "15fa307c1c666b745f4a1b009f99b84838840b026e6d3a2a7aae47a0429cd58c"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming Bootcamp Day 4 Data Structures",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: Day-4-material.pdf",
+        "dataset_id": "MAT_018",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 32250375,
+            "sha256": "7d804020d26a093e73cd92df6b50a4af8acce73bf8a76001906784c36d665e50"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming Bootcamp Day 5 File I/O",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: Day-5-material.pdf",
+        "dataset_id": "MAT_019",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 1421301,
+            "sha256": "38bb5669cceb60e1ab1b46c0400afa9becb05f4f4b9380c6acb2ecd9b1f6d454"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming Bootcamp Day 6 Advanced Algorithms",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: Day-6-material.pdf",
+        "dataset_id": "MAT_020",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 1059200,
+            "sha256": "0fd352b6734d3b9254af36f62727e1d730c3cb597728b6c5b45b7a82ea9ffe1d"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming Bootcamp Day 7 System Applications",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: Day-7-material.pdf",
+        "dataset_id": "MAT_021",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 532287,
+            "sha256": "e93bc129e50ed8bdc7458fd57cda42c60a1e8dbe17b1c72ee5951fcc9980326f"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Exploratory Data Analysis Statistical Practice",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: EDA-Practice.pdf",
+        "dataset_id": "MAT_022",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 133270,
+            "sha256": "59ee2eb83284af85c694318e8e3e96a6e5b71c69bb6e2fa45b4a56d2dcefb3e5"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "Programming for Problem Solving Unit 2 Notes",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: PPS_UNIT-2_NOTES-new (1).pdf",
+        "dataset_id": "MAT_023",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 1366370,
+            "sha256": "da1a00f21d3f6a0c0196930bcb93afb89036f88c71fee6ca2cddf9c279c26a0e"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Computer Science / Engineering",
+        "topic": "PSC Mid-II Revision Notes",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "written_curriculum",
+        "content_type": "Academic Instruction",
+        "duration": "N/A",
+        "special_conditions": "Official university learning material",
+        "notes": "Original file: PSC MID-II NOTES (R22).pdf",
+        "dataset_id": "MAT_024",
+        "modality": "MATERIAL_ONLY",
+        "category": "MATERIAL_ONLY",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 5185156,
+            "sha256": "9b5ac7142138dc2c7b127b287a9386a69efeac79ab8806fdc167cce5fe65f0f7"
+          }
+        ],
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      }
+    ],
+    "EDGE_CASES": [
+      {
+        "subject": "Edge Case Evaluation",
+        "topic": "Classroom Humor and Casual Banter (Non-Academic)",
+        "audio_file": "audio.m4a",
+        "supporting_material_files": [],
+        "language": "English",
+        "teaching_style": "informal_or_unstructured",
+        "content_type": "Casual Banter",
+        "expected_academicity": "REJECT",
+        "expected_content_behavior": "non_academic",
+        "duration": "UNKNOWN/TBD",
+        "special_conditions": "Edge testing: Casual Banter",
+        "notes": "Original file: Pps jocks.m4a",
+        "dataset_id": "EDGE_001",
+        "modality": "EDGE_CASES",
+        "category": "EDGE_CASES",
+        "files": [
+          {
+            "filename": "audio.m4a",
+            "size_bytes": 5261589,
+            "sha256": "66147c82e18adcf69c5321fde959a5417304697a17b20aa93d955e31c754f2d3"
+          }
+        ],
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Edge Case Evaluation",
+        "topic": "CSS Handwritten Notes",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "informal_or_unstructured",
+        "content_type": "Academic Instruction",
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "duration": "N/A",
+        "special_conditions": "Edge testing: Academic Instruction",
+        "notes": "Original file: CSS_Complete_Notes.pdf",
+        "dataset_id": "EDGE_002",
+        "modality": "EDGE_CASES",
+        "category": "EDGE_CASES",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 26266299,
+            "sha256": "57470a8aa25cbf9e617aceca009b5eabb362010f5d522f0558b30ea27b3f619f"
+          }
+        ],
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Edge Case Evaluation",
+        "topic": "Scanned English Textbook",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "informal_or_unstructured",
+        "content_type": "Academic Instruction",
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "duration": "N/A",
+        "special_conditions": "Edge testing: Academic Instruction",
+        "notes": "Original file: ENGLISH TEXTBOOK _2022.pdf",
+        "dataset_id": "EDGE_003",
+        "modality": "EDGE_CASES",
+        "category": "EDGE_CASES",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 50677205,
+            "sha256": "6cc5129da4acc1534fc76b37479dcf9626f086a70b05e6987d274de0724bd336"
+          }
+        ],
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Edge Case Evaluation",
+        "topic": "MSF Unit 4 Handwritten Diagrams",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "informal_or_unstructured",
+        "content_type": "Academic Instruction",
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "duration": "N/A",
+        "special_conditions": "Edge testing: Academic Instruction",
+        "notes": "Original file: MSF-UNIT-4.pdf",
+        "dataset_id": "EDGE_004",
+        "modality": "EDGE_CASES",
+        "category": "EDGE_CASES",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 24532317,
+            "sha256": "5279e045a1f433f389a486bc628befd8682cba4a4d92fcc4cff384a64eadb1df"
+          }
+        ],
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Edge Case Evaluation",
+        "topic": "Electrical Machines Unit 4 Handwritten Formulas",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "informal_or_unstructured",
+        "content_type": "Academic Instruction",
+        "expected_academicity": "PASS",
+        "expected_content_behavior": "instructional_only",
+        "duration": "N/A",
+        "special_conditions": "Edge testing: Academic Instruction",
+        "notes": "Original file: Unit-4 Electrical Machines.pdf",
+        "dataset_id": "EDGE_005",
+        "modality": "EDGE_CASES",
+        "category": "EDGE_CASES",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 14929579,
+            "sha256": "ec404dbc8733ee948d742303cefc9603f7878a0a87569273afae3bb251591dc9"
+          }
+        ],
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      },
+      {
+        "subject": "Edge Case Evaluation",
+        "topic": "Camera Captured Photo Scans of Board",
+        "audio_file": null,
+        "supporting_material_files": [
+          "material.pdf"
+        ],
+        "language": "English",
+        "teaching_style": "informal_or_unstructured",
+        "content_type": "Academic Instruction",
+        "expected_academicity": "UNKNOWN/TBD",
+        "expected_content_behavior": "ungrounded_vocabulary",
+        "duration": "N/A",
+        "special_conditions": "Edge testing: Academic Instruction",
+        "notes": "Original file: IT Photos.pdf",
+        "dataset_id": "EDGE_006",
+        "modality": "EDGE_CASES",
+        "category": "EDGE_CASES",
+        "files": [
+          {
+            "filename": "material.pdf",
+            "size_bytes": 1928463,
+            "sha256": "ef67938fb298a1ea16dbff6b23a312fa615f1858fbab56367d7669e64d5dc129"
+          }
+        ],
+        "expected_representation_route": "UNKNOWN/TBD",
+        "expected_usable_concepts": [],
+        "expected_excluded_content": [
+          "jokes",
+          "classroom_management",
+          "exam_dates"
+        ],
+        "verification_status": "VERIFIED"
+      }
+    ]
+  },
+  "duplicates_detected": [],
+  "total_items": 54
+}

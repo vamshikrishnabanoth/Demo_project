@@ -1,0 +1,225 @@
+{
+  "testId": "FOCUSED_MAT_003",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "MAT_003",
+  "topic": "Design and Analysis of Algorithms - Unit II Divide and Conquer",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 2,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 6,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "2 evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.",
+  "average_rubric_score": 4.75,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.9,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "When writing a function to compute the minimum product of a subset of an integer array using the greedy approach described, under which condition should the function return the product of all array elements?",
+      "options": [
+        "There are no negative numbers",
+        "All numbers are positive",
+        "There are an even number of negative numbers and at least one zero",
+        "There are an odd number of negative numbers and no zeros"
+      ],
+      "correctAnswer": "There are an odd number of negative numbers and no zeros",
+      "explanation": "The evidence states that if there are an odd number of negative numbers and no zeros, the minimum product is obtained by multiplying all elements. In other cases, different handling (e.g., excluding the largest negative) is required.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Balanced",
+        "concept": "Write A Function - Aspect 1",
+        "subtopic": "Write A Function",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Write A Function - Aspect 1",
+          "subtopic": "Write A Function",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Balanced",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Write A Function - Aspect 1 as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Write A Function - Aspect 1."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "R02",
+      "questionText": "During each iteration of binary search on a sorted array, which comparison is performed to decide the next sub‑array to search?",
+      "options": [
+        "The input key is compared with the middle element of the current sub‑array",
+        "The input key is compared with the first element of the array",
+        "The input key is compared with the last element of the array",
+        "The input key is compared with a randomly chosen element"
+      ],
+      "correctAnswer": "The input key is compared with the middle element of the current sub‑array",
+      "explanation": "Binary search examines the middle element of the current search interval; if the key is less, it continues on the left half, otherwise on the right half. This comparison determines the next sub‑array.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Balanced",
+        "concept": "Compares The Input - Extension 2",
+        "subtopic": "Compares The Input",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "R02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Compares The Input - Extension 2",
+          "subtopic": "Compares The Input",
+          "cognitiveDimension": "Application",
+          "difficulty": "Balanced",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE + DOCUMENT",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Compares The Input - Extension 2 as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Compares The Input - Extension 2."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T18:32:21.381Z"
+}

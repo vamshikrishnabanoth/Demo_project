@@ -1,0 +1,327 @@
+{
+  "testId": "FOCUSED_MULTI_001",
+  "condition": "CONDITION_B_PDI",
+  "round": "Focused",
+  "datasetId": "MULTI_001",
+  "topic": "Computer Organization and Architecture - Unit IV",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "UNIFIED",
+  "duration_sec": 164.8,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.63,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "According to the provided evidence, which type of memory has the highest access speed?",
+      "options": [
+        "Cache memory",
+        "Main memory (RAM)",
+        "Hard disk",
+        "Flash memory"
+      ],
+      "correctAnswer": "Cache memory",
+      "explanation": "The evidence states that cache memory is \"extremely faster\" than main memory, which in turn is faster than hard disk. Cache memory is a small, high‑speed memory located close to the CPU that holds frequently accessed data, so its proximity and data locality reduce access time, making it the fastest among the listed options.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Define cache memory and explain why it is faster than main memory.",
+        "subtopic": "Cache Memory",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 2,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Define cache memory and explain why it is faster than main memory.",
+          "subtopic": "Cache Memory",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Define cache memory and explain why it is faster than main memory. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Define cache memory and explain why it is faster than main memory.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "According to the discussion, what happens to cost and access speed as storage capacity increases from cache memory to hard‑disk memory?",
+      "options": [
+        "Cost decreases and access speed increases",
+        "Cost increases and access speed decreases",
+        "Cost increases and access speed increases",
+        "Cost decreases and access speed decreases"
+      ],
+      "correctAnswer": "Cost decreases and access speed decreases",
+      "explanation": "The evidence states that as storage capacity grows from cache (small capacity) to main memory and then to hard‑disk (large capacity), the cost per unit of storage goes down while the access speed becomes slower. Therefore, higher capacity is associated with lower cost and lower speed.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Medium",
+        "concept": "Describe how increasing storage capacity affects cost and access speed across cache, main, and hard‑disk memories.",
+        "subtopic": "Cost vs Capacity Relationship",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Describe how increasing storage capacity affects cost and access speed across cache, main, and hard‑disk memories.",
+          "subtopic": "Cost vs Capacity Relationship",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Describe how increasing storage capacity affects cost and access speed across cache, main, and hard‑disk memories. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Describe how increasing storage capacity affects cost and access speed across cache, main, and hard‑disk memories.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "In a multiprogramming system, when Program A is waiting for an I/O operation, which description best reflects how the memory hierarchy is used and how the CPU proceeds?",
+      "options": [
+        "Program A is moved directly from auxiliary memory to CPU registers, and the CPU executes Program B from registers.",
+        "Program A remains in cache memory while the CPU continues executing its own instructions, waiting for I/O to finish.",
+        "Program A is stored in auxiliary memory, its needed pages are moved to main memory, frequently used instructions are placed in cache; the CPU executes Program B from main memory.",
+        "Program A stays in main memory without using cache, and the CPU idles until the I/O operation completes."
+      ],
+      "correctAnswer": "Program A is stored in auxiliary memory, its needed pages are moved to main memory, frequently used instructions are placed in cache; the CPU executes Program B from main memory.",
+      "explanation": "When a program waits for I/O, the operating system may keep its inactive parts in auxiliary (secondary) storage. Required pages are swapped into main memory, and hot code/instructions are cached for fast access. Meanwhile the CPU is free to run another ready program (Program B) from main memory, utilizing cache to reduce the CPU‑memory speed gap.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Apply the memory hierarchy to a scenario where a program waits for I/O and the CPU must continue executing other programs.",
+        "subtopic": "Multi‑programming and Memory Hierarchy",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Apply the memory hierarchy to a scenario where a program waits for I/O and the CPU must continue executing other programs.",
+          "subtopic": "Multi‑programming and Memory Hierarchy",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Apply the memory hierarchy to a scenario where a program waits for I/O and the CPU must continue executing other programs. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Apply the memory hierarchy to a scenario where a program waits for I/O and the CPU must continue executing other programs.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T17:23:57.981Z"
+}

@@ -1,0 +1,123 @@
+{
+  "testId": "FOCUSED_EDGE_004",
+  "condition": "CONDITION_B_PDI",
+  "round": "Focused",
+  "datasetId": "EDGE_004",
+  "topic": "MSF Unit 4 Handwritten Diagrams",
+  "modality": "EDGE_CASES",
+  "requested_count": 3,
+  "delivered_count": 1,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 136.5,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "1 evidence-grounded questions were generated from the available instructional content. 2 additional questions could not be validated against the available evidence.",
+  "average_rubric_score": 4.5,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following options exactly reproduces the Y5s formula as shown in the session evidence?",
+      "options": [
+        "Y5s =\\!/xl_)4 %y@T t?($]OZ +v]da _5`% M{4F v~]w iZv5 g*qk ^xF#S nIw2 77<) &u]>}9 M:/7^ #kvV Uw{) ]MF> r590 6EJ2M4n B_N!S |2w6",
+        "Y5s =\\!/x l_)4 %y@T t?($]OZ +v]da _5`% M{4F v~]w iZv5 g*qk ^xF#S nIw2 77<) &u]>}9 M:/7^ #kvV Uw{) ]MF> r590 6EJ2M4n B_N!S |2w7",
+        "Y5s =\\!/x l_)4 %y@T t?($]OZ +v]da _5`% M{4F v~]w iZv5 g*qk ^xF#S nIw2 77<) &u]>}9 M:/7^ #kvV Uw{) ]MF> r590 6EJ2M4n B_N!S |2w6",
+        "Y5s =/!/x l_)4 %y@T t?($]OZ +v]da _5`% M{4F v~]w iZv5 g*qk ^xF#S nIw2 77<) &u]>}9 M:/7^ #kvV Uw{) ]MF> r590 6EJ2M4n B_N!S |2w6"
+      ],
+      "correctAnswer": "Y5s =\\!/x l_)4 %y@T t?($]OZ +v]da _5`% M{4F v~]w iZv5 g*qk ^xF#S nIw2 77<) &u]>}9 M:/7^ #kvV Uw{) ]MF> r590 6EJ2M4n B_N!S |2w6",
+      "explanation": "The correct option matches the exact sequence of characters of the Y5s formula from the evidence, including spaces, symbols, and the final token \"|2w6\".",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "Recognize the exact syntax of the Y5s formula presented in the session",
+        "subtopic": "Y5s formula",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_02"
+            ]
+          },
+          "concept": "Recognize the exact syntax of the Y5s formula presented in the session",
+          "subtopic": "Y5s formula",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "CODE",
+          "2_supportingSessionChunks": [
+            "chunk_02"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Recognize the exact syntax of the Y5s formula presented in the session as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Recognize the exact syntax of the Y5s formula presented in the session."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T17:34:20.269Z"
+}

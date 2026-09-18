@@ -1,0 +1,39 @@
+{
+  "subject": "Data Structures",
+  "topic": "Binary Trees and Different Types of Trees",
+  "audio_file": "audio.mp3",
+  "supporting_material_files": [
+    "slides.pptx"
+  ],
+  "language": "English",
+  "teaching_style": "slides_expository",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Classroom lecture paired with PPTX slides",
+  "notes": "Derived from Speech_To_Text/Audio/voice+ppt/deepamam_binarytrees_lecture1",
+  "dataset_id": "MULTI_004",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "category": "VOICE_PLUS_MATERIAL",
+  "files": [
+    {
+      "filename": "audio.mp3",
+      "size_bytes": 46403551,
+      "sha256": "fb55cd3c9292139649d44442d053cb02d3481d350e9426d045c859c7d0cf97d4"
+    },
+    {
+      "filename": "slides.pptx",
+      "size_bytes": 616968,
+      "sha256": "15b88b605867f1b31c6dc4a24925758021e35ed9ead5b93f414ff52bff69cb9b"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

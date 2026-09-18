@@ -1,0 +1,34 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Operating Systems Lab Experiment 1: Process Creation",
+  "audio_file": null,
+  "supporting_material_files": [
+    "material.pdf"
+  ],
+  "language": "English",
+  "teaching_style": "written_curriculum",
+  "content_type": "Academic Instruction",
+  "duration": "N/A",
+  "special_conditions": "Official university learning material",
+  "notes": "Original file: OS-LAB-EXPERIMENT-1.pdf",
+  "dataset_id": "MAT_011",
+  "modality": "MATERIAL_ONLY",
+  "category": "MATERIAL_ONLY",
+  "files": [
+    {
+      "filename": "material.pdf",
+      "size_bytes": 1689852,
+      "sha256": "46322165446e0cec2c619a0abda769ff6412500833cdb0ed995f8cf8c3be9cd0"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_only",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

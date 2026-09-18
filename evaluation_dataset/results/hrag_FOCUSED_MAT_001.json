@@ -1,0 +1,327 @@
+{
+  "testId": "FOCUSED_MAT_001",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "MAT_001",
+  "topic": "SE Lab Week 3: Git Workflows and Merge Conflicts",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 163,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.83,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.9,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 4,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 4,
+        "distractor_quality": 4,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.9,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "What is the definition of code collaboration as described in the session?",
+      "options": [
+        "The practice of writing code individually without sharing any files.",
+        "A method of testing software automatically using continuous integration.",
+        "The process of multiple people working together on the same codebase.",
+        "A technique for deploying applications to cloud servers."
+      ],
+      "correctAnswer": "The process of multiple people working together on the same codebase.",
+      "explanation": "The session explicitly defines code collaboration as the process of multiple people working together on the same codebase.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "Define code collaboration as taught in the session.",
+        "subtopic": "Code Collaboration Definition",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Define code collaboration as taught in the session.",
+          "subtopic": "Code Collaboration Definition",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Define code collaboration as taught in the session. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Define code collaboration as taught in the session.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "Why is resolving merge conflicts considered a normal part of team development in collaborative Git workflows?",
+      "options": [
+        "Because conflicts indicate that multiple team members edited the same part of the code, requiring a decision on which changes to keep",
+        "Because Git automatically merges all changes without any need for human intervention",
+        "Because conflicts only occur when the repository is corrupted and must be deleted",
+        "Because resolving conflicts eliminates the need for branching strategies"
+      ],
+      "correctAnswer": "Because conflicts indicate that multiple team members edited the same part of the code, requiring a decision on which changes to keep",
+      "explanation": "When collaborators modify the same lines or sections of a file, Git cannot automatically decide which version to retain, so a merge conflict is raised. Resolving these conflicts is a routine step in team development because it ensures that the final code reflects the intended combined changes and maintains project integrity.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Explain why conflict resolution is a normal part of team development when using Git.",
+        "subtopic": "Resolving Git Conflicts",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain why conflict resolution is a normal part of team development when using Git.",
+          "subtopic": "Resolving Git Conflicts",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain why conflict resolution is a normal part of team development when using Git. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain why conflict resolution is a normal part of team development when using Git.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Which of the following sequences correctly describes the steps a collaborator must follow to share a repository with another collaborator within an organization?",
+      "options": [
+        "Generate an SSH key, add it to GitHub, clone the repository, and push changes directly to the main branch.",
+        "Create a new branch, make changes, commit them, push to the remote repository, and then open a pull request.",
+        "Go to Settings > collaborators, click Manage Access, select Add people, send the invitation, and wait for the collaborator to accept the invitation.",
+        "Fork the repository, clone your fork, make edits, and submit a pull request to the original repository."
+      ],
+      "correctAnswer": "Go to Settings > collaborators, click Manage Access, select Add people, send the invitation, and wait for the collaborator to accept the invitation.",
+      "explanation": "The documented steps for a collaborator to share a repository are: navigate to Settings > collaborators, use Manage Access to click Add people, which sends an invitation to the other collaborator; the invited collaborator must then accept the invitation. The other options describe unrelated Git workflows such as branching, SSH setup, or forking, which are not the specific sharing steps.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "List the steps a collaborator must follow to share a repository within an organization.",
+        "subtopic": "Steps to Facilitate Collaborative Work",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "List the steps a collaborator must follow to share a repository within an organization.",
+          "subtopic": "Steps to Facilitate Collaborative Work",
+          "cognitiveDimension": "Application",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized List the steps a collaborator must follow to share a repository within an organization. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for List the steps a collaborator must follow to share a repository within an organization.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T18:26:47.742Z"
+}

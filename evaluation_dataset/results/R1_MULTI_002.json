@@ -1,0 +1,9 @@
+{
+  "testId": "R1_MULTI_002",
+  "round": "Round1",
+  "datasetId": "MULTI_002",
+  "status": "FAILED",
+  "duration_sec": 4,
+  "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+  "timestamp": "2026-09-18T09:48:07.078Z"
+}

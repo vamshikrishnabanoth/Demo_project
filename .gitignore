@@ -51,3 +51,11 @@ pipeline_experiment/results/
 scratch/
 test_assets/
 server/data/cache/
+
+# Audio and Large Media (Exceeds GitHub 100MB limit)
+*.mp3
+*.m4a
+*.mp4
+*.wav
+*.flac
+*.ogg

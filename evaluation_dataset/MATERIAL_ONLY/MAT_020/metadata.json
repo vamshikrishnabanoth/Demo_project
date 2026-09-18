@@ -1,0 +1,34 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Programming Bootcamp Day 6 Advanced Algorithms",
+  "audio_file": null,
+  "supporting_material_files": [
+    "material.pdf"
+  ],
+  "language": "English",
+  "teaching_style": "written_curriculum",
+  "content_type": "Academic Instruction",
+  "duration": "N/A",
+  "special_conditions": "Official university learning material",
+  "notes": "Original file: Day-6-material.pdf",
+  "dataset_id": "MAT_020",
+  "modality": "MATERIAL_ONLY",
+  "category": "MATERIAL_ONLY",
+  "files": [
+    {
+      "filename": "material.pdf",
+      "size_bytes": 1059200,
+      "sha256": "0fd352b6734d3b9254af36f62727e1d730c3cb597728b6c5b45b7a82ea9ffe1d"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_only",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

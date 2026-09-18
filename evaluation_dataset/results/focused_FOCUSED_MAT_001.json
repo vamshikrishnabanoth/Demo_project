@@ -1,0 +1,326 @@
+{
+  "testId": "FOCUSED_MAT_001",
+  "round": "Focused",
+  "datasetId": "MAT_001",
+  "topic": "SE Lab Week 3: Git Workflows and Merge Conflicts",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "BLUEPRINT",
+  "duration_sec": 78.3,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.43,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following best defines code collaboration as described in the session?",
+      "options": [
+        "The process of multiple people working together on the same codebase.",
+        "An approach where a single developer writes all code for a project.",
+        "The practice of reviewing code after it has been deployed to production.",
+        "A method of assigning tasks to individual developers without sharing code."
+      ],
+      "correctAnswer": "The process of multiple people working together on the same codebase.",
+      "explanation": "The session defined code collaboration as the process of multiple people working together on the same codebase.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "Define code collaboration as it was presented in the session.",
+        "subtopic": "Code collaboration definition",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Define code collaboration as it was presented in the session.",
+          "subtopic": "Code collaboration definition",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Define code collaboration as it was presented in the session. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Define code collaboration as it was presented in the session.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "According to the explanation, what condition triggers a merge conflict when multiple collaborators work on the same file?",
+      "options": [
+        "A collaborator pushes changes without first pulling the latest version",
+        "One collaborator deletes a file while another edits it",
+        "Two collaborators edit different files in the repository",
+        "Two collaborators edit the same part of the file"
+      ],
+      "correctAnswer": "Two collaborators edit the same part of the file",
+      "explanation": "A merge conflict occurs when two people make changes to the same part of the code, and Git cannot determine which version to keep automatically.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Explain why merge conflicts occur when multiple collaborators edit the same part of a file.",
+        "subtopic": "Merge conflicts and their causes",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_02"
+            ]
+          },
+          "concept": "Explain why merge conflicts occur when multiple collaborators edit the same part of a file.",
+          "subtopic": "Merge conflicts and their causes",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_02"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain why merge conflicts occur when multiple collaborators edit the same part of a file. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain why merge conflicts occur when multiple collaborators edit the same part of a file.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Collaborator 2 attempted to push changes to README.md but received a merge conflict because collaborator 1 had added a line at the same location. Which sequence of Git commands correctly resolves the conflict and completes the push?",
+      "options": [
+        "git merge --abort; edit README.md; git add README.md; git commit -m \"Abort merge\"; git push",
+        "git fetch; git rebase origin/feature-abc; edit README.md; git add README.md; git rebase --continue; git push",
+        "git pull; edit README.md to resolve conflicts; git add README.md; git commit -m \"Merge conflict resolved\"; git push",
+        "git fetch; git merge origin/feature-abc; edit README.md to resolve conflicts; git add README.md; git commit -m \"Resolve merge conflict\"; git push"
+      ],
+      "correctAnswer": "git pull; edit README.md to resolve conflicts; git add README.md; git commit -m \"Merge conflict resolved\"; git push",
+      "explanation": "When a push fails due to upstream changes, the standard remedy is to run 'git pull', which fetches the remote changes and attempts to merge them. The merge will produce conflict markers in README.md. After manually editing the file to resolve the conflict, the file must be staged with 'git add', committed, and then pushed again. The other options either abort the merge or use rebase without completing the conflict resolution, which would not correctly finish the scenario described.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Hard",
+        "concept": "Apply the correct sequence of Git commands to resolve a merge conflict after a push fails due to upstream changes.",
+        "subtopic": "Resolving merge conflicts",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_03"
+            ]
+          },
+          "concept": "Apply the correct sequence of Git commands to resolve a merge conflict after a push fails due to upstream changes.",
+          "subtopic": "Resolving merge conflicts",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Hard",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "CODE + VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_03"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Apply the correct sequence of Git commands to resolve a merge conflict after a push fails due to upstream changes. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Apply the correct sequence of Git commands to resolve a merge conflict after a push fails due to upstream changes.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T15:06:00.811Z"
+}

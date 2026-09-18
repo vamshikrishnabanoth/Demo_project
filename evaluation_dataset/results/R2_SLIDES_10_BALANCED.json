@@ -1,0 +1,9 @@
+{
+  "testId": "R2_SLIDES_10_BALANCED",
+  "round": "Round2",
+  "datasetId": "MAT_007",
+  "status": "FAILED",
+  "duration_sec": 2,
+  "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+  "timestamp": "2026-09-18T05:36:57.968Z"
+}

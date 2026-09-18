@@ -1,0 +1,1758 @@
+{
+  "sessionId": "sess_5j5lrx",
+  "filename": "final_session_trace.json",
+  "recordedAt": "2026-09-18T18:30:54.474Z",
+  "startTime": "2026-09-18T18:27:38.551Z",
+  "endTime": "2026-09-18T18:30:54.473Z",
+  "totalDurationMs": 195922,
+  "metrics": {
+    "totalDurationMs": 195922,
+    "deliveredCount": 1,
+    "totalAttempts": 6,
+    "acceptanceRatePercent": 16.7,
+    "avgGroundingScore": 0.9,
+    "stageDurations": {
+      "EVIDENCE_PACKAGE": 88,
+      "AGENT_1_PLANNING": 20610,
+      "AGENT_3_QUESTION_EVAL": 174529,
+      "GENERATION_ERROR": 612,
+      "AGENT_3_QUIZ_EVAL": 2,
+      "DETERMINISTIC_POSTCHECKS": 1,
+      "FINAL_GROUNDING_GATE": 17
+    },
+    "dimensionCounts": {
+      "Cause / Effect": 1
+    },
+    "tcScoreBreakdown": {
+      "conceptCoverage": "17/25",
+      "applicationCoverage": "16/25",
+      "artifactCoverage": "12/20",
+      "teacherEmphasis": "14/15",
+      "depth": "10/15",
+      "total": "67/100"
+    }
+  },
+  "stageExecutionTimeline": [
+    {
+      "stage": "INGESTION",
+      "stageOrder": "01",
+      "timestamp": "2026-09-18T18:27:38.551Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "Uploaded voice audio",
+        "Document texts",
+        "Code snippet"
+      ],
+      "input": {
+        "voiceLengthChars": 0,
+        "documentCount": 1,
+        "hasCode": false,
+        "requestedCount": 3,
+        "requestedDifficulty": "Balanced"
+      },
+      "processing": {
+        "operations": [
+          "Receive multi-modal payload",
+          "Validate input types",
+          "Initialize Session Trace"
+        ]
+      },
+      "calculations": {
+        "totalCharactersReceived": 226052
+      },
+      "decisions": {
+        "justifications": [
+          "Accepted session inputs: Voice (0 chars), Docs (1), Code (false)",
+          "Target configuration: count=3, difficulty=Balanced"
+        ],
+        "rulesApplied": [
+          "Multi-modal payload schema validation rule"
+        ],
+        "evidenceUsed": [
+          "Uploaded voice audio",
+          "Document texts",
+          "Code snippet"
+        ]
+      },
+      "output": {
+        "status": "RECEIVED",
+        "sessionId": "sess_5j5lrx"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Input format valid",
+          "Count > 0"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "EVIDENCE_PACKAGE",
+      "stageOrder": "02",
+      "timestamp": "2026-09-18T18:27:38.644Z",
+      "durationMs": 88,
+      "model": null,
+      "evidenceCitations": [
+        "voice_transcript_01",
+        "document_chunk_01"
+      ],
+      "input": {
+        "voiceTranscriptSnippet": "",
+        "docsSnippet": "%PDF-1.3\r\n% \r\n1 0 obj\r\n<</Pages 2 0 R /Type/Catalog>>\r\nendobj\r\n2 0 obj\r\n<</Count 65/Kids[3 0 R 8 0 R 13 0 R 18 0 R 23 0 R 28 0 R 33 0 R 38 0 R 43 0 R "
+      },
+      "processing": {
+        "operations": [
+          "Apply Dual-Source Authority Division",
+          "Extract verbal emphasis cues from Voice transcript",
+          "Extract exact artifacts & formulas from Code/PPT/PDF",
+          "PDI Router path selection: SUMMARY",
+          "Construct Dual-Level Hierarchical Evidence Store (75-word child / 400-word parent)",
+          "Build Bidirectional Cross-Material Alignment Graph"
+        ]
+      },
+      "calculations": {
+        "voiceCharCount": 0,
+        "formulasDetectedCount": 5,
+        "explicitInstructionsCount": 0,
+        "hierarchicalChildrenCount": 1,
+        "hierarchicalParentsCount": 1,
+        "crossMaterialLinksCount": 1
+      },
+      "decisions": {
+        "justifications": [
+          "Voice Authority applied: Syntax emphasis = MEDIUM, Conceptual emphasis = HIGH",
+          "Material Authority applied: 5 formulas detected, Code presence = false",
+          "PDI Representation Path selected: SUMMARY",
+          "Hierarchical RAG: 1 children mapped to 1 parent windows",
+          "Cross-Material Alignment: 1 bidirectional cross-modal nodes established"
+        ],
+        "rulesApplied": [
+          "Dual-Source Authority Division Rule: Voice rules intent/emphasis, Materials rule exact artifacts",
+          "PDI Representation Routing Rule: Map modal inputs to SUMMARY / BLUEPRINT / UNIFIED",
+          "Hierarchical Evidence Framing Rule: Precision micro-citation with macro-narrative expansion",
+          "Cross-Material Alignment Rule: Bidirectional semantic graph linking spoken concepts to formal slides/code"
+        ],
+        "evidenceUsed": [
+          "voice_transcript_01",
+          "document_chunk_01"
+        ]
+      },
+      "output": {
+        "voiceEmphasis": {
+          "syntaxEmphasis": "MEDIUM",
+          "conceptualEmphasis": "HIGH",
+          "explicitInstructions": [],
+          "perceivedDifficultyCues": "BALANCED"
+        },
+        "artifactsSummary": {
+          "hasCode": false,
+          "codeSnippets": [],
+          "formulasDetected": [
+            "Y5s =\\!/x l_)4 %y@T t?($]OZ +v]da _5`% M{4F v~]w iZv5 g*qk ^xF#S nIw2 77<) &u]>}9 M:/7^ #kvV Uw{) ]MF> r590 6EJ2M4n B_N!S |2w6",
+            "C =S~>>>55 U;g~tT Q]y' BJn> n{/B {/Id]9Y` ZYU)( vtn_/ &IZ^",
+            "4_= c2yK `(GK <x}/ YI=S #(N1 3z}6 uMI? mv8E t",
+            "T =\\kz X84`cU F+neY B*1K J2M4 tlIc9 3;\"m )BI/ 3_1i +jNQVq +3/t *pr~\" As)$ eS9/u >ksq) cqvn 4}'>}",
+            "m=Q<; fyL| 5<,j0 6$q0 *dn- sf}? _K(QQ /o>{'3^ +3]3 9[dU [k1M Axqf Ukzdpp) ~n>L MOg%g %N3< ^z~{ 'oggw |!e6BqR <[peJ LMs* 4}:N W<U7\" }rIe -qM& uFVV N"
+          ],
+          "keyTerms": []
+        },
+        "isAcademic": true,
+        "lectureDepth": {
+          "rating": "Developing",
+          "score": 67,
+          "characteristics": {
+            "conceptExplanation": "Developing",
+            "reasoning": "Light",
+            "examples": "Present",
+            "procedures": "Light"
+          }
+        },
+        "unifiedLength": 226124,
+        "representationMode": "SUMMARY",
+        "routerReason": "[Adaptive PDI Router: PDI=0.290] PDI=0.290 < 0.60: Material is predominantly static, code-dense, or monologue exposition. Routed to Technical Summary."
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Evidence package assembled",
+          "Artifacts extracted"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_1_PLANNING",
+      "stageOrder": "03",
+      "timestamp": "2026-09-18T18:27:59.257Z",
+      "durationMs": 20610,
+      "model": "llama-3.3-70b-versatile",
+      "evidenceCitations": [
+        "Teaching Evidence Package",
+        "Voice emphasis signals"
+      ],
+      "input": {
+        "requestedCount": 3,
+        "requestedDifficulty": "Balanced",
+        "voiceEmphasis": {
+          "syntaxEmphasis": "MEDIUM",
+          "conceptualEmphasis": "HIGH",
+          "explicitInstructions": [],
+          "perceivedDifficultyCues": "BALANCED"
+        }
+      },
+      "processing": {
+        "operations": [
+          "Analyze topic hierarchy",
+          "Calibrate difficulty relative to teaching depth",
+          "Generate N primary targets + M reserve targets",
+          "Compute transparent TC Score breakdown"
+        ]
+      },
+      "calculations": {
+        "conceptCoverage": "17/25",
+        "applicationCoverage": "16/25",
+        "artifactCoverage": "12/20",
+        "teacherEmphasis": "14/15",
+        "depth": "10/15",
+        "total": "67/100"
+      },
+      "decisions": {
+        "justifications": [
+          "Identified Subject: \"Computer Science\" | Main Topic: \"Advanced Syntax and Formula Representation\"",
+          "Planned 3 primary targets + 2 reserve targets",
+          "TC Score assessed at 67/100 based on concept depth and artifact presence"
+        ],
+        "rulesApplied": [
+          "Target Reserve Rule: Generate N primary targets + M reserve targets upfront",
+          "Relative Difficulty Calibration Rule: Calibrate cognitive challenge against session depth"
+        ],
+        "evidenceUsed": [
+          "Teaching Evidence Package",
+          "Voice emphasis signals"
+        ]
+      },
+      "output": {
+        "subject": "Computer Science",
+        "mainTopic": "Advanced Syntax and Formula Representation",
+        "primaryTargetsSummary": [
+          {
+            "id": "T01",
+            "concept": "Identify the components of a taught formula artifact",
+            "dimension": "Conceptual"
+          },
+          {
+            "id": "T02",
+            "concept": "Compare two formula artifacts based on character composition",
+            "dimension": "Comparison / Tradeoff"
+          },
+          {
+            "id": "T03",
+            "concept": "Predict the effect of modifying a character in a formula artifact",
+            "dimension": "Prediction"
+          }
+        ],
+        "reserveTargetsSummary": [
+          {
+            "id": "R01",
+            "concept": "Identify the purpose of a formula artifact within the session"
+          },
+          {
+            "id": "R02",
+            "concept": "Explain the role of special characters in the taught formulas"
+          }
+        ]
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "AssessmentPlan schema valid",
+          "Reserve targets generated"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TT01_att1",
+      "timestamp": "2026-09-18T18:27:59.262Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T01"
+      ],
+      "input": {
+        "targetId": "T01",
+        "concept": "Identify the components of a taught formula artifact"
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 1/3 (\"Identify the components of a taught formula artifact\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "T01"
+        ]
+      },
+      "output": {
+        "targetId": "T01"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUESTION_EVAL",
+      "stageOrder": "04_TT01_att1",
+      "timestamp": "2026-09-18T18:28:54.376Z",
+      "durationMs": 55114,
+      "model": "openai/gpt-oss-120b",
+      "evidenceCitations": [
+        "chunk_01"
+      ],
+      "input": {
+        "targetId": "T01",
+        "candidateMCQ": {
+          "targetId": "T01",
+          "questionText": "In the displayed formula fragment, which of the following symbols most likely functions as an operator?",
+          "options": [
+            "+",
+            "Y5s",
+            "%",
+            "g*qk"
+          ],
+          "correctAnswer": "+",
+          "explanation": "The '+' character is a standard arithmetic operator (addition) and appears in the fragment \"+v]da\", indicating it is used as an operator rather than a variable name.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Identify the components of a taught formula artifact",
+            "subtopic": "QR",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Identify the components of a taught formula artifact",
+              "subtopic": "QR",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "CODE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Identify the components of a taught formula artifact as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Remember",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Identify the components of a taught formula artifact."
+              }
+            }
+          }
+        }
+      },
+      "processing": {
+        "operations": [
+          "Grounding analysis",
+          "5-Tier Derivability evaluation",
+          "Student answerability check",
+          "Distractor plausibility check"
+        ]
+      },
+      "calculations": {
+        "groundingScore": 0.95
+      },
+      "decisions": {
+        "justifications": [
+          "Target T01 PASSED on attempt 1",
+          "Subtopic: \"QR\" | Concept: \"Identify the components of a taught formula artifact\"",
+          "Derivability Tier: EVIDENCE_DERIVED | Student Answerability: HIGH",
+          "Grounding justification score: 0.95",
+          "Distractors evaluated plausible, distinct, and free of superficial hallucinations"
+        ],
+        "rulesApplied": [
+          "Pedagogical Quality and 5-Tier Derivability Acceptance Rule"
+        ],
+        "evidenceUsed": [
+          "chunk_01"
+        ]
+      },
+      "output": {
+        "status": "PASS",
+        "mcq": {
+          "targetId": "T01",
+          "questionText": "In the displayed formula fragment, which of the following symbols most likely functions as an operator?",
+          "options": [
+            "+",
+            "Y5s",
+            "%",
+            "g*qk"
+          ],
+          "correctAnswer": "+",
+          "explanation": "The '+' character is a standard arithmetic operator (addition) and appears in the fragment \"+v]da\", indicating it is used as an operator rather than a variable name.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Identify the components of a taught formula artifact",
+            "subtopic": "QR",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Identify the components of a taught formula artifact",
+              "subtopic": "QR",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "CODE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Identify the components of a taught formula artifact as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Remember",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Identify the components of a taught formula artifact."
+              }
+            }
+          }
+        }
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Grounding >= 0.85",
+          "Target aligned",
+          "Distractors valid"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TT02_att1",
+      "timestamp": "2026-09-18T18:28:54.379Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T02"
+      ],
+      "input": {
+        "targetId": "T02",
+        "concept": "Compare two formula artifacts based on character composition"
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 2/3 (\"Compare two formula artifacts based on character composition\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "T02"
+        ]
+      },
+      "output": {
+        "targetId": "T02"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "GENERATION_ERROR",
+      "stageOrder": "04_TT02_att1",
+      "timestamp": "2026-09-18T18:28:54.992Z",
+      "durationMs": 612,
+      "model": null,
+      "evidenceCitations": [
+        "T02"
+      ],
+      "input": {
+        "targetId": "T02",
+        "attempt": 1
+      },
+      "processing": {
+        "operations": [
+          "LLM generation / parsing"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generation attempt 1 failed: NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 400); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ],
+        "rulesApplied": [
+          "Error recovery & retry rule"
+        ],
+        "evidenceUsed": [
+          "T02"
+        ]
+      },
+      "output": {
+        "isValid": false
+      },
+      "validation": {
+        "status": "FAIL",
+        "checks": [],
+        "errors": [
+          "NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 400); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ]
+      }
+    },
+    {
+      "stage": "TARGET_RESERVE_SWAP",
+      "stageOrder": "04_SWAP_T02",
+      "timestamp": "2026-09-18T18:28:54.997Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T02",
+        "R01"
+      ],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Target T02 exhausted retry budget.",
+          "Swapped in pre-generated reserve target R01 (\"Identify the purpose of a formula artifact within the session\")."
+        ],
+        "rulesApplied": [
+          "Reserve Target Fallback Rule (no Agent 1 recall)"
+        ],
+        "evidenceUsed": [
+          "T02",
+          "R01"
+        ]
+      },
+      "output": {
+        "swappedFrom": "T02",
+        "swappedTo": "R01"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Reserve target available and swapped"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TT03_att1",
+      "timestamp": "2026-09-18T18:28:55.002Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T03"
+      ],
+      "input": {
+        "targetId": "T03",
+        "concept": "Predict the effect of modifying a character in a formula artifact"
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 2/3 (\"Predict the effect of modifying a character in a formula artifact\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "T03"
+        ]
+      },
+      "output": {
+        "targetId": "T03"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUESTION_EVAL",
+      "stageOrder": "04_TT03_att1",
+      "timestamp": "2026-09-18T18:29:25.559Z",
+      "durationMs": 30557,
+      "model": "openai/gpt-oss-120b",
+      "evidenceCitations": [
+        "chunk_03"
+      ],
+      "input": {
+        "targetId": "T03",
+        "candidateMCQ": {
+          "targetId": "T03",
+          "questionText": "In the fragment \"JFIF hExif +&.%#%.&D5//5DNB>BN_UU_wqw\", if the '+' character is replaced with '-', how is the visual pattern and potential parsing of the formula most likely to change?",
+          "options": [
+            "The minus sign will appear, and a parser may interpret it as a subtraction operator, affecting how subsequent characters are parsed as a negative operand.",
+            "Visually nothing changes because '+' and '-' look the same in this encoded context, so parsing is unaffected.",
+            "The '-' will be treated as whitespace, so the parser will ignore it and the original parsing remains unchanged.",
+            "The replacement makes the entire string syntactically invalid, causing the parser to reject the formula."
+          ],
+          "correctAnswer": "The minus sign will appear, and a parser may interpret it as a subtraction operator, affecting how subsequent characters are parsed as a negative operand.",
+          "explanation": "Replacing '+' with '-' changes the symbol from a plus to a minus. Visually the character is different, and many parsers treat '-' as a subtraction or negation operator, which can alter tokenization and the meaning of the following characters. The other options either ignore the semantic role of '-' or incorrectly claim no visual change.",
+          "metadata": {
+            "dimension": "Prediction",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Predict the effect of modifying a character in a formula artifact"
+          }
+        }
+      },
+      "processing": {
+        "operations": [
+          "Grounding analysis",
+          "5-Tier Derivability evaluation",
+          "Distractor plausibility check"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Target T03 FAILED on attempt 1",
+          "Reason: The session content provides only raw binary-like data without any explanation of how '+' or '-' function as operators in a formula or affect parsing. Answering the question requires external knowledge of parsing semantics that was not taught.",
+          "Repair: Modify the question to reference concepts explicitly covered in the session, such as asking about the visual appearance of the '+' character in the given data string or its frequency, rather than its parsing semantics."
+        ],
+        "rulesApplied": [
+          "Agent 3 Quality Threshold Enforcement Rule"
+        ],
+        "evidenceUsed": [
+          "chunk_03"
+        ]
+      },
+      "output": {
+        "status": "FAIL",
+        "repairInstruction": "Modify the question to reference concepts explicitly covered in the session, such as asking about the visual appearance of the '+' character in the given data string or its frequency, rather than its parsing semantics."
+      },
+      "validation": {
+        "status": "FAIL",
+        "checks": [],
+        "errors": [
+          "The session content provides only raw binary-like data without any explanation of how '+' or '-' function as operators in a formula or affect parsing. Answering the question requires external knowledge of parsing semantics that was not taught."
+        ]
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TT03_att2",
+      "timestamp": "2026-09-18T18:29:25.563Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T03"
+      ],
+      "input": {
+        "targetId": "T03",
+        "concept": "Predict the effect of modifying a character in a formula artifact"
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Repairing candidate MCQ for Question 2/3 (\"Predict the effect of modifying a character in a formula artifact\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "T03"
+        ]
+      },
+      "output": {
+        "targetId": "T03"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUESTION_EVAL",
+      "stageOrder": "04_TT03_att2",
+      "timestamp": "2026-09-18T18:30:06.194Z",
+      "durationMs": 40631,
+      "model": "openai/gpt-oss-120b",
+      "evidenceCitations": [
+        "chunk_03"
+      ],
+      "input": {
+        "targetId": "T03",
+        "candidateMCQ": {
+          "targetId": "T03",
+          "questionText": "In the provided code fragment, the character '+' appears several times (e.g., in the segment \"+&.%#%.&D5\"). If every '+' were replaced with '-', which of the following best describes the expected change in the visual pattern and its potential effect on parsing?",
+          "options": [
+            "The visual pattern would show hyphens instead of plus signs, and parsing might treat '-' as a subtraction operator, altering token boundaries.",
+            "The visual pattern would remain unchanged because '+' and '-' look identical in this context.",
+            "The string would become syntactically invalid, causing the entire formula to be rejected.",
+            "Only the visual appearance changes; parsing would ignore the difference between '+' and '-'."
+          ],
+          "correctAnswer": "The visual pattern would show hyphens instead of plus signs, and parsing might treat '-' as a subtraction operator, altering token boundaries.",
+          "explanation": "Replacing '+' with '-' changes the displayed characters from plus to hyphen. In many parsing schemes, '-' is interpreted as a subtraction or negative sign, which can modify how the surrounding tokens are tokenized, whereas '+' often denotes concatenation or a different operator. Therefore both the visual pattern and parsing behavior are affected.",
+          "metadata": {
+            "dimension": "Prediction",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Predict the effect of modifying a character in a formula artifact"
+          }
+        }
+      },
+      "processing": {
+        "operations": [
+          "Grounding analysis",
+          "5-Tier Derivability evaluation",
+          "Distractor plausibility check"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Target T03 FAILED on attempt 2",
+          "Reason: The question asks about the effect of replacing '+' with '-' on visual pattern and parsing semantics, which is not addressed or derivable from the provided session evidence. The session contains only arbitrary character data without any discussion of operators, parsing rules, or visual representation, so the required knowledge is external.",
+          "Repair: Modify the question to focus on observable characteristics present in the session content, such as asking how the frequency or distribution of '+' characters changes if they are replaced, or what visual differences appear in the raw string, without invoking parsing semantics."
+        ],
+        "rulesApplied": [
+          "Agent 3 Quality Threshold Enforcement Rule"
+        ],
+        "evidenceUsed": [
+          "chunk_03"
+        ]
+      },
+      "output": {
+        "status": "FAIL",
+        "repairInstruction": "Modify the question to focus on observable characteristics present in the session content, such as asking how the frequency or distribution of '+' characters changes if they are replaced, or what visual differences appear in the raw string, without invoking parsing semantics."
+      },
+      "validation": {
+        "status": "FAIL",
+        "checks": [],
+        "errors": [
+          "The question asks about the effect of replacing '+' with '-' on visual pattern and parsing semantics, which is not addressed or derivable from the provided session evidence. The session contains only arbitrary character data without any discussion of operators, parsing rules, or visual representation, so the required knowledge is external."
+        ]
+      }
+    },
+    {
+      "stage": "TARGET_RESERVE_SWAP",
+      "stageOrder": "04_SWAP_T03",
+      "timestamp": "2026-09-18T18:30:06.197Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T03",
+        "R02"
+      ],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Target T03 exhausted retry budget.",
+          "Swapped in pre-generated reserve target R02 (\"Explain the role of special characters in the taught formulas\")."
+        ],
+        "rulesApplied": [
+          "Reserve Target Fallback Rule (no Agent 1 recall)"
+        ],
+        "evidenceUsed": [
+          "T03",
+          "R02"
+        ]
+      },
+      "output": {
+        "swappedFrom": "T03",
+        "swappedTo": "R02"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Reserve target available and swapped"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TR01_att1",
+      "timestamp": "2026-09-18T18:30:06.201Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "R01"
+      ],
+      "input": {
+        "targetId": "R01",
+        "concept": "Identify the purpose of a formula artifact within the session"
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 2/3 (\"Identify the purpose of a formula artifact within the session\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "R01"
+        ]
+      },
+      "output": {
+        "targetId": "R01"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUESTION_EVAL",
+      "stageOrder": "04_TR01_att1",
+      "timestamp": "2026-09-18T18:30:37.826Z",
+      "durationMs": 31625,
+      "model": "openai/gpt-oss-120b",
+      "evidenceCitations": [
+        "chunk_04"
+      ],
+      "input": {
+        "targetId": "R01",
+        "candidateMCQ": {
+          "targetId": "R01",
+          "questionText": "Why is the long, seemingly random string shown in the session most likely included?",
+          "options": [
+            "To illustrate an example of obfuscated code or a syntax challenge",
+            "To provide a functional program that can be executed directly",
+            "To demonstrate clean, readable coding style",
+            "To serve as documentation for a standard library"
+          ],
+          "correctAnswer": "To illustrate an example of obfuscated code or a syntax challenge",
+          "explanation": "The string consists of nonsensical characters and lacks any recognizable syntax, which is characteristic of obfuscated code used to challenge readers or hide intent rather than being executable or illustrative of good coding practices.",
+          "metadata": {
+            "dimension": "Evidence-Derived Inference",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Identify the purpose of a formula artifact within the session",
+            "subtopic": "QPN",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "R01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_04"
+                ]
+              },
+              "concept": "Identify the purpose of a formula artifact within the session",
+              "subtopic": "QPN",
+              "cognitiveDimension": "Evidence-Derived Inference",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "CODE",
+              "2_supportingSessionChunks": [
+                "chunk_04"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Identify the purpose of a formula artifact within the session as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Evidence-Derived Inference",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Identify the purpose of a formula artifact within the session."
+              }
+            }
+          }
+        }
+      },
+      "processing": {
+        "operations": [
+          "Grounding analysis",
+          "5-Tier Derivability evaluation",
+          "Student answerability check",
+          "Distractor plausibility check"
+        ]
+      },
+      "calculations": {
+        "groundingScore": 0.95
+      },
+      "decisions": {
+        "justifications": [
+          "Target R01 PASSED on attempt 1",
+          "Subtopic: \"QPN\" | Concept: \"Identify the purpose of a formula artifact within the session\"",
+          "Derivability Tier: EVIDENCE_DERIVED | Student Answerability: HIGH",
+          "Grounding justification score: 0.95",
+          "Distractors evaluated plausible, distinct, and free of superficial hallucinations"
+        ],
+        "rulesApplied": [
+          "Pedagogical Quality and 5-Tier Derivability Acceptance Rule"
+        ],
+        "evidenceUsed": [
+          "chunk_04"
+        ]
+      },
+      "output": {
+        "status": "PASS",
+        "mcq": {
+          "targetId": "R01",
+          "questionText": "Why is the long, seemingly random string shown in the session most likely included?",
+          "options": [
+            "To illustrate an example of obfuscated code or a syntax challenge",
+            "To provide a functional program that can be executed directly",
+            "To demonstrate clean, readable coding style",
+            "To serve as documentation for a standard library"
+          ],
+          "correctAnswer": "To illustrate an example of obfuscated code or a syntax challenge",
+          "explanation": "The string consists of nonsensical characters and lacks any recognizable syntax, which is characteristic of obfuscated code used to challenge readers or hide intent rather than being executable or illustrative of good coding practices.",
+          "metadata": {
+            "dimension": "Evidence-Derived Inference",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Identify the purpose of a formula artifact within the session",
+            "subtopic": "QPN",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "R01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_04"
+                ]
+              },
+              "concept": "Identify the purpose of a formula artifact within the session",
+              "subtopic": "QPN",
+              "cognitiveDimension": "Evidence-Derived Inference",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "CODE",
+              "2_supportingSessionChunks": [
+                "chunk_04"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Identify the purpose of a formula artifact within the session as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Evidence-Derived Inference",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Identify the purpose of a formula artifact within the session."
+              }
+            }
+          }
+        }
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Grounding >= 0.85",
+          "Target aligned",
+          "Distractors valid"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TR02_att1",
+      "timestamp": "2026-09-18T18:30:37.828Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "R02"
+      ],
+      "input": {
+        "targetId": "R02",
+        "concept": "Explain the role of special characters in the taught formulas"
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 3/3 (\"Explain the role of special characters in the taught formulas\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "R02"
+        ]
+      },
+      "output": {
+        "targetId": "R02"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUESTION_EVAL",
+      "stageOrder": "04_TR02_att1",
+      "timestamp": "2026-09-18T18:30:54.430Z",
+      "durationMs": 16602,
+      "model": "openai/gpt-oss-120b",
+      "evidenceCitations": [
+        "chunk_05"
+      ],
+      "input": {
+        "targetId": "R02",
+        "candidateMCQ": {
+          "targetId": "R02",
+          "questionText": "Based on the provided code fragment, how does the presence of the '+' character in the token \"F+neY\" affect its parsing in the hypothetical language?",
+          "options": [
+            "It is treated as a literal character within the token",
+            "It indicates string concatenation between two identifiers",
+            "It signals the start of a comment",
+            "It separates two distinct identifiers"
+          ],
+          "correctAnswer": "It is treated as a literal character within the token",
+          "explanation": "In the evidence the '+' appears inside the token \"F+neY\" without surrounding whitespace, so the parser treats it as part of the identifier rather than as an operator such as concatenation or a comment delimiter.",
+          "metadata": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "concept": "Explain the role of special characters in the taught formulas",
+            "subtopic": "FMU",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.9,
+            "targetId": "R02",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q3",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_05"
+                ]
+              },
+              "concept": "Explain the role of special characters in the taught formulas",
+              "subtopic": "FMU",
+              "cognitiveDimension": "Cause / Effect",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.9
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "CODE",
+              "2_supportingSessionChunks": [
+                "chunk_05"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Explain the role of special characters in the taught formulas as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Cause / Effect",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.9,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Explain the role of special characters in the taught formulas."
+              }
+            }
+          }
+        }
+      },
+      "processing": {
+        "operations": [
+          "Grounding analysis",
+          "5-Tier Derivability evaluation",
+          "Student answerability check",
+          "Distractor plausibility check"
+        ]
+      },
+      "calculations": {
+        "groundingScore": 0.9
+      },
+      "decisions": {
+        "justifications": [
+          "Target R02 PASSED on attempt 1",
+          "Subtopic: \"FMU\" | Concept: \"Explain the role of special characters in the taught formulas\"",
+          "Derivability Tier: EVIDENCE_DERIVED | Student Answerability: HIGH",
+          "Grounding justification score: 0.9",
+          "Distractors evaluated plausible, distinct, and free of superficial hallucinations"
+        ],
+        "rulesApplied": [
+          "Pedagogical Quality and 5-Tier Derivability Acceptance Rule"
+        ],
+        "evidenceUsed": [
+          "chunk_05"
+        ]
+      },
+      "output": {
+        "status": "PASS",
+        "mcq": {
+          "targetId": "R02",
+          "questionText": "Based on the provided code fragment, how does the presence of the '+' character in the token \"F+neY\" affect its parsing in the hypothetical language?",
+          "options": [
+            "It is treated as a literal character within the token",
+            "It indicates string concatenation between two identifiers",
+            "It signals the start of a comment",
+            "It separates two distinct identifiers"
+          ],
+          "correctAnswer": "It is treated as a literal character within the token",
+          "explanation": "In the evidence the '+' appears inside the token \"F+neY\" without surrounding whitespace, so the parser treats it as part of the identifier rather than as an operator such as concatenation or a comment delimiter.",
+          "metadata": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "concept": "Explain the role of special characters in the taught formulas",
+            "subtopic": "FMU",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.9,
+            "targetId": "R02",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q3",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_05"
+                ]
+              },
+              "concept": "Explain the role of special characters in the taught formulas",
+              "subtopic": "FMU",
+              "cognitiveDimension": "Cause / Effect",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.9
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "CODE",
+              "2_supportingSessionChunks": [
+                "chunk_05"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Explain the role of special characters in the taught formulas as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Cause / Effect",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.9,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Explain the role of special characters in the taught formulas."
+              }
+            }
+          }
+        }
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Grounding >= 0.85",
+          "Target aligned",
+          "Distractors valid"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "VALIDATING_QUESTIONS",
+      "stageOrder": "04_VALIDATE",
+      "timestamp": "2026-09-18T18:30:54.433Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Validated 3 questions against 4-option schema and deterministic consistency"
+        ],
+        "rulesApplied": [],
+        "evidenceUsed": []
+      },
+      "output": {},
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "All delivered candidate questions valid"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AUDITING_QUALITY",
+      "stageOrder": "04_AUDIT",
+      "timestamp": "2026-09-18T18:30:54.437Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Audited pedagogical derivability and student answerability for 3 questions"
+        ],
+        "rulesApplied": [],
+        "evidenceUsed": []
+      },
+      "output": {},
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Audit complete"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUIZ_EVAL",
+      "stageOrder": "05",
+      "timestamp": "2026-09-18T18:30:54.443Z",
+      "durationMs": 2,
+      "model": null,
+      "evidenceCitations": [
+        "All passing candidate MCQs"
+      ],
+      "input": {
+        "passingCount": 3,
+        "requestedCount": 3
+      },
+      "processing": {
+        "operations": [
+          "Coverage analysis",
+          "Cognitive dimension diversity analysis",
+          "Subtopic concentration analysis",
+          "Pairwise redundancy matrix check"
+        ]
+      },
+      "calculations": {
+        "coverageScore": 100,
+        "uniqueDimensions": 3,
+        "totalQuestions": 3,
+        "redundantPairsCount": 0,
+        "cognitiveDistribution": {
+          "Conceptual": 1,
+          "Evidence-Derived Inference": 1,
+          "Cause / Effect": 1
+        },
+        "conceptDistribution": {
+          "QR": 1,
+          "QPN": 1,
+          "FMU": 1
+        },
+        "derivabilityTiers": {
+          "DIRECT_EVIDENCE": 0,
+          "EVIDENCE_DERIVED": 3,
+          "FOUNDATIONAL_PREREQUISITE": 0,
+          "RELATED_EXTENSION": 0
+        }
+      },
+      "decisions": {
+        "justifications": [
+          "Quiz coverage evaluated at 100%",
+          "Cognitive dimension diversity: 3 unique dimensions (Conceptual, Evidence-Derived Inference, Cause / Effect)",
+          "Concept / Subtopic coverage: 3 unique subtopics",
+          "Derivability Tiers: Direct=0, Derived=3, Foundational=0, Extension=0",
+          "Pairwise semantic redundancy: 0 true redundant pairs",
+          "Quiz Quality Status: QUALITY_PASSED"
+        ],
+        "rulesApplied": [
+          "Whole-Quiz Pedagogical Balance, Subtopic Diversity & Concentration Limit Rule"
+        ],
+        "evidenceUsed": [
+          "All passing candidate MCQs"
+        ]
+      },
+      "output": {
+        "quizQualityStatus": "QUALITY_PASSED",
+        "isBalanced": true,
+        "totalQuestions": 3,
+        "requestedCount": 3,
+        "uniqueDimensionsCount": 3,
+        "cognitiveDistribution": {
+          "Conceptual": 1,
+          "Evidence-Derived Inference": 1,
+          "Cause / Effect": 1
+        },
+        "conceptDistribution": {
+          "QR": 1,
+          "QPN": 1,
+          "FMU": 1
+        },
+        "derivabilityTiers": {
+          "DIRECT_EVIDENCE": 0,
+          "EVIDENCE_DERIVED": 3,
+          "FOUNDATIONAL_PREREQUISITE": 0,
+          "RELATED_EXTENSION": 0
+        },
+        "redundancy": {
+          "totalRedundantPairs": 0,
+          "highSimilarityPairs": []
+        },
+        "concentrationWarning": null,
+        "suggestion": null,
+        "coverageScore": 100,
+        "recommendations": []
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Quality Status: QUALITY_PASSED"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "DETERMINISTIC_POSTCHECKS",
+      "stageOrder": "06",
+      "timestamp": "2026-09-18T18:30:54.448Z",
+      "durationMs": 1,
+      "model": null,
+      "evidenceCitations": [
+        "Passing MCQs"
+      ],
+      "input": {},
+      "processing": {
+        "operations": [
+          "Verify payload integrity",
+          "Shuffle option positions to balance A/B/C/D key distribution"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "All passing MCQs normalized with randomized option placement"
+        ],
+        "rulesApplied": [
+          "Answer Position Bias Elimination Rule (~25% A/B/C/D split)"
+        ],
+        "evidenceUsed": [
+          "Passing MCQs"
+        ]
+      },
+      "output": {
+        "postCheckedCount": 3
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Options randomized",
+          "Payload intact"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "FINAL_GROUNDING_GATE",
+      "stageOrder": "07",
+      "timestamp": "2026-09-18T18:30:54.469Z",
+      "durationMs": 17,
+      "model": null,
+      "evidenceCitations": [
+        "session_evidence_package",
+        "final_candidate_mcqs"
+      ],
+      "input": {
+        "totalCandidateMCQs": 3
+      },
+      "processing": {
+        "operations": [
+          "Verify keyword overlap",
+          "Verify factual justification against session content",
+          "Foreign domain boundary check"
+        ]
+      },
+      "calculations": {
+        "justifiedCount": 1,
+        "rejectedCount": 2,
+        "evidenceSafety": "GROUNDED"
+      },
+      "decisions": {
+        "justifications": [
+          "Final Grounding Gate status: PASSED | Evidence Safety: GROUNDED",
+          "Verified 1/3 questions strictly supported by session evidence"
+        ],
+        "rulesApplied": [
+          "Final Grounding Verification Rule: Reject un-grounded questions before delivery"
+        ],
+        "evidenceUsed": [
+          "session_evidence_package",
+          "final_candidate_mcqs"
+        ]
+      },
+      "output": {
+        "status": "PASSED",
+        "evidenceSafety": "GROUNDED",
+        "finalCount": 1
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "1 questions justified"
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "deliveredQuestions": [
+    {
+      "targetId": "R02",
+      "questionText": "Based on the provided code fragment, how does the presence of the '+' character in the token \"F+neY\" affect its parsing in the hypothetical language?",
+      "options": [
+        "It is treated as a literal character within the token",
+        "It indicates string concatenation between two identifiers",
+        "It signals the start of a comment",
+        "It separates two distinct identifiers"
+      ],
+      "correctAnswer": "It is treated as a literal character within the token",
+      "explanation": "In the evidence the '+' appears inside the token \"F+neY\" without surrounding whitespace, so the parser treats it as part of the identifier rather than as an operator such as concatenation or a comment delimiter.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Explain the role of special characters in the taught formulas",
+        "subtopic": "FMU",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "R02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_05"
+            ]
+          },
+          "concept": "Explain the role of special characters in the taught formulas",
+          "subtopic": "FMU",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "CODE",
+          "2_supportingSessionChunks": [
+            "chunk_05"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain the role of special characters in the taught formulas as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain the role of special characters in the taught formulas."
+          }
+        }
+      }
+    }
+  ]
+}

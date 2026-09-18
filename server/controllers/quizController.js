@@ -2403,6 +2403,14 @@ exports.generateQuizQuestions = async (req, res) => {
                         const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };
                         resolvedNames.add(file.originalname);
                         
+                        const safeUnlink = (p) => {
+                            if (!p) return;
+                            const lower = String(p).toLowerCase();
+                            if (lower.includes('uploads') || lower.includes('tmp') || lower.includes('temp')) {
+                                try { fs.unlinkSync(p); } catch (_) {}
+                            }
+                        };
+
                         const isAudio = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
                         if (isAudio) {
                             console.log(`🎙️ Transcribing uploaded lecture audio: ${file.originalname}`);
@@ -2415,7 +2423,7 @@ exports.generateQuizQuestions = async (req, res) => {
                                     source_name: file.originalname
                                 });
                             }
-                            try { fs.unlinkSync(filePath); } catch (_) {}
+                            safeUnlink(filePath);
                             continue;
                         }
 
@@ -2427,7 +2435,7 @@ exports.generateQuizQuestions = async (req, res) => {
                                 content: textContent,
                                 source_name: file.originalname
                             });
-                            try { fs.unlinkSync(filePath); } catch (_) {}
+                            safeUnlink(filePath);
                             continue;
                         }
 
@@ -2458,7 +2466,7 @@ exports.generateQuizQuestions = async (req, res) => {
                             endPage: config.endPage || 999
                         });
                         
-                        try { fs.unlinkSync(filePath); } catch (_) {}
+                        safeUnlink(filePath);
                     }
                 }
 
@@ -2815,7 +2823,7 @@ exports.generateQuizQuestions = async (req, res) => {
             let absolutePath = null;
             let isVoiceSource = false;
             
-            if (req.file) {
+            if (req.file && (!parsedInputs || parsedInputs.length === 0)) {
                 absolutePath = path.resolve(req.file.path);
                 const ext = path.extname(req.file.originalname).toLowerCase();
                 const AUDIO_EXTS = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'];

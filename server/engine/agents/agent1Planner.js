@@ -125,7 +125,7 @@ Requested Difficulty: ${requestedDifficulty}
 Requested Question Count: ${requestedCount}
 
 [ASSESSABLE CURRICULAR CONTENT]
-${assessableContent.substring(0, 25000)}
+${assessableContent.substring(0, 6000)}
 `;
 
     let planData;

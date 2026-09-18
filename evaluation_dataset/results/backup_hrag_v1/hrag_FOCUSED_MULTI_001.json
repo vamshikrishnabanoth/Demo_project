@@ -1,0 +1,225 @@
+{
+  "testId": "FOCUSED_MULTI_001",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "MULTI_001",
+  "topic": "Computer Organization and Architecture - Unit IV",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "requested_count": 3,
+  "delivered_count": 2,
+  "representation_mode": "UNIFIED",
+  "duration_sec": 104,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "2 evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.",
+  "average_rubric_score": 4.9,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 5,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 5,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 4,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.8,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "What is cache memory and why is it placed between the CPU and main memory?",
+      "options": [
+        "A type of secondary memory that holds backup copies of programs, accessed only when the main memory fails",
+        "A small, fast memory that stores frequently accessed data and instructions, allowing the CPU to retrieve them more quickly than from main memory",
+        "A large, slow storage device used for long-term data retention, accessed directly by the CPU for all operations",
+        "An auxiliary processor that executes instructions independently of the CPU, reducing the need for main memory access"
+      ],
+      "correctAnswer": "A small, fast memory that stores frequently accessed data and instructions, allowing the CPU to retrieve them more quickly than from main memory",
+      "explanation": "Cache memory is a small, high‑speed memory placed between the CPU and main memory. It holds copies of the most frequently used instructions and data so the CPU can access them with much lower latency than accessing slower main memory, thereby bridging the speed gap.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+        "subtopic": "Cache Memory",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+          "subtopic": "Cache Memory",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Define cache memory and explain why it is placed between CPU and main memory. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "MEDIUM"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Define cache memory and explain why it is placed between CPU and main memory.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "When a program is blocked waiting for an I/O operation, which of the following best describes the sequence of actions involving the CPU, I/O processor, main memory, and cache memory?",
+      "options": [
+        "The CPU hands the I/O request to the I/O processor, continues executing another ready program whose instructions are fetched from main memory and cached, while the blocked program remains in main memory until the I/O completes.",
+        "The CPU waits idle until the I/O processor signals completion, then fetches the blocked program's instructions directly from secondary storage.",
+        "The I/O processor transfers the blocked program's code to cache memory, and the CPU executes it while the I/O operation proceeds.",
+        "The CPU suspends all activity, and the cache memory stores the I/O data until the CPU resumes execution."
+      ],
+      "correctAnswer": "The CPU hands the I/O request to the I/O processor, continues executing another ready program whose instructions are fetched from main memory and cached, while the blocked program remains in main memory until the I/O completes.",
+      "explanation": "When a program issues an I/O request and must wait, the CPU delegates the request to the I/O processor and does not stay idle. It schedules another ready program; that program's instructions are loaded into main memory and the frequently used ones are moved into cache for fast access. The blocked program stays in main memory until the I/O device signals completion, at which point the CPU can resume it. This sequence reflects the use of the memory hierarchy (main memory and cache) while the CPU handles other work.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+        "subtopic": "Memory Hierarchy Scenario",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+          "subtopic": "Memory Hierarchy Scenario",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain how the memory hierarchy is used when a program waits for I/O. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "MEDIUM"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain how the memory hierarchy is used when a program waits for I/O.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T18:05:46.990Z"
+}

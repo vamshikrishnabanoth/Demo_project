@@ -1,0 +1,34 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Digital Electronics - Unit 1 Logic Gates and Boolean Algebra",
+  "audio_file": null,
+  "supporting_material_files": [
+    "material.pdf"
+  ],
+  "language": "English",
+  "teaching_style": "written_curriculum",
+  "content_type": "Academic Instruction",
+  "duration": "N/A",
+  "special_conditions": "Official university learning material",
+  "notes": "Original file: DE-UNIT-1.pdf",
+  "dataset_id": "MAT_008",
+  "modality": "MATERIAL_ONLY",
+  "category": "MATERIAL_ONLY",
+  "files": [
+    {
+      "filename": "material.pdf",
+      "size_bytes": 7584233,
+      "sha256": "7d29af24b7b41d7e7cb47c82edd7526a4420719bf413cd47c96cf22a2a7d0f4d"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_only",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

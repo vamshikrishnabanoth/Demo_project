@@ -1,0 +1,9 @@
+{
+  "testId": "R3_CASUAL_BANTER_GATE",
+  "round": "Round3",
+  "datasetId": "EDGE_001",
+  "status": "FAILED",
+  "duration_sec": 2,
+  "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+  "timestamp": "2026-09-18T05:37:13.103Z"
+}

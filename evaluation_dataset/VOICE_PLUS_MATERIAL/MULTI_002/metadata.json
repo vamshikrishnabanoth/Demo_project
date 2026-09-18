@@ -1,0 +1,39 @@
+{
+  "subject": "Computer Science and Engineering",
+  "topic": "Operating Systems - Unit 3 Memory Management and Synchronization",
+  "audio_file": "audio.mp3",
+  "supporting_material_files": [
+    "material.pdf"
+  ],
+  "language": "English",
+  "teaching_style": "interactive_lecture",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Full 303MB lecture audio with unit notes",
+  "notes": "Derived from final_tests/OS_voice+material",
+  "dataset_id": "MULTI_002",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "category": "VOICE_PLUS_MATERIAL",
+  "files": [
+    {
+      "filename": "audio.mp3",
+      "size_bytes": 318253485,
+      "sha256": "771b073e0877b3fe1ed7166963bfec29f72940b1b5c5ce682c593ef7583d5a6d"
+    },
+    {
+      "filename": "material.pdf",
+      "size_bytes": 1246692,
+      "sha256": "a65d89ed92dd63bdab9bfe2ad630e8feb4e7e8e33add28f3edb9a4c4bf2d487e"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

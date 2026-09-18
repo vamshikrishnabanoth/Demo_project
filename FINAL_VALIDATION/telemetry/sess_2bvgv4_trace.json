@@ -1,0 +1,1682 @@
+{
+  "sessionId": "sess_2bvgv4",
+  "filename": "final_session_trace.json",
+  "recordedAt": "2026-09-18T18:05:46.330Z",
+  "startTime": "2026-09-18T18:05:36.615Z",
+  "endTime": "2026-09-18T18:05:46.329Z",
+  "totalDurationMs": 9714,
+  "metrics": {
+    "totalDurationMs": 9714,
+    "deliveredCount": 2,
+    "totalAttempts": 6,
+    "acceptanceRatePercent": 33.3,
+    "avgGroundingScore": 0.9,
+    "stageDurations": {
+      "EVIDENCE_PACKAGE": 47,
+      "AGENT_1_PLANNING": 4975,
+      "AGENT_3_QUESTION_EVAL": 4258,
+      "GENERATION_ERROR": 392,
+      "AGENT_3_QUIZ_EVAL": 1,
+      "FINAL_GROUNDING_GATE": 7
+    },
+    "dimensionCounts": {
+      "Conceptual": 1,
+      "Scenario Analysis": 1
+    },
+    "tcScoreBreakdown": {
+      "conceptCoverage": "25/25",
+      "applicationCoverage": "24/25",
+      "artifactCoverage": "18/20",
+      "teacherEmphasis": "14/15",
+      "depth": "15/15",
+      "total": "100/100"
+    }
+  },
+  "stageExecutionTimeline": [
+    {
+      "stage": "INGESTION",
+      "stageOrder": "01",
+      "timestamp": "2026-09-18T18:05:36.615Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "Uploaded voice audio",
+        "Document texts",
+        "Code snippet"
+      ],
+      "input": {
+        "voiceLengthChars": 126741,
+        "documentCount": 1,
+        "hasCode": false,
+        "requestedCount": 3,
+        "requestedDifficulty": "Balanced"
+      },
+      "processing": {
+        "operations": [
+          "Receive multi-modal payload",
+          "Validate input types",
+          "Initialize Session Trace"
+        ]
+      },
+      "calculations": {
+        "totalCharactersReceived": 192872
+      },
+      "decisions": {
+        "justifications": [
+          "Accepted session inputs: Voice (126741 chars), Docs (1), Code (false)",
+          "Target configuration: count=3, difficulty=Balanced"
+        ],
+        "rulesApplied": [
+          "Multi-modal payload schema validation rule"
+        ],
+        "evidenceUsed": [
+          "Uploaded voice audio",
+          "Document texts",
+          "Code snippet"
+        ]
+      },
+      "output": {
+        "status": "RECEIVED",
+        "sessionId": "sess_2bvgv4"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Input format valid",
+          "Count > 0"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "EVIDENCE_PACKAGE",
+      "stageOrder": "02",
+      "timestamp": "2026-09-18T18:05:36.664Z",
+      "durationMs": 47,
+      "model": null,
+      "evidenceCitations": [
+        "voice_transcript_01",
+        "document_chunk_01"
+      ],
+      "input": {
+        "voiceTranscriptSnippet": "Now let's see about memory hierarchy in a computer system. Memory is essential part in any computer. Memory is just like a brain which is useful for s",
+        "docsSnippet": "\n\n1 \n \nKR24 COMPUTER ORGANIZATION AND ARCHITECTURE CSE   II-II \n COMPUTER ORGANIZATION AND ARCHITECTURE \nUNIT –IV \nMEMORY ORGANIZATION \nTOPIC- MEMORY "
+      },
+      "processing": {
+        "operations": [
+          "Apply Dual-Source Authority Division",
+          "Extract verbal emphasis cues from Voice transcript",
+          "Extract exact artifacts & formulas from Code/PPT/PDF",
+          "PDI Router path selection: UNIFIED",
+          "Construct Dual-Level Hierarchical Evidence Store (75-word child / 400-word parent)",
+          "Build Bidirectional Cross-Material Alignment Graph"
+        ]
+      },
+      "calculations": {
+        "voiceCharCount": 126741,
+        "formulasDetectedCount": 5,
+        "explicitInstructionsCount": 0,
+        "hierarchicalChildrenCount": 163,
+        "hierarchicalParentsCount": 46,
+        "crossMaterialLinksCount": 163
+      },
+      "decisions": {
+        "justifications": [
+          "Voice Authority applied: Syntax emphasis = MEDIUM, Conceptual emphasis = HIGH",
+          "Material Authority applied: 5 formulas detected, Code presence = false",
+          "PDI Representation Path selected: UNIFIED",
+          "Hierarchical RAG: 163 children mapped to 46 parent windows",
+          "Cross-Material Alignment: 163 bidirectional cross-modal nodes established"
+        ],
+        "rulesApplied": [
+          "Dual-Source Authority Division Rule: Voice rules intent/emphasis, Materials rule exact artifacts",
+          "PDI Representation Routing Rule: Map modal inputs to SUMMARY / BLUEPRINT / UNIFIED",
+          "Hierarchical Evidence Framing Rule: Precision micro-citation with macro-narrative expansion",
+          "Cross-Material Alignment Rule: Bidirectional semantic graph linking spoken concepts to formal slides/code"
+        ],
+        "evidenceUsed": [
+          "voice_transcript_01",
+          "document_chunk_01"
+        ]
+      },
+      "output": {
+        "voiceEmphasis": {
+          "syntaxEmphasis": "MEDIUM",
+          "conceptualEmphasis": "HIGH",
+          "explicitInstructions": [],
+          "perceivedDifficultyCues": "BALANCED"
+        },
+        "artifactsSummary": {
+          "hasCode": false,
+          "codeSnippets": [],
+          "formulasDetected": [
+            "CS1=1 and = 0, the memory can be placed in a write or read ",
+            "CS1=1 and =0 for the unit to ",
+            "j \n=1",
+            "j=1, 2",
+            "j \n=F"
+          ],
+          "keyTerms": []
+        },
+        "isAcademic": true,
+        "lectureDepth": {
+          "rating": "Comprehensive",
+          "score": 100,
+          "characteristics": {
+            "conceptExplanation": "Strong",
+            "reasoning": "Strong",
+            "examples": "Present",
+            "procedures": "Strong"
+          }
+        },
+        "unifiedLength": 192944,
+        "representationMode": "UNIFIED",
+        "routerReason": "[Adaptive PDI Router: PDI=0.830] Multimodal Classroom (Audio + PPT/Code with PDI=0.830): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY)."
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Evidence package assembled",
+          "Artifacts extracted"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_1_PLANNING",
+      "stageOrder": "03",
+      "timestamp": "2026-09-18T18:05:41.640Z",
+      "durationMs": 4975,
+      "model": "llama-3.3-70b-versatile",
+      "evidenceCitations": [
+        "Teaching Evidence Package",
+        "Voice emphasis signals"
+      ],
+      "input": {
+        "requestedCount": 3,
+        "requestedDifficulty": "Balanced",
+        "voiceEmphasis": {
+          "syntaxEmphasis": "MEDIUM",
+          "conceptualEmphasis": "HIGH",
+          "explicitInstructions": [],
+          "perceivedDifficultyCues": "BALANCED"
+        }
+      },
+      "processing": {
+        "operations": [
+          "Analyze topic hierarchy",
+          "Calibrate difficulty relative to teaching depth",
+          "Generate N primary targets + M reserve targets",
+          "Compute transparent TC Score breakdown"
+        ]
+      },
+      "calculations": {
+        "conceptCoverage": "25/25",
+        "applicationCoverage": "24/25",
+        "artifactCoverage": "18/20",
+        "teacherEmphasis": "14/15",
+        "depth": "15/15",
+        "total": "100/100"
+      },
+      "decisions": {
+        "justifications": [
+          "Identified Subject: \"Computer Architecture\" | Main Topic: \"Memory Hierarchy and Types\"",
+          "Planned 3 primary targets + 3 reserve targets",
+          "TC Score assessed at 100/100 based on concept depth and artifact presence"
+        ],
+        "rulesApplied": [
+          "Target Reserve Rule: Generate N primary targets + M reserve targets upfront",
+          "Relative Difficulty Calibration Rule: Calibrate cognitive challenge against session depth"
+        ],
+        "evidenceUsed": [
+          "Teaching Evidence Package",
+          "Voice emphasis signals"
+        ]
+      },
+      "output": {
+        "subject": "Computer Architecture",
+        "mainTopic": "Memory Hierarchy and Types",
+        "primaryTargetsSummary": [
+          {
+            "id": "T01",
+            "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+            "dimension": "Conceptual"
+          },
+          {
+            "id": "T02",
+            "concept": "Compare the cost and access speed of cache memory, main memory, and hard‑disk storage.",
+            "dimension": "Comparison / Tradeoff"
+          },
+          {
+            "id": "T03",
+            "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+            "dimension": "Scenario Analysis"
+          }
+        ],
+        "reserveTargetsSummary": [
+          {
+            "id": "R01",
+            "concept": "State the conversion relationships among KB, MB, GB, and TB as presented."
+          },
+          {
+            "id": "R02",
+            "concept": "Describe how multi‑programming improves CPU utilization."
+          },
+          {
+            "id": "R03",
+            "concept": "Predict how the cost per MB changes as storage capacity increases from cache to hard‑disk."
+          }
+        ]
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "AssessmentPlan schema valid",
+          "Reserve targets generated"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TT01_att1",
+      "timestamp": "2026-09-18T18:05:41.643Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T01"
+      ],
+      "input": {
+        "targetId": "T01",
+        "concept": "Define cache memory and explain why it is placed between CPU and main memory."
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 1/3 (\"Define cache memory and explain why it is placed between CPU and main memory.\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "T01"
+        ]
+      },
+      "output": {
+        "targetId": "T01"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUESTION_EVAL",
+      "stageOrder": "04_TT01_att1",
+      "timestamp": "2026-09-18T18:05:43.622Z",
+      "durationMs": 1979,
+      "model": "openai/gpt-oss-120b",
+      "evidenceCitations": [
+        "chunk_01"
+      ],
+      "input": {
+        "targetId": "T01",
+        "candidateMCQ": {
+          "targetId": "T01",
+          "questionText": "What is cache memory and why is it placed between the CPU and main memory?",
+          "options": [
+            "A small, fast memory that stores frequently accessed data and instructions, allowing the CPU to retrieve them more quickly than from main memory",
+            "A large, slow storage device used for long-term data retention, accessed directly by the CPU for all operations",
+            "A type of secondary memory that holds backup copies of programs, accessed only when the main memory fails",
+            "An auxiliary processor that executes instructions independently of the CPU, reducing the need for main memory access"
+          ],
+          "correctAnswer": "A small, fast memory that stores frequently accessed data and instructions, allowing the CPU to retrieve them more quickly than from main memory",
+          "explanation": "Cache memory is a small, high‑speed memory placed between the CPU and main memory. It holds copies of the most frequently used instructions and data so the CPU can access them with much lower latency than accessing slower main memory, thereby bridging the speed gap.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+            "subtopic": "Cache Memory",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.9,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+              "subtopic": "Cache Memory",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.9
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Define cache memory and explain why it is placed between CPU and main memory. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "MEDIUM"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.9,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Define cache memory and explain why it is placed between CPU and main memory.."
+              }
+            }
+          }
+        }
+      },
+      "processing": {
+        "operations": [
+          "Grounding analysis",
+          "5-Tier Derivability evaluation",
+          "Student answerability check",
+          "Distractor plausibility check"
+        ]
+      },
+      "calculations": {
+        "groundingScore": 0.9
+      },
+      "decisions": {
+        "justifications": [
+          "Target T01 PASSED on attempt 1",
+          "Subtopic: \"Cache Memory\" | Concept: \"Define cache memory and explain why it is placed between CPU and main memory.\"",
+          "Derivability Tier: EVIDENCE_DERIVED | Student Answerability: HIGH",
+          "Grounding justification score: 0.9",
+          "Distractors evaluated plausible, distinct, and free of superficial hallucinations"
+        ],
+        "rulesApplied": [
+          "Pedagogical Quality and 5-Tier Derivability Acceptance Rule"
+        ],
+        "evidenceUsed": [
+          "chunk_01"
+        ]
+      },
+      "output": {
+        "status": "PASS",
+        "mcq": {
+          "targetId": "T01",
+          "questionText": "What is cache memory and why is it placed between the CPU and main memory?",
+          "options": [
+            "A small, fast memory that stores frequently accessed data and instructions, allowing the CPU to retrieve them more quickly than from main memory",
+            "A large, slow storage device used for long-term data retention, accessed directly by the CPU for all operations",
+            "A type of secondary memory that holds backup copies of programs, accessed only when the main memory fails",
+            "An auxiliary processor that executes instructions independently of the CPU, reducing the need for main memory access"
+          ],
+          "correctAnswer": "A small, fast memory that stores frequently accessed data and instructions, allowing the CPU to retrieve them more quickly than from main memory",
+          "explanation": "Cache memory is a small, high‑speed memory placed between the CPU and main memory. It holds copies of the most frequently used instructions and data so the CPU can access them with much lower latency than accessing slower main memory, thereby bridging the speed gap.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+            "subtopic": "Cache Memory",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.9,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+              "subtopic": "Cache Memory",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.9
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Define cache memory and explain why it is placed between CPU and main memory. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "MEDIUM"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.9,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Define cache memory and explain why it is placed between CPU and main memory.."
+              }
+            }
+          }
+        }
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Grounding >= 0.85",
+          "Target aligned",
+          "Distractors valid"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TT02_att1",
+      "timestamp": "2026-09-18T18:05:43.623Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T02"
+      ],
+      "input": {
+        "targetId": "T02",
+        "concept": "Compare the cost and access speed of cache memory, main memory, and hard‑disk storage."
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 2/3 (\"Compare the cost and access speed of cache memory, main memory, and hard‑disk storage.\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "T02"
+        ]
+      },
+      "output": {
+        "targetId": "T02"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "GENERATION_ERROR",
+      "stageOrder": "04_TT02_att1",
+      "timestamp": "2026-09-18T18:05:43.717Z",
+      "durationMs": 94,
+      "model": null,
+      "evidenceCitations": [
+        "T02"
+      ],
+      "input": {
+        "targetId": "T02",
+        "attempt": 1
+      },
+      "processing": {
+        "operations": [
+          "LLM generation / parsing"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generation attempt 1 failed: NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 429); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ],
+        "rulesApplied": [
+          "Error recovery & retry rule"
+        ],
+        "evidenceUsed": [
+          "T02"
+        ]
+      },
+      "output": {
+        "isValid": false
+      },
+      "validation": {
+        "status": "FAIL",
+        "checks": [],
+        "errors": [
+          "NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 429); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ]
+      }
+    },
+    {
+      "stage": "TARGET_RESERVE_SWAP",
+      "stageOrder": "04_SWAP_T02",
+      "timestamp": "2026-09-18T18:05:43.718Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T02",
+        "R01"
+      ],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Target T02 exhausted retry budget.",
+          "Swapped in pre-generated reserve target R01 (\"State the conversion relationships among KB, MB, GB, and TB as presented.\")."
+        ],
+        "rulesApplied": [
+          "Reserve Target Fallback Rule (no Agent 1 recall)"
+        ],
+        "evidenceUsed": [
+          "T02",
+          "R01"
+        ]
+      },
+      "output": {
+        "swappedFrom": "T02",
+        "swappedTo": "R01"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Reserve target available and swapped"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TT03_att1",
+      "timestamp": "2026-09-18T18:05:43.720Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "T03"
+      ],
+      "input": {
+        "targetId": "T03",
+        "concept": "Explain how the memory hierarchy is used when a program waits for I/O."
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 2/3 (\"Explain how the memory hierarchy is used when a program waits for I/O.\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "T03"
+        ]
+      },
+      "output": {
+        "targetId": "T03"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUESTION_EVAL",
+      "stageOrder": "04_TT03_att1",
+      "timestamp": "2026-09-18T18:05:45.999Z",
+      "durationMs": 2279,
+      "model": "openai/gpt-oss-120b",
+      "evidenceCitations": [
+        "chunk_01"
+      ],
+      "input": {
+        "targetId": "T03",
+        "candidateMCQ": {
+          "targetId": "T03",
+          "questionText": "When a program is blocked waiting for an I/O operation, which of the following best describes the sequence of actions involving the CPU, I/O processor, main memory, and cache memory?",
+          "options": [
+            "The CPU hands the I/O request to the I/O processor, continues executing another ready program whose instructions are fetched from main memory and cached, while the blocked program remains in main memory until the I/O completes.",
+            "The CPU waits idle until the I/O processor signals completion, then fetches the blocked program's instructions directly from secondary storage.",
+            "The I/O processor transfers the blocked program's code to cache memory, and the CPU executes it while the I/O operation proceeds.",
+            "The CPU suspends all activity, and the cache memory stores the I/O data until the CPU resumes execution."
+          ],
+          "correctAnswer": "The CPU hands the I/O request to the I/O processor, continues executing another ready program whose instructions are fetched from main memory and cached, while the blocked program remains in main memory until the I/O completes.",
+          "explanation": "When a program issues an I/O request and must wait, the CPU delegates the request to the I/O processor and does not stay idle. It schedules another ready program; that program's instructions are loaded into main memory and the frequently used ones are moved into cache for fast access. The blocked program stays in main memory until the I/O device signals completion, at which point the CPU can resume it. This sequence reflects the use of the memory hierarchy (main memory and cache) while the CPU handles other work.",
+          "metadata": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+            "subtopic": "Memory Hierarchy Scenario",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.9,
+            "targetId": "T03",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+              "subtopic": "Memory Hierarchy Scenario",
+              "cognitiveDimension": "Scenario Analysis",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.9
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Explain how the memory hierarchy is used when a program waits for I/O. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "MEDIUM"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Scenario Analysis",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.9,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Explain how the memory hierarchy is used when a program waits for I/O.."
+              }
+            }
+          }
+        }
+      },
+      "processing": {
+        "operations": [
+          "Grounding analysis",
+          "5-Tier Derivability evaluation",
+          "Student answerability check",
+          "Distractor plausibility check"
+        ]
+      },
+      "calculations": {
+        "groundingScore": 0.9
+      },
+      "decisions": {
+        "justifications": [
+          "Target T03 PASSED on attempt 1",
+          "Subtopic: \"Memory Hierarchy Scenario\" | Concept: \"Explain how the memory hierarchy is used when a program waits for I/O.\"",
+          "Derivability Tier: EVIDENCE_DERIVED | Student Answerability: HIGH",
+          "Grounding justification score: 0.9",
+          "Distractors evaluated plausible, distinct, and free of superficial hallucinations"
+        ],
+        "rulesApplied": [
+          "Pedagogical Quality and 5-Tier Derivability Acceptance Rule"
+        ],
+        "evidenceUsed": [
+          "chunk_01"
+        ]
+      },
+      "output": {
+        "status": "PASS",
+        "mcq": {
+          "targetId": "T03",
+          "questionText": "When a program is blocked waiting for an I/O operation, which of the following best describes the sequence of actions involving the CPU, I/O processor, main memory, and cache memory?",
+          "options": [
+            "The CPU hands the I/O request to the I/O processor, continues executing another ready program whose instructions are fetched from main memory and cached, while the blocked program remains in main memory until the I/O completes.",
+            "The CPU waits idle until the I/O processor signals completion, then fetches the blocked program's instructions directly from secondary storage.",
+            "The I/O processor transfers the blocked program's code to cache memory, and the CPU executes it while the I/O operation proceeds.",
+            "The CPU suspends all activity, and the cache memory stores the I/O data until the CPU resumes execution."
+          ],
+          "correctAnswer": "The CPU hands the I/O request to the I/O processor, continues executing another ready program whose instructions are fetched from main memory and cached, while the blocked program remains in main memory until the I/O completes.",
+          "explanation": "When a program issues an I/O request and must wait, the CPU delegates the request to the I/O processor and does not stay idle. It schedules another ready program; that program's instructions are loaded into main memory and the frequently used ones are moved into cache for fast access. The blocked program stays in main memory until the I/O device signals completion, at which point the CPU can resume it. This sequence reflects the use of the memory hierarchy (main memory and cache) while the CPU handles other work.",
+          "metadata": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+            "subtopic": "Memory Hierarchy Scenario",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.9,
+            "targetId": "T03",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+              "subtopic": "Memory Hierarchy Scenario",
+              "cognitiveDimension": "Scenario Analysis",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.9
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Explain how the memory hierarchy is used when a program waits for I/O. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "MEDIUM"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Scenario Analysis",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.9,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Explain how the memory hierarchy is used when a program waits for I/O.."
+              }
+            }
+          }
+        }
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Grounding >= 0.85",
+          "Target aligned",
+          "Distractors valid"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TR01_att1",
+      "timestamp": "2026-09-18T18:05:46.000Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "R01"
+      ],
+      "input": {
+        "targetId": "R01",
+        "concept": "State the conversion relationships among KB, MB, GB, and TB as presented."
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 3/3 (\"State the conversion relationships among KB, MB, GB, and TB as presented.\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "R01"
+        ]
+      },
+      "output": {
+        "targetId": "R01"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "GENERATION_ERROR",
+      "stageOrder": "04_TR01_att1",
+      "timestamp": "2026-09-18T18:05:46.100Z",
+      "durationMs": 100,
+      "model": null,
+      "evidenceCitations": [
+        "R01"
+      ],
+      "input": {
+        "targetId": "R01",
+        "attempt": 1
+      },
+      "processing": {
+        "operations": [
+          "LLM generation / parsing"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generation attempt 1 failed: NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 429); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ],
+        "rulesApplied": [
+          "Error recovery & retry rule"
+        ],
+        "evidenceUsed": [
+          "R01"
+        ]
+      },
+      "output": {
+        "isValid": false
+      },
+      "validation": {
+        "status": "FAIL",
+        "checks": [],
+        "errors": [
+          "NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 429); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ]
+      }
+    },
+    {
+      "stage": "TARGET_RESERVE_SWAP",
+      "stageOrder": "04_SWAP_R01",
+      "timestamp": "2026-09-18T18:05:46.101Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "R01",
+        "R02"
+      ],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Target R01 exhausted retry budget.",
+          "Swapped in pre-generated reserve target R02 (\"Describe how multi‑programming improves CPU utilization.\")."
+        ],
+        "rulesApplied": [
+          "Reserve Target Fallback Rule (no Agent 1 recall)"
+        ],
+        "evidenceUsed": [
+          "R01",
+          "R02"
+        ]
+      },
+      "output": {
+        "swappedFrom": "R01",
+        "swappedTo": "R02"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Reserve target available and swapped"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TR02_att1",
+      "timestamp": "2026-09-18T18:05:46.103Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "R02"
+      ],
+      "input": {
+        "targetId": "R02",
+        "concept": "Describe how multi‑programming improves CPU utilization."
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 3/3 (\"Describe how multi‑programming improves CPU utilization.\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "R02"
+        ]
+      },
+      "output": {
+        "targetId": "R02"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "GENERATION_ERROR",
+      "stageOrder": "04_TR02_att1",
+      "timestamp": "2026-09-18T18:05:46.207Z",
+      "durationMs": 104,
+      "model": null,
+      "evidenceCitations": [
+        "R02"
+      ],
+      "input": {
+        "targetId": "R02",
+        "attempt": 1
+      },
+      "processing": {
+        "operations": [
+          "LLM generation / parsing"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generation attempt 1 failed: NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 429); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ],
+        "rulesApplied": [
+          "Error recovery & retry rule"
+        ],
+        "evidenceUsed": [
+          "R02"
+        ]
+      },
+      "output": {
+        "isValid": false
+      },
+      "validation": {
+        "status": "FAIL",
+        "checks": [],
+        "errors": [
+          "NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 429); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ]
+      }
+    },
+    {
+      "stage": "TARGET_RESERVE_SWAP",
+      "stageOrder": "04_SWAP_R02",
+      "timestamp": "2026-09-18T18:05:46.208Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "R02",
+        "R03"
+      ],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Target R02 exhausted retry budget.",
+          "Swapped in pre-generated reserve target R03 (\"Predict how the cost per MB changes as storage capacity increases from cache to hard‑disk.\")."
+        ],
+        "rulesApplied": [
+          "Reserve Target Fallback Rule (no Agent 1 recall)"
+        ],
+        "evidenceUsed": [
+          "R02",
+          "R03"
+        ]
+      },
+      "output": {
+        "swappedFrom": "R02",
+        "swappedTo": "R03"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Reserve target available and swapped"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "QUESTION_GENERATION",
+      "stageOrder": "04_TR03_att1",
+      "timestamp": "2026-09-18T18:05:46.211Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "R03"
+      ],
+      "input": {
+        "targetId": "R03",
+        "concept": "Predict how the cost per MB changes as storage capacity increases from cache to hard‑disk."
+      },
+      "processing": {
+        "operations": [
+          "Prompt formulation",
+          "LLM generation via Gateway"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generating candidate MCQ for Question 3/3 (\"Predict how the cost per MB changes as storage capacity increases from cache to hard‑disk.\")"
+        ],
+        "rulesApplied": [
+          "Scenario Transformation & Cognitive Dimension Alignment"
+        ],
+        "evidenceUsed": [
+          "R03"
+        ]
+      },
+      "output": {
+        "targetId": "R03"
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [],
+        "errors": []
+      }
+    },
+    {
+      "stage": "GENERATION_ERROR",
+      "stageOrder": "04_TR03_att1",
+      "timestamp": "2026-09-18T18:05:46.305Z",
+      "durationMs": 94,
+      "model": null,
+      "evidenceCitations": [
+        "R03"
+      ],
+      "input": {
+        "targetId": "R03",
+        "attempt": 1
+      },
+      "processing": {
+        "operations": [
+          "LLM generation / parsing"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Generation attempt 1 failed: NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 429); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ],
+        "rulesApplied": [
+          "Error recovery & retry rule"
+        ],
+        "evidenceUsed": [
+          "R03"
+        ]
+      },
+      "output": {
+        "isValid": false
+      },
+      "validation": {
+        "status": "FAIL",
+        "checks": [],
+        "errors": [
+          "NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [Groq (Request failed with status code 429); Local Ollama (connect ECONNREFUSED 127.0.0.1:11434)]. Please verify your API key or try again in a few moments."
+        ]
+      }
+    },
+    {
+      "stage": "TARGET_EXHAUSTED",
+      "stageOrder": "04_EXHAUSTED_R03",
+      "timestamp": "2026-09-18T18:05:46.308Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Target R03 could not pass audit and reserve budget is reached."
+        ],
+        "rulesApplied": [],
+        "evidenceUsed": []
+      },
+      "output": {},
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Target closed without forcing ungrounded question"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "VALIDATING_QUESTIONS",
+      "stageOrder": "04_VALIDATE",
+      "timestamp": "2026-09-18T18:05:46.310Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Validated 2 questions against 4-option schema and deterministic consistency"
+        ],
+        "rulesApplied": [],
+        "evidenceUsed": []
+      },
+      "output": {},
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "All delivered candidate questions valid"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AUDITING_QUALITY",
+      "stageOrder": "04_AUDIT",
+      "timestamp": "2026-09-18T18:05:46.312Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [],
+      "input": {},
+      "processing": {},
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "Audited pedagogical derivability and student answerability for 2 questions"
+        ],
+        "rulesApplied": [],
+        "evidenceUsed": []
+      },
+      "output": {},
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Audit complete"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "AGENT_3_QUIZ_EVAL",
+      "stageOrder": "05",
+      "timestamp": "2026-09-18T18:05:46.315Z",
+      "durationMs": 1,
+      "model": null,
+      "evidenceCitations": [
+        "All passing candidate MCQs"
+      ],
+      "input": {
+        "passingCount": 2,
+        "requestedCount": 3
+      },
+      "processing": {
+        "operations": [
+          "Coverage analysis",
+          "Cognitive dimension diversity analysis",
+          "Subtopic concentration analysis",
+          "Pairwise redundancy matrix check"
+        ]
+      },
+      "calculations": {
+        "coverageScore": 67,
+        "uniqueDimensions": 2,
+        "totalQuestions": 2,
+        "redundantPairsCount": 0,
+        "cognitiveDistribution": {
+          "Conceptual": 1,
+          "Scenario Analysis": 1
+        },
+        "conceptDistribution": {
+          "Cache Memory": 1,
+          "Memory Hierarchy Scenario": 1
+        },
+        "derivabilityTiers": {
+          "DIRECT_EVIDENCE": 0,
+          "EVIDENCE_DERIVED": 2,
+          "FOUNDATIONAL_PREREQUISITE": 0,
+          "RELATED_EXTENSION": 0
+        }
+      },
+      "decisions": {
+        "justifications": [
+          "Quiz coverage evaluated at 67%",
+          "Cognitive dimension diversity: 2 unique dimensions (Conceptual, Scenario Analysis)",
+          "Concept / Subtopic coverage: 2 unique subtopics",
+          "Derivability Tiers: Direct=0, Derived=2, Foundational=0, Extension=0",
+          "Pairwise semantic redundancy: 0 true redundant pairs",
+          "Quiz Quality Status: QUALITY_PASSED"
+        ],
+        "rulesApplied": [
+          "Whole-Quiz Pedagogical Balance, Subtopic Diversity & Concentration Limit Rule"
+        ],
+        "evidenceUsed": [
+          "All passing candidate MCQs"
+        ]
+      },
+      "output": {
+        "quizQualityStatus": "QUALITY_PASSED",
+        "isBalanced": true,
+        "totalQuestions": 2,
+        "requestedCount": 3,
+        "uniqueDimensionsCount": 2,
+        "cognitiveDistribution": {
+          "Conceptual": 1,
+          "Scenario Analysis": 1
+        },
+        "conceptDistribution": {
+          "Cache Memory": 1,
+          "Memory Hierarchy Scenario": 1
+        },
+        "derivabilityTiers": {
+          "DIRECT_EVIDENCE": 0,
+          "EVIDENCE_DERIVED": 2,
+          "FOUNDATIONAL_PREREQUISITE": 0,
+          "RELATED_EXTENSION": 0
+        },
+        "redundancy": {
+          "totalRedundantPairs": 0,
+          "highSimilarityPairs": []
+        },
+        "concentrationWarning": null,
+        "suggestion": null,
+        "coverageScore": 67,
+        "recommendations": []
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Quality Status: QUALITY_PASSED"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "DETERMINISTIC_POSTCHECKS",
+      "stageOrder": "06",
+      "timestamp": "2026-09-18T18:05:46.318Z",
+      "durationMs": 0,
+      "model": null,
+      "evidenceCitations": [
+        "Passing MCQs"
+      ],
+      "input": {},
+      "processing": {
+        "operations": [
+          "Verify payload integrity",
+          "Shuffle option positions to balance A/B/C/D key distribution"
+        ]
+      },
+      "calculations": null,
+      "decisions": {
+        "justifications": [
+          "All passing MCQs normalized with randomized option placement"
+        ],
+        "rulesApplied": [
+          "Answer Position Bias Elimination Rule (~25% A/B/C/D split)"
+        ],
+        "evidenceUsed": [
+          "Passing MCQs"
+        ]
+      },
+      "output": {
+        "postCheckedCount": 2
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "Options randomized",
+          "Payload intact"
+        ],
+        "errors": []
+      }
+    },
+    {
+      "stage": "FINAL_GROUNDING_GATE",
+      "stageOrder": "07",
+      "timestamp": "2026-09-18T18:05:46.327Z",
+      "durationMs": 7,
+      "model": null,
+      "evidenceCitations": [
+        "session_evidence_package",
+        "final_candidate_mcqs"
+      ],
+      "input": {
+        "totalCandidateMCQs": 2
+      },
+      "processing": {
+        "operations": [
+          "Verify keyword overlap",
+          "Verify factual justification against session content",
+          "Foreign domain boundary check"
+        ]
+      },
+      "calculations": {
+        "justifiedCount": 2,
+        "rejectedCount": 0,
+        "evidenceSafety": "GROUNDED"
+      },
+      "decisions": {
+        "justifications": [
+          "Final Grounding Gate status: PASSED | Evidence Safety: GROUNDED",
+          "Verified 2/2 questions strictly supported by session evidence"
+        ],
+        "rulesApplied": [
+          "Final Grounding Verification Rule: Reject un-grounded questions before delivery"
+        ],
+        "evidenceUsed": [
+          "session_evidence_package",
+          "final_candidate_mcqs"
+        ]
+      },
+      "output": {
+        "status": "PASSED",
+        "evidenceSafety": "GROUNDED",
+        "finalCount": 2
+      },
+      "validation": {
+        "status": "PASS",
+        "checks": [
+          "2 questions justified"
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "deliveredQuestions": [
+    {
+      "targetId": "T01",
+      "questionText": "What is cache memory and why is it placed between the CPU and main memory?",
+      "options": [
+        "A type of secondary memory that holds backup copies of programs, accessed only when the main memory fails",
+        "A small, fast memory that stores frequently accessed data and instructions, allowing the CPU to retrieve them more quickly than from main memory",
+        "A large, slow storage device used for long-term data retention, accessed directly by the CPU for all operations",
+        "An auxiliary processor that executes instructions independently of the CPU, reducing the need for main memory access"
+      ],
+      "correctAnswer": "A small, fast memory that stores frequently accessed data and instructions, allowing the CPU to retrieve them more quickly than from main memory",
+      "explanation": "Cache memory is a small, high‑speed memory placed between the CPU and main memory. It holds copies of the most frequently used instructions and data so the CPU can access them with much lower latency than accessing slower main memory, thereby bridging the speed gap.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+        "subtopic": "Cache Memory",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Define cache memory and explain why it is placed between CPU and main memory.",
+          "subtopic": "Cache Memory",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Define cache memory and explain why it is placed between CPU and main memory. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "MEDIUM"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Define cache memory and explain why it is placed between CPU and main memory.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "When a program is blocked waiting for an I/O operation, which of the following best describes the sequence of actions involving the CPU, I/O processor, main memory, and cache memory?",
+      "options": [
+        "The CPU hands the I/O request to the I/O processor, continues executing another ready program whose instructions are fetched from main memory and cached, while the blocked program remains in main memory until the I/O completes.",
+        "The CPU waits idle until the I/O processor signals completion, then fetches the blocked program's instructions directly from secondary storage.",
+        "The I/O processor transfers the blocked program's code to cache memory, and the CPU executes it while the I/O operation proceeds.",
+        "The CPU suspends all activity, and the cache memory stores the I/O data until the CPU resumes execution."
+      ],
+      "correctAnswer": "The CPU hands the I/O request to the I/O processor, continues executing another ready program whose instructions are fetched from main memory and cached, while the blocked program remains in main memory until the I/O completes.",
+      "explanation": "When a program issues an I/O request and must wait, the CPU delegates the request to the I/O processor and does not stay idle. It schedules another ready program; that program's instructions are loaded into main memory and the frequently used ones are moved into cache for fast access. The blocked program stays in main memory until the I/O device signals completion, at which point the CPU can resume it. This sequence reflects the use of the memory hierarchy (main memory and cache) while the CPU handles other work.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+        "subtopic": "Memory Hierarchy Scenario",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain how the memory hierarchy is used when a program waits for I/O.",
+          "subtopic": "Memory Hierarchy Scenario",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain how the memory hierarchy is used when a program waits for I/O. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "MEDIUM"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain how the memory hierarchy is used when a program waits for I/O.."
+          }
+        }
+      }
+    }
+  ]
+}

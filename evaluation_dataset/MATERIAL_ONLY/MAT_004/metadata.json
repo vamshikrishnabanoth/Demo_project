@@ -1,0 +1,34 @@
+{
+  "subject": "Computer Science / Engineering",
+  "topic": "Data Structures Lab Programs Manual",
+  "audio_file": null,
+  "supporting_material_files": [
+    "material.docx"
+  ],
+  "language": "English",
+  "teaching_style": "written_curriculum",
+  "content_type": "Academic Instruction",
+  "duration": "N/A",
+  "special_conditions": "Official university learning material",
+  "notes": "Original file: DS Lab Programs(KR24)II-II.docx",
+  "dataset_id": "MAT_004",
+  "modality": "MATERIAL_ONLY",
+  "category": "MATERIAL_ONLY",
+  "files": [
+    {
+      "filename": "material.docx",
+      "size_bytes": 2445996,
+      "sha256": "343510b19733b4a1e8cdb4fd5f857b39f3f20c95b14cd419e03d32759bc7a84a"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_only",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

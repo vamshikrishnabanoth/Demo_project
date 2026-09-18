@@ -1,0 +1,326 @@
+{
+  "testId": "FOCUSED_VOICE_001",
+  "round": "Focused",
+  "datasetId": "VOICE_001",
+  "topic": "Deep Learning and Neural Network Foundations",
+  "modality": "VOICE_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 78.3,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.4,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following is a drawback of using a plain ANN for image data that CNNs specifically address?",
+      "options": [
+        "Plain ANN requires a very large number of parameters because every pixel is connected to every neuron in the next layer",
+        "Plain ANN cannot learn any non‑linear relationships in image data",
+        "Plain ANN automatically reduces image size without any extra layers",
+        "Plain ANN uses convolutional filters to extract local features"
+      ],
+      "correctAnswer": "Plain ANN requires a very large number of parameters because every pixel is connected to every neuron in the next layer",
+      "explanation": "A fully connected ANN treats each pixel independently, leading to an explosion of weights for high‑resolution images. CNNs address this by using local receptive fields (convolutional layers) and weight sharing, dramatically reducing the number of parameters while preserving spatial information.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Explain why CNNs are used instead of plain ANNs for image data.",
+        "subtopic": "CNN definition and motivation",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "MEDIUM",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain why CNNs are used instead of plain ANNs for image data.",
+          "subtopic": "CNN definition and motivation",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "MEDIUM",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain why CNNs are used instead of plain ANNs for image data. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "MEDIUM",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain why CNNs are used instead of plain ANNs for image data.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "Which sequence correctly describes the ordered steps of forward propagation in the CNN model described in the session?",
+      "options": [
+        "Read image → Convolution → Activation function → Pooling → Fully connected layer → Loss calculation",
+        "Read image → Convolution → Pooling → Activation function → Fully connected layer → Loss calculation",
+        "Read image → Convolution → Activation function → Fully connected layer → Pooling → Loss calculation",
+        "Read image → Pooling → Convolution → Activation function → Fully connected layer → Loss calculation"
+      ],
+      "correctAnswer": "Read image → Convolution → Activation function → Pooling → Fully connected layer → Loss calculation",
+      "explanation": "The forward propagation described starts with reading the input image, then applying a convolutional layer to extract features, followed by an activation function (e.g., ReLU) to introduce non‑linearity, then a pooling layer to reduce spatial dimensions, after which the feature maps are flattened and fed into a fully connected layer, and finally the loss function is computed.",
+      "metadata": {
+        "dimension": "Flow / Trace",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Medium",
+        "concept": "List the ordered steps of forward propagation in the described CNN model.",
+        "subtopic": "Forward propagation sequence",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_02"
+            ]
+          },
+          "concept": "List the ordered steps of forward propagation in the described CNN model.",
+          "subtopic": "Forward propagation sequence",
+          "cognitiveDimension": "Flow / Trace",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_02"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized List the ordered steps of forward propagation in the described CNN model. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Flow / Trace",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for List the ordered steps of forward propagation in the described CNN model.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Before feeding an image into the CNN, which preprocessing steps must be applied to meet the model requirements?",
+      "options": [
+        "Resize to 28x28 pixels and convert to grayscale",
+        "Resize to 32x32 pixels and keep RGB channels",
+        "Normalize pixel values to [0,1] without resizing",
+        "Crop to central 28x28 region and keep original color format"
+      ],
+      "correctAnswer": "Resize to 28x28 pixels and convert to grayscale",
+      "explanation": "The CNN expects input images of size 28 × 28 with a single channel. Therefore any image must be resized to 28 × 28 pixels and converted from color (RGB) to grayscale before being fed to the network.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Easy",
+        "concept": "Describe the required preprocessing steps before feeding an image into the CNN.",
+        "subtopic": "Image preprocessing (resize & grayscale)",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_03"
+            ]
+          },
+          "concept": "Describe the required preprocessing steps before feeding an image into the CNN.",
+          "subtopic": "Image preprocessing (resize & grayscale)",
+          "cognitiveDimension": "Application",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_03"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Describe the required preprocessing steps before feeding an image into the CNN. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "HIGH",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Describe the required preprocessing steps before feeding an image into the CNN.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T14:55:41.266Z"
+}

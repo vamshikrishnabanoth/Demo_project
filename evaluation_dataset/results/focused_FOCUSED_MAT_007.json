@@ -1,0 +1,326 @@
+{
+  "testId": "FOCUSED_MAT_007",
+  "round": "Focused",
+  "datasetId": "MAT_007",
+  "topic": "Digital Electronics Lecture Slides DE-31",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "BLUEPRINT",
+  "duration_sec": 92.4,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.4,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following statements correctly defines a combinational logic circuit as given in the textbook?",
+      "options": [
+        "Combinational Logic Circuits are memoryless digital logic circuits whose output depends on the sequence of past inputs.",
+        "Combinational Logic Circuits are memoryless digital logic circuits whose output at any instant in time depends only on the combination of its inputs.",
+        "Combinational Logic Circuits are digital circuits that store previous input states to determine their output.",
+        "Combinational Logic Circuits are digital logic circuits whose output at any instant depends on both current inputs and internal state."
+      ],
+      "correctAnswer": "Combinational Logic Circuits are memoryless digital logic circuits whose output at any instant in time depends only on the combination of its inputs.",
+      "explanation": "The textbook definition states that combinational logic circuits are memoryless digital logic circuits whose output at any instant depends only on the combination of its inputs. The other options introduce memory or dependence on past inputs, which are characteristics of sequential circuits, not combinational ones.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "State the formal definition of a combinational logic circuit.",
+        "subtopic": "Definition of combinational logic circuits",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "slide_03"
+            ]
+          },
+          "concept": "State the formal definition of a combinational logic circuit.",
+          "subtopic": "Definition of combinational logic circuits",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "DOCUMENT",
+          "2_supportingSessionChunks": [
+            "slide_03"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized State the formal definition of a combinational logic circuit. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for State the formal definition of a combinational logic circuit.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "Which of the following statements correctly distinguishes combinational and sequential circuits with respect to memory and feedback?",
+      "options": [
+        "Combinational circuits have no memory and no feedback; sequential circuits have memory and use feedback",
+        "Combinational circuits use feedback while sequential circuits do not have memory",
+        "Both combinational and sequential circuits use feedback, but only sequential circuits have memory",
+        "Combinational circuits have memory but no feedback; sequential circuits have no memory and use feedback"
+      ],
+      "correctAnswer": "Combinational circuits have no memory and no feedback; sequential circuits have memory and use feedback",
+      "explanation": "Combinational circuits produce outputs solely from current inputs, so they contain no storage elements (no memory) and do not employ feedback loops. Sequential circuits include storage elements (e.g., flip‑flops) that provide memory and typically use feedback to retain state across clock cycles.",
+      "metadata": {
+        "dimension": "Comparison / Tradeoff",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Differentiate combinational circuits from sequential circuits in terms of memory and feedback.",
+        "subtopic": "Comparison of combinational vs sequential circuits",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "slide_02"
+            ]
+          },
+          "concept": "Differentiate combinational circuits from sequential circuits in terms of memory and feedback.",
+          "subtopic": "Comparison of combinational vs sequential circuits",
+          "cognitiveDimension": "Comparison / Tradeoff",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "DOCUMENT",
+          "2_supportingSessionChunks": [
+            "slide_02"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Differentiate combinational circuits from sequential circuits in terms of memory and feedback. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Differentiate combinational circuits from sequential circuits in terms of memory and feedback.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Consider a combinational logic circuit where the output Y = A AND B. Initially A=0 and B=1, so Y=0. If the input A changes instantly to 1 while B stays at 1, what will be the new value of Y?",
+      "options": [
+        "Y changes to 0",
+        "Y changes to 1",
+        "Y remains 0",
+        "Y remains 1"
+      ],
+      "correctAnswer": "Y changes to 1",
+      "explanation": "For an AND gate, Y = A·B. After the change, A=1 and B=1, so Y=1. Because the circuit is combinational, the output reflects the new input values immediately.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Predict the output behavior when an input to a combinational circuit changes instantly.",
+        "subtopic": "No feedback / Immediate effect",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "slide_04"
+            ]
+          },
+          "concept": "Predict the output behavior when an input to a combinational circuit changes instantly.",
+          "subtopic": "No feedback / Immediate effect",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "DOCUMENT",
+          "2_supportingSessionChunks": [
+            "slide_04"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Predict the output behavior when an input to a combinational circuit changes instantly. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Predict the output behavior when an input to a combinational circuit changes instantly.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T15:09:41.646Z"
+}

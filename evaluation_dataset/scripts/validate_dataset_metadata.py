@@ -35,7 +35,7 @@ def validate_all():
 
     required_fields = schema.get("required", [])
 
-    meta_files = glob.glob(os.path.join(BASE_DIR, "0*", "*", "metadata.json"))
+    meta_files = glob.glob(os.path.join(BASE_DIR, "*", "*", "metadata.json"))
     if not meta_files:
         print("ℹ️ No metadata.json files found in evaluation_dataset categories.")
         print("Ready for teammate ZIP ingestion.")

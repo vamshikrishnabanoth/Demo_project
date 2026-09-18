@@ -1,0 +1,11 @@
+Test_ID,Topic,Modality,Route,Requested,Delivered,Correctness,Grounding,Uniqueness,Sufficiency,Precision,Teaching_Alignment,Cognitive_Alignment,Distractor_Quality,Diversity,Naturalness,Audited_Composite,Status
+FOCUSED_VOICE_001,"Deep Learning and Neural Network Foundations",VOICE_ONLY,SUMMARY,3,3,5,3,5,5,5,5,5,4,5,5,4.8,COMPLETED
+FOCUSED_VOICE_002,"Containerization with Docker Architecture",VOICE_ONLY,BLUEPRINT,3,3,5,4,5,5,4,5,5,3,5,5,4.8,COMPLETED
+FOCUSED_VOICE_004,"Relational Database SQL Queries and Joins",VOICE_ONLY,SUMMARY,3,3,5,3,5,5,5,5,5,4,5,5,4.83,COMPLETED
+FOCUSED_MULTI_001,"Computer Organization and Architecture - Unit IV",VOICE_PLUS_MATERIAL,UNIFIED,3,3,5,4,5,5,5,5,5,5,5,5,4.87,COMPLETED
+FOCUSED_MULTI_005,"DAA - Best Time to Buy and Sell Stock (Single and Infinite Transactions)",VOICE_PLUS_MATERIAL,UNIFIED,3,1,5,3,5,5,4,5,5,5,5,5,4.7,COMPLETED
+FOCUSED_MAT_001,"SE Lab Week 3: Git Workflows and Merge Conflicts",MATERIAL_ONLY,SUMMARY,3,3,5,4,5,5,5,5,5,5,5,5,4.83,COMPLETED
+FOCUSED_MAT_003,"Design and Analysis of Algorithms - Unit II Divide and Conquer",MATERIAL_ONLY,SUMMARY,3,1,5,4,5,5,4,5,5,5,5,5,4.8,COMPLETED
+FOCUSED_MAT_007,"Digital Electronics Lecture Slides DE-31",MATERIAL_ONLY,SUMMARY,3,1,5,3,5,5,5,5,5,4,5,5,4.7,COMPLETED
+FOCUSED_EDGE_001,"Classroom Humor and Casual Banter (Non-Academic)",EDGE_CASES,N/A,3,0,5,5,5,5,5,5,5,3,5,5,5,REJECTED_AS_EXPECTED
+FOCUSED_EDGE_004,"MSF Unit 4 Handwritten Diagrams",MATERIAL_ONLY,SUMMARY,3,1,5,3,5,5,5,5,5,4,5,5,4.7,COMPLETED

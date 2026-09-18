@@ -1,0 +1,326 @@
+{
+  "testId": "FOCUSED_VOICE_002",
+  "round": "Focused",
+  "datasetId": "VOICE_002",
+  "topic": "Containerization with Docker Architecture",
+  "modality": "VOICE_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 86.3,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.43,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which statement correctly describes the difference between a Docker image and a Docker container?",
+      "options": [
+        "A Docker image is a read‑only template; a Docker container is a running instance created from that image.",
+        "A Docker image is a running instance; a Docker container is the stored template used to create images.",
+        "Docker images and containers are interchangeable terms that refer to the same thing.",
+        "A Docker image is used only for networking configuration, while a Docker container stores application data."
+      ],
+      "correctAnswer": "A Docker image is a read‑only template; a Docker container is a running instance created from that image.",
+      "explanation": "A Docker image is a static, layered file system that serves as a blueprint. When you start an image, Docker creates a container, which is a live, isolated process with its own writable layer on top of the image.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Distinguish between Docker images and Docker containers, including their roles in the container lifecycle",
+        "subtopic": "Docker Images vs Containers",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Distinguish between Docker images and Docker containers, including their roles in the container lifecycle",
+          "subtopic": "Docker Images vs Containers",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Distinguish between Docker images and Docker containers, including their roles in the container lifecycle as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Distinguish between Docker images and Docker containers, including their roles in the container lifecycle."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "Which statement best explains how Docker solves the \"it works on my machine\" problem in team development environments?",
+      "options": [
+        "Docker removes the need for version control by storing all code directly inside containers.",
+        "Docker automatically translates Linux commands into their macOS and Windows equivalents at runtime.",
+        "Docker packages the application together with all its dependencies into a container, ensuring the same runtime environment on every machine.",
+        "Docker provides a cloud‑based integrated development environment that synchronizes code changes in real time."
+      ],
+      "correctAnswer": "Docker packages the application together with all its dependencies into a container, ensuring the same runtime environment on every machine.",
+      "explanation": "The evidence describes that the \"it works on my machine\" issue arises from differences in OS and dependency setups when replicating environments. Docker mitigates this by bundling the application and all its dependencies into a single container, which can be shared and run consistently across Linux, macOS, and Windows machines, eliminating environment‑specific errors.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Explain why Docker solves the \"it works on my machine\" problem in team development environments",
+        "subtopic": "Environment Replication Issues",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Explain why Docker solves the \"it works on my machine\" problem in team development environments",
+          "subtopic": "Environment Replication Issues",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain why Docker solves the \"it works on my machine\" problem in team development environments as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain why Docker solves the \"it works on my machine\" problem in team development environments."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "In a docker-compose.yml that defines a web service and a database service, which of the following best explains how the file coordinates the two containers?",
+      "options": [
+        "It starts the database container first, waits for it to exit, and then runs the web container.",
+        "It builds a single Docker image that contains both the web application and the database.",
+        "It defines each service separately and creates a shared network so the web container can communicate with the database container.",
+        "It uses Docker Swarm mode to distribute the services across multiple hosts."
+      ],
+      "correctAnswer": "It defines each service separately and creates a shared network so the web container can communicate with the database container.",
+      "explanation": "Docker Compose allows you to declare multiple services in one file. Each service runs in its own container, and Compose automatically creates a default network (or a custom one you define) that lets the containers discover each other by service name, enabling the web service to connect to the database.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Medium",
+        "concept": "Demonstrate how Docker Compose can be used to define and run multiple containers together",
+        "subtopic": "Docker Compose",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Demonstrate how Docker Compose can be used to define and run multiple containers together",
+          "subtopic": "Docker Compose",
+          "cognitiveDimension": "Application",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Demonstrate how Docker Compose can be used to define and run multiple containers together as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Demonstrate how Docker Compose can be used to define and run multiple containers together."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T14:57:22.632Z"
+}

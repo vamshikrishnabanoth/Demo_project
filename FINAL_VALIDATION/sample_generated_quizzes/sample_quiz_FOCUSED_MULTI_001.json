@@ -1,0 +1,260 @@
+[
+  {
+    "targetId": "T01",
+    "questionText": "Which of the following statements correctly defines cache memory and its typical capacity, cost, and speed characteristics?",
+    "options": [
+      "Cache memory is a small, fast memory placed between CPU and main memory; its capacity is typically measured in kilobytes, costs about 3000 rupees per megabyte, and it is much faster than main memory.",
+      "Cache memory is a large, slow storage device used for long-term data archiving; its capacity is measured in gigabytes, costs about 10 rupees per megabyte, and it is slower than main memory.",
+      "Cache memory is a volatile register file inside the CPU; its capacity is measured in bytes, costs about 100 rupees per megabyte, and it is slightly slower than main memory.",
+      "Cache memory is a medium-speed buffer located on the hard disk; its capacity is measured in megabytes, costs about 500 rupees per megabyte, and its speed is comparable to main memory."
+    ],
+    "correctAnswer": "Cache memory is a small, fast memory placed between CPU and main memory; its capacity is typically measured in kilobytes, costs about 3000 rupees per megabyte, and it is much faster than main memory.",
+    "explanation": "Cache memory is a small, high‑speed memory located between the CPU and main memory. Its typical capacity is expressed in kilobytes (1 MB = 1024 KB), it costs roughly 3000 rupees per megabyte, and it is significantly faster than main memory.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Define cache memory and list its typical capacity, cost, and access speed characteristics.",
+      "subtopic": "Cache memory",
+      "tier": "DIRECT_EVIDENCE",
+      "studentAnswerability": "HIGH",
+      "groundingScore": 0.95,
+      "targetId": "T01",
+      "attempt": 1,
+      "decisionLedger": {
+        "questionId": "Q1",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Define cache memory and list its typical capacity, cost, and access speed characteristics.",
+        "subtopic": "Cache memory",
+        "cognitiveDimension": "Conceptual",
+        "difficulty": "Easy",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.95
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      "traceabilityAudit": {
+        "1_sourceOrigin": "VOICE",
+        "2_supportingSessionChunks": [
+          "chunk_01"
+        ],
+        "3_agent1AssessmentReasoning": {
+          "whyAssessed": "Teacher emphasized Define cache memory and list its typical capacity, cost, and access speed characteristics. as a key learning outcome.",
+          "detectedEmphasis": {
+            "conceptual": "HIGH",
+            "application": "MEDIUM",
+            "syntax": "MEDIUM",
+            "calculation": "LOW"
+          },
+          "ruleApplied": "Teacher verbal emphasis elevates target priority."
+        },
+        "4_agent2FormulationReasoning": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Remember",
+          "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+        },
+        "5_agent3EvaluationReasoning": {
+          "groundingScore": 0.95,
+          "derivabilityTier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+          "verdict": "PASS"
+        },
+        "6_deterministicCalculations": {
+          "preChecksPassed": true,
+          "mathVerified": "N/A"
+        },
+        "7_finalGroundingGateReasoning": {
+          "status": "PASSED",
+          "justification": "Question and options are directly justified by session evidence for Define cache memory and list its typical capacity, cost, and access speed characteristics.."
+        }
+      }
+    }
+  },
+  {
+    "targetId": "T02",
+    "questionText": "According to the lecture, what happens to the cost per unit and access speed as the storage capacity of memory increases from cache to main memory to hard‑disk?",
+    "options": [
+      "Larger‑capacity memories cost more per unit and have slower access speed",
+      "Larger‑capacity memories cost less per unit but have faster access speed",
+      "Larger‑capacity memories cost less per unit and have slower access speed",
+      "Larger‑capacity memories cost more per unit and have faster access speed"
+    ],
+    "correctAnswer": "Larger‑capacity memories cost less per unit and have slower access speed",
+    "explanation": "The evidence states that as storage capacity grows (MB → GB → TB), the cost per unit decreases while the access speed becomes slower. Cache memory is cheap per unit and very fast, main memory is moderately priced and slower, and hard‑disk storage is cheapest per unit but slowest in access time.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain how increasing storage capacity across memory types affects cost and access speed.",
+      "subtopic": "Cost‑capacity‑speed trade‑off",
+      "tier": "DIRECT_EVIDENCE",
+      "studentAnswerability": "HIGH",
+      "groundingScore": 0.96,
+      "targetId": "T02",
+      "attempt": 1,
+      "decisionLedger": {
+        "questionId": "Q2",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Explain how increasing storage capacity across memory types affects cost and access speed.",
+        "subtopic": "Cost‑capacity‑speed trade‑off",
+        "cognitiveDimension": "Cause / Effect",
+        "difficulty": "Medium",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.96
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      "traceabilityAudit": {
+        "1_sourceOrigin": "VOICE",
+        "2_supportingSessionChunks": [
+          "chunk_01"
+        ],
+        "3_agent1AssessmentReasoning": {
+          "whyAssessed": "Teacher emphasized Explain how increasing storage capacity across memory types affects cost and access speed. as a key learning outcome.",
+          "detectedEmphasis": {
+            "conceptual": "HIGH",
+            "application": "MEDIUM",
+            "syntax": "MEDIUM",
+            "calculation": "LOW"
+          },
+          "ruleApplied": "Teacher verbal emphasis elevates target priority."
+        },
+        "4_agent2FormulationReasoning": {
+          "dimension": "Cause / Effect",
+          "cognitiveLevel": "Understand",
+          "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+        },
+        "5_agent3EvaluationReasoning": {
+          "groundingScore": 0.96,
+          "derivabilityTier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+          "verdict": "PASS"
+        },
+        "6_deterministicCalculations": {
+          "preChecksPassed": true,
+          "mathVerified": "N/A"
+        },
+        "7_finalGroundingGateReasoning": {
+          "status": "PASSED",
+          "justification": "Question and options are directly justified by session evidence for Explain how increasing storage capacity across memory types affects cost and access speed.."
+        }
+      }
+    }
+  },
+  {
+    "targetId": "R01",
+    "questionText": "Based on the given cost information, which ordering correctly lists the memory types from highest to lowest cost per GB?",
+    "options": [
+      "Cache memory > Hard disk > Main memory",
+      "Hard disk > Main memory > Cache memory",
+      "Main memory > Cache memory > Hard disk",
+      "Cache memory > Main memory > Hard disk"
+    ],
+    "correctAnswer": "Cache memory > Main memory > Hard disk",
+    "explanation": "Cache: 3000 rupees for 1 MB = 3,000,000 rupees/GB. Main memory: 1500‑3000 rupees for 4 GB ≈ 375‑750 rupees/GB. Hard disk: 3000 rupees for 1024 GB ≈ 2.9 rupees/GB. Thus the cost per GB ranking is Cache > Main memory > Hard disk.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Compare the cost per unit of storage for cache memory, main memory, and hard disk.",
+      "subtopic": "Cost comparison",
+      "tier": "EVIDENCE_DERIVED",
+      "studentAnswerability": "HIGH",
+      "groundingScore": 0.9,
+      "targetId": "R01",
+      "attempt": 1,
+      "decisionLedger": {
+        "questionId": "Q3",
+        "source": {
+          "tier": "EVIDENCE_DERIVED",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Compare the cost per unit of storage for cache memory, main memory, and hard disk.",
+        "subtopic": "Cost comparison",
+        "cognitiveDimension": "Comparison / Tradeoff",
+        "difficulty": "Medium",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.9
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      "traceabilityAudit": {
+        "1_sourceOrigin": "VOICE",
+        "2_supportingSessionChunks": [
+          "chunk_01"
+        ],
+        "3_agent1AssessmentReasoning": {
+          "whyAssessed": "Teacher emphasized Compare the cost per unit of storage for cache memory, main memory, and hard disk. as a key learning outcome.",
+          "detectedEmphasis": {
+            "conceptual": "HIGH",
+            "application": "MEDIUM",
+            "syntax": "MEDIUM",
+            "calculation": "LOW"
+          },
+          "ruleApplied": "Teacher verbal emphasis elevates target priority."
+        },
+        "4_agent2FormulationReasoning": {
+          "dimension": "Comparison / Tradeoff",
+          "cognitiveLevel": "Analyze",
+          "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+        },
+        "5_agent3EvaluationReasoning": {
+          "groundingScore": 0.9,
+          "derivabilityTier": "EVIDENCE_DERIVED",
+          "studentAnswerability": "HIGH",
+          "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+          "verdict": "PASS"
+        },
+        "6_deterministicCalculations": {
+          "preChecksPassed": true,
+          "mathVerified": "N/A"
+        },
+        "7_finalGroundingGateReasoning": {
+          "status": "PASSED",
+          "justification": "Question and options are directly justified by session evidence for Compare the cost per unit of storage for cache memory, main memory, and hard disk.."
+        }
+      }
+    }
+  }
+]

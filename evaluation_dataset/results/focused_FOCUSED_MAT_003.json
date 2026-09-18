@@ -1,0 +1,326 @@
+{
+  "testId": "FOCUSED_MAT_003",
+  "round": "Focused",
+  "datasetId": "MAT_003",
+  "topic": "Design and Analysis of Algorithms - Unit II Divide and Conquer",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "BLUEPRINT",
+  "duration_sec": 98.4,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.47,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 2,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.4,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "What is the prerequisite condition for binary search and how does it operate in each step?",
+      "options": [
+        "It can be applied to unsorted data and swaps elements until the target reaches the middle.",
+        "It needs a linked list and moves sequentially from the start until the target is found.",
+        "It works on any collection and selects a random element to compare with the target in each step.",
+        "It requires a sorted collection and repeatedly compares the target with the middle element, discarding half of the remaining elements each step."
+      ],
+      "correctAnswer": "It requires a sorted collection and repeatedly compares the target with the middle element, discarding half of the remaining elements each step.",
+      "explanation": "Binary search only works on collections that are sorted (and allow random access). In each iteration it compares the target with the middle element and eliminates the half of the array that cannot contain the target, thus narrowing the search space.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Binary search requires a sorted collection and works by repeatedly comparing the target with the middle element.",
+        "subtopic": "Binary Search",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Binary search requires a sorted collection and works by repeatedly comparing the target with the middle element.",
+          "subtopic": "Binary Search",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Binary search requires a sorted collection and works by repeatedly comparing the target with the middle element. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Binary search requires a sorted collection and works by repeatedly comparing the target with the middle element.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "During a binary search on the sorted array [2, 5, 8, 12, 16, 23, 38, 56, 72, 91] for the key 23, after comparing the key with the middle element, which sub-array will be searched next?",
+      "options": [
+        "The left sub-array [2, 5, 8, 12, 16]",
+        "Search terminates with 'Not found'",
+        "The middle element 16 is the target",
+        "The right sub-array [23, 38, 56, 72, 91]"
+      ],
+      "correctAnswer": "The right sub-array [23, 38, 56, 72, 91]",
+      "explanation": "The middle element of the array (index 4) is 16. Since the target key 23 is greater than 16, binary search discards the left half and continues with the right sub-array that starts at index 5, which is [23, 38, 56, 72, 91].",
+      "metadata": {
+        "dimension": "Flow / Trace",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Medium",
+        "concept": "At each iteration binary search compares the target with the middle element and discards half of the search space.",
+        "subtopic": "Binary Search Flow",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "At each iteration binary search compares the target with the middle element and discards half of the search space.",
+          "subtopic": "Binary Search Flow",
+          "cognitiveDimension": "Flow / Trace",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized At each iteration binary search compares the target with the middle element and discards half of the search space. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Flow / Trace",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for At each iteration binary search compares the target with the middle element and discards half of the search space.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Which of the following sequences correctly describes the binary‑search based algorithm to find the median of two sorted arrays A (size m) and B (size n)?",
+      "options": [
+        "Compute mid = (n+m-1)/2, assign i = mid and j = mid, then check if A[i-1] ≤ B[j] and B[j-1] ≤ A[i]; if true, return i as the median index, otherwise repeat with a different mid.",
+        "Merge the two arrays linearly until the (m+n)/2‑th element is reached and return that element as the median.",
+        "Set i = (m+n)/2, j = i, then compare A[i] with B[j] and increment both i and j by 1 each iteration until A[i] ≤ B[j] and B[j] ≤ A[i] hold, then return A[i] as the median.",
+        "Initialize low = 0, high = m. While low ≤ high: set i = (low+high)/2, j = (m+n+1)/2 - i. If i>0 and A[i-1] > B[j], set high = i-1. Else if i<m and B[j-1] > A[i], set low = i+1. Otherwise compute the median from max(A[i-1],B[j-1]) and min(A[i],B[j]) depending on whether (m+n) is odd or even."
+      ],
+      "correctAnswer": "Initialize low = 0, high = m. While low ≤ high: set i = (low+high)/2, j = (m+n+1)/2 - i. If i>0 and A[i-1] > B[j], set high = i-1. Else if i<m and B[j-1] > A[i], set low = i+1. Otherwise compute the median from max(A[i-1],B[j-1]) and min(A[i],B[j]) depending on whether (m+n) is odd or even.",
+      "explanation": "The binary‑search median algorithm partitions the combined length into two halves using i from A and j from B such that i + j = (m+n+1)/2. By adjusting i based on the cross‑array ordering conditions A[i-1] ≤ B[j] and B[j-1] ≤ A[i], the correct partition is found in O(log min(m,n)) time, after which the median is derived from the bordering elements.",
+      "metadata": {
+        "dimension": "Application",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Hard",
+        "concept": "Binary search can be used to find the median of two sorted arrays by partitioning with mid = (n+m-1)/2 and checking cross‑array ordering conditions.",
+        "subtopic": "Median of Two Sorted Arrays",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "MEDIUM",
+        "groundingScore": 0.95,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Binary search can be used to find the median of two sorted arrays by partitioning with mid = (n+m-1)/2 and checking cross‑array ordering conditions.",
+          "subtopic": "Median of Two Sorted Arrays",
+          "cognitiveDimension": "Application",
+          "difficulty": "Hard",
+          "studentAnswerability": "MEDIUM",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Binary search can be used to find the median of two sorted arrays by partitioning with mid = (n+m-1)/2 and checking cross‑array ordering conditions. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "MEDIUM",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Binary search can be used to find the median of two sorted arrays by partitioning with mid = (n+m-1)/2 and checking cross‑array ordering conditions.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T15:07:54.230Z"
+}

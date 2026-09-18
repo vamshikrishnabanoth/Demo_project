@@ -1,0 +1,9 @@
+{
+  "testId": "R3_SHORT_AUDIO",
+  "round": "Round3",
+  "datasetId": "VOICE_010",
+  "status": "FAILED",
+  "duration_sec": 2,
+  "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+  "timestamp": "2026-09-18T05:37:02.989Z"
+}

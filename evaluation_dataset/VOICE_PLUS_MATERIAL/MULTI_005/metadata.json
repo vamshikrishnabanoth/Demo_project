@@ -1,0 +1,39 @@
+{
+  "subject": "Algorithms",
+  "topic": "DAA - Best Time to Buy and Sell Stock (Single and Infinite Transactions)",
+  "audio_file": "audio.mp3",
+  "supporting_material_files": [
+    "material.pdf"
+  ],
+  "language": "English",
+  "teaching_style": "code_problem_solving",
+  "content_type": "Worked Problem",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Deep dynamic programming walkthrough with C++ code snippet PDF",
+  "notes": "Derived from Speech_To_Text/Audio/voice+ppt/tapadiasir_buyandsellstock_lecture2",
+  "dataset_id": "MULTI_005",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "category": "VOICE_PLUS_MATERIAL",
+  "files": [
+    {
+      "filename": "audio.mp3",
+      "size_bytes": 99383725,
+      "sha256": "3f36286f9471287b25456f6fab109fefeb24c2bdea91d7ac49f296810b83c716"
+    },
+    {
+      "filename": "material.pdf",
+      "size_bytes": 120039,
+      "sha256": "5d9d56bf8c70e4f3103f26998b50b46581dfd84b968ac02c478fd9f28a9798d3"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

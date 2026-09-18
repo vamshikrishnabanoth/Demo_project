@@ -1,0 +1,123 @@
+{
+  "testId": "FOCUSED_EDGE_004",
+  "condition": "ARCHITECTURE_E_HRAG_CMA",
+  "round": "Focused",
+  "datasetId": "EDGE_004",
+  "topic": "MSF Unit 4 Handwritten Diagrams",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 1,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 196,
+  "status": "COMPLETED",
+  "partial_delivery": true,
+  "notice": "PARTIAL_FULFILLMENT: Engine delivered 1 questions based on available evidence.",
+  "average_rubric_score": 4.7,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 4,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "R02",
+      "questionText": "Based on the provided code fragment, how does the presence of the '+' character in the token \"F+neY\" affect its parsing in the hypothetical language?",
+      "options": [
+        "It is treated as a literal character within the token",
+        "It indicates string concatenation between two identifiers",
+        "It signals the start of a comment",
+        "It separates two distinct identifiers"
+      ],
+      "correctAnswer": "It is treated as a literal character within the token",
+      "explanation": "In the evidence the '+' appears inside the token \"F+neY\" without surrounding whitespace, so the parser treats it as part of the identifier rather than as an operator such as concatenation or a comment delimiter.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Medium",
+        "concept": "Explain the role of special characters in the taught formulas",
+        "subtopic": "FMU",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.9,
+        "targetId": "R02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_05"
+            ]
+          },
+          "concept": "Explain the role of special characters in the taught formulas",
+          "subtopic": "FMU",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.9
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "CODE",
+          "2_supportingSessionChunks": [
+            "chunk_05"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain the role of special characters in the taught formulas as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.9,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain the role of special characters in the taught formulas."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T18:33:36.741Z"
+}

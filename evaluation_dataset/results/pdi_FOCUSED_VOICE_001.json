@@ -1,0 +1,327 @@
+{
+  "testId": "FOCUSED_VOICE_001",
+  "condition": "CONDITION_B_PDI",
+  "round": "Focused",
+  "datasetId": "VOICE_001",
+  "topic": "Deep Learning and Neural Network Foundations",
+  "modality": "VOICE_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 62.3,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.6,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 3,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.5,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following sequences correctly represents the three components of a CNN block in their proper order?",
+      "options": [
+        "Convolution → Pooling → Activation function",
+        "Activation function → Convolution → Pooling",
+        "Pooling → Convolution → Activation function",
+        "Convolution → Activation function → Pooling"
+      ],
+      "correctAnswer": "Convolution → Activation function → Pooling",
+      "explanation": "The session repeatedly described the CNN block as a set of convolution followed by an activation function and then pooling. This order is essential for building multi‑layer CNN architectures.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Remember",
+        "targetDifficulty": "Easy",
+        "concept": "Identify the three‑step block that composes a CNN layer set: convolution, activation function, and pooling.",
+        "subtopic": "CNN architecture blocks (conv‑activation‑pooling)",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Identify the three‑step block that composes a CNN layer set: convolution, activation function, and pooling.",
+          "subtopic": "CNN architecture blocks (conv‑activation‑pooling)",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Identify the three‑step block that composes a CNN layer set: convolution, activation function, and pooling. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Identify the three‑step block that composes a CNN layer set: convolution, activation function, and pooling.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "What is the primary effect of scaling pixel values from the range 0‑255 to the range 0‑1 before feeding them into a neural network?",
+      "options": [
+        "It changes the color space from RGB to grayscale",
+        "It increases the resolution of the image",
+        "It reduces the number of parameters in the model",
+        "It speeds up training by keeping input values small"
+      ],
+      "correctAnswer": "It speeds up training by keeping input values small",
+      "explanation": "Normalizing pixel values to 0‑1 keeps the inputs in a small, consistent range, which helps gradient‑based optimization converge faster and prevents large weight updates. This improves training stability and speed. The other options describe unrelated effects.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Explain why pixel values are scaled to the range 0‑1 before feeding them to the network.",
+        "subtopic": "Image preprocessing (normalize pixel values)",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "MEDIUM",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_02"
+            ]
+          },
+          "concept": "Explain why pixel values are scaled to the range 0‑1 before feeding them to the network.",
+          "subtopic": "Image preprocessing (normalize pixel values)",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Easy",
+          "studentAnswerability": "MEDIUM",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_02"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain why pixel values are scaled to the range 0‑1 before feeding them to the network. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "MEDIUM",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain why pixel values are scaled to the range 0‑1 before feeding them to the network.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Which sequence correctly describes the complete forward‑propagation pipeline from preprocessing to classification as described in the session?",
+      "options": [
+        "Resize to 28x28 → Convert to grayscale → Conv layer (32 filters) → Activation → Max pooling → Conv layer (64 filters) → Activation → Fully connected layer → Max pooling → Softmax activation",
+        "Resize to 28x28 → Convert to grayscale → Conv layer (32 filters) → Activation → Conv layer (64 filters) → Activation → Max pooling → Fully connected layer → Softmax activation",
+        "Convert to grayscale → Resize to 28x28 → Conv layer (32 filters) → Max pooling → Activation → Conv layer (64 filters) → Max pooling → Activation → Fully connected layer → Softmax activation",
+        "Resize to 28x28 → Convert to grayscale → Conv layer (32 filters) → Activation → Max pooling → Conv layer (64 filters) → Activation → Max pooling → Fully connected layer → Softmax activation"
+      ],
+      "correctAnswer": "Resize to 28x28 → Convert to grayscale → Conv layer (32 filters) → Activation → Max pooling → Conv layer (64 filters) → Activation → Max pooling → Fully connected layer → Softmax activation",
+      "explanation": "The session specifies: (1) resize any image to 28x28, (2) convert it to grayscale, (3) apply a first convolutional layer with 32 filters, (4) apply an activation function, (5) apply max‑pooling, (6) apply a second convolutional layer with 64 filters, (7) apply an activation function, (8) apply max‑pooling, (9) feed the result to a fully connected (dense) layer, and (10) use a softmax activation for probability prediction. Option A follows this exact order, while the other options reorder preprocessing steps or place pooling/activation in the wrong positions.",
+      "metadata": {
+        "dimension": "Flow / Trace",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Medium",
+        "concept": "Trace the complete forward‑propagation pipeline described in the session, from preprocessing to dense‑layer classification.",
+        "subtopic": "Forward propagation sequence",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_03"
+            ]
+          },
+          "concept": "Trace the complete forward‑propagation pipeline described in the session, from preprocessing to dense‑layer classification.",
+          "subtopic": "Forward propagation sequence",
+          "cognitiveDimension": "Flow / Trace",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_03"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Trace the complete forward‑propagation pipeline described in the session, from preprocessing to dense‑layer classification. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Flow / Trace",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Trace the complete forward‑propagation pipeline described in the session, from preprocessing to dense‑layer classification.."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T17:17:35.076Z"
+}

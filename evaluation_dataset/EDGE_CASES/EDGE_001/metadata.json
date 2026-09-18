@@ -1,0 +1,32 @@
+{
+  "subject": "Edge Case Evaluation",
+  "topic": "Classroom Humor and Casual Banter (Non-Academic)",
+  "audio_file": "audio.m4a",
+  "supporting_material_files": [],
+  "language": "English",
+  "teaching_style": "informal_or_unstructured",
+  "content_type": "Casual Banter",
+  "expected_academicity": "REJECT",
+  "expected_content_behavior": "non_academic",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Edge testing: Casual Banter",
+  "notes": "Original file: Pps jocks.m4a",
+  "dataset_id": "EDGE_001",
+  "modality": "EDGE_CASES",
+  "category": "EDGE_CASES",
+  "files": [
+    {
+      "filename": "audio.m4a",
+      "size_bytes": 5261589,
+      "sha256": "66147c82e18adcf69c5321fde959a5417304697a17b20aa93d955e31c754f2d3"
+    }
+  ],
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

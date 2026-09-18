@@ -1,0 +1,39 @@
+{
+  "subject": "Computer Science and Engineering",
+  "topic": "Computer Organization and Architecture - Unit IV",
+  "audio_file": "audio.mp3",
+  "supporting_material_files": [
+    "material.pdf"
+  ],
+  "language": "English",
+  "teaching_style": "interactive_lecture",
+  "content_type": "Academic Instruction",
+  "duration": "UNKNOWN/TBD",
+  "special_conditions": "Full 355MB lecture audio with unit slides",
+  "notes": "Derived from final_tests/COA_voice+material",
+  "dataset_id": "MULTI_001",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "category": "VOICE_PLUS_MATERIAL",
+  "files": [
+    {
+      "filename": "audio.mp3",
+      "size_bytes": 372549165,
+      "sha256": "446933531a934aa288dfda192e5dd2629b9221844884fd6a1aaf625d7d82f76a"
+    },
+    {
+      "filename": "material.pdf",
+      "size_bytes": 2784705,
+      "sha256": "e7404de57c2421ba706d7768a29fdfd47ed5f5bddac888afac3a94ddf6e3f8d3"
+    }
+  ],
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_plus_pedagogical",
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

@@ -1,0 +1,327 @@
+{
+  "testId": "FOCUSED_MAT_003",
+  "condition": "CONDITION_B_PDI",
+  "round": "Focused",
+  "datasetId": "MAT_003",
+  "topic": "Design and Analysis of Algorithms - Unit II Divide and Conquer",
+  "modality": "MATERIAL_ONLY",
+  "requested_count": 3,
+  "delivered_count": 3,
+  "representation_mode": "SUMMARY",
+  "duration_sec": 82.3,
+  "status": "COMPLETED",
+  "partial_delivery": false,
+  "notice": null,
+  "average_rubric_score": 4.7,
+  "rubric_breakdown": [
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.7,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 4,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 2,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.6,
+      "verdict": "PASS"
+    },
+    {
+      "rubric": {
+        "correctness": 5,
+        "grounding": 5,
+        "answer_uniqueness": 5,
+        "information_sufficiency": 5,
+        "technical_precision": 5,
+        "teaching_alignment": 5,
+        "cognitive_alignment": 5,
+        "distractor_quality": 3,
+        "diversity": 5,
+        "naturalness": 5
+      },
+      "average_score": 4.8,
+      "verdict": "PASS"
+    }
+  ],
+  "questions": [
+    {
+      "targetId": "T01",
+      "questionText": "Which of the following best explains why binary search runs in O(log N) time?",
+      "options": [
+        "Because it uses a linear scan of the array",
+        "Because it examines every element in the array once",
+        "Because it sorts the array before searching",
+        "Because each recursive call halves the search interval, resulting in log N levels of recursion"
+      ],
+      "correctAnswer": "Because each recursive call halves the search interval, resulting in log N levels of recursion",
+      "explanation": "Binary search repeatedly halves the search interval, so the number of recursive calls (or iterations) is proportional to log N, giving O(log N) time complexity.",
+      "metadata": {
+        "dimension": "Conceptual",
+        "cognitiveLevel": "Understand",
+        "targetDifficulty": "Easy",
+        "concept": "Understand that binary search operates in O(log N) time because it repeatedly halves the search interval.",
+        "subtopic": "Binary Search",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T01",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q1",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_01"
+            ]
+          },
+          "concept": "Understand that binary search operates in O(log N) time because it repeatedly halves the search interval.",
+          "subtopic": "Binary Search",
+          "cognitiveDimension": "Conceptual",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_01"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Understand that binary search operates in O(log N) time because it repeatedly halves the search interval. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Understand that binary search operates in O(log N) time because it repeatedly halves the search interval.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T02",
+      "questionText": "If the array used in the binary‑search step for finding the median were not sorted (i.e., A[i‑1] < A[i] does not hold), what is the most likely effect on the algorithm?",
+      "options": [
+        "The algorithm will still correctly find the median because binary‑search does not depend on ordering",
+        "The partition condition A[i‑1] ≤ B[j] and B[j‑1] ≤ A[i] can never be satisfied, causing the search to fail",
+        "The algorithm will enter an infinite loop because the mid index never changes",
+        "The binary‑search may discard the half containing the correct median, leading to an incorrect result"
+      ],
+      "correctAnswer": "The binary‑search may discard the half containing the correct median, leading to an incorrect result",
+      "explanation": "Binary search relies on the sorted order (A[i‑1] < A[i]) to decide which half of the array can be safely ignored. If the array is unsorted, the comparison used to move left or right is unreliable, so the algorithm may discard the segment that actually contains the median, producing a wrong answer.",
+      "metadata": {
+        "dimension": "Cause / Effect",
+        "cognitiveLevel": "Analyze",
+        "targetDifficulty": "Medium",
+        "concept": "Explain why the sorted property (A[i‑1] < A[i]) is required for binary search to work correctly.",
+        "subtopic": "Sorted Arrays",
+        "tier": "EVIDENCE_DERIVED",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.95,
+        "targetId": "T02",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q2",
+          "source": {
+            "tier": "EVIDENCE_DERIVED",
+            "supportingChunks": [
+              "chunk_02"
+            ]
+          },
+          "concept": "Explain why the sorted property (A[i‑1] < A[i]) is required for binary search to work correctly.",
+          "subtopic": "Sorted Arrays",
+          "cognitiveDimension": "Cause / Effect",
+          "difficulty": "Medium",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.95
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_02"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Explain why the sorted property (A[i‑1] < A[i]) is required for binary search to work correctly. as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Analyze",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.95,
+            "derivabilityTier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Explain why the sorted property (A[i‑1] < A[i]) is required for binary search to work correctly.."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T03",
+      "questionText": "Given the array [12, 7, 9, 20], after sorting it in ascending order, what is the middle value according to the rule that when the array length is even the middle value is the mean of the two middle numbers?",
+      "options": [
+        "9",
+        "12",
+        "10.5",
+        "15"
+      ],
+      "correctAnswer": "10.5",
+      "explanation": "Sorting the array yields [7, 9, 12, 20]. The two middle numbers are 9 and 12. Their mean is (9+12)/2 = 21/2 = 10.5, which is the required middle value for an even‑length array.",
+      "metadata": {
+        "dimension": "Scenario Analysis",
+        "cognitiveLevel": "Apply",
+        "targetDifficulty": "Easy",
+        "concept": "Determine the correct way to identify the middle element when the array length is even (use the mean of the two middle numbers).",
+        "subtopic": "Middle Element",
+        "tier": "DIRECT_EVIDENCE",
+        "studentAnswerability": "HIGH",
+        "groundingScore": 0.96,
+        "targetId": "T03",
+        "attempt": 1,
+        "decisionLedger": {
+          "questionId": "Q3",
+          "source": {
+            "tier": "DIRECT_EVIDENCE",
+            "supportingChunks": [
+              "chunk_03"
+            ]
+          },
+          "concept": "Determine the correct way to identify the middle element when the array length is even (use the mean of the two middle numbers).",
+          "subtopic": "Middle Element",
+          "cognitiveDimension": "Scenario Analysis",
+          "difficulty": "Easy",
+          "studentAnswerability": "HIGH",
+          "redundancy": {
+            "similarQuestion": null,
+            "similarity": 0,
+            "decision": "KEEP"
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "groundingScore": 0.96
+          },
+          "grounding": {
+            "status": "GROUNDED"
+          }
+        },
+        "traceabilityAudit": {
+          "1_sourceOrigin": "VOICE",
+          "2_supportingSessionChunks": [
+            "chunk_03"
+          ],
+          "3_agent1AssessmentReasoning": {
+            "whyAssessed": "Teacher emphasized Determine the correct way to identify the middle element when the array length is even (use the mean of the two middle numbers). as a key learning outcome.",
+            "detectedEmphasis": {
+              "conceptual": "HIGH",
+              "application": "MEDIUM",
+              "syntax": "MEDIUM",
+              "calculation": "LOW"
+            },
+            "ruleApplied": "Teacher verbal emphasis elevates target priority."
+          },
+          "4_agent2FormulationReasoning": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+          },
+          "5_agent3EvaluationReasoning": {
+            "groundingScore": 0.96,
+            "derivabilityTier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+            "verdict": "PASS"
+          },
+          "6_deterministicCalculations": {
+            "preChecksPassed": true,
+            "mathVerified": "N/A"
+          },
+          "7_finalGroundingGateReasoning": {
+            "status": "PASSED",
+            "justification": "Question and options are directly justified by session evidence for Determine the correct way to identify the middle element when the array length is even (use the mean of the two middle numbers).."
+          }
+        }
+      }
+    }
+  ],
+  "timestamp": "2026-09-18T17:28:42.079Z"
+}

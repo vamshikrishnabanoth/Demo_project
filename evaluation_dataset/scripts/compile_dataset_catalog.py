@@ -24,7 +24,7 @@ def compile_catalog():
     print("📖 COMPILING MASTER EVALUATION DATASET CATALOG")
     print("=" * 85)
 
-    meta_files = sorted(glob.glob(os.path.join(BASE_DIR, "0*", "*", "metadata.json")))
+    meta_files = sorted(glob.glob(os.path.join(BASE_DIR, "*", "*", "metadata.json")))
     items = []
 
     for m_path in meta_files:

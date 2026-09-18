@@ -23,6 +23,8 @@ class LLMRouter {
     this.ollamaUrl = process.env.OLLAMA_URL || 'http://127.0.0.1:11434/api/generate';
     this.vllmUrl = process.env.VLLM_URL || null;
     this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'local_ollama');
+    this.keyCooldowns = new Map();
+    this.currentKeyIndex = 0;
   }
 
   /** Sleep helper for exponential backoff on rate limits */
@@ -41,15 +43,14 @@ class LLMRouter {
 
     const errors = [];
 
-    // Resolve model cleanly
-    let primaryModel = model || process.env.AGENT1_MODEL || 'openai/gpt-oss-120b';
-    if (primaryModel === 'llama-3.1-8b-instant' || primaryModel === 'quiz-expert-fast') {
-      primaryModel = process.env.AGENT2_MODEL || 'openai/gpt-oss-20b';
-    } else if (primaryModel.includes('llama') || primaryModel === 'quiz-expert') {
-      primaryModel = process.env.AGENT1_MODEL || 'openai/gpt-oss-120b';
+    // Resolve model cleanly: production Architecture E GPT-OSS models
+    let primaryModel = 'openai/gpt-oss-120b';
+    let fallbackModel = null;
+    if (model && model !== 'openai/gpt-oss-20b') {
+      primaryModel = model;
     }
 
-    // 1. Try Primary Groq Cloud (bounded retry on 429, no silent downgrade)
+    // 1. Try Primary Groq Cloud (bounded retry on 429, with high-quality fallback)
     if (this.groqApiKey) {
       try {
         return await this._callGroqWithRetry({
@@ -57,7 +58,7 @@ class LLMRouter {
           systemPrompt,
           temperature,
           primaryModel,
-          fallbackModel: null, // No silent downgrade across tiers
+          fallbackModel,
           sessionId
         });
       } catch (err) {
@@ -96,74 +97,117 @@ class LLMRouter {
     throw fatalError;
   }
 
-  /** Call Groq Cloud API with configured model and bounded rate-limit backoff */
+  _getGroqKeys() {
+    const raw = [
+      process.env.GROQ_API_KEY,
+      process.env.GROQ_API_KEY_BACKUP,
+      process.env.GROQ_API_KEY_3,
+      this.groqApiKey
+    ];
+    return Array.from(new Set(raw.filter(Boolean)));
+  }
+
+  /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
   async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null }) {
-    const key = this.groqApiKey || process.env.GROQ_API_KEY;
-    if (!key) throw new Error('GROQ_API_KEY is missing');
+    const keys = this._getGroqKeys();
+    if (keys.length === 0) throw new Error('GROQ_API_KEY is missing');
 
     const modelsToTry = [primaryModel, fallbackModel].filter(Boolean);
-
+    const totalKeys = keys.length;
     let lastErr = null;
-    for (const currentModel of modelsToTry) {
-      let attempts = 0;
-      const maxAttempts = 3;
-      while (attempts < maxAttempts) {
-        attempts++;
-        try {
-          const response = await axios.post(
-            'https://api.groq.com/openai/v1/chat/completions',
-            {
-              model: currentModel,
-              messages: [
-                ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-                { role: 'user', content: prompt }
-              ],
-              temperature: temperature,
-              response_format: { type: 'json_object' }
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${key}`,
-                'Content-Type': 'application/json'
-              },
-              timeout: 30000
-            }
-          );
 
-          const content = response.data.choices[0].message.content;
+    // Up to 2 passes across the pool with bounded cooldown sleep if all keys are temporarily throttled
+    for (let poolAttempt = 0; poolAttempt < 2; poolAttempt++) {
+      for (let offset = 0; offset < totalKeys; offset++) {
+        const keyIdx = (this.currentKeyIndex + offset) % totalKeys;
+        const key = keys[keyIdx];
 
-          if (sessionId) {
+        // Check if key is currently in cooldown
+        const cooldownUntil = this.keyCooldowns.get(keyIdx) || 0;
+        const now = Date.now();
+        if (now < cooldownUntil) {
+          continue; // Key is in cooldown, check next key
+        }
+
+        for (const currentModel of modelsToTry) {
+          let attempts = 0;
+          const maxAttempts = 2; // Bounded attempts per key before rotating
+
+          while (attempts < maxAttempts) {
+            attempts++;
             try {
-              const telemetryLedger = require('../observability/telemetryLedger');
-              telemetryLedger.recordCallUsage(sessionId, {
-                prompt,
-                completion: content,
-                usage: response.data.usage,
-                requestId: response.data.id,
-                model: currentModel,
-                provider: 'groq'
-              });
-            } catch (_) {}
-          }
+              const response = await axios.post(
+                'https://api.groq.com/openai/v1/chat/completions',
+                {
+                  model: currentModel,
+                  messages: [
+                    ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+                    { role: 'user', content: prompt }
+                  ],
+                  temperature: temperature,
+                  response_format: { type: 'json_object' }
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${key}`,
+                    'Content-Type': 'application/json'
+                  },
+                  timeout: 45000
+                }
+              );
 
-          return content;
-        } catch (err) {
-          lastErr = err;
-          const status = err.response?.status;
-          const isRateLimit = status === 429 || (err.message || '').includes('429');
+              const content = response.data.choices[0].message.content;
 
-          if (isRateLimit && attempts < maxAttempts) {
-            const sleepMs = attempts * 2500;
-            console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' rate limited (429, attempt ${attempts}/${maxAttempts}). Sleeping ${sleepMs}ms...`);
-            await this._sleep(sleepMs);
-          } else {
-            console.warn(`⚠️ [LLMRouter] Groq model '${currentModel}' error (${status || err.message}).`);
-            break;
+              // Success! Clear cooldown for this key and advance currentKeyIndex
+              this.keyCooldowns.delete(keyIdx);
+              this.currentKeyIndex = (keyIdx + 1) % totalKeys;
+
+              if (sessionId) {
+                try {
+                  const telemetryLedger = require('../observability/telemetryLedger');
+                  telemetryLedger.recordCallUsage(sessionId, {
+                    prompt,
+                    completion: content,
+                    usage: response.data.usage,
+                    requestId: response.data.id,
+                    model: currentModel,
+                    provider: 'groq'
+                  });
+                } catch (_) {}
+              }
+
+              return content;
+            } catch (err) {
+              lastErr = err;
+              const status = err.response?.status;
+              const errorMsg = err.response?.data?.error?.message || err.message || '';
+              const isTPD = errorMsg.includes('tokens per day') || errorMsg.includes('TPD');
+              const isRateLimit = status === 429 || errorMsg.includes('429') || errorMsg.includes('Rate limit') || isTPD;
+
+              if (isRateLimit) {
+                const cooldownMs = isTPD ? 120000 : 10000;
+                this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
+                console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} throttled (${isTPD ? 'daily TPD' : 'TPM 429'}). Rotating to next key in pool...`);
+                break; // Break inner attempts loop to rotate key immediately
+              } else {
+                console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' error (${status || errorMsg}).`);
+                break;
+              }
+            }
           }
         }
       }
+
+      // If pass 0 completed without returning, sleep until earliest cooldown expires and retry
+      if (poolAttempt === 0 && this.keyCooldowns.size > 0) {
+        const earliestCooldown = Math.min(...Array.from(this.keyCooldowns.values()));
+        const waitMs = Math.min(Math.max(earliestCooldown - Date.now(), 1000), 10000);
+        console.warn(`⏳ [LLMRouter] All available keys throttled. Bounded wait ${waitMs}ms before second pool pass...`);
+        await this._sleep(waitMs);
+      }
     }
-    throw lastErr || new Error('Configured Groq models failed');
+
+    throw lastErr || new Error('Configured Groq models failed across all available keys in pool');
   }
 
   /** Call local FastAPI / Ollama backend */

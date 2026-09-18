@@ -1,0 +1,34 @@
+{
+  "subject": "Edge Case Evaluation",
+  "topic": "Scanned English Textbook",
+  "audio_file": null,
+  "supporting_material_files": [
+    "material.pdf"
+  ],
+  "language": "English",
+  "teaching_style": "informal_or_unstructured",
+  "content_type": "Academic Instruction",
+  "expected_academicity": "PASS",
+  "expected_content_behavior": "instructional_only",
+  "duration": "N/A",
+  "special_conditions": "Edge testing: Academic Instruction",
+  "notes": "Original file: ENGLISH TEXTBOOK _2022.pdf",
+  "dataset_id": "EDGE_003",
+  "modality": "EDGE_CASES",
+  "category": "EDGE_CASES",
+  "files": [
+    {
+      "filename": "material.pdf",
+      "size_bytes": 50677205,
+      "sha256": "6cc5129da4acc1534fc76b37479dcf9626f086a70b05e6987d274de0724bd336"
+    }
+  ],
+  "expected_representation_route": "UNKNOWN/TBD",
+  "expected_usable_concepts": [],
+  "expected_excluded_content": [
+    "jokes",
+    "classroom_management",
+    "exam_dates"
+  ],
+  "verification_status": "VERIFIED"
+}

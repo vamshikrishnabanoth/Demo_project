@@ -1,0 +1,9 @@
+{
+  "testId": "R2_PPT_5_BALANCED",
+  "round": "Round2",
+  "datasetId": "MULTI_004",
+  "status": "FAILED",
+  "duration_sec": 2,
+  "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+  "timestamp": "2026-09-18T05:36:40.849Z"
+}

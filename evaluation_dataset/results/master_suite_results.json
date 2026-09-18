@@ -1,0 +1,2765 @@
+{
+  "round1": [
+    {
+      "testId": "R1_VOICE_001",
+      "round": "Round1",
+      "datasetId": "VOICE_001",
+      "topic": "Deep Learning and Neural Network Foundations",
+      "modality": "VOICE_ONLY",
+      "requested_count": 5,
+      "delivered_count": 5,
+      "representation_mode": "SUMMARY",
+      "duration_sec": 78.3,
+      "status": "COMPLETED",
+      "partial_delivery": false,
+      "notice": null,
+      "average_rubric_score": 4.42,
+      "rubric_breakdown": [
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 5,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.5,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 5,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 4,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.6,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 3,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.3,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 3,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.3,
+          "verdict": "PASS"
+        }
+      ],
+      "questions": [
+        {
+          "targetId": "T01",
+          "questionText": "Which of the following best describes a Convolutional Neural Network (CNN) and its advantages over a plain Artificial Neural Network (ANN) for image data?",
+          "options": [
+            "A CNN is a type of recurrent neural network that processes images sequentially, and it is preferred because it can handle variable-sized inputs and capture temporal dependencies.",
+            "A CNN is a network that uses fully connected layers only, and it is preferred because it requires less memory than an ANN.",
+            "A CNN is a neural network that uses convolutional layers to automatically extract spatial features from images, and it is preferred over a plain ANN because it reduces the number of parameters, preserves spatial locality, and is invariant to translation.",
+            "A CNN is a feedforward network that flattens images into vectors before processing, and it is preferred because it simplifies the architecture and speeds up training."
+          ],
+          "correctAnswer": "A CNN is a neural network that uses convolutional layers to automatically extract spatial features from images, and it is preferred over a plain ANN because it reduces the number of parameters, preserves spatial locality, and is invariant to translation.",
+          "explanation": "CNNs apply convolutional layers with learnable kernels to capture local patterns, followed by activation and pooling to reduce dimensionality. This architecture preserves spatial relationships, reduces parameters compared to fully connected layers, and provides translation invariance, making CNNs more suitable for image data than plain ANNs.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Define what a CNN is and why it is used for image data instead of a plain ANN.",
+            "subtopic": "CNN fundamentals",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Define what a CNN is and why it is used for image data instead of a plain ANN.",
+              "subtopic": "CNN fundamentals",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Define what a CNN is and why it is used for image data instead of a plain ANN. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Define what a CNN is and why it is used for image data instead of a plain ANN.."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T02",
+          "questionText": "What is the role of kernels in a convolutional layer of a CNN?",
+          "options": [
+            "They slide over the input image to compute weighted sums that form a feature map.",
+            "They perform the final classification of the image.",
+            "They normalize the pixel values before pooling.",
+            "They reduce the dimensionality of the input image."
+          ],
+          "correctAnswer": "They slide over the input image to compute weighted sums that form a feature map.",
+          "explanation": "Kernels (filters) are applied to the input image by sliding over it and computing weighted sums at each position. The resulting values form a feature map that highlights specific patterns in the image, as described in the session evidence.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Explain how a convolutional layer extracts features using filters (kernels).",
+            "subtopic": "Convolution layer",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.96,
+            "targetId": "T02",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Explain how a convolutional layer extracts features using filters (kernels).",
+              "subtopic": "Convolution layer",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.96
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Explain how a convolutional layer extracts features using filters (kernels). as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.96,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Explain how a convolutional layer extracts features using filters (kernels).."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T03",
+          "questionText": "A convolutional layer receives an input image of size 28 × 28 pixels. The layer uses a 3 × 3 kernel and a stride of 1. What will be the height and width of the resulting feature map?",
+          "options": [
+            "26x26",
+            "24x24",
+            "27x27",
+            "28x28"
+          ],
+          "correctAnswer": "26x26",
+          "explanation": "The output dimension is calculated as (input size – kernel size)/stride + 1. For both height and width: (28 – 3)/1 + 1 = 25 + 1 = 26. Thus the feature map is 26 × 26.",
+          "metadata": {
+            "dimension": "Flow / Trace",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Calculate the output height and width of a feature map given input size, kernel size, and stride.",
+            "subtopic": "Convolution layer",
+            "tier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.96,
+            "targetId": "T03",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q3",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Calculate the output height and width of a feature map given input size, kernel size, and stride.",
+              "subtopic": "Convolution layer",
+              "cognitiveDimension": "Flow / Trace",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.96
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Calculate the output height and width of a feature map given input size, kernel size, and stride. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Flow / Trace",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.96,
+                "derivabilityTier": "DIRECT_EVIDENCE",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Calculate the output height and width of a feature map given input size, kernel size, and stride.."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T04",
+          "questionText": "Which of the following statements correctly identifies a difference in representational power or computational cost between a single‑layer CNN (one conv‑activation‑pool set) and a multi‑layer CNN (multiple such sets)?",
+          "options": [
+            "A single‑layer CNN can overfit less due to fewer parameters.",
+            "A multi‑layer CNN has a larger receptive field, enabling it to capture broader context.",
+            "A single‑layer CNN has fewer parameters and requires less computation than a multi‑layer CNN.",
+            "A multi‑layer CNN can learn hierarchical features, whereas a single‑layer CNN captures only low‑level features."
+          ],
+          "correctAnswer": "A multi‑layer CNN can learn hierarchical features, whereas a single‑layer CNN captures only low‑level features.",
+          "explanation": "The session evidence describes a single conv‑pool set versus multiple conv‑pool sets. Adding more layers allows the network to build higher‑level, more abstract representations (hierarchical features). It also increases the number of parameters and computational cost, but the key representational advantage is the ability to capture complex, multi‑scale patterns.",
+          "metadata": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Medium",
+            "concept": "Compare a single‑layer CNN (one conv‑activation‑pool set) with a multi‑layer CNN (multiple such sets).",
+            "subtopic": "Multi‑layer CNN architecture",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T04",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q4",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Compare a single‑layer CNN (one conv‑activation‑pool set) with a multi‑layer CNN (multiple such sets).",
+              "subtopic": "Multi‑layer CNN architecture",
+              "cognitiveDimension": "Comparison / Tradeoff",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Compare a single‑layer CNN (one conv‑activation‑pool set) with a multi‑layer CNN (multiple such sets). as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Comparison / Tradeoff",
+                "cognitiveLevel": "Analyze",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Compare a single‑layer CNN (one conv‑activation‑pool set) with a multi‑layer CNN (multiple such sets).."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T05",
+          "questionText": "Which of the following sequences correctly describes the preprocessing steps before feeding an image to the CNN as discussed in the session?",
+          "options": [
+            "Resize the image to 28×28, then convert it to RGB.",
+            "Convert the image to grayscale, then resize it to 32×32.",
+            "Resize the image to 28×28, then convert it to grayscale.",
+            "Convert the image to grayscale, then resize it to 28×28."
+          ],
+          "correctAnswer": "Convert the image to grayscale, then resize it to 28×28.",
+          "explanation": "The session explained that any image, regardless of its original size or color channels, must first be converted to a single‑channel grayscale image and then resized to a fixed 28×28 pixel grid before it can be fed into the CNN. This standardizes the input shape and reduces computational complexity.",
+          "metadata": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Easy",
+            "concept": "Describe the required preprocessing steps (grayscale conversion, resizing to 28×28, normalization) before feeding an image to the CNN.",
+            "subtopic": "Image preprocessing",
+            "tier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T05",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q5",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Describe the required preprocessing steps (grayscale conversion, resizing to 28×28, normalization) before feeding an image to the CNN.",
+              "subtopic": "Image preprocessing",
+              "cognitiveDimension": "Application",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Describe the required preprocessing steps (grayscale conversion, resizing to 28×28, normalization) before feeding an image to the CNN. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Application",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "DIRECT_EVIDENCE",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Describe the required preprocessing steps (grayscale conversion, resizing to 28×28, normalization) before feeding an image to the CNN.."
+              }
+            }
+          }
+        }
+      ],
+      "timestamp": "2026-09-18T03:25:34.538Z"
+    },
+    {
+      "testId": "R1_VOICE_002",
+      "round": "Round1",
+      "datasetId": "VOICE_002",
+      "topic": "Containerization with Docker Architecture",
+      "modality": "VOICE_ONLY",
+      "requested_count": 5,
+      "delivered_count": 5,
+      "representation_mode": "SUMMARY",
+      "duration_sec": 52.2,
+      "status": "COMPLETED",
+      "partial_delivery": false,
+      "notice": null,
+      "average_rubric_score": 4.38,
+      "rubric_breakdown": [
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 3,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.3,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        }
+      ],
+      "questions": [
+        {
+          "targetId": "T01",
+          "questionText": "When a new team member with a macOS joins and attempts to replicate the development environment manually, which issue is most likely to arise?",
+          "options": [
+            "Docker automatically ensures all dependencies are correctly installed",
+            "Manual installation of dependencies can introduce errors and version mismatches",
+            "The production server will not experience any of the same errors as the local environment",
+            "CLI commands used in the original application will work identically on macOS"
+          ],
+          "correctAnswer": "Manual installation of dependencies can introduce errors and version mismatches",
+          "explanation": "The evidence describes that manually installing each dependency can lead to errors, version mismatches, and bugs, especially when the application depends on a specific Node.js version or when CLI commands behave differently across operating systems.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Balanced",
+            "concept": "PDF - Aspect 1",
+            "subtopic": "PDF",
+            "tier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.96,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "PDF - Aspect 1",
+              "subtopic": "PDF",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Balanced",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.96
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE + DOCUMENT",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized PDF - Aspect 1 as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.96,
+                "derivabilityTier": "DIRECT_EVIDENCE",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for PDF - Aspect 1."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T02",
+          "questionText": "Which of the following best explains why Docker is considered an essential tool for teams working in large organizations?",
+          "options": [
+            "It replaces the need for a database",
+            "It automatically writes unit tests",
+            "It ensures consistent environments across developers' machines",
+            "It eliminates the need for version control"
+          ],
+          "correctAnswer": "It ensures consistent environments across developers' machines",
+          "explanation": "Docker packages an application and its dependencies into a container, allowing every team member—regardless of operating system—to run the same environment. This consistency eliminates the \"works on my machine\" problem and speeds up onboarding and collaboration in large teams.",
+          "metadata": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Balanced",
+            "concept": "Essential Tool Especially If We - Aspect 2",
+            "subtopic": "Essential Tool Especially If We",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T02",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Essential Tool Especially If We - Aspect 2",
+              "subtopic": "Essential Tool Especially If We",
+              "cognitiveDimension": "Cause / Effect",
+              "difficulty": "Balanced",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE + DOCUMENT",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Essential Tool Especially If We - Aspect 2 as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Cause / Effect",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Essential Tool Especially If We - Aspect 2."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T03",
+          "questionText": "Which statement best captures the trade‑off of using Docker to replicate a development environment, based on the challenges described in the evidence?",
+          "options": [
+            "Docker eliminates manual dependency installation but introduces the overhead of managing containers",
+            "Docker increases manual errors but reduces OS compatibility issues",
+            "Docker requires manual installation of dependencies but ensures consistent OS behavior",
+            "Docker removes the need for a Dockerfile but increases version mismatch risk"
+          ],
+          "correctAnswer": "Docker eliminates manual dependency installation but introduces the overhead of managing containers",
+          "explanation": "The evidence highlights that manually installing dependencies on each machine leads to many errors and OS‑specific command failures. Docker addresses these problems by automating dependency setup and ensuring consistent environments, but it adds the additional complexity of container management and runtime overhead.",
+          "metadata": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Balanced",
+            "concept": "Exactly Does Layer - Aspect 3",
+            "subtopic": "Exactly Does Layer",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T03",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q3",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Exactly Does Layer - Aspect 3",
+              "subtopic": "Exactly Does Layer",
+              "cognitiveDimension": "Comparison / Tradeoff",
+              "difficulty": "Balanced",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE + DOCUMENT",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Exactly Does Layer - Aspect 3 as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Comparison / Tradeoff",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Exactly Does Layer - Aspect 3."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T04",
+          "questionText": "A new team member on macOS wants to replicate the Node.js application environment using Docker. Which Docker command would correctly start a container from the image 'node-app' with port 3000 exposed and environment variable NODE_ENV set to 'development'?",
+          "options": [
+            "docker compose up -d",
+            "docker run -p 3000:3000 -e NODE_ENV=development node-app",
+            "docker run -d -p 3000:3000 -e NODE_ENV=development node-app",
+            "docker start -p 3000:3000 -e NODE_ENV=development node-app"
+          ],
+          "correctAnswer": "docker run -d -p 3000:3000 -e NODE_ENV=development node-app",
+          "explanation": "The evidence indicates that Docker allows setting environment variables with the -e flag and port mapping with the -p flag. To run a container in detached mode, the -d flag is used. Therefore the correct command is docker run -d -p 3000:3000 -e NODE_ENV=development node-app.",
+          "metadata": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Balanced",
+            "concept": "Develop A Node - Aspect 4",
+            "subtopic": "Develop A Node",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T04",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q4",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Develop A Node - Aspect 4",
+              "subtopic": "Develop A Node",
+              "cognitiveDimension": "Scenario Analysis",
+              "difficulty": "Balanced",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE + DOCUMENT",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Develop A Node - Aspect 4 as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Scenario Analysis",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Develop A Node - Aspect 4."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T05",
+          "questionText": "Which of the following best describes a primary reason for using Docker when developing a Node.js application in a team environment?",
+          "options": [
+            "To eliminate the need for writing Dockerfiles",
+            "To replace the need for a database like MongoDB",
+            "To automatically scale the application to handle high traffic",
+            "To ensure a consistent runtime environment across all developers’ machines"
+          ],
+          "correctAnswer": "To ensure a consistent runtime environment across all developers’ machines",
+          "explanation": "The session explains that a new team member on macOS would otherwise have to manually install Node, MongoDB, and all dependencies, leading to inconsistencies. Docker containers encapsulate the environment, ensuring every developer works with the same setup.",
+          "metadata": {
+            "dimension": "Application",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Balanced",
+            "concept": "Building A Node - Aspect 5",
+            "subtopic": "Building A Node",
+            "tier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.96,
+            "targetId": "T05",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q5",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Building A Node - Aspect 5",
+              "subtopic": "Building A Node",
+              "cognitiveDimension": "Application",
+              "difficulty": "Balanced",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.96
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE + DOCUMENT",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Building A Node - Aspect 5 as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Application",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.96,
+                "derivabilityTier": "DIRECT_EVIDENCE",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Building A Node - Aspect 5."
+              }
+            }
+          }
+        }
+      ],
+      "timestamp": "2026-09-18T03:26:29.785Z"
+    },
+    {
+      "testId": "R1_VOICE_003",
+      "round": "Round1",
+      "datasetId": "VOICE_003",
+      "topic": "Java Object-Oriented Principles and Syntax",
+      "modality": "VOICE_ONLY",
+      "requested_count": 5,
+      "delivered_count": 5,
+      "representation_mode": "SUMMARY",
+      "duration_sec": 120.5,
+      "status": "COMPLETED",
+      "partial_delivery": false,
+      "notice": null,
+      "average_rubric_score": 4.34,
+      "rubric_breakdown": [
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 3,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.3,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 3,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.3,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 3,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.3,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        }
+      ],
+      "questions": [
+        {
+          "targetId": "T01",
+          "questionText": "Which statement best describes the relationship between a function, a method, and a class in Java?",
+          "options": [
+            "A method is a container for functions; a function is a block of code; a class is a method that contains functions.",
+            "A method is a block of code; a function is a container for methods; a class is a method that contains functions.",
+            "A function is a block of code; a class is a container for functions; when a function is inside a class it becomes a method.",
+            "A class is a block of code; a function is a container for classes; a method is a function that belongs to a class."
+          ],
+          "correctAnswer": "A function is a block of code; a class is a container for functions; when a function is inside a class it becomes a method.",
+          "explanation": "In Java, a function is a block of code that performs a task. A class is a container that can hold multiple functions. When a function is defined inside a class, it is referred to as a method of that class. This relationship is directly stated in the provided evidence.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Distinguish between a function, a method, and a class in Java.",
+            "subtopic": "Java Program Anatomy",
+            "tier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Distinguish between a function, a method, and a class in Java.",
+              "subtopic": "Java Program Anatomy",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Distinguish between a function, a method, and a class in Java. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "DIRECT_EVIDENCE",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Distinguish between a function, a method, and a class in Java.."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T02",
+          "questionText": "Which of the following sequences correctly describes the end‑to‑end steps from writing Java source code to seeing the output in the terminal when using IntelliJ?",
+          "options": [
+            "Write code → compile to bytecode → JVM translates bytecode to native → run program → output",
+            "Write code → compile to bytecode → run program → JVM translates bytecode to native → output",
+            "Write code → compile to bytecode → run program → output",
+            "Write code → run program → compile to bytecode → JVM translates bytecode to native → output"
+          ],
+          "correctAnswer": "Write code → compile to bytecode → JVM translates bytecode to native → run program → output",
+          "explanation": "In IntelliJ the Java compiler (javac) first turns the source file into a .class byte‑code file. The JVM then loads this byte‑code and translates it into native machine code for the host OS. Finally the program is executed and its output appears in the terminal. This matches option A.",
+          "metadata": {
+            "dimension": "Flow / Trace",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Medium",
+            "concept": "Trace the end‑to‑end steps from source code to program output.",
+            "subtopic": "Compilation and Execution Process",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T02",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_02"
+                ]
+              },
+              "concept": "Trace the end‑to‑end steps from source code to program output.",
+              "subtopic": "Compilation and Execution Process",
+              "cognitiveDimension": "Flow / Trace",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_02"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Trace the end‑to‑end steps from source code to program output. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Flow / Trace",
+                "cognitiveLevel": "Analyze",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Trace the end‑to‑end steps from source code to program output.."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T03",
+          "questionText": "Which statement best captures the tradeoff between using Java bytecode (platform independent) and compiling directly to native binaries?",
+          "options": [
+            "Native binaries are easier to debug than Java bytecode because they are platform independent.",
+            "Java bytecode eliminates the need for a JVM, making it faster than native binaries on all platforms.",
+            "Native compiled binaries provide platform independence and require a JVM, while Java bytecode runs directly on the OS.",
+            "Java bytecode offers platform independence but may incur runtime overhead due to JVM translation, whereas native binaries run directly on the OS with potentially better performance."
+          ],
+          "correctAnswer": "Java bytecode offers platform independence but may incur runtime overhead due to JVM translation, whereas native binaries run directly on the OS with potentially better performance.",
+          "explanation": "The evidence shows that Java bytecode is platform independent and the JVM translates it into native code for the underlying OS. This adds a layer that can introduce runtime overhead, but it allows the same bytecode to run on Windows, Mac, Linux, etc. Native binaries, compiled directly for a specific OS, run without the JVM and can achieve higher performance, but lose the portability advantage.",
+          "metadata": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Evaluate",
+            "targetDifficulty": "Medium",
+            "concept": "Compare Java bytecode’s platform independence with native compiled binaries.",
+            "subtopic": "Bytecode and JVM",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T03",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q3",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_03"
+                ]
+              },
+              "concept": "Compare Java bytecode’s platform independence with native compiled binaries.",
+              "subtopic": "Bytecode and JVM",
+              "cognitiveDimension": "Comparison / Tradeoff",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_03"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Compare Java bytecode’s platform independence with native compiled binaries. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Comparison / Tradeoff",
+                "cognitiveLevel": "Evaluate",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Compare Java bytecode’s platform independence with native compiled binaries.."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T04",
+          "questionText": "Which of the following sequences correctly describes the steps to create a new command‑line Java project in IntelliJ and select the JDK?",
+          "options": [
+            "On the home screen, click New Project, select Java, leave the project SDK blank, click Next, choose a GUI application template, click Next, name the project \"HelloWorld\", set the location, and click Finish.",
+            "On the home screen, click New Project, select Java, ensure the project SDK is not blank, click Next, choose a command line application template, click Next, name the project \"HelloWorld\", set the location, and click Finish.",
+            "On the home screen, click New Project, select Java, set the project SDK to JDK 12, click Next, choose a command line application template, click Next, name the project \"HelloWorld\", set the location, and click Finish.",
+            "On the home screen, click New Project, select Java, set the project SDK to JDK 12, click Next, choose a command line application template, click Next, name the project \"HelloWorld\", set the location, and click Cancel."
+          ],
+          "correctAnswer": "On the home screen, click New Project, select Java, set the project SDK to JDK 12, click Next, choose a command line application template, click Next, name the project \"HelloWorld\", set the location, and click Finish.",
+          "explanation": "To create a command‑line Java project in IntelliJ, you start from the home screen, choose New Project, select Java, set the project SDK to the downloaded JDK (e.g., JDK 12), click Next, pick the command‑line application template, click Next again, give the project a name such as \"HelloWorld\", specify the location, and finish the wizard.",
+          "metadata": {
+            "dimension": "Application",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Easy",
+            "concept": "Set up a Java development environment in IntelliJ, including selecting the correct JDK.",
+            "subtopic": "Installation and Setup",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T04",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q4",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_04"
+                ]
+              },
+              "concept": "Set up a Java development environment in IntelliJ, including selecting the correct JDK.",
+              "subtopic": "Installation and Setup",
+              "cognitiveDimension": "Application",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_04"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Set up a Java development environment in IntelliJ, including selecting the correct JDK. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Application",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Set up a Java development environment in IntelliJ, including selecting the correct JDK.."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T05",
+          "questionText": "If you try to run a Java program on macOS or Linux with an incorrect case for the class name (e.g., running `java main` when the class is declared as `Main`), what error will you see?",
+          "options": [
+            "File not found error",
+            "No error; Java is case‑insensitive",
+            "Runtime error: Could not find or load main class",
+            "Compilation error: class name does not match file name"
+          ],
+          "correctAnswer": "Runtime error: Could not find or load main class",
+          "explanation": "macOS and Linux file systems are case‑sensitive. When the class name’s case does not match the file name, the JVM looks for a class file with the exact name you provide. Since it cannot find `main.class`, it throws a \"Could not find or load main class\" runtime error.",
+          "metadata": {
+            "dimension": "Prediction",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Easy",
+            "concept": "Predict the outcome if the case of the class name is incorrect on a case‑sensitive OS.",
+            "subtopic": "Compilation and Execution Process",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T05",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q5",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_05"
+                ]
+              },
+              "concept": "Predict the outcome if the case of the class name is incorrect on a case‑sensitive OS.",
+              "subtopic": "Compilation and Execution Process",
+              "cognitiveDimension": "Prediction",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_05"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Predict the outcome if the case of the class name is incorrect on a case‑sensitive OS. as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "HIGH",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Prediction",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Predict the outcome if the case of the class name is incorrect on a case‑sensitive OS.."
+              }
+            }
+          }
+        }
+      ],
+      "timestamp": "2026-09-18T03:28:33.291Z"
+    },
+    {
+      "testId": "R1_VOICE_004",
+      "round": "Round1",
+      "datasetId": "VOICE_004",
+      "topic": "Relational Database SQL Queries and Joins",
+      "modality": "VOICE_ONLY",
+      "requested_count": 5,
+      "delivered_count": 5,
+      "representation_mode": "SUMMARY",
+      "duration_sec": 162.7,
+      "status": "COMPLETED",
+      "partial_delivery": false,
+      "notice": null,
+      "average_rubric_score": 4.44,
+      "rubric_breakdown": [
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 5,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.5,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 5,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.5,
+          "verdict": "PASS"
+        }
+      ],
+      "questions": [
+        {
+          "targetId": "T01",
+          "questionText": "Which command is used to select and view all columns from a table?",
+          "options": [
+            "SELECT FROM student",
+            "SELECT * FROM",
+            "SELECT ALL FROM student",
+            "SELECT * FROM student"
+          ],
+          "correctAnswer": "SELECT * FROM student",
+          "explanation": "The SQL command to retrieve all columns from a table uses the asterisk (*) wildcard: SELECT * FROM <table_name>. In this context, the table is named student.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Identify the command used to select and view all columns",
+            "subtopic": "Select and view all columns",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Identify the command used to select and view all columns",
+              "subtopic": "Select and view all columns",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Identify the command used to select and view all columns as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Remember",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Identify the command used to select and view all columns."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T02",
+          "questionText": "What happens when you execute the command SELECT * FROM student?",
+          "options": [
+            "It prints all rows and columns from the student table",
+            "It deletes all rows from the student table",
+            "It creates a new table named student",
+            "It updates the student table with new data"
+          ],
+          "correctAnswer": "It prints all rows and columns from the student table",
+          "explanation": "The command SELECT * FROM student retrieves every row and every column from the student table, displaying the entire table’s contents.",
+          "metadata": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Explain what the command does when executed",
+            "subtopic": "Select and view all columns",
+            "tier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T02",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q2",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Explain what the command does when executed",
+              "subtopic": "Select and view all columns",
+              "cognitiveDimension": "Cause / Effect",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Explain what the command does when executed as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Cause / Effect",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "DIRECT_EVIDENCE",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Explain what the command does when executed."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T03",
+          "questionText": "Which of the following statements best describes the trade-offs when using SELECT * versus specifying column names in a SELECT query?",
+          "options": [
+            "Using SELECT * is always preferable because it automatically adapts to schema changes without modifying the query.",
+            "Listing column names can lead to errors if the table structure changes, whereas SELECT * eliminates the need to update queries.",
+            "Specifying column names guarantees that only the requested data is retrieved, reducing network traffic and improving query clarity.",
+            "SELECT * retrieves all columns, which can be convenient but may fetch unnecessary data and impact performance, especially when only a few columns are needed."
+          ],
+          "correctAnswer": "SELECT * retrieves all columns, which can be convenient but may fetch unnecessary data and impact performance, especially when only a few columns are needed.",
+          "explanation": "The shortcut SELECT * is quick to write and automatically includes all columns, which is handy during development or when the schema is stable. However, it can retrieve more data than necessary, increasing I/O, network traffic, and memory usage, and can degrade performance on large tables. Specifying column names limits the result set to only what is needed, improving efficiency and making the query clearer. Therefore, the trade‑off is convenience versus potential inefficiency.",
+          "metadata": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Medium",
+            "concept": "Compare using the command versus listing each column name individually",
+            "subtopic": "Select and view all columns",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "MEDIUM",
+            "groundingScore": 0.92,
+            "targetId": "T03",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q3",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Compare using the command versus listing each column name individually",
+              "subtopic": "Select and view all columns",
+              "cognitiveDimension": "Comparison / Tradeoff",
+              "difficulty": "Medium",
+              "studentAnswerability": "MEDIUM",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.92
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Compare using the command versus listing each column name individually as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Comparison / Tradeoff",
+                "cognitiveLevel": "Analyze",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.92,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "MEDIUM",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Compare using the command versus listing each column name individually."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T04",
+          "questionText": "Which SQL command would you use to view all columns and rows from the 'student' table?",
+          "options": [
+            "SELECT ALL FROM student;",
+            "SELECT * FROM student;",
+            "SELECT * FROM;",
+            "SELECT FROM student;"
+          ],
+          "correctAnswer": "SELECT * FROM student;",
+          "explanation": "The evidence states that to view all columns and rows, we use the SELECT command with an asterisk: \"select asterisk\" meaning SELECT * FROM student;",
+          "metadata": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Choose the appropriate command for a scenario where all table data must be inspected",
+            "subtopic": "Select and view all columns",
+            "tier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T04",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q4",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Choose the appropriate command for a scenario where all table data must be inspected",
+              "subtopic": "Select and view all columns",
+              "cognitiveDimension": "Scenario Analysis",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Choose the appropriate command for a scenario where all table data must be inspected as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Scenario Analysis",
+                "cognitiveLevel": "Apply",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "DIRECT_EVIDENCE",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Choose the appropriate command for a scenario where all table data must be inspected."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T05",
+          "questionText": "What will be the result set when executing the command `SELECT * FROM student;` on the table described in the evidence?",
+          "options": [
+            "All rows and columns of the student table, including any data that may have been inserted.",
+            "An empty result set with columns role number and name.",
+            "Only the role number column is returned.",
+            "An error because the table has no data."
+          ],
+          "correctAnswer": "An empty result set with columns role number and name.",
+          "explanation": "The evidence states that the student table has two columns, role number and name, but no data has been inserted yet. Therefore, executing `SELECT * FROM student;` will return an empty set that still displays the column names.",
+          "metadata": {
+            "dimension": "Prediction",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "concept": "Predict the output when the command is run on a table with five columns",
+            "subtopic": "Select and view all columns",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T05",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q5",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Predict the output when the command is run on a table with five columns",
+              "subtopic": "Select and view all columns",
+              "cognitiveDimension": "Prediction",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Predict the output when the command is run on a table with five columns as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Prediction",
+                "cognitiveLevel": "Understand",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Predict the output when the command is run on a table with five columns."
+              }
+            }
+          }
+        }
+      ],
+      "timestamp": "2026-09-18T03:31:18.983Z"
+    },
+    {
+      "testId": "R1_VOICE_005",
+      "round": "Round1",
+      "datasetId": "VOICE_005",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T03:35:23.175Z"
+    },
+    {
+      "testId": "R1_MULTI_001",
+      "round": "Round1",
+      "datasetId": "MULTI_001",
+      "status": "RUNNING",
+      "duration_sec": 241,
+      "timestamp": "2026-09-18T03:39:27.351Z"
+    },
+    {
+      "testId": "R1_MULTI_002",
+      "round": "Round1",
+      "datasetId": "MULTI_002",
+      "status": "RUNNING",
+      "duration_sec": 241,
+      "timestamp": "2026-09-18T03:43:31.537Z"
+    },
+    {
+      "testId": "R1_MULTI_003",
+      "round": "Round1",
+      "datasetId": "MULTI_003",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T03:47:35.683Z"
+    },
+    {
+      "testId": "R1_MULTI_004",
+      "round": "Round1",
+      "datasetId": "MULTI_004",
+      "status": "RUNNING",
+      "duration_sec": 2650.1,
+      "timestamp": "2026-09-18T04:31:48.790Z"
+    },
+    {
+      "testId": "R1_MULTI_005",
+      "round": "Round1",
+      "datasetId": "MULTI_005",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T04:31:54.007Z"
+    },
+    {
+      "testId": "R1_MAT_001",
+      "round": "Round1",
+      "datasetId": "MAT_001",
+      "status": "FAILED",
+      "duration_sec": 669.4,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T04:43:06.460Z"
+    },
+    {
+      "testId": "R1_MAT_005",
+      "round": "Round1",
+      "datasetId": "MAT_005",
+      "status": "FAILED",
+      "duration_sec": 235.2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T04:47:04.694Z"
+    },
+    {
+      "testId": "R1_MAT_007",
+      "round": "Round1",
+      "datasetId": "MAT_007",
+      "status": "RUNNING",
+      "duration_sec": 943.7,
+      "timestamp": "2026-09-18T05:02:51.393Z"
+    },
+    {
+      "testId": "R1_EDGE_001",
+      "round": "Round1",
+      "datasetId": "EDGE_001",
+      "status": "FAILED",
+      "duration_sec": 1995.9,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:36:10.299Z"
+    },
+    {
+      "testId": "R1_EDGE_002",
+      "round": "Round1",
+      "datasetId": "EDGE_002",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:36:15.377Z"
+    }
+  ],
+  "round2": [
+    {
+      "testId": "R2_SMALL_3_EASY",
+      "round": "Round2",
+      "datasetId": "VOICE_010",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:36:20.518Z"
+    },
+    {
+      "testId": "R2_SMALL_10_HARD",
+      "round": "Round2",
+      "datasetId": "VOICE_008",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:36:25.646Z"
+    },
+    {
+      "testId": "R2_MED_5_BALANCED",
+      "round": "Round2",
+      "datasetId": "VOICE_003",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:36:30.678Z"
+    },
+    {
+      "testId": "R2_LARGE_10_MED",
+      "round": "Round2",
+      "datasetId": "VOICE_005",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:36:35.792Z"
+    },
+    {
+      "testId": "R2_PPT_5_BALANCED",
+      "round": "Round2",
+      "datasetId": "MULTI_004",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:36:40.849Z"
+    },
+    {
+      "testId": "R2_PDF_10_HARD",
+      "round": "Round2",
+      "datasetId": "MULTI_003",
+      "status": "FAILED",
+      "duration_sec": 4,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:36:47.924Z"
+    },
+    {
+      "testId": "R2_DOC_5_EASY",
+      "round": "Round2",
+      "datasetId": "MAT_001",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:36:52.942Z"
+    },
+    {
+      "testId": "R2_SLIDES_10_BALANCED",
+      "round": "Round2",
+      "datasetId": "MAT_007",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:36:57.968Z"
+    }
+  ],
+  "round3": [
+    {
+      "testId": "R3_SHORT_AUDIO",
+      "round": "Round3",
+      "datasetId": "VOICE_010",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:37:02.989Z"
+    },
+    {
+      "testId": "R3_CODE_SWITCHING",
+      "round": "Round3",
+      "datasetId": "MULTI_005",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:37:08.083Z"
+    },
+    {
+      "testId": "R3_CASUAL_BANTER_GATE",
+      "round": "Round3",
+      "datasetId": "EDGE_001",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:37:13.103Z"
+    },
+    {
+      "testId": "R3_HANDWRITTEN_SCAN",
+      "round": "Round3",
+      "datasetId": "EDGE_004",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:37:18.154Z"
+    },
+    {
+      "testId": "R3_PARTIAL_DELIVERY",
+      "round": "Round3",
+      "datasetId": "MAT_006",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: No valid grounded questions could be generated from the provided session material.",
+      "timestamp": "2026-09-18T05:37:23.175Z"
+    },
+    {
+      "testId": "R3_MULTI_TOPIC",
+      "round": "Round3",
+      "datasetId": "VOICE_017",
+      "status": "FAILED",
+      "duration_sec": 4,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:37:30.246Z"
+    },
+    {
+      "testId": "R3_NOISY_CLASSROOM",
+      "round": "Round3",
+      "datasetId": "VOICE_015",
+      "status": "FAILED",
+      "duration_sec": 4,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:37:37.353Z"
+    },
+    {
+      "testId": "R3_ASSIGNMENT_SHEET",
+      "round": "Round3",
+      "datasetId": "MAT_002",
+      "topic": "Course Assignment 1 Problems and Questions",
+      "modality": "MATERIAL_ONLY",
+      "requested_count": 5,
+      "delivered_count": 2,
+      "representation_mode": "BLUEPRINT",
+      "duration_sec": 58.3,
+      "status": "COMPLETED",
+      "partial_delivery": true,
+      "notice": "2 evidence-grounded questions were generated from the available instructional content. 3 additional questions could not be validated against the available evidence.",
+      "average_rubric_score": 4.4,
+      "rubric_breakdown": [
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        },
+        {
+          "rubric": {
+            "correctness": 2,
+            "grounding": 4,
+            "answer_uniqueness": 5,
+            "information_sufficiency": 5,
+            "technical_precision": 5,
+            "teaching_alignment": 5,
+            "cognitive_alignment": 5,
+            "distractor_quality": 3,
+            "diversity": 5,
+            "naturalness": 5
+          },
+          "average_score": 4.4,
+          "verdict": "PASS"
+        }
+      ],
+      "questions": [
+        {
+          "targetId": "T01",
+          "questionText": "Which SQL query correctly returns all products whose stock is less than 20?",
+          "options": [
+            "SELECT product_id, product_name, stock, brand FROM products WHERE stock = 20;",
+            "SELECT product_id, product_name, stock, brand FROM products WHERE stock < 20;",
+            "SELECT * FROM products WHERE stock > 20;",
+            "SELECT product_id, product_name, stock, brand FROM products WHERE stock <= 20;"
+          ],
+          "correctAnswer": "SELECT product_id, product_name, stock, brand FROM products WHERE stock < 20;",
+          "explanation": "The query selects the required columns and uses the < operator to filter products with stock less than 20.",
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Identify products with stock less than a given threshold",
+            "subtopic": "Numeric Filtering",
+            "tier": "DIRECT_EVIDENCE",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T01",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q1",
+              "source": {
+                "tier": "DIRECT_EVIDENCE",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Identify products with stock less than a given threshold",
+              "subtopic": "Numeric Filtering",
+              "cognitiveDimension": "Conceptual",
+              "difficulty": "Easy",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Identify products with stock less than a given threshold as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Conceptual",
+                "cognitiveLevel": "Remember",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "DIRECT_EVIDENCE",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Identify products with stock less than a given threshold."
+              }
+            }
+          }
+        },
+        {
+          "targetId": "T04",
+          "questionText": "When retrieving the second page of records with a page size of 10, what should the skip and limit values be?",
+          "options": [
+            "skip = 0, limit = 10",
+            "skip = 10, limit = 5",
+            "skip = 10, limit = 10",
+            "skip = 20, limit = 10"
+          ],
+          "correctAnswer": "skip = 10, limit = 10",
+          "explanation": "For page 2, the number of records to skip is (2‑1)×10 = 10. The limit is the page size, 10.",
+          "metadata": {
+            "dimension": "Scenario Analysis",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Medium",
+            "concept": "Determine which records belong to the second page of a paginated view",
+            "subtopic": "Pagination",
+            "tier": "EVIDENCE_DERIVED",
+            "studentAnswerability": "HIGH",
+            "groundingScore": 0.95,
+            "targetId": "T04",
+            "attempt": 1,
+            "decisionLedger": {
+              "questionId": "Q4",
+              "source": {
+                "tier": "EVIDENCE_DERIVED",
+                "supportingChunks": [
+                  "chunk_01"
+                ]
+              },
+              "concept": "Determine which records belong to the second page of a paginated view",
+              "subtopic": "Pagination",
+              "cognitiveDimension": "Scenario Analysis",
+              "difficulty": "Medium",
+              "studentAnswerability": "HIGH",
+              "redundancy": {
+                "similarQuestion": null,
+                "similarity": 0,
+                "decision": "KEEP"
+              },
+              "agent3": {
+                "verdict": "PASS",
+                "groundingScore": 0.95
+              },
+              "grounding": {
+                "status": "GROUNDED"
+              }
+            },
+            "traceabilityAudit": {
+              "1_sourceOrigin": "VOICE",
+              "2_supportingSessionChunks": [
+                "chunk_01"
+              ],
+              "3_agent1AssessmentReasoning": {
+                "whyAssessed": "Teacher emphasized Determine which records belong to the second page of a paginated view as a key learning outcome.",
+                "detectedEmphasis": {
+                  "conceptual": "HIGH",
+                  "application": "MEDIUM",
+                  "syntax": "MEDIUM",
+                  "calculation": "LOW"
+                },
+                "ruleApplied": "Teacher verbal emphasis elevates target priority."
+              },
+              "4_agent2FormulationReasoning": {
+                "dimension": "Scenario Analysis",
+                "cognitiveLevel": "Analyze",
+                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+              },
+              "5_agent3EvaluationReasoning": {
+                "groundingScore": 0.95,
+                "derivabilityTier": "EVIDENCE_DERIVED",
+                "studentAnswerability": "HIGH",
+                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                "verdict": "PASS"
+              },
+              "6_deterministicCalculations": {
+                "preChecksPassed": true,
+                "mathVerified": "N/A"
+              },
+              "7_finalGroundingGateReasoning": {
+                "status": "PASSED",
+                "justification": "Question and options are directly justified by session evidence for Determine which records belong to the second page of a paginated view."
+              }
+            }
+          }
+        }
+      ],
+      "timestamp": "2026-09-18T05:38:38.640Z"
+    },
+    {
+      "testId": "R3_OBJECT_DETECTION_COMPARE",
+      "round": "Round3",
+      "datasetId": "MAT_005",
+      "status": "RUNNING",
+      "duration_sec": 241,
+      "timestamp": "2026-09-18T05:42:42.614Z"
+    },
+    {
+      "testId": "R3_WORKSHOP_PRACTICE",
+      "round": "Round3",
+      "datasetId": "MAT_010",
+      "status": "RUNNING",
+      "duration_sec": 241,
+      "timestamp": "2026-09-18T05:46:46.599Z"
+    }
+  ],
+  "round4": [
+    {
+      "testId": "R4_VOICE_006",
+      "round": "Round4",
+      "datasetId": "VOICE_006",
+      "status": "RUNNING",
+      "duration_sec": 241,
+      "timestamp": "2026-09-18T05:50:50.670Z"
+    },
+    {
+      "testId": "R4_VOICE_007",
+      "round": "Round4",
+      "datasetId": "VOICE_007",
+      "status": "FAILED",
+      "duration_sec": 210.9,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:54:24.630Z"
+    },
+    {
+      "testId": "R4_VOICE_009",
+      "round": "Round4",
+      "datasetId": "VOICE_009",
+      "status": "FAILED",
+      "duration_sec": 34.1,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:55:01.864Z"
+    },
+    {
+      "testId": "R4_VOICE_011",
+      "round": "Round4",
+      "datasetId": "VOICE_011",
+      "status": "FAILED",
+      "duration_sec": 34.1,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:55:39.067Z"
+    },
+    {
+      "testId": "R4_VOICE_014",
+      "round": "Round4",
+      "datasetId": "VOICE_014",
+      "status": "FAILED",
+      "duration_sec": 84.4,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:57:06.492Z"
+    },
+    {
+      "testId": "R4_VOICE_018",
+      "round": "Round4",
+      "datasetId": "VOICE_018",
+      "status": "FAILED",
+      "duration_sec": 36.1,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:57:45.717Z"
+    },
+    {
+      "testId": "R4_VOICE_019",
+      "round": "Round4",
+      "datasetId": "VOICE_019",
+      "status": "FAILED",
+      "duration_sec": 36.1,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T05:58:24.918Z"
+    },
+    {
+      "testId": "R4_MULTI_001",
+      "round": "Round4",
+      "datasetId": "MULTI_001",
+      "status": "RUNNING",
+      "duration_sec": 241.4,
+      "timestamp": "2026-09-18T06:02:29.628Z"
+    },
+    {
+      "testId": "R4_MULTI_002",
+      "round": "Round4",
+      "datasetId": "MULTI_002",
+      "status": "RUNNING",
+      "duration_sec": 241,
+      "timestamp": "2026-09-18T06:06:33.807Z"
+    },
+    {
+      "testId": "R4_MULTI_004",
+      "round": "Round4",
+      "datasetId": "MULTI_004",
+      "status": "RUNNING",
+      "duration_sec": 241,
+      "timestamp": "2026-09-18T06:10:37.899Z"
+    },
+    {
+      "testId": "R4_MULTI_005",
+      "round": "Round4",
+      "datasetId": "MULTI_005",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T06:14:42.088Z"
+    },
+    {
+      "testId": "R4_MAT_003",
+      "round": "Round4",
+      "datasetId": "MAT_003",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T06:18:46.247Z"
+    },
+    {
+      "testId": "R4_MAT_004",
+      "round": "Round4",
+      "datasetId": "MAT_004",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T06:22:50.430Z"
+    },
+    {
+      "testId": "R4_MAT_011",
+      "round": "Round4",
+      "datasetId": "MAT_011",
+      "status": "RUNNING",
+      "duration_sec": 241.2,
+      "timestamp": "2026-09-18T06:26:54.608Z"
+    },
+    {
+      "testId": "R4_MAT_008",
+      "round": "Round4",
+      "datasetId": "MAT_008",
+      "status": "RUNNING",
+      "duration_sec": 241,
+      "timestamp": "2026-09-18T06:30:58.691Z"
+    },
+    {
+      "testId": "R4_MAT_010",
+      "round": "Round4",
+      "datasetId": "MAT_010",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T06:35:02.833Z"
+    },
+    {
+      "testId": "R4_MAT_012",
+      "round": "Round4",
+      "datasetId": "MAT_012",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T06:39:06.954Z"
+    },
+    {
+      "testId": "R4_MAT_015",
+      "round": "Round4",
+      "datasetId": "MAT_015",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T06:43:11.112Z"
+    },
+    {
+      "testId": "R4_EDGE_003",
+      "round": "Round4",
+      "datasetId": "EDGE_003",
+      "status": "RUNNING",
+      "duration_sec": 241.1,
+      "timestamp": "2026-09-18T06:47:15.303Z"
+    },
+    {
+      "testId": "R4_EDGE_005",
+      "round": "Round4",
+      "datasetId": "EDGE_005",
+      "status": "FAILED",
+      "duration_sec": 2,
+      "error": "PIPELINE_ERROR: INSUFFICIENT_CURRICULAR_CONTENT: Standard conversational speech without domain instructional substance.",
+      "timestamp": "2026-09-18T06:47:20.352Z"
+    }
+  ]
+}
