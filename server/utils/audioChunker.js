@@ -243,9 +243,47 @@ function chunkM4a(inputPath, options = {}) {
     return chunks;
 }
 
+/**
+ * Fast mono voice pre-compression pass for Whisper Large-v3.
+ * Downsamples audio to 16kHz mono 48kbps AAC.
+ * Whisper internally processes 16kHz mono log-Mel spectrograms, so this downsampling
+ * preserves full acoustic speech fidelity while reducing file size by 60-70%,
+ * allowing lectures up to ~55 minutes to be transcribed in a single API call (< 20MB).
+ *
+ * @param {string} inputPath
+ * @param {Object} options
+ * @returns {{ compressedPath: string, sizeBytes: number } | null}
+ */
+function compressForWhisper(inputPath, options = {}) {
+    const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+    const { execSync } = require('child_process');
+    const outputDir = options.outputDir || path.dirname(inputPath);
+    const targetPath = path.join(outputDir, `whisper_opt_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.m4a`);
+
+    try {
+        const startTime = Date.now();
+        execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -vn -ar 16000 -ac 1 -c:a aac -b:a 48k "${targetPath}"`, {
+            stdio: ['ignore', 'pipe', 'pipe'],
+            timeout: 120000
+        });
+        const stats = fs.statSync(targetPath);
+        console.log(`⚡ [AudioOptimizer] Compressed ${path.basename(inputPath)} in ${((Date.now() - startTime) / 1000).toFixed(1)}s -> ${(stats.size / (1024 * 1024)).toFixed(2)} MB`);
+        return {
+            compressedPath: targetPath,
+            sizeBytes: stats.size
+        };
+    } catch (err) {
+        console.warn('⚠️ [AudioOptimizer] Pre-compression failed or timed out, falling back to original audio:', err.message);
+        try { if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath); } catch (_) {}
+        return null;
+    }
+}
+
 module.exports = {
     chunkMp3,
     chunkM4a,
+    compressForWhisper,
     parseFrameHeader,
     findNextFrameSync
 };
+

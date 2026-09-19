@@ -120,20 +120,20 @@ class LLMRouter {
     const keys = this._getGroqKeys();
     if (keys.length === 0) throw new Error('GROQ_API_KEY is missing');
 
-    const modelsToTry = [primaryModel, fallbackModel].filter(Boolean);
+    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel].filter(Boolean)));
     const totalKeys = keys.length;
     let lastErr = null;
 
-    // Up to 2 passes across the pool with bounded cooldown sleep if all keys are temporarily throttled
-    for (let poolAttempt = 0; poolAttempt < 2; poolAttempt++) {
+    // Up to 3 passes across the pool with bounded cooldown sleep if keys are temporarily throttled
+    for (let poolAttempt = 0; poolAttempt < 3; poolAttempt++) {
       for (let offset = 0; offset < totalKeys; offset++) {
         const keyIdx = (this.currentKeyIndex + offset) % totalKeys;
         const key = keys[keyIdx];
 
-        // Check if key is currently in cooldown
+        // Check if key is currently in cooldown (with 50ms tolerance for clock jitter)
         const cooldownUntil = this.keyCooldowns.get(keyIdx) || 0;
         const now = Date.now();
-        if (now < cooldownUntil) {
+        if (now < cooldownUntil - 50) {
           continue; // Key is in cooldown, check next key
         }
 
@@ -144,7 +144,7 @@ class LLMRouter {
 
           // Check if this specific model is currently in short-term cooldown on this key
           const modelCooldownUntil = this.modelCooldowns.get(`${keyIdx}_${currentModel}`) || 0;
-          if (Date.now() < modelCooldownUntil) {
+          if (Date.now() < modelCooldownUntil - 50) {
             continue; // Skip directly to fallback model without network delay
           }
 
@@ -153,17 +153,24 @@ class LLMRouter {
 
           while (attempts < maxAttempts) {
             attempts++;
+            const combinedPromptText = `${systemPrompt || ''} ${prompt || ''}`.toLowerCase();
+            const hasJsonWord = combinedPromptText.includes('json');
+            const sanitizedSystemPrompt = systemPrompt
+              ? (hasJsonWord ? systemPrompt : `${systemPrompt}\nOutput valid JSON format.`)
+              : (hasJsonWord ? '' : 'Output valid JSON format.');
+
             try {
               const response = await axios.post(
                 'https://api.groq.com/openai/v1/chat/completions',
                 {
                   model: currentModel,
                   messages: [
-                    ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+                    ...(sanitizedSystemPrompt ? [{ role: 'system', content: sanitizedSystemPrompt }] : []),
                     { role: 'user', content: prompt }
                   ],
                   temperature: temperature,
-                  response_format: { type: 'json_object' }
+                  response_format: { type: 'json_object' },
+                  max_tokens: 4096
                 },
                 {
                   headers: {
@@ -204,19 +211,60 @@ class LLMRouter {
               const isTPD = errorMsg.includes('tokens per day') || errorMsg.includes('TPD');
               const isRateLimit = status === 429 || errorMsg.includes('429') || errorMsg.includes('Rate limit') || isTPD;
 
+              if (errorMsg.includes('Failed to validate JSON') && attempts === 1) {
+                console.warn(`⚠️ [LLMRouter] Groq strict JSON validator rejected '${currentModel}'. Retrying with relaxed JSON prompt...`);
+                try {
+                  const retryResp = await axios.post(
+                    'https://api.groq.com/openai/v1/chat/completions',
+                    {
+                      model: currentModel,
+                      messages: [
+                        ...(sanitizedSystemPrompt ? [{ role: 'system', content: `${sanitizedSystemPrompt}\nReturn pure JSON only.` }] : []),
+                        { role: 'user', content: prompt }
+                      ],
+                      temperature: temperature,
+                      max_tokens: 4096
+                    },
+                    {
+                      headers: {
+                        Authorization: `Bearer ${key}`,
+                        'Content-Type': 'application/json'
+                      },
+                      timeout: 45000
+                    }
+                  );
+                  const content = retryResp.data.choices[0].message.content;
+                  this.keyCooldowns.delete(keyIdx);
+                  this.modelCooldowns.delete(`${keyIdx}_${currentModel}`);
+                  this.currentKeyIndex = (keyIdx + 1) % totalKeys;
+                  keySucceeded = true;
+                  return content;
+                } catch (retryErr) {
+                  console.warn(`⚠️ [LLMRouter] Relaxed JSON retry failed: ${retryErr.message}`);
+                }
+              }
+
               if (isRateLimit) {
+                const retryAfterSec = err.response?.headers?.['retry-after']
+                  ? parseFloat(err.response.headers['retry-after'])
+                  : null;
+                const retryMatch = errorMsg.match(/try again in ([\d\.]+)s/i);
+                const extractedWaitSec = retryAfterSec || (retryMatch ? parseFloat(retryMatch[1]) : null);
+                const parsedWaitMs = extractedWaitSec ? Math.ceil(extractedWaitSec * 1000) + 600 : null;
+
                 if (isTPD || isLastModel) {
-                  const cooldownMs = isTPD ? 120000 : 10000;
+                  const cooldownMs = isTPD ? 120000 : (parsedWaitMs || 5000);
                   this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' exhausted (${isTPD ? 'daily TPD' : 'rate limit'}). Rotating key...`);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' throttled (${isTPD ? 'daily TPD' : 'rate limit'}). Backing off ${cooldownMs}ms...`);
                 } else {
-                  // Mark this specific model as temporarily throttled on this key for 25s so next requests skip immediately to fallback
-                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 25000);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Immediately failing over to fallback '${modelsToTry[mIdx + 1]}'...`);
+                  // Mark this specific model as temporarily throttled on this key so next requests skip immediately to fallback
+                  const modelCooldownMs = parsedWaitMs || 25000;
+                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + modelCooldownMs);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Failing over to fallback '${modelsToTry[mIdx + 1]}'...`);
                 }
                 break; // Break inner loop to try fallback model or next key
               } else {
-                console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' error (${status || errorMsg}).`);
+                console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' error (${status}): ${errorMsg}`);
                 break;
               }
             }
@@ -225,12 +273,15 @@ class LLMRouter {
         }
       }
 
-      // If pass 0 completed without returning, sleep until earliest cooldown expires and retry
-      if (poolAttempt === 0 && this.keyCooldowns.size > 0) {
+      // If pass completed without returning, sleep until earliest cooldown expires and retry
+      if (poolAttempt < 2 && this.keyCooldowns.size > 0) {
         const earliestCooldown = Math.min(...Array.from(this.keyCooldowns.values()));
-        const waitMs = Math.min(Math.max(earliestCooldown - Date.now(), 1000), 10000);
-        console.warn(`⏳ [LLMRouter] All available keys throttled. Bounded wait ${waitMs}ms before second pool pass...`);
-        await this._sleep(waitMs);
+        const remaining = earliestCooldown - Date.now();
+        if (remaining > 0) {
+          const waitMs = Math.min(remaining + 400, 15000);
+          console.warn(`⏳ [LLMRouter] All available keys throttled. Bounded wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
+          await this._sleep(waitMs);
+        }
       }
     }
 

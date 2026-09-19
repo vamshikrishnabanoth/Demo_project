@@ -18,7 +18,7 @@ const { resolveCorrectOptionText } = require('../utils/grading');
 const documentStore = require('../storage/documentStore');
 const { expandShortTopicDescription } = require('../engine/documentAnalyzer/topicExpander');
 const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
-const { chunkMp3, chunkM4a } = require('../utils/audioChunker');
+const { chunkMp3, chunkM4a, compressForWhisper } = require('../utils/audioChunker');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -133,15 +133,34 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         throw lastError;
     };
 
-    // ── Tier A: Single Direct Pass (Files <= 20 MB) ──────────────────────────
-    if (fileSizeBytes <= GROQ_MAX_BYTES) {
-        try {
-            console.log(`🎙️ Transcribing with Whisper Large-v3 directly (size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
-            const data = await callGroqWithRetry(() => ({
-                file: fs.createReadStream(filePath),
-                model: 'whisper-large-v3',
-                response_format: 'verbose_json'
-            }), 2);
+    // ── Tier A: Single Direct Pass (Files <= 20 MB, or pre-compressed <= 20 MB) ──
+    let effectiveFilePath = filePath;
+    let effectiveFileSize = fileSizeBytes;
+    let tempCompressedPath = null;
+
+    if (fileSizeBytes > GROQ_MAX_BYTES && (ext === '.m4a' || ext === '.mp3' || ext === '.wav')) {
+        console.log(`🎙️ Oversized audio (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Running fast 16kHz mono voice compression pass...`);
+        const comp = compressForWhisper(filePath);
+        if (comp && comp.sizeBytes <= GROQ_MAX_BYTES) {
+            effectiveFilePath = comp.compressedPath;
+            effectiveFileSize = comp.sizeBytes;
+            tempCompressedPath = comp.compressedPath;
+            console.log(`✅ Pre-compression succeeded: ${(effectiveFileSize / (1024 * 1024)).toFixed(2)} MB is within safe single-call ceiling.`);
+        } else if (comp) {
+            console.log(`ℹ️ Compressed size (${(comp.sizeBytes / (1024 * 1024)).toFixed(2)} MB) still exceeds 20 MB. Proceeding to multi-chunk segmentation.`);
+            try { fs.unlinkSync(comp.compressedPath); } catch (_) {}
+        }
+    }
+
+    try {
+        if (effectiveFileSize <= GROQ_MAX_BYTES) {
+            try {
+                console.log(`🎙️ Transcribing with Whisper Large-v3 directly (size: ${(effectiveFileSize / (1024 * 1024)).toFixed(2)} MB)...`);
+                const data = await callGroqWithRetry(() => ({
+                    file: fs.createReadStream(effectiveFilePath),
+                    model: 'whisper-large-v3',
+                    response_format: 'verbose_json'
+                }), 2);
 
             let fullText = sanitizeTranscriptEchoes((data.text || '').trim());
             const rawSegs = Array.isArray(data.segments) ? data.segments : [];
@@ -305,6 +324,11 @@ const transcribeAudioWithTimestamps = async (filePath) => {
     const overLimitMsg = `File ${path.basename(filePath)} (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds Whisper limit (20 MB). Oversized chunking is supported for .mp3 and .m4a.`;
     console.error(`❌ ${overLimitMsg}`);
     throw new Error(overLimitMsg);
+    } finally {
+        if (tempCompressedPath) {
+            try { if (fs.existsSync(tempCompressedPath)) fs.unlinkSync(tempCompressedPath); } catch (_) {}
+        }
+    }
 };
 
 const transcribeAudio = async (filePath) => {

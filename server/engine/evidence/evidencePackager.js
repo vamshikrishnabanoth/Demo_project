@@ -163,9 +163,12 @@ class EvidencePackager {
     const artifactBlock = [formulaLines, codeLines].filter(Boolean).join('\n');
 
     if (mode === 'SUMMARY') {
-      const summarySegs = segments.filter(s => s.classification?.substanceType === 'DEFINITION_OR_FACT');
+      const summarySegs = segments.filter(s => {
+        const st = s.classification?.substanceType;
+        return ['DEFINITION_OR_FACT', 'MECHANISM', 'RULE_OR_CONDITION', 'COMPARISON'].includes(st);
+      });
       const textSegs = (summarySegs.length >= 3 ? summarySegs : segments).map(s => s.text).join('\n');
-      selectedText = `--- TECHNICAL SUMMARY: CONCEPTS, DEFINITIONS & ARTIFACTS (WHAT WAS TAUGHT) ---\n${textSegs}`;
+      selectedText = `--- TECHNICAL SUMMARY: CONCEPTS, DEFINITIONS, MECHANISMS & PRINCIPLES (WHAT WAS TAUGHT) ---\n${textSegs}`;
       if (artifactBlock) {
         selectedText += `\n\n--- EXACT ARTIFACTS ---\n${artifactBlock}`;
       }

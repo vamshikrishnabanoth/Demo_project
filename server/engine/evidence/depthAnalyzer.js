@@ -176,24 +176,54 @@ class DepthAnalyzer {
       'tell', 'telling', 'told', 'write', 'writing', 'wrote', 'make', 'making', 'made',
       'want', 'wanting', 'need', 'needing', 'feel', 'feeling', 'think', 'thinking', 'thought',
       'show', 'showing', 'seen', 'mean', 'means', 'meaning', 'case', 'cases', 'part', 'parts',
-      'well', 'just', 'also', 'even', 'much', 'more', 'most', 'very', 'like', 'good', 'way'
+      'well', 'just', 'also', 'even', 'much', 'more', 'most', 'very', 'like', 'good', 'way',
+      'yes', 'yeah', 'no', 'so', 'into', 'onto', 'from', 'with', 'by', 'some', 'our', 'your'
+    ]);
+
+    const genericSingleWords = new Set([
+      'model', 'models', 'element', 'elements', 'input', 'inputs', 'output', 'outputs',
+      'number', 'numbers', 'word', 'words', 'structure', 'structures', 'method', 'methods',
+      'thing', 'things', 'way', 'ways', 'case', 'cases', 'part', 'parts', 'step', 'steps',
+      'example', 'examples', 'time', 'times', 'type', 'types', 'item', 'items', 'value', 'values',
+      'image', 'images', 'data', 'code'
+    ]);
+
+    const weakModifiers = new Set([
+      'smaller', 'larger', 'bigger', 'exact', 'same', 'different', 'original', 'entire', 'whole',
+      'actual', 'given', 'certain', 'particular', 'single', 'multiple', 'final', 'initial'
     ]);
 
     let phrase = raw.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
-    // Strip leading noise prepositions/articles twice to catch combinations like "about a ..."
-    phrase = phrase.replace(/^(?:the|a|an|about|to|in|for|of|and|or|some|our|your|let|lets|we|you)\s+/i, '');
-    phrase = phrase.replace(/^(?:the|a|an|about|to|in|for|of|and|or|some|our|your)\s+/i, '');
-    phrase = phrase.trim();
+    
+    // Strip conversational, prepositional, and auxiliary prefixes iteratively
+    const prefixRegex = /^(?:the|a|an|about|to|in|for|of|and|or|but|if|then|so|yes|yeah|no|into|onto|from|with|by|some|our|your|let|lets|we|you|now|just|well|look|looks|see|what|which|when|where|why|how|this|that|these|those|there|here|i\s+think|you\s+know|is|are|was|were|be|been|being|have|has|had)\s+/i;
+    while (prefixRegex.test(phrase)) {
+      phrase = phrase.replace(prefixRegex, '').trim();
+    }
+    phrase = phrase.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '').trim();
     if (phrase.length < 3) return '';
 
     const words = phrase.split(/\s+/).filter(Boolean);
     if (words.length === 0 || words.length > 5) return '';
 
+    // Reject if single generic word or single conversational stop word
+    if (words.length === 1 && (genericSingleWords.has(words[0].toLowerCase()) || conversationalStopwords.has(words[0].toLowerCase()))) {
+      return '';
+    }
+
+    // Reject combinations like "smaller elements", "exact input" where modifier is weak adjective and head is generic noun
+    if (words.length === 2 && weakModifiers.has(words[0].toLowerCase()) && genericSingleWords.has(words[1].toLowerCase())) {
+      return '';
+    }
+
     // Reject if all words are conversational stop words
     if (words.every(w => conversationalStopwords.has(w.toLowerCase()))) return '';
 
-    // Reject if first word is a conversational filler verb or adverb (e.g. "Quickly Through", "Understand What")
+    // Reject if first word is a conversational filler verb or adverb
     if (conversationalStopwords.has(words[0].toLowerCase())) return '';
+
+    // Reject if last word is a conversational stop word
+    if (conversationalStopwords.has(words[words.length - 1].toLowerCase())) return '';
 
     return words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
   }
@@ -209,7 +239,7 @@ class DepthAnalyzer {
     // 1. Prominent Acronyms (e.g., DAA, BST, AVL, ACID, TCP, IP, CPU, API, SQL)
     const acronyms = seg.match(/\b[A-Z]{2,}\b/g) || [];
     acronyms.forEach(a => {
-      if (!['THE', 'FOR', 'AND', 'ARE', 'THIS', 'THAT', 'WITH', 'NOT', 'BUT', 'FROM', 'CAN', 'ALL', 'OUT'].includes(a)) {
+      if (!['THE', 'FOR', 'AND', 'ARE', 'THIS', 'THAT', 'WITH', 'NOT', 'BUT', 'FROM', 'CAN', 'ALL', 'OUT', 'HOW', 'WHY', 'YES', 'NOW'].includes(a)) {
         concepts.push(a);
       }
     });
@@ -239,8 +269,8 @@ class DepthAnalyzer {
       if (cleaned) concepts.push(cleaned);
     });
 
-    // 5. High-Value Academic Bigrams (e.g., "greedy approach", "spanning tree", "time complexity", "dynamic programming")
-    const academicBigramRegex = /\b(greedy\s+\w+|spanning\s+trees?|minimum\s+cost|dynamic\s+programming|binary\s+search|page\s+fault|virtual\s+memory|acid\s+properties|transaction\s+isolation|sliding\s+window|depth\s+first|breadth\s+first|time\s+complexity|space\s+complexity|best\s+time)\b/gi;
+    // 5. High-Value Academic Bigrams & Domain Terms
+    const academicBigramRegex = /\b(auto\s*encoders?|convolutional\s+auto\s*encoders?|latent\s+space|reconstruction\s+loss|dense\s+layers?|max\s+pooling|up\s*sampling|down\s*sampling|activation\s+function|mean\s+squared\s+error|loss\s+function|feature\s+extraction|spatial\s+patterns?|greedy\s+\w+|spanning\s+trees?|minimum\s+cost|dynamic\s+programming|binary\s+search|page\s+fault|virtual\s+memory|acid\s+properties|transaction\s+isolation|sliding\s+window|depth\s+first|breadth\s+first|time\s+complexity|space\s+complexity)\b/gi;
     let abMatch;
     while ((abMatch = academicBigramRegex.exec(seg)) !== null) {
       const cleaned = this._cleanConceptPhrase(abMatch[0]);
@@ -329,15 +359,23 @@ class DepthAnalyzer {
       };
     }
 
-    // Extract detected focus concepts strictly from CURRICULAR segments
-    const focusSet = new Set();
+    // Extract detected focus concepts strictly from CURRICULAR segments ranked by occurrence frequency
+    const termFreq = new Map();
     curricularSegments.forEach(s => {
       (s.classification.matchedTerms || []).forEach(t => {
-        focusSet.add(t);
+        const normKey = t.toLowerCase().replace(/\s+/g, ' ').replace(/s$/, '');
+        const current = termFreq.get(normKey) || { term: t, count: 0 };
+        current.count += 1;
+        if (t.length > current.term.length) current.term = t;
+        termFreq.set(normKey, current);
       });
     });
 
-    const detectedFocus = Array.from(focusSet).slice(0, 6);
+    const sortedTerms = Array.from(termFreq.values())
+      .sort((a, b) => b.count - a.count)
+      .map(entry => entry.term);
+
+    const detectedFocus = sortedTerms.slice(0, 6);
     if (detectedFocus.length === 0) detectedFocus.push('Instructional Content');
 
     // Procedural and depth signals evaluated on curricular content

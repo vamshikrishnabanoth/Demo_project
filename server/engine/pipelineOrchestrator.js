@@ -29,7 +29,7 @@ class PipelineOrchestrator {
    */
   async runPipeline(sessionInputs = {}, progressCallback = null) {
     const sessionId = sessionInputs.sessionId || 'sess_' + Math.random().toString(36).substring(2, 8);
-    const requestedCount = sessionInputs.count || 5;
+    const requestedCount = sessionInputs.count || sessionInputs.requestedCount || 5;
     const requestedDifficulty = sessionInputs.difficulty || 'Balanced';
 
     // Initialize Session Trace Coordinator
@@ -239,9 +239,9 @@ class PipelineOrchestrator {
       const passingQuestions = [];
       let totalAttempts = 0;
       let totalSwaps = 0;
-      const MAX_TOTAL_SWAPS = Math.max(3, Math.ceil(requestedCount * 0.4));
+      const MAX_TOTAL_ATTEMPTS = Math.max(requestedCount * 3, 15);
 
-      const CONCURRENCY_LIMIT = 3;
+      const CONCURRENCY_LIMIT = 2;
       const targetQueue = [...primaryTargets];
       let queueIdx = 0;
 
@@ -376,7 +376,11 @@ class PipelineOrchestrator {
           const currentTarget = targetQueue[currentIdx];
           if (!currentTarget) break;
 
+          // Pacing pause between target launches to keep request cadence below provider rate limits
+          await new Promise(r => setTimeout(r, 400));
+
           const res = await executeTarget(currentTarget, passingQuestions.length);
+          let targetAccepted = false;
 
           if (res.status === 'PASS' && passingQuestions.length < requestedCount) {
             // Check deterministic duplicate question against passing pool
@@ -455,6 +459,7 @@ class PipelineOrchestrator {
               };
 
               passingQuestions.push(res.candidateMCQ);
+              targetAccepted = true;
             } else {
               console.warn(`⚠️ [Orchestrator] Concurrent question duplicate detected: ${dupCheck.reason}. Retrying with reserve target...`);
               await trace.recordStage({
@@ -472,16 +477,9 @@ class PipelineOrchestrator {
             }
           }
 
-          // If target failed or was duplicate, draw from reservePool if available
-          let isDuplicate = false;
-          if (res.status === 'PASS') {
-            const dupCheck = deterministicValidator.checkDuplicateQuestion(res.candidateMCQ, passingQuestions, res.target);
-            isDuplicate = dupCheck.isDuplicate;
-          }
-
-          const targetFailed = (res.status !== 'PASS') || isDuplicate;
+          const targetFailed = !targetAccepted;
           if (targetFailed) {
-            if (reservePool.length > 0 && totalSwaps < MAX_TOTAL_SWAPS && passingQuestions.length < requestedCount) {
+            if (reservePool.length > 0 && totalAttempts < MAX_TOTAL_ATTEMPTS && passingQuestions.length < requestedCount) {
               totalSwaps++;
               const reserveTarget = reservePool.shift();
               await trace.recordStage({
@@ -501,7 +499,7 @@ class PipelineOrchestrator {
               await trace.recordStage({
                 stageOrder: `04_EXHAUSTED_${currentTarget.targetId}`,
                 stageName: 'TARGET_EXHAUSTED',
-                decisions: [`Target ${currentTarget.targetId} could not pass audit and reserve budget is reached.`],
+                decisions: [`Target ${currentTarget.targetId} could not pass audit and reserve budget or attempt ceiling is reached.`],
                 validation: { status: 'PASS', checks: ['Target closed without forcing ungrounded question'] }
               });
             }

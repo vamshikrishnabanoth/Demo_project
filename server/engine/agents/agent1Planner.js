@@ -21,7 +21,18 @@ class Agent1Planner {
    * @param {Number} requestedCount - Number of questions requested
    * @returns {Object} AssessmentPlan JSON payload
    */
-  async planAssessment(evidencePackage, requestedDifficulty = 'Medium', requestedCount = 5) {
+  async planAssessment(evidencePackage, difficultyOrOptions = 'Medium', maybeCount = 5) {
+    let requestedDifficulty = 'Medium';
+    let requestedCount = 5;
+
+    if (typeof difficultyOrOptions === 'object' && difficultyOrOptions !== null) {
+      requestedDifficulty = difficultyOrOptions.requestedDifficulty || difficultyOrOptions.difficulty || 'Medium';
+      requestedCount = difficultyOrOptions.requestedCount || difficultyOrOptions.count || 5;
+    } else {
+      requestedDifficulty = difficultyOrOptions || 'Medium';
+      requestedCount = typeof maybeCount === 'number' ? maybeCount : (parseInt(maybeCount) || 5);
+    }
+
     if (evidencePackage && evidencePackage.isAcademic === false) {
       throw new Error(evidencePackage.academicFailureReason || 'Cannot plan assessment: Recording contains no assessable instructional content.');
     }
@@ -35,80 +46,35 @@ class Agent1Planner {
     // 1. Calculate TC (Teaching Coverage) Score
     const tcScoreReport = this._computeTCScore(rawContent, voiceEmphasis, lectureDepth);
 
-    // 2. Build prompt for Agent 1 Planning
+    const reserveTargetCount = Math.max(3, Math.ceil(requestedCount * 0.5));
+    const targetIdList = Array.from({ length: requestedCount }, (_, i) => `T${String(i + 1).padStart(2, '0')}`).join(', ');
+    const reserveIdList = Array.from({ length: reserveTargetCount }, (_, i) => `R${String(i + 1).padStart(2, '0')}`).join(', ');
+
     const systemPrompt = `You are Agent 1: Assessment Planner & Curriculum Strategist.
 Analyze the session evidence and generate an Assessment Plan in valid JSON format.
-You must plan up to ${requestedCount} primary assessment targets AND ${Math.max(3, Math.ceil(requestedCount * 0.5))} reserve targets.
+CRITICAL INSTRUCTION:
+The user requested ${requestedCount} questions.
+You MUST generate an array with EXACTLY ${requestedCount} primary targets in "assessmentTargets": [${targetIdList}].
+And an array with EXACTLY ${reserveTargetCount} reserve targets in "reserveTargets": [${reserveIdList}].
+Do not output fewer than ${requestedCount} primary targets! Plan all ${requestedCount} primary targets spanning early foundations, middle mechanisms, and late models/tradeoffs.
 
-CENTRAL PRINCIPLES:
-1. STRICT EVIDENCE GROUNDING: Every target MUST be directly derived from statements in [SESSION CONTENT].
-   - For every target, you MUST provide "supportingEvidence": a verbatim quote or specific factual statement from the text showing where this was taught.
-   - DO NOT hallucinate, extrapolate, or invent related topics that were not actually taught in this session (for example, do NOT plan targets on 'event loops' or 'microtasks' if the instructor only discussed callbacks).
-   - If the session content only supports fewer targets than requested, plan only the grounded targets. Never manufacture ungrounded targets.
-2. NATURAL SUBTOPIC EXTRACTION: Extract natural, assessable concepts actually supported by the session content.
-3. MULTI-DIMENSIONAL EXPANSION: Distribute grounded targets across diverse cognitive dimensions:
-   - "Conceptual": Core definitions & fundamental mechanism principles.
-   - "Cause / Effect": Why things happen, consequences of actions.
-   - "Comparison / Tradeoff": Contrasting alternatives, tradeoffs.
-   - "Scenario Analysis": Applied problem scenarios in context.
-   - "Application": Implementation, setup, or configuration.
-   - "Prediction": What will happen when a condition changes.
-   - "Flow / Trace": Step-by-step execution sequencing.
-   - "Foundational Prerequisite": Basic knowledge necessary to understand the topic.
-   - "Evidence-Derived Inference": Logical conclusions derived directly from taught material.
-4. DIFFICULTY POLICY:
-   - The teaching depth of this session is "${lectureDepth.rating}" (Score: ${lectureDepth.score}/100).
-   - Calibrate difficulty to reasoning complexity over taught principles.
-   - Do NOT introduce un-taught advanced algorithms if teaching depth is Introductory.
-5. CURRICULAR SUBJECT MATTER ONLY:
-   - Targets MUST assess genuine curricular knowledge (definitions, mechanisms, algorithms, rules, code traces, comparisons, formulas).
-   - NEVER create targets assessing teaching process (e.g. teaching pace, teacher's gear selection), student feelings/comfort (e.g. student anxiety, comfort level, asking boys/girls for feedback), classroom discipline (e.g. closing laptops, silence), or exam logistics.
+CORE PRINCIPLES:
+1. STRICT EVIDENCE GROUNDING: Every target must be derived directly from taught session content. Provide supportingEvidence verbatim quote.
+2. CHRONOLOGICAL TRAJECTORY: Distribute targets chronologically across early, middle, and late lecture concepts.
+3. CURRICULAR SUBJECT MATTER ONLY: Focus exclusively on academic concepts, mechanisms, and rules. Never assess teaching logistics.
 
 JSON SCHEMA:
 {
   "subject": "string",
   "mainTopic": "string",
-  "subtopics": ["all distinct subtopics extracted from evidence"],
-  "teachingEmphasis": {
-    "conceptual": "HIGH|MEDIUM|LOW",
-    "application": "HIGH|MEDIUM|LOW",
-    "syntax": "HIGH|MEDIUM|LOW",
-    "calculation": "HIGH|MEDIUM|LOW"
-  },
+  "subtopics": ["..."],
+  "teachingEmphasis": { "conceptual": "HIGH", "application": "HIGH", "syntax": "MEDIUM", "calculation": "LOW" },
   "targetCount": ${requestedCount},
   "assessmentTargets": [
-    {
-      "targetId": "T01",
-      "subtopic": "...",
-      "concept": "Specific, unique learning objective",
-      "dimension": "Conceptual|Cause / Effect|Comparison / Tradeoff|Scenario Analysis|Application|Prediction|Flow / Trace|Foundational Prerequisite|Evidence-Derived Inference",
-      "cognitiveLevel": "Remember|Understand|Apply|Analyze|Evaluate",
-      "targetDifficulty": "Easy|Medium|Hard",
-      "evidenceType": "VOICE|CODE|DOCUMENT|VOICE + DOCUMENT",
-      "supportingEvidence": "Verbatim quote or factual sentence from session content",
-      "evidenceSpan": "Context sentence where concept is taught",
-      "confidence": "HIGH|MEDIUM",
-      "sourceChunks": ["chunk_01"],
-      "requiresExactArtifact": false,
-      "instruction": "Guidance for question generation"
-    }
+    { "targetId": "T01", "subtopic": "...", "concept": "Specific unique learning objective", "dimension": "Conceptual|Cause / Effect|Comparison / Tradeoff|Scenario Analysis|Application|Prediction|Flow / Trace|Foundational Prerequisite|Evidence-Derived Inference", "cognitiveLevel": "Remember|Understand|Apply|Analyze|Evaluate", "targetDifficulty": "Easy|Medium|Hard", "evidenceType": "VOICE|CODE|DOCUMENT|VOICE + DOCUMENT", "supportingEvidence": "Verbatim quote or factual sentence from session content", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_01"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ],
   "reserveTargets": [
-    {
-      "targetId": "R01",
-      "subtopic": "...",
-      "concept": "Distinct fallback concept",
-      "dimension": "...",
-      "cognitiveLevel": "...",
-      "targetDifficulty": "...",
-      "evidenceType": "...",
-      "supportingEvidence": "Verbatim quote or factual sentence from session content",
-      "evidenceSpan": "Context sentence where concept is taught",
-      "confidence": "HIGH|MEDIUM",
-      "sourceChunks": ["chunk_02"],
-      "requiresExactArtifact": false,
-      "instruction": "..."
-    }
+    { "targetId": "R01", "subtopic": "...", "concept": "Distinct fallback concept", "dimension": "Conceptual", "cognitiveLevel": "Understand", "targetDifficulty": "Medium", "evidenceType": "VOICE", "supportingEvidence": "Verbatim quote", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_02"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ]
 }`;
 
@@ -117,15 +83,13 @@ JSON SCHEMA:
     const userPrompt = `
 [TEACHING EVIDENCE PACKAGE]
 Lecture Depth: ${lectureDepth.rating} (${lectureDepth.score}/100)
-Detected Focus Areas: ${detectedFocus.join(', ')}
 Voice Emphasis: Syntax=${voiceEmphasis.syntaxEmphasis}, Conceptual=${voiceEmphasis.conceptualEmphasis}
 Explicit Instructions: ${(voiceEmphasis.explicitInstructions || []).join('; ')}
-Evidence-Driven Category Weights: ${JSON.stringify(categoryWeights)}
 Requested Difficulty: ${requestedDifficulty}
-Requested Question Count: ${requestedCount}
+Requested Question Count: ${requestedCount} (You MUST plan all ${requestedCount} primary targets: ${targetIdList})
 
 [ASSESSABLE CURRICULAR CONTENT]
-${assessableContent.substring(0, 6000)}
+${assessableContent}
 `;
 
     let planData;
@@ -149,6 +113,8 @@ ${assessableContent.substring(0, 6000)}
       const rawReserve = Array.isArray(parsed.reserveTargets) 
         ? parsed.reserveTargets 
         : (Array.isArray(parsed.reserve_targets) ? parsed.reserve_targets : []);
+
+      console.log(`[Agent1Planner] rawTargets count from LLM: ${rawTargets.length}, rawReserve: ${rawReserve.length}`);
 
       if (rawTargets.length === 0) {
         throw new Error('No assessment targets found in LLM response');
