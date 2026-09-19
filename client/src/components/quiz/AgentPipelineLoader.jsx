@@ -141,9 +141,21 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                                 {stageList[activeStage].label}
                             </h2>
                         </div>
-                        <p className="text-[11px] font-bold tracking-wider text-[#334155] leading-relaxed" style={{ color: '#334155' }}>
+                        {stageLabel && stageLabel !== stageList[activeStage].label && (
+                            <div className="py-1 px-2.5 rounded-lg bg-blue-50/90 border border-blue-200/60 shadow-xs">
+                                <p className="text-[11px] font-black text-[#133E87] leading-tight">
+                                    {stageLabel.includes('(') ? stageLabel.replace(/^.*?\((.*?)\).*$/, '$1') : stageLabel}
+                                </p>
+                            </div>
+                        )}
+                        <p className="text-[11px] font-medium tracking-wide text-[#475569] leading-relaxed">
                             {stageList[activeStage].sub}
                         </p>
+                        {elapsed > 0 && (
+                            <p className="text-[10px] font-bold tracking-wider text-slate-400 mt-1">
+                                ⏱️ {Math.floor(elapsed / 60)}:{(elapsed % 60).toString().padStart(2, '0')} elapsed
+                            </p>
+                        )}
                     </motion.div>
                 </AnimatePresence>
 

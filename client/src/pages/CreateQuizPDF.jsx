@@ -260,6 +260,7 @@ export default function CreateQuizPDF() {
     const [polling, setPolling]       = useState(false);
     const [stage, setStage]           = useState(0);
     const [stageLabel, setStageLabel] = useState('Generating Questions');
+    const [representationMode, setRepresentationMode] = useState(null);
     const [elapsed, setElapsed]       = useState(0);
     const [pollError, setPollError]   = useState(null);
     const pollIntervalRef = useRef(null);
@@ -276,6 +277,7 @@ export default function CreateQuizPDF() {
         setPolling(true);
         setStage(0);
         setStageLabel('Generating Questions');
+        setRepresentationMode(null);
         setElapsed(0);
         setPollError(null);
         startTimeRef.current = Date.now();
@@ -287,9 +289,10 @@ export default function CreateQuizPDF() {
         const doPoll = async () => {
             try {
                 const res = await api.get(`/quiz/generate/status/${taskId}`);
-                const { status, stage: s, stageLabel: sl, result, error: e } = res.data;
+                const { status, stage: s, stageLabel: sl, representation_mode: rm, result, error: e } = res.data;
                 if (s !== undefined) setStage(s);
                 if (sl) setStageLabel(sl);
+                if (rm) setRepresentationMode(rm);
 
                  if (status === 'COMPLETED' && result) {
                     stopPolling();
@@ -415,13 +418,14 @@ export default function CreateQuizPDF() {
                 onComplete: (result) => {
                     navigate('/create-quiz/text', {
                         state: {
-                            questions:       result.questions,
-                            title:           result.title || file.name.replace(/\.[^/.]+$/, ''),
-                            duration:        result.duration || 10,
-                            source:          'generated',
-                            agentReport:     result.agentReport || null,
-                            finalValidation: result.finalValidation || null,
-                            executionMessages: result.metadata?.executionMessages || []
+                            questions:          result.questions,
+                            title:              result.title || file.name.replace(/\.[^/.]+$/, ''),
+                            duration:           result.duration || 10,
+                            source:             'generated',
+                            agentReport:        result.agentReport || null,
+                            finalValidation:    result.finalValidation || null,
+                            representationMode: result.representation_mode || representationMode || 'BLUEPRINT',
+                            executionMessages:  result.metadata?.executionMessages || []
                         },
                     });
                 },
@@ -446,6 +450,7 @@ export default function CreateQuizPDF() {
                     stage={stage}
                     stageLabel={stageLabel}
                     elapsed={elapsed}
+                    representationMode={representationMode}
                 />
             )}
             <div className="max-w-4xl mx-auto pb-20 relative">

@@ -44,9 +44,9 @@ class LLMRouter {
     const errors = [];
 
     // Resolve model cleanly: production Architecture E GPT-OSS models
-    let primaryModel = 'openai/gpt-oss-120b';
-    let fallbackModel = null;
-    if (model && model !== 'openai/gpt-oss-20b') {
+    let primaryModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
+    let fallbackModel = process.env.GROQ_FALLBACK_MODEL || 'openai/gpt-oss-20b';
+    if (model) {
       primaryModel = model;
     }
 
@@ -101,9 +101,16 @@ class LLMRouter {
     const raw = [
       process.env.GROQ_API_KEY,
       process.env.GROQ_API_KEY_BACKUP,
+      process.env.GROQ_API_KEY_2,
       process.env.GROQ_API_KEY_3,
       this.groqApiKey
     ];
+    if (process.env.GROQ_API_KEYS) {
+      raw.push(...process.env.GROQ_API_KEYS.split(',').map(k => k.trim()));
+    }
+    if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY.includes(',')) {
+      raw.push(...process.env.GROQ_API_KEY.split(',').map(k => k.trim()));
+    }
     return Array.from(new Set(raw.filter(Boolean)));
   }
 
@@ -129,9 +136,12 @@ class LLMRouter {
           continue; // Key is in cooldown, check next key
         }
 
-        for (const currentModel of modelsToTry) {
+        let keySucceeded = false;
+        for (let mIdx = 0; mIdx < modelsToTry.length; mIdx++) {
+          const currentModel = modelsToTry[mIdx];
+          const isLastModel = mIdx === modelsToTry.length - 1;
           let attempts = 0;
-          const maxAttempts = 2; // Bounded attempts per key before rotating
+          const maxAttempts = 1; // 1 attempt per model, then fail over to fallback model or next key immediately
 
           while (attempts < maxAttempts) {
             attempts++;
@@ -161,6 +171,7 @@ class LLMRouter {
               // Success! Clear cooldown for this key and advance currentKeyIndex
               this.keyCooldowns.delete(keyIdx);
               this.currentKeyIndex = (keyIdx + 1) % totalKeys;
+              keySucceeded = true;
 
               if (sessionId) {
                 try {
@@ -185,16 +196,21 @@ class LLMRouter {
               const isRateLimit = status === 429 || errorMsg.includes('429') || errorMsg.includes('Rate limit') || isTPD;
 
               if (isRateLimit) {
-                const cooldownMs = isTPD ? 120000 : 10000;
-                this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
-                console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} throttled (${isTPD ? 'daily TPD' : 'TPM 429'}). Rotating to next key in pool...`);
-                break; // Break inner attempts loop to rotate key immediately
+                if (isTPD || isLastModel) {
+                  const cooldownMs = isTPD ? 120000 : 10000;
+                  this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' exhausted (${isTPD ? 'daily TPD' : 'rate limit'}). Rotating key...`);
+                } else {
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Immediately failing over to fallback '${modelsToTry[mIdx + 1]}'...`);
+                }
+                break; // Break inner loop to try fallback model or next key
               } else {
                 console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' error (${status || errorMsg}).`);
                 break;
               }
             }
           }
+          if (keySucceeded) break;
         }
       }
 

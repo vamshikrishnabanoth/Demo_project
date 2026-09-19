@@ -24,18 +24,20 @@ export default function CreateQuizVoice() {
     const [stage, setStage] = useState(0);
     const [stageLabel, setStageLabel] = useState('Transcribing Audio');
     const [elapsed, setElapsed] = useState(0);
+    const [representationMode, setRepresentationMode] = useState(null);
 
-    const handleQuestionsLoaded = (questions, title, agentReport, lectureDepth) => {
+    const handleQuestionsLoaded = (questions, title, agentReport, lectureDepth, repMode = null) => {
         // Redirect to the editor with generated questions + full agent report
         navigate('/create-quiz/text', {
             state: {
                 questions,
                 title,
-                duration:    10,
-                source:      'generated',
-                isVoice:     true,
-                agentReport: agentReport || null,
-                lectureDepth: lectureDepth || null,
+                duration:           10,
+                source:             'generated',
+                isVoice:            true,
+                agentReport:        agentReport || null,
+                lectureDepth:       lectureDepth || null,
+                representationMode: repMode || representationMode || 'SUMMARY'
             }
         });
     };
@@ -88,16 +90,23 @@ export default function CreateQuizVoice() {
             const pollTimer = setInterval(async () => {
                 try {
                     const statusRes = await api.get(`/quiz/generate/status/${taskId}`);
-                    const { status, stage: s, stageLabel: sl, result, error: errMsg } = statusRes.data;
+                    const { status, stage: s, stageLabel: sl, representation_mode: rm, result, error: errMsg } = statusRes.data;
                     if (s !== undefined) setStage(s);
                     if (sl) setStageLabel(sl);
+                    if (rm) setRepresentationMode(rm);
 
                     if (status === 'COMPLETED' && result) {
                         clearInterval(pollTimer);
                         clearInterval(elapsedTimer);
                         setPolling(false);
                         if (result.questions && result.questions.length > 0) {
-                            handleQuestionsLoaded(result.questions, result.title || audioFile.name.replace(/\.[^/.]+$/, ''), result.agentReport, result.lectureDepth);
+                            handleQuestionsLoaded(
+                                result.questions, 
+                                result.title || audioFile.name.replace(/\.[^/.]+$/, ''), 
+                                result.agentReport, 
+                                result.lectureDepth,
+                                rm || result.representation_mode || representationMode
+                            );
                         } else {
                             setError('No questions were generated from the recording. Please try an audio file with clearer speech.');
                         }
@@ -125,6 +134,8 @@ export default function CreateQuizVoice() {
                     stage={stage}
                     stageLabel={stageLabel}
                     elapsed={elapsed}
+                    isVoice={true}
+                    representationMode={representationMode}
                 />
             )}
             <div className="max-w-4xl mx-auto pb-20 relative">

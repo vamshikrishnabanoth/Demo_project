@@ -49,6 +49,7 @@ export default function CreateQuizText() {
     const [pipelineNotice, setPipelineNotice] = useState(null);
     const [isPartialYield, setIsPartialYield] = useState(false);
     const [requestedCount, setRequestedCount] = useState(null);
+    const [representationMode, setRepresentationMode] = useState(null);
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
@@ -111,6 +112,9 @@ export default function CreateQuizText() {
             }
             if (location.state.requestedCount) {
                 setRequestedCount(location.state.requestedCount);
+            }
+            if (location.state.representationMode) {
+                setRepresentationMode(location.state.representationMode);
             }
 
             if (location.state.isTemplate || location.state.source === 'template') {
@@ -372,6 +376,26 @@ export default function CreateQuizText() {
                         )}
                     </div>
                 </div>
+
+                {/* PDI Representation Path Verification Banner */}
+                {isGeneratedSource && representationMode && (
+                    <div className="mb-6 bg-slate-900/90 border border-indigo-500/40 rounded-2xl p-4 shadow-lg flex items-center justify-between gap-4 backdrop-blur-md animate-in fade-in slide-in-from-top-1 duration-300">
+                        <div className="flex items-center gap-3.5">
+                            <div className="px-3 py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/40 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+                                PDI PATH: {representationMode}
+                            </div>
+                            <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                                {representationMode === 'UNIFIED' && 'Multimodal Dual-Source Synthesis: Spoken Teacher Authority (WHY) + Slide/Document Artifacts (WHAT).'}
+                                {representationMode === 'SUMMARY' && 'Voice Narrative Path: Synthesized directly from live lecture spoken exposition & instructor emphasis.'}
+                                {representationMode === 'BLUEPRINT' && 'Document / Code Blueprint Path: Structured syllabus & programmatic artifact schema.'}
+                            </p>
+                        </div>
+                        <span className="text-[10px] font-mono text-indigo-300/70 uppercase tracking-widest hidden sm:inline-block px-2.5 py-1 rounded-md bg-white/5 border border-white/10">
+                            Architecture E Verified
+                        </span>
+                    </div>
+                )}
 
                 {/* Evidence Grounding & Partial Yield Notice Banner */}
                 {pipelineNotice && (

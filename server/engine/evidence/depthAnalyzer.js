@@ -159,6 +159,46 @@ class DepthAnalyzer {
   }
 
   /**
+   * Helper to clean, strip leading prepositions/articles, and validate that a phrase
+   * is a genuine academic/curricular concept rather than conversational clutter.
+   */
+  _cleanConceptPhrase(raw) {
+    if (!raw) return '';
+    const conversationalStopwords = new Set([
+      'today', 'tomorrow', 'yesterday', 'quickly', 'through', 'understand', 'understanding',
+      'know', 'knowing', 'let', 'lets', 'now', 'here', 'there', 'first', 'second', 'third',
+      'step', 'sentence', 'example', 'look', 'looks', 'looking', 'going', 'talk', 'talking',
+      'about', 'discuss', 'discussing', 'thing', 'things', 'stuff', 'really', 'actually',
+      'basically', 'simply', 'maybe', 'probably', 'class', 'lecture', 'sir', 'maam', 'okay',
+      'alright', 'everyone', 'everybody', 'student', 'students', 'teacher', 'we', 'you',
+      'they', 'this', 'that', 'these', 'those', 'what', 'which', 'where', 'when', 'why',
+      'how', 'come', 'coming', 'came', 'take', 'taking', 'took', 'give', 'giving', 'gave',
+      'tell', 'telling', 'told', 'write', 'writing', 'wrote', 'make', 'making', 'made',
+      'want', 'wanting', 'need', 'needing', 'feel', 'feeling', 'think', 'thinking', 'thought',
+      'show', 'showing', 'seen', 'mean', 'means', 'meaning', 'case', 'cases', 'part', 'parts',
+      'well', 'just', 'also', 'even', 'much', 'more', 'most', 'very', 'like', 'good', 'way'
+    ]);
+
+    let phrase = raw.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
+    // Strip leading noise prepositions/articles twice to catch combinations like "about a ..."
+    phrase = phrase.replace(/^(?:the|a|an|about|to|in|for|of|and|or|some|our|your|let|lets|we|you)\s+/i, '');
+    phrase = phrase.replace(/^(?:the|a|an|about|to|in|for|of|and|or|some|our|your)\s+/i, '');
+    phrase = phrase.trim();
+    if (phrase.length < 3) return '';
+
+    const words = phrase.split(/\s+/).filter(Boolean);
+    if (words.length === 0 || words.length > 5) return '';
+
+    // Reject if all words are conversational stop words
+    if (words.every(w => conversationalStopwords.has(w.toLowerCase()))) return '';
+
+    // Reject if first word is a conversational filler verb or adverb (e.g. "Quickly Through", "Understand What")
+    if (conversationalStopwords.has(words[0].toLowerCase())) return '';
+
+    return words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+  }
+
+  /**
    * Extract key subject nouns or domain concept entities from an instructional segment.
    * Works across CS, Mathematics, English Grammar, Sciences, and emerging topics.
    */
@@ -166,31 +206,28 @@ class DepthAnalyzer {
     if (!seg) return [];
     const concepts = [];
 
-    // 1. Prominent Acronyms (e.g., MCP, CNN, HTTP, LLM, API, CPU, DNA, RNA)
+    // 1. Prominent Acronyms (e.g., DAA, BST, AVL, ACID, TCP, IP, CPU, API, SQL)
     const acronyms = seg.match(/\b[A-Z]{2,}\b/g) || [];
     acronyms.forEach(a => {
-      if (!['THE', 'FOR', 'AND', 'ARE', 'THIS', 'THAT', 'WITH', 'NOT', 'BUT', 'FROM'].includes(a)) {
+      if (!['THE', 'FOR', 'AND', 'ARE', 'THIS', 'THAT', 'WITH', 'NOT', 'BUT', 'FROM', 'CAN', 'ALL', 'OUT'].includes(a)) {
         concepts.push(a);
       }
     });
 
-    // 2. Definitional Subject: "X is a Y", "X means Y", "A pronoun is used...", "MCP provides..."
+    // 2. Definitional Subject: "X is a Y", "X means Y", "A spanning tree is..."
     const defMatch = seg.match(/(?:^|\b(?:a|an|the)\s+)([A-Za-z0-9\s\-]+?)\s+(?:is an?|are(?: words)?|means|refers to|stands for|provides|applies|consists of|differs from)/i);
     if (defMatch && defMatch[1]) {
-      const rawSubject = defMatch[1].trim();
-      if (rawSubject.length > 2 && rawSubject.length < 40) {
-        const cleaned = rawSubject.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-        concepts.push(cleaned);
-      }
+      const cleaned = this._cleanConceptPhrase(defMatch[1]);
+      if (cleaned) concepts.push(cleaned);
     }
 
     // 3. Technical / Subject compound noun phrases
-    const nounPhraseRegex = /\b([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(?:algorithm|layers?|filters?|protocols?|numbers?|words?|spaces?|functions?|methods?|structures?|models?|elements?|inputs?|outputs?|vectors?|graphs?|nodes?|trees?)/gi;
+    const nounPhraseRegex = /\b([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(?:algorithm|layers?|filters?|protocols?|numbers?|words?|spaces?|functions?|methods?|structures?|models?|elements?|inputs?|outputs?|vectors?|graphs?|nodes?|trees?|complexity|matrices|arrays?)/gi;
     let npMatch;
     while ((npMatch = nounPhraseRegex.exec(seg)) !== null) {
       if (npMatch[0] && npMatch[0].length > 3 && npMatch[0].length < 40) {
-        const cleaned = npMatch[0].split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-        concepts.push(cleaned);
+        const cleaned = this._cleanConceptPhrase(npMatch[0]);
+        if (cleaned) concepts.push(cleaned);
       }
     }
 
@@ -198,26 +235,26 @@ class DepthAnalyzer {
     const quoted = seg.match(/['"`](.*?)['"`]/g) || [];
     quoted.forEach(q => {
       const strip = q.replace(/['"`]/g, '').trim();
-      if (strip.length > 2 && strip.length < 30) {
-        concepts.push(strip);
-      }
+      const cleaned = this._cleanConceptPhrase(strip);
+      if (cleaned) concepts.push(cleaned);
     });
 
-    // Deduplicate and filter generic filler words
-    const stopWords = new Set(['today', 'we', 'you', 'let', 'now', 'here', 'first', 'second', 'example', 'step', 'sentence']);
-    const deduped = [];
-    for (const c of concepts) {
-      const lower = c.toLowerCase();
-      if (!stopWords.has(lower) && !deduped.some(d => d.toLowerCase() === lower)) {
-        deduped.push(c);
-      }
+    // 5. High-Value Academic Bigrams (e.g., "greedy approach", "spanning tree", "time complexity", "dynamic programming")
+    const academicBigramRegex = /\b(greedy\s+\w+|spanning\s+trees?|minimum\s+cost|dynamic\s+programming|binary\s+search|page\s+fault|virtual\s+memory|acid\s+properties|transaction\s+isolation|sliding\s+window|depth\s+first|breadth\s+first|time\s+complexity|space\s+complexity|best\s+time)\b/gi;
+    let abMatch;
+    while ((abMatch = academicBigramRegex.exec(seg)) !== null) {
+      const cleaned = this._cleanConceptPhrase(abMatch[0]);
+      if (cleaned) concepts.push(cleaned);
     }
 
-    if (deduped.length === 0) {
-      // Fallback: take first 2 salient content words of the sentence
-      const words = seg.replace(/[^a-zA-Z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 3 && !stopWords.has(w.toLowerCase()));
-      if (words.length > 0) {
-        deduped.push(words.slice(0, 2).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '));
+    // Deduplicate and filter generic filler words with stem normalization
+    const deduped = [];
+    const seenStems = new Set();
+    for (const c of concepts) {
+      const stem = c.toLowerCase().replace(/s$/, '');
+      if (!seenStems.has(stem)) {
+        seenStems.add(stem);
+        deduped.push(c);
       }
     }
 
