@@ -57,6 +57,13 @@ export default function CreateQuizVoice() {
             return;
         }
 
+        const MAX_DIRECT_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB safe direct upload ceiling
+        if (audioFile.size > MAX_DIRECT_UPLOAD_BYTES) {
+            const sizeMB = (audioFile.size / (1024 * 1024)).toFixed(1);
+            setError(`Large audio file (${sizeMB} MB) exceeds the 50 MB direct upload limit. Please compress audio (e.g. 16 kHz mono) or select a file under 50 MB.`);
+            return;
+        }
+
         setUploading(true);
         setError(null);
 
@@ -123,7 +130,13 @@ export default function CreateQuizVoice() {
         } catch (err) {
             console.error('Audio upload error:', err);
             setUploading(false);
-            setError(err.response?.data?.message || err.response?.data?.msg || err.message || 'Failed to upload audio file.');
+            const rawMsg = err.response?.data?.message || err.response?.data?.msg || err.message || '';
+            const sizeMB = audioFile ? (audioFile.size / (1024 * 1024)).toFixed(1) : '';
+            const isFetchFail = err.message === 'Failed to fetch' || !err.response || rawMsg.includes('Failed to fetch');
+            const errorMsg = isFetchFail
+                ? `Upload interrupted (${sizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or use a file under 50 MB.`
+                : (rawMsg || 'Failed to upload audio file.');
+            setError(errorMsg);
         }
     };
 

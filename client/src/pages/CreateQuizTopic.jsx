@@ -347,6 +347,20 @@ export default function CreateQuizTopic() {
             } : item));
         }
 
+        // Client-side preflight check: direct upload limit
+        const MAX_DIRECT_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB safe direct upload ceiling
+        if (file.size > MAX_DIRECT_UPLOAD_BYTES) {
+            const warningMsg = `Large audio file (${fileSizeMB} MB) exceeds the 50 MB direct upload limit. Please compress audio (e.g. 16 kHz mono) or use a file under 50 MB.`;
+            setInputs(prev => prev.map(item => item.id === id ? {
+                ...item,
+                status: 'error',
+                fetchingMetadata: false,
+                errorMsg: warningMsg
+            } : item));
+            toast.error(warningMsg, { duration: 8000 });
+            return;
+        }
+
         try {
             const formData = new FormData();
             formData.append('file', file);
@@ -381,14 +395,18 @@ export default function CreateQuizTopic() {
             }
         } catch (err) {
             console.error('Lecture transcription failed:', err);
-            const errorMsg = err.response?.data?.msg || err.response?.data?.error || err.message || 'Transcription failed';
+            const rawMsg = err.response?.data?.msg || err.response?.data?.error || err.message || '';
+            const isFetchFail = err.message === 'Failed to fetch' || !err.response || rawMsg.includes('Failed to fetch');
+            const errorMsg = isFetchFail
+                ? `Upload interrupted (${fileSizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or use a file under 50 MB.`
+                : (rawMsg || 'Transcription failed');
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
                 status: 'error',
                 fetchingMetadata: false,
                 errorMsg: errorMsg
             } : item));
-            toast.error(`Transcription failed: ${errorMsg}`, { duration: 6000 });
+            toast.error(errorMsg, { duration: 7000 });
         }
     };
 
