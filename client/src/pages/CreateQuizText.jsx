@@ -47,6 +47,7 @@ export default function CreateQuizText() {
     const [lectureDepth, setLectureDepth] = useState(null);
     const [isVoice, setIsVoice] = useState(false);
     const [pipelineNotice, setPipelineNotice] = useState(null);
+    const [alignmentWarning, setAlignmentWarning] = useState(null);
     const [isPartialYield, setIsPartialYield] = useState(false);
     const [requestedCount, setRequestedCount] = useState(null);
     const [representationMode, setRepresentationMode] = useState(null);
@@ -107,6 +108,9 @@ export default function CreateQuizText() {
             if (location.state.notice) {
                 setPipelineNotice(location.state.notice);
             }
+            if (location.state.alignmentWarning) {
+                setAlignmentWarning(location.state.alignmentWarning);
+            }
             if (location.state.isPartial) {
                 setIsPartialYield(true);
             }
@@ -115,6 +119,10 @@ export default function CreateQuizText() {
             }
             if (location.state.representationMode) {
                 setRepresentationMode(location.state.representationMode);
+            } else if (location.state.isVoice || location.state.isAudio || location.state.source === 'voice') {
+                setRepresentationMode('SUMMARY');
+            } else if (location.state.source === 'generated') {
+                setRepresentationMode('BLUEPRINT');
             }
 
             if (location.state.isTemplate || location.state.source === 'template') {
@@ -397,8 +405,40 @@ export default function CreateQuizText() {
                     </div>
                 )}
 
+                {/* Cross-Material Alignment Warning Banner (Policy C+B) */}
+                {alignmentWarning && (
+                    <div className="mb-6 bg-gradient-to-r from-amber-950/80 via-slate-900/90 to-amber-950/80 border border-amber-500/40 rounded-2xl p-4 shadow-lg flex items-start justify-between gap-4 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-300">
+                        <div className="flex items-start gap-3.5">
+                            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-400/30 shrink-0 mt-0.5">
+                                <AlertTriangle size={20} className="stroke-[2.5]" />
+                            </div>
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-amber-300">
+                                        Instructional Alignment Notice (Voice Authority)
+                                    </h4>
+                                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 text-[10px] font-bold">
+                                        Material Excluded
+                                    </span>
+                                </div>
+                                <p className="text-xs text-amber-100/90 leading-relaxed font-medium">
+                                    {alignmentWarning}
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setAlignmentWarning(null)}
+                            className="text-amber-400/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors shrink-0"
+                            title="Dismiss Warning"
+                        >
+                            <X size={16} />
+                        </button>
+                    </div>
+                )}
+
                 {/* Evidence Grounding & Partial Yield Notice Banner */}
-                {pipelineNotice && (
+                {pipelineNotice && !alignmentWarning && (
                     <div className="mb-6 bg-gradient-to-r from-blue-950/80 via-slate-900/90 to-indigo-950/80 border border-blue-500/30 rounded-2xl p-4 shadow-lg flex items-start justify-between gap-4 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-300">
                         <div className="flex items-start gap-3.5">
                             <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-400/30 shrink-0 mt-0.5">

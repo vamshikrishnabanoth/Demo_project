@@ -24,6 +24,7 @@ class LLMRouter {
     this.vllmUrl = process.env.VLLM_URL || null;
     this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'local_ollama');
     this.keyCooldowns = new Map();
+    this.modelCooldowns = new Map();
     this.currentKeyIndex = 0;
   }
 
@@ -140,6 +141,13 @@ class LLMRouter {
         for (let mIdx = 0; mIdx < modelsToTry.length; mIdx++) {
           const currentModel = modelsToTry[mIdx];
           const isLastModel = mIdx === modelsToTry.length - 1;
+
+          // Check if this specific model is currently in short-term cooldown on this key
+          const modelCooldownUntil = this.modelCooldowns.get(`${keyIdx}_${currentModel}`) || 0;
+          if (Date.now() < modelCooldownUntil) {
+            continue; // Skip directly to fallback model without network delay
+          }
+
           let attempts = 0;
           const maxAttempts = 1; // 1 attempt per model, then fail over to fallback model or next key immediately
 
@@ -168,8 +176,9 @@ class LLMRouter {
 
               const content = response.data.choices[0].message.content;
 
-              // Success! Clear cooldown for this key and advance currentKeyIndex
+              // Success! Clear cooldowns for this key and model
               this.keyCooldowns.delete(keyIdx);
+              this.modelCooldowns.delete(`${keyIdx}_${currentModel}`);
               this.currentKeyIndex = (keyIdx + 1) % totalKeys;
               keySucceeded = true;
 
@@ -201,6 +210,8 @@ class LLMRouter {
                   this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
                   console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' exhausted (${isTPD ? 'daily TPD' : 'rate limit'}). Rotating key...`);
                 } else {
+                  // Mark this specific model as temporarily throttled on this key for 25s so next requests skip immediately to fallback
+                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 25000);
                   console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Immediately failing over to fallback '${modelsToTry[mIdx + 1]}'...`);
                 }
                 break; // Break inner loop to try fallback model or next key

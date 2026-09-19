@@ -13,7 +13,15 @@
 
 const STOPWORDS = new Set([
   'this', 'that', 'with', 'from', 'have', 'were', 'what', 'when', 'where',
-  'which', 'there', 'their', 'about', 'would', 'could', 'should', 'going'
+  'which', 'there', 'their', 'about', 'would', 'could', 'should', 'going',
+  'because', 'these', 'those', 'being', 'other', 'the', 'and', 'for', 'are',
+  'all', 'not', 'but', 'into', 'than', 'then', 'also', 'each', 'can', 'will',
+  'just', 'such', 'only', 'more', 'some', 'any', 'been', 'has', 'had', 'does',
+  'did', 'doing', 'our', 'you', 'your', 'they', 'them', 'who', 'how', 'why',
+  'today', 'discuss', 'talk', 'learn', 'well', 'here', 'first', 'second',
+  'must', 'may', 'might', 'shall', 'ought', 'need', 'used', 'make', 'made',
+  'good', 'morning', 'everyone', 'remember', 'rule', 'rules', 'one', 'two', 'three',
+  'take', 'taken', 'give', 'given', 'look', 'see', 'let'
 ]);
 
 function tokenize(text = '') {
@@ -141,6 +149,59 @@ class CrossMaterialAligner {
     }
 
     return Array.from(new Set(expandedIds));
+  }
+
+  /**
+   * Evaluate semantic alignment between spoken audio transcript and an uploaded document/material.
+   * @param {string} voiceText - Spoken lecture transcript
+   * @param {string} docText - Uploaded document / PDF / notes text
+   * @param {Object} [options] - Configuration thresholds
+   * @returns {Object} { isAligned: boolean, sharedTokens: string[], overlapRatio: number, jaccard: number, score: number }
+   */
+  static evaluateDocumentAlignment(voiceText = '', docText = '', options = {}) {
+    const minSharedTokens = options.minSharedTokens || 4;
+    const minOverlapRatio = options.minOverlapRatio || 0.15;
+    const minJaccard = options.minJaccard || 0.07;
+
+    const vTokens = tokenize(voiceText);
+    const dTokens = tokenize(docText);
+
+    if (vTokens.size === 0 || dTokens.size === 0) {
+      return {
+        isAligned: false,
+        sharedTokens: [],
+        overlapRatio: 0,
+        jaccard: 0,
+        score: 0,
+        reason: 'Insufficient meaningful tokens in voice or document.'
+      };
+    }
+
+    const shared = [];
+    for (const t of vTokens) {
+      if (dTokens.has(t)) {
+        shared.push(t);
+      }
+    }
+
+    const minTokenSize = Math.min(vTokens.size, dTokens.size);
+    const overlapRatio = minTokenSize > 0 ? (shared.length / minTokenSize) : 0;
+    const unionSize = new Set([...vTokens, ...dTokens]).size;
+    const jaccard = unionSize > 0 ? (shared.length / unionSize) : 0;
+
+    // A document aligns if it shares significant domain terminology with the spoken lecture
+    const isAligned = (shared.length >= minSharedTokens && (overlapRatio >= minOverlapRatio || jaccard >= minJaccard));
+
+    return {
+      isAligned,
+      sharedTokens: shared,
+      overlapRatio,
+      jaccard,
+      score: jaccard,
+      reason: isAligned 
+        ? `Aligned: ${shared.length} shared concepts (overlap: ${(overlapRatio * 100).toFixed(1)}%, jaccard: ${(jaccard * 100).toFixed(1)}%)`
+        : `Unaligned: only ${shared.length} shared concepts (overlap: ${(overlapRatio * 100).toFixed(1)}%, jaccard: ${(jaccard * 100).toFixed(1)}% below threshold)`
+    };
   }
 }
 

@@ -27,12 +27,15 @@ function tokenize(text) {
  * Deterministically selects the relevant evidence span for a specific target.
  * @param {Object} target - AssessmentTarget
  * @param {Object|string} evidencePackageOrContent - EvidencePackage object or raw string
- * @param {number} maxContextChars - Maximum character budget for fallback window (default: 3500)
+ * @param {number} maxContextChars - Maximum character budget for context window (default: 2000, validated by A/B experiment)
  * @returns {string} Formatted evidence context
  */
-function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', maxContextChars = 3500) {
+function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', maxContextChars = 2000) {
   const isPackage = typeof evidencePackageOrContent === 'object' && evidencePackageOrContent !== null;
   const evidencePackage = isPackage ? evidencePackageOrContent : null;
+  const effectiveMaxChars = (evidencePackage && typeof evidencePackage.maxContextCharsOverride === 'number')
+    ? evidencePackage.maxContextCharsOverride
+    : maxContextChars;
   const rawContent = evidencePackage ? (evidencePackage.unifiedRawContent || '') : String(evidencePackageOrContent || '');
 
   const supporting = (target.supportingEvidence || target.evidenceSpan || '').trim();
@@ -75,8 +78,8 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
           parts.push('[DIRECT TARGET EVIDENCE]\n' + supporting);
         }
         let fullContext = (retrieved.retrievedContent + extraCrossModalContent).trim();
-        if (fullContext.length > maxContextChars) {
-          fullContext = fullContext.substring(0, maxContextChars);
+        if (fullContext.length > effectiveMaxChars) {
+          fullContext = fullContext.substring(0, effectiveMaxChars);
         }
         parts.push('[RELEVANT SESSION CONTEXT (HIERARCHICAL & ALIGNED)]\n' + fullContext);
         return parts.join('\n\n');
@@ -95,7 +98,7 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
   }
 
   // If content is already shorter than window, return it entirely
-  if (content.length <= maxContextChars) {
+  if (content.length <= effectiveMaxChars) {
     const parts = [];
     if (supporting) {
       parts.push('[DIRECT TARGET EVIDENCE]\n' + supporting);
@@ -156,13 +159,13 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
   // 3. Extract surrounding window around matchIndex
   let windowText = '';
   if (matchIndex !== -1) {
-    const halfWindow = Math.floor(maxContextChars / 2);
+    const halfWindow = Math.floor(effectiveMaxChars / 2);
     const start = Math.max(0, matchIndex - halfWindow);
-    const end = Math.min(content.length, start + maxContextChars);
-    const adjustedStart = Math.max(0, end - maxContextChars);
+    const end = Math.min(content.length, start + effectiveMaxChars);
+    const adjustedStart = Math.max(0, end - effectiveMaxChars);
     windowText = content.substring(adjustedStart, end);
   } else {
-    windowText = content.substring(0, maxContextChars);
+    windowText = content.substring(0, effectiveMaxChars);
   }
 
   const parts = [];

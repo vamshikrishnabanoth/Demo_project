@@ -957,10 +957,21 @@ export default function CreateQuizTopic() {
                         setLectureDepth(result.lectureDepth);
                     }
 
-                    if (result.notice || result.isPartial || (result.questions && result.questions.length < questionCount)) {
+                    if (result.alignmentWarning) {
+                        toast(result.alignmentWarning, {
+                            icon: '⚠️',
+                            duration: 9000,
+                            style: {
+                                border: '1px solid rgba(234, 179, 8, 0.4)',
+                                padding: '16px',
+                                color: '#fef08a',
+                                background: '#1e1b4b',
+                            }
+                        });
+                    } else if (result.notice || result.isPartial || (result.questions && result.questions.length < questionCount)) {
                         const count = result.questions ? result.questions.length : 0;
                         const missing = questionCount - count;
-                        toast(`${count} evidence-grounded questions generated. ${missing === 1 ? 'One additional question' : `${missing} additional questions`} could not be validated against available evidence.`, {
+                        toast(result.notice || `${count} evidence-grounded questions generated. ${missing === 1 ? 'One additional question' : `${missing} additional questions`} could not be validated against available evidence.`, {
                             icon: '🛡️',
                             duration: 7000,
                             style: {
@@ -983,6 +994,8 @@ export default function CreateQuizTopic() {
                             agentReport: result.agentReport || null,
                             lectureDepth: hasVoice ? (result.lectureDepth || lectureDepth) : null,
                             notice: result.notice || (result.questions && result.questions.length < questionCount ? `${result.questions.length} grounded questions were generated from the available learning material. Additional questions were withheld to prevent hallucination without supporting evidence.` : null),
+                            alignmentWarning: result.alignmentWarning || null,
+                            unalignedDocuments: result.unalignedDocuments || [],
                             isPartial: Boolean(result.isPartial || (result.questions && result.questions.length < questionCount)),
                             requestedCount: result.requestedCount || questionCount,
                             deliveredCount: result.questions ? result.questions.length : 0,

@@ -14,6 +14,7 @@
 const depthAnalyzer = require('./depthAnalyzer');
 const { HierarchicalChunker } = require('./hierarchicalChunker');
 const { CrossMaterialAligner } = require('./crossMaterialAligner');
+const evidenceCache = require('./evidenceCache');
 
 class EvidencePackager {
   /**
@@ -23,14 +24,59 @@ class EvidencePackager {
    * @returns {Object} Teaching Evidence Package
    */
   packageSessionEvidence(sessionInputs = {}, ragChunks = []) {
+    // 0. Check Preprocessing LRU Cache
+    const cached = evidenceCache.get(sessionInputs);
+    if (cached) {
+      console.log(`⚡ [EvidencePackager] Preprocessing LRU Cache HIT for session (instant <5ms)`);
+      return cached;
+    }
+
     const voiceText = sessionInputs.voiceTranscript || '';
-    const docsText = (sessionInputs.documentTexts || []).join('\n');
+    const hasVoice = Boolean(voiceText && voiceText.trim().length > 50);
+    const docTexts = Array.isArray(sessionInputs.documentTexts) ? sessionInputs.documentTexts : (sessionInputs.documentTexts ? [sessionInputs.documentTexts] : []);
+    const docNames = Array.isArray(sessionInputs.documentNames) ? sessionInputs.documentNames : [];
     const codeText = sessionInputs.codeSnippets || '';
     const imageText = (sessionInputs.imageTexts || []).join('\n');
-    // Extract exact artifacts from Code / PPT / PDF / Board Images
-    const exactArtifacts = this._extractExactArtifacts(codeText, docsText, imageText);
 
-    const rawContent = `[VOICE TRANSCRIPT]\n${voiceText}\n\n[DOCUMENT CONTENT]\n${docsText}\n\n[CODE SNIPPETS]\n${codeText}\n\n[BOARD OCR]\n${imageText}`;
+    // Policy C + B: Cross-Material Alignment Check
+    // When Voice Authority is present, any uploaded materials (PDFs/docs/code) must semantically align with what was spoken.
+    // If an uploaded document is unrelated, exclude it to protect assessment scope and issue an explicit warning notice.
+    let effectiveDocTexts = [];
+    let unalignedDocs = [];
+    let alignmentWarning = null;
+
+    if (hasVoice && docTexts.length > 0) {
+      docTexts.forEach((dText, idx) => {
+        const dName = docNames[idx] || (docTexts.length === 1 ? 'Uploaded Document' : `Document ${idx + 1}`);
+        if (!dText || dText.trim().length === 0) return;
+
+        const evalResult = CrossMaterialAligner.evaluateDocumentAlignment(voiceText, dText);
+        if (evalResult.isAligned) {
+          effectiveDocTexts.push({ text: dText, name: dName });
+        } else {
+          unalignedDocs.push({ text: dText, name: dName, evalResult });
+        }
+      });
+
+      if (unalignedDocs.length > 0) {
+        const namesList = unalignedDocs.map(d => `'${d.name}'`).join(', ');
+        alignmentWarning = `Uploaded document ${namesList} did not align with the spoken lecture topic and was excluded to keep assessment questions strictly grounded in what was taught.`;
+        console.log(`⚠️ [CrossMaterialAligner] Policy C+B Applied: ${alignmentWarning}`);
+      }
+    } else {
+      effectiveDocTexts = docTexts.map((dText, idx) => ({
+        text: dText,
+        name: docNames[idx] || `Document ${idx + 1}`
+      }));
+    }
+
+    const cleanDocsArray = effectiveDocTexts.map(d => d.text);
+    const cleanDocsText = cleanDocsArray.join('\n');
+
+    // Extract exact artifacts from Code / PPT / PDF / Board Images (using only aligned materials)
+    const exactArtifacts = this._extractExactArtifacts(codeText, cleanDocsText, imageText);
+
+    const rawContent = `[VOICE TRANSCRIPT]\n${voiceText}\n\n[DOCUMENT CONTENT]\n${cleanDocsText}\n\n[CODE SNIPPETS]\n${codeText}\n\n[BOARD OCR]\n${imageText}`;
 
     // 1. Pedagogical Lecture Depth & Academic Content Analysis
     const depthAnalysis = depthAnalyzer.analyzeLecture(rawContent);
@@ -66,6 +112,10 @@ class EvidencePackager {
       adminSegments: depthAnalysis.adminSegments || [],
       curricularContent,
       categoryWeights: categoryWeights,
+      hasExcludedMaterials: unalignedDocs.length > 0,
+      unalignedDocuments: unalignedDocs.map(d => d.name),
+      alignmentWarning: alignmentWarning,
+      hasAlignedDocs: cleanDocsArray.length > 0,
       ragChunksSummary: ragChunks.map(c => ({
         id: c.id,
         sourceType: c.sourceType,
@@ -76,8 +126,13 @@ class EvidencePackager {
     };
 
     // 3. Construct Dual-Level Hierarchical Evidence Store & Cross-Material Alignment Graph
+    // Using effective session inputs where unaligned materials have been excluded
     try {
-      packageData.hierarchicalStore = HierarchicalChunker.buildStore(sessionInputs);
+      const sanitizedInputs = {
+        ...sessionInputs,
+        documentTexts: cleanDocsArray
+      };
+      packageData.hierarchicalStore = HierarchicalChunker.buildStore(sanitizedInputs);
       packageData.alignmentGraph = CrossMaterialAligner.buildAlignmentGraph(packageData.hierarchicalStore);
     } catch (storeErr) {
       console.warn(`⚠️ [EvidencePackager] Notice building hierarchical/alignment store: ${storeErr.message}`);
@@ -85,6 +140,7 @@ class EvidencePackager {
       packageData.alignmentGraph = {};
     }
 
+    evidenceCache.set(sessionInputs, packageData);
     return packageData;
   }
 

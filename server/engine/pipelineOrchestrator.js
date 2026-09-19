@@ -82,20 +82,30 @@ class PipelineOrchestrator {
       let representationMode = 'UNIFIED';
       let routerReason = '';
 
-      if (usePdiRouter) {
-        const pdiDecision = pdiRouter.route(sessionInputs);
+      const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
+      const hasAlignedDocs = Boolean(evidencePackage.hasAlignedDocs);
+      const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
+
+      if (evidencePackage.hasExcludedMaterials && !hasAlignedDocs && !hasCode) {
+        // Policy C + B: Voice primary authority - all unaligned materials excluded
+        representationMode = 'SUMMARY';
+        routerReason = `Voice Primary Authority (Policy C+B): Unaligned material (${(evidencePackage.unalignedDocuments || []).join(', ')}) was excluded. Routed to pure transcript narrative representation path.`;
+      } else if (usePdiRouter) {
+        const sanitizedInputs = {
+          ...sessionInputs,
+          documentTexts: hasAlignedDocs ? (evidencePackage.hasAlignedDocs ? sessionInputs.documentTexts : []) : []
+        };
+        const pdiDecision = pdiRouter.route(sanitizedInputs);
         representationMode = pdiDecision.selected_representation;
         routerReason = `[Adaptive PDI Router: PDI=${pdiDecision.pedagogical_delivery_index.toFixed(3)}] ${pdiDecision.rationale}`;
       } else {
         // Deterministic Modality Baseline Route
-        const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
-        const hasDocs = Boolean(sessionInputs.documentTexts && sessionInputs.documentTexts.length > 0);
-        const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
-
-        if (hasVoice && !hasDocs && !hasCode) {
+        if (hasVoice && !hasAlignedDocs && !hasCode) {
           representationMode = 'SUMMARY';
-          routerReason = 'Voice-only modality: Pure transcript narrative representation path.';
-        } else if (!hasVoice && (hasDocs || hasCode)) {
+          routerReason = evidencePackage.hasExcludedMaterials
+            ? `Voice Primary Authority (Policy C+B): Unaligned material was excluded. Routed to pure transcript narrative representation path.`
+            : 'Voice-only modality: Pure transcript narrative representation path.';
+        } else if (!hasVoice && (hasAlignedDocs || hasCode)) {
           representationMode = 'BLUEPRINT';
           routerReason = hasCode ? 'Code/artifact modality: Structural blueprint schema representation path.' : 'Document-only modality: Syllabus/slide blueprint representation path.';
         } else {
@@ -136,11 +146,12 @@ class PipelineOrchestrator {
         },
         decisions: [
           `Voice Authority applied: Syntax emphasis = ${voiceEmphasis.syntaxEmphasis}, Conceptual emphasis = ${voiceEmphasis.conceptualEmphasis}`,
+          evidencePackage.alignmentWarning ? `Cross-Material Alignment Warning: ${evidencePackage.alignmentWarning}` : null,
           `Material Authority applied: ${evidencePackage.artifacts?.formulasDetected?.length || 0} formulas detected, Code presence = ${evidencePackage.artifacts?.hasCode}`,
           `PDI Representation Path selected: ${representationMode}`,
           `Hierarchical RAG: ${evidencePackage.hierarchicalStore?.children?.length || 0} children mapped to ${evidencePackage.hierarchicalStore?.parents?.length || 0} parent windows`,
           `Cross-Material Alignment: ${Object.keys(evidencePackage.alignmentGraph || {}).length} bidirectional cross-modal nodes established`
-        ],
+        ].filter(Boolean),
         rulesApplied: [
           'Dual-Source Authority Division Rule: Voice rules intent/emphasis, Materials rule exact artifacts',
           'PDI Representation Routing Rule: Map modal inputs to SUMMARY / BLUEPRINT / UNIFIED',
@@ -223,25 +234,23 @@ class PipelineOrchestrator {
       });
 
       // ──────────────────────────────────────────────────────────────────────────
-      // Stage 04: QUESTION GENERATION & EVALUATION LOOP
+      // Stage 04: QUESTION GENERATION & EVALUATION LOOP (Bounded Concurrency)
       // ──────────────────────────────────────────────────────────────────────────
       const passingQuestions = [];
       let totalAttempts = 0;
       let totalSwaps = 0;
       const MAX_TOTAL_SWAPS = Math.max(3, Math.ceil(requestedCount * 0.4));
 
-      for (let i = 0; i < primaryTargets.length; i++) {
-        // If we already reached requested question count, stop generating more
-        if (passingQuestions.length >= requestedCount) {
-          break;
-        }
+      const CONCURRENCY_LIMIT = 3;
+      const targetQueue = [...primaryTargets];
+      let queueIdx = 0;
 
-        let currentTarget = primaryTargets[i];
+      // Encapsulated single-target generation & evaluation unit
+      const executeTarget = async (currentTarget, displayIndex) => {
         let attempts = 0;
-        let targetPassed = false;
         let repairInstruction = null;
 
-        while (attempts < 2 && !targetPassed) {
+        while (attempts < 2) {
           attempts++;
           totalAttempts++;
           const targetStartTime = Date.now();
@@ -252,7 +261,7 @@ class PipelineOrchestrator {
             stageName: 'QUESTION_GENERATION',
             input: { targetId: currentTarget.targetId, concept: currentTarget.concept },
             processing: { operations: ['Prompt formulation', 'LLM generation via Gateway'] },
-            decisions: [`${targetAction} candidate MCQ for Question ${passingQuestions.length + 1}/${Math.min(requestedCount, primaryTargets.length)} ("${currentTarget.concept}")`],
+            decisions: [`${targetAction} candidate MCQ for Question ${Math.min(requestedCount, displayIndex + 1)}/${requestedCount} ("${currentTarget.concept}")`],
             rulesApplied: ['Scenario Transformation & Cognitive Dimension Alignment'],
             evidenceUsed: [currentTarget.targetId],
             output: { targetId: currentTarget.targetId },
@@ -281,8 +290,7 @@ class PipelineOrchestrator {
 
             const isRateLimit = genErr.code === 'NO_LLM_PROVIDER_AVAILABLE' || (genErr.message || '').includes('429') || (genErr.message || '').includes('rate-limit');
             if (isRateLimit) {
-              console.warn(`⏳ [Orchestrator] Provider capacity notice on target ${currentTarget.targetId} (attempt ${attempts}). Bounded cooldown (3s)...`);
-              await new Promise(r => setTimeout(r, 3000));
+              console.warn(`⚠️ [Orchestrator] Provider capacity notice on target ${currentTarget.targetId} (attempt ${attempts}). Failing over immediately...`);
             }
 
             repairInstruction = `Fix previous failure (${genErr.message}). Output strictly raw JSON starting with { and ending with }.`;
@@ -309,105 +317,10 @@ class PipelineOrchestrator {
             continue;
           }
 
-          // 4C. Deterministic Duplicate Question Check (using 3-zone pedagogical redundancy model)
-          const dupCheck = deterministicValidator.checkDuplicateQuestion(candidateMCQ, passingQuestions, currentTarget);
-          if (dupCheck.isDuplicate) {
-            await trace.recordStage({
-              stageOrder: `04_T${currentTarget.targetId}_att${attempts}`,
-              stageName: 'DETERMINISTIC_DUPLICATE_CHECK',
-              input: { targetId: currentTarget.targetId, candidateMCQ, duplicateWith: dupCheck.duplicateWith },
-              processing: { operations: ['Jaccard token similarity check against accepted questions'] },
-              decisions: [`Candidate MCQ rejected: ${dupCheck.reason} (similarity: ${dupCheck.similarity})`],
-              rulesApplied: ['Deterministic Multi-Factor Redundancy Rule'],
-              evidenceUsed: [currentTarget.targetId],
-              errors: [`${dupCheck.reason}: "${dupCheck.duplicateWith}"`],
-              output: { isValid: false, duplicate: true },
-              validation: { status: 'FAIL', errors: [`Duplicate of: "${dupCheck.duplicateWith}"`] },
-              durationMs: Date.now() - targetStartTime
-            });
-            repairInstruction = `Generate a DIFFERENT question testing ${currentTarget.concept} with a different cognitive operation. Do NOT repeat phrasing or exact answers from previous questions.`;
-            continue;
-          }
-
           // 4D. Agent 3 Question-Level Reasoning Evaluation
           const evalDecision = await agent3Evaluator.evaluateQuestion(candidateMCQ, currentTarget, evidencePackage);
 
           if (evalDecision.status === 'PASS') {
-            // Construct Question Decision Ledger Record
-            const decisionLedger = {
-              questionId: `Q${passingQuestions.length + 1}`,
-              source: {
-                tier: evalDecision.tier || 'EVIDENCE_DERIVED',
-                supportingChunks: currentTarget.sourceChunks || ['chunk_01']
-              },
-              concept: currentTarget.concept,
-              subtopic: currentTarget.subtopic || 'Core Mechanism',
-              cognitiveDimension: currentTarget.dimension,
-              difficulty: currentTarget.targetDifficulty,
-              studentAnswerability: evalDecision.studentAnswerability || 'HIGH',
-              redundancy: {
-                similarQuestion: null,
-                similarity: dupCheck.similarity || 0,
-                decision: 'KEEP'
-              },
-              agent3: {
-                verdict: 'PASS',
-                groundingScore: evalDecision.groundingScore || 0.95
-              },
-              grounding: {
-                status: 'GROUNDED'
-              }
-            };
-
-            // Construct Full 7-Point Traceability Audit Record
-            const traceabilityAudit = {
-              "1_sourceOrigin": currentTarget.evidenceType || "VOICE + DOCUMENT",
-              "2_supportingSessionChunks": currentTarget.sourceChunks || ["chunk_01"],
-              "3_agent1AssessmentReasoning": {
-                "whyAssessed": `Teacher emphasized ${currentTarget.concept} as a key learning outcome.`,
-                "detectedEmphasis": plan.teachingEmphasis,
-                "ruleApplied": "Teacher verbal emphasis elevates target priority."
-              },
-              "4_agent2FormulationReasoning": {
-                "dimension": currentTarget.dimension,
-                "cognitiveLevel": currentTarget.cognitiveLevel,
-                "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
-              },
-              "5_agent3EvaluationReasoning": {
-                "groundingScore": evalDecision.groundingScore || 0.95,
-                "derivabilityTier": evalDecision.tier || "EVIDENCE_DERIVED",
-                "studentAnswerability": evalDecision.studentAnswerability || "HIGH",
-                "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
-                "verdict": "PASS"
-              },
-              "6_deterministicCalculations": {
-                "preChecksPassed": true,
-                "mathVerified": currentTarget.dimension === 'Calculation' ? "Verified by CalculationEngine" : "N/A"
-              },
-              "7_finalGroundingGateReasoning": {
-                "status": "PASSED",
-                "justification": `Question and options are directly justified by session evidence for ${currentTarget.concept}.`
-              }
-            };
-
-            candidateMCQ.metadata = {
-              ...candidateMCQ.metadata,
-              subtopic: currentTarget.subtopic || 'Core Mechanism',
-              concept: currentTarget.concept,
-              dimension: currentTarget.dimension,
-              cognitiveLevel: currentTarget.cognitiveLevel,
-              tier: evalDecision.tier || 'EVIDENCE_DERIVED',
-              studentAnswerability: evalDecision.studentAnswerability || 'HIGH',
-              groundingScore: evalDecision.groundingScore || 0.95,
-              targetId: currentTarget.targetId,
-              attempt: attempts,
-              decisionLedger,
-              traceabilityAudit
-            };
-
-            passingQuestions.push(candidateMCQ);
-            targetPassed = true;
-
             await trace.recordStage({
               stageOrder: `04_T${currentTarget.targetId}_att${attempts}`,
               stageName: 'AGENT_3_QUESTION_EVAL',
@@ -420,14 +333,16 @@ class PipelineOrchestrator {
                 `Subtopic: "${currentTarget.subtopic || 'Core Mechanism'}" | Concept: "${currentTarget.concept}"`,
                 `Derivability Tier: ${evalDecision.tier || 'EVIDENCE_DERIVED'} | Student Answerability: ${evalDecision.studentAnswerability || 'HIGH'}`,
                 `Grounding justification score: ${evalDecision.groundingScore || 0.95}`,
-                `Distractors evaluated plausible, distinct, and free of superficial hallucinations`
+                'Distractors evaluated plausible, distinct, and free of superficial hallucinations'
               ],
-              rulesApplied: ['Pedagogical Quality and 5-Tier Derivability Acceptance Rule'],
+              rulesApplied: ['Agent 3 Quality Threshold Enforcement Rule', 'Pedagogical Justification Constraint'],
               evidenceUsed: currentTarget.sourceChunks || ['chunk_01'],
-              output: { status: 'PASS', mcq: candidateMCQ },
-              validation: { status: 'PASS', checks: ['Grounding >= 0.85', 'Target aligned', 'Distractors valid'] },
+              output: { status: 'PASS', tier: evalDecision.tier, score: evalDecision.groundingScore },
+              validation: { status: 'PASS', checks: ['Target approved by Agent 3 Reasoner'] },
               durationMs: Date.now() - targetStartTime
             });
+
+            return { status: 'PASS', target: currentTarget, candidateMCQ, evalDecision, attempts };
           } else {
             await trace.recordStage({
               stageOrder: `04_T${currentTarget.targetId}_att${attempts}`,
@@ -451,35 +366,155 @@ class PipelineOrchestrator {
           }
         }
 
-        // If target failed, swap in at most 1 Reserve Target across the session if needed
-        if (!targetPassed) {
-          if (reservePool.length > 0 && totalSwaps < MAX_TOTAL_SWAPS && passingQuestions.length < requestedCount) {
-            totalSwaps++;
-            const reserveTarget = reservePool.shift();
-            await new Promise(r => setTimeout(r, 2000));
-            await trace.recordStage({
-              stageOrder: `04_SWAP_${currentTarget.targetId}`,
-              stageName: 'TARGET_RESERVE_SWAP',
-              decisions: [
-                `Target ${currentTarget.targetId} exhausted retry budget.`,
-                `Swapped in pre-generated reserve target ${reserveTarget.targetId} ("${reserveTarget.concept}").`
-              ],
-              rulesApplied: ['Reserve Target Fallback Rule (no Agent 1 recall)'],
-              evidenceUsed: [currentTarget.targetId, reserveTarget.targetId],
-              output: { swappedFrom: currentTarget.targetId, swappedTo: reserveTarget.targetId },
-              validation: { status: 'PASS', checks: ['Reserve target available and swapped'] }
-            });
-            primaryTargets.push(reserveTarget);
-          } else {
-            await trace.recordStage({
-              stageOrder: `04_EXHAUSTED_${currentTarget.targetId}`,
-              stageName: 'TARGET_EXHAUSTED',
-              decisions: [`Target ${currentTarget.targetId} could not pass audit and reserve budget is reached.`],
-              validation: { status: 'PASS', checks: ['Target closed without forcing ungrounded question'] }
-            });
+        return { status: 'FAIL', target: currentTarget, attempts };
+      };
+
+      // Concurrent Worker Pool Execution
+      const worker = async () => {
+        while (queueIdx < targetQueue.length && passingQuestions.length < requestedCount) {
+          const currentIdx = queueIdx++;
+          const currentTarget = targetQueue[currentIdx];
+          if (!currentTarget) break;
+
+          const res = await executeTarget(currentTarget, passingQuestions.length);
+
+          if (res.status === 'PASS' && passingQuestions.length < requestedCount) {
+            // Check deterministic duplicate question against passing pool
+            const dupCheck = deterministicValidator.checkDuplicateQuestion(res.candidateMCQ, passingQuestions, res.target);
+
+            if (!dupCheck.isDuplicate) {
+              const qNum = passingQuestions.length + 1;
+              const decisionLedger = {
+                questionId: `Q${qNum}`,
+                source: {
+                  tier: res.evalDecision.tier || 'EVIDENCE_DERIVED',
+                  supportingChunks: res.target.sourceChunks || ['chunk_01']
+                },
+                concept: res.target.concept,
+                subtopic: res.target.subtopic || 'Core Mechanism',
+                cognitiveDimension: res.target.dimension,
+                difficulty: res.target.targetDifficulty,
+                studentAnswerability: res.evalDecision.studentAnswerability || 'HIGH',
+                redundancy: {
+                  similarQuestion: null,
+                  similarity: dupCheck.similarity || 0,
+                  decision: 'KEEP'
+                },
+                agent3: {
+                  verdict: 'PASS',
+                  groundingScore: res.evalDecision.groundingScore || 0.95
+                },
+                grounding: {
+                  status: 'GROUNDED'
+                }
+              };
+
+              const traceabilityAudit = {
+                "1_sourceOrigin": res.target.evidenceType || "VOICE + DOCUMENT",
+                "2_supportingSessionChunks": res.target.sourceChunks || ["chunk_01"],
+                "3_agent1AssessmentReasoning": {
+                  "whyAssessed": `Teacher emphasized ${res.target.concept} as a key learning outcome.`,
+                  "detectedEmphasis": plan.teachingEmphasis,
+                  "ruleApplied": "Teacher verbal emphasis elevates target priority."
+                },
+                "4_agent2FormulationReasoning": {
+                  "dimension": res.target.dimension,
+                  "cognitiveLevel": res.target.cognitiveLevel,
+                  "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+                },
+                "5_agent3EvaluationReasoning": {
+                  "groundingScore": res.evalDecision.groundingScore || 0.95,
+                  "derivabilityTier": res.evalDecision.tier || "EVIDENCE_DERIVED",
+                  "studentAnswerability": res.evalDecision.studentAnswerability || "HIGH",
+                  "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+                  "verdict": "PASS"
+                },
+                "6_deterministicCalculations": {
+                  "preChecksPassed": true,
+                  "mathVerified": res.target.dimension === 'Calculation' ? "Verified by CalculationEngine" : "N/A"
+                },
+                "7_finalGroundingGateReasoning": {
+                  "status": "PASSED",
+                  "justification": `Question and options are directly justified by session evidence for ${res.target.concept}.`
+                }
+              };
+
+              res.candidateMCQ.metadata = {
+                ...res.candidateMCQ.metadata,
+                subtopic: res.target.subtopic || 'Core Mechanism',
+                concept: res.target.concept,
+                dimension: res.target.dimension,
+                cognitiveLevel: res.target.cognitiveLevel,
+                tier: res.evalDecision.tier || 'EVIDENCE_DERIVED',
+                studentAnswerability: res.evalDecision.studentAnswerability || 'HIGH',
+                groundingScore: res.evalDecision.groundingScore || 0.95,
+                targetId: res.target.targetId,
+                attempt: res.attempts,
+                decisionLedger,
+                traceabilityAudit
+              };
+
+              passingQuestions.push(res.candidateMCQ);
+            } else {
+              console.warn(`⚠️ [Orchestrator] Concurrent question duplicate detected: ${dupCheck.reason}. Retrying with reserve target...`);
+              await trace.recordStage({
+                stageOrder: `04_T${res.target.targetId}_dup`,
+                stageName: 'DETERMINISTIC_DUPLICATE_CHECK',
+                input: { targetId: res.target.targetId, candidateMCQ: res.candidateMCQ, duplicateWith: dupCheck.duplicateWith },
+                processing: { operations: ['Jaccard token similarity check against accepted questions'] },
+                decisions: [`Candidate MCQ rejected: ${dupCheck.reason} (similarity: ${dupCheck.similarity})`],
+                rulesApplied: ['Deterministic Multi-Factor Redundancy Rule'],
+                evidenceUsed: [res.target.targetId],
+                errors: [`${dupCheck.reason}: "${dupCheck.duplicateWith}"`],
+                output: { isValid: false, duplicate: true },
+                validation: { status: 'FAIL', errors: [`Duplicate of: "${dupCheck.duplicateWith}"`] }
+              });
+            }
+          }
+
+          // If target failed or was duplicate, draw from reservePool if available
+          let isDuplicate = false;
+          if (res.status === 'PASS') {
+            const dupCheck = deterministicValidator.checkDuplicateQuestion(res.candidateMCQ, passingQuestions, res.target);
+            isDuplicate = dupCheck.isDuplicate;
+          }
+
+          const targetFailed = (res.status !== 'PASS') || isDuplicate;
+          if (targetFailed) {
+            if (reservePool.length > 0 && totalSwaps < MAX_TOTAL_SWAPS && passingQuestions.length < requestedCount) {
+              totalSwaps++;
+              const reserveTarget = reservePool.shift();
+              await trace.recordStage({
+                stageOrder: `04_SWAP_${currentTarget.targetId}`,
+                stageName: 'TARGET_RESERVE_SWAP',
+                decisions: [
+                  `Target ${currentTarget.targetId} exhausted or duplicate.`,
+                  `Swapped in pre-generated reserve target ${reserveTarget.targetId} ("${reserveTarget.concept}").`
+                ],
+                rulesApplied: ['Reserve Target Fallback Rule (no Agent 1 recall)'],
+                evidenceUsed: [currentTarget.targetId, reserveTarget.targetId],
+                output: { swappedFrom: currentTarget.targetId, swappedTo: reserveTarget.targetId },
+                validation: { status: 'PASS', checks: ['Reserve target available and swapped'] }
+              });
+              targetQueue.push(reserveTarget);
+            } else {
+              await trace.recordStage({
+                stageOrder: `04_EXHAUSTED_${currentTarget.targetId}`,
+                stageName: 'TARGET_EXHAUSTED',
+                decisions: [`Target ${currentTarget.targetId} could not pass audit and reserve budget is reached.`],
+                validation: { status: 'PASS', checks: ['Target closed without forcing ungrounded question'] }
+              });
+            }
           }
         }
+      };
+
+      const workers = [];
+      const workerCount = Math.min(CONCURRENCY_LIMIT, targetQueue.length);
+      for (let w = 0; w < workerCount; w++) {
+        workers.push(worker());
       }
+      await Promise.all(workers);
 
       trace.totalAttempts = totalAttempts;
 
@@ -606,6 +641,11 @@ class PipelineOrchestrator {
         notice = `${deliveredCount} evidence-grounded questions were generated from the available instructional content. ${missingCount === 1 ? 'One additional question' : `${missingCount} additional questions`} could not be validated against the available evidence.`;
       }
 
+      // Merge Cross-Material Alignment exclusion warning if present
+      if (evidencePackage.alignmentWarning) {
+        notice = notice ? `${evidencePackage.alignmentWarning} (${notice})` : evidencePackage.alignmentWarning;
+      }
+
       // Finalize Session Trace & Persist final_session_trace.json
       const finalTraceData = await trace.finalize(groundingResult.validatedQuestions, plan.tcScore, evidencePackage, plan, pipelineStatus);
 
@@ -619,6 +659,8 @@ class PipelineOrchestrator {
         requestedCount,
         deliveredCount,
         notice,
+        alignmentWarning: evidencePackage.alignmentWarning || null,
+        unalignedDocuments: evidencePackage.unalignedDocuments || [],
         lectureDepth: evidencePackage.lectureDepth,
         representationMode: evidencePackage.representationMode || 'UNIFIED',
         routerReason: evidencePackage.routerReason || null,

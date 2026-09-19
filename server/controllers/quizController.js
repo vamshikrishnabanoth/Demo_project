@@ -210,8 +210,9 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             const textParts = [];
             let cumulativeDuration = 0;
 
-            for (let i = 0; i < chunks.length; i++) {
-                const chunk = chunks[i];
+            // Transcribe oversized chunks in parallel with Promise.all
+            console.log(`🎙️ [Whisper Large-v3] Launching parallel transcription for ${chunks.length} chunks...`);
+            const chunkResults = await Promise.all(chunks.map(async (chunk, i) => {
                 const chunkNum = i + 1;
                 console.log(`🎙️ [Whisper Large-v3] Transcribing Chunk ${chunkNum}/${chunks.length} (${(chunk.sizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
 
@@ -226,6 +227,13 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                 const chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : 0);
 
                 console.log(`✅ [Whisper Large-v3] Chunk ${chunkNum}/${chunks.length} transcribed: ${chunkText.length} chars, ${chunkDuration.toFixed(1)}s, ${chunkSegs.length} segments`);
+                return { chunk, chunkText, chunkSegs, chunkDuration, i };
+            }));
+
+            // Assemble chunks in original chronological order with boundary deduplication
+            for (let i = 0; i < chunkResults.length; i++) {
+                const { chunk, chunkText, chunkSegs, chunkDuration } = chunkResults[i];
+                const chunkNum = i + 1;
 
                 // Deduplicate boundary overlap text with previous chunk
                 let filteredSegs = chunkSegs;
@@ -608,16 +616,18 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
 
         let voiceText = '';
         let docTexts = [];
+        let docNames = [];
         let codeSnippets = '';
 
         if (Array.isArray(inputs) && inputs.length > 0) {
-            inputs.forEach(inp => {
+            inputs.forEach((inp, idx) => {
                 if (inp.type === 'voice' || inp.type === 'audio' || inp.type === 'transcript') {
                     voiceText += (inp.content || '') + '\n';
                 } else if (inp.type === 'code') {
                     codeSnippets += (inp.content || '') + '\n';
                 } else if (inp.content) {
                     docTexts.push(inp.content);
+                    docNames.push(inp.name || inp.filename || inp.source_name || inp.title || `Document ${idx + 1}`);
                 }
             });
         } else if (typeof content === 'string') {
@@ -627,12 +637,14 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 codeSnippets = content;
             } else {
                 docTexts.push(content);
+                docNames.push('Uploaded Document');
             }
         }
 
         const sessionInputs = {
             voiceTranscript: voiceText,
             documentTexts: docTexts,
+            documentNames: docNames,
             codeSnippets: codeSnippets,
             difficulty: difficulty,
             count: parseInt(count)
@@ -678,6 +690,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 const tObj = getTaskForMeta(taskId);
                 if (tObj) {
                     tObj.pipelineNotice = result.notice || null;
+                    tObj.alignmentWarning = result.alignmentWarning || null;
+                    tObj.unalignedDocuments = result.unalignedDocuments || [];
                     tObj.isPartial = Boolean(result.pipelineStatus === 'COMPLETED_WITH_PARTIAL_FULFILLMENT' || (result.questions.length < sessionInputs.count));
                     tObj.requestedCount = sessionInputs.count;
                     tObj.deliveredCount = result.questions.length;
@@ -2397,52 +2411,51 @@ exports.generateQuizQuestions = async (req, res) => {
                 }
 
                 if (allUploadedFiles.length > 0) {
-                    for (const file of allUploadedFiles) {
+                    const safeUnlink = (p) => {
+                        if (!p) return;
+                        const lower = String(p).toLowerCase();
+                        if (lower.includes('uploads') || lower.includes('tmp') || lower.includes('temp')) {
+                            try { fs.unlinkSync(p); } catch (_) {}
+                        }
+                    };
+
+                    const processedFiles = await Promise.all(allUploadedFiles.map(async (file) => {
                         const filePath = path.resolve(file.path);
                         const ext = path.extname(file.originalname).toLowerCase();
                         const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };
                         resolvedNames.add(file.originalname);
-                        
-                        const safeUnlink = (p) => {
-                            if (!p) return;
-                            const lower = String(p).toLowerCase();
-                            if (lower.includes('uploads') || lower.includes('tmp') || lower.includes('temp')) {
-                                try { fs.unlinkSync(p); } catch (_) {}
-                            }
-                        };
 
                         const isAudio = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
                         if (isAudio) {
                             console.log(`🎙️ Transcribing uploaded lecture audio: ${file.originalname}`);
                             updateTaskStage(taskId, 0, 'Ingesting & Analyzing Material');
                             const transcript = await transcribeAudio(filePath);
+                            safeUnlink(filePath);
                             if (transcript && transcript.trim().length > 0) {
-                                parsedInputs.push({
+                                return {
                                     type: 'voice',
                                     content: transcript,
                                     source_name: file.originalname
-                                });
+                                };
                             }
-                            safeUnlink(filePath);
-                            continue;
+                            return null;
                         }
 
                         const isTxt = ext === '.txt';
                         if (isTxt) {
                             const textContent = fs.readFileSync(filePath, 'utf8');
-                            parsedInputs.push({
+                            safeUnlink(filePath);
+                            return {
                                 type: 'voice',
                                 content: textContent,
                                 source_name: file.originalname
-                            });
-                            safeUnlink(filePath);
-                            continue;
+                            };
                         }
 
                         let textContent = "";
                         const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
                         let isHandwrittenScan = isImage;
-                        
+
                         if (isImage) {
                             const buffer = fs.readFileSync(filePath);
                             textContent = "base64:" + buffer.toString('base64');
@@ -2457,16 +2470,20 @@ exports.generateQuizQuestions = async (req, res) => {
                                 }
                             }
                         }
-                        
-                        parsedInputs.push({
+
+                        safeUnlink(filePath);
+
+                        return {
                             type: isHandwrittenScan ? 'handwritten_scan' : ext.replace('.', ''),
                             content: textContent || filePath,
                             source_name: file.originalname,
                             startPage: config.startPage || 1,
                             endPage: config.endPage || 999
-                        });
-                        
-                        safeUnlink(filePath);
+                        };
+                    }));
+
+                    for (const item of processedFiles) {
+                        if (item) parsedInputs.push(item);
                     }
                 }
 
@@ -2948,7 +2965,9 @@ exports.generateQuizQuestions = async (req, res) => {
                 requestedCount:  (finalTaskObj && finalTaskObj.requestedCount) || questionCount,
                 deliveredCount:  finalQuestions.length,
                 notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `${finalQuestions.length} evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.` : null),
-                representation_mode: (finalTaskObj && finalTaskObj.representation_mode) || null,
+                alignmentWarning: (finalTaskObj && finalTaskObj.alignmentWarning) || null,
+                unalignedDocuments: (finalTaskObj && finalTaskObj.unalignedDocuments) || [],
+                representation_mode: (finalTaskObj && finalTaskObj.representation_mode) || (isVoiceSource ? 'SUMMARY' : 'BLUEPRINT'),
                 metadata: {
                     executionMessages: (finalTaskObj && finalTaskObj.executionMessages) || []
                 }
