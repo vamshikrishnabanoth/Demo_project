@@ -239,6 +239,7 @@ class PipelineOrchestrator {
       const passingQuestions = [];
       let totalAttempts = 0;
       let totalSwaps = 0;
+      // Bounded reserve/retry budget: max(3N, 15) attempts to prevent runaway loops during provider degradation
       const MAX_TOTAL_ATTEMPTS = Math.max(requestedCount * 3, 15);
 
       const CONCURRENCY_LIMIT = 2;
