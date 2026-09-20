@@ -3,8 +3,8 @@
  *
  * Enforces the formal Assessment Docket Policy for Architecture E + Production Hardening:
  * - Up to 4 audio files across accumulated draft
- * - Up to 120 minutes (2 hours) cumulative audio duration
- * - Up to 90 minutes for any single audio recording
+ * - Up to 180 minutes (3 hours) cumulative audio duration
+ * - Up to 180 minutes (3 hours) for any single audio recording
  * - Warning on brief recordings (< 2 minutes)
  * - Up to 5 supporting documents across accumulated draft
  * - Up to 100 pages cumulative
@@ -18,8 +18,8 @@
 
 const DOCKET_LIMITS = {
   MAX_AUDIO_FILES: 4,
-  MAX_TOTAL_AUDIO_DURATION_SEC: 7200, // 120 minutes (2 hours)
-  MAX_SINGLE_AUDIO_DURATION_SEC: 5400, // 90 minutes
+  MAX_TOTAL_AUDIO_DURATION_SEC: 10800, // 180 minutes (3 hours)
+  MAX_SINGLE_AUDIO_DURATION_SEC: 10800, // 180 minutes (3 hours)
   MIN_INFORMATIVE_AUDIO_SEC: 120, // 2 minutes
   MAX_DOCUMENTS: 5,
   MAX_TOTAL_PAGES: 100,
@@ -88,7 +88,7 @@ class DocketPolicy {
       if (durationSec > DOCKET_LIMITS.MAX_SINGLE_AUDIO_DURATION_SEC) {
         return {
           isValid: false,
-          error: "Individual recording limit exceeded: Recording '" + name + "' duration is " + Math.round(durationSec / 60) + " minutes. Maximum allowed is 90 minutes per recording session.",
+          error: "Individual recording limit exceeded: Recording '" + name + "' duration is " + Math.round(durationSec / 60) + " minutes. Maximum allowed is 180 minutes (3 hours) per recording session.",
           warnings,
           metrics: { offendingFile: name, durationSec }
         };
@@ -104,14 +104,14 @@ class DocketPolicy {
     if (totalAudioSec > DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
       return {
         isValid: false,
-        error: "Cumulative audio limit exceeded: Total audio duration across accumulated docket is " + Math.round(totalAudioSec / 60) + " minutes. Maximum allowed is 120 minutes (2 hours). Please remove or trim one recording.",
+        error: "Cumulative audio limit exceeded: Total audio duration across accumulated docket is " + Math.round(totalAudioSec / 60) + " minutes. Maximum allowed is 180 minutes (3 hours). Please remove or trim one recording.",
         warnings,
         metrics: { totalAudioDurationSec: totalAudioSec }
       };
     }
 
-    // Real-time approaching limit warning
-    if (totalAudioSec >= 6600 && totalAudioSec <= DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
+    // Real-time approaching limit warning (within 10 minutes)
+    if (totalAudioSec >= 10200 && totalAudioSec <= DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
       const remainingMin = Math.round((DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC - totalAudioSec) / 60);
       warnings.push("Approaching cumulative audio limit: " + remainingMin + " minute(s) of recording time remaining in this assessment docket.");
     }

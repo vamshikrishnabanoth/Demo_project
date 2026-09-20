@@ -19,7 +19,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded, accumulatedAudioCou
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
     const [timeWarning, setTimeWarning] = useState(null);
-    const [showNinetyMinModal, setShowNinetyMinModal] = useState(false);
+    const [showThreeHourModal, setShowThreeHourModal] = useState(false);
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
     const [pendingRecoverySessions, setPendingRecoverySessions] = useState([]);
 
@@ -218,7 +218,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded, accumulatedAudioCou
 
             mediaRecorder.onstop = handleStop;
 
-            // Background Tab Resilient Web Worker Timer with 90-min Cutoff & Real-Time Warning
+            // Background Tab Resilient Web Worker Timer with 3-Hour Cutoff & Real-Time Warning
             const worker = createTimerWorker();
             timerWorkerRef.current = worker;
             worker.onmessage = (e) => {
@@ -226,12 +226,12 @@ export default function LiveRecordPanel({ onQuestionsLoaded, accumulatedAudioCou
                     const secs = e.data.seconds;
                     setRecordingTime(secs);
 
-                    const remainingDocketSecs = Math.max(0, 7200 - (accumulatedAudioSec || 0));
-                    const effectiveLimit = Math.min(5400, remainingDocketSecs);
+                    const remainingDocketSecs = Math.max(0, 10800 - (accumulatedAudioSec || 0));
+                    const effectiveLimit = Math.min(10800, remainingDocketSecs);
 
                     if (secs >= effectiveLimit) {
                         stopRecording();
-                        setShowNinetyMinModal(true);
+                        setShowThreeHourModal(true);
                         setTimeWarning(null);
                     } else if (secs >= effectiveLimit - 30) {
                         setTimeWarning('30 seconds remaining in recording limit');
@@ -386,7 +386,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded, accumulatedAudioCou
                     </div>
                     <div>
                         <h2 className="text-lg font-bold text-slate-100 tracking-tight">Live Class Voice Recorder</h2>
-                        <p className="text-xs text-slate-400 font-medium">Memory-safe 4h background recording & offline resilience</p>
+                        <p className="text-xs text-slate-400 font-medium">Memory-safe 3h background recording & offline resilience</p>
                     </div>
                 </div>
 
@@ -627,20 +627,20 @@ export default function LiveRecordPanel({ onQuestionsLoaded, accumulatedAudioCou
                 </div>
             )}
 
-            {/* 90-Minute Limit Blocking Acknowledgment Modal */}
-            {showNinetyMinModal && (
+            {/* 3-Hour Limit Blocking Acknowledgment Modal */}
+            {showThreeHourModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
                     <div className="bg-slate-900 border border-amber-500/50 rounded-2xl p-6 max-w-md w-full shadow-2xl text-center animate-in fade-in zoom-in duration-200">
                         <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
                             <AlertCircle size={26} />
                         </div>
-                        <h3 className="text-lg font-bold text-white mb-2">90-Minute Recording Limit Reached</h3>
+                        <h3 className="text-lg font-bold text-white mb-2">3-Hour Recording Limit Reached</h3>
                         <p className="text-slate-300 text-xs mb-6 leading-relaxed">
-                            90-minute recording limit reached. This recording has been stopped and saved. If you need to continue the lecture, please start a new recording. The new recording will be added as another audio file to your assessment docket.
+                            3-hour recording limit reached. This recording has been stopped and saved. If you need to continue the lecture, please start a new recording. The new recording will be added as another audio file to your assessment docket.
                         </p>
                         <button
                             type="button"
-                            onClick={() => setShowNinetyMinModal(false)}
+                            onClick={() => setShowThreeHourModal(false)}
                             className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-lg shadow-amber-500/20"
                         >
                             OK
