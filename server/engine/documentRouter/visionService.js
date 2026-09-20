@@ -1,24 +1,29 @@
 /**
  * server/engine/documentRouter/visionService.js
  *
- * Multimodal Visual Understanding Engine with Multi-Tier Fallback.
- * Strictly grounds descriptions in observable visual evidence. NEVER fabricates values.
- *
- * Fallback Chain:
- * Primary Vision Model -> Fallback Vision Model -> Local OCR / Text fallback
+ * Multimodal Visual Understanding Engine with Intelligent Cost Control & Multi-Tier Fallback.
+ * Features:
+ *   - Cost Decision Filter: Ignores decorative tiny images (<3 KB)
+ *   - OCR-First for text images (skips expensive cloud vision calls when local OCR suffices)
+ *   - Routes charts/diagrams to Vision API with strict evidentiary grounding
+ *   - Fallback Chain: Primary Vision -> Fallback Vision -> Local Tesseract OCR
+ *   - Observability: Latency & request metrics tracked in productionMetrics
  */
 
 'use strict';
 
 const axios = require('axios');
 const OcrService = require('./ocrService');
+const providerConfig = require('../../config/providerConfig');
+const productionMetrics = require('../../utils/productionMetrics');
 
 class VisionService {
   constructor() {
-    this.primaryProvider = process.env.VISION_PROVIDER || 'groq';
-    this.primaryModel = process.env.VISION_MODEL || 'llama-3.2-11b-vision-preview';
-    this.fallbackProvider = process.env.VISION_FALLBACK_PROVIDER || 'ocr';
-    this.fallbackModel = process.env.VISION_FALLBACK_MODEL || 'gemini-2.0-flash';
+    this.primaryProvider = providerConfig.vision.primaryProvider;
+    this.primaryModel = providerConfig.vision.primaryModel;
+    this.fallbackProvider = providerConfig.vision.fallbackProvider;
+    this.fallbackModel = providerConfig.vision.fallbackModel;
+    this.timeoutMs = providerConfig.vision.timeoutMs;
     this.groqApiKey = process.env.GROQ_API_KEY || null;
     this.geminiApiKey = (process.env.ENABLE_GEMINI_VISION === 'true' && process.env.GEMINI_API_KEY) ? process.env.GEMINI_API_KEY : null;
     this.ollamaUrl = process.env.OLLAMA_URL || 'http://127.0.0.1:11434';
@@ -92,7 +97,7 @@ class VisionService {
         Authorization: `Bearer ${this.groqApiKey}`,
         'Content-Type': 'application/json'
       },
-      timeout: 30000
+      timeout: this.timeoutMs
     });
 
     const content = res.data?.choices?.[0]?.message?.content || '';
@@ -137,14 +142,14 @@ class VisionService {
       options: { temperature: 0.1 }
     };
 
-    const res = await axios.post(`${this.ollamaUrl}/api/generate`, payload, { timeout: 45000 });
+    const res = await axios.post(`${this.ollamaUrl}/api/generate`, payload, { timeout: this.timeoutMs });
     const content = res.data?.response || '';
     if (!content.trim()) throw new Error('Ollama Vision returned empty response');
     return content.trim();
   }
 
   /**
-   * Describe an image with multi-tier fallback: Primary -> Fallback -> OCR.
+   * Describe an image with intelligent cost control and multi-tier fallback.
    * @param {Buffer|string} imageInput - Buffer or Base64 string
    * @param {string} mimeType - e.g. 'image/png', 'image/jpeg'
    * @param {'chart'|'diagram'|'general'} category
@@ -170,7 +175,37 @@ class VisionService {
       return { description: '', method: 'none', isSuccessful: false };
     }
 
+    // Cost Optimization 1: Decorative Image Filter (tiny icons, spacer pixels)
+    // Only apply to general/unspecified images, never to intentional charts or diagrams
+    if (category === 'general' && imageBuffer && imageBuffer.length < 2500) {
+      return {
+        description: '',
+        method: 'ignored_decorative',
+        isSuccessful: false
+      };
+    }
+
+    // Cost Optimization 2: Pre-emptive Local OCR for text-heavy general images
+    // Avoids calling cloud vision when local Tesseract can extract readable text for free
+    if (category === 'general' && imageBuffer) {
+      try {
+        const ocrPreview = await OcrService.recognize(imageBuffer);
+        if (ocrPreview.isReadable && ocrPreview.text && ocrPreview.text.length >= 25 && ocrPreview.confidence >= 0.50) {
+          return {
+            description: `[TEXT IN IMAGE (OCR)]:\n${ocrPreview.text}`,
+            method: 'ocr_preemptive',
+            confidence: ocrPreview.confidence,
+            isSuccessful: true
+          };
+        }
+      } catch (_) {
+        // Fall through to vision
+      }
+    }
+
     const prompt = this._buildVisionPrompt(category);
+    const startTime = Date.now();
+    productionMetrics.inc('vision_requests_total');
 
     // 1. Try Primary Vision Provider
     try {
@@ -184,6 +219,8 @@ class VisionService {
       }
 
       if (desc) {
+        const durationMs = Date.now() - startTime;
+        productionMetrics.recordLatency('vision', durationMs);
         return {
           description: desc,
           method: `vision_${this.primaryProvider}`,
@@ -192,6 +229,7 @@ class VisionService {
       }
     } catch (primaryErr) {
       console.warn(`⚠️ [VisionService] Primary vision (${this.primaryProvider}) failed: ${primaryErr.message}. Trying fallback...`);
+      productionMetrics.inc('provider_failure_count');
     }
 
     // 2. Try Fallback Vision Provider
@@ -206,6 +244,8 @@ class VisionService {
       }
 
       if (fallbackDesc) {
+        const durationMs = Date.now() - startTime;
+        productionMetrics.recordLatency('vision', durationMs);
         return {
           description: fallbackDesc,
           method: `vision_${this.fallbackProvider}`,
@@ -219,6 +259,8 @@ class VisionService {
     // 3. Fallback to Local Tesseract OCR
     try {
       const ocrRes = await OcrService.recognize(imageBuffer);
+      const durationMs = Date.now() - startTime;
+      productionMetrics.recordLatency('vision', durationMs);
       if (ocrRes.isReadable && ocrRes.text) {
         return {
           description: `[TEXT IN IMAGE (OCR)]:\n${ocrRes.text}`,
@@ -231,6 +273,8 @@ class VisionService {
       console.warn(`⚠️ [VisionService] Local OCR fallback failed: ${ocrErr.message}`);
     }
 
+    const durationMs = Date.now() - startTime;
+    productionMetrics.recordLatency('vision', durationMs);
     return {
       description: '[Visual element present: content could not be legibly resolved]',
       method: 'unreadable',

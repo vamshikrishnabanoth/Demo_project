@@ -1,8 +1,10 @@
 /**
- * Server-Side Document Persistence Layer & Document ID Store (v3.2.0)
+ * Server-Side Document Persistence Layer & Document ID Store (v3.3.0)
  * Stores extracted document text, page chunks, metadata, and NormalizedDocumentProfiles
- * by stable SHA-256 documentId. Prevents storing heavy raw text in client localStorage.
+ * by stable SHA-256 documentId with multi-tenant user authorization.
  */
+
+'use strict';
 
 const crypto = require('crypto');
 const fs = require('fs');
@@ -30,7 +32,7 @@ class DocumentStore {
     return `doc_${hash}`;
   }
 
-  saveDocument({ filename, ext, totalPages = 1, textContent = '', documentProfile = null, commonDocumentModel = null }) {
+  saveDocument({ filename, ext, totalPages = 1, textContent = '', documentProfile = null, commonDocumentModel = null, userId = null }) {
     if (!textContent || typeof textContent !== 'string') {
       throw new Error('DocumentStore: Invalid textContent provided for document saving.');
     }
@@ -42,6 +44,7 @@ class DocumentStore {
 
     const entry = {
       documentId,
+      userId,
       filename,
       ext: ext.replace('.', '').toLowerCase(),
       totalPages: Math.max(1, totalPages),
@@ -73,48 +76,62 @@ class DocumentStore {
     return entry;
   }
 
-  getDocument(documentId) {
+  getDocument(documentId, requestingUserId = null) {
     if (!documentId) return null;
+
+    let entry = null;
 
     // 1. Check in-memory Map
     if (this.store.has(documentId)) {
-      const entry = this.store.get(documentId);
-      if (Date.now() > entry.expiresAt) {
+      const memEntry = this.store.get(documentId);
+      if (Date.now() > memEntry.expiresAt) {
         this.store.delete(documentId);
         try {
           const diskPath = path.join(this.cacheDir, `${documentId}.json`);
           if (fs.existsSync(diskPath)) fs.unlinkSync(diskPath);
         } catch (_) {}
-        return null;
+      } else {
+        entry = memEntry;
       }
-      return entry;
     }
 
-    // 2. Check disk cache
-    try {
-      const diskPath = path.join(this.cacheDir, `${documentId}.json`);
-      if (fs.existsSync(diskPath)) {
-        const raw = fs.readFileSync(diskPath, 'utf8');
-        const entry = JSON.parse(raw);
-        if (entry && Date.now() <= entry.expiresAt) {
-          if (!entry.lines && entry.textContent) {
-            entry.lines = entry.textContent.split('\n');
+    // 2. Check disk cache if not in memory
+    if (!entry) {
+      try {
+        const diskPath = path.join(this.cacheDir, `${documentId}.json`);
+        if (fs.existsSync(diskPath)) {
+          const raw = fs.readFileSync(diskPath, 'utf8');
+          const diskEntry = JSON.parse(raw);
+          if (diskEntry && Date.now() <= diskEntry.expiresAt) {
+            if (!diskEntry.lines && diskEntry.textContent) {
+              diskEntry.lines = diskEntry.textContent.split('\n');
+            }
+            this.store.set(documentId, diskEntry);
+            entry = diskEntry;
+          } else if (diskEntry) {
+            fs.unlinkSync(diskPath);
           }
-          this.store.set(documentId, entry);
-          return entry;
-        } else if (entry) {
-          fs.unlinkSync(diskPath);
         }
+      } catch (err) {
+        console.warn(`DocumentStore: Disk read failed for ${documentId}:`, err.message);
       }
-    } catch (err) {
-      console.warn(`DocumentStore: Disk read failed for ${documentId}:`, err.message);
     }
 
-    return null;
+    if (!entry) return null;
+
+    // Multi-tenant authorization guard
+    if (requestingUserId && entry.userId && entry.userId !== requestingUserId) {
+      const err = new Error('UNAUTHORIZED_DOCUMENT_ACCESS: You do not have permission to access this document.');
+      err.code = 'FORBIDDEN';
+      err.statusCode = 403;
+      throw err;
+    }
+
+    return entry;
   }
 
-  getScopedText(documentId, startPage = 1, endPage = 999) {
-    const doc = this.getDocument(documentId);
+  getScopedText(documentId, startPage = 1, endPage = 999, requestingUserId = null) {
+    const doc = this.getDocument(documentId, requestingUserId);
     if (!doc) return null;
 
     const start = Math.max(1, startPage);
@@ -133,6 +150,35 @@ class DocumentStore {
       scopedText: scopedSnippet,
       documentProfile: doc.documentProfile
     };
+  }
+
+  deleteDocument(documentId, requestingUserId = null) {
+    const doc = this.getDocument(documentId, requestingUserId);
+    if (!doc) return false;
+
+    this.store.delete(documentId);
+    try {
+      const diskPath = path.join(this.cacheDir, `${documentId}.json`);
+      if (fs.existsSync(diskPath)) fs.unlinkSync(diskPath);
+    } catch (_) {}
+
+    return true;
+  }
+
+  listUserDocuments(userId) {
+    if (!userId) return [];
+    const list = [];
+    for (const doc of this.store.values()) {
+      if (doc.userId === userId) {
+        list.push({
+          documentId: doc.documentId,
+          filename: doc.filename,
+          totalPages: doc.totalPages,
+          createdAt: doc.createdAt
+        });
+      }
+    }
+    return list;
   }
 
   clear() {

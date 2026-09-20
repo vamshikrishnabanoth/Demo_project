@@ -227,24 +227,56 @@ class DocxMultimodalExtractor {
   }
 
   /**
-   * Extract image media buffers from DOCX zip archive.
+   * Extract image media buffers from DOCX zip archive safely.
+   * Defends against Zip-Slip, path traversal, zip bombs, and excess file counts.
    */
   static async _extractMediaFiles(docxBuffer) {
     const images = [];
+    const MAX_FILES = 50;
+    const MAX_SINGLE_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB
+    const MAX_TOTAL_DECOMPRESSED_BYTES = 100 * 1024 * 1024; // 100 MB
+    let totalDecompressedBytes = 0;
+
     try {
       const zip = new AdmZip(docxBuffer);
       const zipEntries = zip.getEntries();
 
       for (const entry of zipEntries) {
-        if (entry.entryName.startsWith('word/media/')) {
-          const ext = path.extname(entry.entryName).toLowerCase();
+        if (images.length >= MAX_FILES) {
+          console.warn(`⚠️ [DocxExtractor] Reached max media file limit (${MAX_FILES}). Skipping remaining entries.`);
+          break;
+        }
+
+        const entryName = entry.entryName;
+
+        // 1. Path Traversal & Zip-Slip Defense
+        if (entryName.includes('..') || entryName.startsWith('/') || entryName.startsWith('\\')) {
+          console.warn(`🚨 [SECURITY] Malicious path traversal blocked in DOCX archive: ${entryName}`);
+          continue;
+        }
+
+        if (entryName.startsWith('word/media/')) {
+          // 2. Zip Bomb / Size Guard
+          const uncompressedSize = entry.header?.size || 0;
+          if (uncompressedSize > MAX_SINGLE_IMAGE_BYTES) {
+            console.warn(`⚠️ [DocxExtractor] Skipping oversized media entry (${(uncompressedSize / (1024*1024)).toFixed(1)} MB): ${entryName}`);
+            continue;
+          }
+
+          totalDecompressedBytes += uncompressedSize;
+          if (totalDecompressedBytes > MAX_TOTAL_DECOMPRESSED_BYTES) {
+            console.warn(`⚠️ [DocxExtractor] Decompressed media limit exceeded (${MAX_TOTAL_DECOMPRESSED_BYTES} bytes). Halting extraction.`);
+            break;
+          }
+
+          const ext = path.extname(entryName).toLowerCase();
           let mimeType = 'image/png';
           if (['.jpg', '.jpeg'].includes(ext)) mimeType = 'image/jpeg';
           else if (ext === '.gif') mimeType = 'image/gif';
           else if (ext === '.webp') mimeType = 'image/webp';
 
           images.push({
-            name: path.basename(entry.entryName),
+            name: path.basename(entryName),
             buffer: entry.getData(),
             mimeType
           });

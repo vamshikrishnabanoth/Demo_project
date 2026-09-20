@@ -211,6 +211,13 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
+const productionMetrics = require('./utils/productionMetrics');
+require('./utils/diskCleanup');
+
+app.get('/api/metrics', (req, res) => {
+    res.json(productionMetrics.getMetricsSummary());
+});
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/quiz', require('./routes/quiz'));
 app.use('/api/admin', require('./routes/admin'));

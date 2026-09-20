@@ -158,6 +158,22 @@ const joinLimiter = rateLimit({
     message: 'Too many attempts to join quizzes. Please try again later.'
 });
 
+// Rate limiter for expensive generation workloads
+const generationLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 30,
+    keyGenerator: (req) => req.user?.id || req.ip,
+    message: { msg: 'Rate limit exceeded: too many generation requests. Please wait a few minutes before submitting again.' }
+});
+
+// Rate limiter for document uploads
+const uploadLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 60,
+    keyGenerator: (req) => req.user?.id || req.ip,
+    message: { msg: 'Too many upload requests. Please slow down.' }
+});
+
 const quizValidation = [
     check('title', 'Title must be at least 1 character').optional().isLength({ min: 1 }).trim(),
     check('questionCount', 'Question count must be between 1 and 50').optional().isInt({ min: 1, max: 50 }),
@@ -305,14 +321,19 @@ router.post('/submit', auth, quizController.submitAttempt);
 
 // @route   POST api/quiz/generate
 // @desc    Generate quiz questions (async — returns taskId immediately)
-router.post('/generate', auth, teacherOrAdmin, upload.array('files', 10), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
+router.post('/generate', auth, teacherOrAdmin, generationLimiter, upload.array('files', 10), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
 // SECURITY: Require auth on callback to prevent injection of fake task results
 router.post('/generate/callback/:taskId', auth, quizController.taskCompleteCallback);
 
 // @route   GET api/quiz/generate/status/:taskId
-// @desc    Poll status of an async generation task
+// @desc    Poll status of an async generation task with multi-tenant ownership verification
 router.get('/generate/status/:taskId', auth, (req, res) => {
-    const task = getTask(req.params.taskId);
+    let task;
+    try {
+        task = getTask(req.params.taskId, req.user?.id);
+    } catch (authErr) {
+        return res.status(authErr.statusCode || 403).json({ status: 'FORBIDDEN', msg: authErr.message });
+    }
     if (!task) {
         return res.status(404).json({ status: 'NOT_FOUND', msg: 'Task not found or expired' });
     }
@@ -323,6 +344,8 @@ router.get('/generate/status/:taskId', auth, (req, res) => {
     if (task.status === 'COMPLETED') {
         return res.json({
             status: task.status,
+            state: task.state || 'COMPLETED',
+            progressPct: task.progressPct || 100,
             stage: task.stage,
             stageLabel: task.stageLabel,
             representation_mode: task.representation_mode || (task.result && task.result.representation_mode) || null,
@@ -332,10 +355,13 @@ router.get('/generate/status/:taskId', auth, (req, res) => {
     // RUNNING or FAILED
     res.json({
         status: task.status,
+        state: task.state || task.status,
+        progressPct: task.progressPct || 0,
         stage: task.stage,
         stageLabel: task.stageLabel,
         representation_mode: task.representation_mode || null,
         error: task.error || null,
+        errorCode: task.errorCode || null,
     });
 });
 

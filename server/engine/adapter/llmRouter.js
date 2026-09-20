@@ -15,6 +15,8 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 const axios = require('axios');
+const providerConfig = require('../../config/providerConfig');
+const productionMetrics = require('../../utils/productionMetrics');
 
 class LLMRouter {
   constructor() {
@@ -25,6 +27,7 @@ class LLMRouter {
     this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'local_ollama');
     this.keyCooldowns = new Map();
     this.modelCooldowns = new Map();
+    this.invalidKeys = new Set();
     this.currentKeyIndex = 0;
   }
 
@@ -129,6 +132,10 @@ class LLMRouter {
       for (let offset = 0; offset < totalKeys; offset++) {
         const keyIdx = (this.currentKeyIndex + offset) % totalKeys;
         const key = keys[keyIdx];
+        // Check if key was permanently invalidated (e.g. 401/403)
+        if (this.invalidKeys.has(keyIdx)) {
+          continue;
+        }
 
         // Check if key is currently in cooldown (with 50ms tolerance for clock jitter)
         const cooldownUntil = this.keyCooldowns.get(keyIdx) || 0;
@@ -182,6 +189,15 @@ class LLMRouter {
               );
 
               const content = response.data.choices[0].message.content;
+
+              // Record production metrics
+              productionMetrics.inc('llm_requests_total');
+              if (response.data.usage) {
+                productionMetrics.recordTokens(
+                  response.data.usage.prompt_tokens || 0,
+                  response.data.usage.completion_tokens || 0
+                );
+              }
 
               // Success! Clear cooldowns for this key and model
               this.keyCooldowns.delete(keyIdx);
@@ -263,8 +279,19 @@ class LLMRouter {
                   console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Failing over to fallback '${modelsToTry[mIdx + 1]}'...`);
                 }
                 break; // Break inner loop to try fallback model or next key
+              } else if (status === 401 || status === 403) {
+                console.warn(`🚨 [LLMRouter] Groq Key-${keyIdx + 1} authentication/permission failed (${status}). Marking key invalid.`);
+                this.invalidKeys.add(keyIdx);
+                productionMetrics.inc('provider_failure_count');
+                break;
+              } else if (status === 404) {
+                console.warn(`⚠️ [LLMRouter] Model '${currentModel}' not found (404). Marking model unavailable on Key-${keyIdx + 1}.`);
+                this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 3600000);
+                productionMetrics.inc('provider_failure_count');
+                break;
               } else {
                 console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' error (${status}): ${errorMsg}`);
+                productionMetrics.inc('provider_failure_count');
                 break;
               }
             }

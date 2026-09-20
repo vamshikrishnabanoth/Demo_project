@@ -172,9 +172,15 @@ class PdfMultimodalExtractor {
         doc.addPage(page);
       }
 
-      // Only scan for embedded images if document is sparse (<500 chars) or explicitly contains scans
-      const isDocumentSparse = doc.getAllBlocks().length === 0 || doc.toUnifiedText().length < 500;
-      if (doc.metadata.hasScans || isDocumentSparse) {
+      // Check for chart or diagram keywords in unified text or filename
+      const unified = doc.toUnifiedText();
+      if (/\b(chart|bar chart|pie chart|line graph|sales revenue|revenue analysis)\b/i.test(unified) || /\b(chart|diagram)\b/i.test(options.filename || '')) {
+        doc.metadata.hasCharts = true;
+      }
+
+      // Scan for embedded images if document is sparse (<500 chars), contains chart keywords, or has scans
+      const isDocumentSparse = doc.getAllBlocks().length === 0 || unified.length < 500;
+      if (doc.metadata.hasScans || doc.metadata.hasCharts || isDocumentSparse) {
         const embeddedImages = PdfMultimodalExtractor.extractEmbeddedImages(pdfBuffer);
         if (embeddedImages.length > 0) {
           doc.metadata.hasImages = true;

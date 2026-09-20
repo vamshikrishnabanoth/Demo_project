@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const crypto = require('crypto');
 const { getCache, setCache, invalidateCache } = require('../lib/cache');
 const { moderateContent } = require('../lib/moderator');
 const path = require('path');
@@ -2341,7 +2342,17 @@ exports.updateQuiz = async (req, res) => {
 
 exports.generateQuizQuestions = async (req, res) => {
     // Create a task immediately and return taskId — client polls /generate/status/:taskId
-    const taskId = createTask();
+    const filesStr = req.files ? req.files.map(f => f.originalname).join(',') : (req.file ? req.file.originalname : '');
+    const idempotencyRaw = `${req.user?.id || 'anon'}_${req.body.topic || ''}_${req.body.type || ''}_${req.body.questionCount || ''}_${filesStr}`;
+    const idempotencyKey = crypto.createHash('sha256').update(idempotencyRaw).digest('hex');
+
+    let taskId;
+    try {
+        taskId = createTask({ userId: req.user?.id, idempotencyKey });
+    } catch (bpErr) {
+        return res.status(bpErr.statusCode || 429).json({ msg: bpErr.message, code: bpErr.code || 'SYSTEM_BUSY' });
+    }
+
     res.json({ taskId });
 
     // Run entire pipeline in background (non-blocking)
@@ -3660,11 +3671,19 @@ exports.updateSchedule = async (req, res) => {
 
 exports.getIngestedDocuments = async (req, res) => {
     try {
-        const docs = await prisma.documentChunk.findMany({
+        const userDocs = req.user?.id ? documentStore.listUserDocuments(req.user.id).map(d => d.filename) : [];
+        const dbDocs = await prisma.documentChunk.findMany({
+            where: {
+                OR: [
+                    { sourceType: 'COLLEGE' },
+                    ...(req.user?.id ? [{ source: { contains: req.user.id } }] : [])
+                ]
+            },
             select: { source: true },
             distinct: ['source']
         });
-        res.json(docs.map(d => d.source));
+        const combined = Array.from(new Set([...userDocs, ...dbDocs.map(d => d.source)]));
+        res.json(combined);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error' });
