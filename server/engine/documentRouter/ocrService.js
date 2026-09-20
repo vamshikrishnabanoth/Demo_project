@@ -40,13 +40,40 @@ class OcrService {
       };
     }
 
-    if (Buffer.isBuffer(imageInput) && imageInput.length >= 4 && imageInput.slice(0, 4).toString() === '%PDF') {
-      return {
-        text: '',
-        confidence: 0,
-        isReadable: false,
-        error: 'Cannot run OCR directly on raw PDF binary; input must be an image buffer.'
-      };
+    if (Buffer.isBuffer(imageInput)) {
+      if (imageInput.length < 8) {
+        return {
+          text: '',
+          confidence: 0,
+          isReadable: false,
+          error: 'Image buffer too small or empty.'
+        };
+      }
+      if (imageInput.slice(0, 4).toString() === '%PDF') {
+        return {
+          text: '',
+          confidence: 0,
+          isReadable: false,
+          error: 'Cannot run OCR directly on raw PDF binary; input must be an image buffer.'
+        };
+      }
+      // Check for valid image magic bytes (PNG, JPEG, GIF, BMP, TIFF, WEBP)
+      const isPng = imageInput[0] === 0x89 && imageInput[1] === 0x50 && imageInput[2] === 0x4E && imageInput[3] === 0x47;
+      const validJpegMarkers = [0xE0, 0xE1, 0xE2, 0xDB, 0xC0, 0xC2, 0xEE, 0xFE];
+      const isJpeg = imageInput[0] === 0xFF && imageInput[1] === 0xD8 && imageInput[2] === 0xFF && validJpegMarkers.includes(imageInput[3]);
+      const isGif = imageInput[0] === 0x47 && imageInput[1] === 0x49 && imageInput[2] === 0x46;
+      const isBmp = imageInput[0] === 0x42 && imageInput[1] === 0x4D;
+      const isTiff = (imageInput[0] === 0x49 && imageInput[1] === 0x49) || (imageInput[0] === 0x4D && imageInput[1] === 0x4D);
+      const isWebp = imageInput.length >= 12 && imageInput.slice(0, 4).toString() === 'RIFF' && imageInput.slice(8, 12).toString() === 'WEBP';
+
+      if (!isPng && !isJpeg && !isGif && !isBmp && !isTiff && !isWebp) {
+        return {
+          text: '',
+          confidence: 0,
+          isReadable: false,
+          error: 'Unsupported or corrupted image format. Input must be a valid PNG, JPEG, BMP, or TIFF image.'
+        };
+      }
     }
 
     const minConfidence = typeof options.minConfidence === 'number' ? options.minConfidence : 35;

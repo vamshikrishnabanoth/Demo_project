@@ -108,4 +108,6 @@ class GroundingGate {
   }
 }
 
-module.exports = new GroundingGate();
+const instance = new GroundingGate();
+instance.GroundingGate = GroundingGate;
+module.exports = instance;

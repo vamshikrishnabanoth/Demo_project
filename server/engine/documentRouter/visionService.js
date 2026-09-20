@@ -17,10 +17,10 @@ class VisionService {
   constructor() {
     this.primaryProvider = process.env.VISION_PROVIDER || 'groq';
     this.primaryModel = process.env.VISION_MODEL || 'llama-3.2-11b-vision-preview';
-    this.fallbackProvider = process.env.VISION_FALLBACK_PROVIDER || 'gemini';
-    this.fallbackModel = process.env.VISION_FALLBACK_MODEL || 'gemini-1.5-flash';
+    this.fallbackProvider = process.env.VISION_FALLBACK_PROVIDER || 'ocr';
+    this.fallbackModel = process.env.VISION_FALLBACK_MODEL || 'gemini-2.0-flash';
     this.groqApiKey = process.env.GROQ_API_KEY || null;
-    this.geminiApiKey = process.env.GEMINI_API_KEY || null;
+    this.geminiApiKey = (process.env.ENABLE_GEMINI_VISION === 'true' && process.env.GEMINI_API_KEY) ? process.env.GEMINI_API_KEY : null;
     this.ollamaUrl = process.env.OLLAMA_URL || 'http://127.0.0.1:11434';
   }
 

@@ -26,9 +26,10 @@ class RerankerService {
       };
     }
 
-    const topN = options.topN || 3;
-    const concept = (target.concept || target.concept_name || '').toLowerCase().trim();
-    const instruction = (target.instruction || target.what_taught || '').toLowerCase().trim();
+    const topN = options?.topN || 3;
+    const safeTarget = target || {};
+    const concept = (safeTarget.concept || safeTarget.concept_name || '').toLowerCase().trim();
+    const instruction = (safeTarget.instruction || safeTarget.what_taught || '').toLowerCase().trim();
     const targetWords = new Set(
       `${concept} ${instruction}`
         .replace(/[^\w\s]/g, ' ')

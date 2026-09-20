@@ -87,13 +87,31 @@ class DocxMultimodalExtractor {
         } else {
           // Paragraph or list item
           const text = innerContent.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+          const isHeadingLike = text.length > 3 && text.length < 80 && (
+            innerContent.includes('<strong>') ||
+            innerContent.includes('<b>') ||
+            /^(Chapter|Section|Unit|Part|Table|Figure|Overview)\b/i.test(text) ||
+            /^[A-Z0-9\s:.-]{4,70}$/.test(text) ||
+            (blockCount === 1 && text.length < 70)
+          );
+
           if (text.length > 0) {
-            page.addBlock(new DocumentBlock({
-              blockId: `blk_docx_${blockCount++}`,
-              type: BlockTypes.PARAGRAPH,
-              content: text,
-              metadata: { section: currentSection }
-            }));
+            if (isHeadingLike) {
+              currentSection = text;
+              page.addBlock(new DocumentBlock({
+                blockId: `blk_docx_${blockCount++}`,
+                type: BlockTypes.HEADING,
+                content: text,
+                metadata: { headingLevel: 2, section: currentSection }
+              }));
+            } else {
+              page.addBlock(new DocumentBlock({
+                blockId: `blk_docx_${blockCount++}`,
+                type: BlockTypes.PARAGRAPH,
+                content: text,
+                metadata: { section: currentSection }
+              }));
+            }
           }
         }
       }

@@ -107,6 +107,36 @@ class TableExtractor {
   }
 
   /**
+   * Determine if an individual line has tabular formatting (pipes, tabs, or aligned column spacing).
+   * @param {string} line
+   * @returns {boolean}
+   */
+  static isTabularLine(line) {
+    if (!line || typeof line !== 'string') return false;
+    const trimmed = line.trim();
+    if (!trimmed) return false;
+    // Separator line
+    if (/^\+[-+]+\+$/.test(trimmed) || /^\|?[-:\s|]{3,}\|?$/.test(trimmed)) return true;
+    // Pipe delimited
+    if (trimmed.includes('|')) {
+      const cells = trimmed.split('|').map(c => c.trim()).filter(Boolean);
+      if (cells.length >= 2) return true;
+    }
+    // Tab delimited
+    if (trimmed.includes('\t')) {
+      const cells = trimmed.split('\t').map(c => c.trim()).filter(Boolean);
+      if (cells.length >= 2) return true;
+    }
+    // Multi-column whitespace alignment
+    const parts = trimmed.split(/\s{2,}/).filter(Boolean);
+    if (parts.length >= 2 && parts.length <= 10) {
+      const isSentence = /^[A-Z].*[.!?]$/.test(trimmed) && parts.length === 2 && parts[0].length > 40;
+      if (!isSentence) return true;
+    }
+    return false;
+  }
+
+  /**
    * Scans a block of text and extracts detected tables with their surrounding text preserved.
    * @param {string} text
    * @returns {Array<{ type: 'text'|'table', content: string, metadata: Object }>}
@@ -151,19 +181,21 @@ class TableExtractor {
 
     let i = 0;
     while (i < lines.length) {
-      // Look ahead for 2-8 line tabular patterns
-      const lookahead = lines.slice(i, i + 4);
-      if (TableExtractor.isTabularBlock(lookahead)) {
-        flushText();
-        while (i < lines.length && lines[i].trim().length > 0) {
-          currentTableLines.push(lines[i]);
-          i++;
+      const line = lines[i];
+      if (TableExtractor.isTabularLine(line)) {
+        const lookahead = lines.slice(i, i + 3);
+        if (TableExtractor.isTabularBlock(lookahead)) {
+          flushText();
+          while (i < lines.length && TableExtractor.isTabularLine(lines[i])) {
+            currentTableLines.push(lines[i]);
+            i++;
+          }
+          flushTable();
+          continue;
         }
-        flushTable();
-      } else {
-        currentTextLines.push(lines[i]);
-        i++;
       }
+      currentTextLines.push(line);
+      i++;
     }
 
     flushText();

@@ -172,6 +172,40 @@ class PdfMultimodalExtractor {
         doc.addPage(page);
       }
 
+      // Only scan for embedded images if document is sparse (<500 chars) or explicitly contains scans
+      const isDocumentSparse = doc.getAllBlocks().length === 0 || doc.toUnifiedText().length < 500;
+      if (doc.metadata.hasScans || isDocumentSparse) {
+        const embeddedImages = PdfMultimodalExtractor.extractEmbeddedImages(pdfBuffer);
+        if (embeddedImages.length > 0) {
+          doc.metadata.hasImages = true;
+          let imgIdx = 1;
+          for (const img of embeddedImages) {
+            if (img.length < 1500) continue; // Skip tiny icons
+            try {
+              const descResult = await visionService.describeImage(img, 'image/jpeg', 'chart');
+              if (descResult && descResult.description && descResult.isSuccessful) {
+                doc.metadata.hasCharts = true;
+                const targetPage = doc.pages[0] || new DocumentPage({ pageNumber: 1 });
+                targetPage.addBlock(new DocumentBlock({
+                  blockId: `blk_pdf_img_${imgIdx++}`,
+                  type: BlockTypes.CHART,
+                  content: descResult.description,
+                  metadata: {
+                    figureId: `FIG_PDF_${imgIdx}`,
+                    pageNumber: targetPage.pageNumber || 1,
+                    isVisualEvidence: true,
+                    extractionMethod: descResult.method
+                  }
+                }));
+                if (doc.pages.length === 0) doc.addPage(targetPage);
+              }
+            } catch (imgErr) {
+              console.warn(`⚠️ [PdfExtractor] Embedded image description notice: ${imgErr.message}`);
+            }
+          }
+        }
+      }
+
       // If page-level extraction produced no blocks (e.g. edge case PDF format), use flat text safety net
       if (doc.getAllBlocks().length === 0) {
         console.warn(`⚠️ [PdfExtractor] Page-level blocks empty. Using flat-text safety net.`);
@@ -239,9 +273,10 @@ class PdfMultimodalExtractor {
     if (!Buffer.isBuffer(buffer)) return [];
     const images = [];
     let offset = 0;
-    while (offset < buffer.length - 4) {
-      // JPEG SOI: 0xFF 0xD8 0xFF
-      if (buffer[offset] === 0xFF && buffer[offset + 1] === 0xD8 && buffer[offset + 2] === 0xFF) {
+    const validJpegMarkers = [0xE0, 0xE1, 0xE2, 0xDB, 0xC0, 0xC2, 0xEE, 0xFE];
+    while (offset < buffer.length - 5) {
+      // JPEG SOI: 0xFF 0xD8 0xFF followed by valid JPEG marker
+      if (buffer[offset] === 0xFF && buffer[offset + 1] === 0xD8 && buffer[offset + 2] === 0xFF && validJpegMarkers.includes(buffer[offset + 3])) {
         let end = offset + 2;
         while (end < buffer.length - 1) {
           // JPEG EOI: 0xFF 0xD9
