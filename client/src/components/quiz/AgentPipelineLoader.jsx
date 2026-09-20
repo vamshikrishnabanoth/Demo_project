@@ -38,7 +38,7 @@ const CONNECTIONS = [
     [1, 6], [2, 7], [6, 3], [7, 4], [6, 7],
 ];
 
-export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0, representationMode = null }) {
+export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0, representationMode = null, topic = null, questionCount = null }) {
     const stageList = PIPELINE_STAGES;
 
     const [activeStage, setActiveStage] = useState(() => {
@@ -60,8 +60,18 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
 
     const pct = Math.round(((activeStage + 1) / stageList.length) * 100);
 
+    // Identify active AI agent
+    let activeAgentName = 'Agent 1: Curriculum Planner';
+    if (activeStage >= 3 && activeStage <= 4) {
+        activeAgentName = 'Agent 2: MCQ Generator';
+    } else if (activeStage >= 5 && activeStage <= 6) {
+        activeAgentName = 'Agent 3: Grounding Auditor';
+    } else if (activeStage >= 7) {
+        activeAgentName = 'Grounding Gate: Final Validator';
+    }
+
     return (
-        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#E6F0FA] overflow-hidden select-none">
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#E6F0FA] overflow-hidden select-none p-4">
 
             {/* Ambient Background Glow */}
             <motion.div
@@ -75,10 +85,29 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="relative max-w-md w-full mx-4 bg-white/90 backdrop-blur-md border-2 border-[#9cbcd8] rounded-[2.5rem] p-8 sm:p-10 shadow-xl flex flex-col items-center justify-center text-center overflow-hidden"
+                className="relative max-w-lg w-full bg-white/95 backdrop-blur-md border-2 border-[#9cbcd8] rounded-[2.5rem] p-6 sm:p-8 shadow-2xl flex flex-col items-center justify-center text-center overflow-hidden"
             >
+                {/* Topic & Question Goal Header */}
+                {(topic || questionCount) && (
+                    <div className="w-full mb-3 px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center justify-between gap-3 text-left">
+                        <div className="min-w-0 flex-1">
+                            <p className="text-[9.5px] font-black uppercase tracking-wider text-purple-900">
+                                Active Assessment Target
+                            </p>
+                            <p className="text-xs font-bold text-slate-800 truncate" title={topic}>
+                                {topic || 'Classroom Lecture Material'}
+                            </p>
+                        </div>
+                        {questionCount && (
+                            <span className="shrink-0 px-2.5 py-1 bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-xs font-black">
+                                {questionCount} MCQs
+                            </span>
+                        )}
+                    </div>
+                )}
+
                 {/* Neural Network Visualization */}
-                <div className="relative w-44 h-44 sm:w-52 sm:h-52 mb-2">
+                <div className="relative w-36 h-36 sm:w-44 sm:h-44 mb-1">
                     <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
                         {CONNECTIONS.map(([a, b], i) => (
                             <motion.line
@@ -125,7 +154,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                     </svg>
                 </div>
 
-                {/* Stage Label */}
+                {/* Stage & Agent Label */}
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={activeStage}
@@ -133,7 +162,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}
                         transition={{ duration: 0.3 }}
-                        className="space-y-1.5 px-2 max-w-xs"
+                        className="space-y-2 px-2 max-w-sm w-full"
                     >
                         <div className="flex items-center justify-center gap-2">
                             <span className="text-xl">{stageList[activeStage].icon}</span>
@@ -141,18 +170,28 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                                 {stageList[activeStage].label}
                             </h2>
                         </div>
-                        {stageLabel && stageLabel !== stageList[activeStage].label && (
-                            <div className="py-1 px-2.5 rounded-lg bg-blue-50/90 border border-blue-200/60 shadow-xs">
-                                <p className="text-[11px] font-black text-[#133E87] leading-tight">
-                                    {stageLabel.includes('(') ? stageLabel.replace(/^.*?\((.*?)\).*$/, '$1') : stageLabel}
+
+                        {/* Live Telemetry Action Badge */}
+                        {stageLabel && (
+                            <div className="py-2 px-3 rounded-xl bg-blue-50/90 border border-blue-200/80 shadow-xs">
+                                <p className="text-xs font-black text-[#133E87] leading-tight">
+                                    {stageLabel}
                                 </p>
                             </div>
                         )}
-                        <p className="text-[11px] font-medium tracking-wide text-[#475569] leading-relaxed">
+
+                        <p className="text-xs font-medium tracking-wide text-[#475569] leading-relaxed">
                             {stageList[activeStage].sub}
                         </p>
+
+                        {/* Active Agent Pill */}
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 border border-purple-200 rounded-full text-[10px] font-bold text-purple-900">
+                            <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping" />
+                            <span>Active: {activeAgentName}</span>
+                        </div>
+
                         {elapsed > 0 && (
-                            <p className="text-[10px] font-bold tracking-wider text-slate-400 mt-1">
+                            <p className="text-[10px] font-bold tracking-wider text-slate-400 mt-0.5">
                                 ⏱️ {Math.floor(elapsed / 60)}:{(elapsed % 60).toString().padStart(2, '0')} elapsed
                             </p>
                         )}
@@ -160,7 +199,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                 </AnimatePresence>
 
                 {/* Stage Dots */}
-                <div className="flex items-center gap-1.5 mt-5 mb-3">
+                <div className="flex items-center gap-1.5 mt-4 mb-2">
                     {stageList.map((s, i) => (
                         <motion.div
                             key={i}
@@ -175,7 +214,7 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                 </div>
 
                 {/* Progress Bar */}
-                <div className="w-full max-w-xs h-2 bg-slate-100 border border-slate-300 rounded-full overflow-hidden shadow-inner my-2">
+                <div className="w-full max-w-xs h-2 bg-slate-100 border border-slate-300 rounded-full overflow-hidden shadow-inner my-1.5">
                     <motion.div
                         className="h-full bg-[var(--bg-saffron)] rounded-full"
                         animate={{ width: `${pct}%` }}
@@ -184,15 +223,15 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
                 </div>
 
                 {/* Architecture E Badge & PDI Representation Path */}
-                <div className="mt-2 flex flex-col items-center gap-1.5">
-                    <div className="px-3.5 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
+                <div className="mt-2 flex flex-col items-center gap-1">
+                    <div className="px-3 py-0.5 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
                         <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-accent)]">
                             ARCHITECTURE E · STAGE {activeStage + 1} OF {stageList.length}
                         </p>
                     </div>
                     <div className="px-3 py-0.5 rounded-md bg-slate-100 border border-slate-200">
                         <p className="text-[8.5px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                            REPRESENTATION PATH: <span className="text-[#133E87] font-black">{representationMode || 'DETERMINING REPRESENTATION...'}</span>
+                            REPRESENTATION PATH: <span className="text-[#133E87] font-black">{representationMode || (isVoice ? 'VOICE AUTHORITY / UNIFIED' : 'MATERIAL AUTHORITY')}</span>
                         </p>
                     </div>
                 </div>

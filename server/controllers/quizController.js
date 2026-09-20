@@ -22,6 +22,7 @@ const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
 const { chunkMp3, chunkM4a, compressForWhisper } = require('../utils/audioChunker');
 const DocumentRouter = require('../engine/documentRouter/documentRouter');
 const DocketPolicy = require('../engine/docketPolicy');
+const llmRouter = require('../engine/adapter/llmRouter');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -684,8 +685,21 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     let label = mapped.label;
                     if (event.decisions && Array.isArray(event.decisions) && event.decisions.length > 0) {
                         const firstDec = event.decisions[0];
-                        if (firstDec && (firstDec.startsWith('Generating candidate MCQ') || firstDec.startsWith('Auditing Question') || firstDec.startsWith('Target '))) {
-                            label = `${mapped.label} (${firstDec})`;
+                        if (firstDec) {
+                            const qMatch = firstDec.match(/(?:Question\s+(\d+)\/(\d+)|Target\s+T(\d+))/i);
+                            const qNum = qMatch ? (qMatch[1] || qMatch[3]) : null;
+                            const qTotal = qMatch && qMatch[2] ? qMatch[2] : count;
+                            if (firstDec.includes('Generating candidate MCQ') || event.stage === 'QUESTION_GENERATION') {
+                                label = qNum ? `Agent 2: Formulating Question ${qNum} of ${qTotal}` : `Agent 2: Generating Question Candidates`;
+                            } else if (firstDec.includes('Auditing Question') || firstDec.includes('PASSED') || event.stage === 'AGENT_3_QUESTION_EVAL') {
+                                label = qNum ? `Agent 3: Auditing Grounding for Question ${qNum} of ${qTotal}` : `Agent 3: Auditing Pedagogical Grounding`;
+                            } else if (firstDec.includes('Assessment Plan') || event.stage === 'AGENT_1_PLANNING') {
+                                label = `Agent 1: Planning ${count} Pedagogical Targets across Curriculum`;
+                            } else if (event.stage === 'FINAL_GROUNDING_GATE') {
+                                label = `Grounding Gate: Assembling Ground-Truth Assessment`;
+                            } else {
+                                label = `${mapped.label}: ${firstDec.substring(0, 60)}`;
+                            }
                         }
                     }
                     updateTaskStage(taskId, mapped.stage, label, event.representation_mode);
@@ -4041,14 +4055,57 @@ exports.clearUserDocket = async (req, res) => {
 
 exports.analyzeDepth = async (req, res) => {
     try {
-        const { text } = req.body;
+        const { text, title } = req.body;
         const analysis = depthAnalyzer.analyzeLecture(text || '');
+        
+        // Generate clean 1-line overview and key topics for UI preview
+        let whatWasTaught = '';
+        let keyTopics = [];
+        const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
+        const recommendedQuestions = wordCount > 3000 ? '5 to 25 Questions' : (wordCount > 1000 ? '5 to 15 Questions' : '3 to 10 Questions');
+
+        if (analysis.isAcademic && wordCount > 25) {
+            try {
+                const cleanTitle = (title || '').replace(/^(?:Y2Mate\.is\s*[-–—]\s*)+/i, '').replace(/[-_]/g, ' ').trim();
+                const snippet = (text || '').substring(0, 1500).replace(/\s+/g, ' ');
+                const aiRes = await Promise.race([
+                    llmRouter.complete({
+                        systemPrompt: 'You are an academic curriculum summarizer. Return a valid JSON object with whatWasTaught (1 clear, professional sentence, 18-25 words describing what was taught) and keyTopics (array of 3-4 clean high-level topics, 2-5 words each). Do NOT output markdown or preface. Format: {"whatWasTaught": "...", "keyTopics": ["..."]}',
+                        prompt: `Title: ${cleanTitle}\nExcerpt: ${snippet}`,
+                        responseFormat: 'json',
+                        temperature: 0.2
+                    }),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('Summary timeout')), 3500))
+                ]);
+                let parsed = typeof aiRes === 'string' ? JSON.parse(aiRes) : aiRes;
+                if (parsed?.whatWasTaught) whatWasTaught = parsed.whatWasTaught;
+                if (Array.isArray(parsed?.keyTopics) && parsed.keyTopics.length > 0) keyTopics = parsed.keyTopics;
+            } catch (summaryErr) {
+                console.warn('AI summary fallback used:', summaryErr.message);
+            }
+        }
+
+        // Deterministic fallback if AI summary unavailable
+        if (!whatWasTaught && analysis.isAcademic) {
+            const cleanTitle = (title || 'Classroom Lecture').replace(/^(?:Y2Mate\.is\s*[-–—]\s*)+/i, '').replace(/[-_]/g, ' ').trim();
+            whatWasTaught = `A comprehensive lecture exploring ${cleanTitle} with detailed conceptual explanations, operational mechanisms, and step-by-step traces.`;
+            keyTopics = [
+                `${cleanTitle} Principles`,
+                'Algorithmic Mechanisms & Rules',
+                'Worked Examples & Applications'
+            ];
+        }
+
         return res.json({
             success: true,
             isAcademic: analysis.isAcademic,
             reason: analysis.reason,
             lectureDepth: analysis.lectureDepth,
-            detectedFocus: analysis.detectedFocus
+            detectedFocus: analysis.detectedFocus,
+            whatWasTaught,
+            keyTopics,
+            wordCount,
+            recommendedQuestions
         });
     } catch (err) {
         console.error('Error in analyzeDepth controller:', err.message);
