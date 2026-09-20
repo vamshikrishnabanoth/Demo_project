@@ -1,7 +1,13 @@
 // High-performance Native Fetch API wrapper (replaces Axios dependency completely)
 const PRODUCTION_API_URL = 'https://quiz-backend-qgro.onrender.com/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const isProductionDomain = typeof window !== 'undefined' && (
+    window.location.hostname.includes('vercel.app') ||
+    window.location.hostname.includes('render.com') ||
+    !['localhost', '127.0.0.1'].includes(window.location.hostname)
+);
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || (isProductionDomain ? PRODUCTION_API_URL : 'http://localhost:5000/api');
 
 async function request(endpoint, options = {}, retryCount = 0) {
     const token = localStorage.getItem('token');
