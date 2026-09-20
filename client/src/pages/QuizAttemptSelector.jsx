@@ -27,26 +27,7 @@ export default function QuizAttemptSelector() {
         fetchQuiz();
     }, [id]);
 
-    useEffect(() => {
-        if (quiz && !quiz.isLive) {
-            // Check if assessment has already been completed by student
-            const isCompleted = quiz.isAlreadyCompleted || (quiz.isAssessment && quiz.previousResult?.status === 'completed');
-            if (isCompleted) {
-                return; // Do not auto-navigate into game arenas if already completed
-            }
-
-            const statePayload = { questions: quiz.questions, title: quiz.title, quizId: quiz.id };
-            const gType = quiz.gameType || 'cyber_quest';
-            
-            if (gType === 'cyber_quest') {
-                navigate('/cyber-quest', { replace: true, state: statePayload });
-            } else if (gType === 'sprint_arena') {
-                navigate('/sprint-arena', { replace: true, state: statePayload });
-            } else if (gType === 'match_up') {
-                navigate('/match-up-arena', { replace: true, state: statePayload });
-            }
-        }
-    }, [quiz, navigate]);
+    
 
     if (loading) return <WaitingRoomLoader message="Synchronizing Arena Link..." />;
     
@@ -122,9 +103,63 @@ export default function QuizAttemptSelector() {
         );
     }
 
-    if (quiz.gameType === 'standard') {
-        return <AssessmentAttempt />;
-    } else {
-        return <WaitingRoomLoader message="Entering Game Arena..." />;
-    }
+    
+    // Render game selection UI for assignments
+    const statePayload = { questions: quiz.questions, title: quiz.title, quizId: quiz.id };
+    
+    return (
+        <div className="min-h-screen bg-[var(--bg-primary)] p-6 sm:p-10 font-inter text-white">
+            <div className="max-w-4xl mx-auto space-y-8">
+                <div className="text-center space-y-2">
+                    <h1 className="text-3xl font-black italic uppercase tracking-tighter">Choose Your Arena</h1>
+                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Select a game mode for {quiz.title}</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Cyber Quest */}
+                    <div 
+                        onClick={() => navigate('/cyber-quest', { replace: true, state: statePayload })}
+                        className="bg-white/5 border border-white/10 p-6 rounded-3xl hover:border-amber-500 hover:bg-amber-500/10 cursor-pointer transition-all text-center flex flex-col items-center gap-4 group"
+                    >
+                        <div className="w-16 h-16 bg-amber-500/20 text-amber-500 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                            🏆
+                        </div>
+                        <div>
+                            <h3 className="font-black text-xl italic uppercase tracking-tight text-white mb-1">Cyber Quest</h3>
+                            <p className="text-xs font-medium text-slate-400">10-level survival ladder with emergency lifelines & streak multipliers</p>
+                        </div>
+                    </div>
+
+                    {/* Sprint Arena */}
+                    <div 
+                        onClick={() => navigate('/sprint-arena', { replace: true, state: statePayload })}
+                        className="bg-white/5 border border-white/10 p-6 rounded-3xl hover:border-cyan-500 hover:bg-cyan-500/10 cursor-pointer transition-all text-center flex flex-col items-center gap-4 group"
+                    >
+                        <div className="w-16 h-16 bg-cyan-500/20 text-cyan-500 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                            ⚡
+                        </div>
+                        <div>
+                            <h3 className="font-black text-xl italic uppercase tracking-tight text-white mb-1">Sprint Arena</h3>
+                            <p className="text-xs font-medium text-slate-400">Rapid-fire speed run against a 45s countdown timer</p>
+                        </div>
+                    </div>
+
+                    {/* Match-Up */}
+                    <div 
+                        onClick={() => navigate('/match-up-arena', { replace: true, state: statePayload })}
+                        className="bg-white/5 border border-white/10 p-6 rounded-3xl hover:border-emerald-500 hover:bg-emerald-500/10 cursor-pointer transition-all text-center flex flex-col items-center gap-4 group"
+                    >
+                        <div className="w-16 h-16 bg-emerald-500/20 text-emerald-500 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                            🧩
+                        </div>
+                        <div>
+                            <h3 className="font-black text-xl italic uppercase tracking-tight text-white mb-1">Match-Up</h3>
+                            <p className="text-xs font-medium text-slate-400">Memory card matching grid connecting questions with answers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+    
 }

@@ -41,6 +41,8 @@ model User {
   
   // Gamification Fields
   xp                  Int       @default(0)
+  points              Int       @default(0)
+  attendancePct       Float     @default(75.0)
   streak              Int       @default(0)
   highestStreak       Int       @default(0)
   streakSavesUsed     Int       @default(0)
@@ -54,6 +56,7 @@ model User {
   results          Result[]
   broadcastsSent   Broadcast[]
   cheatingLogs     CheatingLog[]
+  pointTransactions PointTransaction[]
 }
 
 model Quiz {
@@ -84,7 +87,7 @@ model Quiz {
   topic            String?
   isLive           Boolean  @default(false)
   isAssessment     Boolean  @default(false)
-  gameType         String?  @default("cyber_quest") // 'cyber_quest', 'sprint_arena', 'match_up', 'standard'
+  gameType         String?  // 'cyber_quest', 'sprint_arena', 'match_up', 'standard'
   status           String   @default("waiting") // 'waiting', 'started', 'finished'
   assignedGroups   Json?    // Stores targeting parameters e.g. [{ branch: 'CSE', section: 'A', year: '3', semester: '1' }]
   assignedStudents String[] @default([]) // Selected User IDs
@@ -123,6 +126,7 @@ model Result {
   totalTimeTaken Int       @default(0)
   answers        Json      // Stores the answers array
   status         String    @default("in-progress") // 'in-progress', 'completed'
+  pointsAwarded  Boolean   @default(false)
   startedAt      DateTime  @default(now())
   completedAt    DateTime?
   lastAnsweredAt DateTime  @default(now())
@@ -131,6 +135,19 @@ model Result {
   @@index([quizId])      // analytics queries filter by quizId
   @@index([studentId])   // student history queries filter by studentId
   @@index([status])      // filter completed vs in-progress
+}
+
+model PointTransaction {
+  id        String   @id @default(uuid())
+  studentId String
+  amount    Int
+  reason    String
+  quizId    String?
+  createdAt DateTime @default(now())
+
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  @@index([studentId])
 }
 
 model Broadcast {

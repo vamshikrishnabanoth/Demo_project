@@ -227,13 +227,13 @@ router.get('/gamification', auth, async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { id: req.user.id },
-            select: { xp: true, streak: true, highestStreak: true, dailyMissions: true, unlockedPerks: true }
+            select: { xp: true, points: true, attendancePct: true, streak: true, highestStreak: true, dailyMissions: true, unlockedPerks: true }
         });
 
         if (!user) return res.status(404).json({ msg: 'User not found' });
 
         res.json({
-            xp: user.xp,
+            xp: user.xp, points: user.points, attendancePct: user.attendancePct,
             streak: user.streak,
             highestStreak: user.highestStreak || 0,
             dailyMissions: user.dailyMissions || [],
@@ -506,8 +506,9 @@ router.post('/game-score', auth, async (req, res) => {
     }
 });
 
+
 // @route   POST api/students/redeem-perk
-// @desc    Redeem a gamification perk using XP
+// @desc    Redeem a gamification perk using Points
 router.post('/redeem-perk', auth, async (req, res) => {
     try {
         const { perkId, perkName, cost } = req.body;
@@ -515,40 +516,15 @@ router.post('/redeem-perk', auth, async (req, res) => {
         const user = await prisma.user.findUnique({ where: { id: req.user.id } });
         if (!user) return res.status(404).json({ msg: 'User not found' });
 
-        // Enforce monthly limits for perks
-        const PERK_LIMITS = {
-            perk_att: 1, // Attendance Pass: max 1/month
-            perk_late: 2  // Late Pass: max 2/month
-        };
-
-        const limit = PERK_LIMITS[perkId];
-        const unlockedPerks = Array.isArray(user.unlockedPerks) ? user.unlockedPerks : [];
-
-        if (limit !== undefined) {
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            const currentMonth = now.getMonth();
-
-            const redemptionsThisMonth = unlockedPerks.filter(p => {
-                if (p.id !== perkId) return false;
-                const d = new Date(p.redeemedAt);
-                return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
-            }).length;
-
-            if (redemptionsThisMonth >= limit) {
-                return res.status(400).json({ msg: `Monthly redemption limit reached. You can only redeem this perk ${limit} time(s) per month.` });
-            }
-        }
-
-        if (user.xp < cost) {
-            return res.status(400).json({ msg: 'Insufficient XP to redeem this perk.' });
+        if (user.points < cost) {
+            return res.status(400).json({ msg: 'Insufficient points to redeem this perk.' });
         }
         
-        // Generate cryptographic Unique ID for the ticket
+        const unlockedPerks = Array.isArray(user.unlockedPerks) ? user.unlockedPerks : [];
+        
         const crypto = require('crypto');
         const uniqueId = 'PRK-' + crypto.randomBytes(3).toString('hex').toUpperCase() + '-' + crypto.randomBytes(3).toString('hex').toUpperCase();
 
-        // 7-day expiry date
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 7);
 
@@ -564,18 +540,34 @@ router.post('/redeem-perk', auth, async (req, res) => {
 
         unlockedPerks.push(newPerk);
 
-        await prisma.user.update({
-            where: { id: user.id },
-            data: {
-                xp: { decrement: cost },
-                unlockedPerks: unlockedPerks
-            }
-        });
+        const updates = {
+            points: { decrement: cost },
+            unlockedPerks: unlockedPerks
+        };
+        
+        if (perkId === 'perk_att') {
+            updates.attendancePct = { increment: 5.0 };
+        }
+
+        const [updatedUser, pTx] = await prisma.$transaction([
+            prisma.user.update({
+                where: { id: user.id, points: { gte: cost } },
+                data: updates
+            }),
+            prisma.pointTransaction.create({
+                data: {
+                    studentId: user.id,
+                    amount: -cost,
+                    reason: `Reward: ${perkName}`
+                }
+            })
+        ]);
 
         res.json({
             msg: 'Perk redeemed successfully!',
             perk: newPerk,
-            remainingXp: user.xp - cost
+            remainingPoints: updatedUser.points,
+            attendancePct: updatedUser.attendancePct
         });
 
     } catch (err) {

@@ -1726,7 +1726,7 @@ exports.submitQuiz = async (req, res) => {
             });
             if (existingResult) {
                 if (existingResult.status === 'completed') {
-                    return res.json(existingResult);
+                    await awardPointsIfEligible(existingResult, req.user, quiz); return res.json(existingResult);
                 }
                 const updated = await prisma.result.update({
                     where: { id: existingResult.id },
@@ -1736,7 +1736,7 @@ exports.submitQuiz = async (req, res) => {
                         lastAnsweredAt: new Date()
                     }
                 });
-                return res.json(updated);
+                await awardPointsIfEligible(updated, req.user, quiz); return res.json(updated);
             } else {
                 // If they joined but never answered any question, create a zero score completed result
                 const result = await prisma.result.create({
@@ -1753,7 +1753,7 @@ exports.submitQuiz = async (req, res) => {
                         lastAnsweredAt: new Date()
                     }
                 });
-                return res.json(result);
+                await awardPointsIfEligible(result, req.user, quiz); return res.json(result);
             }
         }
 
@@ -1841,6 +1841,7 @@ exports.submitQuiz = async (req, res) => {
                     }
                 });
             }
+            await awardPointsIfEligible(result, req.user, quiz);
             return res.json({
                 ...result,
                 maxPossibleScore,
@@ -1871,6 +1872,7 @@ exports.submitQuiz = async (req, res) => {
                     lastAnsweredAt: new Date()
                 }
             });
+            await awardPointsIfEligible(updated, req.user, quiz);
             return res.json({
                 ...updated,
                 maxPossibleScore
@@ -1892,6 +1894,7 @@ exports.submitQuiz = async (req, res) => {
             }
         });
 
+        await awardPointsIfEligible(result, req.user, quiz);
         res.json({
             ...result,
             maxPossibleScore

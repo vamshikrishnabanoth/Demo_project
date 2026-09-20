@@ -24,7 +24,7 @@ export default function CreateQuizText() {
     // ─── STATE MANAGEMENT ───────────────────────────────────────────────────
     const [title, setTitle] = useState('');
     const [isAssessment, setIsAssessment] = useState(false);
-    const [gameType, setGameType] = useState('cyber_quest');
+    
     const [duration, setDuration] = useState(30);
     const [timerType, setTimerType] = useState('timePerQuestion');
     const [timerPerQuestion, setTimerPerQuestion] = useState(30);
@@ -96,7 +96,7 @@ export default function CreateQuizText() {
             if (location.state.duration)        setDuration(location.state.duration);
             if (location.state.timerPerQuestion) setTimerPerQuestion(location.state.timerPerQuestion);
             if (location.state.isAssessment !== undefined) setIsAssessment(location.state.isAssessment);
-            if (location.state.gameType)         setGameType(location.state.gameType);
+            
             if (location.state.agentReport)     setAgentReport(location.state.agentReport);
             if (location.state.finalValidation) setFinalValidation(location.state.finalValidation);
             if (location.state.isVoice || location.state.isAudio || location.state.source === 'voice') {
@@ -287,7 +287,7 @@ export default function CreateQuizText() {
                 startTime: finalStartTime || null,
                 endTime: finalEndTime || null,
                 isAssessment: Boolean(isAssessment),
-                gameType: isAssessment ? gameType : 'standard',
+                
                 isLive: !isAssessment,
                 assignedGroups: assignedGroups || [],
                 assignedStudents: assignedStudents || [],
@@ -304,7 +304,7 @@ export default function CreateQuizText() {
                     match_up: 'Match-Up Arena',
                     standard: 'Standard Mode'
                 };
-                toast.success(`Assessment Deployed to Games Arena in ${gameNames[gameType] || 'Selected Game'} Mode!`);
+                toast.success(`Assessment Deployed to Games Arena in ${gameNames['standard'] || 'Selected Game'} Mode!`);
                 navigate('/assessments');
             }
         } catch (err) {
@@ -625,82 +625,6 @@ export default function CreateQuizText() {
                                         )}
                                     </GlassCard>
                                 </div>
-
-                                {/* Assessment-Only: Games Arena Mode Selection */}
-                                {isAssessment && (
-                                    <GlassCard className="p-5 border-2 border-violet-500/30 bg-violet-500/5">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div>
-                                                <h4 className="text-xs font-black text-violet-900 uppercase tracking-wider flex items-center gap-2">
-                                                    <span>🎮 Games Arena Mode Selection</span>
-                                                </h4>
-                                                <p className="text-[10px] text-slate-500 font-semibold">Select how students will experience and attempt this quiz in the Games Arena</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => setGameType('cyber_quest')}
-                                                className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'cyber_quest' ? 'border-amber-500 bg-amber-500/10 text-slate-900 shadow-md ring-2 ring-amber-500/30' : 'border-slate-200 bg-white hover:border-amber-400 text-slate-700'}`}
-                                            >
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <span className="text-xl">🏆</span>
-                                                    {gameType === 'cyber_quest' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white">Selected</span>}
-                                                </div>
-                                                <div>
-                                                    <h5 className="text-xs font-black uppercase tracking-wide text-amber-900">Cyber Quest</h5>
-                                                    <p className="text-[9px] font-medium text-slate-600 mt-0.5">10-level survival ladder with emergency lifelines & streak multipliers</p>
-                                                </div>
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => setGameType('sprint_arena')}
-                                                className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'sprint_arena' ? 'border-cyan-500 bg-cyan-500/10 text-slate-900 shadow-md ring-2 ring-cyan-500/30' : 'border-slate-200 bg-white hover:border-cyan-400 text-slate-700'}`}
-                                            >
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <span className="text-xl">⚡</span>
-                                                    {gameType === 'sprint_arena' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-cyan-500 text-white">Selected</span>}
-                                                </div>
-                                                <div>
-                                                    <h5 className="text-xs font-black uppercase tracking-wide text-cyan-900">Sprint Arena</h5>
-                                                    <p className="text-[9px] font-medium text-slate-600 mt-0.5">Rapid-fire speed run against a 45s countdown timer</p>
-                                                </div>
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => setGameType('match_up')}
-                                                className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'match_up' ? 'border-emerald-500 bg-emerald-500/10 text-slate-900 shadow-md ring-2 ring-emerald-500/30' : 'border-slate-200 bg-white hover:border-emerald-400 text-slate-700'}`}
-                                            >
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <span className="text-xl">🧩</span>
-                                                    {gameType === 'match_up' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500 text-white">Selected</span>}
-                                                </div>
-                                                <div>
-                                                    <h5 className="text-xs font-black uppercase tracking-wide text-emerald-900">Match-Up Arena</h5>
-                                                    <p className="text-[9px] font-medium text-slate-600 mt-0.5">Memory card matching grid connecting questions with answers</p>
-                                                </div>
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => setGameType('standard')}
-                                                className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'standard' ? 'border-indigo-500 bg-indigo-500/10 text-slate-900 shadow-md ring-2 ring-indigo-500/30' : 'border-slate-200 bg-white hover:border-indigo-400 text-slate-700'}`}
-                                            >
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <span className="text-xl">📝</span>
-                                                    {gameType === 'standard' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-500 text-white">Selected</span>}
-                                                </div>
-                                                <div>
-                                                    <h5 className="text-xs font-black uppercase tracking-wide text-indigo-900">Standard Mode</h5>
-                                                    <p className="text-[9px] font-medium text-slate-600 mt-0.5">Classic step-by-step tactical assessment interface</p>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </GlassCard>
-                                )}
 
                                 {/* Assessment-Only: Schedule & Expiration Row */}
                                 {isAssessment && (
