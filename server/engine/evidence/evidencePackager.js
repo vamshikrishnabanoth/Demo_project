@@ -31,7 +31,10 @@ class EvidencePackager {
       return cached;
     }
 
-    const voiceText = sessionInputs.voiceTranscript || '';
+    const voiceText = (sessionInputs.voiceTranscript || 
+      (Array.isArray(sessionInputs.audioTranscripts) ? sessionInputs.audioTranscripts.join('\n\n') : '') ||
+      (Array.isArray(sessionInputs.voiceTranscripts) ? sessionInputs.voiceTranscripts.join('\n\n') : '') ||
+      '').trim();
     const hasVoice = Boolean(voiceText && voiceText.trim().length > 50);
     const docTexts = Array.isArray(sessionInputs.documentTexts) ? sessionInputs.documentTexts : (sessionInputs.documentTexts ? [sessionInputs.documentTexts] : []);
     const docNames = Array.isArray(sessionInputs.documentNames) ? sessionInputs.documentNames : [];
@@ -52,15 +55,43 @@ class EvidencePackager {
 
         const evalResult = CrossMaterialAligner.evaluateDocumentAlignment(voiceText, dText);
         if (evalResult.isAligned) {
-          effectiveDocTexts.push({ text: dText, name: dName });
+          // If partially aligned document (Case 6), retain aligned sections for high priority
+          if (evalResult.relationship === 'PARTIALLY_ALIGNED_SECTION' && evalResult.sections && evalResult.sections.length > 1) {
+            const alignedText = evalResult.sections
+              .filter(s => s.priority <= 3)
+              .map(s => s.text)
+              .join('\n\n');
+            effectiveDocTexts.push({
+              text: alignedText || dText,
+              name: dName,
+              priority: evalResult.priority,
+              relationship: evalResult.relationship,
+              evalResult
+            });
+          } else {
+            effectiveDocTexts.push({
+              text: dText,
+              name: dName,
+              priority: evalResult.priority,
+              relationship: evalResult.relationship,
+              evalResult
+            });
+          }
         } else {
-          unalignedDocs.push({ text: dText, name: dName, evalResult });
+          // Priority 5: Unrelated material remains registered in docket for traceability, but suppressed from question targets
+          unalignedDocs.push({
+            text: dText,
+            name: dName,
+            priority: 5,
+            relationship: evalResult.relationship || 'COMPLETELY_UNRELATED',
+            evalResult
+          });
         }
       });
 
       if (unalignedDocs.length > 0) {
         const namesList = unalignedDocs.map(d => `'${d.name}'`).join(', ');
-        alignmentWarning = `Uploaded document ${namesList} did not align with the spoken lecture topic and was excluded to keep assessment questions strictly grounded in what was taught.`;
+        alignmentWarning = `Uploaded document ${namesList} did not align with the spoken lecture topic and was assigned lowest priority (suppressed from question targets) to keep assessment questions strictly grounded in what was taught.`;
         console.log(`⚠️ [CrossMaterialAligner] Policy C+B Applied: ${alignmentWarning}`);
       }
     } else {
@@ -116,6 +147,8 @@ class EvidencePackager {
       unalignedDocuments: unalignedDocs.map(d => d.name),
       alignmentWarning: alignmentWarning,
       hasAlignedDocs: cleanDocsArray.length > 0,
+      relationships: effectiveDocTexts.map(d => ({ name: d.name, relationship: d.relationship, priority: d.priority })),
+      unrelatedMaterials: unalignedDocs.map(d => ({ name: d.name, relationship: d.relationship, priority: d.priority })),
       ragChunksSummary: ragChunks.map(c => ({
         id: c.id,
         sourceType: c.sourceType,

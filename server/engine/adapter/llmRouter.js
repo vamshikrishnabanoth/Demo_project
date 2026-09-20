@@ -123,7 +123,7 @@ class LLMRouter {
     const keys = this._getGroqKeys();
     if (keys.length === 0) throw new Error('GROQ_API_KEY is missing');
 
-    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b'].filter(Boolean)));
+    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel, process.env.GROQ_TERTIARY_MODEL, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b'].filter(Boolean)));
     const totalKeys = keys.length;
     let lastErr = null;
 

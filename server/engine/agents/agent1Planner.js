@@ -53,10 +53,10 @@ class Agent1Planner {
     const systemPrompt = `You are Agent 1: Assessment Planner & Curriculum Strategist.
 Analyze the session evidence and generate an Assessment Plan in valid JSON format.
 CRITICAL INSTRUCTION:
-The user requested ${requestedCount} questions.
-You MUST generate an array with EXACTLY ${requestedCount} primary targets in "assessmentTargets": [${targetIdList}].
-And an array with EXACTLY ${reserveTargetCount} reserve targets in "reserveTargets": [${reserveIdList}].
-Do not output fewer than ${requestedCount} primary targets! Plan all ${requestedCount} primary targets spanning early foundations, middle mechanisms, and late models/tradeoffs.
+The user requested up to ${requestedCount} questions.
+Generate primary targets in "assessmentTargets" (up to ${requestedCount}: [${targetIdList}]) and reserve targets in "reserveTargets" (up to ${reserveTargetCount}: [${reserveIdList}]).
+EVIDENCE-BOUNDED PLANNING RULE:
+Plan only as many targets as can be strictly and genuinely derived from the provided evidence. When the evidence contains sufficient distinct concepts, plan all ${requestedCount} targets spanning early foundations, middle mechanisms, and late models/tradeoffs. If the material is brief or contains fewer distinct concepts, plan ONLY the targets supported by verbatim evidence. NEVER fabricate unsupported concepts or duplicate the same concept merely to hit a quota.
 
 CORE PRINCIPLES:
 1. STRICT EVIDENCE GROUNDING: Every target must be derived directly from taught session content. Provide supportingEvidence verbatim quote.
@@ -87,7 +87,7 @@ Lecture Depth: ${lectureDepth.rating} (${lectureDepth.score}/100)
 Voice Emphasis: Syntax=${voiceEmphasis.syntaxEmphasis}, Conceptual=${voiceEmphasis.conceptualEmphasis}
 Explicit Instructions: ${(voiceEmphasis.explicitInstructions || []).join('; ')}
 Requested Difficulty: ${requestedDifficulty}
-Requested Question Count: ${requestedCount} (You MUST plan all ${requestedCount} primary targets: ${targetIdList})
+Requested Question Count: Up to ${requestedCount} (Bound by genuine evidence: ${targetIdList})
 
 [UNTRUSTED DOCUMENT EVIDENCE]
 <untrusted_document_evidence>

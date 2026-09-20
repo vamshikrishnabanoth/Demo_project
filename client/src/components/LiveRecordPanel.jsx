@@ -12,12 +12,14 @@ import {
 } from '../utils/audioDB';
 import { createTimerWorker } from '../utils/timerWorker';
 
-export default function LiveRecordPanel({ onQuestionsLoaded }) {
+export default function LiveRecordPanel({ onQuestionsLoaded, accumulatedAudioCount = 0, accumulatedAudioSec = 0 }) {
     const [isRecording, setIsRecording] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
+    const [timeWarning, setTimeWarning] = useState(null);
+    const [showNinetyMinModal, setShowNinetyMinModal] = useState(false);
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
     const [pendingRecoverySessions, setPendingRecoverySessions] = useState([]);
 
@@ -145,6 +147,18 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
         checkRecovery();
     }, []);
 
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (isRecording || pendingBlob) {
+                e.preventDefault();
+                e.returnValue = 'You have unsaved recordings in this assessment. Are you sure you want to leave?';
+                return e.returnValue;
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isRecording, pendingBlob]);
+
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
@@ -154,6 +168,12 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
     const startRecording = async () => {
         try {
             setError(null);
+            setTimeWarning(null);
+
+            if (accumulatedAudioCount >= 4) {
+                setError('Maximum 4 audio recordings reached for this assessment. Remove an existing recording or continue with the current docket.');
+                return;
+            }
 
             const newSessionId = `live_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
             currentSessionIdRef.current = newSessionId;
@@ -198,12 +218,28 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
 
             mediaRecorder.onstop = handleStop;
 
-            // Background Tab Resilient Web Worker Timer
+            // Background Tab Resilient Web Worker Timer with 90-min Cutoff & Real-Time Warning
             const worker = createTimerWorker();
             timerWorkerRef.current = worker;
             worker.onmessage = (e) => {
                 if (e.data.type === 'tick') {
-                    setRecordingTime(e.data.seconds);
+                    const secs = e.data.seconds;
+                    setRecordingTime(secs);
+
+                    const remainingDocketSecs = Math.max(0, 7200 - (accumulatedAudioSec || 0));
+                    const effectiveLimit = Math.min(5400, remainingDocketSecs);
+
+                    if (secs >= effectiveLimit) {
+                        stopRecording();
+                        setShowNinetyMinModal(true);
+                        setTimeWarning(null);
+                    } else if (secs >= effectiveLimit - 30) {
+                        setTimeWarning('30 seconds remaining in recording limit');
+                    } else if (secs >= effectiveLimit - 60) {
+                        setTimeWarning('1 minute remaining in recording limit');
+                    } else {
+                        setTimeWarning(null);
+                    }
                 }
             };
             worker.postMessage({ command: 'start', seconds: 0 });
@@ -421,6 +457,13 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                                     </span>
                                 </div>
 
+                                {timeWarning && (
+                                    <div className="px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-semibold animate-pulse flex items-center gap-1.5">
+                                        <AlertCircle size={14} />
+                                        {timeWarning}
+                                    </div>
+                                )}
+
                                 <p className="text-xs text-slate-400 font-medium">
                                     {isPaused ? 'Recording paused' : 'Recording in progress... (Chunks saved to IndexedDB)'}
                                 </p>
@@ -580,6 +623,28 @@ export default function LiveRecordPanel({ onQuestionsLoaded }) {
                                 Generate MCQs
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 90-Minute Limit Blocking Acknowledgment Modal */}
+            {showNinetyMinModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+                    <div className="bg-slate-900 border border-amber-500/50 rounded-2xl p-6 max-w-md w-full shadow-2xl text-center animate-in fade-in zoom-in duration-200">
+                        <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
+                            <AlertCircle size={26} />
+                        </div>
+                        <h3 className="text-lg font-bold text-white mb-2">90-Minute Recording Limit Reached</h3>
+                        <p className="text-slate-300 text-xs mb-6 leading-relaxed">
+                            90-minute recording limit reached. This recording has been stopped and saved. If you need to continue the lecture, please start a new recording. The new recording will be added as another audio file to your assessment docket.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => setShowNinetyMinModal(false)}
+                            className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-lg shadow-amber-500/20"
+                        >
+                            OK
+                        </button>
                     </div>
                 </div>
             )}

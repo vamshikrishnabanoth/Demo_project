@@ -19,6 +19,7 @@ const agent2Generator = require('./agents/agent2Generator');
 const agent3Evaluator = require('./agents/agent3Evaluator');
 const deterministicValidator = require('./validators/deterministicValidator');
 const groundingGate = require('./validators/groundingGate');
+const DocketPolicy = require('./docketPolicy');
 
 class PipelineOrchestrator {
   /**
@@ -644,9 +645,8 @@ class PipelineOrchestrator {
       let notice = null;
 
       if (deliveredCount < requestedCount) {
-        const missingCount = requestedCount - deliveredCount;
         pipelineStatus = 'COMPLETED_WITH_PARTIAL_FULFILLMENT';
-        notice = `${deliveredCount} evidence-grounded questions were generated from the available instructional content. ${missingCount === 1 ? 'One additional question' : `${missingCount} additional questions`} could not be validated against the available evidence.`;
+        notice = `${deliveredCount} of ${requestedCount} questions generated. The uploaded material contained enough distinct academic evidence for ${deliveredCount} well-grounded questions. The remaining questions were withheld to avoid repetition or unsupported content.`;
       }
 
       // Merge Cross-Material Alignment exclusion warning if present

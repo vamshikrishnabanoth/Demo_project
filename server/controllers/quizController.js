@@ -21,6 +21,7 @@ const { expandShortTopicDescription } = require('../engine/documentAnalyzer/topi
 const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
 const { chunkMp3, chunkM4a, compressForWhisper } = require('../utils/audioChunker');
 const DocumentRouter = require('../engine/documentRouter/documentRouter');
+const DocketPolicy = require('../engine/docketPolicy');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -2346,6 +2347,35 @@ exports.updateQuiz = async (req, res) => {
 };
 
 exports.generateQuizQuestions = async (req, res) => {
+    // 0. Assessment Docket Policy Preflight Guard
+    const allUploadedFiles = (req.files && req.files.length > 0) ? req.files : (req.file ? [req.file] : []);
+    const incomingAudio = allUploadedFiles.filter(f => {
+        const ext = path.extname(f.originalname || '').toLowerCase();
+        return ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
+    });
+    const incomingDocs = allUploadedFiles.filter(f => {
+        const ext = path.extname(f.originalname || '').toLowerCase();
+        return !['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
+    });
+
+    let fileConfigs = [];
+    if (req.body.file_configs) {
+        try {
+            fileConfigs = typeof req.body.file_configs === 'string' ? JSON.parse(req.body.file_configs) : req.body.file_configs;
+        } catch (_) {}
+    }
+
+    const preflight = DocketPolicy.validateDocket({
+        newAudio: incomingAudio.map(f => ({ name: f.originalname, size: f.size })),
+        accumulatedDocs: (fileConfigs || []).map(cfg => ({ name: cfg.name, pages: (cfg.endPage - cfg.startPage + 1) || 1 })),
+        newDocs: incomingDocs.map(f => ({ name: f.originalname, size: f.size })),
+        requestedCount: req.body.questionCount || 10
+    });
+
+    if (!preflight.isValid) {
+        return res.status(400).json({ msg: preflight.error, code: 'DOCKET_LIMIT_EXCEEDED', warnings: preflight.warnings });
+    }
+
     // Create a task immediately and return taskId — client polls /generate/status/:taskId
     const filesStr = req.files ? req.files.map(f => f.originalname).join(',') : (req.file ? req.file.originalname : '');
     const idempotencyRaw = `${req.user?.id || 'anon'}_${req.body.topic || ''}_${req.body.type || ''}_${req.body.questionCount || ''}_${filesStr}`;
