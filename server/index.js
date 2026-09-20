@@ -1632,6 +1632,8 @@ prisma.user.updateMany({
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT} (0.0.0.0)`);
+    const routerMode = process.env.ROUTER_MODE || 'baseline';
+    console.log(`[Router Configuration] ROUTER_MODE="${routerMode}" | PDI_ROUTER_ENABLED=${routerMode === 'pdi'}`);
     console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
 
     // Automatic Prisma Database Schema Synchronization
