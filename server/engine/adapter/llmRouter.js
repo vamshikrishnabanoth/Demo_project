@@ -123,7 +123,7 @@ class LLMRouter {
     const keys = this._getGroqKeys();
     if (keys.length === 0) throw new Error('GROQ_API_KEY is missing');
 
-    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel].filter(Boolean)));
+    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel, 'llama-3.3-70b-versatile', 'llama3-70b-8192', 'llama3-8b-8192'].filter(Boolean)));
     const totalKeys = keys.length;
     let lastErr = null;
 
