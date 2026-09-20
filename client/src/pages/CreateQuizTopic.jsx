@@ -31,6 +31,38 @@ export default function CreateQuizTopic() {
     const [inputs, setInputs] = useState([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
+    // Helper to evaluate docket item state upon hydration
+    const sanitizeHydratedItem = (inp) => {
+        // 1. If it has extracted text or transcript, it is completely READY
+        if (inp.content && String(inp.content).trim().length > 0) {
+            return {
+                ...inp,
+                status: 'ready',
+                fetchingMetadata: false,
+                errorMsg: null
+            };
+        }
+        // 2. If it has an active live File object in memory, preserve its status
+        if (inp.file) {
+            return inp;
+        }
+        // 3. If it has a documentId referencing the server document store, it is READY
+        if (inp.documentId) {
+            return {
+                ...inp,
+                status: 'ready',
+                fetchingMetadata: false
+            };
+        }
+        // 4. If saved without content and no live binary, explicitly classify as FILE_UNAVAILABLE
+        return {
+            ...inp,
+            status: 'file_unavailable',
+            fetchingMetadata: false,
+            errorMsg: 'File is not in browser memory. Please select the file again.'
+        };
+    };
+
     // Load inputs on mount / user change with backend sync
     useEffect(() => {
         if (authLoading) return; // Wait until AuthContext finishes hydration
@@ -59,12 +91,12 @@ export default function CreateQuizTopic() {
             }
 
             if (loadedInputs.length > 0) {
-                setInputs(loadedInputs);
+                setInputs(loadedInputs.map(sanitizeHydratedItem));
             } else if (user) {
                 // Fetch from server if authenticated and nothing locally
                 api.get('/quiz/docket').then(res => {
                     if (res.data?.success && Array.isArray(res.data.inputs) && res.data.inputs.length > 0) {
-                        setInputs(res.data.inputs);
+                        setInputs(res.data.inputs.map(sanitizeHydratedItem));
                     }
                 }).catch(() => {});
             }
@@ -78,14 +110,16 @@ export default function CreateQuizTopic() {
     useEffect(() => {
         if (!isHydrated || authLoading) return;
         try {
-            const serializable = inputs.map(inp => {
-                const { file, ...rest } = inp;
-                // Preserve extracted text and metadata across reloads!
-                return {
-                    ...rest,
-                    schemaVersion: 2
-                };
-            });
+            const serializable = inputs
+                .filter(inp => inp.status !== 'error') // Never persist rejected error items
+                .map(inp => {
+                    const { file, ...rest } = inp;
+                    // Preserve extracted text and metadata across reloads!
+                    return {
+                        ...rest,
+                        schemaVersion: 2
+                    };
+                });
             localStorage.setItem(storageKey, JSON.stringify(serializable));
 
             // Sync with backend if authenticated
@@ -336,21 +370,76 @@ export default function CreateQuizTopic() {
         pollIntervalRef.current = setInterval(doPoll, 1500);
     }, [stopPolling]);
 
+    // Helper to determine audio duration in browser via HTML5 Audio metadata
+    const getAudioDuration = (file) => new Promise((resolve) => {
+        try {
+            const url = URL.createObjectURL(file);
+            const audio = document.createElement('audio');
+            audio.preload = 'metadata';
+            audio.onloadedmetadata = () => {
+                URL.revokeObjectURL(url);
+                resolve(audio.duration || 0);
+            };
+            audio.onerror = () => {
+                URL.revokeObjectURL(url);
+                resolve(0); // If browser cannot decode metadata, server Whisper will validate
+            };
+            audio.src = url;
+        } catch (_) {
+            resolve(0);
+        }
+    });
+
     // ── Unified Audio File Ingestion & Whisper Transcription ─────────────────
-    // Immediately after file selection, creates a docket item with status: 'transcribing'
-    // Retries update the existing docket item in-place without creating duplicates.
+    // Validates: type -> 1 GB infrastructure cap -> audio count -> 3h single duration -> 4h cumulative docket
+    // ONLY adds to docket once all preflight checks pass.
     const processAudioFile = async (file, existingId = null) => {
-        const id = existingId || Math.random().toString();
         const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
 
+        // 1. Infrastructure technical safety ceiling (1 GB)
+        const MAX_AUDIO_BYTES = 1024 * 1024 * 1024;
+        if (file.size > MAX_AUDIO_BYTES) {
+            toast.error(`Audio file "${file.name}" (${fileSizeMB} MB) exceeds the 1 GB technical safety ceiling.`);
+            return;
+        }
+
+        // 2. Audio File Count Boundary (max 4 audio files across docket)
         if (!existingId) {
-            // Immediately after file selection: show in docket card
+            const currentAudioCount = inputs.filter(i => (i.type === 'voice' || i.type === 'audio')).length;
+            if (currentAudioCount >= 4) {
+                toast.error(`Maximum 4 audio recordings allowed per assessment docket. The docket already contains 4 recordings.`);
+                return;
+            }
+        }
+
+        // 3. Inspect audio duration via browser metadata
+        const durationSec = await getAudioDuration(file);
+
+        // 4. Product Rule: 3-Hour Individual Limit (180 minutes / 10,800 sec)
+        if (durationSec > 10800) {
+            toast.error(`Recording "${file.name}" duration (${Math.round(durationSec / 60)} min) exceeds the 3-hour limit per recording session.`);
+            return;
+        }
+
+        // 5. Product Rule: 4-Hour Cumulative Docket Limit (240 minutes / 14,400 sec)
+        const otherAudioSec = inputs
+            .filter(i => (i.type === 'voice' || i.type === 'audio') && (!existingId || i.id !== existingId))
+            .reduce((acc, i) => acc + (i.durationSec || 0), 0);
+        if (durationSec > 0 && (otherAudioSec + durationSec) > 14400) {
+            toast.error(`Cumulative audio limit exceeded (${Math.round((otherAudioSec + durationSec) / 60)} min). Maximum allowed is 4 hours across the assessment docket.`);
+            return;
+        }
+
+        // 6. ONLY NOW add to docket or update existing item for in-place retry
+        const id = existingId || Math.random().toString();
+        if (!existingId) {
             const newInput = {
                 id,
                 type: 'voice',
                 file,
                 source_name: file.name,
                 fileSizeMB,
+                durationSec,
                 status: 'transcribing',
                 fetchingMetadata: true,
                 content: '',
@@ -358,27 +447,14 @@ export default function CreateQuizTopic() {
             };
             setInputs(prev => [...prev, newInput]);
         } else {
-            // In-place retry: mark existing item as transcribing
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
+                file,
+                durationSec: durationSec || item.durationSec,
                 status: 'transcribing',
                 fetchingMetadata: true,
                 errorMsg: null
             } : item));
-        }
-
-        // Client-side preflight check: direct upload limit
-        const MAX_DIRECT_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB safe direct upload ceiling
-        if (file.size > MAX_DIRECT_UPLOAD_BYTES) {
-            const warningMsg = `Large audio file (${fileSizeMB} MB) exceeds the 50 MB direct upload limit. Please compress audio (e.g. 16 kHz mono) or use a file under 50 MB.`;
-            setInputs(prev => prev.map(item => item.id === id ? {
-                ...item,
-                status: 'error',
-                fetchingMetadata: false,
-                errorMsg: warningMsg
-            } : item));
-            toast.error(warningMsg, { duration: 8000 });
-            return;
         }
 
         try {
@@ -396,6 +472,7 @@ export default function CreateQuizTopic() {
                     status: 'ready',
                     fetchingMetadata: false,
                     content: transcribeRes.data.text,
+                    durationSec: transcribeRes.data.duration || durationSec,
                     lectureDepth: transcribeRes.data.lectureDepth || null,
                     errorMsg: null
                 } : item));
@@ -416,10 +493,7 @@ export default function CreateQuizTopic() {
         } catch (err) {
             console.error('Lecture transcription failed:', err);
             const rawMsg = err.response?.data?.msg || err.response?.data?.error || err.message || '';
-            const isFetchFail = err.message === 'Failed to fetch' || !err.response || rawMsg.includes('Failed to fetch');
-            const errorMsg = isFetchFail
-                ? `Upload interrupted (${fileSizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or use a file under 50 MB.`
-                : (rawMsg || 'Transcription failed');
+            const errorMsg = rawMsg || 'Transcription failed';
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
                 status: 'error',
@@ -918,6 +992,12 @@ export default function CreateQuizTopic() {
 
         if (hasTranscribingAudio) {
             toast.error('Please wait for lecture audio transcription to complete before generating the quiz.');
+            return;
+        }
+
+        const unavailableInputs = inputs.filter(inp => inp.status === 'file_unavailable');
+        if (unavailableInputs.length > 0) {
+            toast.error('Some docket items are missing from browser memory. Please re-select or remove them before generating.');
             return;
         }
 
@@ -1477,6 +1557,23 @@ export default function CreateQuizTopic() {
                                                                 title="Retry transcription in-place"
                                                             >
                                                                 <RefreshCw size={11} /> Retry
+                                                            </button>
+                                                        </div>
+                                                    ) : inp.status === 'file_unavailable' ? (
+                                                        <div className="flex items-center justify-between gap-2 bg-amber-50/90 p-2.5 rounded-xl border border-amber-300 text-amber-900">
+                                                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                                <AlertCircle size={15} className="text-amber-600 shrink-0" />
+                                                                <span className="text-[10px] font-bold truncate">
+                                                                    Audio not in browser memory. Please re-select file.
+                                                                </span>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => lectureFileInputRef.current && lectureFileInputRef.current.click()}
+                                                                className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shrink-0 active:scale-95 shadow-xs"
+                                                                title="Re-select audio file"
+                                                            >
+                                                                <RefreshCw size={11} /> Re-select
                                                             </button>
                                                         </div>
                                                     ) : (

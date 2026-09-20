@@ -2361,52 +2361,61 @@ exports.updateQuiz = async (req, res) => {
 };
 
 exports.generateQuizQuestions = async (req, res) => {
-    // 0. Assessment Docket Policy Preflight Guard
-    const allUploadedFiles = (req.files && req.files.length > 0) ? req.files : (req.file ? [req.file] : []);
-    const incomingAudio = allUploadedFiles.filter(f => {
-        const ext = path.extname(f.originalname || '').toLowerCase();
-        return ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
-    });
-    const incomingDocs = allUploadedFiles.filter(f => {
-        const ext = path.extname(f.originalname || '').toLowerCase();
-        return !['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
-    });
-
-    let fileConfigs = [];
-    if (req.body.file_configs) {
-        try {
-            fileConfigs = typeof req.body.file_configs === 'string' ? JSON.parse(req.body.file_configs) : req.body.file_configs;
-        } catch (_) {}
-    }
-
-    const preflight = DocketPolicy.validateDocket({
-        newAudio: incomingAudio.map(f => ({ name: f.originalname, size: f.size })),
-        accumulatedDocs: (fileConfigs || []).map(cfg => ({ name: cfg.name, pages: (cfg.endPage - cfg.startPage + 1) || 1 })),
-        newDocs: incomingDocs.map(f => ({ name: f.originalname, size: f.size })),
-        requestedCount: req.body.questionCount || 10
-    });
-
-    if (!preflight.isValid) {
-        return res.status(400).json({ msg: preflight.error, code: 'DOCKET_LIMIT_EXCEEDED', warnings: preflight.warnings });
-    }
-
-    // Create a task immediately and return taskId — client polls /generate/status/:taskId
-    const filesStr = req.files ? req.files.map(f => f.originalname).join(',') : (req.file ? req.file.originalname : '');
-    const idempotencyRaw = `${req.user?.id || 'anon'}_${req.body.topic || ''}_${req.body.type || ''}_${req.body.questionCount || ''}_${filesStr}`;
-    const idempotencyKey = crypto.createHash('sha256').update(idempotencyRaw).digest('hex');
-
-    let taskId;
     try {
-        taskId = createTask({ userId: req.user?.id, idempotencyKey });
-    } catch (bpErr) {
-        return res.status(bpErr.statusCode || 429).json({ msg: bpErr.message, code: bpErr.code || 'SYSTEM_BUSY' });
-    }
+        // 0. Normalize uploaded files safely across multer.array, multer.fields, or multer.single
+        let allUploadedFiles = [];
+        if (Array.isArray(req.files)) {
+            allUploadedFiles = req.files;
+        } else if (req.files && typeof req.files === 'object') {
+            allUploadedFiles = Object.values(req.files).flat();
+        } else if (req.file) {
+            allUploadedFiles = [req.file];
+        }
 
-    res.json({ taskId });
+        const incomingAudio = allUploadedFiles.filter(f => {
+            const ext = path.extname(f.originalname || '').toLowerCase();
+            return ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
+        });
+        const incomingDocs = allUploadedFiles.filter(f => {
+            const ext = path.extname(f.originalname || '').toLowerCase();
+            return !['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext);
+        });
 
-    // Run entire pipeline in background (non-blocking)
-    setImmediate(async () => {
+        let fileConfigs = [];
+        if (req.body.file_configs) {
+            try {
+                fileConfigs = typeof req.body.file_configs === 'string' ? JSON.parse(req.body.file_configs) : req.body.file_configs;
+            } catch (_) {}
+        }
+
+        const preflight = DocketPolicy.validateDocket({
+            newAudio: incomingAudio.map(f => ({ name: f.originalname, size: f.size })),
+            accumulatedDocs: (fileConfigs || []).map(cfg => ({ name: cfg.name, pages: (cfg.endPage - cfg.startPage + 1) || 1 })),
+            newDocs: incomingDocs.map(f => ({ name: f.originalname, size: f.size })),
+            requestedCount: req.body.questionCount || 10
+        });
+
+        if (!preflight.isValid) {
+            return res.status(400).json({ msg: preflight.error, code: 'DOCKET_LIMIT_EXCEEDED', warnings: preflight.warnings });
+        }
+
+        // Create a task immediately and return taskId — client polls /generate/status/:taskId
+        const filesStr = allUploadedFiles.map(f => f.originalname || f.name || '').join(',');
+        const idempotencyRaw = `${req.user?.id || 'anon'}_${req.body.topic || ''}_${req.body.type || ''}_${req.body.questionCount || ''}_${filesStr}`;
+        const idempotencyKey = crypto.createHash('sha256').update(idempotencyRaw).digest('hex');
+
+        let taskId;
         try {
+            taskId = createTask({ userId: req.user?.id, idempotencyKey });
+        } catch (bpErr) {
+            return res.status(bpErr.statusCode || 429).json({ msg: bpErr.message, code: bpErr.code || 'SYSTEM_BUSY' });
+        }
+
+        res.json({ taskId });
+
+        // Run entire pipeline in background (non-blocking)
+        setImmediate(async () => {
+            try {
             console.log('\n=================== [PAYLOAD DEBUG] ===================');
             console.log('Incoming req.body payload:');
             console.log(JSON.stringify(req.body, null, 2));
@@ -2471,7 +2480,9 @@ exports.generateQuizQuestions = async (req, res) => {
                     }
                 }
 
-                const allUploadedFiles = (req.files && req.files.length > 0) ? req.files : (req.file ? [req.file] : []);
+                const allUploadedFiles = Array.isArray(req.files)
+                    ? req.files
+                    : (req.files && typeof req.files === 'object' ? Object.values(req.files).flat() : (req.file ? [req.file] : []));
                 const uploadedNames = new Set(allUploadedFiles.map(f => f.originalname));
                 const resolvedDocIds = new Set();
                 const resolvedNames = new Set();
@@ -3069,6 +3080,10 @@ exports.generateQuizQuestions = async (req, res) => {
             failTask(taskId, err.message);
         }
     });
+    } catch (entryErr) {
+        console.error('❌ [GenerateQuizQuestions Entry Error]:', entryErr);
+        return res.status(500).json({ msg: 'Failed to initialize assessment generation: ' + entryErr.message });
+    }
 };
 
 exports.getStudentHistory = async (req, res) => {

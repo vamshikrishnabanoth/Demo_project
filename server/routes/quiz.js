@@ -125,11 +125,11 @@ const storage = multer.diskStorage({
 });
 
 // File upload security: Strict types, size limits, and path traversal protection
-// Voice files can be large; allow up to 200 MB for audio/document
+// Infrastructure protection: generous 1 GB technical ceiling (product rules governed by duration)
 const upload = multer({ 
     storage: storage,
     limits: {
-        fileSize: 200 * 1024 * 1024, // 200MB limit (supports ~2.5 hour lecture recordings)
+        fileSize: 1024 * 1024 * 1024, // 1 GB infrastructure protection ceiling
         files: 10, // Maximum 10 files per request (for mixed RAG ingestion)
     },
     fileFilter: (req, file, cb) => {

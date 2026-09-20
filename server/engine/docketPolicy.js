@@ -3,8 +3,9 @@
  *
  * Enforces the formal Assessment Docket Policy for Architecture E + Production Hardening:
  * - Up to 4 audio files across accumulated draft
- * - Up to 180 minutes (3 hours) cumulative audio duration
+ * - Up to 240 minutes (4 hours) cumulative audio duration
  * - Up to 180 minutes (3 hours) for any single audio recording
+ * - 1 GB technical infrastructure safety ceiling per audio file
  * - Warning on brief recordings (< 2 minutes)
  * - Up to 5 supporting documents across accumulated draft
  * - Up to 100 pages cumulative
@@ -18,8 +19,9 @@
 
 const DOCKET_LIMITS = {
   MAX_AUDIO_FILES: 4,
-  MAX_TOTAL_AUDIO_DURATION_SEC: 10800, // 180 minutes (3 hours)
+  MAX_TOTAL_AUDIO_DURATION_SEC: 14400, // 240 minutes (4 hours)
   MAX_SINGLE_AUDIO_DURATION_SEC: 10800, // 180 minutes (3 hours)
+  MAX_AUDIO_FILE_BYTES: 1024 * 1024 * 1024, // 1 GB technical infrastructure protection
   MIN_INFORMATIVE_AUDIO_SEC: 120, // 2 minutes
   MAX_DOCUMENTS: 5,
   MAX_TOTAL_PAGES: 100,
@@ -78,13 +80,25 @@ class DocketPolicy {
       };
     }
 
-    // 3. Audio Duration Boundaries (single file & cumulative)
+    // 3. Audio Duration & Technical Size Ceiling Boundaries (single file & cumulative)
     let totalAudioSec = 0;
     for (let i = 0; i < allAudio.length; i++) {
       const a = allAudio[i];
       const durationSec = Number(a.duration || a.durationSec || 0);
+      const sizeBytes = Number(a.size || a.sizeBytes || a.fileSizeBytes || 0);
       const name = a.name || a.filename || a.originalname || ("Audio " + (i + 1));
 
+      // Technical infrastructure guard (prevents out-of-memory crashes on extreme files)
+      if (sizeBytes > DOCKET_LIMITS.MAX_AUDIO_FILE_BYTES) {
+        return {
+          isValid: false,
+          error: "Technical safety limit exceeded: Audio file '" + name + "' exceeds the 1 GB infrastructure protection ceiling. Please select an audio file under 1 GB.",
+          warnings,
+          metrics: { offendingFile: name, sizeBytes }
+        };
+      }
+
+      // Product rule: Maximum single audio duration
       if (durationSec > DOCKET_LIMITS.MAX_SINGLE_AUDIO_DURATION_SEC) {
         return {
           isValid: false,
@@ -101,17 +115,18 @@ class DocketPolicy {
       totalAudioSec += durationSec;
     }
 
+    // Product rule: Maximum cumulative audio duration across accumulated docket
     if (totalAudioSec > DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
       return {
         isValid: false,
-        error: "Cumulative audio limit exceeded: Total audio duration across accumulated docket is " + Math.round(totalAudioSec / 60) + " minutes. Maximum allowed is 180 minutes (3 hours). Please remove or trim one recording.",
+        error: "Cumulative audio limit exceeded: Total audio duration across accumulated docket is " + Math.round(totalAudioSec / 60) + " minutes. Maximum allowed is 240 minutes (4 hours). Please remove or trim one recording.",
         warnings,
         metrics: { totalAudioDurationSec: totalAudioSec }
       };
     }
 
-    // Real-time approaching limit warning (within 10 minutes)
-    if (totalAudioSec >= 10200 && totalAudioSec <= DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
+    // Real-time approaching limit warning (within 15 minutes of 4 hours)
+    if (totalAudioSec >= 13500 && totalAudioSec <= DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
       const remainingMin = Math.round((DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC - totalAudioSec) / 60);
       warnings.push("Approaching cumulative audio limit: " + remainingMin + " minute(s) of recording time remaining in this assessment docket.");
     }

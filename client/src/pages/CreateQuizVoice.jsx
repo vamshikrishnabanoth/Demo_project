@@ -57,12 +57,35 @@ export default function CreateQuizVoice() {
             return;
         }
 
-        const MAX_DIRECT_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB safe direct upload ceiling
-        if (audioFile.size > MAX_DIRECT_UPLOAD_BYTES) {
+        // 1. Infrastructure technical ceiling (1 GB)
+        const MAX_AUDIO_BYTES = 1024 * 1024 * 1024; // 1 GB infrastructure protection
+        if (audioFile.size > MAX_AUDIO_BYTES) {
             const sizeMB = (audioFile.size / (1024 * 1024)).toFixed(1);
-            setError(`Large audio file (${sizeMB} MB) exceeds the 50 MB direct upload limit. Please compress audio (e.g. 16 kHz mono) or select a file under 50 MB.`);
+            setError(`Audio file (${sizeMB} MB) exceeds the 1 GB technical safety ceiling. Please select an audio file under 1 GB.`);
             return;
         }
+
+        // 2. Product Rule: 3-Hour single audio duration check
+        try {
+            const durationSec = await new Promise((resolve) => {
+                const url = URL.createObjectURL(audioFile);
+                const audio = document.createElement('audio');
+                audio.preload = 'metadata';
+                audio.onloadedmetadata = () => {
+                    URL.revokeObjectURL(url);
+                    resolve(audio.duration || 0);
+                };
+                audio.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    resolve(0);
+                };
+                audio.src = url;
+            });
+            if (durationSec > 10800) {
+                setError(`Audio recording duration (${Math.round(durationSec / 60)} minutes) exceeds the 3-hour limit.`);
+                return;
+            }
+        } catch (_) {}
 
         setUploading(true);
         setError(null);

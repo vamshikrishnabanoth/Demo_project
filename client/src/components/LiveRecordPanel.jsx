@@ -226,7 +226,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded, accumulatedAudioCou
                     const secs = e.data.seconds;
                     setRecordingTime(secs);
 
-                    const remainingDocketSecs = Math.max(0, 10800 - (accumulatedAudioSec || 0));
+                    const remainingDocketSecs = Math.max(0, 14400 - (accumulatedAudioSec || 0));
                     const effectiveLimit = Math.min(10800, remainingDocketSecs);
 
                     if (secs >= effectiveLimit) {
