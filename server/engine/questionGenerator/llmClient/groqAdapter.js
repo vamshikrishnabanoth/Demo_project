@@ -2,7 +2,7 @@ const Groq = require('groq-sdk');
 
 class GroqAdapter {
   constructor() {
-    this.defaultModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+    this.defaultModel = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
     this.capabilities = {
       supportsJSONMode: true,
       maxContextTokens: 8192

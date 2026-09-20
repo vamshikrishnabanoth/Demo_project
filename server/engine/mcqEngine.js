@@ -120,7 +120,7 @@ class LLMProvider {
             { role: "system", content: systemMessage },
             { role: "user", content: prompt }
           ],
-          model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
+          model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
           response_format: { type: "json_object" },
           temperature: PROMPT_CONFIG.LLM_PARAMS.TEMPERATURE,
           top_p: PROMPT_CONFIG.LLM_PARAMS.TOP_P,

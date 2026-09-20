@@ -198,7 +198,7 @@ class PipelineOrchestrator {
       await trace.recordStage({
         stageOrder: '03',
         stageName: 'AGENT_1_PLANNING',
-        model: 'llama-3.3-70b-versatile',
+        model: 'openai/gpt-oss-120b',
         input: {
           requestedCount,
           requestedDifficulty,

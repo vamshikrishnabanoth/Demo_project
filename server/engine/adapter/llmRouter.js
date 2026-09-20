@@ -47,7 +47,7 @@ class LLMRouter {
 
     const errors = [];
 
-    // Resolve model cleanly: production Architecture E GPT-OSS models
+    // Resolve model cleanly: use active models on user key
     let primaryModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
     let fallbackModel = process.env.GROQ_FALLBACK_MODEL || 'openai/gpt-oss-20b';
     if (model) {
@@ -123,7 +123,7 @@ class LLMRouter {
     const keys = this._getGroqKeys();
     if (keys.length === 0) throw new Error('GROQ_API_KEY is missing');
 
-    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel, 'llama-3.3-70b-versatile', 'llama3-70b-8192', 'llama3-8b-8192'].filter(Boolean)));
+    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b'].filter(Boolean)));
     const totalKeys = keys.length;
     let lastErr = null;
 

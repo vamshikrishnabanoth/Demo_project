@@ -50,35 +50,40 @@ function sanitizeTranscriptEchoes(text) {
  * Transcribes audio file locally using Python faster-whisper with cloud fallback to Groq Whisper
  */
 const transcribeAudioWithTimestamps = async (filePath) => {
-    // 1. Try local Python faster-whisper service
+    // 1. Try local Python faster-whisper service only if AI_SERVICE_URL is local or responsive
     try {
         const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
-        console.log(`🎙️ Transcribing audio with timestamps via Python Whisper: ${AI_SERVICE_URL}/transcribe`);
-        const FormData = require('form-data');
-        const formData = new FormData();
-        formData.append('file', fs.createReadStream(filePath), {
-            filename: path.basename(filePath)
-        });
+        const isNgrokOrRemote = AI_SERVICE_URL.includes('ngrok') || AI_SERVICE_URL.includes('.dev') || AI_SERVICE_URL.includes('.app');
+        
+        // Fast skip remote dead tunnels if not explicitly online
+        if (!isNgrokOrRemote || (await checkAiServiceOnline(AI_SERVICE_URL))) {
+            console.log(`🎙️ Transcribing audio with timestamps via Python Whisper: ${AI_SERVICE_URL}/transcribe`);
+            const FormData = require('form-data');
+            const formData = new FormData();
+            formData.append('file', fs.createReadStream(filePath), {
+                filename: path.basename(filePath)
+            });
 
-        const response = await axios.post(`${AI_SERVICE_URL}/transcribe`, formData, {
-            headers: {
-                ...formData.getHeaders()
-            },
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity,
-            timeout: 5000 // 5s timeout to fast-fail if local Python service is offline
-        });
+            const response = await axios.post(`${AI_SERVICE_URL}/transcribe`, formData, {
+                headers: {
+                    ...formData.getHeaders()
+                },
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
+                timeout: 2500 // 2.5s fast timeout
+            });
 
-        if (response.data && response.data.status === 'success') {
-            console.log(`✅ Local timestamped transcription successful! (${response.data.segments?.length || 0} segments)`);
-            return {
-                text: response.data.text || '',
-                rawText: response.data.raw_text || response.data.text || '',
-                segments: response.data.segments || [],
-                duration: response.data.duration || 0,
-                duration_formatted: response.data.duration_formatted || '00:00:00',
-                language: response.data.language || 'en'
-            };
+            if (response.data && response.data.status === 'success') {
+                console.log(`✅ Local timestamped transcription successful! (${response.data.segments?.length || 0} segments)`);
+                return {
+                    text: response.data.text || '',
+                    rawText: response.data.raw_text || response.data.text || '',
+                    segments: response.data.segments || [],
+                    duration: response.data.duration || 0,
+                    duration_formatted: response.data.duration_formatted || '00:00:00',
+                    language: response.data.language || 'en'
+                };
+            }
         }
     } catch (err) {
         console.log('ℹ️ Local timestamp transcription unavailable. Falling back to Groq Cloud Whisper...');

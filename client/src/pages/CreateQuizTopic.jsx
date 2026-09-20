@@ -1022,12 +1022,17 @@ export default function CreateQuizTopic() {
                     });
                 },
                 onError: (msg) => {
-                    toast.error(msg || 'Generation failed. Please try again.');
+                    const cleanMsg = msg || 'Generation failed. Please try again.';
+                    toast.error(cleanMsg);
+                    setPollError(cleanMsg);
+                    setSubmitting(false);
                 },
             });
         } catch (err) {
             console.error(err);
-            toast.error('Failed to start generation. Please try again.');
+            const errDetail = err.response?.data?.message || err.message || 'Failed to start generation. Please try again.';
+            toast.error(errDetail);
+            setPollError(errDetail);
             setSubmitting(false);
         }
     };
@@ -1078,8 +1083,33 @@ export default function CreateQuizTopic() {
                 </div>
 
                 {pollError && (
-                    <div className="mx-6 mt-4 px-5 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 font-bold text-xs uppercase tracking-wider">
-                        ⚠️ {pollError}
+                    <div className="mx-6 mt-4 p-4 rounded-2xl border-2 border-red-500/40 bg-red-500/10 text-red-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                        <div className="flex items-center gap-3">
+                            <span className="text-xl">⚠️</span>
+                            <div>
+                                <p className="font-black text-xs uppercase tracking-wider text-red-900">Quiz Generation Could Not Complete</p>
+                                <p className="font-medium text-xs text-red-800 mt-0.5">{pollError}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 self-end sm:self-auto">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setPollError(null);
+                                    handleGenerateQuiz();
+                                }}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                            >
+                                Retry Generation
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setPollError(null)}
+                                className="px-3 py-2 bg-transparent hover:bg-red-500/20 text-red-800 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                            >
+                                Dismiss
+                            </button>
+                        </div>
                     </div>
                 )}
 

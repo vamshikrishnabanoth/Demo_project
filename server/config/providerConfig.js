@@ -17,7 +17,7 @@ const providerConfig = {
     primaryModel: process.env.TEXT_MODEL || 'openai/gpt-oss-120b',
     fallbackProvider: process.env.TEXT_FALLBACK_PROVIDER || 'groq',
     fallbackModel: process.env.TEXT_FALLBACK_MODEL || 'openai/gpt-oss-20b',
-    plannerModel: process.env.PLANNER_MODEL || 'llama-3.3-70b-versatile',
+    plannerModel: process.env.PLANNER_MODEL || 'openai/gpt-oss-120b',
     fastModel: process.env.FAST_MODEL || 'openai/gpt-oss-20b',
     timeoutMs: parseInt(process.env.LLM_TIMEOUT_MS, 10) || 60000,
     maxRetries: parseInt(process.env.LLM_MAX_RETRIES, 10) || 3
