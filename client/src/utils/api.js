@@ -51,10 +51,17 @@ async function request(endpoint, options = {}, retryCount = 0) {
         fetchOptions.body = options.body;
     }
 
-    // Support AbortSignal timeout
+    // Support AbortSignal and timeout properly
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 120000);
-    fetchOptions.signal = options.signal || controller.signal;
+    const effectiveTimeout = customTimeout !== undefined ? customTimeout : (options.timeout || 120000);
+    const timeoutId = setTimeout(() => {
+        controller.abort(new Error(`Request timeout after ${effectiveTimeout}ms`));
+    }, effectiveTimeout);
+
+    if (options.signal) {
+        options.signal.addEventListener('abort', () => controller.abort(options.signal.reason));
+    }
+    fetchOptions.signal = controller.signal;
 
     try {
         const response = await fetch(url, fetchOptions);
@@ -90,9 +97,10 @@ async function request(endpoint, options = {}, retryCount = 0) {
     } catch (error) {
         clearTimeout(timeoutId);
         
-        const isRetryable = error.name === 'AbortError' || error.message === 'Failed to fetch' || !error.response;
+        const isAbort = error.name === 'AbortError' || error.message?.includes('aborted');
+        const isRetryable = (isAbort || error.message === 'Failed to fetch' || !error.response) && retryCount < 2;
         
-        if (isRetryable && retryCount < 2) {
+        if (isRetryable) {
             const delay = Math.floor(2000 * Math.pow(1.5, retryCount) + Math.random() * 1500);
             console.log(`[API] Retry attempt ${retryCount + 1} for ${endpoint} after ${delay}ms...`);
             await new Promise(r => setTimeout(r, delay));
@@ -100,7 +108,11 @@ async function request(endpoint, options = {}, retryCount = 0) {
         }
 
         if (!error.response) {
-            error.response = { status: 0, data: { message: error.message } };
+            let msg = error.message;
+            if (isAbort) {
+                msg = `The server took too long to respond (${Math.round(effectiveTimeout / 1000)}s timeout). The request was cancelled.`;
+            }
+            error.response = { status: 0, data: { message: msg } };
         }
         throw error;
     }
