@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -108,7 +108,7 @@ export default function StudentDashboard() {
         }
     };
 
-    // Called once per day when tab mounts — handles streak saves, resets, mission generation
+    // Called once per day when tab mounts ΓÇö handles streak saves, resets, mission generation
     const initGamification = async () => {
         try {
             const res = await api.post('/students/gamification/init');
@@ -121,9 +121,9 @@ export default function StudentDashboard() {
             if (res.data.actionsTaken?.length > 0) {
                 res.data.actionsTaken.forEach(action => {
                     if (action.includes('saved')) {
-                        toast.success(`🛡️ ${action}`, { duration: 5000 });
+                        toast.success(`≡ƒ¢í∩╕Å ${action}`, { duration: 5000 });
                     } else if (action.includes('reset')) {
-                        toast.error(`💔 ${action}`, { duration: 5000 });
+                        toast.error(`≡ƒÆö ${action}`, { duration: 5000 });
                     }
                 });
             }
@@ -250,7 +250,7 @@ export default function StudentDashboard() {
         }
     };
 
-    // ── Polling Logics ──────────────────────────────────────────────────────
+    // ΓöÇΓöÇ Polling Logics ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
     const stopPolling = useCallback(() => {
         clearInterval(pollIntervalRef.current);
         clearInterval(elapsedRef.current);
@@ -388,7 +388,7 @@ export default function StudentDashboard() {
             )}
             <div className="relative min-h-[75vh] flex items-center justify-center py-10 font-inter overflow-hidden">
                 
-                {/* ─── AMBIENT DECORATIONS ─────────────────────────────────── */}
+                {/* ΓöÇΓöÇΓöÇ AMBIENT DECORATIONS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <FloatingSymbol Icon={Cpu} top="15%" left="10%" delay={0} size={isSmallScreen ? 24 : 40} />
                     <FloatingSymbol Icon={Globe} top="25%" left="85%" delay={2} size={isSmallScreen ? 20 : 32} />
@@ -440,7 +440,51 @@ export default function StudentDashboard() {
                             </div>
                         </div>
                         <div className="h-8 w-px bg-[var(--border-color)]"></div>
-                        
+                        <div className="flex items-center gap-2">
+                            <Trophy className="text-amber-600" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Best Streak</p>
+                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{highestStreak} <span className="text-xs text-amber-600">DAYS</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* XP Progress toward Next Reward */}
+                    {(() => {
+                        const XP_REWARDS = [
+                            { name: 'Attendance Pass', cost: 1500 },
+                            { name: 'Late Pass', cost: 3000 },
+                        ];
+                        const nextReward = XP_REWARDS.find(r => xp < r.cost);
+                        if (!nextReward) return (
+                            <div className="max-w-2xl mx-auto px-2">
+                                <p className="text-center text-[10px] font-black text-amber-400 uppercase tracking-widest">
+                                    ≡ƒÅå All XP Rewards Unlocked! Maintain your streak for the Golden Perk.
+                                </p>
+                            </div>
+                        );
+                        const prevCost = XP_REWARDS[XP_REWARDS.indexOf(nextReward) - 1]?.cost || 0;
+                        const progress = Math.min(((xp - prevCost) / (nextReward.cost - prevCost)) * 100, 100);
+                        const xpLeft = nextReward.cost - xp;
+                        return (
+                            <div className="max-w-2xl mx-auto px-2 space-y-1.5">
+                                <div className="flex justify-between items-center">
+                                    <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
+                                        Next: <span className="text-amber-700 font-extrabold">{nextReward.name}</span>
+                                    </p>
+                                    <p className="text-[9px] font-black text-[var(--text-primary)]">
+                                        {xp.toLocaleString()} / {nextReward.cost.toLocaleString()} XP
+                                        <span className="text-amber-700 font-extrabold ml-2">ΓÇö {xpLeft.toLocaleString()} XP to go</span>
+                                    </p>
+                                </div>
+                                <div className="w-full bg-[var(--border-color)]/50 h-2 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progress}%` }}
+                                        transition={{ duration: 1, ease: 'easeOut' }}
+                                        className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.4)]"
+                                    />
+                                </div>
                             </div>
                         );
                     })()}
@@ -458,7 +502,17 @@ export default function StudentDashboard() {
                         >
                             Join Quiz
                         </button>
-                        
+                        <button
+                            onClick={() => { if (!isLoading) setActiveTab('arena'); }}
+                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
+                                activeTab === 'arena'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
+                            }`}
+                            style={activeTab === 'arena' ? { color: '#ffffff' } : {}}
+                        >
+                            Game Arena
+                        </button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
                             className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-1.5 ${
@@ -586,6 +640,195 @@ export default function StudentDashboard() {
                                     )}
                                 </button>
                             </motion.div>
+                        ) : activeTab === 'arena' ? (
+                            <motion.div
+                                key="tab-arena"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.4 }}
+                                className="space-y-10 max-w-4xl mx-auto text-left"
+                            >
+                                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                                    
+                                    {/* Column 1: Document Uploader */}
+                                    <div className="lg:col-span-2 space-y-6">
+                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 relative overflow-hidden group shadow-sm">
+                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
+                                                Step 1: Upload Study Material
+                                            </label>
+                                            <div className="relative border-4 border-dashed border-[var(--border-color)] rounded-2xl hover:border-[var(--bg-accent)] transition-all bg-[var(--bg-primary)] group/upload">
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png,.txt"
+                                                    onChange={handleFileChange}
+                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                                    required
+                                                />
+                                                <div className="p-8 flex flex-col items-center gap-4 text-center">
+                                                    {file ? (
+                                                        <div className="flex flex-col items-center gap-3 animate-in fade-in zoom-in duration-300">
+                                                            <div className="w-14 h-14 rounded-2xl bg-[var(--accent-sand)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-accent)] shadow-xs">
+                                                                <FileCheck size={28} className="text-[var(--text-accent)]" />
+                                                            </div>
+                                                            <p className="font-black text-sm text-[#0f172a] italic max-w-[200px] truncate" style={{ color: '#0f172a' }}>{file.name}</p>
+                                                            <div className="px-3 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
+                                                                <p className="text-[9px] font-black text-[var(--text-accent)] uppercase tracking-widest">Material Locked In</p>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] p-4 rounded-xl text-[var(--text-secondary)] group-hover/upload:text-[var(--bg-accent)] transition-colors">
+                                                                <Upload size={32} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-[var(--text-primary)] font-black text-sm italic">SELECT DOCUMENT</p>
+                                                                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-[8px] mt-1">PDF, DOCX, PPTX, JPG, PNG (MAX 10MB)</p>
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 relative overflow-hidden group shadow-sm">
+                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
+                                                OR YouTube Video Links (Max 2)
+                                            </label>
+                                            <div className="space-y-3">
+                                                {videoUrls.map((url, i) => (
+                                                    <div key={i} className="flex gap-2">
+                                                        <input
+                                                            type="text"
+                                                            value={url}
+                                                            onChange={(e) => handleUpdateVideoUrl(i, e.target.value)}
+                                                            className="flex-1 p-4 bg-white border border-[var(--border-color)] rounded-xl focus:border-red-500 transition-all font-bold text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/60 outline-none"
+                                                            placeholder="https://youtube.com/watch?v=..."
+                                                            disabled={submitting}
+                                                        />
+                                                    </div>
+                                                ))}
+                                                {videoUrls.length < 2 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleAddVideoUrl}
+                                                        className="text-[10px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest flex items-center gap-1 mt-2"
+                                                        disabled={submitting}
+                                                    >
+                                                        + Add another video
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Column 2: Choose Game Mode */}
+                                    <div className="lg:col-span-3 space-y-6">
+                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 shadow-sm">
+                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
+                                                Step 2: Select Game Arena
+                                            </label>
+                                            
+                                            <div className="flex flex-col gap-4">
+                                                {/* Cyber Quest Card (Active) */}
+                                                <div 
+                                                    onClick={() => setSelectedGame('cyber-quest')}
+                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
+                                                        selectedGame === 'cyber-quest'
+                                                            ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/8 shadow-md'
+                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-[var(--bg-accent)]/50'
+                                                    }`}
+                                                >
+                                                    <div className="bg-[var(--bg-accent)]/10 text-[var(--text-accent)] w-12 h-12 rounded-xl flex items-center justify-center">
+                                                        <Sparkles size={24} />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between items-center">
+                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Cyber Quest</h3>
+                                                            <span className="text-[var(--text-accent)] font-bold text-[8px] uppercase tracking-widest border border-[var(--text-accent)]/30 px-2 py-0.5 rounded">READY</span>
+                                                        </div>
+                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
+                                                            Progress through 10 cyberpunk difficulty tiers. Use 50:50, Shield, and Skip lifelines to win.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                {/* Sprint Arena Card (Unlocked!) */}
+                                                <div 
+                                                    onClick={() => setSelectedGame('sprint-arena')}
+                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
+                                                        selectedGame === 'sprint-arena'
+                                                            ? 'border-pink-500 bg-pink-500/5 shadow-md opacity-100'
+                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-pink-400/50 opacity-80'
+                                                    }`}
+                                                >
+                                                    <div className="bg-pink-600/10 text-pink-400 w-12 h-12 rounded-xl flex items-center justify-center">
+                                                        <Clock size={24} />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between items-center">
+                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Sprint Arena</h3>
+                                                            <span className="text-pink-500 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 px-2 py-0.5 rounded">READY</span>
+                                                        </div>
+                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
+                                                            Beat the ticking clock in rapid time-survival MCQ matches. Correct adds time, wrong subtracts.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                {/* Match-Up Card (Unlocked!) */}
+                                                <div 
+                                                    onClick={() => setSelectedGame('match-up')}
+                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
+                                                        selectedGame === 'match-up'
+                                                            ? 'border-purple-500 bg-purple-500/5 shadow-md opacity-100'
+                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-purple-400/50 opacity-80'
+                                                    }`}
+                                                >
+                                                    <div className="bg-purple-600/10 text-purple-400 w-12 h-12 rounded-xl flex items-center justify-center">
+                                                        <Cpu size={24} />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between items-center">
+                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Match-Up Match</h3>
+                                                            <span className="text-purple-500 font-bold text-[8px] uppercase tracking-widest border border-purple-500/30 px-2 py-0.5 rounded">READY</span>
+                                                        </div>
+                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
+                                                            Visual cognitive card-matching memory board. Solve vocabulary and concepts in record times.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Launch Game button */}
+                                <div className="flex justify-center pt-4">
+                                    <button
+                                        onClick={handleLaunchGame}
+                                        disabled={(!file && videoUrls.every(u => !u.trim())) || submitting}
+                                        className={`w-full sm:w-auto px-6 sm:px-16 py-4 sm:py-5 rounded-2xl font-black text-base sm:text-xl italic uppercase tracking-wider sm:tracking-[0.25em] flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 border border-[#133E87] bg-[#133E87] !text-white shadow-[0_10px_25px_rgba(19,62,135,0.3)] ${
+                                            (!file && videoUrls.every(u => !u.trim())) || submitting
+                                                ? 'opacity-85 cursor-pointer'
+                                                : 'hover:bg-[#0e2e65] hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
+                                        }`}
+                                        style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
+                                    >
+                                        {submitting ? (
+                                            <>
+                                                <Loader2 size={24} className="animate-spin text-white" />
+                                                <span className="text-white font-black">ANALYZING MATERIAL...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Play size={24} fill="#ffffff" className="text-white" />
+                                                <span className="text-white font-black">LAUNCH GAME MODE</span>
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </motion.div>
                         ) : activeTab === 'gamification' ? (
                             <motion.div
                                 key="tab-gamification"
@@ -629,17 +872,49 @@ export default function StudentDashboard() {
 
                                     {/* Rewards Store */}
                                     <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
-                                        
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Trophy className="text-yellow-600" size={28} />
+                                            <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase">Rewards Store</h2>
+                                        </div>
+
+                                        {/* Perk Store */}
+                                        {(() => {
+                                            const getRedemptionsThisMonth = (perkId) => {
+                                                const now = new Date();
+                                                const currentYear = now.getFullYear();
+                                                const currentMonth = now.getMonth();
+                                                return unlockedPerks.filter(p => {
+                                                    if (p.id !== perkId) return false;
+                                                    const d = new Date(p.redeemedAt);
+                                                    return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+                                                }).length;
+                                            };
+
+                                            return [
+                                                { id: 'perk_att', name: '1 Hour Free Attendance', cost: 1500, icon: Clock, color: 'text-[var(--text-accent)]', border: 'border-[var(--border-color)]', desc: 'Excuse yourself from 1 hour of attendance', monthlyLimit: 1 },
+                                                { id: 'perk_late', name: '1 Day Late Pass', cost: 3000, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
+                                                { id: 'perk_golden', name: 'ΓÜí Golden Perk ΓÇö Free Streak Save', cost: 0, icon: Star, color: 'text-yellow-400', border: 'border-yellow-500', desc: 'One emergency streak save that costs 0 XP. Used automatically on your next missed day.', streakOnly: 30 },
+                                            ].map(perk => {
+                                                const isStreakLocked = perk.streakOnly && streak < perk.streakOnly;
+                                                const redemptionsThisMonth = perk.monthlyLimit ? getRedemptionsThisMonth(perk.id) : 0;
+                                                const limitReached = perk.monthlyLimit ? redemptionsThisMonth >= perk.monthlyLimit : false;
+                                                const canAfford = !isStreakLocked && !limitReached && xp >= perk.cost;
+                                                return (
+                                                <div key={perk.id} className={`p-4 rounded-2xl border bg-[var(--bg-primary)] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${isStreakLocked ? 'border-yellow-500/40 opacity-70' : 'border-[var(--border-color)]'}`}>
+                                                    <div className="flex items-center gap-4">
+                                                        <div className={`p-3 rounded-xl bg-[var(--bg-secondary)] border ${perk.border} ${perk.color}`}>
+                                                            <perk.icon size={24} />
+                                                        </div>
                                                         <div>
                                                             <h3 className="font-bold text-[var(--text-primary)] text-sm">{perk.name}</h3>
                                                             <p className="text-[var(--text-secondary)] text-[10px] mt-0.5">{perk.desc}</p>
                                                             {perk.monthlyLimit && (
                                                                 <p className="text-pink-400 text-[9px] font-black uppercase tracking-wider mt-1">
-                                                                    ⚠️ Only {perk.monthlyLimit} redeemable this month • {redemptionsThisMonth}/{perk.monthlyLimit} used
+                                                                    ΓÜá∩╕Å Only {perk.monthlyLimit} redeemable this month ΓÇó {redemptionsThisMonth}/{perk.monthlyLimit} used
                                                                 </p>
                                                             )}
                                                             {isStreakLocked
-                                                                ? <p className="text-yellow-400 text-xs font-black italic mt-1">🔒 Requires {perk.streakOnly}-Day Streak</p>
+                                                                ? <p className="text-yellow-400 text-xs font-black italic mt-1">≡ƒöÆ Requires {perk.streakOnly}-Day Streak</p>
                                                                 : <p className="text-yellow-400 text-xs font-black italic mt-1">{perk.cost} XP</p>
                                                             }
                                                         </div>
@@ -736,7 +1011,7 @@ export default function StudentDashboard() {
                                                 onClick={() => window.print()}
                                                 className="w-full py-3 bg-white text-black font-black uppercase text-sm rounded-lg hover:bg-gray-200 transition-colors"
                                             >
-                                                🖨 Print / Save as PDF
+                                                ≡ƒû¿ Print / Save as PDF
                                             </button>
                                         </div>
                                     </div>
