@@ -390,8 +390,8 @@ export default function CreateQuizPDF() {
         try {
             const formData = new FormData();
             formData.append('files', file);
-            formData.append('file', file);
             formData.append('type', 'file');
+            formData.append('topic', file.name.replace(/\.[^/.]+$/, ''));
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
             formData.append('startPage', startPage.toString());
@@ -407,7 +407,6 @@ export default function CreateQuizPDF() {
             formData.append('target_ratios', JSON.stringify(targetRatiosPayload));
 
             const res = await api.post('/quiz/generate', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
                 timeout: 30000, // only wait for taskId
             });
 
@@ -435,8 +434,9 @@ export default function CreateQuizPDF() {
                 },
             });
         } catch (err) {
-            console.error(err);
-            toast.error('Failed to start generation. Please try again.');
+            console.error('PDF generation submit error:', err);
+            const serverMsg = err.response?.data?.msg || err.response?.data?.message || err.message;
+            toast.error(serverMsg || 'Failed to start generation. Please try again.');
             setSubmitting(false);
         }
     };

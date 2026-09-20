@@ -321,7 +321,7 @@ router.post('/submit', auth, quizController.submitAttempt);
 
 // @route   POST api/quiz/generate
 // @desc    Generate quiz questions (async — returns taskId immediately)
-router.post('/generate', auth, teacherOrAdmin, generationLimiter, upload.array('files', 10), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
+router.post('/generate', auth, teacherOrAdmin, generationLimiter, upload.fields([{ name: 'files', maxCount: 10 }, { name: 'file', maxCount: 10 }]), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
 // SECURITY: Require auth on callback to prevent injection of fake task results
 router.post('/generate/callback/:taskId', auth, quizController.taskCompleteCallback);
 
