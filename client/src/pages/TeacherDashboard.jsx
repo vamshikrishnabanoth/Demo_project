@@ -102,7 +102,7 @@ export default function TeacherDashboard() {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 15 }}
                             transition={{ type: 'spring', duration: 0.4 }}
-                            className="bg-white border-2 border-slate-200 w-full max-w-3xl rounded-[2.5rem] shadow-2xl relative overflow-hidden z-10 flex flex-col p-6 sm:p-8 md:p-10 gap-6"
+                            className="bg-white border-2 border-slate-200 w-full max-w-5xl rounded-[2.5rem] shadow-2xl relative overflow-hidden z-10 flex flex-col p-6 sm:p-8 md:p-10 gap-6"
                         >
                             {/* Close Button */}
                             <button
@@ -127,8 +127,41 @@ export default function TeacherDashboard() {
                             </div>
 
                             {/* Cards Container */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-                                {/* Card 1: AI Creation Studio */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+                                {/* Card 1: PDF & Document Parser */}
+                                <div
+                                    onClick={() => {
+                                        setShowModal(false);
+                                        navigate('/create-quiz/pdf');
+                                    }}
+                                    className="group relative bg-gradient-to-br from-slate-50 to-white hover:from-white hover:to-white border-2 border-slate-200 hover:border-amber-500 rounded-3xl p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl active:scale-[0.98] select-none text-left"
+                                >
+                                    <div className="absolute inset-0 bg-amber-600/[0.01] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                                    <div className="flex items-center justify-between">
+                                        <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-100 text-amber-700 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
+                                            <FileText size={24} />
+                                        </div>
+                                        <ArrowRight size={18} className="text-slate-400 group-hover:translate-x-1 group-hover:text-amber-600 transition-all" />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <h4 className="font-extrabold text-slate-950 text-lg group-hover:text-amber-700 transition-colors">
+                                            PDF & Document Upload
+                                        </h4>
+                                        <p className="text-xs text-slate-500 leading-relaxed font-semibold">
+                                            Directly drag & drop PDF files, Word docs (.docx), PowerPoint (.pptx), or scanned image notes.
+                                        </p>
+                                    </div>
+                                    <div className="mt-auto pt-3 flex flex-wrap gap-1.5">
+                                        {['PDF Drag & Drop', 'Word .docx', 'Scanned OCR', 'Tables & Diagrams'].map((tag) => (
+                                            <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-amber-50 group-hover:text-amber-700 px-2.5 py-1 rounded-md text-slate-600 transition-colors">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Card 2: AI Creation Studio */}
                                 <div
                                     onClick={() => {
                                         setShowModal(false);
@@ -146,14 +179,14 @@ export default function TeacherDashboard() {
                                     </div>
                                     <div className="space-y-1.5">
                                         <h4 className="font-extrabold text-slate-950 text-lg group-hover:text-violet-700 transition-colors">
-                                            AI Creation Studio
+                                            AI Multi-Modal Studio
                                         </h4>
                                         <p className="text-xs text-slate-500 leading-relaxed font-semibold">
-                                            Auto-generate high-quality quizzes from lecture audio (.mp3, .m4a), live voice recordings, topics, or PDFs with AI.
+                                            Combine lecture audio (.mp3, .m4a), topics, live recordings, and multi-file material into one quiz.
                                         </p>
                                     </div>
                                     <div className="mt-auto pt-3 flex flex-wrap gap-1.5">
-                                        {['Topics', 'Voice Audio', 'Lecture Uploads', 'PDFs & Docs'].map((tag) => (
+                                        {['Topics', 'Voice Audio', 'Lecture Uploads', 'Multi-Source'].map((tag) => (
                                             <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-violet-50 group-hover:text-violet-700 px-2.5 py-1 rounded-md text-slate-600 transition-colors">
                                                 {tag}
                                             </span>
@@ -161,7 +194,7 @@ export default function TeacherDashboard() {
                                     </div>
                                 </div>
 
-                                {/* Card 2: Manual Quiz Builder */}
+                                {/* Card 3: Manual Quiz Builder */}
                                 <div
                                     onClick={() => {
                                         setShowModal(false);
