@@ -98,7 +98,7 @@ function AnimatedRoutes() {
                     {/* Teacher pages — standard slide transition */}
                     <Route path="/teacher-dashboard" element={<PageTransition><ProtectedRoute roles={['teacher']}><TeacherDashboard /></ProtectedRoute></PageTransition>} />
                     <Route path="/create-quiz/text"  element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizText /></ProtectedRoute></PageTransition>} />
-                    <Route path="/create-quiz/pdf"   element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizPDF /></ProtectedRoute></PageTransition>} />
+                    <Route path="/create-quiz/pdf"   element={<Navigate to="/create-quiz/topic" replace />} />
                     <Route path="/create-quiz/topic" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizTopic /></ProtectedRoute></PageTransition>} />
                     <Route path="/create-quiz/voice" element={<Navigate to="/create-quiz/topic" replace />} />
                     <Route path="/my-quizzes"        element={<PageTransition><ProtectedRoute roles={['teacher']}><MyQuizzes /></ProtectedRoute></PageTransition>} />
