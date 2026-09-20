@@ -247,15 +247,22 @@ class PipelineOrchestrator {
       let queueIdx = 0;
 
       // Encapsulated single-target generation & evaluation unit
+      const MAX_GENERATION_ATTEMPTS = 3;
       const executeTarget = async (currentTarget, displayIndex) => {
+        // Case E check: If session evidence is completely empty or non-academic, halt immediately without retrying
+        if (!evidencePackage.curricularContent || evidencePackage.curricularContent.trim().length < 30) {
+          console.warn(`🛑 [Orchestrator] Case E: Document lacks readable content. Halting target ${currentTarget.targetId} immediately.`);
+          return { status: 'FAIL', target: currentTarget, attempts: 0, reason: 'INSUFFICIENT_READABLE_EVIDENCE' };
+        }
+
         let attempts = 0;
         let repairInstruction = null;
 
-        while (attempts < 2) {
+        while (attempts < MAX_GENERATION_ATTEMPTS) {
           attempts++;
           totalAttempts++;
           const targetStartTime = Date.now();
-          const targetAction = attempts === 1 ? 'Generating' : 'Repairing';
+          const targetAction = attempts === 1 ? 'Generating' : `Repairing (Attempt ${attempts}/${MAX_GENERATION_ATTEMPTS})`;
 
           await trace.recordStage({
             stageOrder: `04_T${currentTarget.targetId}_att${attempts}`,
@@ -518,7 +525,9 @@ class PipelineOrchestrator {
       trace.totalAttempts = totalAttempts;
 
       if (passingQuestions.length === 0) {
-        throw new Error('No valid grounded questions could be generated from the provided session material.');
+        const insErr = new Error('INSUFFICIENT_READABLE_EVIDENCE: No valid grounded questions could be generated from the provided document/session material.');
+        insErr.code = 'INSUFFICIENT_READABLE_EVIDENCE';
+        throw insErr;
       }
 
       // Record Stage 4 & 5 advance for truthful monotonic UI telemetry
@@ -671,17 +680,27 @@ class PipelineOrchestrator {
         traceSummaryPath: `server/logs/debug/sessions/${sessionId}/final_session_trace.json`
       };
     } catch (err) {
+      const isInsufficient = err.code === 'INSUFFICIENT_READABLE_EVIDENCE' || (err.message && err.message.includes('INSUFFICIENT_READABLE_EVIDENCE'));
       const isFatal = err.code === 'NO_LLM_PROVIDER_AVAILABLE' || (err.message && err.message.includes('NO_LLM_PROVIDER_AVAILABLE'));
-      const failureReason = isFatal 
-        ? 'NO_LLM_PROVIDER_AVAILABLE: All AI providers are rate-limited or offline. Please retry in a few moments.'
-        : `PIPELINE_ERROR: ${err.message}`;
+      let failureReason;
+      let failureCode = 'PIPELINE_ERROR';
+
+      if (isInsufficient) {
+        failureCode = 'INSUFFICIENT_READABLE_EVIDENCE';
+        failureReason = 'INSUFFICIENT_READABLE_EVIDENCE: The uploaded document did not contain sufficient readable instructional text, tables, or visual data to formulate grounded assessment questions.';
+      } else if (isFatal) {
+        failureCode = 'NO_LLM_PROVIDER_AVAILABLE';
+        failureReason = 'NO_LLM_PROVIDER_AVAILABLE: All AI providers are rate-limited or offline. Please retry in a few moments.';
+      } else {
+        failureReason = `PIPELINE_ERROR: ${err.message}`;
+      }
 
       await trace.recordStage({
         stageOrder: 'ERR',
         stageName: 'PIPELINE_FAILURE',
         decisions: [failureReason],
         errors: [err.message],
-        output: { status: 'FAILED' },
+        output: { status: 'FAILED', failureCode },
         validation: { status: 'FAIL', errors: [failureReason] }
       });
 
@@ -690,6 +709,7 @@ class PipelineOrchestrator {
       return {
         sessionId: sessionId,
         pipelineStatus: 'FAILED',
+        failureCode,
         evidenceSafety: 'UNKNOWN',
         quizQualityStatus: 'FAILED',
         error: failureReason,

@@ -13,6 +13,8 @@
 
 const { HierarchicalRetriever } = require('./hierarchicalRetriever');
 const { CrossMaterialAligner } = require('./crossMaterialAligner');
+const HybridRetriever = require('./hybridRetriever');
+const RerankerService = require('./rerankerService');
 
 function tokenize(text) {
   if (!text) return [];
@@ -41,7 +43,34 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
   const supporting = (target.supportingEvidence || target.evidenceSpan || '').trim();
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Primary Path: Dual-Level Hierarchical RAG + Cross-Material Alignment
+  // Primary Path: Multimodal Hybrid Retrieval (Dense + BM25 + Content-Type Boost + Reranker)
+  // ──────────────────────────────────────────────────────────────────────────
+  const activeStore = evidencePackage?.multimodalStore || evidencePackage?.hierarchicalStore;
+  if (activeStore && Array.isArray(activeStore.children) && activeStore.children.length > 0) {
+    try {
+      const candidates = HybridRetriever.retrieveForTarget(activeStore, target, { topK: 4 });
+      if (candidates && candidates.length > 0) {
+        const { evidenceContextString } = RerankerService.rerank(candidates, target, { topN: 3 });
+        if (evidenceContextString && evidenceContextString.trim().length > 30) {
+          const parts = [];
+          if (supporting) {
+            parts.push('[DIRECT TARGET EVIDENCE]\n' + supporting);
+          }
+          let fullContext = evidenceContextString.trim();
+          if (fullContext.length > effectiveMaxChars) {
+            fullContext = fullContext.substring(0, effectiveMaxChars);
+          }
+          parts.push('[RELEVANT MULTIMODAL CONTEXT (HYBRID BM25 + DENSE)]\n' + fullContext);
+          return parts.join('\n\n');
+        }
+      }
+    } catch (hybridErr) {
+      console.warn(`⚠️ [EvidenceContextSelector] Hybrid retrieval notice for target ${target.targetId}: ${hybridErr.message}. Falling back to standard hierarchical.`);
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Secondary Path: Dual-Level Hierarchical RAG + Cross-Material Alignment
   // ──────────────────────────────────────────────────────────────────────────
   if (evidencePackage && evidencePackage.hierarchicalStore && Array.isArray(evidencePackage.hierarchicalStore.children)) {
     try {

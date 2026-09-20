@@ -133,6 +133,29 @@ class EvidencePackager {
         documentTexts: cleanDocsArray
       };
       packageData.hierarchicalStore = HierarchicalChunker.buildStore(sanitizedInputs);
+
+      // Integrate Structure-Aware Multimodal Chunker if CommonDocumentModel is present
+      const StructureAwareChunker = require('./structureAwareChunker');
+      if (sessionInputs.commonDocumentModel) {
+        packageData.commonDocumentModel = sessionInputs.commonDocumentModel;
+        const structResult = StructureAwareChunker.chunkDocument(sessionInputs.commonDocumentModel);
+        if (structResult.children && structResult.children.length > 0) {
+          if (!packageData.hierarchicalStore) {
+            packageData.hierarchicalStore = { parents: [], children: [], parentMap: {}, childMap: {} };
+          }
+          // Merge structure-aware chunks
+          for (const p of structResult.parents) {
+            packageData.hierarchicalStore.parents.push(p);
+            packageData.hierarchicalStore.parentMap[p.evidenceId] = p;
+          }
+          for (const c of structResult.children) {
+            packageData.hierarchicalStore.children.push(c);
+            packageData.hierarchicalStore.childMap[c.evidenceId] = c;
+          }
+        }
+      }
+      packageData.multimodalStore = packageData.hierarchicalStore;
+
       packageData.alignmentGraph = CrossMaterialAligner.buildAlignmentGraph(packageData.hierarchicalStore);
     } catch (storeErr) {
       console.warn(`⚠️ [EvidencePackager] Notice building hierarchical/alignment store: ${storeErr.message}`);

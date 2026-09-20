@@ -20,33 +20,51 @@ class GroundingGate {
     const rawContent = (evidencePackage.unifiedRawContent || '').toLowerCase();
     const validated = [];
     let rejectedCount = 0;
+    let failureReasons = [];
+
+    // Extract table and visual contents from multimodalStore or commonDocumentModel if present
+    let tableText = '';
+    let visualText = '';
+    if (evidencePackage.commonDocumentModel) {
+      const blocks = evidencePackage.commonDocumentModel.getAllBlocks?.() || [];
+      for (const b of blocks) {
+        if (b.type === 'table') tableText += ' ' + b.content.toLowerCase();
+        if (b.type === 'chart' || b.type === 'diagram' || b.type === 'image') visualText += ' ' + b.content.toLowerCase();
+      }
+    }
+
+    const fullVerifiableContent = `${rawContent} ${tableText} ${visualText}`.trim();
 
     for (const q of quizQuestions) {
       const qText = (q.questionText || '').toLowerCase();
       const ansText = (q.correctAnswer || '').toLowerCase();
 
-      // Semantic keywords overlap verification against raw session content
-      const { isJustified, reason } = this._checkJustification(qText, ansText, rawContent);
+      // Semantic keywords overlap verification against verifiable session content
+      const { isJustified, reason } = this._checkJustification(qText, ansText, fullVerifiableContent);
 
       if (isJustified) {
         validated.push(q);
       } else {
         console.warn(`⚠️ [Grounding Gate] REJECTED question due to: ${reason} | Question: "${q.questionText}"`);
         rejectedCount++;
+        failureReasons.push(reason);
       }
     }
 
+    const passed = validated.length > 0;
     return {
-      status: validated.length > 0 ? 'PASSED' : 'FAILED',
+      status: passed ? 'PASSED' : 'FAILED',
+      failureCode: passed ? null : 'INSUFFICIENT_READABLE_EVIDENCE',
       validatedQuestions: validated,
       rejectedCount: rejectedCount,
-      totalVerified: validated.length
+      totalVerified: validated.length,
+      reasons: failureReasons
     };
   }
 
   _checkJustification(qText, ansText, rawContent) {
     if (!rawContent || rawContent.length < 50) {
-      return { isJustified: true, reason: 'Minimal raw content' };
+      return { isJustified: false, reason: 'INSUFFICIENT_READABLE_EVIDENCE: Session content too sparse to verify grounding' };
     }
 
     // Stopwords list
@@ -64,7 +82,7 @@ class GroundingGate {
       .filter(w => w.length > 3 && !stopwords.has(w));
 
     if (keywords.length === 0) {
-      return { isJustified: true, reason: 'No significant keywords' };
+      return { isJustified: true, reason: 'No significant keywords to constrain' };
     }
 
     // Check if key terms exist in session evidence
@@ -76,7 +94,7 @@ class GroundingGate {
     const hasForeignIndicator = foreignIndicators.some(f => (qText + ' ' + ansText).includes(f) && !rawContent.includes(f));
 
     if (hasForeignIndicator) {
-      return { isJustified: false, reason: 'FOREIGN_TOPIC_CONTAMINATION: Detected domain terms absent from lecture' };
+      return { isJustified: false, reason: 'FOREIGN_TOPIC_CONTAMINATION: Detected domain terms absent from document' };
     }
 
     if (matchRatio < 0.15 && matched.length < 2) {

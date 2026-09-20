@@ -19,6 +19,7 @@ const documentStore = require('../storage/documentStore');
 const { expandShortTopicDescription } = require('../engine/documentAnalyzer/topicExpander');
 const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
 const { chunkMp3, chunkM4a, compressForWhisper } = require('../utils/audioChunker');
+const DocumentRouter = require('../engine/documentRouter/documentRouter');
 
 // Initialize Groq for Whisper (Transcription)
 let groq;
@@ -449,116 +450,90 @@ const parsePptOrPptx = async (filePath) => {
     return textParts.join('\n');
 };
 
-// Text Extraction Helper
+// Text Extraction Helper with Multimodal Pipeline Router
 const extractText = async (filePath) => {
     try {
         const ext = path.extname(filePath).toLowerCase();
+        if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
+            return (await transcribeAudio(filePath)) || '';
+        }
+        if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
+            return await parsePptOrPptx(filePath);
+        }
+
+        // Multimodal Ingestion via DocumentRouter
+        try {
+            const commonDoc = await DocumentRouter.ingestDocument(filePath, {
+                filename: path.basename(filePath)
+            });
+            const extracted = commonDoc.toUnifiedText();
+            if (extracted && extracted.trim().length >= 20) {
+                return extracted;
+            }
+        } catch (routerErr) {
+            console.warn(`⚠️ [quizController] DocumentRouter notice: ${routerErr.message}. Executing fallback parser.`);
+        }
+
+        // Resilient Fallback parsing
         let extracted = '';
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(filePath);
             const data = await pdfParse(dataBuffer);
             extracted = data.text || '';
-            // Fallback: binary ASCII text extraction if pdfParse returns minimal text
-            if (extracted.trim().length < 100) {
-                const rawBufferStr = dataBuffer.toString('binary');
-                const asciiMatches = rawBufferStr.match(/[\x20-\x7E\s]{4,}/g) || [];
-                const fallbackText = asciiMatches.filter(s => s.trim().length > 3).join(' ');
-                if (fallbackText.trim().length > extracted.trim().length) {
-                    extracted = fallbackText;
-                }
-            }
         } else if (ext === '.docx') {
             const result = await mammoth.extractRawText({ path: filePath });
             extracted = result.value || '';
-        } else if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
-            extracted = await parsePptOrPptx(filePath);
-        } else if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
-            extracted = (await transcribeAudio(filePath)) || '';
         } else {
             extracted = fs.readFileSync(filePath, 'utf8');
         }
 
-        // If extracted text is under 100 chars, expand short topic/filename context
-        if (!extracted || extracted.trim().length < 100) {
-            const baseName = path.basename(filePath, ext).replace(/[-_]/g, ' ');
-            return expandShortTopicDescription(extracted || baseName);
+        if (!extracted || extracted.trim().length < 50) {
+            return (extracted || '').trim();
         }
 
         return extracted;
     } catch (err) {
         console.error('❌ Extraction Error:', err.message);
-        const baseName = path.basename(filePath).replace(/[-_]/g, ' ');
-        return `Document Title: ${baseName}\nThis educational study material details essential technical concepts, operational mechanisms, definitions, and applications for ${baseName}.`;
+        return '';
     }
 };
 
 const extractTextWithRange = async (filePath, startPage = 1, endPage = 999) => {
     try {
         const ext = path.extname(filePath).toLowerCase();
-        let start = Math.max(1, startPage);
-        let end = Math.max(start, endPage);
-
-        if (start > end) {
-            const temp = start;
-            start = end;
-            end = temp;
+        if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
+            return (await transcribeAudio(filePath)) || '';
         }
-
-        if (ext === '.pdf') {
-            const dataBuffer = fs.readFileSync(filePath);
-            const data = await pdfParse(dataBuffer);
-            let fullText = data.text || '';
-            
-            // Binary ASCII text extraction fallback if pdfParse yields minimal text
-            if (fullText.trim().length < 100) {
-                const rawBufferStr = dataBuffer.toString('binary');
-                const asciiMatches = rawBufferStr.match(/[\x20-\x7E\s]{4,}/g) || [];
-                const fallbackText = asciiMatches.filter(s => s.trim().length > 3).join(' ');
-                if (fallbackText.trim().length > fullText.trim().length) {
-                    fullText = fallbackText;
-                }
-            }
-
-            let extractedRange = fullText;
-            if (fullText.includes('\f')) {
-                const pages = fullText.split('\f');
-                const total = pages.length;
-                let s = Math.max(0, start - 1);
-                let e = Math.min(total, end);
-                if (s < e) {
-                    extractedRange = pages.slice(s, e).join('\n\n');
-                }
-            }
-
-            if (!extractedRange || extractedRange.trim().length < 100) {
-                const baseName = path.basename(filePath, ext).replace(/[-_]/g, ' ');
-                extractedRange = `Document Title: ${baseName}\n${fullText || ''}\nThis educational study material details essential technical concepts, operational mechanisms, definitions, and applications for ${baseName}.`;
-            }
-            return extractedRange;
-        } else if (ext === '.docx') {
-            const result = await mammoth.extractRawText({ path: filePath });
-            const lines = result.value.split('\n');
-            const linesPerPage = 30;
-            const total = Math.max(1, Math.ceil(lines.length / linesPerPage));
-            if (start > total) start = total;
-            if (end > total) end = total;
-            const s = Math.max(0, (start - 1) * linesPerPage);
-            const e = Math.min(lines.length, end * linesPerPage);
-            return lines.slice(s, e).join('\n');
-        } else if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
+        if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
             const parsedText = await parsePptOrPptx(filePath);
             const chunks = (parsedText || '').split('\n');
             const chunksPerSlide = 15;
             const total = Math.max(1, Math.ceil(chunks.length / chunksPerSlide));
+            let start = Math.max(1, startPage);
+            let end = Math.max(start, endPage);
             if (start > total) start = total;
             if (end > total) end = total;
             const s = Math.max(0, (start - 1) * chunksPerSlide);
             const e = Math.min(chunks.length, end * chunksPerSlide);
             return chunks.slice(s, e).join('\n');
-        } else if (['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'].includes(ext)) {
-            return (await transcribeAudio(filePath)) || '';
         }
-        return fs.readFileSync(filePath, 'utf8');
+
+        // Multimodal Ingestion with page scoping
+        try {
+            const commonDoc = await DocumentRouter.ingestDocument(filePath, {
+                filename: path.basename(filePath),
+                startPage,
+                endPage
+            });
+            const extracted = commonDoc.toUnifiedText();
+            if (extracted && extracted.trim().length >= 20) {
+                return extracted;
+            }
+        } catch (routerErr) {
+            console.warn(`⚠️ [quizController] Scoped DocumentRouter notice: ${routerErr.message}. Executing fallback.`);
+        }
+
+        return extractText(filePath);
     } catch (err) {
         console.error('❌ Scoped Extraction Error:', err.message);
         return extractText(filePath);
@@ -643,8 +618,13 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         let docNames = [];
         let codeSnippets = '';
 
+        let commonDocModel = null;
+
         if (Array.isArray(inputs) && inputs.length > 0) {
             inputs.forEach((inp, idx) => {
+                if (inp.commonDocumentModel) {
+                    commonDocModel = inp.commonDocumentModel;
+                }
                 if (inp.type === 'voice' || inp.type === 'audio' || inp.type === 'transcript') {
                     voiceText += (inp.content || '') + '\n';
                 } else if (inp.type === 'code') {
@@ -670,6 +650,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             documentTexts: docTexts,
             documentNames: docNames,
             codeSnippets: codeSnippets,
+            commonDocumentModel: commonDocModel,
             difficulty: difficulty,
             count: parseInt(count)
         };
@@ -1015,13 +996,32 @@ exports.createQuiz = async (req, res) => {
             finalQuestions = Array.isArray(manualQuestions) ? manualQuestions : JSON.parse(manualQuestions);
         } else if (req.file) {
             const absolutePath = path.resolve(req.file.path);
-            const extractedText = await extractText(absolutePath);
+            let commonDoc = null;
+            try {
+                commonDoc = await DocumentRouter.ingestDocument(absolutePath, {
+                    filename: req.file.originalname || path.basename(absolutePath)
+                });
+            } catch (rErr) {
+                console.warn(`⚠️ [createQuiz] DocumentRouter notice: ${rErr.message}`);
+            }
+
+            let extractedText = commonDoc ? commonDoc.toUnifiedText() : await extractText(absolutePath);
+            if (!extractedText || extractedText.trim().length < 50) {
+                extractedText = await extractText(absolutePath);
+            }
+
             if (extractedText && extractedText.trim().length >= 100) {
-                finalQuestions = await generateQuestions('topic', extractedText, questionCount, difficulty);
+                const docInputs = [{
+                    type: 'document',
+                    content: extractedText,
+                    name: req.file.originalname || 'Uploaded Document',
+                    commonDocumentModel: commonDoc
+                }];
+                finalQuestions = await generateQuestions('document', extractedText, questionCount, difficulty, null, null, docInputs);
             } else {
                 return res.status(400).json({
-                    msg: "EMPTY_DOCUMENT_PAYLOAD: PDF text extraction failed or document contains no readable text (textLength < 100). Please upload a valid text-searchable PDF.",
-                    code: "EMPTY_DOCUMENT_PAYLOAD"
+                    msg: "INSUFFICIENT_READABLE_EVIDENCE: Document text extraction failed or document contains no readable text (textLength < 100). Please upload a valid readable document.",
+                    code: "INSUFFICIENT_READABLE_EVIDENCE"
                 });
             }
         } else if (content || topic) {
@@ -1177,6 +1177,13 @@ exports.createQuiz = async (req, res) => {
 
     } catch (err) {
         console.error('❌ Final CreateQuiz Error:', err.message);
+        if (err.code === 'INSUFFICIENT_READABLE_EVIDENCE' || (err.message && err.message.includes('INSUFFICIENT_READABLE_EVIDENCE'))) {
+            return res.status(400).json({ 
+                message: 'No valid grounded questions could be generated from the provided document material.', 
+                code: 'INSUFFICIENT_READABLE_EVIDENCE',
+                error: err.message
+            });
+        }
         res.status(500).json({ 
             message: 'Failed to create quiz', 
             error: process.env.NODE_ENV === 'development' ? err.message : 'Internal error'

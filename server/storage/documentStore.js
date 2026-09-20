@@ -30,7 +30,7 @@ class DocumentStore {
     return `doc_${hash}`;
   }
 
-  saveDocument({ filename, ext, totalPages = 1, textContent = '', documentProfile = null }) {
+  saveDocument({ filename, ext, totalPages = 1, textContent = '', documentProfile = null, commonDocumentModel = null }) {
     if (!textContent || typeof textContent !== 'string') {
       throw new Error('DocumentStore: Invalid textContent provided for document saving.');
     }
@@ -49,6 +49,7 @@ class DocumentStore {
       lines,
       linesPerPage,
       documentProfile,
+      commonDocumentModel: commonDocumentModel ? (typeof commonDocumentModel.toJSON === 'function' ? commonDocumentModel.toJSON() : commonDocumentModel) : null,
       createdAt: Date.now(),
       expiresAt: Date.now() + this.ttlMs
     };
