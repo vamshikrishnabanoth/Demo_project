@@ -228,6 +228,10 @@ exports.getQuizAnalytics = async (req, res) => {
 
         const topStudents = leaderboard.slice(0, 5);
 
+        const studentRank = req.user?.role === 'student'
+            ? (leaderboard.find(student => student.id === req.user.id)?.rank || null)
+            : null;
+
         const allStudentsInDb = await prisma.user.count({ where: { role: 'student' } });
 
         let formattedCheatingLogs = [];
@@ -356,7 +360,8 @@ exports.getQuizAnalytics = async (req, res) => {
             topStudents,
             leaderboard,
             cheatingLogs: formattedCheatingLogs,
-            studentAttempt
+            studentAttempt,
+            studentRank
         });
 
     } catch (err) {
@@ -453,10 +458,11 @@ exports.getQuestionAnalysis = async (req, res) => {
                 const answersArray = getAnswersArray(userResult.answers);
                 const ans = answersArray.find(a => a && (a.questionText === question.questionText || a.questionIndex === qIndex));
                 if (ans) {
+                    const hasTimeTaken = Object.prototype.hasOwnProperty.call(ans, 'timeTaken') && Number.isFinite(Number(ans.timeTaken));
                     userAnswer = {
                         selectedOption: ans.selectedOption || null,
                         isCorrect: ans.isCorrect || false,
-                        timeTaken: ans.timeTaken || 0
+                        timeTaken: hasTimeTaken ? Number(ans.timeTaken) : null
                     };
                 }
             }
@@ -493,9 +499,11 @@ exports.getQuestionAIReview = async (req, res) => {
     let skippedCount = 0;
     let optionSelection = {};
     let question = { questionText: 'Unknown', correctAnswer: '', options: [] };
+    let fallbackReview = '';
 
     try {
         const { quizId, questionIndex } = req.params;
+        const followUp = typeof req.query.followUp === 'string' ? req.query.followUp.trim() : '';
         const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
         
         if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
@@ -553,36 +561,37 @@ exports.getQuestionAIReview = async (req, res) => {
         const totalAttempts = correctCount + wrongCount + skippedCount;
         const correctPercentage = totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0;
 
-        // Initialize Gemini model
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "dummy_key");
+        fallbackReview = `The correct answer is "${question.correctAnswer}". It is correct because it directly matches the relationship or definition described in the question.`;
+
+        // Do not send requests with a placeholder key. Return a useful grounded answer immediately.
+        if (!process.env.GEMINI_API_KEY?.trim()) {
+            return res.json({ review: fallbackReview, source: 'grounded-fallback' });
+        }
+
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY.trim());
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const prompt = `
-            You are an elite, expert academic analyst.
-            Analyze the following question and the classroom's performance:
-            
-            Question: "${question.questionText}"
+            You are a precise question-answering tutor. Answer only the question below.
+            Use only the question, its options, and the verified correct answer provided here.
+            Do not produce a classroom report, mastery statistics, misconception diagnosis,
+            teaching strategies, alternate questions, headings, or unrelated details.
+            State the correct answer and explain briefly why it is correct. Never change the
+            verified answer or invent information not supported by the question.
+
+            Question: ${question.questionText}
             Options: ${JSON.stringify(question.options)}
-            Correct Answer: "${question.correctAnswer}"
-            Difficulty: "${question.difficulty}"
-            Points: ${question.points}
-            
-            Class Performance Stats:
-            - Total Students Attempted: ${totalAttempts}
-            - Correct Answers: ${correctCount} (${correctPercentage}%)
-            - Wrong Answers: ${wrongCount}
-            - Skipped/Missed: ${skippedCount}
-            - Option Pick Counts: ${JSON.stringify(optionSelection)}
-            
-            Please provide a structured, professional, and visually stunning review in markdown. Include the following sections:
-            1. **Correct Answer**: State the correct answer clearly and briefly justify why it is correct.
-            2. **Classroom Mastery Assessment**: A brief, engaging summary of how well the class understood this question.
-            3. **Misconception Diagnosis**: Deep dive into why students may have selected the specific wrong options (looking at the option pick counts). Explain the learning gaps causing these errors. If there are no wrong selections, highlight the perfect accuracy.
-            4. **Actionable Teaching Strategies**: 2-3 specific pedagogical techniques or quick explanations the teacher can use in class tomorrow to correct these misconceptions.
-            5. **Alternate / Enhanced Formulations**: Propose 1-2 alternate variations of this question to better test this concept or build on it in the next exam.
+            Verified correct answer: ${question.correctAnswer}
+            ${followUp ? `Student follow-up question: ${followUp}` : 'Student request: Explain the correct answer.'}
+
+            Return a concise answer in 2-5 sentences. If the follow-up asks about something
+            unrelated to this question, say that you can only help with this question.
         `;
 
-        const response = await model.generateContent(prompt);
+        const aiTimeout = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('AI_REVIEW_TIMEOUT')), 20000);
+        });
+        const response = await Promise.race([model.generateContent(prompt), aiTimeout]);
         const review = response.response.text();
 
         res.json({ review });
@@ -600,29 +609,6 @@ exports.getQuestionAIReview = async (req, res) => {
                 mostPickedWrongOption = opt;
             }
         });
-
-        const fallbackReview = `
-## Correct Answer
-The correct answer is **"${question.correctAnswer.toUpperCase()}"**.
-
-## Classroom Mastery Assessment
-The classroom shows a **${correctPercentage}%** accuracy rating for this question, reflecting a **${correctPercentage > 75 ? 'HIGH' : correctPercentage > 45 ? 'MODERATE' : 'CRITICAL'}** conceptual understanding of this topic. Out of **${totalAttempts}** student attempts, **${correctCount}** were correct, **${wrongCount}** were incorrect, and **${skippedCount}** skipped.
-
-## Misconception Diagnosis
-${maxWrongCount > 0 ? `* **Primary Distractor Analysis:** Option "${mostPickedWrongOption.toUpperCase()}" was chosen by **${maxWrongCount}** students.
-* **Learning Gap:** Students who selected the wrong answers are likely suffering from a common misconception relating to the foundational definitions in this section. When choosing "${mostPickedWrongOption.toUpperCase()}", students often confuse direct relationships with inverse parameters, overlooking the exact constraints outlined in the question context.` : `* **Distractor Analysis:** No incorrect options were chosen. The class achieved 100% mastery!
-* **Learning Gap:** Since all attempts were correct, there are no immediate misconception gaps identified for this question.`}
-* **Confidence Indicators:** The skipped rate of **${Math.round((skippedCount / totalAttempts) * 100) || 0}%** indicates ${skippedCount > 0 ? 'a lack of confidence' : 'high confidence'}, where students ${skippedCount > 0 ? 'preferred not to guess, signaling that the core formulas need a brief review' : 'actively attempted the question without hesitation'}.
-
-## Actionable Teaching Strategies
-1. **Interactive Retrieval Practice (10 Mins):** Tomorrow in class, project this exact question on the screen and walk through a process-of-elimination exercise to prove why the distractors are mathematically or logically incorrect.
-${maxWrongCount > 0 ? `2. **Concept Mapping:** Draw a quick flowchart on the board connecting the core variables to show where the inverse correlation occurs, directly targeting the primary distractor "${mostPickedWrongOption.toUpperCase()}".` : `2. **Reinforcement:** Celebrate the 100% success rate with the class and briefly touch on the underlying concepts to reinforce long-term retention.`}
-3. **Peer Instruction:** Have students who answered correctly explain their reasoning to their neighbors for 3 minutes to leverage peer-led cognitive reinforcement.
-
-## Alternate / Enhanced Formulations
-* **Alternative 1 (Application-focused):** Rewrite the question by introducing a practical scenario using these variables, reducing the abstract complexity.
-* **Alternative 2 (Step-by-step scaffolding):** Divide this question into two sequential parts—first testing the basic definition, and then testing the composite calculation.
-        `;
 
         res.json({ review: fallbackReview });
     }

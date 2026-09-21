@@ -44,6 +44,22 @@ const SAFFRON_SHADES = [
     '#D96B27', '#ea580c', '#f97316', '#c2410c', '#b84c12', '#fb923c', '#9a3412', '#d97706', '#ff8c00', '#7c2d12'
 ];
 
+// Section Mastery bin colors
+const SECTION_MASTERY_COLORS = [
+    '#FF0052',
+    '#FFD400',
+    '#00C68D',
+    '#0055DA',
+    'rgb(255, 91, 91)',
+    'rgb(240, 255, 195)',
+    'rgb(156, 207, 255)',
+    'rgb(104, 90, 255)',
+    'rgb(0, 234, 211)',
+    'rgb(255, 245, 183)',
+    'rgb(255, 68, 159)',
+    'rgb(0, 95, 153)'
+];
+
 const getThemePalette = () => {
     const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
     return isSaffronTheme ? SAFFRON_SHADES : BLUE_SHADES;
@@ -470,7 +486,12 @@ export default function QuizAnalytics() {
                                 <div style={{ minWidth: `${Math.max(300, radarData.length * 60)}px`, height: '300px' }}>
                                     <Suspense fallback={<ChartFallback />}>
                                         <ScoreDistributionChart 
-                                            data={(radarData || []).map((entry, idx) => ({ ...entry, range: entry.subject, count: entry.A, fill: getThemePalette()[idx % getThemePalette().length] }))} 
+                                            data={(radarData || []).map((entry, idx) => ({ 
+                                                ...entry, 
+                                                range: entry.subject, 
+                                                count: entry.A, 
+                                                fill: SECTION_MASTERY_COLORS[idx % SECTION_MASTERY_COLORS.length] 
+                                            }))} 
                                             tooltip={<CustomTooltip />} 
                                             name="Average Marks"
                                         />

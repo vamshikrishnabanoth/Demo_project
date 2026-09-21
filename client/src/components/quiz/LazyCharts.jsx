@@ -12,7 +12,11 @@ export function ScoreDistributionChart({ data, tooltip, name = "Students" }) {
                 <XAxis dataKey="range" stroke="var(--text-secondary)" tick={{ fontSize: 12, fontWeight: 700 }} />
                 <YAxis stroke="var(--text-secondary)" tick={{ fontSize: 12, fontWeight: 700 }} />
                 <Tooltip content={tooltip} />
-                <Bar dataKey="count" name={name} radius={[8, 8, 0, 0]} />
+                <Bar dataKey="count" name={name} radius={[8, 8, 0, 0]}>
+                    {(data || []).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill || 'var(--bg-accent)'} />
+                    ))}
+                </Bar>
             </BarChart>
         </ResponsiveContainer>
     );

@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 // Global Error Handlers to catch silent crashes
 process.on('uncaughtException', (err) => {
@@ -27,7 +28,6 @@ const {
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-const path = require('path');
 const fs = require('fs');
 const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
@@ -1639,8 +1639,12 @@ server.listen(PORT, '0.0.0.0', () => {
     // Automatic Prisma Database Schema Synchronization
     setImmediate(() => {
         try {
+            const prismaSyncCommand = process.platform === 'win32'
+                ? `cd /d "${__dirname}" && npx prisma db push --skip-generate`
+                : `cd "${__dirname}" && npx prisma db push --skip-generate`;
+
             console.log('🔄 Syncing database schema via prisma db push...');
-            exec('npx prisma db push --skip-generate', (error, stdout, stderr) => {
+            exec(prismaSyncCommand, (error, stdout, stderr) => {
                 if (error) {
                     console.warn('⚠️ [Prisma Sync Note]:', error.message);
                     return;

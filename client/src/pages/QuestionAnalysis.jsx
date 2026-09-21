@@ -139,10 +139,7 @@ export default function QuestionAnalysis() {
     ];
 
     const qIdx = parseInt(questionIndex) || 0;
-    const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
-    const optionColors = isSaffronTheme 
-        ? ['#D96B27', '#ea580c', '#f97316', '#c2410c', '#fb923c', '#9a3412'] 
-        : ['#133E87', '#1d4ed8', '#2563eb', '#0284c7', '#3b82f6', '#0369a1'];
+    const optionColors = ['#425B9A', '#76C0EC', '#FFF6DC', '#FF95A5'];
 
     // Filters for lists
     const filteredCorrect = studentInsights.correct.filter(name =>

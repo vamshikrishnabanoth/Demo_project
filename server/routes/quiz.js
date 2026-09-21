@@ -6,7 +6,7 @@ const { getTask } = require('../services/taskManager');
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
-const rateLimit = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const { check, validationResult } = require('express-validator');
 
 // ── SECURITY: Role-based access control for teacher-only operations ───────────
@@ -162,7 +162,7 @@ const joinLimiter = rateLimit({
 const generationLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 30,
-    keyGenerator: (req) => req.user?.id || req.ip,
+    keyGenerator: (req, res) => req.user?.id || ipKeyGenerator(req, res),
     message: { msg: 'Rate limit exceeded: too many generation requests. Please wait a few minutes before submitting again.' }
 });
 
@@ -170,7 +170,7 @@ const generationLimiter = rateLimit({
 const uploadLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 60,
-    keyGenerator: (req) => req.user?.id || req.ip,
+    keyGenerator: (req, res) => req.user?.id || ipKeyGenerator(req, res),
     message: { msg: 'Too many upload requests. Please slow down.' }
 });
 
