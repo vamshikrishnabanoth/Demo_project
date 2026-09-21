@@ -72,6 +72,7 @@ export default function StudentDashboard() {
 
     // Gamification States
     const [xp, setXp] = useState(0);
+    const [points, setPoints] = useState(0);
     const [streak, setStreak] = useState(0);
     const [highestStreak, setHighestStreak] = useState(0);
     const [dailyMissions, setDailyMissions] = useState([]);
@@ -100,6 +101,7 @@ export default function StudentDashboard() {
         try {
             const res = await api.get('/students/gamification');
             setXp(res.data.xp || 0);
+            setPoints(res.data.points ?? res.data.xp ?? 0);
             setStreak(res.data.streak || 0);
             setHighestStreak(res.data.highestStreak || 0);
             setDailyMissions(res.data.dailyMissions || []);
@@ -114,6 +116,7 @@ export default function StudentDashboard() {
         try {
             const res = await api.post('/students/gamification/init');
             setXp(res.data.xp || 0);
+            setPoints(res.data.points ?? res.data.xp ?? 0);
             setStreak(res.data.streak || 0);
             setHighestStreak(res.data.highestStreak || 0);
             setDailyMissions(res.data.dailyMissions || []);
@@ -152,13 +155,16 @@ export default function StudentDashboard() {
     }, [activeTab]);
 
     const handleRedeemPerk = async (perkId, perkName, cost) => {
-        if (xp < cost) return toast.error('Not enough XP!');
+        const currentPts = points || xp;
+        if (currentPts < cost) return toast.error('Not enough points to redeem this perk!');
         setRedeeming(true);
         try {
             const res = await api.post('/students/redeem-perk', { perkId, perkName, cost });
-            setXp(res.data.remainingXp);
+            const remaining = res.data.remainingPoints ?? res.data.remainingXp ?? (currentPts - cost);
+            setPoints(remaining);
+            setXp(remaining);
             setUnlockedPerks(prev => [...prev, res.data.perk]);
-            toast.success(`Redeemed: ${perkName}`);
+            toast.success(`🎉 Redeemed: ${perkName}`);
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Redemption failed');
         } finally {
@@ -407,116 +413,38 @@ export default function StudentDashboard() {
                     className="w-full max-w-4xl space-y-8 text-center relative z-10 px-6"
                 >
                     {/* Header System */}
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         <h1 className="type-page-title font-black text-[var(--text-primary)] italic tracking-tight">
-                            Student <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">Game Arena</span>
+                            Student <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">Dashboard</span>
                         </h1>
                         <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.3em] text-[10px] max-w-md mx-auto">
-                            Attempt quizzes via code or launch cognitive AI games
+                            Attempt quizzes via PIN code or redeem missions & academic perks
                         </p>
                     </div>
 
-                    {/* Gamification Quick Stats Banner */}
-                    <div className="flex justify-center items-center gap-4 bg-[var(--student-surface-alt)] border border-[var(--student-border)] rounded-2xl p-4 max-w-2xl mx-auto shadow-[var(--student-shadow-soft)] backdrop-blur-md flex-wrap">
-                        <div className="flex items-center gap-2">
-                            <Star className="text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.45)]" size={22} fill="currentColor" />
-                            <div className="text-left">
-                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Total XP</p>
-                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{xp} <span className="text-xs text-amber-400">XP</span></p>
-                            </div>
-                        </div>
-                        <div className="h-8 w-px bg-[var(--student-border)]"></div>
-                        <div className="flex items-center gap-2">
-                            <Rocket className="text-cyan-500 drop-shadow-[0_0_12px_rgba(34,211,238,0.45)]" size={22} fill="currentColor" />
-                            <div className="text-left">
-                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Current Streak</p>
-                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{streak} <span className="text-xs text-cyan-500">DAYS</span></p>
-                            </div>
-                        </div>
-                        <div className="h-8 w-px bg-[var(--student-border)]"></div>
-                        <div className="flex items-center gap-2">
-                            <Trophy className="text-violet-500 drop-shadow-[0_0_12px_rgba(168,85,247,0.45)]" size={22} fill="currentColor" />
-                            <div className="text-left">
-                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Best Streak</p>
-                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{highestStreak} <span className="text-xs text-violet-500">DAYS</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* XP Progress toward Next Reward */}
-                    {(() => {
-                        const XP_REWARDS = [
-                            { name: 'Attendance Pass', cost: 1500 },
-                            { name: 'Late Pass', cost: 3000 },
-                        ];
-                        const nextReward = XP_REWARDS.find(r => xp < r.cost);
-                        if (!nextReward) return (
-                            <div className="max-w-2xl mx-auto px-2">
-                                <p className="text-center text-[10px] font-black text-amber-400 uppercase tracking-widest">
-                                    All XP Rewards Unlocked! Maintain your streak for the Golden Perk.
-                                </p>
-                            </div>
-                        );
-                        const prevCost = XP_REWARDS[XP_REWARDS.indexOf(nextReward) - 1]?.cost || 0;
-                        const progress = Math.min(((xp - prevCost) / (nextReward.cost - prevCost)) * 100, 100);
-                        const xpLeft = nextReward.cost - xp;
-                        return (
-                            <div className="max-w-2xl mx-auto px-2 space-y-1.5">
-                                <div className="flex justify-between items-center">
-                                    <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
-                                        Next: <span className="text-amber-700 font-extrabold">{nextReward.name}</span>
-                                    </p>
-                                    <p className="text-[9px] font-black text-[var(--text-primary)]">
-                                        {xp.toLocaleString()} / {nextReward.cost.toLocaleString()} XP
-                                        <span className="text-amber-700 font-extrabold ml-2">— {xpLeft.toLocaleString()} XP to go</span>
-                                    </p>
-                                </div>
-                                <div className="w-full bg-[var(--border-color)]/50 h-2 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${progress}%` }}
-                                        transition={{ duration: 1, ease: 'easeOut' }}
-                                        className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.4)]"
-                                    />
-                                </div>
-                            </div>
-                        );
-                    })()}
-
                     {/* Tab Controls */}
-                    <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-2xl mx-auto">
+                    <div className="flex justify-center gap-4 max-w-2xl mx-auto pt-2">
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('link'); }}
-                            className={`flex-1 min-h-[50px] px-4 py-3 rounded-xl font-semibold uppercase tracking-wider text-xs transition-all duration-200 border flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`flex-1 py-3.5 px-6 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-2 cursor-pointer ${
                                 activeTab === 'link'
-                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_16px_rgba(234,88,12,0.22)] border-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] hover:-translate-y-0.5'
-                                    : 'bg-white text-[var(--text-primary)] hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 border-slate-200 shadow-sm'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_20px_rgba(234,88,12,0.25)] border-[var(--bg-accent)]'
+                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
                             }`}
                             style={activeTab === 'link' ? { color: '#ffffff' } : {}}
                         >
-                            Join Quiz
-                        </button>
-                        <button
-                            onClick={() => { if (!isLoading) setActiveTab('arena'); }}
-                            className={`flex-1 min-h-[50px] px-4 py-3 rounded-xl font-semibold uppercase tracking-wider text-xs transition-all duration-200 border flex items-center justify-center gap-2 cursor-pointer ${
-                                activeTab === 'arena'
-                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_16px_rgba(234,88,12,0.22)] border-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] hover:-translate-y-0.5'
-                                    : 'bg-white text-[var(--text-primary)] hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 border-slate-200 shadow-sm'
-                            }`}
-                            style={activeTab === 'arena' ? { color: '#ffffff' } : {}}
-                        >
-                            Game Arena
+                            <Zap size={16} /> Join Quiz
                         </button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
-                            className={`flex-1 min-h-[50px] px-4 py-3 rounded-xl font-semibold uppercase tracking-wider text-xs transition-all duration-200 border flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`flex-1 py-3.5 px-6 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-2 cursor-pointer ${
                                 activeTab === 'gamification'
-                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_16px_rgba(234,88,12,0.22)] border-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] hover:-translate-y-0.5'
-                                    : 'bg-white text-[var(--text-primary)] hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 border-slate-200 shadow-sm'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_20px_rgba(234,88,12,0.25)] border-[var(--bg-accent)]'
+                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
                             }`}
                             style={activeTab === 'gamification' ? { color: '#ffffff' } : {}}
                         >
-                            <Trophy size={15} /> Missions & Perks
+                            <Trophy size={16} /> Missions & Perks
                         </button>
                     </div>
 
@@ -825,8 +753,57 @@ export default function StudentDashboard() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -15 }}
                                 transition={{ duration: 0.4 }}
-                                className="space-y-10 max-w-5xl mx-auto text-left"
+                                className="space-y-8 max-w-5xl mx-auto text-left"
                             >
+                                {/* Missions & Perks Progression Card */}
+                                <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 shadow-sm">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500">
+                                                <Trophy size={24} className="text-amber-500" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-xl font-black text-[var(--text-primary)] italic uppercase tracking-wide">
+                                                    Missions & Perks Progression
+                                                </h2>
+                                                <p className="text-xs text-[var(--text-secondary)] font-medium">
+                                                    Complete tasks & quizzes to unlock exclusive academic perks
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right self-end sm:self-auto">
+                                            <span className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-wider block">
+                                                Total Points Gained
+                                            </span>
+                                            <span className="text-xl font-black text-amber-500 italic">
+                                                {(points || xp)} <span className="text-xs text-[var(--text-secondary)] font-bold">/ 1300 PTS</span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Golden Progress Line */}
+                                    <div className="w-full bg-[var(--bg-primary)] h-4 rounded-full border border-[var(--border-color)] overflow-hidden p-0.5 relative">
+                                        <motion.div 
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${Math.min(((points || xp) / 1300) * 100, 100)}%` }}
+                                            transition={{ duration: 1, ease: "easeOut" }}
+                                            className="h-full rounded-full relative overflow-hidden"
+                                            style={{
+                                                background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)',
+                                                boxShadow: '0 0 15px rgba(245, 158, 11, 0.6)'
+                                            }}
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+                                        </motion.div>
+                                    </div>
+
+                                    <div className="flex justify-between items-center text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mt-2">
+                                        <span>0 PTS</span>
+                                        <span className="text-amber-500 font-black">{Math.min(Math.round(((points || xp) / 1300) * 100), 100)}% COMPLETED</span>
+                                        <span>1300 PTS (MAX MILESTONE)</span>
+                                    </div>
+                                </div>
+
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     {/* Daily Missions */}
                                     <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-5 sm:p-6 flex flex-col gap-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
@@ -951,98 +928,70 @@ export default function StudentDashboard() {
 
                                         {/* Perk Store */}
                                         {(() => {
-                                            const getRedemptionsThisMonth = (perkId) => {
-                                                const now = new Date();
-                                                const currentYear = now.getFullYear();
-                                                const currentMonth = now.getMonth();
-                                                return unlockedPerks.filter(p => {
-                                                    if (p.id !== perkId) return false;
-                                                    const d = new Date(p.redeemedAt);
-                                                    return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
-                                                }).length;
-                                            };
-
                                             const rewardThemes = {
-                                                perk_att: {
-                                                    iconBg: 'bg-amber-100',
-                                                    icon: 'text-amber-700',
-                                                    border: 'border-amber-200',
-                                                    ring: 'ring-amber-100',
-                                                    accent: 'text-amber-700',
-                                                    badge: 'bg-amber-100 text-amber-700',
-                                                    status: 'text-amber-700'
-                                                },
                                                 perk_late: {
                                                     iconBg: 'bg-violet-100',
                                                     icon: 'text-violet-700',
                                                     border: 'border-violet-200',
-                                                    ring: 'ring-violet-100',
-                                                    accent: 'text-violet-700',
-                                                    badge: 'bg-violet-100 text-violet-700',
                                                     status: 'text-violet-700'
                                                 },
-                                                perk_golden: {
+                                                perk_half: {
+                                                    iconBg: 'bg-blue-100',
+                                                    icon: 'text-blue-700',
+                                                    border: 'border-blue-200',
+                                                    status: 'text-blue-700'
+                                                },
+                                                perk_att: {
                                                     iconBg: 'bg-emerald-100',
                                                     icon: 'text-emerald-700',
                                                     border: 'border-emerald-200',
-                                                    ring: 'ring-emerald-100',
-                                                    accent: 'text-emerald-700',
-                                                    badge: 'bg-emerald-100 text-emerald-700',
                                                     status: 'text-emerald-700'
                                                 },
                                                 default: {
                                                     iconBg: 'bg-slate-100',
                                                     icon: 'text-slate-700',
                                                     border: 'border-slate-200',
-                                                    ring: 'ring-slate-100',
-                                                    accent: 'text-slate-700',
-                                                    badge: 'bg-slate-100 text-slate-700',
                                                     status: 'text-slate-700'
                                                 }
                                             };
 
-                                            return [
-                                                { id: 'perk_att', name: '1 Hour Free Attendance', cost: 1500, icon: Clock, color: 'text-[var(--text-accent)]', border: 'border-[var(--border-color)]', desc: 'Excuse yourself from 1 hour of attendance', monthlyLimit: 1 },
-                                                { id: 'perk_late', name: '1 Day Late Pass', cost: 3000, icon: FileText, color: 'text-violet-700', border: 'border-violet-200', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
-                                                { id: 'perk_golden', name: 'Golden Perk — Free Streak Save', cost: 0, icon: Star, color: 'text-emerald-700', border: 'border-emerald-200', desc: 'One emergency streak save that costs 0 XP. Used automatically on your next missed day.', streakOnly: 30 },
-                                            ].map(perk => {
-                                                const isStreakLocked = perk.streakOnly && streak < perk.streakOnly;
-                                                const redemptionsThisMonth = perk.monthlyLimit ? getRedemptionsThisMonth(perk.id) : 0;
-                                                const limitReached = perk.monthlyLimit ? redemptionsThisMonth >= perk.monthlyLimit : false;
-                                                const canAfford = !isStreakLocked && !limitReached && xp >= perk.cost;
+                                            const PERK_LIST = [
+                                                { id: 'perk_late', name: 'Late Permission', cost: 700, icon: FileText, desc: 'Submit any assignment 1 day late with no penalty' },
+                                                { id: 'perk_half', name: 'Half Day Permission', cost: 900, icon: Clock3, desc: 'Excuse yourself for a half day' },
+                                                { id: 'perk_att', name: 'Attendance 5% hike', cost: 1300, icon: Target, desc: 'Increase your overall attendance by 5%' },
+                                            ];
+
+                                            const currentPts = points || xp;
+
+                                            return PERK_LIST.map(perk => {
+                                                const canAfford = currentPts >= perk.cost;
                                                 const theme = rewardThemes[perk.id] || rewardThemes.default;
+                                                const IconComponent = perk.icon;
+
                                                 return (
-                                                <div key={perk.id} className={`p-4 rounded-2xl border bg-white flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${isStreakLocked ? 'border-slate-200 opacity-80' : `${theme.border}`} ${isStreakLocked ? 'bg-slate-50' : 'bg-[var(--bg-primary)]'}`}>
-                                                    <div className="flex items-center gap-4">
-                                                        <div className={`p-3 rounded-xl border ${theme.iconBg} ${theme.border} ${theme.icon}`}>
-                                                            {perk.id === 'perk_att' ? <Clock3 size={24} /> : perk.id === 'perk_late' ? <BadgeCheck size={24} /> : <Medal size={24} />}
+                                                    <div key={perk.id} className={`p-4 rounded-2xl border bg-white flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${theme.border} bg-[var(--bg-primary)]`}>
+                                                        <div className="flex items-center gap-4">
+                                                            <div className={`p-3 rounded-xl border ${theme.iconBg} ${theme.border} ${theme.icon}`}>
+                                                                <IconComponent size={24} />
+                                                            </div>
+                                                            <div>
+                                                                <h3 className="font-bold text-[var(--text-primary)] text-sm">{perk.name}</h3>
+                                                                <p className="text-[var(--text-secondary)] text-[10px] mt-0.5">{perk.desc}</p>
+                                                                <p className="text-amber-600 text-xs font-black italic mt-1">{perk.cost} PTS</p>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <h3 className="font-bold text-[var(--text-primary)] text-sm">{perk.name}</h3>
-                                                            <p className="text-[var(--text-secondary)] text-[10px] mt-0.5">{perk.desc}</p>
-                                                            {perk.monthlyLimit && (
-                                                                <p className={`${theme.accent} text-[9px] font-black uppercase tracking-wider mt-1`}>
-                                                                    <AlertTriangle size={12} aria-hidden="true" /> Only {perk.monthlyLimit} redeemable this month • {redemptionsThisMonth}/{perk.monthlyLimit} used
-                                                                </p>
-                                                            )}
-                                                            {isStreakLocked
-                                                                ? <p className="text-slate-500 text-xs font-black italic mt-1 flex items-center gap-1"><Lock size={12} aria-hidden="true" /> Requires {perk.streakOnly}-Day Streak</p>
-                                                                : <p className={`${theme.status} text-xs font-black italic mt-1`}>{perk.cost} XP</p>
-                                                            }
-                                                        </div>
+                                                        <button
+                                                            onClick={() => canAfford && handleRedeemPerk(perk.id, perk.name, perk.cost)}
+                                                            disabled={!canAfford || redeeming}
+                                                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
+                                                                canAfford
+                                                                    ? 'bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent-hover)] shadow-md hover:-translate-y-0.5 cursor-pointer'
+                                                                    : 'bg-white text-[var(--text-secondary)] border border-[var(--border-color)] cursor-not-allowed opacity-60'
+                                                            }`}
+                                                        >
+                                                            {canAfford ? 'Redeem' : 'Locked'}
+                                                        </button>
                                                     </div>
-                                                    <button
-                                                        onClick={() => !isStreakLocked && !limitReached && handleRedeemPerk(perk.id, perk.name, perk.cost)}
-                                                        disabled={!canAfford || redeeming}
-                                                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
-                                                            canAfford
-                                                                ? 'bg-gradient-to-r from-[#f59e0b] to-[#f97316] text-white hover:brightness-105 shadow-md'
-                                                                : 'bg-white text-[var(--text-secondary)] border border-[var(--border-color)] cursor-not-allowed'
-                                                        }`}
-                                                    >
-                                                        {isStreakLocked ? 'Locked' : limitReached ? 'Max Limit' : 'Redeem'}
-                                                    </button>
-                                                </div>
                                                 );
                                             });
                                         })()}

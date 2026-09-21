@@ -549,19 +549,10 @@ router.post('/redeem-perk', auth, async (req, res) => {
             updates.attendancePct = { increment: 5.0 };
         }
 
-        const [updatedUser, pTx] = await prisma.$transaction([
-            prisma.user.update({
-                where: { id: user.id, points: { gte: cost } },
-                data: updates
-            }),
-            prisma.pointTransaction.create({
-                data: {
-                    studentId: user.id,
-                    amount: -cost,
-                    reason: `Reward: ${perkName}`
-                }
-            })
-        ]);
+        const updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: updates
+        });
 
         res.json({
             msg: 'Perk redeemed successfully!',

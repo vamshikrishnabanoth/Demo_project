@@ -1704,6 +1704,37 @@ exports.getQuizById = async (req, res) => {
     }
 };
 
+/**
+ * Award gamification points to student upon completing a quiz/assessment.
+ * Rule: 1 point per correct question (e.g., 8 correct out of 10 questions = 8 points awarded).
+ */
+const awardPointsIfEligible = async (result, user, quiz) => {
+    try {
+        if (!user || !user.id || !result) return;
+
+        // Calculate correct questions count (1 point per correct question)
+        let correctCount = 0;
+        if (Array.isArray(result.answers) && result.answers.length > 0) {
+            correctCount = result.answers.filter(a => a.isCorrect === true || a.isCorrect === 'true' || a.isCorrect === 1).length;
+        } else if (result.score !== undefined && result.totalQuestions) {
+            const ptsPerQ = (quiz?.questions && quiz.questions[0]?.points) || 10;
+            correctCount = Math.round(result.score / ptsPerQ);
+        }
+
+        if (correctCount <= 0) return;
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                points: { increment: correctCount },
+                xp: { increment: correctCount * 10 }
+            }
+        });
+        console.log(`[Gamification] Awarded ${correctCount} points to student ${user.id} (${correctCount} correct questions)`);
+    } catch (err) {
+        console.error('[awardPointsIfEligible] Error awarding points:', err.message);
+    }
+};
 
 exports.submitQuiz = async (req, res) => {
     try {
