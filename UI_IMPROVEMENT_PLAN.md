@@ -246,18 +246,18 @@ toast.success('Quiz created successfully!', {
 **Why:** Helps struggling students without giving away answers
 
 #### **Point System**
-- [ ] Base points per question (e.g., 100 points)
-- [ ] Time bonus (faster = more points)
-- [ ] Streak bonus (consecutive correct answers)
-- [ ] Difficulty multiplier (hard questions = 2x points)
-- [ ] Penalty for hints used (-10 points per hint)
+- [x] Base points per question (dynamic budget & yield)
+- [x] Time bonus (faster = higher yield tier)
+- [x] Streak bonus (consecutive correct answers + multiplier)
+- [x] Difficulty multiplier (dynamic scaling)
+- [x] Penalty for hints used (-10 to -30 points per lifeline)
 
 #### **Hint System**
 **Types of Hints:**
-1. **50/50** - Eliminate 2 wrong answers (costs 20 points)
-2. **Ask AI** - Get explanation of concept (costs 30 points)
-3. **Skip** - Skip question, come back later (costs 10 points)
-4. **Extra Time** - Add 15 seconds (costs 15 points)
+1. [x] **50/50** - Eliminate 2 wrong answers (costs 20 points)
+2. [x] **Ask AI** - Neural concept guidance clue (costs 30 points)
+3. [x] **Skip** - Skip question, advance safely (costs 10 points)
+4. [x] **Extra Time** - Add 15 seconds (costs 15 points)
 
 **Implementation:**
 ```jsx
