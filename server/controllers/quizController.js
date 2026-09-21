@@ -2391,9 +2391,19 @@ exports.generateQuizQuestions = async (req, res) => {
             } catch (_) {}
         }
 
+        // Only validate actual documents in accumulatedDocs, and clamp any 999 sentinel endPage
+        const accumulatedDocsForValidation = (fileConfigs || [])
+            .filter(cfg => cfg && (cfg.documentId || cfg.file || cfg.type === 'pdf' || cfg.type === 'document' || cfg.type === 'file'))
+            .map(cfg => {
+                const diff = (cfg.endPage && cfg.startPage) ? (cfg.endPage - cfg.startPage + 1) : 1;
+                // If endPage was sent as 999 or unbounded default, clamp to maxPages or fallback to 1 page
+                const pages = (diff >= 900) ? (cfg.maxPages || 1) : Math.max(1, diff);
+                return { name: cfg.name, pages };
+            });
+
         const preflight = DocketPolicy.validateDocket({
             newAudio: incomingAudio.map(f => ({ name: f.originalname, size: f.size })),
-            accumulatedDocs: (fileConfigs || []).map(cfg => ({ name: cfg.name, pages: (cfg.endPage - cfg.startPage + 1) || 1 })),
+            accumulatedDocs: accumulatedDocsForValidation,
             newDocs: incomingDocs.map(f => ({ name: f.originalname, size: f.size })),
             requestedCount: req.body.questionCount || 10
         });

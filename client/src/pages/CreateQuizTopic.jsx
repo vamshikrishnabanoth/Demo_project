@@ -911,13 +911,18 @@ export default function CreateQuizTopic() {
             formData.append('files', inp.file);
         });
 
-        // 2. All document configurations (both live files and restored docket items)
-        const docInputs = inputs.filter(inp => inp.type !== 'voice' && inp.type !== 'audio' && (inp.file || inp.documentId || inp.content));
+        // 2. All document configurations (only actual document files or restored docket items, not pure text prompts)
+        const docInputs = inputs.filter(inp => 
+            inp.type !== 'voice' && 
+            inp.type !== 'audio' && 
+            inp.type !== 'text' && 
+            (inp.file || inp.documentId)
+        );
         const fileConfigs = docInputs.map(inp => ({
             name: inp.source_name,
             documentId: inp.documentId,
             startPage: inp.startPage || 1,
-            endPage: inp.endPage || inp.maxPages || 999
+            endPage: inp.endPage || inp.maxPages || 1
         }));
         formData.append('file_configs', JSON.stringify(fileConfigs));
 
@@ -1027,7 +1032,8 @@ export default function CreateQuizTopic() {
             });
         } catch (err) {
             console.error(err);
-            toast.error('Failed to start generation. Please try again.');
+            const serverMsg = err.response?.data?.msg || err.response?.data?.error || (err.response?.data?.errors && err.response.data.errors.map(e => e.msg).join(', ')) || err.message;
+            toast.error(serverMsg || 'Failed to start generation. Please try again.');
             setSubmitting(false);
         }
     };
