@@ -360,30 +360,156 @@ export default function QuizAnalytics() {
                     </div>
                 </div>
 
-                {/* KPI Overview Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* KPI Overview Cards — Semantic Color System */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                     {(isStudent ? [
-                        { title: 'Your Score', value: analytics.studentAttempt ? `${analytics.studentAttempt.score} PTS` : 'N/A', icon: Award },
-                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle },
-                        { title: 'Rank', value: analytics.studentRank ? `#${analytics.studentRank}` : '—', icon: Trophy },
-                        { title: 'Total Time Spent', value: formatDuration(analytics.studentAttempt?.totalTimeTaken), icon: Clock },
+                        {
+                            title: 'Your Score',
+                            value: analytics.studentAttempt ? `${analytics.studentAttempt.score} PTS` : 'N/A',
+                            icon: Award,
+                            accent: {
+                                iconBg: 'bg-amber-50',
+                                iconBorder: 'border-amber-200',
+                                iconColor: 'text-amber-600',
+                                label: 'text-amber-700',
+                                number: 'text-amber-800',
+                                border: 'border-amber-200/70',
+                                hoverBorder: 'hover:border-amber-300',
+                                topLine: 'bg-amber-400',
+                            }
+                        },
+                        {
+                            title: 'Total Questions',
+                            value: analytics.totalQuestions,
+                            icon: CheckCircle,
+                            accent: {
+                                iconBg: 'bg-violet-50',
+                                iconBorder: 'border-violet-200',
+                                iconColor: 'text-violet-600',
+                                label: 'text-violet-700',
+                                number: 'text-violet-900',
+                                border: 'border-violet-200/70',
+                                hoverBorder: 'hover:border-violet-300',
+                                topLine: 'bg-violet-400',
+                            }
+                        },
+                        {
+                            title: 'Rank',
+                            value: analytics.studentRank ? `#${analytics.studentRank}` : '—',
+                            icon: Trophy,
+                            accent: {
+                                iconBg: 'bg-blue-50',
+                                iconBorder: 'border-blue-200',
+                                iconColor: 'text-blue-600',
+                                label: 'text-blue-700',
+                                number: 'text-blue-900',
+                                border: 'border-blue-200/70',
+                                hoverBorder: 'hover:border-blue-300',
+                                topLine: 'bg-blue-400',
+                            }
+                        },
+                        {
+                            title: 'Total Time Spent',
+                            value: formatDuration(analytics.studentAttempt?.totalTimeTaken),
+                            icon: Clock,
+                            accent: {
+                                iconBg: 'bg-teal-50',
+                                iconBorder: 'border-teal-200',
+                                iconColor: 'text-teal-600',
+                                label: 'text-teal-700',
+                                number: 'text-teal-900',
+                                border: 'border-teal-200/70',
+                                hoverBorder: 'hover:border-teal-300',
+                                topLine: 'bg-teal-400',
+                            }
+                        },
                     ] : [
-                        { title: 'Total Participants', value: analytics.totalParticipants, icon: Users },
-                        { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target },
-                        { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy },
-                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle },
+                        {
+                            title: 'Total Participants',
+                            value: analytics.totalParticipants,
+                            icon: Users,
+                            accent: {
+                                iconBg: 'bg-blue-50',
+                                iconBorder: 'border-blue-200',
+                                iconColor: 'text-blue-600',
+                                label: 'text-blue-700',
+                                number: 'text-blue-900',
+                                border: 'border-blue-200/70',
+                                hoverBorder: 'hover:border-blue-300',
+                                topLine: 'bg-blue-400',
+                            }
+                        },
+                        {
+                            title: 'Average Score',
+                            value: `${analytics.averageScore}%`,
+                            icon: Target,
+                            accent: {
+                                iconBg: 'bg-teal-50',
+                                iconBorder: 'border-teal-200',
+                                iconColor: 'text-teal-600',
+                                label: 'text-teal-700',
+                                number: 'text-teal-900',
+                                border: 'border-teal-200/70',
+                                hoverBorder: 'hover:border-teal-300',
+                                topLine: 'bg-teal-400',
+                            }
+                        },
+                        {
+                            title: 'Highest Score',
+                            value: `${analytics.highestScore}%`,
+                            icon: Trophy,
+                            accent: {
+                                iconBg: 'bg-amber-50',
+                                iconBorder: 'border-amber-200',
+                                iconColor: 'text-amber-600',
+                                label: 'text-amber-700',
+                                number: 'text-amber-800',
+                                border: 'border-amber-200/70',
+                                hoverBorder: 'hover:border-amber-300',
+                                topLine: 'bg-amber-400',
+                            }
+                        },
+                        {
+                            title: 'Total Questions',
+                            value: analytics.totalQuestions,
+                            icon: CheckCircle,
+                            accent: {
+                                iconBg: 'bg-violet-50',
+                                iconBorder: 'border-violet-200',
+                                iconColor: 'text-violet-600',
+                                label: 'text-violet-700',
+                                number: 'text-violet-900',
+                                border: 'border-violet-200/70',
+                                hoverBorder: 'hover:border-violet-300',
+                                topLine: 'bg-violet-400',
+                            }
+                        },
                     ]).map((kpi, idx) => (
-                        <div key={idx} className="bg-white border-2 border-slate-200 p-6 rounded-3xl flex items-center gap-6 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300 group">
-                            <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 group-hover:scale-105 transition-transform">
-                                <kpi.icon size={28} />
+                        <div
+                            key={idx}
+                            className={`relative bg-white border ${kpi.accent.border} ${kpi.accent.hoverBorder} rounded-2xl p-5 sm:p-6 flex flex-col gap-4 shadow-[0_2px_12px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.10)] transition-all duration-200 overflow-hidden group`}
+                        >
+                            {/* Subtle top accent line */}
+                            <div className={`absolute top-0 left-0 right-0 h-[3px] ${kpi.accent.topLine} rounded-t-2xl opacity-70`} />
+
+                            {/* Icon */}
+                            <div className={`self-start p-3 rounded-xl ${kpi.accent.iconBg} border ${kpi.accent.iconBorder} ${kpi.accent.iconColor} group-hover:scale-105 transition-transform duration-200 mt-1`}>
+                                <kpi.icon size={22} strokeWidth={2.2} />
                             </div>
-                            <div>
-                                <p className="text-[11px] font-black text-slate-500 uppercase tracking-wider mb-1">{kpi.title}</p>
-                                <p className="text-3xl font-black text-slate-900 italic">{kpi.value}</p>
+
+                            {/* Text */}
+                            <div className="flex flex-col gap-1.5">
+                                <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-widest ${kpi.accent.label} leading-tight`}>
+                                    {kpi.title}
+                                </p>
+                                <p className={`text-[1.75rem] sm:text-[2rem] font-black italic leading-none ${kpi.accent.number}`}>
+                                    {kpi.value}
+                                </p>
                             </div>
                         </div>
                     ))}
                 </div>
+
 
                 {/* Main Charts Area — Hidden for Students */}
                 {!isStudent && (
