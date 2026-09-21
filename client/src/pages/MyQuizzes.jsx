@@ -355,24 +355,24 @@ export default function MyQuizzes() {
                     <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-1">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Active Sessions</span>
                         <div className="flex items-center justify-between">
-                            <span className="text-2xl font-black text-emerald-600">{activeSessionsCount}</span>
-                            <Play size={20} className="text-emerald-500" />
+                            <span className="text-2xl font-black text-slate-900">{activeSessionsCount}</span>
+                            <Play size={20} className="text-slate-400" />
                         </div>
                     </div>
 
                     <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-1">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Saved Templates</span>
                         <div className="flex items-center justify-between">
-                            <span className="text-2xl font-black text-[#f97316]">{savedTemplates.length}</span>
-                            <Bookmark size={20} className="text-[#f97316]" />
+                            <span className="text-2xl font-black text-slate-900">{savedTemplates.length}</span>
+                            <Bookmark size={20} className="text-slate-400" />
                         </div>
                     </div>
 
                     <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-1">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Student Attempts</span>
                         <div className="flex items-center justify-between">
-                            <span className="text-2xl font-black text-indigo-600">{totalCompletions}</span>
-                            <Users size={20} className="text-indigo-500" />
+                            <span className="text-2xl font-black text-slate-900">{totalCompletions}</span>
+                            <Users size={20} className="text-slate-400" />
                         </div>
                     </div>
                 </div>

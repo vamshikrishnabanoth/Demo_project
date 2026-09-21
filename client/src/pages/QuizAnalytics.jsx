@@ -363,29 +363,23 @@ export default function QuizAnalytics() {
                 {/* KPI Overview Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {(isStudent ? [
-                        { 
-                            title: 'Your Score', 
-                            value: analytics.studentAttempt ? `${analytics.studentAttempt.score} PTS` : 'N/A', 
-                            icon: Award, 
-                            color: 'text-emerald-700', 
-                            bg: 'bg-emerald-100 border border-emerald-300 ring-2 ring-emerald-400/20' 
-                        },
-                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' },
-                        { title: 'Rank', value: analytics.studentRank ? `#${analytics.studentRank}` : '—', icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
-                        { title: 'Total Time Spent', value: formatDuration(analytics.studentAttempt?.totalTimeTaken), icon: Clock, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
+                        { title: 'Your Score', value: analytics.studentAttempt ? `${analytics.studentAttempt.score} PTS` : 'N/A', icon: Award },
+                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle },
+                        { title: 'Rank', value: analytics.studentRank ? `#${analytics.studentRank}` : '—', icon: Trophy },
+                        { title: 'Total Time Spent', value: formatDuration(analytics.studentAttempt?.totalTimeTaken), icon: Clock },
                     ] : [
-                        { title: 'Total Participants', value: analytics.totalParticipants, icon: Users, color: 'text-[var(--text-accent)]', bg: 'bg-[var(--accent-sand)] border border-[var(--border-color)]' },
-                        { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
-                        { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
-                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' },
+                        { title: 'Total Participants', value: analytics.totalParticipants, icon: Users },
+                        { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target },
+                        { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy },
+                        { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle },
                     ]).map((kpi, idx) => (
-                        <div key={idx} className="bg-white border-2 border-[var(--border-color)] p-6 rounded-3xl flex items-center gap-6 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[var(--bg-accent)] transition-all duration-300 group">
-                            <div className={`p-4 rounded-2xl ${kpi.bg} ${kpi.color} group-hover:scale-105 transition-transform`}>
+                        <div key={idx} className="bg-white border-2 border-slate-200 p-6 rounded-3xl flex items-center gap-6 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300 group">
+                            <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 group-hover:scale-105 transition-transform">
                                 <kpi.icon size={28} />
                             </div>
                             <div>
-                                <p className="text-[11px] font-black text-[#334155] uppercase tracking-wider mb-1" style={{ color: '#334155' }}>{kpi.title}</p>
-                                <p className="text-3xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>{kpi.value}</p>
+                                <p className="text-[11px] font-black text-slate-500 uppercase tracking-wider mb-1">{kpi.title}</p>
+                                <p className="text-3xl font-black text-slate-900 italic">{kpi.value}</p>
                             </div>
                         </div>
                     ))}

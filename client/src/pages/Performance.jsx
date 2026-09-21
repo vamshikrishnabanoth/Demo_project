@@ -54,33 +54,33 @@ export default function Performance() {
 
                 {/* Top Stats Overview */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-indigo-100/20 border border-gray-50 flex items-center gap-5">
-                        <div className="bg-indigo-50 p-4 rounded-2xl text-indigo-600">
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-100/40 border border-slate-200/80 flex items-center gap-5">
+                        <div className="bg-slate-100 border border-slate-200 p-4 rounded-2xl text-slate-700">
                             <Users size={32} />
                         </div>
                         <div>
-                            <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mb-1">Total Attempts</p>
-                            <p className="text-4xl font-black text-gray-900 italic">{totalCompletions}</p>
+                            <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Attempts</p>
+                            <p className="text-4xl font-black text-slate-900 italic">{totalCompletions}</p>
                         </div>
                     </div>
 
-                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-indigo-100/20 border border-gray-50 flex items-center gap-5">
-                        <div className="bg-green-50 p-4 rounded-2xl text-green-600">
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-100/40 border border-slate-200/80 flex items-center gap-5">
+                        <div className="bg-slate-100 border border-slate-200 p-4 rounded-2xl text-slate-700">
                             <Trophy size={32} />
                         </div>
                         <div>
-                            <p className="text-[10px] text-green-400 font-black uppercase tracking-widest mb-1">Avg. Score</p>
-                            <p className="text-4xl font-black text-gray-900 italic">{avgOverallScore.toFixed(1)}%</p>
+                            <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Avg. Score</p>
+                            <p className="text-4xl font-black text-slate-900 italic">{avgOverallScore.toFixed(1)}%</p>
                         </div>
                     </div>
 
-                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-indigo-100/20 border border-gray-50 flex items-center gap-5">
-                        <div className="bg-purple-50 p-4 rounded-2xl text-purple-600">
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-100/40 border border-slate-200/80 flex items-center gap-5">
+                        <div className="bg-slate-100 border border-slate-200 p-4 rounded-2xl text-slate-700">
                             <BarChart3 size={32} />
                         </div>
                         <div>
-                            <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest mb-1">Active Quizzes</p>
-                            <p className="text-4xl font-black text-gray-900 italic">{stats.length}</p>
+                            <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Active Quizzes</p>
+                            <p className="text-4xl font-black text-slate-900 italic">{stats.length}</p>
                         </div>
                     </div>
                 </div>

@@ -243,7 +243,7 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                         >
                             <div className="flex items-center justify-between gap-3">
                                 <span className="admin-pill bg-slate-100 text-slate-800 border-slate-200">Total Entities</span>
-                                <div className="p-3 rounded-2xl bg-orange-50 text-[#f97316] border border-orange-200 shadow-sm">
+                                <div className="p-3 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200 shadow-sm">
                                     <Users size={20} />
                                 </div>
                             </div>
@@ -255,48 +255,48 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 
                         <div
                             onClick={() => setActiveTab('students')}
-                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-sky-200/80"
+                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-slate-200"
                         >
                             <div className="flex items-center justify-between gap-3">
-                                <span className="admin-pill bg-sky-50 text-sky-700 border-sky-200">Active Students</span>
-                                <div className="p-3 rounded-2xl bg-sky-100 text-sky-700 border border-sky-200">
+                                <span className="admin-pill bg-slate-100 text-slate-800 border-slate-200">Active Students</span>
+                                <div className="p-3 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200 shadow-sm">
                                     <GraduationCap size={20} />
                                 </div>
                             </div>
                             <div className="mt-5">
-                                <h2 className="text-3xl sm:text-4xl font-black text-sky-700 italic tracking-tight"><AnimatedCount value={stats.students} /></h2>
+                                <h2 className="text-3xl sm:text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.students} /></h2>
                                 <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Enrolled Degree Candidates</p>
                             </div>
                         </div>
 
                         <div
                             onClick={() => setActiveTab('teachers')}
-                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-emerald-200/80"
+                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-slate-200"
                         >
                             <div className="flex items-center justify-between gap-3">
-                                <span className="admin-pill bg-emerald-50 text-emerald-700 border-emerald-200">Faculty Members</span>
-                                <div className="p-3 rounded-2xl bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                <span className="admin-pill bg-slate-100 text-slate-800 border-slate-200">Faculty Members</span>
+                                <div className="p-3 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200 shadow-sm">
                                     <UserCheck size={20} />
                                 </div>
                             </div>
                             <div className="mt-5">
-                                <h2 className="text-3xl sm:text-4xl font-black text-emerald-700 italic tracking-tight"><AnimatedCount value={stats.teachers} /></h2>
+                                <h2 className="text-3xl sm:text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.teachers} /></h2>
                                 <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Academic & Technical Staff</p>
                             </div>
                         </div>
 
                         <div
                             onClick={() => setActiveTab('admins')}
-                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-violet-200/80"
+                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-slate-200"
                         >
                             <div className="flex items-center justify-between gap-3">
-                                <span className="admin-pill bg-violet-50 text-violet-700 border-violet-200">System Admins</span>
-                                <div className="p-3 rounded-2xl bg-violet-100 text-violet-700 border border-violet-200">
+                                <span className="admin-pill bg-slate-100 text-slate-800 border-slate-200">System Admins</span>
+                                <div className="p-3 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200 shadow-sm">
                                     <Shield size={20} />
                                 </div>
                             </div>
                             <div className="mt-5">
-                                <h2 className="text-3xl sm:text-4xl font-black text-violet-700 italic tracking-tight"><AnimatedCount value={stats.admins} /></h2>
+                                <h2 className="text-3xl sm:text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.admins} /></h2>
                                 <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Super Administrators</p>
                             </div>
                         </div>
