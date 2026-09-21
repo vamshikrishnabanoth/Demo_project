@@ -146,7 +146,7 @@ export function TimeSpentChart({ data, onQuestionClick }) {
                         <p className={`text-[11px] font-black uppercase tracking-wider ${
                             dataPoint.isCorrect ? 'text-emerald-400' : dataPoint.isCorrect === false ? 'text-rose-400' : 'text-slate-400'
                         }`}>
-                            {dataPoint.status} {dataPoint.isCorrect ? '✓' : dataPoint.isCorrect === false ? '✗' : '-'}
+                            {dataPoint.status} {dataPoint.isCorrect ? 'Correct' : dataPoint.isCorrect === false ? 'Incorrect' : 'Skipped'}
                         </p>
                     )}
                     <p className="text-[9px] font-bold text-purple-400/80 italic mt-1">Click to analyze question</p>

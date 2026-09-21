@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import socket, { ensureSocketConnected } from '../utils/socket';
-import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock, TrendingUp, ShieldAlert, Maximize, Crown, LogOut } from 'lucide-react';
+import { Loader2, CheckCircle, ChevronRight, ChevronLeft, Send, Home, XCircle, Award, Clock, Trophy, Bell, Square, Circle, Triangle, Diamond, WifiOff, Lock, TrendingUp, ShieldAlert, Maximize, Crown, LogOut, Zap, Flame, Turtle, AlertTriangle } from 'lucide-react';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
@@ -1672,7 +1672,6 @@ export default function AttemptQuiz() {
                                 transition={{ type: 'spring', delay: 0.08 }}
                                 className="relative z-10 flex items-center gap-4"
                             >
-                                {/* Big emoji */}
                                 <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner ${
                                     speedFeedback.isUnattempted
                                         ? 'bg-red-900/60 border border-red-500/30'
@@ -1680,7 +1679,7 @@ export default function AttemptQuiz() {
                                         ? 'bg-cyan-900/60 border border-cyan-500/30'
                                         : 'bg-amber-900/60 border border-amber-500/30'
                                 }`}>
-                                    {speedFeedback.isUnattempted ? "❌" : speedFeedback.isFast ? "⚡" : "🐢"}
+                                    {speedFeedback.isUnattempted ? <XCircle size={28} aria-hidden="true" /> : speedFeedback.isFast ? <Zap size={28} aria-hidden="true" /> : <Turtle size={28} aria-hidden="true" />}
                                 </div>
 
                                 {/* Text block */}
@@ -1696,8 +1695,8 @@ export default function AttemptQuiz() {
                                         {speedFeedback.isUnattempted
                                             ? 'No Answer Locked!'
                                             : speedFeedback.isFast
-                                            ? (speedFeedback.message?.toLowerCase().includes('first') ? 'Lightning Fast! 🔥' :
-                                               speedFeedback.message?.toLowerCase().includes('top') ? 'Top Speed! 🚀' :
+                                                          ? (speedFeedback.message?.toLowerCase().includes('first') ? 'Lightning Fast!' :
+                                                              speedFeedback.message?.toLowerCase().includes('top') ? 'Top Speed!' :
                                                'Quick Reflexes!')
                                             : (speedFeedback.message?.toLowerCase().includes('last') ? 'Too Slow...' :
                                                speedFeedback.message?.toLowerCase().includes('half') ? 'Speed Up!' :
@@ -1781,8 +1780,8 @@ export default function AttemptQuiz() {
                         </div>
 
                         <div className="p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-xs font-bold text-red-300 text-left space-y-2">
-                            <p className="flex items-center gap-2"><span>⚠️</span> Exiting fullscreen mode records an integrity alert.</p>
-                            <p className="flex items-center gap-2"><span>⚠️</span> Switching tabs 2 times auto-submits exam.</p>
+                            <p className="flex items-center gap-2"><AlertTriangle size={14} aria-hidden="true" /> Exiting fullscreen mode records an integrity alert.</p>
+                            <p className="flex items-center gap-2"><AlertTriangle size={14} aria-hidden="true" /> Switching tabs 2 times auto-submits exam.</p>
                         </div>
 
                         <button

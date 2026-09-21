@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useCallback, useContext, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import { useAdmin } from '../context/AdminContext';
@@ -8,7 +8,8 @@ import {
     TrendingUp, Clock, Zap, CheckCircle2, Megaphone,
     ArrowUpRight, BarChart2, Search, Edit3, Trash2, Ban,
     Plus, X as XIcon, Upload, Award, ArrowUpDown, Eye, Download,
-    Briefcase, BookOpen, Mail, Crown, Filter, Layers, RotateCcw
+    Briefcase, BookOpen, Mail, Crown, Filter, Layers, RotateCcw,
+    ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -40,6 +41,95 @@ function Skeleton({ className = '' }) {
     return <div className={`animate-pulse bg-slate-200 rounded-2xl ${className}`} />;
 }
 
+function CustomSelect({ value, onChange, options, placeholder = 'Select', ariaLabel }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const ref = useRef(null);
+
+    const selectedOption = options.find(option => option.value === value) || { value: '', label: placeholder };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (ref.current && !ref.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            setIsOpen(false);
+            return;
+        }
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const currentIndex = options.findIndex(option => option.value === value);
+            const direction = event.key === 'ArrowDown' ? 1 : -1;
+            const nextIndex = (currentIndex + direction + options.length) % options.length;
+            onChange(options[nextIndex].value);
+            setIsOpen(true);
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsOpen(prev => !prev);
+        }
+    };
+
+    return (
+        <div ref={ref} className="relative">
+            <button
+                type="button"
+                aria-label={ariaLabel}
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                onClick={() => setIsOpen(prev => !prev)}
+                onKeyDown={handleKeyDown}
+                className="flex min-w-[130px] items-center justify-between gap-2 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-left text-xs font-black uppercase tracking-wider text-slate-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] transition-all duration-200 hover:border-slate-400 hover:shadow-[0_8px_18px_rgba(15,23,42,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            >
+                <span className="truncate">{selectedOption.label}</span>
+                <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <div className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-[0_18px_36px_rgba(15,23,42,0.08)] ring-1 ring-slate-100">
+                    <ul role="listbox" aria-label={ariaLabel} className="py-1.5">
+                        {options.map((option) => {
+                            const isSelected = option.value === value;
+                            return (
+                                <li key={option.value || 'empty'} className="px-1.5">
+                                    <button
+                                        type="button"
+                                        role="option"
+                                        aria-selected={isSelected}
+                                        onClick={() => {
+                                            onChange(option.value);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-[11px] font-black uppercase tracking-wider transition-all duration-200 ${
+                                            isSelected ? 'bg-[#ea580c] text-white' : 'text-slate-700 hover:bg-orange-50 hover:text-[#c2410c]'
+                                        }`}
+                                    >
+                                        <span>{option.label}</span>
+                                        {isSelected && (
+                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
+
 // ─── High-Contrast Accessible Status Badges ──────────────────────────
 function StatusBadge({ suspended, online }) {
     if (suspended)
@@ -53,7 +143,7 @@ function RoleBadge({ role }) {
     const cfgs = {
         student: { label: 'Student', cls: 'bg-sky-100 text-sky-950 border border-sky-300' },
         teacher: { label: 'Teacher', cls: 'bg-emerald-100 text-emerald-950 border border-emerald-300' },
-        admin:   { label: 'Admin',   cls: 'bg-purple-100 text-purple-950 border border-purple-300' },
+        admin:   { label: 'Admin',   cls: 'bg-[#fff7ed] text-[#ea580c] border border-[#fdba74]' },
         none:    { label: 'None',    cls: 'bg-slate-100 text-slate-800 border border-slate-300' },
     };
     const c = cfgs[role] || cfgs.none;
@@ -92,8 +182,8 @@ function ActivityRow({ item }) {
         TEACHER_CREATED: { icon: UserCheck, color: 'text-emerald-800 bg-emerald-100 border-2 border-emerald-300' },
         ADMIN_CREATED:   { icon: Shield, color: 'text-purple-800 bg-purple-100 border-2 border-purple-300' },
         USER_DELETED:    { icon: Users, color: 'text-rose-800 bg-rose-100 border-2 border-rose-300' },
-        SEMESTER_PROMOTED: { icon: TrendingUp, color: 'text-amber-800 bg-amber-100 border-2 border-amber-300' },
-        YEAR_PROMOTED:   { icon: TrendingUp, color: 'text-amber-800 bg-amber-100 border-2 border-amber-300' },
+        SEMESTER_PROMOTED: { icon: TrendingUp, color: 'text-[#9a4a12] bg-[#fff7ed] border-2 border-[#fed7aa]' },
+        YEAR_PROMOTED:   { icon: TrendingUp, color: 'text-[#9a4a12] bg-[#fff7ed] border-2 border-[#fed7aa]' },
         BULK_IMPORT:     { icon: Database, color: 'text-indigo-800 bg-indigo-100 border-2 border-indigo-300' },
     };
 
@@ -136,77 +226,77 @@ function ActivityRow({ item }) {
 
 // ─── TAB 1: OVERVIEW ────────────────────────────────────────────────────────
 function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
-    const PIE_COLORS = ['#0284c7', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#6366f1'];
+    const PIE_COLORS = ['#0284c7', '#10b981', '#8b5cf6', '#f97316', '#ec4899', '#6366f1'];
 
     return (
         <div className="space-y-8">
             {/* 4 Clean Stat Cards — Text, Number & Icon Colors Match Container Border Color */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                 {loadingStats ? (
                     Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-36" />)
                 ) : (
                     <>
-                        <div 
+                        <div
                             onClick={() => setActiveTab('directory')}
-                            className="p-6 rounded-3xl bg-white border-2 border-slate-400 shadow-sm cursor-pointer hover:border-slate-600 transition-all flex flex-col justify-between"
+                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between"
                         >
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-slate-800 uppercase tracking-wider">TOTAL ENTITIES</span>
-                                <div className="p-3 rounded-2xl bg-slate-100 border-2 border-slate-300 text-slate-800">
-                                    <Users size={22} />
+                            <div className="flex items-center justify-between gap-3">
+                                <span className="admin-pill bg-slate-100 text-slate-800 border-slate-200">Total Entities</span>
+                                <div className="p-3 rounded-2xl bg-orange-50 text-[#f97316] border border-orange-200 shadow-sm">
+                                    <Users size={20} />
                                 </div>
                             </div>
-                            <div className="mt-4">
-                                <h2 className="text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.totalUsers} /></h2>
-                                <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Students + Teachers + Admins</p>
+                            <div className="mt-5">
+                                <h2 className="text-3xl sm:text-4xl font-black text-slate-900 italic tracking-tight"><AnimatedCount value={stats.totalUsers} /></h2>
+                                <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Students + Teachers + Admins</p>
                             </div>
                         </div>
 
-                        <div 
+                        <div
                             onClick={() => setActiveTab('students')}
-                            className="p-6 rounded-3xl bg-white border-2 border-sky-400 shadow-sm cursor-pointer hover:border-sky-500 transition-all flex flex-col justify-between"
+                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-sky-200/80"
                         >
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-sky-600 uppercase tracking-wider">ACTIVE STUDENTS</span>
-                                <div className="p-3 rounded-2xl bg-sky-50 border-2 border-sky-300 text-sky-600">
-                                    <GraduationCap size={22} />
+                            <div className="flex items-center justify-between gap-3">
+                                <span className="admin-pill bg-sky-50 text-sky-700 border-sky-200">Active Students</span>
+                                <div className="p-3 rounded-2xl bg-sky-100 text-sky-700 border border-sky-200">
+                                    <GraduationCap size={20} />
                                 </div>
                             </div>
-                            <div className="mt-4">
-                                <h2 className="text-4xl font-black text-sky-600 italic tracking-tight"><AnimatedCount value={stats.students} /></h2>
-                                <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Enrolled Degree Candidates</p>
+                            <div className="mt-5">
+                                <h2 className="text-3xl sm:text-4xl font-black text-sky-700 italic tracking-tight"><AnimatedCount value={stats.students} /></h2>
+                                <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Enrolled Degree Candidates</p>
                             </div>
                         </div>
 
-                        <div 
+                        <div
                             onClick={() => setActiveTab('teachers')}
-                            className="p-6 rounded-3xl bg-white border-2 border-emerald-400 shadow-sm cursor-pointer hover:border-emerald-500 transition-all flex flex-col justify-between"
+                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-emerald-200/80"
                         >
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-emerald-600 uppercase tracking-wider">FACULTY MEMBERS</span>
-                                <div className="p-3 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-emerald-600">
-                                    <UserCheck size={22} />
+                            <div className="flex items-center justify-between gap-3">
+                                <span className="admin-pill bg-emerald-50 text-emerald-700 border-emerald-200">Faculty Members</span>
+                                <div className="p-3 rounded-2xl bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                    <UserCheck size={20} />
                                 </div>
                             </div>
-                            <div className="mt-4">
-                                <h2 className="text-4xl font-black text-emerald-600 italic tracking-tight"><AnimatedCount value={stats.teachers} /></h2>
-                                <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Academic & Technical Staff</p>
+                            <div className="mt-5">
+                                <h2 className="text-3xl sm:text-4xl font-black text-emerald-700 italic tracking-tight"><AnimatedCount value={stats.teachers} /></h2>
+                                <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Academic & Technical Staff</p>
                             </div>
                         </div>
 
-                        <div 
+                        <div
                             onClick={() => setActiveTab('admins')}
-                            className="p-6 rounded-3xl bg-white border-2 border-purple-400 shadow-sm cursor-pointer hover:border-purple-500 transition-all flex flex-col justify-between"
+                            className="admin-stat-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between border-violet-200/80"
                         >
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-black text-purple-600 uppercase tracking-wider">SYSTEM ADMINS</span>
-                                <div className="p-3 rounded-2xl bg-purple-50 border-2 border-purple-300 text-purple-600">
-                                    <Shield size={22} />
+                            <div className="flex items-center justify-between gap-3">
+                                <span className="admin-pill bg-violet-50 text-violet-700 border-violet-200">System Admins</span>
+                                <div className="p-3 rounded-2xl bg-violet-100 text-violet-700 border border-violet-200">
+                                    <Shield size={20} />
                                 </div>
                             </div>
-                            <div className="mt-4">
-                                <h2 className="text-4xl font-black text-purple-600 italic tracking-tight"><AnimatedCount value={stats.admins} /></h2>
-                                <p className="text-xs text-slate-600 font-bold tracking-wide mt-1">Super Administrators</p>
+                            <div className="mt-5">
+                                <h2 className="text-3xl sm:text-4xl font-black text-violet-700 italic tracking-tight"><AnimatedCount value={stats.admins} /></h2>
+                                <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Super Administrators</p>
                             </div>
                         </div>
                     </>
@@ -277,14 +367,18 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                                         if (active && payload && payload.length) {
                                             return (
                                                 <div className="bg-[#0f172a] text-white p-3 rounded-xl shadow-xl border border-slate-700 text-xs font-bold">
-                                                    <p className="text-emerald-300 font-black">{payload[0].payload.name}</p>
+                                                    <p className="text-white font-black">{payload[0].payload.name}</p>
                                                     <p>{payload[0].value} Students</p>
                                                 </div>
                                             );
                                         }
                                         return null;
                                     }} />
-                                    <Bar dataKey="value" fill="#0f172a" radius={[10, 10, 0, 0]} />
+                                    <Bar dataKey="value" radius={[10, 10, 0, 0]}>
+                                        {stats.charts.yearDistribution.map((entry, index) => (
+                                            <Cell key={`year-bar-${entry.name}-${index}`} fill={['#fed7aa', '#bfdbfe', '#bbf7d0', '#ddd6fe'][index % 4]} />
+                                        ))}
+                                    </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
@@ -299,7 +393,7 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                 <div className="lg:col-span-2 p-8 rounded-3xl bg-white border-2 border-slate-200 shadow-sm space-y-6">
                     <div className="flex items-center justify-between border-b-2 border-slate-100 pb-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-purple-100 text-purple-800 border-2 border-purple-300">
+                            <div className="p-2.5 rounded-xl bg-orange-50 text-[#f97316] border-2 border-orange-200">
                                 <Activity size={20} />
                             </div>
                             <div>
@@ -489,13 +583,13 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
-                    <button onClick={() => setUserModal({ isNew: true, defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                    <button onClick={() => setUserModal({ isNew: true, defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                         <Plus size={18} /> Add Student
                     </button>
-                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                         <Upload size={18} /> Import CSV
                     </button>
-                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                         <Award size={18} /> Batch Promote
                     </button>
                 </div>
@@ -506,40 +600,54 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                 <div className="flex items-center gap-2 text-slate-800 font-black uppercase tracking-widest text-xs">
                     <Filter size={16} /> Filters:
                 </div>
-                <select value={yearF} onChange={(e) => { setYearF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
-                    <option value="">All Years</option>
-                    {(filterOptions.years || []).map(y => <option key={y} value={y}>Year {y}</option>)}
-                </select>
-                <select value={semF} onChange={(e) => { setSemF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
-                    <option value="">All Semesters</option>
-                    {(filterOptions.semesters || []).map(s => <option key={s} value={s}>Semester {s}</option>)}
-                </select>
-                <select value={branchF} onChange={(e) => { 
-                    const newBranch = e.target.value;
-                    setBranchF(newBranch); 
-                    setPage(1); 
-                    const validSecs = getSectionsForBranch(newBranch, filterOptions.sections);
-                    if (sectionF && !validSecs.includes(sectionF)) {
-                        setSectionF('');
-                    }
-                }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold cursor-pointer">
-                    <option value="">All Branches</option>
-                    {['CSE', 'CSM'].map(b => <option key={b} value={b}>{b}</option>)}
-                </select>
-                <select value={sectionF} onChange={(e) => { setSectionF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold cursor-pointer">
-                    <option value="">All Sections</option>
-                    {getSectionsForBranch(branchF, filterOptions.sections).map(sec => <option key={sec} value={sec}>Section {sec}</option>)}
-                </select>
-                <select value={statusF} onChange={(e) => { setStatusF(e.target.value); setPage(1); }} className="px-4 py-2.5 rounded-xl bg-white border-2 border-slate-300 text-[#0f172a] focus:outline-none font-bold">
-                    <option value="">All Statuses</option>
-                    <option value="active">Active</option>
-                    <option value="suspended">Suspended</option>
-                </select>
+                <CustomSelect
+                    value={yearF}
+                    onChange={(value) => { setYearF(value); setPage(1); }}
+                    ariaLabel="Filter by year"
+                    placeholder="All Years"
+                    options={[(filterOptions.years || []).map(y => ({ value: String(y), label: `Year ${y}` }))].flat()}
+                />
+                <CustomSelect
+                    value={semF}
+                    onChange={(value) => { setSemF(value); setPage(1); }}
+                    ariaLabel="Filter by semester"
+                    placeholder="All Semesters"
+                    options={[(filterOptions.semesters || []).map(s => ({ value: String(s), label: `Semester ${s}` }))].flat()}
+                />
+                <CustomSelect
+                    value={branchF}
+                    onChange={(value) => {
+                        const newBranch = value;
+                        setBranchF(newBranch);
+                        setPage(1);
+                        const validSecs = getSectionsForBranch(newBranch, filterOptions.sections);
+                        if (sectionF && !validSecs.includes(sectionF)) {
+                            setSectionF('');
+                        }
+                    }}
+                    ariaLabel="Filter by branch"
+                    placeholder="All Branches"
+                    options={[{ value: '', label: 'All Branches' }, ...['CSE', 'CSM'].map(b => ({ value: b, label: b }))]}
+                />
+                <CustomSelect
+                    value={sectionF}
+                    onChange={(value) => { setSectionF(value); setPage(1); }}
+                    ariaLabel="Filter by section"
+                    placeholder="All Sections"
+                    options={[{ value: '', label: 'All Sections' }, ...getSectionsForBranch(branchF, filterOptions.sections).map(sec => ({ value: sec, label: `Section ${sec}` }))]}
+                />
+                <CustomSelect
+                    value={statusF}
+                    onChange={(value) => { setStatusF(value); setPage(1); }}
+                    ariaLabel="Filter by status"
+                    placeholder="All Statuses"
+                    options={[{ value: '', label: 'All Statuses' }, { value: 'active', label: 'Active' }, { value: 'suspended', label: 'Suspended' }]}
+                />
 
                 {isFiltered && (
                     <button 
                         onClick={resetAllFilters}
-                        className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                        className="px-3.5 py-2 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
                     >
                         <RotateCcw size={14} /> Reset Filters
                     </button>
@@ -561,7 +669,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                     {selectedIds.length > 0 && (
                         <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border-2 border-slate-300">
                             <span className="text-xs font-black text-rose-800 uppercase">{selectedIds.length} Selected</span>
-                            <button onClick={() => handleBulkSuspend(true)} className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 hover:bg-amber-500 hover:text-white text-xs font-black uppercase transition-all">Suspend</button>
+                            <button onClick={() => handleBulkSuspend(true)} className="px-3 py-1.5 rounded-xl bg-[#fff7ed] text-[#9a4a12] border border-[#fed7aa] hover:bg-[#ea580c] hover:text-white text-xs font-black uppercase transition-all">Suspend</button>
                             <button onClick={handleBulkDelete} className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase transition-all">Delete</button>
                         </div>
                     )}
@@ -620,19 +728,19 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                             <div className="flex items-center justify-center gap-2 min-w-[140px] shrink-0">
                                                 <button 
                                                     onClick={() => setViewingProfile(s.id)} 
-                                                    className="p-2.5 rounded-xl border-2 border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:border-sky-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                                                    className="p-2.5 rounded-xl border-2 border-[#7dd3fc] bg-[#eff6ff] text-[#0284c7] hover:bg-[#e0f2fe] hover:border-[#38bdf8] transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="View Student Analytics"
                                                     aria-label="View Student Analytics"
                                                 >
-                                                    <Eye size={18} />
+                                                    <Eye size={18} className="text-[#0284c7]" />
                                                 </button>
                                                 <button 
                                                     onClick={() => setUserModal({ isNew: false, user: s, defaultRole: 'student' })} 
-                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Student Details"
                                                     aria-label="Edit Student Details"
                                                 >
-                                                    <Edit3 size={18} />
+                                                    <Edit3 size={18} className="text-indigo-700" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(s)} 
@@ -769,20 +877,25 @@ function AdminTeachersTab({ setUserModal }) {
                             </button>
                         )}
                     </div>
-                    <select value={deptFilter} onChange={(e) => { setDeptFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
-                        <option value="">All Departments</option>
-                        {(filterOptions.departments || []).map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
-                    <select value={statusF} onChange={(e) => { setStatusF(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
-                        <option value="">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="suspended">Suspended</option>
-                    </select>
+                    <CustomSelect
+                        value={deptFilter}
+                        onChange={(value) => { setDeptFilter(value); setPage(1); }}
+                        ariaLabel="Filter teachers by department"
+                        placeholder="All Departments"
+                        options={[{ value: '', label: 'All Departments' }, ...(filterOptions.departments || []).map((d) => ({ value: d, label: d }))]}
+                    />
+                    <CustomSelect
+                        value={statusF}
+                        onChange={(value) => { setStatusF(value); setPage(1); }}
+                        ariaLabel="Filter teachers by status"
+                        placeholder="All Statuses"
+                        options={[{ value: '', label: 'All Statuses' }, { value: 'active', label: 'Active' }, { value: 'suspended', label: 'Suspended' }]}
+                    />
                     {isFiltered ? (
                         <>
                             <button 
                                 onClick={resetAllFilters}
-                                className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                                className="px-3.5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
                             >
                                 <RotateCcw size={14} /> Reset
                             </button>
@@ -797,7 +910,7 @@ function AdminTeachersTab({ setUserModal }) {
                         </span>
                     )}
                 </div>
-                <button onClick={() => setUserModal({ isNew: true, defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                <button onClick={() => setUserModal({ isNew: true, defaultRole: 'teacher' })} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                     <Plus size={18} /> Add Faculty Member
                 </button>
             </div>
@@ -835,11 +948,11 @@ function AdminTeachersTab({ setUserModal }) {
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ isNew: false, user: t, defaultRole: 'teacher' })} 
-                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Faculty Details"
                                                     aria-label="Edit Faculty Details"
                                                 >
-                                                    <Edit3 size={18} />
+                                                    <Edit3 size={18} className="text-indigo-700" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(t)} 
@@ -951,21 +1064,23 @@ function AdminAdminsTab({ setUserModal }) {
                             </button>
                         )}
                     </div>
-                    <select value={statusF} onChange={(e) => setStatusF(e.target.value)} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none">
-                        <option value="">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="suspended">Suspended</option>
-                    </select>
+                    <CustomSelect
+                        value={statusF}
+                        onChange={(value) => setStatusF(value)}
+                        ariaLabel="Filter administrators by status"
+                        placeholder="All Statuses"
+                        options={[{ value: '', label: 'All Statuses' }, { value: 'active', label: 'Active' }, { value: 'suspended', label: 'Suspended' }]}
+                    />
                     {isFiltered && (
                         <button 
                             onClick={resetAllFilters}
-                            className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                            className="px-3.5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
                         >
                             <RotateCcw size={14} /> Reset
                         </button>
                     )}
                 </div>
-                <button onClick={() => setUserModal({ isNew: true, defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                <button onClick={() => setUserModal({ isNew: true, defaultRole: 'admin' })} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                     <Plus size={18} /> Add Administrator
                 </button>
             </div>
@@ -995,17 +1110,17 @@ function AdminAdminsTab({ setUserModal }) {
                                                 <p className="text-xs text-slate-500 font-bold">{a.email || 'No email'}</p>
                                             </div>
                                         </td>
-                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-purple-100 text-purple-900 border border-purple-300 text-xs font-black uppercase">SUPER ADMIN</span></td>
+                                        <td className="p-4"><span className="px-3 py-1 rounded-full bg-[#fff7ed] text-[#ea580c] border border-[#fdba74] text-xs font-black uppercase">SUPER ADMIN</span></td>
                                         <td className="p-4"><StatusBadge suspended={a.isSuspended} online={a.isOnline} /></td>
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ isNew: false, user: a, defaultRole: 'admin' })} 
-                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit Administrator Details"
                                                     aria-label="Edit Administrator Details"
                                                 >
-                                                    <Edit3 size={18} />
+                                                    <Edit3 size={18} className="text-indigo-700" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(a)} 
@@ -1238,22 +1353,25 @@ function AdminDirectoryTab({ setUserModal }) {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none font-bold">
-                        <option value="all">All Roles</option>
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                    <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="px-4 py-3 rounded-2xl border-2 border-slate-300 text-xs font-bold text-[#0f172a] bg-white focus:outline-none font-bold">
-                        <option value="">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="suspended">Suspended</option>
-                    </select>
+                    <CustomSelect
+                        value={roleFilter}
+                        onChange={(value) => { setRoleFilter(value); setPage(1); }}
+                        ariaLabel="Filter users by role"
+                        placeholder="All Roles"
+                        options={[{ value: 'all', label: 'All Roles' }, { value: 'student', label: 'Student' }, { value: 'teacher', label: 'Teacher' }, { value: 'admin', label: 'Admin' }]}
+                    />
+                    <CustomSelect
+                        value={statusFilter}
+                        onChange={(value) => { setStatusFilter(value); setPage(1); }}
+                        ariaLabel="Filter users by status"
+                        placeholder="All Statuses"
+                        options={[{ value: '', label: 'All Statuses' }, { value: 'active', label: 'Active' }, { value: 'suspended', label: 'Suspended' }]}
+                    />
                     {isFiltered ? (
                         <>
                             <button 
                                 onClick={resetAllFilters}
-                                className="px-3.5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                                className="px-3.5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
                             >
                                 <RotateCcw size={14} /> Reset
                             </button>
@@ -1267,7 +1385,7 @@ function AdminDirectoryTab({ setUserModal }) {
                             {totalCount} Total Users
                         </span>
                     )}
-                    <button onClick={() => setUserModal({ isNew: true, defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-slate-950 transition-all cursor-pointer">
+                    <button onClick={() => setUserModal({ isNew: true, defaultRole: 'student' })} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                         <Plus size={18} /> Create User
                     </button>
                 </div>
@@ -1310,11 +1428,11 @@ function AdminDirectoryTab({ setUserModal }) {
                                             <div className="flex items-center justify-center gap-2 min-w-[120px] shrink-0">
                                                 <button 
                                                     onClick={() => setUserModal({ isNew: false, user: u, defaultRole: u.role || 'student' })} 
-                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="Edit User Details"
                                                     aria-label="Edit User Details"
                                                 >
-                                                    <Edit3 size={18} />
+                                                    <Edit3 size={18} className="text-indigo-700" />
                                                 </button>
                                                 <button 
                                                     onClick={() => handleSuspend(u)} 
@@ -1403,7 +1521,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-3">
                         <button 
                             onClick={refreshStats} 
-                            className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm border-2 border-slate-950 cursor-pointer active:scale-95"
+                            className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm border-2 border-[#ea580c] cursor-pointer active:scale-95"
                         >
                             <RefreshCw size={16} className={loadingStats ? 'animate-spin text-amber-400' : 'text-amber-400'} /> 
                             <span>Sync Live Data</span>
@@ -1417,7 +1535,7 @@ export default function AdminDashboard() {
                         onClick={() => setActiveTab('overview')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'overview'
-                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                ? 'bg-[#ea580c] text-white border-[#ea580c] shadow-md scale-[1.02]'
                                 : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
@@ -1429,52 +1547,52 @@ export default function AdminDashboard() {
                         onClick={() => setActiveTab('students')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'students'
-                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                ? 'bg-[#ea580c] text-white border-[#ea580c] shadow-md scale-[1.02]'
                                 : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <GraduationCap size={18} className={activeTab === 'students' ? 'text-white' : 'text-teal-600'} />
                         <span>Students</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'students' ? 'bg-white/20 text-white' : 'bg-teal-100 text-teal-900 border border-teal-300'}`}>{stats.students || 0}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black border ${activeTab === 'students' ? 'bg-white/20 text-white border-white/50' : 'bg-[#f0fdfa] text-[#0f766e] border-[#0f766e]'}`}>{stats.students || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('teachers')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'teachers'
-                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                ? 'bg-[#ea580c] text-white border-[#ea580c] shadow-md scale-[1.02]'
                                 : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <UserCheck size={18} className={activeTab === 'teachers' ? 'text-white' : 'text-emerald-600'} />
                         <span>Teachers</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'teachers' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-900 border border-emerald-300'}`}>{stats.teachers || 0}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black border ${activeTab === 'teachers' ? 'bg-white/20 text-white border-white/50' : 'bg-[#ecfdf5] text-[#047857] border-[#047857]'}`}>{stats.teachers || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('admins')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'admins'
-                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                ? 'bg-[#ea580c] text-white border-[#ea580c] shadow-md scale-[1.02]'
                                 : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <Shield size={18} className={activeTab === 'admins' ? 'text-white' : 'text-purple-600'} />
                         <span>Admins</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'admins' ? 'bg-white/20 text-white' : 'bg-purple-100 text-purple-900 border border-purple-300'}`}>{stats.admins || 0}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black border ${activeTab === 'admins' ? 'bg-white/20 text-white border-white/50' : 'bg-[#fff7ed] text-[#ea580c] border-[#ea580c]'}`}>{stats.admins || 0}</span>
                     </button>
 
                     <button
                         onClick={() => setActiveTab('directory')}
                         className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 transition-all duration-200 cursor-pointer whitespace-nowrap border-2 ${
                             activeTab === 'directory'
-                                ? 'bg-[#0f172a] text-white border-black shadow-md scale-[1.02]'
+                                ? 'bg-[#ea580c] text-white border-[#ea580c] shadow-md scale-[1.02]'
                                 : 'bg-white text-[#0f172a] border-slate-300 hover:bg-slate-100 font-extrabold'
                         }`}
                     >
                         <Users size={18} className={activeTab === 'directory' ? 'text-white' : 'text-slate-800'} />
                         <span>All Directory</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${activeTab === 'directory' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-900 border border-slate-300'}`}>{stats.totalUsers || 0}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-black border ${activeTab === 'directory' ? 'bg-white/20 text-white border-white/50' : 'bg-slate-100 text-slate-600 border-slate-600'}`}>{stats.totalUsers || 0}</span>
                     </button>
                 </div>
 

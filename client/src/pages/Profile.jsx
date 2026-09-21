@@ -65,7 +65,7 @@ export default function Profile() {
     ] : [
         { icon: User, label: 'Full Name', value: user?.name || user?.username || '—' },
         { icon: Hash, label: 'Roll Number', value: user?.username || '—' },
-        { icon: Mail, label: 'Roll Number', value: user?.email || '—' },
+        { icon: Mail, label: 'Email', value: user?.email || '—' },
         { icon: Shield, label: 'Role', value: (user?.role || '—').toUpperCase() },
         { icon: Activity, label: 'Account Status', value: 'ACTIVE' },
         { icon: Calendar, label: 'Member Since', value: memberSince },
@@ -73,12 +73,12 @@ export default function Profile() {
 
     return (
         <DashboardLayout role={role}>
-            <div className="max-w-5xl mx-auto pb-20 space-y-10">
+            <div className="admin-shell max-w-5xl space-y-8">
 
                 {/* Back */}
                 <button
                     onClick={() => navigate(-1)}
-                    className="group flex items-center gap-3 px-6 py-3 bg-white border-2 border-[#0f172a] rounded-full font-black text-xs uppercase tracking-[0.2em] transition-all btn-press w-fit shadow-md hover:border-[var(--bg-accent)]"
+                    className="group flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-full font-black text-xs uppercase tracking-[0.2em] transition-all btn-press w-fit shadow-sm hover:border-slate-300"
                     style={{ color: '#0f172a' }}
                 >
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform text-[#0f172a]" style={{ color: '#0f172a' }} /> 
@@ -86,7 +86,7 @@ export default function Profile() {
                 </button>
 
                 {/* Profile Header */}
-                <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.5rem] p-10 flex items-center gap-8 relative overflow-hidden">
+                <div className="admin-panel bg-[var(--student-surface-alt)] p-5 sm:p-8 lg:p-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8 relative overflow-hidden shadow-[var(--student-shadow-md)]">
                     <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--bg-accent)]/5 rounded-full blur-[100px] pointer-events-none" />
 
                     {/* Avatar */}
@@ -104,7 +104,7 @@ export default function Profile() {
 
                     {/* Info */}
                     <div className="relative z-10">
-                        <h1 className="text-4xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter">
+                        <h1 className="type-page-title font-black text-[var(--text-primary)] italic uppercase">
                             {user?.name || user?.username || 'User'}
                         </h1>
                         <div className="flex items-center gap-4 mt-3 flex-wrap">
@@ -203,7 +203,7 @@ export default function Profile() {
                                                 ? confirmPassword === newPassword
                                                     ? 'border-green-500 focus:border-green-600'
                                                     : 'border-red-500 focus:border-red-600'
-                                                : 'border-[var(--border-color)] focus:border-[var(--bg-accent)]'}`}
+                                                : 'border-[var(--student-border)] focus:border-[var(--bg-accent)]'}`}
                                     />
                                     <button
                                         type="button"

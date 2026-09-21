@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -24,7 +24,7 @@ export default function CreateQuizText() {
     // ─── STATE MANAGEMENT ───────────────────────────────────────────────────
     const [title, setTitle] = useState('');
     const [isAssessment, setIsAssessment] = useState(false);
-    
+    const [gameType, setGameType] = useState('cyber_quest');
     const [duration, setDuration] = useState(30);
     const [timerType, setTimerType] = useState('timePerQuestion');
     const [timerPerQuestion, setTimerPerQuestion] = useState(30);
@@ -96,7 +96,7 @@ export default function CreateQuizText() {
             if (location.state.duration)        setDuration(location.state.duration);
             if (location.state.timerPerQuestion) setTimerPerQuestion(location.state.timerPerQuestion);
             if (location.state.isAssessment !== undefined) setIsAssessment(location.state.isAssessment);
-            
+            if (location.state.gameType)         setGameType(location.state.gameType);
             if (location.state.agentReport)     setAgentReport(location.state.agentReport);
             if (location.state.finalValidation) setFinalValidation(location.state.finalValidation);
             if (location.state.isVoice || location.state.isAudio || location.state.source === 'voice') {
@@ -134,7 +134,7 @@ export default function CreateQuizText() {
             if (location.state.executionMessages && Array.isArray(location.state.executionMessages) && location.state.executionMessages.length > 0) {
                 location.state.executionMessages.forEach(msg => {
                     toast(msg, {
-                        icon: 'ℹ️',
+                        icon: <Info size={16} aria-hidden="true" />,
                         duration: 8000,
                         style: {
                             border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -287,7 +287,7 @@ export default function CreateQuizText() {
                 startTime: finalStartTime || null,
                 endTime: finalEndTime || null,
                 isAssessment: Boolean(isAssessment),
-                
+                gameType: isAssessment ? gameType : 'standard',
                 isLive: !isAssessment,
                 assignedGroups: assignedGroups || [],
                 assignedStudents: assignedStudents || [],
@@ -304,7 +304,7 @@ export default function CreateQuizText() {
                     match_up: 'Match-Up Arena',
                     standard: 'Standard Mode'
                 };
-                toast.success(`Assessment Deployed to Games Arena in ${gameNames['standard'] || 'Selected Game'} Mode!`);
+                toast.success(`Assessment Deployed to Games Arena in ${gameNames[gameType] || 'Selected Game'} Mode!`);
                 navigate('/assessments');
             }
         } catch (err) {
@@ -366,8 +366,8 @@ export default function CreateQuizText() {
                         </PremiumButton>
                     </div>
                     <div className="flex-1 flex justify-center items-center">
-                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_0_20px_var(--bg-accent-glow)] m-0">
-                            <span className="text-[var(--text-accent)]">{uiTerminology.creationMethods.text.toUpperCase()}</span>
+                        <h1 className="text-[1.9rem] sm:text-[2.35rem] font-black text-[var(--text-primary)] italic uppercase tracking-[-0.04em] m-0">
+                            <span>{uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
                     </div>
                     <div className="flex items-center gap-3 z-10">
@@ -376,30 +376,29 @@ export default function CreateQuizText() {
                                 type="button"
                                 onClick={handleSaveQuizTemplate}
                                 disabled={loading}
-                                className="px-7 py-3 rounded-full bg-[#e55b00] hover:bg-[#d45200] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-2.5 cursor-pointer transition-all border-b-4 border-[#b34700] shrink-0 animate-in fade-in duration-200"
+                                className="px-6 py-2.5 rounded-full bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] active:scale-[0.98] text-white font-black text-[10px] uppercase tracking-[0.18em] shadow-[0_10px_20px_rgba(17,17,17,0.12)] flex items-center gap-2 cursor-pointer transition-all border border-[var(--bg-accent)] shrink-0"
                             >
-                                <Save size={17} className="stroke-[2.5]" />
+                                <Save size={16} className="stroke-[2.5]" />
                                 <span>Save Quiz Template</span>
                             </button>
                         )}
                     </div>
                 </div>
 
-                {/* PDI Representation Path Verification Banner */}
                 {isGeneratedSource && representationMode && (
-                    <div className="mb-6 bg-slate-900/90 border border-indigo-500/40 rounded-2xl p-4 shadow-lg flex items-center justify-between gap-4 backdrop-blur-md animate-in fade-in slide-in-from-top-1 duration-300">
-                        <div className="flex items-center gap-3.5">
-                            <div className="px-3 py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/40 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+                    <div className="mb-6 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl p-4 shadow-sm flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3.5 min-w-0">
+                            <div className="px-2.5 py-1.5 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] text-[10px] font-black uppercase tracking-[0.18em] flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[var(--bg-accent)] animate-pulse" />
                                 PDI PATH: {representationMode}
                             </div>
-                            <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                            <p className="text-xs text-[var(--text-secondary)] font-medium leading-relaxed truncate">
                                 {representationMode === 'UNIFIED' && 'Multimodal Dual-Source Synthesis: Spoken Teacher Authority (WHY) + Slide/Document Artifacts (WHAT).'}
                                 {representationMode === 'SUMMARY' && 'Voice Narrative Path: Synthesized directly from live lecture spoken exposition & instructor emphasis.'}
                                 {representationMode === 'BLUEPRINT' && 'Document / Code Blueprint Path: Structured syllabus & programmatic artifact schema.'}
                             </p>
                         </div>
-                        <span className="text-[10px] font-mono text-indigo-300/70 uppercase tracking-widest hidden sm:inline-block px-2.5 py-1 rounded-md bg-white/5 border border-white/10">
+                        <span className="text-[10px] font-black uppercase tracking-[0.18em] hidden sm:inline-block px-2.5 py-1 rounded-md bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-secondary)]">
                             Architecture E Verified
                         </span>
                     </div>
@@ -557,7 +556,7 @@ export default function CreateQuizText() {
                                                 }}
                                                 className={`py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${!isAssessment ? 'bg-[var(--bg-accent)] text-white shadow-md' : 'text-slate-600 hover:text-slate-900'}`}
                                             >
-                                                <span>⚡ Live Quiz</span>
+                                                <span className="flex items-center gap-1.5"><Zap size={14} aria-hidden="true" /> Live Quiz</span>
                                                 <span className="text-[8px] font-medium opacity-80">No Timer</span>
                                             </button>
 
@@ -569,7 +568,7 @@ export default function CreateQuizText() {
                                                 }}
                                                 className={`py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${isAssessment ? 'bg-violet-600 text-white shadow-md' : 'text-slate-600 hover:text-slate-900'}`}
                                             >
-                                                <span>📋 Assignment</span>
+                                                <span className="flex items-center gap-1.5"><ClipboardList size={14} aria-hidden="true" /> Assignment</span>
                                                 <span className="text-[8px] font-medium opacity-80">Fixed Duration</span>
                                             </button>
                                         </div>
@@ -625,6 +624,82 @@ export default function CreateQuizText() {
                                         )}
                                     </GlassCard>
                                 </div>
+
+                                {/* Assessment-Only: Games Arena Mode Selection */}
+                                {isAssessment && (
+                                    <GlassCard className="p-5 border-2 border-violet-500/30 bg-violet-500/5">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div>
+                                                <h4 className="text-xs font-black text-violet-900 uppercase tracking-wider flex items-center gap-2">
+                                                    <span className="flex items-center gap-1.5"><Puzzle size={14} aria-hidden="true" /> Games Arena Mode Selection</span>
+                                                </h4>
+                                                <p className="text-[10px] text-slate-500 font-semibold">Select how students will experience and attempt this quiz in the Games Arena</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setGameType('cyber_quest')}
+                                                className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'cyber_quest' ? 'border-amber-500 bg-amber-500/10 text-slate-900 shadow-md ring-2 ring-amber-500/30' : 'border-slate-200 bg-white hover:border-amber-400 text-slate-700'}`}
+                                            >
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <Trophy size={20} aria-hidden="true" />
+                                                    {gameType === 'cyber_quest' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white">Selected</span>}
+                                                </div>
+                                                <div>
+                                                    <h5 className="text-xs font-black uppercase tracking-wide text-amber-900">Cyber Quest</h5>
+                                                    <p className="text-[9px] font-medium text-slate-600 mt-0.5">10-level survival ladder with emergency lifelines & streak multipliers</p>
+                                                </div>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => setGameType('sprint_arena')}
+                                                className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'sprint_arena' ? 'border-cyan-500 bg-cyan-500/10 text-slate-900 shadow-md ring-2 ring-cyan-500/30' : 'border-slate-200 bg-white hover:border-cyan-400 text-slate-700'}`}
+                                            >
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <Zap size={20} aria-hidden="true" />
+                                                    {gameType === 'sprint_arena' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-cyan-500 text-white">Selected</span>}
+                                                </div>
+                                                <div>
+                                                    <h5 className="text-xs font-black uppercase tracking-wide text-cyan-900">Sprint Arena</h5>
+                                                    <p className="text-[9px] font-medium text-slate-600 mt-0.5">Rapid-fire speed run against a 45s countdown timer</p>
+                                                </div>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => setGameType('match_up')}
+                                                className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'match_up' ? 'border-emerald-500 bg-emerald-500/10 text-slate-900 shadow-md ring-2 ring-emerald-500/30' : 'border-slate-200 bg-white hover:border-emerald-400 text-slate-700'}`}
+                                            >
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <Puzzle size={20} aria-hidden="true" />
+                                                    {gameType === 'match_up' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500 text-white">Selected</span>}
+                                                </div>
+                                                <div>
+                                                    <h5 className="text-xs font-black uppercase tracking-wide text-emerald-900">Match-Up Arena</h5>
+                                                    <p className="text-[9px] font-medium text-slate-600 mt-0.5">Memory card matching grid connecting questions with answers</p>
+                                                </div>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => setGameType('standard')}
+                                                className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'standard' ? 'border-indigo-500 bg-indigo-500/10 text-slate-900 shadow-md ring-2 ring-indigo-500/30' : 'border-slate-200 bg-white hover:border-indigo-400 text-slate-700'}`}
+                                            >
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <span className="text-xl">📝</span>
+                                                    {gameType === 'standard' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-500 text-white">Selected</span>}
+                                                </div>
+                                                <div>
+                                                    <h5 className="text-xs font-black uppercase tracking-wide text-indigo-900">Standard Mode</h5>
+                                                    <p className="text-[9px] font-medium text-slate-600 mt-0.5">Classic step-by-step tactical assessment interface</p>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </GlassCard>
+                                )}
 
                                 {/* Assessment-Only: Schedule & Expiration Row */}
                                 {isAssessment && (

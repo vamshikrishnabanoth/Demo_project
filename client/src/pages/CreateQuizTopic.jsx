@@ -7,7 +7,7 @@ import {
     Hash, Sparkles, Loader2, Database, 
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
-    AlertCircle, CheckCircle, Download
+    AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
@@ -30,38 +30,6 @@ export default function CreateQuizTopic() {
     // 1. Source Content (Ingested files, recordings, or text prompts)
     const [inputs, setInputs] = useState([]);
     const [isHydrated, setIsHydrated] = useState(false);
-
-    // Helper to evaluate docket item state upon hydration
-    const sanitizeHydratedItem = (inp) => {
-        // 1. If it has extracted text or transcript, it is completely READY
-        if (inp.content && String(inp.content).trim().length > 0) {
-            return {
-                ...inp,
-                status: 'ready',
-                fetchingMetadata: false,
-                errorMsg: null
-            };
-        }
-        // 2. If it has an active live File object in memory, preserve its status
-        if (inp.file) {
-            return inp;
-        }
-        // 3. If it has a documentId referencing the server document store, it is READY
-        if (inp.documentId) {
-            return {
-                ...inp,
-                status: 'ready',
-                fetchingMetadata: false
-            };
-        }
-        // 4. If saved without content and no live binary, explicitly classify as FILE_UNAVAILABLE
-        return {
-            ...inp,
-            status: 'file_unavailable',
-            fetchingMetadata: false,
-            errorMsg: 'File is not in browser memory. Please select the file again.'
-        };
-    };
 
     // Load inputs on mount / user change with backend sync
     useEffect(() => {
@@ -91,12 +59,12 @@ export default function CreateQuizTopic() {
             }
 
             if (loadedInputs.length > 0) {
-                setInputs(loadedInputs.map(sanitizeHydratedItem));
+                setInputs(loadedInputs);
             } else if (user) {
                 // Fetch from server if authenticated and nothing locally
                 api.get('/quiz/docket').then(res => {
                     if (res.data?.success && Array.isArray(res.data.inputs) && res.data.inputs.length > 0) {
-                        setInputs(res.data.inputs.map(sanitizeHydratedItem));
+                        setInputs(res.data.inputs);
                     }
                 }).catch(() => {});
             }
@@ -110,16 +78,14 @@ export default function CreateQuizTopic() {
     useEffect(() => {
         if (!isHydrated || authLoading) return;
         try {
-            const serializable = inputs
-                .filter(inp => inp.status !== 'error') // Never persist rejected error items
-                .map(inp => {
-                    const { file, ...rest } = inp;
-                    // Preserve extracted text and metadata across reloads!
-                    return {
-                        ...rest,
-                        schemaVersion: 2
-                    };
-                });
+            const serializable = inputs.map(inp => {
+                const { file, ...rest } = inp;
+                // Preserve extracted text and metadata across reloads!
+                return {
+                    ...rest,
+                    schemaVersion: 2
+                };
+            });
             localStorage.setItem(storageKey, JSON.stringify(serializable));
 
             // Sync with backend if authenticated
@@ -140,13 +106,9 @@ export default function CreateQuizTopic() {
     // 3. Question Count (Integer, default 10, range 1-30)
     const [questionCount, setQuestionCount] = useState(10);
 
-    // Dynamic Lecture Depth & Curriculum Overview
+    // Dynamic Lecture Depth & Detected Focus
     const [lectureDepth, setLectureDepth] = useState(null);
     const [detectedFocus, setDetectedFocus] = useState([]);
-    const [whatWasTaught, setWhatWasTaught] = useState('');
-    const [keyTopics, setKeyTopics] = useState([]);
-    const [lectureWordCount, setLectureWordCount] = useState(0);
-    const [recommendedQuestions, setRecommendedQuestions] = useState('');
 
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
@@ -175,7 +137,7 @@ export default function CreateQuizTopic() {
             if ('wakeLock' in navigator) {
                 wakeLockRef.current = await navigator.wakeLock.request('screen');
                 setWakeLockActive(true);
-                console.log('💡 Screen Wake Lock ACTIVE during lecture recording.');
+                console.log('Screen Wake Lock ACTIVE during lecture recording.');
             }
         } catch (err) {
             console.warn('Screen Wake Lock request failed:', err.message);
@@ -188,7 +150,7 @@ export default function CreateQuizTopic() {
                 await wakeLockRef.current.release();
                 wakeLockRef.current = null;
                 setWakeLockActive(false);
-                console.log('💡 Screen Wake Lock RELEASED.');
+                console.log('Screen Wake Lock RELEASED.');
             }
         } catch (err) {
             console.warn('Screen Wake Lock release failed:', err.message);
@@ -248,7 +210,7 @@ export default function CreateQuizTopic() {
         };
         const handleOffline = () => {
             setIsOffline(true);
-            toast('⚠️ Network offline. Recording saved locally to IndexedDB.', { icon: '💾' });
+            toast('Network offline. Recording saved locally to IndexedDB.', { icon: <Database size={16} aria-hidden="true" /> });
         };
 
         window.addEventListener('online', handleOnline);
@@ -276,10 +238,6 @@ export default function CreateQuizTopic() {
         if (!hasVoice) {
             setLectureDepth(null);
             setDetectedFocus([]);
-            setWhatWasTaught('');
-            setKeyTopics([]);
-            setLectureWordCount(0);
-            setRecommendedQuestions('');
             return;
         }
 
@@ -291,37 +249,25 @@ export default function CreateQuizTopic() {
         if (voiceTexts.length > 25) {
             const timer = setTimeout(async () => {
                 try {
-                    const title = inputs.map(i => i.source_name).filter(Boolean).join(', ');
-                    const res = await api.post('/quiz/analyze-depth', { text: voiceTexts, title });
+                    const res = await api.post('/quiz/analyze-depth', { text: voiceTexts });
                     if (res.data && res.data.isAcademic) {
                         setLectureDepth(res.data.lectureDepth);
                         setDetectedFocus(res.data.detectedFocus || []);
-                        setWhatWasTaught(res.data.whatWasTaught || '');
-                        setKeyTopics(res.data.keyTopics || []);
-                        setLectureWordCount(res.data.wordCount || voiceTexts.trim().split(/\s+/).length);
-                        setRecommendedQuestions(res.data.recommendedQuestions || '');
                     } else if (res.data && !res.data.isAcademic) {
                         setLectureDepth({ rating: 'Non-Academic', score: 10, characteristics: {} });
                         setDetectedFocus([]);
-                        setWhatWasTaught('');
-                        setKeyTopics([]);
                     }
                 } catch (_) {
                     // Local fallback
                     const words = voiceTexts.trim().split(/\s+/).length;
                     const rating = words > 150 ? 'Comprehensive' : (words > 50 ? 'Developing' : 'Introductory');
                     setLectureDepth({ rating, score: words > 150 ? 80 : (words > 50 ? 60 : 40), characteristics: { conceptExplanation: 'Moderate', reasoning: 'Present' } });
-                    setLectureWordCount(words);
                 }
             }, 600);
             return () => clearTimeout(timer);
         } else {
             setLectureDepth(null);
             setDetectedFocus([]);
-            setWhatWasTaught('');
-            setKeyTopics([]);
-            setLectureWordCount(0);
-            setRecommendedQuestions('');
         }
     }, [inputs]);
 
@@ -370,76 +316,21 @@ export default function CreateQuizTopic() {
         pollIntervalRef.current = setInterval(doPoll, 1500);
     }, [stopPolling]);
 
-    // Helper to determine audio duration in browser via HTML5 Audio metadata
-    const getAudioDuration = (file) => new Promise((resolve) => {
-        try {
-            const url = URL.createObjectURL(file);
-            const audio = document.createElement('audio');
-            audio.preload = 'metadata';
-            audio.onloadedmetadata = () => {
-                URL.revokeObjectURL(url);
-                resolve(audio.duration || 0);
-            };
-            audio.onerror = () => {
-                URL.revokeObjectURL(url);
-                resolve(0); // If browser cannot decode metadata, server Whisper will validate
-            };
-            audio.src = url;
-        } catch (_) {
-            resolve(0);
-        }
-    });
-
     // ── Unified Audio File Ingestion & Whisper Transcription ─────────────────
-    // Validates: type -> 1 GB infrastructure cap -> audio count -> 3h single duration -> 4h cumulative docket
-    // ONLY adds to docket once all preflight checks pass.
+    // Immediately after file selection, creates a docket item with status: 'transcribing'
+    // Retries update the existing docket item in-place without creating duplicates.
     const processAudioFile = async (file, existingId = null) => {
+        const id = existingId || Math.random().toString();
         const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
 
-        // 1. Infrastructure technical safety ceiling (1 GB)
-        const MAX_AUDIO_BYTES = 1024 * 1024 * 1024;
-        if (file.size > MAX_AUDIO_BYTES) {
-            toast.error(`Audio file "${file.name}" (${fileSizeMB} MB) exceeds the 1 GB technical safety ceiling.`);
-            return;
-        }
-
-        // 2. Audio File Count Boundary (max 4 audio files across docket)
         if (!existingId) {
-            const currentAudioCount = inputs.filter(i => (i.type === 'voice' || i.type === 'audio')).length;
-            if (currentAudioCount >= 4) {
-                toast.error(`Maximum 4 audio recordings allowed per assessment docket. The docket already contains 4 recordings.`);
-                return;
-            }
-        }
-
-        // 3. Inspect audio duration via browser metadata
-        const durationSec = await getAudioDuration(file);
-
-        // 4. Product Rule: 3-Hour Individual Limit (180 minutes / 10,800 sec)
-        if (durationSec > 10800) {
-            toast.error(`Recording "${file.name}" duration (${Math.round(durationSec / 60)} min) exceeds the 3-hour limit per recording session.`);
-            return;
-        }
-
-        // 5. Product Rule: 4-Hour Cumulative Docket Limit (240 minutes / 14,400 sec)
-        const otherAudioSec = inputs
-            .filter(i => (i.type === 'voice' || i.type === 'audio') && (!existingId || i.id !== existingId))
-            .reduce((acc, i) => acc + (i.durationSec || 0), 0);
-        if (durationSec > 0 && (otherAudioSec + durationSec) > 14400) {
-            toast.error(`Cumulative audio limit exceeded (${Math.round((otherAudioSec + durationSec) / 60)} min). Maximum allowed is 4 hours across the assessment docket.`);
-            return;
-        }
-
-        // 6. ONLY NOW add to docket or update existing item for in-place retry
-        const id = existingId || Math.random().toString();
-        if (!existingId) {
+            // Immediately after file selection: show in docket card
             const newInput = {
                 id,
                 type: 'voice',
                 file,
                 source_name: file.name,
                 fileSizeMB,
-                durationSec,
                 status: 'transcribing',
                 fetchingMetadata: true,
                 content: '',
@@ -447,14 +338,27 @@ export default function CreateQuizTopic() {
             };
             setInputs(prev => [...prev, newInput]);
         } else {
+            // In-place retry: mark existing item as transcribing
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
-                file,
-                durationSec: durationSec || item.durationSec,
                 status: 'transcribing',
                 fetchingMetadata: true,
                 errorMsg: null
             } : item));
+        }
+
+        // Client-side preflight check: direct upload limit
+        const MAX_DIRECT_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB safe direct upload ceiling
+        if (file.size > MAX_DIRECT_UPLOAD_BYTES) {
+            const warningMsg = `Large audio file (${fileSizeMB} MB) exceeds the 50 MB direct upload limit. Please compress audio (e.g. 16 kHz mono) or use a file under 50 MB.`;
+            setInputs(prev => prev.map(item => item.id === id ? {
+                ...item,
+                status: 'error',
+                fetchingMetadata: false,
+                errorMsg: warningMsg
+            } : item));
+            toast.error(warningMsg, { duration: 8000 });
+            return;
         }
 
         try {
@@ -472,7 +376,6 @@ export default function CreateQuizTopic() {
                     status: 'ready',
                     fetchingMetadata: false,
                     content: transcribeRes.data.text,
-                    durationSec: transcribeRes.data.duration || durationSec,
                     lectureDepth: transcribeRes.data.lectureDepth || null,
                     errorMsg: null
                 } : item));
@@ -493,7 +396,10 @@ export default function CreateQuizTopic() {
         } catch (err) {
             console.error('Lecture transcription failed:', err);
             const rawMsg = err.response?.data?.msg || err.response?.data?.error || err.message || '';
-            const errorMsg = rawMsg || 'Transcription failed';
+            const isFetchFail = err.message === 'Failed to fetch' || !err.response || rawMsg.includes('Failed to fetch');
+            const errorMsg = isFetchFail
+                ? `Upload interrupted (${fileSizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or use a file under 50 MB.`
+                : (rawMsg || 'Transcription failed');
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
                 status: 'error',
@@ -556,7 +462,7 @@ export default function CreateQuizTopic() {
                     if (res.data) {
                         if (res.data.isAcademic === false) {
                             const failReason = res.data.reason || `"${file.name}" contains no assessable instructional content and was not added.`;
-                            toast.error(`⚠️ ${failReason}`, { duration: 5000 });
+                            toast.error(failReason, { duration: 5000 });
                             setInputs(prev => prev.filter(item => item.id !== id));
                             continue;
                         }
@@ -631,7 +537,7 @@ export default function CreateQuizTopic() {
             const res = await api.post('/quiz/analyze-depth', { text });
             if (res.data && res.data.isAcademic === false) {
                 const failReason = res.data.reason || 'Entered text contains no assessable instructional content and was not added.';
-                toast.error(`⚠️ ${failReason}`, { duration: 5000 });
+                toast.error(failReason, { duration: 5000 });
                 return;
             }
         } catch (_) {}
@@ -758,7 +664,7 @@ export default function CreateQuizTopic() {
 
                 // If user clicked Cancel, discard session & IndexedDB store
                 if (isCancelledRef.current) {
-                    console.log('🚫 Voice recording was cancelled by user. Discarding IndexedDB session.');
+                    console.log('Voice recording was cancelled by user. Discarding IndexedDB session.');
                     await deleteSessionRecord(newSessionId);
                     setRecording(false);
                     setRecordingPaused(false);
@@ -780,7 +686,7 @@ export default function CreateQuizTopic() {
 
                 // Offline handling
                 if (!navigator.onLine) {
-                    toast('Network offline. Recording safely saved locally in IndexedDB.', { icon: '💾' });
+                    toast('Network offline. Recording safely saved locally in IndexedDB.', { icon: <Database size={16} aria-hidden="true" /> });
                     return;
                 }
 
@@ -814,7 +720,7 @@ export default function CreateQuizTopic() {
                     }
 
                     if (!isAcademic) {
-                        toast.error(academicFailureReason ? `⚠️ ${academicFailureReason}` : '⚠️ Voice recording contains no assessable instructional content and was not added.', { id: toastId, duration: 6000 });
+                        toast.error(academicFailureReason || 'Voice recording contains no assessable instructional content and was not added.', { id: toastId, duration: 6000 });
                         await markSessionCompleted(newSessionId);
                         await deleteSessionRecord(newSessionId);
                         return;
@@ -919,7 +825,7 @@ export default function CreateQuizTopic() {
         setRecording(false);
         setRecordingPaused(false);
         setRecordingDuration(0);
-        toast('Recording cancelled', { icon: '🗑️' });
+            toast('Recording cancelled', { icon: <Trash2 size={16} aria-hidden="true" /> });
     };
 
     // Recover session from previous tab crashes
@@ -992,12 +898,6 @@ export default function CreateQuizTopic() {
 
         if (hasTranscribingAudio) {
             toast.error('Please wait for lecture audio transcription to complete before generating the quiz.');
-            return;
-        }
-
-        const unavailableInputs = inputs.filter(inp => inp.status === 'file_unavailable');
-        if (unavailableInputs.length > 0) {
-            toast.error('Some docket items are missing from browser memory. Please re-select or remove them before generating.');
             return;
         }
 
@@ -1077,7 +977,7 @@ export default function CreateQuizTopic() {
 
                     if (result.alignmentWarning) {
                         toast(result.alignmentWarning, {
-                            icon: '⚠️',
+                            icon: <AlertCircle size={16} aria-hidden="true" />,
                             duration: 9000,
                             style: {
                                 border: '1px solid rgba(234, 179, 8, 0.4)',
@@ -1090,7 +990,7 @@ export default function CreateQuizTopic() {
                         const count = result.questions ? result.questions.length : 0;
                         const missing = questionCount - count;
                         toast(result.notice || `${count} evidence-grounded questions generated. ${missing === 1 ? 'One additional question' : `${missing} additional questions`} could not be validated against available evidence.`, {
-                            icon: '🛡️',
+                            icon: <Shield size={16} aria-hidden="true" />,
                             duration: 7000,
                             style: {
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -1122,17 +1022,12 @@ export default function CreateQuizTopic() {
                     });
                 },
                 onError: (msg) => {
-                    const cleanMsg = msg || 'Generation failed. Please try again.';
-                    toast.error(cleanMsg);
-                    setPollError(cleanMsg);
-                    setSubmitting(false);
+                    toast.error(msg || 'Generation failed. Please try again.');
                 },
             });
         } catch (err) {
             console.error(err);
-            const errDetail = err.response?.data?.message || err.message || 'Failed to start generation. Please try again.';
-            toast.error(errDetail);
-            setPollError(errDetail);
+            toast.error('Failed to start generation. Please try again.');
             setSubmitting(false);
         }
     };
@@ -1144,10 +1039,8 @@ export default function CreateQuizTopic() {
                     stage={stage}
                     stageLabel={stageLabel}
                     elapsed={elapsed}
-                    isVoice={inputs.some(inp => inp.type === 'voice' || inp.type === 'audio')}
+                    isVoice={false}
                     representationMode={representationMode}
-                    topic={inputs.map(i => i.source_name).filter(Boolean).join(', ') || 'Classroom Lecture'}
-                    questionCount={questionCount}
                 />
             )}
 
@@ -1185,33 +1078,8 @@ export default function CreateQuizTopic() {
                 </div>
 
                 {pollError && (
-                    <div className="mx-6 mt-4 p-4 rounded-2xl border-2 border-red-500/40 bg-red-500/10 text-red-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
-                        <div className="flex items-center gap-3">
-                            <span className="text-xl">⚠️</span>
-                            <div>
-                                <p className="font-black text-xs uppercase tracking-wider text-red-900">Quiz Generation Could Not Complete</p>
-                                <p className="font-medium text-xs text-red-800 mt-0.5">{pollError}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2 self-end sm:self-auto">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setPollError(null);
-                                    handleGenerateQuiz();
-                                }}
-                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer"
-                            >
-                                Retry Generation
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setPollError(null)}
-                                className="px-3 py-2 bg-transparent hover:bg-red-500/20 text-red-800 rounded-xl text-xs font-bold transition-all cursor-pointer"
-                            >
-                                Dismiss
-                            </button>
-                        </div>
+                    <div className="mx-6 mt-4 px-5 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 font-bold text-xs uppercase tracking-wider">
+                        <AlertCircle size={14} className="inline mr-1" aria-hidden="true" /> {pollError}
                     </div>
                 )}
 
@@ -1238,7 +1106,7 @@ export default function CreateQuizTopic() {
                                             await deleteSessionRecord(sess.sessionId);
                                         }
                                         setPendingRecoverySessions([]);
-                                        toast('All unsaved recordings discarded', { icon: '🗑️' });
+                                        toast('All unsaved recordings discarded', { icon: <Trash2 size={16} aria-hidden="true" /> });
                                     }}
                                     className="text-[11px] font-bold text-amber-800 hover:text-red-600 hover:underline cursor-pointer transition-all self-end sm:self-auto"
                                 >
@@ -1260,7 +1128,7 @@ export default function CreateQuizTopic() {
                                     >
                                         <div className="flex flex-col">
                                             <span className="font-black text-amber-950 text-[11px]">
-                                                🎙️ Recording #{idx + 1}
+                                                <><Mic size={14} className="inline mr-1" aria-hidden="true" /> Recording #{idx + 1}</>
                                             </span>
                                             <span className="text-[10px] font-bold text-amber-800">
                                                 {dateStr} at {timeStr}
@@ -1279,12 +1147,12 @@ export default function CreateQuizTopic() {
                                                 onClick={async () => {
                                                     await deleteSessionRecord(sess.sessionId);
                                                     setPendingRecoverySessions(prev => prev.filter(s => s.sessionId !== sess.sessionId));
-                                                    toast('Recording discarded', { icon: '🗑️' });
+                                                    toast('Recording discarded', { icon: <Trash2 size={16} aria-hidden="true" /> });
                                                 }}
                                                 title="Discard this recording"
                                                 className="p-1 hover:bg-red-500/20 text-amber-800 hover:text-red-600 rounded-lg text-xs font-black transition-all cursor-pointer"
                                             >
-                                                ✕
+                                                <XIcon size={16} aria-hidden="true" />
                                             </button>
                                         </div>
                                     </div>
@@ -1341,7 +1209,7 @@ export default function CreateQuizTopic() {
                                         </span>
                                         {wakeLockActive && (
                                             <span className="flex items-center gap-1 text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 font-sans font-bold text-[10px]">
-                                                💡 Screen Keep-Alive Active (Laptop won't lock)
+                                                <><Lightbulb size={14} className="inline mr-1" aria-hidden="true" /> Screen Keep-Alive Active (Laptop won't lock)</>
                                             </span>
                                         )}
                                     </div>
@@ -1528,7 +1396,7 @@ export default function CreateQuizTopic() {
 
                                             {inp.fetchingMetadata && (inp.type !== 'voice' && inp.type !== 'audio') && (
                                                 <div className="text-[10px] font-black text-[var(--text-accent)] uppercase animate-pulse pt-2 border-t border-[var(--border-color)]/60">
-                                                    ⚡ Reading document page length...
+                                                    <><Zap size={14} className="inline mr-1" aria-hidden="true" /> Reading document page length...</>
                                                 </div>
                                             )}
 
@@ -1539,7 +1407,7 @@ export default function CreateQuizTopic() {
                                                         <div className="flex items-center gap-2 text-amber-700 bg-amber-50/80 p-2.5 rounded-xl border border-amber-200">
                                                             <Loader2 size={14} className="animate-spin shrink-0 text-amber-600" />
                                                             <span className="text-[10px] font-black uppercase tracking-wider animate-pulse">
-                                                                ⚡ Transcribing with Whisper Large-v3... {inp.fileSizeMB ? `(${inp.fileSizeMB} MB)` : ''}
+                                                                <><Zap size={14} className="inline mr-1" aria-hidden="true" /> Transcribing with Whisper Large-v3... {inp.fileSizeMB ? `(${inp.fileSizeMB} MB)` : ''}</>
                                                             </span>
                                                         </div>
                                                     ) : inp.status === 'error' ? (
@@ -1557,23 +1425,6 @@ export default function CreateQuizTopic() {
                                                                 title="Retry transcription in-place"
                                                             >
                                                                 <RefreshCw size={11} /> Retry
-                                                            </button>
-                                                        </div>
-                                                    ) : inp.status === 'file_unavailable' ? (
-                                                        <div className="flex items-center justify-between gap-2 bg-amber-50/90 p-2.5 rounded-xl border border-amber-300 text-amber-900">
-                                                            <div className="flex items-center gap-2 min-w-0 flex-1">
-                                                                <AlertCircle size={15} className="text-amber-600 shrink-0" />
-                                                                <span className="text-[10px] font-bold truncate">
-                                                                    Audio not in browser memory. Please re-select file.
-                                                                </span>
-                                                            </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => lectureFileInputRef.current && lectureFileInputRef.current.click()}
-                                                                className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shrink-0 active:scale-95 shadow-xs"
-                                                                title="Re-select audio file"
-                                                            >
-                                                                <RefreshCw size={11} /> Re-select
                                                             </button>
                                                         </div>
                                                     ) : (
@@ -1637,55 +1488,45 @@ export default function CreateQuizTopic() {
                             )}
                         </div>
 
-                        {/* 4. LECTURE CONTENT & ASSESSMENT SCOPE CARD (Voice input only) */}
+                        {/* 4. LECTURE PROFILE & DEPTH CARD (Voice input only) */}
                         {inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
-                            <div className="p-4.5 bg-gradient-to-br from-purple-50/90 via-white to-purple-50/50 border-2 border-purple-200 rounded-3xl space-y-3.5 shadow-sm transition-all">
-                                <div className="flex items-center justify-between pb-1 border-b border-purple-100">
-                                    <span className="text-[11px] font-black text-purple-950 uppercase tracking-wider flex items-center gap-2">
-                                        <Sparkles size={16} className="text-purple-600 animate-pulse" />
-                                        Lecture Analysis & Scope
+                            <div className="p-4 bg-purple-50/70 border-2 border-purple-200 rounded-2xl space-y-2.5 shadow-xs transition-all">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-purple-900 uppercase tracking-widest flex items-center gap-1.5">
+                                        <Sparkles size={14} className="text-purple-600" />
+                                        Lecture Profile: <span className="font-bold text-purple-700">{lectureDepth.rating}</span>
                                     </span>
-                                    <span className="text-[10px] font-mono font-black text-purple-700 bg-purple-100/90 px-2.5 py-0.5 rounded-full border border-purple-300">
-                                        Academic Depth: {lectureDepth.score}/100
+                                    <span className="text-[10px] font-mono font-black text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-300">
+                                        Depth: {lectureDepth.score}/100
                                     </span>
                                 </div>
 
-                                {/* 1. What Was Taught (1-Line Pedagogical Overview) */}
-                                <div className="bg-white/95 p-3.5 rounded-2xl border border-purple-200/80 shadow-xs space-y-1">
-                                    <p className="text-[10px] font-black uppercase tracking-wider text-purple-900 flex items-center gap-1.5">
-                                        <span>📖</span> What Was Taught
-                                    </p>
-                                    <p className="text-xs font-semibold text-slate-800 leading-relaxed">
-                                        {whatWasTaught || `A comprehensive lecture exploring ${inputs.map(i => i.source_name).filter(Boolean)[0] || 'core concepts'} with detailed conceptual foundations, operational mechanisms, and step-by-step traces.`}
-                                    </p>
-                                </div>
-
-                                {/* 2. Key Topics to be Assessed */}
-                                {keyTopics && keyTopics.length > 0 && (
-                                    <div className="bg-white/95 p-3.5 rounded-2xl border border-purple-200/80 shadow-xs space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-wider text-purple-900 flex items-center gap-1.5">
-                                            <span>🎯</span> Key Topics to be Assessed
-                                        </p>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
-                                            {keyTopics.map((topic, i) => (
-                                                <div key={i} className="flex items-center gap-2 text-xs font-bold text-slate-800 bg-purple-50/70 hover:bg-purple-100/60 px-3 py-2 rounded-xl border border-purple-200/70 transition-colors">
-                                                    <span className="w-2 h-2 rounded-full bg-purple-600 shrink-0" />
-                                                    <span className="truncate">{topic}</span>
-                                                </div>
-                                            ))}
-                                        </div>
+                                {detectedFocus && detectedFocus.length > 0 && (
+                                    <div className="flex flex-wrap gap-1.5 pt-1">
+                                        {detectedFocus.map((f, i) => (
+                                            <span key={i} className="text-[9px] font-bold text-slate-700 bg-white px-2 py-0.5 rounded-lg border border-purple-200">
+                                                • {f}
+                                            </span>
+                                        ))}
                                     </div>
                                 )}
 
-                                {/* 3. Assessment Scope & Content Volume */}
-                                <div className="bg-white/90 px-3.5 py-2.5 rounded-xl border border-purple-100 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600">
-                                    <span className="flex items-center gap-1.5 text-slate-700">
-                                        <span>📊</span> Content Volume: <span className="font-black text-purple-900">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</span>
-                                    </span>
-                                    <span className="flex items-center gap-1.5 text-slate-700">
-                                        <span>🎯</span> Recommended: <span className="font-black text-purple-900">{recommendedQuestions || '5 to 25 Questions (Strong Evidence Base)'}</span>
-                                    </span>
-                                </div>
+                                {lectureDepth.characteristics && (
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1 text-[9px] font-bold text-slate-600">
+                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
+                                            Concepts: <span className="font-black text-purple-800">{lectureDepth.characteristics.conceptExplanation || 'Developing'}</span>
+                                        </div>
+                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
+                                            Reasoning: <span className="font-black text-purple-800">{lectureDepth.characteristics.reasoning || 'Present'}</span>
+                                        </div>
+                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
+                                            Examples: <span className="font-black text-purple-800">{lectureDepth.characteristics.examples || 'Light'}</span>
+                                        </div>
+                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
+                                            Procedures: <span className="font-black text-purple-800">{lectureDepth.characteristics.procedures || 'Light'}</span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -1715,7 +1556,7 @@ export default function CreateQuizTopic() {
                                                         : 'bg-white text-[var(--text-primary)] border-slate-200 hover:border-[var(--bg-accent)]/60 hover:bg-slate-50'
                                                 }`}
                                             >
-                                                {level === 'Balanced' ? '⚖️ Balanced' : level}
+                                                {level === 'Balanced' ? <><Scale size={14} className="inline mr-1" aria-hidden="true" /> Balanced</> : level}
                                             </button>
                                         ))}
                                     </div>

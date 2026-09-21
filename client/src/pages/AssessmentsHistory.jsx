@@ -69,7 +69,7 @@ const AssessmentsHistory = () => {
                     initial={{ opacity: 0, y: -30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="relative overflow-hidden bg-gradient-to-br from-[var(--bg-secondary)] via-[var(--bg-primary)] to-[var(--bg-secondary)] rounded-[2.5rem] border border-[var(--border-color)] shadow-lg mb-10"
+                    className="relative overflow-hidden bg-gradient-to-br from-[var(--student-surface-alt)] via-[var(--student-surface)] to-[var(--student-surface-alt)] rounded-[2.5rem] border border-[var(--student-border)] shadow-[var(--student-shadow-md)] mb-10"
                 >
                     {/* Accent glow blobs */}
                     <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--bg-accent)]/8 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
@@ -87,7 +87,7 @@ const AssessmentsHistory = () => {
                                 <p className="text-[9px] font-black text-[var(--text-accent)] uppercase tracking-[0.6em] italic">Session Analytics</p>
                             </motion.div>
                             
-                            <h1 className="text-4xl sm:text-5xl font-black text-[var(--text-primary)] italic uppercase tracking-tighter leading-[0.95]">
+                            <h1 className="type-page-title font-black text-[var(--text-primary)] italic uppercase">
                                 Quiz History <br />
                                 <span className="text-[var(--text-accent)]">&amp; Yields</span>
                             </h1>
@@ -100,55 +100,17 @@ const AssessmentsHistory = () => {
                         {/* Interactive Hero Icon Container — Represents Quiz History & Yields */}
                         <div className="relative flex items-center justify-center lg:pr-6 shrink-0 select-none">
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                whileHover="hover"
-                                whileTap="tap"
-                                className="relative flex items-center justify-center group cursor-pointer"
+                                whileHover={{ y: -4, scale: 1.04 }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 280, damping: 20 }}
+                                className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2.2rem] bg-[var(--student-surface)] border border-[var(--student-border)] flex items-center justify-center relative z-10 overflow-hidden shadow-[var(--student-shadow-soft)]"
                             >
-                                {/* Outer Pulsing Ambient Glow (Ignites on Hover) */}
-                                <motion.div 
-                                    variants={{
-                                        hover: { scale: 1.25, opacity: 0.8 },
-                                        initial: { scale: 1, opacity: 0 }
-                                    }}
-                                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                                    className="absolute inset-0 rounded-[2.5rem] bg-[var(--bg-accent)]/20 blur-xl pointer-events-none"
-                                />
-
-                                {/* Glowing Border Pulse */}
                                 <motion.div
-                                    variants={{
-                                        hover: { scale: [1, 1.05, 1], opacity: [0.6, 1, 0.6] },
-                                    }}
-                                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                                    className="absolute -inset-1 rounded-[2.4rem] bg-[var(--bg-accent)] opacity-0 group-hover:opacity-100 blur-xs transition-opacity duration-300 pointer-events-none"
-                                />
-
-                                {/* Main Glass Card Container */}
-                                <motion.div
-                                    variants={{
-                                        initial: { y: 0, scale: 1 },
-                                        hover: { y: -8, scale: 1.06 },
-                                        tap: { scale: 0.95 }
-                                    }}
-                                    transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-                                    className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2.2rem] bg-white border-2 border-[var(--border-color)] group-hover:border-[var(--bg-accent)] flex items-center justify-center relative shadow-xl group-hover:shadow-[0_20px_40px_var(--bg-accent-glow)] transition-colors duration-300 z-10 overflow-hidden"
+                                    whileHover={{ rotate: -8, scale: 1.06 }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 16 }}
+                                    className="text-[var(--bg-accent)] flex items-center justify-center"
                                 >
-                                    {/* Ambient Reflection */}
-                                    <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/90 to-transparent pointer-events-none" />
-
-                                    {/* Primary History Icon — Elastic Counter-Clockwise Rewind Spin on Hover */}
-                                    <motion.div
-                                        variants={{
-                                            initial: { rotate: 0, scale: 1 },
-                                            hover: { rotate: -360, scale: 1.15 }
-                                        }}
-                                        transition={{ duration: 0.75, ease: [0.34, 1.56, 0.64, 1] }}
-                                        className="text-[#133E87] group-hover:text-[#2563EB] relative z-10 flex items-center justify-center transition-colors duration-300"
-                                    >
-                                        <History size={52} strokeWidth={2.25} className="drop-shadow-md" />
-                                    </motion.div>
+                                    <History size={52} strokeWidth={2.25} aria-hidden="true" />
                                 </motion.div>
                             </motion.div>
                         </div>
@@ -163,7 +125,7 @@ const AssessmentsHistory = () => {
                             placeholder="Search quizzes or topics..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-[#ffffff] border-2 border-[#9cbcd8] rounded-2xl py-3.5 pl-12 pr-5 text-[#0f172a] text-sm font-bold placeholder:text-[#0f172a] placeholder:font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all shadow-sm"
+                            className="w-full bg-[var(--student-surface)] border border-[var(--student-border)] rounded-2xl py-3.5 pl-12 pr-5 text-[#0f172a] text-sm font-bold placeholder:text-[#0f172a] placeholder:font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all shadow-[var(--student-shadow-soft)]"
                         />
                     </div>
                     <div className="relative w-full md:w-48">
@@ -171,12 +133,17 @@ const AssessmentsHistory = () => {
                         <select 
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl py-3.5 pl-11 pr-5 text-[var(--text-primary)] font-black text-[11px] uppercase tracking-wider focus:outline-none focus:border-[var(--bg-accent)] transition-all appearance-none cursor-pointer shadow-sm"
+                            className="w-full appearance-none cursor-pointer rounded-2xl border border-[var(--student-border)] bg-[var(--student-surface-alt)] py-3.5 pl-11 pr-10 text-[11px] font-black uppercase tracking-[0.12em] text-[#0f172a] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-200 hover:border-[var(--bg-accent)] hover:shadow-[var(--student-shadow-soft)] focus:border-[var(--bg-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--bg-accent-glow)]"
                         >
                             <option value="all">All Status</option>
                             <option value="completed">Completed</option>
                             <option value="missed">Missed</option>
                         </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-[#0f172a]">
+                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
                 {/* Imperial Row List */}

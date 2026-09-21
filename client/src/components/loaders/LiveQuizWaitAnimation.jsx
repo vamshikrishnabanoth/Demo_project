@@ -75,7 +75,7 @@ function QuizSignalRadarBeacon({ count = 0 }) {
                 {/* Active Pulse Badge on Center Node */}
                 <span className="absolute -right-2 -top-2 flex h-5 w-5 pointer-events-none z-30">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-90"></span>
-                    <span className="relative inline-flex rounded-full h-5 w-5 bg-emerald-500 ring-2 ring-white shadow-md flex items-center justify-center text-[9px] font-black text-white">✓</span>
+                    <span className="relative inline-flex rounded-full h-5 w-5 bg-emerald-500 ring-2 ring-white shadow-md flex items-center justify-center text-white"><CheckCircle2 size={13} aria-hidden="true" /></span>
                 </span>
             </motion.div>
         </div>
@@ -207,7 +207,7 @@ export default function LiveQuizWaitAnimation({
             title: reconnectState === 'recovered' ? 'Connection Restored' : 'Reconnecting...',
             subtitle: reconnectState === 'recovered' ? 'Synchronizing state...' : 'Re-establishing live session. Please wait.',
             detail: reconnectState === 'recovered' 
-                ? 'RECONNECTED ✓' 
+                ? 'RECONNECTED'
                 : (offlineDuration > 10 
                     ? `Attempting reconnect (${offlineDuration}s)...` 
                     : 'Your answers are safe — do not refresh'),

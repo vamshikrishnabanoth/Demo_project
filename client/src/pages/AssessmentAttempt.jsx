@@ -4,7 +4,7 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import {
     ChevronRight, CheckCircle, XCircle, Trophy, HelpCircle,
-    Loader2, AlertCircle, ArrowLeft, Timer, Home, Send, Lock, ShieldAlert, Maximize
+    Loader2, AlertCircle, AlertTriangle, ArrowLeft, Timer, Home, Send, Lock, ShieldAlert, Maximize
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { showConfirm } from '../utils/alerts';
@@ -639,8 +639,8 @@ export default function AssessmentAttempt() {
                         </div>
 
                         <div className="p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-xs font-bold text-red-300 text-left space-y-2">
-                            <p className="flex items-center gap-2"><span>⚠️</span> Exiting fullscreen mode records an integrity alert.</p>
-                            <p className="flex items-center gap-2"><span>⚠️</span> Switching tabs 2 times auto-submits exam.</p>
+                            <p className="flex items-center gap-2"><AlertTriangle size={14} aria-hidden="true" /> Exiting fullscreen mode records an integrity alert.</p>
+                            <p className="flex items-center gap-2"><AlertTriangle size={14} aria-hidden="true" /> Switching tabs 2 times auto-submits exam.</p>
                         </div>
 
                         <button

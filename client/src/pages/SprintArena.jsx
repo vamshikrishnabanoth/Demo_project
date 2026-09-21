@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Zap, Clock, Trophy, Play, RotateCw, Home, AlertTriangle, 
-    Volume2, VolumeX, CheckCircle2, XCircle
+    Volume2, VolumeX, CheckCircle2, XCircle, Gamepad2, Shield
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
@@ -436,11 +436,11 @@ export default function SprintArena() {
                             </div>
 
                             <div className="p-5 rounded-2xl bg-[#191f33] border border-white/10 text-left text-xs leading-relaxed text-slate-200 max-w-sm mx-auto space-y-3">
-                                <p className="font-black text-center uppercase tracking-wider text-pink-400 text-sm mb-1">🎮 Game Manual</p>
-                                <p>⚡ <b>Initial Timer:</b> You start with 45 seconds.</p>
-                                <p>✅ <b>Correct Answer:</b> Grants +5 seconds and score increase.</p>
-                                <p>❌ <b>Incorrect Answer:</b> Deducts -3 seconds immediately.</p>
-                                <p>🛑 <b>Survival Goal:</b> Answer quickly to keep the energy bar active!</p>
+                                <p className="font-black text-center uppercase tracking-wider text-pink-400 text-sm mb-1 flex items-center justify-center gap-2"><Gamepad2 size={16} aria-hidden="true" /> Game Manual</p>
+                                <p><Zap size={14} className="inline mr-1" aria-hidden="true" /> <b>Initial Timer:</b> You start with 45 seconds.</p>
+                                <p><CheckCircle2 size={14} className="inline mr-1" aria-hidden="true" /> <b>Correct Answer:</b> Grants +5 seconds and score increase.</p>
+                                <p><XCircle size={14} className="inline mr-1" aria-hidden="true" /> <b>Incorrect Answer:</b> Deducts -3 seconds immediately.</p>
+                                <p><Shield size={14} className="inline mr-1" aria-hidden="true" /> <b>Survival Goal:</b> Answer quickly to keep the energy bar active!</p>
                             </div>
 
                             <button

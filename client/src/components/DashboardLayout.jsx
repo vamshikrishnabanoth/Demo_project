@@ -71,8 +71,8 @@ export default function DashboardLayout({ children, role }) {
             toast.success(`📢 New Announcement: ${broadcast.title}`, {
                 style: {
                     background: '#161618',
-                    color: '#f59e0b',
-                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                    color: '#f97316',
+                    border: '1px solid rgba(249, 115, 22, 0.2)',
                     borderRadius: '1rem',
                     fontFamily: 'Inter',
                     fontWeight: 'bold'
@@ -147,7 +147,7 @@ export default function DashboardLayout({ children, role }) {
         role === 'admin'   ? '/admin-dashboard'   : '/student-dashboard';
 
     return (
-        <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col transition-colors duration-500 relative">
+        <div className={`${role === 'admin' || role === 'teacher' ? 'workspace-staff' : ''} min-h-screen w-full max-w-full overflow-x-hidden bg-[var(--bg-primary)] text-[var(--text-primary)] flex flex-col transition-colors duration-500 relative`}>
             <CinematicBackground />
 
             {/* ── TOP NAVBAR ──────────────────────────────────────────────── */}
@@ -157,13 +157,13 @@ export default function DashboardLayout({ children, role }) {
                 role="banner"
             >
                 <div className="layout-container">
-                    <div className="flex justify-between h-20">
+                    <div className="flex min-h-20 items-center justify-between gap-3 py-3">
 
                         {/* Logo + Desktop Nav */}
-                        <div className="flex items-center gap-8">
+                        <div className="flex min-w-0 items-center gap-3 lg:gap-8">
                             <Link
                                 to={homeUrl}
-                                className="flex-shrink-0 flex items-center gap-3 group"
+                                className="flex min-w-0 flex-shrink-0 items-center gap-2 sm:gap-3 group"
                                 aria-label="Go to home dashboard"
                             >
                                 <motion.div
@@ -178,7 +178,7 @@ export default function DashboardLayout({ children, role }) {
                                         decoding="async"
                                     />
                                 </motion.div>
-                                <h1 className="text-lg sm:text-2xl font-black text-[var(--text-primary)] tracking-tighter italic shrink-0">
+                                <h1 className="text-base sm:text-2xl font-black text-[var(--text-primary)] tracking-tighter italic shrink-0">
                                     <span className="hidden xs:inline">KMIT </span><span className="text-[var(--text-accent)] drop-shadow-[0_0_10px_var(--bg-accent-glow)]">KAHOOT</span>
                                 </h1>
                             </Link>
@@ -195,10 +195,10 @@ export default function DashboardLayout({ children, role }) {
                                                 to={link.path}
                                                 onMouseEnter={() => prefetchRoute(link.path)}
                                                 aria-current={active ? 'page' : undefined}
-                                                className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 border ${
+                                                className={`relative flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.18em] transition-all duration-200 border ${
                                                     active
-                                                        ? 'bg-slate-100/90 border-slate-200 text-slate-900 shadow-2xs font-extrabold scale-[1.01]'
-                                                        : 'bg-transparent border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
+                                                        ? 'bg-white text-[var(--text-primary)] border-[var(--border-color)] shadow-[0_8px_18px_rgba(0,0,0,0.06)]'
+                                                        : 'bg-transparent border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white hover:border-[var(--border-color)]'
                                                 }`}
                                             >
                                                 <Icon size={16} aria-hidden="true" className={active ? 'text-slate-900' : 'text-slate-500'} />
@@ -220,7 +220,7 @@ export default function DashboardLayout({ children, role }) {
                                     <UserProfileCard user={user} role={role} />
                                     <button
                                         onClick={handleLogout}
-                                        className="w-9 h-9 rounded-full bg-gradient-to-br from-[#D96B27] via-[#E65A1C] to-[#C1581E] hover:from-[#c55d1f] hover:to-[#b84d15] text-white flex items-center justify-center shadow-2xs border border-amber-300/40 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
+                                        className="w-9 h-9 rounded-full bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white flex items-center justify-center shadow-sm border border-[var(--bg-accent)] hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
                                         aria-label="Log out"
                                         title="Log out"
                                     >
@@ -234,7 +234,7 @@ export default function DashboardLayout({ children, role }) {
                                 <div className="flex items-center gap-2 shrink-0">
                                     <button
                                         onClick={handleLogout}
-                                        className="w-9 h-9 rounded-full bg-gradient-to-br from-[#D96B27] via-[#E65A1C] to-[#C1581E] hover:from-[#c55d1f] hover:to-[#b84d15] text-white flex items-center justify-center shadow-2xs border border-amber-300/40 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
+                                        className="w-9 h-9 rounded-full bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white flex items-center justify-center shadow-sm border border-[var(--bg-accent)] hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
                                         aria-label="Log out"
                                         title="Log out"
                                     >
@@ -242,7 +242,7 @@ export default function DashboardLayout({ children, role }) {
                                     </button>
                                     <button
                                         onClick={() => setMobileOpen(true)}
-                                        className="p-2 bg-slate-100 text-slate-900 hover:bg-slate-200 rounded-xl transition-all border border-slate-300 active:scale-95 shadow-sm cursor-pointer shrink-0"
+                                        className="p-2 bg-white text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-xl transition-all border border-[var(--border-color)] active:scale-95 shadow-sm cursor-pointer shrink-0"
                                         aria-label="Open navigation menu"
                                     >
                                         <Menu size={20} aria-hidden="true" />
@@ -257,13 +257,11 @@ export default function DashboardLayout({ children, role }) {
             {/* ── DEDICATED TOP SEARCH SECTION (ISOLATED) ──────────────────── */}
             {location.pathname === '/teacher-dashboard' && (
                 <div 
-                    className="w-full relative z-[90] bg-[var(--bg-primary)]/85 backdrop-blur-[18px]"
+                    className="staff-search-strip w-full relative z-[90] bg-[var(--bg-primary)]/90 backdrop-blur-[18px]"
                     style={{
                         paddingTop: '24px',
                         paddingBottom: '24px',
                         marginBottom: '32px',
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)',
                     }}
                 >
                     <div className="w-full max-w-[900px] mx-auto px-4 sm:px-6">
@@ -570,7 +568,7 @@ export default function DashboardLayout({ children, role }) {
 
             {/* ── MAIN CONTENT ──────────────────────────────────────────────── */}
             <main
-                className="flex-1 w-full max-w-[100rem] mx-auto px-4 sm:px-8 lg:px-10 py-6 sm:py-10 relative z-[var(--z-base)]"
+                className="flex-1 w-full max-w-[100rem] mx-auto px-3 sm:px-6 lg:px-10 py-5 sm:py-8 lg:py-10 relative z-[var(--z-base)]"
                 id="main-content"
                 tabIndex={-1}
             >

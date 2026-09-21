@@ -12,7 +12,7 @@ export const lazyWithSuspense = (componentImport, fallback = <NavigationSkeleton
         try {
             return await componentImport();
         } catch (error) {
-            console.error("🔥 [lazyWithSuspense] Dynamic import failed. Attempting auto-recovery...", error);
+                    console.error("[lazyWithSuspense] Dynamic import failed. Attempting auto-recovery...", error);
             
             // Generate a unique storage key based on the import function string
             const importStr = componentImport.toString();
@@ -28,12 +28,12 @@ export const lazyWithSuspense = (componentImport, fallback = <NavigationSkeleton
                 try {
                     return await componentImport();
                 } catch (retryError) {
-                    console.error("🔥 [lazyWithSuspense] Dynamic import retry failed. Force reloading page to fetch fresh assets...", retryError);
+                    console.error("[lazyWithSuspense] Dynamic import retry failed. Force reloading page to fetch fresh assets...", retryError);
                     window.location.reload();
                     return new Promise(() => {}); // Hold rendering while page reloads
                 }
             } else {
-                console.error("🔥 [lazyWithSuspense] Dynamic import failed repeatedly. Force reloading page...", error);
+                console.error("[lazyWithSuspense] Dynamic import failed repeatedly. Force reloading page...", error);
                 window.location.reload();
                 return new Promise(() => {}); // Hold rendering while page reloads
             }

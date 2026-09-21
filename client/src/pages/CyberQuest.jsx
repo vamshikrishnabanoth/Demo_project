@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Sparkles, Shield, RefreshCw, Trophy, Zap, AlertTriangle, ArrowRight, 
-    X as XIcon, CheckCircle, HelpCircle, Volume2, VolumeX, Home
+    X as XIcon, CheckCircle, HelpCircle, Volume2, VolumeX, Home, Gamepad2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
@@ -468,10 +468,10 @@ export default function CyberQuest() {
                                 </div>
 
                                 <div className="p-5 rounded-2xl bg-[#13192b] border border-white/10 text-left text-xs leading-relaxed text-slate-200 max-w-sm mx-auto space-y-3">
-                                    <p className="font-black text-center uppercase tracking-wider text-cyan-400 text-sm mb-1">🎮 Game Manual</p>
-                                    <p>🛡 <b>{totalLevels} Progressive Levels:</b> Harder questions mean more points.</p>
-                                    <p>🚫 <b>One Mistake Ends the Game:</b> UNLESS you activate the Shield.</p>
-                                    <p>💡 <b>3 Cyber Lifelines:</b> 50:50, Shield, and Skip can be used once each.</p>
+                                    <p className="font-black text-center uppercase tracking-wider text-cyan-400 text-sm mb-1 flex items-center justify-center gap-2"><Gamepad2 size={16} aria-hidden="true" /> Game Manual</p>
+                                    <p><Shield size={14} className="inline mr-1" aria-hidden="true" /> <b>{totalLevels} Progressive Levels:</b> Harder questions mean more points.</p>
+                                    <p><XIcon size={14} className="inline mr-1" aria-hidden="true" /> <b>One Mistake Ends the Game:</b> UNLESS you activate the Shield.</p>
+                                    <p><Sparkles size={14} className="inline mr-1" aria-hidden="true" /> <b>3 Cyber Lifelines:</b> 50:50, Shield, and Skip can be used once each.</p>
                                 </div>
 
                                 <button

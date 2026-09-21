@@ -157,7 +157,7 @@ import { useState, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity, Loader2, Send } from 'lucide-react';
+import { FileText, Upload, CheckCircle, FilePlus, Hash, Activity, Loader2, Send, Zap } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import toast from 'react-hot-toast';
 import { uiTerminology } from '../utils/uiTerminology';
@@ -495,7 +495,7 @@ export default function CreateQuizPDF() {
                                                 
                                                 {fetchingMetadata && (
                                                     <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest animate-pulse mt-2">
-                                                        ⚡ Reading document page length...
+                                                        <><Zap size={14} className="inline mr-1" aria-hidden="true" /> Reading document page length...</>
                                                     </p>
                                                 )}
 
@@ -605,16 +605,23 @@ export default function CreateQuizPDF() {
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1">Difficulty</p>
-                                        <select
-                                            value={difficulty}
-                                            onChange={(e) => setDifficulty(e.target.value)}
-                                            className="bg-transparent border-none text-2xl font-black text-[var(--text-primary)] italic outline-none w-full appearance-none cursor-pointer"
-                                        >
-                                            <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
-                                            <option value="Medium" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Medium</option>
-                                            <option value="Thinkable" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Thinkable</option>
-                                            <option value="Hard" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Hard</option>
-                                        </select>
+                                        <div className="relative">
+                                            <select
+                                                value={difficulty}
+                                                onChange={(e) => setDifficulty(e.target.value)}
+                                                className="w-full appearance-none cursor-pointer rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 pr-10 text-xl font-black italic text-[#0f172a] shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)] outline-none transition-all duration-200 hover:border-[#d7b48a] focus:border-[#d7b48a] focus:ring-2 focus:ring-[#f59e0b]/20"
+                                            >
+                                                <option value="Easy" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Easy</option>
+                                                <option value="Medium" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Medium</option>
+                                                <option value="Thinkable" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Thinkable</option>
+                                                <option value="Hard" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>Hard</option>
+                                            </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-[#0f172a]">
+                                                <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+                                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

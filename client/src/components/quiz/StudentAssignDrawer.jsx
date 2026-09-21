@@ -8,7 +8,7 @@ import {
     Users,
     UserCheck,
     Check,
-    ChevronRight,
+    ChevronRight, ChevronDown,
     SlidersHorizontal,
     GraduationCap,
     CheckSquare,
@@ -380,7 +380,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
                                                     onClick={() => setExpandedBranch(isExpanded ? null : b)}
                                                     className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] hover:text-white transition-colors"
                                                 >
-                                                    {isExpanded ? 'Collapse' : 'Structure Sem/Sec ↓'}
+                                                    <span className="inline-flex items-center gap-1">{isExpanded ? 'Collapse' : 'Structure Sem/Sec'} {!isExpanded && <ChevronDown size={13} aria-hidden="true" />}</span>
                                                 </button>
                                             </div>
 

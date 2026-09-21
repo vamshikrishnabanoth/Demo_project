@@ -1,0 +1,461 @@
+/* ─── Staff workspace (admin + faculty) ───────────────────────────────────
+   Light, production-grade surface system. Layout is unchanged; this file
+   only unifies tokens, type, controls, tables, and chrome.
+*/
+
+.workspace-staff {
+  --ws-surface: var(--bg-primary);
+  --ws-muted: var(--bg-secondary);
+  --ws-ink: var(--text-primary);
+  --ws-ink-soft: var(--text-secondary);
+  --ws-line: var(--border-color);
+  --ws-line-strong: #cfcfcf;
+  --ws-radius: var(--radius-xl);
+  --ws-radius-sm: 0.75rem;
+  --ws-shadow: var(--card-shadow-sm);
+  --ws-shadow-hover: var(--card-shadow-md);
+  color: var(--ws-ink);
+  font-family: var(--app-font);
+}
+
+.workspace-staff *:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--bg-accent-glow), 0 0 0 1px var(--bg-accent);
+}
+
+.workspace-staff header.dashboard-header {
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--ws-line);
+  box-shadow: none;
+}
+
+.workspace-staff header.dashboard-header::after {
+  height: 1px;
+  opacity: 0.55;
+  animation: none;
+  background: linear-gradient(90deg, transparent, var(--bg-accent), transparent);
+}
+
+.workspace-staff .glass-panel:hover {
+  transform: none;
+}
+
+.workspace-staff main#main-content {
+  color: var(--ws-ink);
+}
+
+/* Surfaces */
+.workspace-staff .admin-shell,
+.workspace-staff .admin-panel,
+.workspace-staff .admin-data-surface,
+.workspace-staff .admin-page-header,
+.workspace-staff .admin-stat-card,
+.workspace-staff .admin-toolbar,
+.workspace-staff .ws-card,
+.workspace-staff .ws-surface {
+  background: linear-gradient(180deg, #ffffff, var(--ws-muted));
+  border: 1px solid var(--ws-line);
+  box-shadow: var(--ws-shadow);
+}
+
+.workspace-staff .admin-shell {
+  max-width: 100rem;
+  margin: 0 auto;
+  padding: 1.25rem clamp(0.75rem, 1.5vw, 1.25rem) 5rem;
+  border-radius: 2rem;
+}
+
+.workspace-staff .admin-panel,
+.workspace-staff .admin-data-surface,
+.workspace-staff .ws-card {
+  border-radius: 1.25rem;
+}
+
+.workspace-staff .admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.4rem;
+}
+
+.workspace-staff .admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 1.1rem;
+}
+
+.workspace-staff .admin-stat-card {
+  border-radius: 1.25rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.workspace-staff .admin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ws-shadow-hover);
+  border-color: var(--ws-line-strong);
+}
+
+.workspace-staff .admin-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+  border-radius: 0.85rem;
+  padding: 0.62rem 0.95rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--ws-line);
+  background: var(--ws-surface);
+  color: var(--ws-ink);
+  box-shadow: none;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.workspace-staff .admin-cta:hover {
+  transform: translateY(-1px);
+  border-color: var(--ws-line-strong);
+  box-shadow: var(--ws-shadow);
+}
+
+.workspace-staff .admin-cta:active {
+  transform: translateY(0);
+}
+
+.workspace-staff .admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 9999px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--ws-line);
+  background: var(--ws-muted);
+  color: var(--ws-ink);
+}
+
+/* Typography */
+.workspace-staff .ws-kicker,
+.workspace-staff .ws-meta {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ws-ink-soft);
+}
+
+.workspace-staff .ws-title {
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ws-ink);
+  line-height: 1.15;
+}
+
+.workspace-staff .ws-subtitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ws-ink-soft);
+}
+
+/* Controls */
+.workspace-staff .ws-input,
+.workspace-staff .admin-toolbar input[type="text"],
+.workspace-staff .admin-toolbar input[type="search"] {
+  width: 100%;
+  min-height: 2.5rem;
+  background: #ffffff;
+  border: 1px solid var(--ws-line);
+  border-radius: 0.85rem;
+  color: var(--ws-ink);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.workspace-staff .ws-input:focus,
+.workspace-staff .admin-toolbar input:focus {
+  border-color: var(--bg-accent);
+  box-shadow: 0 0 0 3px var(--bg-accent-glow);
+  outline: none;
+}
+
+.workspace-staff .ws-select-trigger {
+  display: flex;
+  min-width: 8.25rem;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--ws-line);
+  background: #ffffff;
+  padding: 0.5rem 0.85rem;
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ws-ink);
+}
+
+.workspace-staff .ws-select-trigger:hover {
+  border-color: var(--ws-line-strong);
+}
+
+.workspace-staff .ws-select-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: var(--z-popover);
+  margin-top: 0.4rem;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  border: 1px solid var(--ws-line);
+  background: #ffffff;
+  box-shadow: var(--shadow-lg);
+}
+
+.workspace-staff .ws-select-option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0.55rem;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ws-ink);
+}
+
+.workspace-staff .ws-select-option:hover {
+  background: var(--ws-muted);
+}
+
+.workspace-staff .ws-select-option.is-selected {
+  background: var(--bg-accent);
+  color: var(--text-on-accent);
+}
+
+.workspace-staff .ws-btn-primary,
+.workspace-staff .admin-cta.ws-primary {
+  background: var(--bg-accent);
+  color: var(--text-on-accent);
+  border-color: var(--bg-accent);
+}
+
+.workspace-staff .ws-btn-primary:hover,
+.workspace-staff .admin-cta.ws-primary:hover {
+  background: var(--bg-accent-hover);
+  border-color: var(--bg-accent-hover);
+}
+
+.workspace-staff .ws-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--ws-line);
+  background: var(--ws-muted);
+  color: var(--ws-ink);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.workspace-staff .ws-icon-btn:hover {
+  background: #ffffff;
+  border-color: var(--ws-line-strong);
+}
+
+.workspace-staff .ws-icon-btn.is-danger {
+  color: var(--btn-delete);
+}
+
+.workspace-staff .ws-icon-btn.is-warn {
+  color: var(--btn-suspend);
+}
+
+.workspace-staff .ws-icon-btn.is-ok {
+  color: var(--success-bg);
+}
+
+.workspace-staff .ws-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem;
+  border: 1px solid var(--ws-line);
+  border-radius: 1.15rem;
+  background: #ffffff;
+  box-shadow: var(--ws-shadow);
+}
+
+.workspace-staff .ws-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  white-space: nowrap;
+  min-height: 2.75rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 0.9rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ws-ink);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.workspace-staff .ws-tab:hover {
+  background: var(--ws-muted);
+}
+
+.workspace-staff .ws-tab.is-active {
+  background: var(--bg-accent);
+  color: var(--text-on-accent);
+  border-color: var(--bg-accent);
+}
+
+.workspace-staff .ws-tab-count {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  background: var(--ws-muted);
+  color: var(--ws-ink);
+  border: 1px solid var(--ws-line);
+}
+
+.workspace-staff .ws-tab.is-active .ws-tab-count {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+/* Tables */
+.workspace-staff .ws-table-wrap,
+.workspace-staff .admin-data-surface {
+  overflow: hidden;
+}
+
+.workspace-staff table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.workspace-staff thead tr {
+  background: var(--ws-muted);
+  border-bottom: 1px solid var(--ws-line);
+}
+
+.workspace-staff th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ws-ink-soft);
+  white-space: nowrap;
+}
+
+.workspace-staff td {
+  padding: 0.9rem 1rem;
+  font-size: 0.75rem;
+  color: var(--ws-ink);
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.workspace-staff tbody tr:hover {
+  background: var(--table-row-hover);
+}
+
+.workspace-staff .ws-bulkbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.9rem;
+  background: var(--bg-accent);
+  color: var(--text-on-accent);
+}
+
+.workspace-staff .ws-empty {
+  padding: 4rem 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ws-ink-soft);
+}
+
+.workspace-staff .ws-skeleton {
+  animation: pulse 1.4s ease-in-out infinite;
+  background: linear-gradient(90deg, #ececec 25%, #f6f6f6 50%, #ececec 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+  border-radius: 0.85rem;
+}
+
+/* Status stays semantic; chrome is monochrome */
+.workspace-staff .ws-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--ws-line);
+  background: var(--ws-muted);
+}
+
+.workspace-staff .quiz-doc-card,
+.workspace-staff .doc-box,
+.workspace-staff .quiz-item-card {
+  background-color: var(--ws-muted) !important;
+  border-color: var(--ws-line) !important;
+}
+
+.workspace-staff .btn-secondary,
+.workspace-staff .badge-sand {
+  background-color: var(--ws-muted) !important;
+  color: var(--ws-ink) !important;
+  border: 1px solid var(--ws-line) !important;
+}
+
+.workspace-staff .staff-search-strip {
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid var(--ws-line);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-staff .admin-stat-card,
+  .workspace-staff .admin-cta,
+  .workspace-staff .ws-tab,
+  .workspace-staff .ws-icon-btn {
+    transition: none;
+  }
+}

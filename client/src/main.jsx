@@ -5,7 +5,7 @@ import App from './App.jsx'
 
 // Global error and promise rejection listeners for easy debugging/diagnostics
 window.onerror = function (message, source, lineno, colno, error) {
-    console.error("🔥 GLOBAL UNCAUGHT ERROR:", message, "at", source, ":", lineno, ":", colno, error);
+    console.error("GLOBAL UNCAUGHT ERROR:", message, "at", source, ":", lineno, ":", colno, error);
 };
 
 window.addEventListener('unhandledrejection', function (event) {

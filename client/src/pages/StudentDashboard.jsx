@@ -3,9 +3,10 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
     Trophy, Play, Users, Star, ArrowRight, Target, Sparkles, 
-    Zap, Rocket, Globe, Brain, Cpu, MessageSquare, Clock, BarChart3, 
+    Zap, Rocket, Globe, Cpu, MessageSquare, Clock, BarChart3, 
     ChevronRight, Search, LayoutGrid, FileText, Upload, Lock, FilePlus, Loader2,
-    Hash, Gauge, Database, Sliders, Book, FileCheck
+    Hash, Gauge, Database, Sliders, Book, FileCheck, ShieldCheck, Gift, Medal, AlertTriangle,
+    Clock3, BadgeCheck, Binoculars, TimerReset
 } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
@@ -108,7 +109,7 @@ export default function StudentDashboard() {
         }
     };
 
-    // Called once per day when tab mounts ΓÇö handles streak saves, resets, mission generation
+    // Called once per day when tab mounts — handles streak saves, resets, mission generation
     const initGamification = async () => {
         try {
             const res = await api.post('/students/gamification/init');
@@ -121,9 +122,9 @@ export default function StudentDashboard() {
             if (res.data.actionsTaken?.length > 0) {
                 res.data.actionsTaken.forEach(action => {
                     if (action.includes('saved')) {
-                        toast.success(`≡ƒ¢í∩╕Å ${action}`, { duration: 5000 });
+                        toast.success(action, { duration: 5000 });
                     } else if (action.includes('reset')) {
-                        toast.error(`≡ƒÆö ${action}`, { duration: 5000 });
+                        toast.error(`💔 ${action}`, { duration: 5000 });
                     }
                 });
             }
@@ -250,7 +251,7 @@ export default function StudentDashboard() {
         }
     };
 
-    // ΓöÇΓöÇ Polling Logics ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ── Polling Logics ──────────────────────────────────────────────────────
     const stopPolling = useCallback(() => {
         clearInterval(pollIntervalRef.current);
         clearInterval(elapsedRef.current);
@@ -388,14 +389,13 @@ export default function StudentDashboard() {
             )}
             <div className="relative min-h-[75vh] flex items-center justify-center py-10 font-inter overflow-hidden">
                 
-                {/* ΓöÇΓöÇΓöÇ AMBIENT DECORATIONS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
+                {/* ─── AMBIENT DECORATIONS ─────────────────────────────────── */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <FloatingSymbol Icon={Cpu} top="15%" left="10%" delay={0} size={isSmallScreen ? 24 : 40} />
                     <FloatingSymbol Icon={Globe} top="25%" left="85%" delay={2} size={isSmallScreen ? 20 : 32} />
                     {!isSmallScreen && (
                         <>
                             <FloatingSymbol Icon={Rocket} top="70%" left="15%" delay={4} />
-                            <FloatingSymbol Icon={Brain} top="65%" left="80%" delay={1} />
                         </>
                     )}
                 </div>
@@ -406,26 +406,113 @@ export default function StudentDashboard() {
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     className="w-full max-w-4xl space-y-8 text-center relative z-10 px-6"
                 >
+                    {/* Header System */}
+                    <div className="space-y-4">
+                        <h1 className="type-page-title font-black text-[var(--text-primary)] italic tracking-tight">
+                            Student <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">Game Arena</span>
+                        </h1>
+                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.3em] text-[10px] max-w-md mx-auto">
+                            Attempt quizzes via code or launch cognitive AI games
+                        </p>
+                    </div>
+
+                    {/* Gamification Quick Stats Banner */}
+                    <div className="flex justify-center items-center gap-4 bg-[var(--student-surface-alt)] border border-[var(--student-border)] rounded-2xl p-4 max-w-2xl mx-auto shadow-[var(--student-shadow-soft)] backdrop-blur-md flex-wrap">
+                        <div className="flex items-center gap-2">
+                            <Star className="text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.45)]" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Total XP</p>
+                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{xp} <span className="text-xs text-amber-400">XP</span></p>
+                            </div>
+                        </div>
+                        <div className="h-8 w-px bg-[var(--student-border)]"></div>
+                        <div className="flex items-center gap-2">
+                            <Rocket className="text-cyan-500 drop-shadow-[0_0_12px_rgba(34,211,238,0.45)]" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Current Streak</p>
+                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{streak} <span className="text-xs text-cyan-500">DAYS</span></p>
+                            </div>
+                        </div>
+                        <div className="h-8 w-px bg-[var(--student-border)]"></div>
+                        <div className="flex items-center gap-2">
+                            <Trophy className="text-violet-500 drop-shadow-[0_0_12px_rgba(168,85,247,0.45)]" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Best Streak</p>
+                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{highestStreak} <span className="text-xs text-violet-500">DAYS</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* XP Progress toward Next Reward */}
+                    {(() => {
+                        const XP_REWARDS = [
+                            { name: 'Attendance Pass', cost: 1500 },
+                            { name: 'Late Pass', cost: 3000 },
+                        ];
+                        const nextReward = XP_REWARDS.find(r => xp < r.cost);
+                        if (!nextReward) return (
+                            <div className="max-w-2xl mx-auto px-2">
+                                <p className="text-center text-[10px] font-black text-amber-400 uppercase tracking-widest">
+                                    All XP Rewards Unlocked! Maintain your streak for the Golden Perk.
+                                </p>
+                            </div>
+                        );
+                        const prevCost = XP_REWARDS[XP_REWARDS.indexOf(nextReward) - 1]?.cost || 0;
+                        const progress = Math.min(((xp - prevCost) / (nextReward.cost - prevCost)) * 100, 100);
+                        const xpLeft = nextReward.cost - xp;
+                        return (
+                            <div className="max-w-2xl mx-auto px-2 space-y-1.5">
+                                <div className="flex justify-between items-center">
+                                    <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
+                                        Next: <span className="text-amber-700 font-extrabold">{nextReward.name}</span>
+                                    </p>
+                                    <p className="text-[9px] font-black text-[var(--text-primary)]">
+                                        {xp.toLocaleString()} / {nextReward.cost.toLocaleString()} XP
+                                        <span className="text-amber-700 font-extrabold ml-2">— {xpLeft.toLocaleString()} XP to go</span>
+                                    </p>
+                                </div>
+                                <div className="w-full bg-[var(--border-color)]/50 h-2 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progress}%` }}
+                                        transition={{ duration: 1, ease: 'easeOut' }}
+                                        className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.4)]"
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })()}
+
                     {/* Tab Controls */}
-                    <div className="flex justify-center gap-4 max-w-2xl mx-auto pt-4">
+                    <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-2xl mx-auto">
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('link'); }}
-                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
+                            className={`flex-1 min-h-[50px] px-4 py-3 rounded-xl font-semibold uppercase tracking-wider text-xs transition-all duration-200 border flex items-center justify-center gap-2 cursor-pointer ${
                                 activeTab === 'link'
-                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
-                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_16px_rgba(234,88,12,0.22)] border-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] hover:-translate-y-0.5'
+                                    : 'bg-white text-[var(--text-primary)] hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 border-slate-200 shadow-sm'
                             }`}
                             style={activeTab === 'link' ? { color: '#ffffff' } : {}}
                         >
                             Join Quiz
                         </button>
-                        <button style={{display:"none"}}></button>
+                        <button
+                            onClick={() => { if (!isLoading) setActiveTab('arena'); }}
+                            className={`flex-1 min-h-[50px] px-4 py-3 rounded-xl font-semibold uppercase tracking-wider text-xs transition-all duration-200 border flex items-center justify-center gap-2 cursor-pointer ${
+                                activeTab === 'arena'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_16px_rgba(234,88,12,0.22)] border-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] hover:-translate-y-0.5'
+                                    : 'bg-white text-[var(--text-primary)] hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 border-slate-200 shadow-sm'
+                            }`}
+                            style={activeTab === 'arena' ? { color: '#ffffff' } : {}}
+                        >
+                            Game Arena
+                        </button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
-                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-1.5 ${
+                            className={`flex-1 min-h-[50px] px-4 py-3 rounded-xl font-semibold uppercase tracking-wider text-xs transition-all duration-200 border flex items-center justify-center gap-2 cursor-pointer ${
                                 activeTab === 'gamification'
-                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
-                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
+                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_16px_rgba(234,88,12,0.22)] border-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] hover:-translate-y-0.5'
+                                    : 'bg-white text-[var(--text-primary)] hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 border-slate-200 shadow-sm'
                             }`}
                             style={activeTab === 'gamification' ? { color: '#ffffff' } : {}}
                         >
@@ -447,7 +534,7 @@ export default function StudentDashboard() {
                                 <div className="relative">
                                     <motion.div 
                                         animate={controls}
-                                        className="relative flex justify-center gap-2 md:gap-4 cursor-pointer py-8 px-6 bg-[var(--bg-secondary)] rounded-[2.5rem] border-2 border-[var(--border-color)] shadow-lg group"
+                                        className="relative flex justify-center gap-2 md:gap-4 cursor-pointer py-7 px-4 sm:px-6 bg-white rounded-3xl border border-slate-200 shadow-[0_6px_20px_rgba(15,23,42,0.06)] group"
                                         onClick={() => inputRef.current?.focus()}
                                     >
                                         <input
@@ -476,12 +563,12 @@ export default function StudentDashboard() {
                                                     initial={false}
                                                     animate={{
                                                         scale: isActive ? 1.08 : 1,
-                                                        borderColor: isActive ? 'var(--bg-accent)' : isFilled ? 'var(--bg-accent)' : 'var(--border-color)',
-                                                        backgroundColor: isActive ? 'rgba(19,62,135,0.06)' : isFilled ? 'rgba(19,62,135,0.04)' : 'white',
-                                                        boxShadow: isActive ? '0 0 25px var(--bg-accent-glow)' : 'none'
+                                                        borderColor: isActive ? '#111827' : isFilled ? '#64748b' : '#d1d5db',
+                                                        backgroundColor: 'white',
+                                                        boxShadow: isActive ? '0 0 0 3px rgba(17,24,39,0.08)' : 'none'
                                                     }}
                                                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                    className="w-10 md:w-12 h-14 md:h-18 rounded-xl border-2 backdrop-blur-md flex items-center justify-center relative overflow-hidden transition-colors"
+                                                    className="w-10 md:w-12 h-14 md:h-[4.5rem] rounded-xl border-2 flex items-center justify-center relative overflow-hidden transition-colors hover:border-slate-500"
                                                 >
                                                     <AnimatePresence mode="popLayout">
                                                         {joinCode[i] ? (
@@ -499,7 +586,7 @@ export default function StudentDashboard() {
                                                                 <motion.div 
                                                                     animate={{ opacity: [1, 0, 1] }}
                                                                     transition={{ duration: 1, repeat: Infinity }}
-                                                                    className="w-0.5 h-6 bg-[var(--bg-accent)] rounded-full"
+                                                                    className="w-0.5 h-6 bg-[#111827] rounded-full"
                                                                 />
                                                             )
                                                         )}
@@ -511,7 +598,7 @@ export default function StudentDashboard() {
                                                                 initial={{ opacity: 0, scale: 0 }}
                                                                 animate={{ opacity: 1, scale: 1 }}
                                                                 exit={{ opacity: 0, scale: 0 }}
-                                                                className="absolute inset-0 bg-gradient-to-t from-[var(--bg-accent)]/10 to-transparent pointer-events-none"
+                                                                className="absolute inset-0 bg-slate-900/[0.03] pointer-events-none"
                                                             />
                                                         )}
                                                     </AnimatePresence>
@@ -524,12 +611,11 @@ export default function StudentDashboard() {
                                 <button
                                     onClick={() => handleJoin()}
                                     disabled={joinCode.length !== maxChars || isSubmitting}
-                                    className={`w-full h-16 rounded-2xl font-black text-lg italic uppercase tracking-[0.2em] flex items-center justify-center text-center transition-all duration-300 border border-[#133E87] bg-[#133E87] !text-white shadow-[0_10px_25px_rgba(19,62,135,0.3)] ${
+                                        className={`w-full h-16 rounded-[1.4rem] font-black text-lg italic uppercase tracking-[0.18em] flex items-center justify-center text-center transition-all duration-300 border border-[#ea580c]/80 bg-[#ea580c] text-white shadow-[0_12px_28px_rgba(194,65,12,0.28)] ${
                                         joinCode.length === maxChars && !isSubmitting
-                                            ? 'hover:bg-[#0e2e65] hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-[0_0_25px_var(--bg-accent-glow)]' 
-                                            : 'opacity-85 cursor-not-allowed'
+                                            ? 'hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer'
+                                            : 'opacity-90 cursor-not-allowed'
                                     }`}
-                                    style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                                 >
                                     {isSubmitting ? (
                                         <div className="flex items-center justify-center gap-3 text-white">
@@ -547,7 +633,7 @@ export default function StudentDashboard() {
                                     )}
                                 </button>
                             </motion.div>
-                        ) : false ? (
+                        ) : activeTab === 'arena' ? (
                             <motion.div
                                 key="tab-arena"
                                 initial={{ opacity: 0, y: 15 }}
@@ -641,17 +727,17 @@ export default function StudentDashboard() {
                                                     onClick={() => setSelectedGame('cyber-quest')}
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'cyber-quest'
-                                                            ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/8 shadow-md'
-                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-[var(--bg-accent)]/50'
+                                                            ? 'border-cyan-500 bg-cyan-500/8 shadow-md'
+                                                            : 'border-[var(--border-color)] bg-[#f8fafc] hover:border-cyan-400/60'
                                                     }`}
                                                 >
-                                                    <div className="bg-[var(--bg-accent)]/10 text-[var(--text-accent)] w-12 h-12 rounded-xl flex items-center justify-center">
+                                                    <div className="bg-cyan-100 text-cyan-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-inner">
                                                         <Sparkles size={24} />
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
                                                             <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Cyber Quest</h3>
-                                                            <span className="text-[var(--text-accent)] font-bold text-[8px] uppercase tracking-widest border border-[var(--text-accent)]/30 px-2 py-0.5 rounded">READY</span>
+                                                            <span className="text-cyan-600 font-bold text-[8px] uppercase tracking-widest border border-cyan-500/30 bg-cyan-50 px-2 py-0.5 rounded">READY</span>
                                                         </div>
                                                         <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
                                                             Progress through 10 cyberpunk difficulty tiers. Use 50:50, Shield, and Skip lifelines to win.
@@ -665,16 +751,16 @@ export default function StudentDashboard() {
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'sprint-arena'
                                                             ? 'border-pink-500 bg-pink-500/5 shadow-md opacity-100'
-                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-pink-400/50 opacity-80'
+                                                            : 'border-[var(--border-color)] bg-[#fff7fb] hover:border-pink-400/60 opacity-80'
                                                     }`}
                                                 >
-                                                    <div className="bg-pink-600/10 text-pink-400 w-12 h-12 rounded-xl flex items-center justify-center">
-                                                        <Clock size={24} />
+                                                    <div className="bg-pink-100 text-pink-500 w-12 h-12 rounded-xl flex items-center justify-center shadow-inner">
+                                                        <TimerReset size={24} />
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
                                                             <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Sprint Arena</h3>
-                                                            <span className="text-pink-500 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 px-2 py-0.5 rounded">READY</span>
+                                                            <span className="text-pink-500 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 bg-pink-50 px-2 py-0.5 rounded">READY</span>
                                                         </div>
                                                         <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
                                                             Beat the ticking clock in rapid time-survival MCQ matches. Correct adds time, wrong subtracts.
@@ -687,17 +773,14 @@ export default function StudentDashboard() {
                                                     onClick={() => setSelectedGame('match-up')}
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'match-up'
-                                                            ? 'border-purple-500 bg-purple-500/5 shadow-md opacity-100'
-                                                            : 'border-[var(--border-color)] bg-[var(--bg-primary)] hover:border-purple-400/50 opacity-80'
+                                                            ? 'border-violet-500 bg-violet-500/5 shadow-md opacity-100'
+                                                            : 'border-[var(--border-color)] bg-[#faf5ff] hover:border-violet-400/60 opacity-80'
                                                     }`}
                                                 >
-                                                    <div className="bg-purple-600/10 text-purple-400 w-12 h-12 rounded-xl flex items-center justify-center">
-                                                        <Cpu size={24} />
-                                                    </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
                                                             <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Match-Up Match</h3>
-                                                            <span className="text-purple-500 font-bold text-[8px] uppercase tracking-widest border border-purple-500/30 px-2 py-0.5 rounded">READY</span>
+                                                            <span className="text-violet-500 font-bold text-[8px] uppercase tracking-widest border border-violet-500/30 bg-violet-50 px-2 py-0.5 rounded">READY</span>
                                                         </div>
                                                         <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
                                                             Visual cognitive card-matching memory board. Solve vocabulary and concepts in record times.
@@ -715,12 +798,11 @@ export default function StudentDashboard() {
                                     <button
                                         onClick={handleLaunchGame}
                                         disabled={(!file && videoUrls.every(u => !u.trim())) || submitting}
-                                        className={`w-full sm:w-auto px-6 sm:px-16 py-4 sm:py-5 rounded-2xl font-black text-base sm:text-xl italic uppercase tracking-wider sm:tracking-[0.25em] flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 border border-[#133E87] bg-[#133E87] !text-white shadow-[0_10px_25px_rgba(19,62,135,0.3)] ${
+                                        className={`group w-full sm:w-auto px-6 sm:px-16 py-4 sm:py-5 rounded-[1.4rem] font-black text-base sm:text-xl italic uppercase tracking-[0.18em] sm:tracking-[0.25em] flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 border border-[#ea580c]/80 bg-[#ea580c] text-white shadow-[0_12px_28px_rgba(194,65,12,0.28)] ${
                                             (!file && videoUrls.every(u => !u.trim())) || submitting
-                                                ? 'opacity-85 cursor-pointer'
-                                                : 'hover:bg-[#0e2e65] hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
+                                                ? 'opacity-90 cursor-not-allowed'
+                                            : 'hover:brightness-110 hover:scale-[1.02] hover:-translate-y-1 hover:border-white/80 hover:shadow-[0_18px_38px_rgba(249,115,22,0.42)] active:scale-[0.99] active:translate-y-0 cursor-pointer'
                                         }`}
-                                        style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
                                     >
                                         {submitting ? (
                                             <>
@@ -729,7 +811,7 @@ export default function StudentDashboard() {
                                             </>
                                         ) : (
                                             <>
-                                                <Play size={24} fill="#ffffff" className="text-white" />
+                                                <Play size={24} fill="#ffffff" className="text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:scale-110" />
                                                 <span className="text-white font-black">LAUNCH GAME MODE</span>
                                             </>
                                         )}
@@ -743,63 +825,128 @@ export default function StudentDashboard() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -15 }}
                                 transition={{ duration: 0.4 }}
-                                className="space-y-6 max-w-4xl mx-auto text-left"
+                                className="space-y-10 max-w-5xl mx-auto text-left"
                             >
-                                {/* ─── GOLDEN LINE MILESTONE PROGRESSION BAR ─── */}
-                                <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
-                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                                        <div className="flex items-center gap-3">
-                                            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500">
-                                                <Trophy size={24} className="text-amber-500" />
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    {/* Daily Missions */}
+                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-5 sm:p-6 flex flex-col gap-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <div className="rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] p-2 text-[var(--text-primary)] shadow-sm">
+                                                <ShieldCheck size={20} />
                                             </div>
-                                            <div>
-                                                <h2 className="text-xl font-black text-[var(--text-primary)] italic uppercase tracking-wide">
-                                                    Missions & Perks Progression
-                                                </h2>
-                                                <p className="text-xs text-[var(--text-secondary)] font-medium">
-                                                    Complete tasks & quizzes to unlock exclusive academic perks
-                                                </p>
-                                            </div>
+                                            <h2 className="type-section-title font-black text-[var(--text-primary)] italic uppercase">Daily Missions</h2>
                                         </div>
-                                        <div className="text-right self-end sm:self-auto">
-                                            <span className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-wider block">
-                                                Total Points Gained
-                                            </span>
-                                            <span className="text-xl font-black text-amber-500 italic">
-                                                {xp} <span className="text-xs text-[var(--text-secondary)] font-bold">/ 1300 PTS</span>
-                                            </span>
-                                        </div>
+
+                                        {(() => {
+                                            const getMissionTheme = (mission) => {
+                                                const title = (mission?.title || '').toLowerCase();
+                                                const isAccuracy = title.includes('accuracy') || title.includes('precise') || title.includes('correct');
+                                                const isXp = title.includes('xp') || title.includes('earn') || title.includes('score');
+                                                const isCyber = title.includes('cyber') || title.includes('quest');
+
+                                                if (isAccuracy) {
+                                                    return {
+                                                        badge: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200',
+                                                        chip: 'bg-fuchsia-100 text-fuchsia-700',
+                                                        bar: 'bg-fuchsia-500',
+                                                        icon: 'text-fuchsia-600',
+                                                        soft: 'bg-fuchsia-50/70 border-fuchsia-100',
+                                                        progress: 'text-fuchsia-700'
+                                                    };
+                                                }
+
+                                                if (isXp) {
+                                                    return {
+                                                        badge: 'bg-amber-50 text-amber-700 border border-amber-200',
+                                                        chip: 'bg-amber-100 text-amber-700',
+                                                        bar: 'bg-amber-500',
+                                                        icon: 'text-amber-600',
+                                                        soft: 'bg-amber-50/70 border-amber-100',
+                                                        progress: 'text-amber-700'
+                                                    };
+                                                }
+
+                                                if (isCyber) {
+                                                    return {
+                                                        badge: 'bg-violet-50 text-violet-700 border border-violet-200',
+                                                        chip: 'bg-violet-100 text-violet-700',
+                                                        bar: 'bg-violet-500',
+                                                        icon: 'text-violet-600',
+                                                        soft: 'bg-violet-50/70 border-violet-100',
+                                                        progress: 'text-violet-700'
+                                                    };
+                                                }
+
+                                                return {
+                                                    badge: 'bg-slate-100 text-slate-700 border border-slate-200',
+                                                    chip: 'bg-slate-200 text-slate-700',
+                                                    bar: 'bg-slate-600',
+                                                    icon: 'text-slate-600',
+                                                    soft: 'bg-slate-50 border-slate-200',
+                                                    progress: 'text-slate-700'
+                                                };
+                                            };
+
+                                            return dailyMissions.map((m) => {
+                                                const isComplete = m.current >= m.target;
+                                                const theme = getMissionTheme(m);
+                                                const icon = m.required ? 'MAIN' : 'BONUS';
+
+                                                return (
+                                                    <div
+                                                        key={m.id}
+                                                        className={`p-3.5 sm:p-4 rounded-2xl border bg-[var(--bg-primary)] transition-all duration-300 ${
+                                                            isComplete ? `border-[var(--border-color)] ${theme.soft}` : 'border-[var(--border-color)] bg-[var(--bg-primary)]'
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="flex items-center gap-2 flex-wrap">
+                                                                    <div className={`h-2.5 w-2.5 rounded-full ${theme.chip}`} aria-hidden="true" />
+                                                                    <h3 className="font-extrabold text-[var(--text-primary)] text-sm sm:text-[0.95rem] leading-snug tracking-[-0.01em]">
+                                                                        {m.title}
+                                                                    </h3>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="flex items-center gap-2 shrink-0">
+                                                                <span className={`inline-flex items-center rounded-full px-2 py-1 text-[8px] font-black uppercase tracking-[0.14em] ${m.required ? 'bg-pink-50 text-pink-700 border border-pink-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+                                                                    {icon}
+                                                                </span>
+                                                                {isComplete && (
+                                                                    <span className="inline-flex items-center justify-center rounded-full bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] p-1" aria-label="Completed mission">
+                                                                        <ShieldCheck size={12} className={theme.icon} />
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="mt-3 flex items-center justify-between gap-3">
+                                                            <div className="flex-1">
+                                                                <div className="h-2 w-full rounded-full bg-[var(--border-color)]/80 overflow-hidden">
+                                                                    <div
+                                                                        className={`h-full rounded-full transition-all duration-500 ease-out ${theme.bar}`}
+                                                                        style={{ width: `${Math.min((m.current / m.target) * 100, 100)}%` }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <span className={`min-w-[3.5rem] text-right text-[11px] font-black ${isComplete ? theme.progress : 'text-[var(--text-secondary)]'}`}>
+                                                                {m.current} / {m.target}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            });
+                                        })()}
                                     </div>
 
-                                    {/* Golden Progress Line */}
-                                    <div className="w-full bg-[var(--bg-primary)] h-4 rounded-full border border-[var(--border-color)] overflow-hidden p-0.5 relative">
-                                        <motion.div 
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${Math.min((xp / 1300) * 100, 100)}%` }}
-                                            transition={{ duration: 1, ease: "easeOut" }}
-                                            className="h-full rounded-full relative overflow-hidden"
-                                            style={{
-                                                background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)',
-                                                boxShadow: '0 0 15px rgba(245, 158, 11, 0.6)'
-                                            }}
-                                        >
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
-                                        </motion.div>
-                                    </div>
-
-                                    <div className="flex justify-between items-center text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-                                        <span>0 PTS</span>
-                                        <span className="text-amber-500 font-black">{Math.min(Math.round((xp / 1300) * 100), 100)}% COMPLETED</span>
-                                        <span>1300 PTS (MAX MILESTONE)</span>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
                                     {/* Rewards Store */}
-                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
+                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <Star className="text-yellow-500" size={26} fill="currentColor" />
-                                            <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase">Rewards Store</h2>
+                                            <div className="rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] p-2 text-[var(--text-primary)] shadow-sm">
+                                                <Gift size={22} />
+                                            </div>
+                                            <h2 className="type-section-title font-black text-[var(--text-primary)] italic uppercase">Rewards Store</h2>
                                         </div>
 
                                         {/* Perk Store */}
@@ -815,27 +962,72 @@ export default function StudentDashboard() {
                                                 }).length;
                                             };
 
+                                            const rewardThemes = {
+                                                perk_att: {
+                                                    iconBg: 'bg-amber-100',
+                                                    icon: 'text-amber-700',
+                                                    border: 'border-amber-200',
+                                                    ring: 'ring-amber-100',
+                                                    accent: 'text-amber-700',
+                                                    badge: 'bg-amber-100 text-amber-700',
+                                                    status: 'text-amber-700'
+                                                },
+                                                perk_late: {
+                                                    iconBg: 'bg-violet-100',
+                                                    icon: 'text-violet-700',
+                                                    border: 'border-violet-200',
+                                                    ring: 'ring-violet-100',
+                                                    accent: 'text-violet-700',
+                                                    badge: 'bg-violet-100 text-violet-700',
+                                                    status: 'text-violet-700'
+                                                },
+                                                perk_golden: {
+                                                    iconBg: 'bg-emerald-100',
+                                                    icon: 'text-emerald-700',
+                                                    border: 'border-emerald-200',
+                                                    ring: 'ring-emerald-100',
+                                                    accent: 'text-emerald-700',
+                                                    badge: 'bg-emerald-100 text-emerald-700',
+                                                    status: 'text-emerald-700'
+                                                },
+                                                default: {
+                                                    iconBg: 'bg-slate-100',
+                                                    icon: 'text-slate-700',
+                                                    border: 'border-slate-200',
+                                                    ring: 'ring-slate-100',
+                                                    accent: 'text-slate-700',
+                                                    badge: 'bg-slate-100 text-slate-700',
+                                                    status: 'text-slate-700'
+                                                }
+                                            };
+
                                             return [
-                                                { id: 'perk_late', name: 'Late Permission', cost: 700, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
-                                                { id: 'perk_half', name: 'Half Day Permission', cost: 900, icon: Clock, color: 'text-blue-400', border: 'border-blue-500', desc: 'Excuse yourself for a half day', monthlyLimit: 2 },
-                                                { id: 'perk_att', name: 'Attendance 5% hike', cost: 1300, icon: Target, color: 'text-green-400', border: 'border-green-500', desc: 'Increase your attendance by 5%', monthlyLimit: 1 },
+                                                { id: 'perk_att', name: '1 Hour Free Attendance', cost: 1500, icon: Clock, color: 'text-[var(--text-accent)]', border: 'border-[var(--border-color)]', desc: 'Excuse yourself from 1 hour of attendance', monthlyLimit: 1 },
+                                                { id: 'perk_late', name: '1 Day Late Pass', cost: 3000, icon: FileText, color: 'text-violet-700', border: 'border-violet-200', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
+                                                { id: 'perk_golden', name: 'Golden Perk — Free Streak Save', cost: 0, icon: Star, color: 'text-emerald-700', border: 'border-emerald-200', desc: 'One emergency streak save that costs 0 XP. Used automatically on your next missed day.', streakOnly: 30 },
                                             ].map(perk => {
                                                 const isStreakLocked = perk.streakOnly && streak < perk.streakOnly;
                                                 const redemptionsThisMonth = perk.monthlyLimit ? getRedemptionsThisMonth(perk.id) : 0;
                                                 const limitReached = perk.monthlyLimit ? redemptionsThisMonth >= perk.monthlyLimit : false;
                                                 const canAfford = !isStreakLocked && !limitReached && xp >= perk.cost;
+                                                const theme = rewardThemes[perk.id] || rewardThemes.default;
                                                 return (
-                                                <div key={perk.id} className={`p-4 rounded-2xl border bg-[var(--bg-primary)] flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${isStreakLocked ? 'border-yellow-500/40 opacity-70' : 'border-[var(--border-color)]'}`}>
+                                                <div key={perk.id} className={`p-4 rounded-2xl border bg-white flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${isStreakLocked ? 'border-slate-200 opacity-80' : `${theme.border}`} ${isStreakLocked ? 'bg-slate-50' : 'bg-[var(--bg-primary)]'}`}>
                                                     <div className="flex items-center gap-4">
-                                                        <div className={`p-3 rounded-xl bg-[var(--bg-secondary)] border ${perk.border} ${perk.color}`}>
-                                                            <perk.icon size={24} />
+                                                        <div className={`p-3 rounded-xl border ${theme.iconBg} ${theme.border} ${theme.icon}`}>
+                                                            {perk.id === 'perk_att' ? <Clock3 size={24} /> : perk.id === 'perk_late' ? <BadgeCheck size={24} /> : <Medal size={24} />}
                                                         </div>
                                                         <div>
                                                             <h3 className="font-bold text-[var(--text-primary)] text-sm">{perk.name}</h3>
                                                             <p className="text-[var(--text-secondary)] text-[10px] mt-0.5">{perk.desc}</p>
+                                                            {perk.monthlyLimit && (
+                                                                <p className={`${theme.accent} text-[9px] font-black uppercase tracking-wider mt-1`}>
+                                                                    <AlertTriangle size={12} aria-hidden="true" /> Only {perk.monthlyLimit} redeemable this month • {redemptionsThisMonth}/{perk.monthlyLimit} used
+                                                                </p>
+                                                            )}
                                                             {isStreakLocked
-                                                                ? <p className="text-yellow-400 text-xs font-black italic mt-1">Requires {perk.streakOnly}-Day Streak</p>
-                                                                : <p className="text-yellow-400 text-xs font-black italic mt-1">{perk.cost} PTS</p>
+                                                                ? <p className="text-slate-500 text-xs font-black italic mt-1 flex items-center gap-1"><Lock size={12} aria-hidden="true" /> Requires {perk.streakOnly}-Day Streak</p>
+                                                                : <p className={`${theme.status} text-xs font-black italic mt-1`}>{perk.cost} XP</p>
                                                             }
                                                         </div>
                                                     </div>
@@ -844,8 +1036,8 @@ export default function StudentDashboard() {
                                                         disabled={!canAfford || redeeming}
                                                         className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
                                                             canAfford
-                                                                ? 'bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent)]/90 shadow-md' 
-                                                                : 'bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border-color)] cursor-not-allowed'
+                                                                ? 'bg-gradient-to-r from-[#f59e0b] to-[#f97316] text-white hover:brightness-105 shadow-md'
+                                                                : 'bg-white text-[var(--text-secondary)] border border-[var(--border-color)] cursor-not-allowed'
                                                         }`}
                                                     >
                                                         {isStreakLocked ? 'Locked' : limitReached ? 'Max Limit' : 'Redeem'}
@@ -931,7 +1123,7 @@ export default function StudentDashboard() {
                                                 onClick={() => window.print()}
                                                 className="w-full py-3 bg-white text-black font-black uppercase text-sm rounded-lg hover:bg-gray-200 transition-colors"
                                             >
-                                                ≡ƒû¿ Print / Save as PDF
+                                                🖨 Print / Save as PDF
                                             </button>
                                         </div>
                                     </div>

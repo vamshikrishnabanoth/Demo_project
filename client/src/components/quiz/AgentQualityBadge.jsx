@@ -2,12 +2,12 @@
  * AgentQualityBadge.jsx
  *
  * Displays a full Agent Execution Summary + structured per-question review.
- * Shows: Generator ✅ → Critic ✅ → Refiner ✅ + quality diff.
+ * Shows generator, critic, and refiner status with quality differences.
  */
 
 import React from 'react';
 import {
-    AlertTriangle, CheckCircle, RotateCw, Info, ArrowRight
+    AlertTriangle, ArrowRight, CheckCircle, Info, Pencil, Search, Zap
 } from 'lucide-react';
 
 // ─── Verdict config ────────────────────────────────────────────────────────────
@@ -35,23 +35,23 @@ const VERDICT_CONFIG = {
 // ─── Refiner status config ────────────────────────────────────────────────────
 const REFINER_STATUS_CONFIG = {
     refined: {
-        icon: '✏️', label: (n) => `Refiner ✅ — ${n} question${n !== 1 ? 's' : ''} improved`,
+        icon: <Pencil size={14} aria-hidden="true" />, label: (n) => `Refiner — ${n} question${n !== 1 ? 's' : ''} improved`,
         color: 'text-emerald-400',
     },
     early_exit: {
-        icon: '✏️', label: () => 'Refiner ✅ — Skipped · Questions already excellent',
+        icon: <Pencil size={14} aria-hidden="true" />, label: () => 'Refiner — Skipped · Questions already excellent',
         color: 'text-emerald-400',
     },
     no_change: {
-        icon: '✏️', label: () => 'Refiner ℹ — No valid content improvements found',
+        icon: <Info size={14} aria-hidden="true" />, label: () => 'Refiner — No valid content improvements found',
         color: 'text-sky-400',
     },
     unavailable: {
-        icon: '✏️', label: () => 'Refiner ⚠ — Groq API key not configured',
+        icon: <AlertTriangle size={14} aria-hidden="true" />, label: () => 'Refiner — Groq API key not configured',
         color: 'text-amber-400',
     },
     timeout: {
-        icon: '✏️', label: () => 'Refiner ⚠ — Timed out · Best version returned',
+        icon: <AlertTriangle size={14} aria-hidden="true" />, label: () => 'Refiner — Timed out · Best version returned',
         color: 'text-amber-400',
     },
 };
@@ -70,8 +70,8 @@ function AgentExecutionSummary({ report }) {
 
     // Build the pipeline steps with contextual Refiner state
     const steps = [
-        { label: 'Generator ✅', color: 'text-emerald-400', icon: '⚡' },
-        { label: `Critic ${criticExecuted ? '✅' : '—'}`, color: criticExecuted ? 'text-emerald-400' : 'text-white/30', icon: '🔍' },
+        { label: 'Generator', color: 'text-emerald-400', icon: <Zap size={14} aria-hidden="true" /> },
+        { label: `Critic${criticExecuted ? '' : ' —'}`, color: criticExecuted ? 'text-emerald-400' : 'text-white/30', icon: <Search size={14} aria-hidden="true" /> },
         { label: refinerLabel, color: rCfg.color, icon: rCfg.icon },
     ];
 
@@ -79,13 +79,13 @@ function AgentExecutionSummary({ report }) {
     let noChangeReason = null;
     if (questionsChanged === 0) {
         if (refinerStatus === 'early_exit') {
-            noChangeReason = '✅ No content changes needed — questions already met the quality bar.';
+            noChangeReason = 'No content changes needed — questions already met the quality bar.';
         } else if (refinerStatus === 'no_change') {
-            noChangeReason = 'ℹ Refiner ran but found no content to improve. Review issues manually if any remain.';
+            noChangeReason = 'Refiner ran but found no content to improve. Review issues manually if any remain.';
         } else if (refinerStatus === 'unavailable') {
-            noChangeReason = '⚠ Refinement disabled — add a GROQ_API_KEY to enable automatic improvements.';
+            noChangeReason = 'Refinement disabled — add a GROQ_API_KEY to enable automatic improvements.';
         } else if (refinerStatus === 'timeout') {
-            noChangeReason = '⚠ Refinement timed out — increase AGENT_TIMEOUT_MS or reduce question count.';
+            noChangeReason = 'Refinement timed out — increase AGENT_TIMEOUT_MS or reduce question count.';
         }
     }
 

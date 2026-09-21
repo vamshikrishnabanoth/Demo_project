@@ -326,31 +326,45 @@ export default function CreateQuizVoice() {
                                         <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
                                             Questions to Generate
                                         </label>
-                                        <select
-                                            value={questionCount}
-                                            onChange={(e) => setQuestionCount(parseInt(e.target.value))}
-                                            className="w-full bg-transparent border-none text-xl font-black text-white italic outline-none cursor-pointer"
-                                        >
-                                            <option value={3} className="text-black">3 Questions</option>
-                                            <option value={5} className="text-black">5 Questions</option>
-                                            <option value={10} className="text-black">10 Questions</option>
-                                            <option value={15} className="text-black">15 Questions</option>
-                                        </select>
+                                        <div className="relative">
+                                            <select
+                                                value={questionCount}
+                                                onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+                                                className="w-full appearance-none cursor-pointer rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 pr-10 text-xl font-black italic text-[#0f172a] shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)] outline-none transition-all duration-200 hover:border-[#d7b48a] focus:border-[#d7b48a] focus:ring-2 focus:ring-[#f59e0b]/20"
+                                            >
+                                                <option value={3} className="text-black">3 Questions</option>
+                                                <option value={5} className="text-black">5 Questions</option>
+                                                <option value={10} className="text-black">10 Questions</option>
+                                                <option value={15} className="text-black">15 Questions</option>
+                                            </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-[#0f172a]">
+                                                <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+                                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
                                         <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
                                             Assessment Difficulty
                                         </label>
-                                        <select
-                                            value={difficulty}
-                                            onChange={(e) => setDifficulty(e.target.value)}
-                                            className="w-full bg-transparent border-none text-xl font-black text-white italic outline-none cursor-pointer"
-                                        >
-                                            <option value="Easy" className="text-black">Easy</option>
-                                            <option value="Medium" className="text-black">Medium</option>
-                                            <option value="Hard" className="text-black">Hard</option>
-                                        </select>
+                                        <div className="relative">
+                                            <select
+                                                value={difficulty}
+                                                onChange={(e) => setDifficulty(e.target.value)}
+                                                className="w-full appearance-none cursor-pointer rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 pr-10 text-xl font-black italic text-[#0f172a] shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)] outline-none transition-all duration-200 hover:border-[#d7b48a] focus:border-[#d7b48a] focus:ring-2 focus:ring-[#f59e0b]/20"
+                                            >
+                                                <option value="Easy" className="text-black">Easy</option>
+                                                <option value="Medium" className="text-black">Medium</option>
+                                                <option value="Hard" className="text-black">Hard</option>
+                                            </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-[#0f172a]">
+                                                <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+                                                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

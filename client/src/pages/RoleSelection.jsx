@@ -78,14 +78,14 @@ export default function RoleSelection() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg-primary)] p-6 relative overflow-hidden">
+        <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-[var(--bg-primary)] p-4 sm:p-6 relative overflow-hidden">
             <CinematicBackground />
 
             {/* Ambient Background */}
             <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[var(--bg-accent)]/5 rounded-full blur-[150px] -mr-96 -mt-96" />
             <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[150px] -ml-80 -mb-80" />
 
-                <div className="relative z-10 w-full max-w-6xl space-y-16">
+                <div className="relative z-10 w-full max-w-6xl space-y-10 sm:space-y-16 py-6">
                     {/* Header Hierarchy */}
                     <motion.div 
                         initial={{ opacity: 0, y: -20 }}
@@ -106,7 +106,7 @@ export default function RoleSelection() {
                                 decoding="async"
                             />
                         </motion.div>
-                        <h1 className="text-3xl sm:text-5xl font-black text-white italic uppercase tracking-tighter">
+                        <h1 className="type-page-title font-black text-white italic uppercase">
                             SELECT <span className="text-[var(--text-accent)]">CLEARANCE</span>
                         </h1>
                         <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.4em] text-[10px] opacity-40 italic">Mission profile selection required</p>
@@ -114,7 +114,7 @@ export default function RoleSelection() {
 
                     {/* Role Matrix — with staggered entrance */}
                     <motion.div 
-                        className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center"
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-stretch"
                         variants={containerVariants}
                         initial="hidden"
                         animate="show"

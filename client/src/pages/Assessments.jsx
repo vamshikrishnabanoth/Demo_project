@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Play, Clock, BookOpen, Search, Filter, Calendar, Trophy, ChevronRight, Loader2, Sparkles, AlertCircle, CheckCircle, Lock, BarChart2 } from 'lucide-react';
+import { Play, Clock, BookOpen, Search, Filter, Calendar, Trophy, ChevronRight, ChevronDown, Loader2, Sparkles, AlertCircle, CheckCircle, Lock, BarChart2, Zap, Puzzle, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useApiQuery } from '../hooks/useApiQuery';
@@ -55,6 +55,116 @@ const SkeletonRow = () => (
     </motion.div>
 );
 
+const difficultyOptions = [
+    { value: 'All', label: 'ALL DIFFICULTIES' },
+    { value: 'Easy', label: 'EASY' },
+    { value: 'Medium', label: 'MEDIUM' },
+    { value: 'Thinkable', label: 'THINKABLE' },
+    { value: 'Hard', label: 'HARD' },
+];
+
+const statusOptions = [
+    { value: 'All', label: 'ALL STATUSES' },
+    { value: 'Attempted', label: 'ATTEMPTED' },
+    { value: 'Unattempted', label: 'UNATTEMPTED' },
+];
+
+function CustomSelect({ value, onChange, options, ariaLabel }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef(null);
+
+    const selectedOption = options.find(option => option.value === value) || options[0];
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            setIsOpen(false);
+            return;
+        }
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const currentIndex = options.findIndex(option => option.value === value);
+            const direction = event.key === 'ArrowDown' ? 1 : -1;
+            const nextIndex = (currentIndex + direction + options.length) % options.length;
+            onChange(options[nextIndex].value);
+            setIsOpen(true);
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsOpen(prev => !prev);
+        }
+    };
+
+    return (
+        <div ref={containerRef} className="relative w-full">
+            <button
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                aria-label={ariaLabel}
+                onClick={() => setIsOpen(prev => !prev)}
+                onKeyDown={handleKeyDown}
+                className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 text-left shadow-[inset_0_1px_2px_rgba(15,23,42,0.02),0_8px_20px_rgba(15,23,42,0.02)] transition-all duration-200 ease-out hover:border-[#d7b48a] hover:shadow-[0_10px_22px_rgba(15,23,42,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            >
+                <span className="truncate text-xs font-black uppercase tracking-[0.12em] text-[#0f172a]">
+                    {selectedOption.label}
+                </span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f3eee8] text-[#111111] transition-all duration-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                </span>
+            </button>
+
+            {isOpen && (
+                <div className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-[1.35rem] border border-[#e8dcc5] bg-[#fffdfb] shadow-[0_20px_40px_rgba(15,23,42,0.10)] ring-1 ring-[#f4ecdf] backdrop-blur-sm">
+                    <ul role="listbox" aria-label={ariaLabel} className="py-2">
+                        {options.map((option) => {
+                            const isSelected = value === option.value;
+
+                            return (
+                                <li key={option.value} className="px-1.5">
+                                    <button
+                                        type="button"
+                                        role="option"
+                                        aria-selected={isSelected}
+                                        onClick={() => {
+                                            onChange(option.value);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs font-black uppercase tracking-[0.12em] transition-all duration-200 ${
+                                            isSelected
+                                                ? 'bg-[#f5efe7] text-[#111111] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
+                                                : 'text-[#0f172a] hover:bg-[#f4f1ec] hover:text-[#111111]'
+                                        }`}
+                                    >
+                                        <span>{option.label}</span>
+                                        {isSelected && (
+                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 text-[#111111]" aria-hidden="true">
+                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function Assessments() {
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
@@ -99,7 +209,7 @@ export default function Assessments() {
         if (startTime && now < startTime) {
             return royalAlert.fire({
                 icon: 'info',
-                title: '🔒 Assessment Not Started',
+                title: 'Assessment Not Started',
                 text: `This assessment has not started yet. It will start at ${startStr}. Please check back then!`,
                 confirmButtonText: 'UNDERSTOOD'
             });
@@ -164,50 +274,32 @@ export default function Assessments() {
                 </div>
 
                 {/* Search & Filters Controls */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10 bg-white border border-[#9cbcd8] p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10 bg-[var(--student-surface)] border border-[var(--student-border)] p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] shadow-[var(--student-shadow-md)]">
                     {/* Search */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-widest">Search</label>
+                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-[0.24em]">Search</label>
                         <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0f172a]" size={16} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3d4b5d] transition-colors group-focus-within:text-[#f97316]" size={16} />
                             <input
                                 type="text"
                                 placeholder="SEARCH QUIZZES..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full bg-[#ffffff] border-2 border-[#9cbcd8] rounded-xl py-3 pl-10 pr-4 text-xs font-bold text-[#0f172a] placeholder:text-[#0f172a] placeholder:font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all shadow-xs"
+                                className="w-full bg-[var(--student-surface-alt)] border border-[var(--student-border)] rounded-2xl py-3 pl-11 pr-4 text-xs font-bold text-[#0f172a] placeholder:text-[#475569] placeholder:font-bold transition-all duration-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] hover:border-[var(--bg-accent)] focus:outline-none focus:border-[var(--bg-accent)] focus:ring-4 focus:ring-[var(--bg-accent-glow)]"
                             />
                         </div>
                     </div>
 
                     {/* Difficulty */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-widest">Difficulty</label>
-                        <select
-                            value={filterDifficulty}
-                            onChange={(e) => setFilterDifficulty(e.target.value)}
-                            className="bg-[#ffffff] border-2 border-[#9cbcd8] rounded-xl px-4 py-3 text-xs font-bold text-[#0f172a] outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all appearance-none shadow-xs"
-                        >
-                            <option value="All" className="bg-white text-[#0f172a]">ALL DIFFICULTIES</option>
-                            <option value="Easy" className="bg-white text-[#0f172a]">EASY</option>
-                            <option value="Medium" className="bg-white text-[#0f172a]">MEDIUM</option>
-                            <option value="Thinkable" className="bg-white text-[#0f172a]">THINKABLE</option>
-                            <option value="Hard" className="bg-white text-[#0f172a]">HARD</option>
-                        </select>
+                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-[0.24em]">Difficulty</label>
+                        <CustomSelect value={filterDifficulty} onChange={setFilterDifficulty} options={difficultyOptions} ariaLabel="Select difficulty" />
                     </div>
 
                     {/* Status */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-widest">Status</label>
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="bg-[#ffffff] border-2 border-[#9cbcd8] rounded-xl px-4 py-3 text-xs font-bold text-[#0f172a] outline-none cursor-pointer focus:border-[var(--bg-accent)] transition-all appearance-none shadow-xs"
-                        >
-                            <option value="All" className="bg-white text-[#0f172a]">ALL STATUSES</option>
-                            <option value="Attempted" className="bg-white text-[#0f172a]">ATTEMPTED</option>
-                            <option value="Unattempted" className="bg-white text-[#0f172a]">UNATTEMPTED</option>
-                        </select>
+                        <label className="text-[10px] font-black text-[#334155] uppercase tracking-[0.24em]">Status</label>
+                        <CustomSelect value={filterStatus} onChange={setFilterStatus} options={statusOptions} ariaLabel="Select status" />
                     </div>
                 </div>
 
@@ -219,7 +311,7 @@ export default function Assessments() {
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: i * 0.1 }}
-                            className="bg-white border-2 border-[var(--border-color)] group relative p-6 rounded-[2rem] flex items-center gap-5 transition-all duration-300 shadow-md"
+                            className="bg-[var(--student-surface)] border border-[var(--student-border)] group relative p-6 rounded-[2rem] flex items-center gap-5 transition-all duration-300 shadow-[var(--student-shadow-soft)]"
                         >
                             <div className={`w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center ${stat.color}`}>
                                 <stat.icon size={28} aria-hidden="true" />
@@ -255,18 +347,18 @@ export default function Assessments() {
                                         animate={{ y: 0, opacity: 1 }}
                                         exit={{ scale: 0.95, opacity: 0 }}
                                         transition={{ delay: i * 0.08 }}
-                                        className={`group bg-white border-2 border-[var(--border-color)] rounded-[2rem] p-6 sm:p-8 transition-all duration-300 shadow-sm hover:shadow-md ${
+                                        className={`group bg-[var(--student-surface)] border border-[var(--student-border)] rounded-[2rem] p-6 sm:p-8 transition-all duration-300 shadow-[var(--student-shadow-soft)] hover:shadow-[var(--student-shadow-md)] ${
                                             quiz.isLocked 
                                                 ? 'border-indigo-500/30 bg-indigo-50/20' 
                                                 : quiz.isExpired 
-                                                ? 'opacity-75 border-red-500/20 bg-red-50/20'
+                                                ? 'border-red-500/20 bg-red-50/20'
                                                 : quiz.isAttempted
                                                 ? 'border-emerald-500/30 bg-emerald-50/20'
                                                 : ''
                                         }`}
                                     >
                                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                            <div className="flex items-center gap-5">
+                                            <div className="flex items-start gap-5 min-w-0 flex-1">
                                                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${
                                                     quiz.isLocked
                                                         ? 'bg-indigo-500/10 text-indigo-600'
@@ -286,27 +378,27 @@ export default function Assessments() {
                                                         <BookOpen size={24} aria-hidden="true" />
                                                     )}
                                                 </div>
-                                                <div>
+                                                <div className="min-w-0 flex-1">
                                                     <div className="flex flex-wrap items-center gap-3 mb-1">
-                                                        <h3 className="text-lg font-black text-[#111111] group-hover:text-[var(--text-accent)] transition-colors">{cleanQuizTitle(quiz.title)}</h3>
+                                                        <h3 className="text-lg font-black text-[#111111] group-hover:text-[var(--text-accent)] transition-colors break-words">{cleanQuizTitle(quiz.title)}</h3>
                                                         {quiz.gameType === 'cyber_quest' && (
                                                             <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-800 flex items-center gap-1">
-                                                                🏆 CYBER QUEST
+                                                                <Trophy size={12} aria-hidden="true" /> CYBER QUEST
                                                             </span>
                                                         )}
                                                         {quiz.gameType === 'sprint_arena' && (
                                                             <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-800 flex items-center gap-1">
-                                                                ⚡ SPRINT ARENA
+                                                                <Zap size={12} aria-hidden="true" /> SPRINT ARENA
                                                             </span>
                                                         )}
                                                         {quiz.gameType === 'match_up' && (
                                                             <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-800 flex items-center gap-1">
-                                                                🧩 MATCH-UP ARENA
+                                                                <Puzzle size={12} aria-hidden="true" /> MATCH-UP ARENA
                                                             </span>
                                                         )}
                                                         {(!quiz.gameType || quiz.gameType === 'standard') && (
                                                             <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-slate-500/10 border border-slate-500/30 text-slate-700 flex items-center gap-1">
-                                                                📝 STANDARD MODE
+                                                                <FileText size={12} aria-hidden="true" /> STANDARD MODE
                                                             </span>
                                                         )}
                                                         {quiz.isLocked && (
@@ -320,7 +412,7 @@ export default function Assessments() {
                                                             </span>
                                                         )}
                                                         {quiz.wasLiveCompleted && (
-                                                            <span className="px-3 py-1 text-[8px] font-black uppercase tracking-wider rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-700">
+                                                            <span className="inline-flex items-center whitespace-nowrap px-3 py-1.5 text-[9px] leading-none font-black uppercase tracking-[0.08em] rounded-full bg-blue-100 border border-blue-400 text-blue-800 opacity-100 shadow-sm">
                                                                 LIVE COMPLETED
                                                             </span>
                                                         )}
@@ -333,7 +425,7 @@ export default function Assessments() {
                                                     
                                                     {/* Timing and metadata indicators */}
                                                     <div className="flex flex-col gap-1.5">
-                                                        <div className="flex items-center gap-4 text-[#555555] text-[10px] font-bold uppercase tracking-widest">
+                                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[#555555] text-[10px] font-bold uppercase tracking-widest leading-none">
                                                             <span className="flex items-center gap-1.5"><Clock size={12} aria-hidden="true" /> {quiz.duration > 0 ? `${quiz.duration} Mins` : 'Untimed'}</span>
                                                             <span className="flex items-center gap-1.5"><BookOpen size={12} aria-hidden="true" /> {quiz.totalQuestions || 0} Questions</span>
                                                             <span className="flex items-center gap-1.5"><Filter size={12} aria-hidden="true" /> {quiz.difficulty || 'Normal'}</span>
@@ -357,7 +449,7 @@ export default function Assessments() {
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end md:w-auto w-full">
                                                 {quiz.isAttempted && (
                                                     <button
                                                         onClick={() => navigate(`/analytics/quiz/${quiz.id}`)}
@@ -368,22 +460,17 @@ export default function Assessments() {
                                                         Analytics
                                                     </button>
                                                 )}
-                                                <button
-                                                    onClick={() => handleAttemptClick(quiz)}
-                                                    className={`${quiz.isAttempted ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)]'} text-white px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-md`}
-                                                >
-                                                    {quiz.isAttempted ? (
-                                                        <>
-                                                            <Trophy size={14} aria-hidden="true" />
-                                                            View Report
-                                                        </>
-                                                    ) : (
+                                                {!quiz.isAttempted && (
+                                                    <button
+                                                        onClick={() => handleAttemptClick(quiz)}
+                                                        className="bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-6 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all btn-press btn-hover-scale shadow-md"
+                                                    >
                                                         <>
                                                             <Play size={14} fill="currentColor" aria-hidden="true" />
                                                             Start Assessment
                                                         </>
-                                                    )}
-                                                </button>
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </motion.div>

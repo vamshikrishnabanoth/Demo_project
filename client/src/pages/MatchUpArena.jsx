@@ -614,7 +614,7 @@ export default function MatchUpArena() {
 
                                 <div className="space-y-2">
                                     <h2 className="text-3xl sm:text-4xl font-black italic uppercase tracking-tighter" style={{ color: '#c084fc', textShadow: '0 0 30px rgba(168,85,247,0.8), 0 0 60px rgba(168,85,247,0.4)' }}>
-                                        🎉 Arena Resolved!
+                                        <span className="inline-flex items-center gap-2"><CheckCircle2 size={18} aria-hidden="true" /> Arena Resolved!</span>
                                     </h2>
                                     <p className="font-bold uppercase tracking-[0.25em] text-[10px]" style={{ color: '#e2e8f0' }}>All memory matrices paired successfully</p>
                                 </div>

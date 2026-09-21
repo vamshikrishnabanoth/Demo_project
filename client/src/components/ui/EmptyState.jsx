@@ -22,21 +22,21 @@ const EmptyState = ({
 }) => {
     const colors = {
         default: {
-            iconBg:     'bg-white/[0.03]',
-            iconBorder: 'border-white/10',
-            iconColor:  'text-white/20',
+            iconBg:     'bg-[var(--bg-secondary)]',
+            iconBorder: 'border-[var(--border-color)]',
+            iconColor:  'text-[var(--text-secondary)]',
             glowColor:  'bg-[var(--bg-accent)]',
         },
         search: {
-            iconBg:     'bg-white/[0.03]',
-            iconBorder: 'border-white/10',
-            iconColor:  'text-white/20',
+            iconBg:     'bg-[var(--bg-secondary)]',
+            iconBorder: 'border-[var(--border-color)]',
+            iconColor:  'text-[var(--text-secondary)]',
             glowColor:  'bg-[var(--bg-accent)]',
         },
         error: {
-            iconBg:     'bg-red-500/5',
-            iconBorder: 'border-red-500/20',
-            iconColor:  'text-red-400/60',
+            iconBg:     'bg-red-50',
+            iconBorder: 'border-red-200',
+            iconColor:  'text-red-500',
             glowColor:  'bg-red-500',
         },
     };
@@ -64,11 +64,11 @@ const EmptyState = ({
             </div>
 
             {/* Text */}
-            <h3 className="text-2xl font-black italic uppercase tracking-tight text-white mb-3">
+            <h3 className="text-2xl font-black italic uppercase tracking-tight text-[var(--text-primary)] mb-3">
                 {title}
             </h3>
             {description && (
-                <p className="text-sm font-semibold text-white/40 max-w-sm leading-relaxed mb-8">
+                <p className="text-sm font-semibold text-[var(--text-secondary)] max-w-sm leading-relaxed mb-8">
                     {description}
                 </p>
             )}

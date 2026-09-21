@@ -1,37 +1,34 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Plus, Minus, Eye, Code } from 'lucide-react';
+import { Trash2, Plus, Minus, Eye, Code, Pin, Target, Scale } from 'lucide-react';
 import { PremiumInput, GlassCard } from '../ui/Primitives';
 import FormattedQuestionText from './FormattedQuestionText';
 
-// Pastel card backgrounds keyed by index
 const kahootColors = [
-    'border-red-400/50 bg-red-50',
-    'border-orange-400/50 bg-orange-50',
-    'border-yellow-400/50 bg-yellow-50',
-    'border-green-400/50 bg-green-50',
-    'border-purple-400/50 bg-purple-50',
-    'border-pink-400/50 bg-pink-50',
+    'border-red-200 bg-red-50/60',
+    'border-orange-200 bg-orange-50/70',
+    'border-amber-200 bg-amber-50/70',
+    'border-emerald-200 bg-emerald-50/70',
+    'border-violet-200 bg-violet-50/70',
+    'border-pink-200 bg-pink-50/70',
 ];
 
-// Solid colors for the letter badge (hex so they always render regardless of Tailwind purge)
 const kahootBadgeColors = [
-    '#ef4444', // red-500
-    '#f97316', // orange-500
-    '#eab308', // yellow-500
-    '#22c55e', // green-500
-    '#a855f7', // purple-500
-    '#ec4899', // pink-500
+    '#ef4444',
+    '#f97316',
+    '#f59e0b',
+    '#22c55e',
+    '#8b5cf6',
+    '#ec4899',
 ];
 
-// Highlight borders matching option's own color when selected
 const kahootSelectedBorders = [
-    'ring-4 ring-red-500/50 !border-red-500 shadow-md shadow-red-500/20',
-    'ring-4 ring-orange-500/50 !border-orange-500 shadow-md shadow-orange-500/20',
-    'ring-4 ring-yellow-500/50 !border-yellow-500 shadow-md shadow-yellow-500/20',
-    'ring-4 ring-green-500/50 !border-green-500 shadow-md shadow-green-500/20',
-    'ring-4 ring-purple-500/50 !border-purple-500 shadow-md shadow-purple-500/20',
-    'ring-4 ring-pink-500/50 !border-pink-500 shadow-md shadow-pink-500/20',
+    'ring-2 ring-red-200 !border-red-400 shadow-[0_0_0_1px_rgba(239,68,68,0.12)]',
+    'ring-2 ring-orange-200 !border-orange-400 shadow-[0_0_0_1px_rgba(249,115,22,0.12)]',
+    'ring-2 ring-amber-200 !border-amber-400 shadow-[0_0_0_1px_rgba(245,158,11,0.12)]',
+    'ring-2 ring-emerald-200 !border-emerald-400 shadow-[0_0_0_1px_rgba(34,197,94,0.12)]',
+    'ring-2 ring-violet-200 !border-violet-400 shadow-[0_0_0_1px_rgba(139,92,246,0.12)]',
+    'ring-2 ring-pink-200 !border-pink-400 shadow-[0_0_0_1px_rgba(236,72,153,0.12)]',
 ];
 
 // Auto-resize textarea helper so long questions & options are 100% visible
@@ -133,11 +130,11 @@ export default function QuizQuestionEditor({
 
             <div className="space-y-10">
                 <div className="flex items-start gap-6 pr-14">
-                    <div className="bg-[var(--bg-accent)]/10 w-16 h-16 rounded-2xl flex items-center justify-center text-[var(--text-accent)] font-black text-2xl border border-[var(--bg-accent)]/20 italic shrink-0">
+                    <div className="bg-[var(--bg-secondary)] w-16 h-16 rounded-2xl flex items-center justify-center text-[var(--text-primary)] font-black text-2xl border border-[var(--border-color)] italic shrink-0 shadow-sm">
                         {index + 1}
                     </div>
                     <div className="flex-1 space-y-3">
-                        <label className="block text-xs font-bold text-[var(--text-primary)]">
+                        <label className="block text-xs font-black uppercase tracking-[0.18em] text-[var(--text-secondary)]">
                             {question.concept_tag || "Question Text / Code Snippet / Scenario"}
                         </label>
 
@@ -145,22 +142,22 @@ export default function QuizQuestionEditor({
                             placeholder="Enter question prompt or paste multi-line source code here..."
                             value={question.questionText}
                             onChange={(e) => onUpdate(index, 'questionText', e.target.value)}
-                            className="w-full bg-white border border-[var(--border-color)] rounded-2xl p-4 font-sans font-bold text-base text-[#1f2937] leading-relaxed focus:outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)] transition-all shadow-sm"
+                            className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl p-4 font-sans font-bold text-base text-[var(--text-primary)] leading-relaxed focus:outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)] transition-all shadow-sm"
                         />
 
                         {question.sourceEvidence && Array.isArray(question.sourceEvidence) && question.sourceEvidence.length > 0 && question.sourceEvidence[0]?.text && (
-                            <div className="mt-2 text-xs font-mono text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
-                                📌 <strong>Source Evidence Span:</strong> "{question.sourceEvidence[0].text}"
+                            <div className="mt-2 text-xs font-mono text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+                                <Pin size={13} className="inline mr-1" aria-hidden="true" /> <strong>Source Evidence Span:</strong> "{question.sourceEvidence[0].text}"
                             </div>
                         )}
                         {question.assessment_objective && (
-                            <p className="mt-2 text-xs font-mono text-emerald-400/90 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
-                                🎯 Objective: {question.assessment_objective}
+                            <p className="mt-2 text-xs font-mono text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                                <Target size={13} className="inline mr-1" aria-hidden="true" /> Objective: {question.assessment_objective}
                             </p>
                         )}
                         {question.difficulty_reason && Array.isArray(question.difficulty_reason) && (
-                            <div className="mt-2 text-xs font-mono text-amber-300/80 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
-                                <span className="font-bold text-amber-400">⚖️ Calibration Rationale:</span>
+                            <div className="mt-2 text-xs font-mono text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+                                <span className="font-bold text-amber-700"><Scale size={13} className="inline mr-1" aria-hidden="true" /> Calibration Rationale:</span>
                                 <ul className="list-disc list-inside mt-1 space-y-0.5">
                                     {question.difficulty_reason.map((r, rIdx) => (
                                         <li key={rIdx}>{r}</li>
@@ -171,27 +168,24 @@ export default function QuizQuestionEditor({
                     </div>
                 </div>
 
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                     {question.options.map((opt, oIndex) => (
-                        <motion.div 
+                        <motion.div
                             key={oIndex}
                             layout
                             className={`
-                                flex items-start gap-4 p-4 rounded-2xl border-2 transition-all group/opt relative h-auto
-                                ${kahootColors[oIndex % 6]} 
-                                ${question.correctAnswer === opt && opt !== '' ? kahootSelectedBorders[oIndex % 6] : ''}
+                                flex items-start gap-4 p-4 rounded-2xl border transition-all group/opt relative h-auto bg-[var(--bg-primary)]
+                                ${kahootColors[oIndex % 6]}
+                                ${question.correctAnswer === opt && opt !== '' ? kahootSelectedBorders[oIndex % 6] : 'border-slate-200'}
                             `}
                         >
-                            {/* Letter Badge — always white text on solid color */}
                             <div
-                                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-base shrink-0 shadow-md mt-0.5"
+                                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-base shrink-0 shadow-sm mt-0.5"
                                 style={{ backgroundColor: kahootBadgeColors[oIndex % 6], color: '#ffffff' }}
                             >
                                 {String.fromCharCode(65 + oIndex)}
                             </div>
 
-                            {/* Auto-resizing textarea — full option text always visible */}
                             <AutoTextarea
                                 value={opt}
                                 onChange={(e) => onUpdateOption(index, oIndex, e.target.value)}
@@ -200,20 +194,20 @@ export default function QuizQuestionEditor({
                                 style={{ color: '#1f2937', minHeight: '2.5rem' }}
                             />
 
-                            {/* Radio + Delete */}
                             <div className="flex items-center gap-2 shrink-0 pt-1">
                                 <input
                                     type="radio"
                                     name={`correct-${index}`}
                                     checked={question.correctAnswer === opt && opt !== ''}
                                     onChange={() => onUpdate(index, 'correctAnswer', opt)}
-                                    className="w-6 h-6 text-blue-600 bg-white border-slate-300 focus:ring-blue-500 cursor-pointer"
+                                    className="w-5 h-5 text-[var(--bg-accent)] bg-white border-slate-300 focus:ring-[var(--bg-accent)] cursor-pointer"
                                 />
                                 {question.options.length > 2 && (
-                                    <button 
-                                        type="button" 
-                                        onClick={() => onDeleteOption(index, oIndex)} 
-                                        className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                                    <button
+                                        type="button"
+                                        onClick={() => onDeleteOption(index, oIndex)}
+                                        className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
+                                        aria-label={`Delete option ${oIndex + 1}`}
                                     >
                                         <Minus size={16} />
                                     </button>
@@ -226,10 +220,10 @@ export default function QuizQuestionEditor({
                         <button
                             type="button"
                             onClick={() => onAddOption(index)}
-                            className="flex items-center justify-center gap-3 p-6 rounded-2xl border-2 border-dashed border-white/10 text-white/20 hover:border-[var(--bg-accent)]/50 hover:text-[var(--text-accent)] transition-all group/addopt bg-white/[0.01]"
+                            className="flex items-center justify-center gap-3 p-6 rounded-2xl border-2 border-dashed border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--bg-accent)]/60 hover:text-[var(--text-primary)] transition-all group/addopt bg-[var(--bg-secondary)]"
                         >
-                            <Plus size={20} className="group-hover/addopt:scale-125 transition-transform" />
-                            <span className="font-black text-xs uppercase tracking-[0.2em]">Add Option</span>
+                            <Plus size={20} className="group-hover/addopt:scale-110 transition-transform" />
+                            <span className="font-black text-[10px] uppercase tracking-[0.22em]">Add Option</span>
                         </button>
                     )}
                 </div>

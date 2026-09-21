@@ -226,13 +226,13 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     className="pointer-events-auto relative w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85),0_0_40px_-5px_var(--bg-accent-glow)] overflow-hidden flex flex-col"
                                     style={{
                                         width: 'min(900px, 92vw)',
-                                        maxHeight: '80vh',
+                                        maxHeight: '80dvh',
                                     }}
                                     ref={modalRef}
                                     onKeyDown={handleKeyDown}
                                 >
                             {/* Input Field wrapper */}
-                            <div className="flex items-center gap-4 px-6 h-16 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] relative select-none rounded-t-3xl shrink-0">
+                            <div className="flex items-center gap-3 px-4 sm:px-6 min-h-16 py-3 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] relative select-none rounded-t-3xl shrink-0">
                                 <Search size={20} className="text-[var(--text-accent)] shrink-0 opacity-80" />
                                 <input 
                                     ref={inputRef}
@@ -290,7 +290,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
 
                                 {query && totalResultsCount === 0 && !loading && (
                                     <div className="text-center py-12 space-y-3">
-                                        <p className="text-2xl">🔍</p>
+                                        <Search size={24} className="text-[var(--text-secondary)]" aria-hidden="true" />
                                         <p className="text-sm font-black text-[var(--text-primary)] uppercase italic tracking-wider">No matching results found</p>
                                         <p className="text-xs text-[var(--text-secondary)]/50 max-w-xs mx-auto">Double check spelling or search with shorter keywords (e.g. search "data" instead of "databse").</p>
                                     </div>

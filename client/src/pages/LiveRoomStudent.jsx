@@ -258,7 +258,7 @@ export default function LiveRoomStudent() {
 
     return (
         <DashboardLayout role="student">
-            <div className="max-w-4xl mx-auto py-12 relative">
+            <div className="max-w-4xl mx-auto py-5 sm:py-12 relative">
                 {/* Background Flair */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[var(--bg-accent)]/5 rounded-full blur-[120px] pointer-events-none -z-10" />
 
@@ -268,7 +268,7 @@ export default function LiveRoomStudent() {
                     className="bg-[var(--bg-secondary)] rounded-[3rem] shadow-2xl border border-[var(--border-color)] overflow-hidden"
                 >
                     {/* Hero Header */}
-                    <div className="bg-gradient-to-br from-slate-50 via-indigo-50/60 to-white text-[#0f172a] p-8 sm:p-14 text-center relative overflow-hidden border-b border-[var(--border-color)]">
+                    <div className="bg-gradient-to-br from-slate-50 via-indigo-50/60 to-white text-[#0f172a] p-5 sm:p-14 text-center relative overflow-hidden border-b border-[var(--border-color)]">
                         {/* Decorative animated rings */}
                         <motion.div 
                             animate={{ rotate: 360 }}
@@ -308,7 +308,7 @@ export default function LiveRoomStudent() {
                                 >
                                     ● Quiz Arena Active
                                 </motion.div>
-                                <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-[#0f172a] uppercase italic leading-tight max-w-2xl mx-auto drop-shadow-xs">
+                                <h1 className="type-page-title font-black tracking-tight text-[#0f172a] uppercase italic max-w-2xl mx-auto drop-shadow-xs">
                                     {cleanQuizTitle(quiz?.title)}
                                 </h1>
                                 <p className="text-slate-600 max-w-lg mx-auto font-bold text-base sm:text-lg leading-relaxed">
@@ -319,7 +319,7 @@ export default function LiveRoomStudent() {
                     </div>
 
                     {/* Content Body */}
-                    <div className="p-8 sm:p-14 space-y-12">
+                    <div className="p-5 sm:p-10 md:p-14 space-y-8 sm:space-y-12">
                         <LiveQuizWaitAnimation
                             variant="waiting-room"
                             readyCount={readyCount}

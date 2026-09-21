@@ -4,6 +4,7 @@ import api from '../utils/api';
 import AttemptQuiz from './AttemptQuiz';
 import AssessmentAttempt from './AssessmentAttempt';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
+import { Check } from 'lucide-react';
 
 export default function QuizAttemptSelector() {
     const { id } = useParams();
@@ -62,7 +63,7 @@ export default function QuizAttemptSelector() {
 
                 <div className="max-w-lg w-full bg-white/[0.02] backdrop-blur-2xl border border-emerald-500/20 rounded-[2.5rem] p-10 shadow-[0_30px_100px_rgba(16,185,129,0.15)] relative z-10 space-y-6">
                     <div className="w-20 h-20 bg-emerald-500/10 border-2 border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(16,185,129,0.2)] font-black text-2xl">
-                        ✓
+                        <Check size={16} aria-hidden="true" />
                     </div>
 
                     <div className="space-y-2">

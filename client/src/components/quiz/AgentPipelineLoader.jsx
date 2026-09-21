@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Clock, Inbox, Network, Ruler, Scale, Search, ShieldCheck, Zap, Rocket } from 'lucide-react';
 
 const PIPELINE_STAGES = [
-    { label: 'Ingesting & Analyzing Material',             sub: 'Verifying inputs, removing noise, and validating content structure…',     icon: '📥' },
-    { label: 'Packaging Evidence & Knowledge Graph',        sub: 'Extracting concepts, key claims, formulas, and artifacts…',              icon: '🕸️' },
-    { label: 'Assessment Planning & TC Analysis',           sub: 'Calibrating depth, cognitive levels, and planning targets…',             icon: '📐' },
-    { label: 'Generating Questions via AI',                 sub: 'Formulating evidence-grounded candidate questions from concept graph…',  icon: '⚡' },
-    { label: 'Validating Options & Deterministic Schema',   sub: 'Enforcing 4 distinct options and multi-factor anti-redundancy checks…',  icon: '🛡️' },
-    { label: 'Auditing Derivability & Pedagogical Quality', sub: 'Auditing 5-tier derivability, student answerability, and distractors…', icon: '🔍' },
-    { label: 'Reviewing Balance & Curriculum Coverage',     sub: 'Reviewing cognitive distribution, cluster balance, and curriculum…',     icon: '⚖️' },
-    { label: 'Grounding Gate & Final Audit',                sub: 'Verifying source evidence citations and assembling final quiz…',         icon: '🚀' },
+    { label: 'Ingesting & Analyzing Material',             sub: 'Verifying inputs, removing noise, and validating content structure…',     icon: Inbox },
+    { label: 'Packaging Evidence & Knowledge Graph',        sub: 'Extracting concepts, key claims, formulas, and artifacts…',              icon: Network },
+    { label: 'Assessment Planning & TC Analysis',           sub: 'Calibrating depth, cognitive levels, and planning targets…',             icon: Ruler },
+    { label: 'Generating Questions via AI',                 sub: 'Formulating evidence-grounded candidate questions from concept graph…',  icon: Zap },
+    { label: 'Validating Options & Deterministic Schema',   sub: 'Enforcing 4 distinct options and multi-factor anti-redundancy checks…',  icon: ShieldCheck },
+    { label: 'Auditing Derivability & Pedagogical Quality', sub: 'Auditing 5-tier derivability, student answerability, and distractors…', icon: Search },
+    { label: 'Reviewing Balance & Curriculum Coverage',     sub: 'Reviewing cognitive distribution, cluster balance, and curriculum…',     icon: Scale },
+    { label: 'Grounding Gate & Final Audit',                sub: 'Verifying source evidence citations and assembling final quiz…',         icon: Rocket },
 ];
 
 const STAGE_MAP = {
@@ -38,7 +39,7 @@ const CONNECTIONS = [
     [1, 6], [2, 7], [6, 3], [7, 4], [6, 7],
 ];
 
-export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0, representationMode = null, topic = null, questionCount = null }) {
+export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = false, elapsed = 0, representationMode = null }) {
     const stageList = PIPELINE_STAGES;
 
     const [activeStage, setActiveStage] = useState(() => {
@@ -60,178 +61,122 @@ export default function AgentPipelineLoader({ stage = 0, stageLabel, isVoice = f
 
     const pct = Math.round(((activeStage + 1) / stageList.length) * 100);
 
-    // Identify active AI agent
-    let activeAgentName = 'Agent 1: Curriculum Planner';
-    if (activeStage >= 3 && activeStage <= 4) {
-        activeAgentName = 'Agent 2: MCQ Generator';
-    } else if (activeStage >= 5 && activeStage <= 6) {
-        activeAgentName = 'Agent 3: Grounding Auditor';
-    } else if (activeStage >= 7) {
-        activeAgentName = 'Grounding Gate: Final Validator';
-    }
-
     return (
-        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#E6F0FA] overflow-hidden select-none p-4">
-
-            {/* Ambient Background Glow */}
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[var(--bg-secondary)] overflow-hidden select-none">
             <motion.div
-                animate={{ opacity: [0.15, 0.35, 0.15] }}
+                animate={{ opacity: [0.12, 0.24, 0.12] }}
                 transition={{ duration: 3.5, repeat: Infinity }}
-                className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,#133E87_0%,transparent_65%)] opacity-15"
+                className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(17,17,17,0.08),transparent_68%)]"
             />
 
-            {/* Original Light Theme Stage Container Card */}
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.97, y: 12 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="relative max-w-lg w-full bg-white/95 backdrop-blur-md border-2 border-[#9cbcd8] rounded-[2.5rem] p-6 sm:p-8 shadow-2xl flex flex-col items-center justify-center text-center overflow-hidden"
+                exit={{ opacity: 0, scale: 0.97, y: 12 }}
+                className="relative max-w-md w-full mx-4 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-[2.2rem] p-7 sm:p-8 shadow-[0_18px_40px_rgba(15,23,42,0.08)] flex flex-col items-center justify-center text-center overflow-hidden"
             >
-                {/* Topic & Question Goal Header */}
-                {(topic || questionCount) && (
-                    <div className="w-full mb-3 px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center justify-between gap-3 text-left">
-                        <div className="min-w-0 flex-1">
-                            <p className="text-[9.5px] font-black uppercase tracking-wider text-purple-900">
-                                Active Assessment Target
-                            </p>
-                            <p className="text-xs font-bold text-slate-800 truncate" title={topic}>
-                                {topic || 'Classroom Lecture Material'}
-                            </p>
-                        </div>
-                        {questionCount && (
-                            <span className="shrink-0 px-2.5 py-1 bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-xs font-black">
-                                {questionCount} MCQs
-                            </span>
-                        )}
-                    </div>
-                )}
-
-                {/* Neural Network Visualization */}
-                <div className="relative w-36 h-36 sm:w-44 sm:h-44 mb-1">
+                <div className="relative w-40 h-40 sm:w-44 sm:h-44 mb-4">
                     <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
                         {CONNECTIONS.map(([a, b], i) => (
                             <motion.line
                                 key={i}
                                 x1={NODES[a].x} y1={NODES[a].y}
                                 x2={NODES[b].x} y2={NODES[b].y}
-                                stroke="#133E87" strokeWidth="0.8"
-                                animate={{ opacity: [0.2, 0.85, 0.2] }}
-                                transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.25 }}
-                            />
-                        ))}
-                        {CONNECTIONS.map(([a, b], i) => (
-                            <motion.circle
-                                key={`p-${i}`}
-                                cx={NODES[a].x}
-                                cy={NODES[a].y}
-                                r={1.8} fill="#133E87"
-                                initial={{ cx: NODES[a].x, cy: NODES[a].y }}
-                                animate={{
-                                    cx: [NODES[a].x, NODES[b].x, NODES[a].x],
-                                    cy: [NODES[a].y, NODES[b].y, NODES[a].y],
-                                    opacity: [0.1, 1, 0.1],
-                                }}
-                                transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.2 }}
+                                stroke="var(--text-accent)"
+                                strokeWidth="0.8"
+                                animate={{ opacity: [0.2, 0.7, 0.2] }}
+                                transition={{ duration: 2.8, repeat: Infinity, delay: i * 0.2 }}
                             />
                         ))}
                         {NODES.map((node, i) => (
                             <g key={i}>
                                 <motion.circle
                                     cx={node.x} cy={node.y}
-                                    fill="none" stroke="#133E87" strokeWidth="0.8"
-                                    initial={{ r: i === 0 ? 5 : 3 }}
-                                    animate={{ r: [i === 0 ? 5 : 3, i === 0 ? 6.5 : 4, i === 0 ? 5 : 3], opacity: [0.5, 1, 0.5] }}
-                                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.25 }}
+                                    fill="none" stroke="var(--text-accent)"
+                                    strokeWidth="0.8"
+                                    initial={{ r: i === 0 ? 6 : 3 }}
+                                    animate={{ r: [i === 0 ? 6 : 3, i === 0 ? 7.5 : 4, i === 0 ? 6 : 3], opacity: [0.45, 1, 0.45] }}
+                                    transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.2 }}
                                 />
                                 <motion.circle
-                                    cx={node.x} cy={node.y} r={i === 0 ? 2.5 : 1.4}
-                                    fill="#133E87"
+                                    cx={node.x} cy={node.y} r={i === 0 ? 2.6 : 1.4}
+                                    fill="var(--text-accent)"
                                     animate={{ opacity: [0.6, 1, 0.6] }}
-                                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                                    transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.15 }}
                                 />
                             </g>
                         ))}
                     </svg>
                 </div>
 
-                {/* Stage & Agent Label */}
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={activeStage}
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}
-                        transition={{ duration: 0.3 }}
-                        className="space-y-2 px-2 max-w-sm w-full"
+                        transition={{ duration: 0.25 }}
+                        className="space-y-2 px-2 w-full"
                     >
-                        <div className="flex items-center justify-center gap-2">
-                            <span className="text-xl">{stageList[activeStage].icon}</span>
-                            <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-[#0f172a]" style={{ color: '#0f172a' }}>
+                        <div className="flex items-center justify-center gap-2.5">
+                            <span className="text-[var(--text-accent)]" aria-hidden="true">
+                                {React.createElement(stageList[activeStage].icon, { size: 20, strokeWidth: 2.5 })}
+                            </span>
+                            <h2 className="text-base sm:text-lg font-black uppercase tracking-[-0.02em] text-[var(--text-primary)]">
                                 {stageList[activeStage].label}
                             </h2>
                         </div>
 
-                        {/* Live Telemetry Action Badge */}
-                        {stageLabel && (
-                            <div className="py-2 px-3 rounded-xl bg-blue-50/90 border border-blue-200/80 shadow-xs">
-                                <p className="text-xs font-black text-[#133E87] leading-tight">
-                                    {stageLabel}
+                        {stageLabel && stageLabel !== stageList[activeStage].label && (
+                            <div className="mx-auto inline-flex items-center justify-center rounded-full border border-[var(--border-color)] bg-[var(--bg-secondary)] px-2.5 py-1">
+                                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--text-secondary)]">
+                                    {stageLabel.includes('(') ? stageLabel.replace(/^.*?\((.*?)\).*$/, '$1') : stageLabel}
                                 </p>
                             </div>
                         )}
 
-                        <p className="text-xs font-medium tracking-wide text-[#475569] leading-relaxed">
+                        <p className="text-[11px] font-medium tracking-[0.02em] text-[var(--text-secondary)] leading-relaxed px-2">
                             {stageList[activeStage].sub}
                         </p>
 
-                        {/* Active Agent Pill */}
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 border border-purple-200 rounded-full text-[10px] font-bold text-purple-900">
-                            <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping" />
-                            <span>Active: {activeAgentName}</span>
+                        <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--text-secondary)]">
+                            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[var(--bg-accent)]/80" />
+                            {elapsed > 0 ? <><Clock size={12} aria-hidden="true" /> {Math.floor(elapsed / 60)}:{(elapsed % 60).toString().padStart(2, '0')} elapsed</> : 'System live'}
                         </div>
-
-                        {elapsed > 0 && (
-                            <p className="text-[10px] font-bold tracking-wider text-slate-400 mt-0.5">
-                                ⏱️ {Math.floor(elapsed / 60)}:{(elapsed % 60).toString().padStart(2, '0')} elapsed
-                            </p>
-                        )}
                     </motion.div>
                 </AnimatePresence>
 
-                {/* Stage Dots */}
-                <div className="flex items-center gap-1.5 mt-4 mb-2">
+                <div className="flex items-center gap-1.5 my-4 w-full max-w-[220px]">
                     {stageList.map((s, i) => (
                         <motion.div
                             key={i}
                             animate={{
-                                width:   i <= activeStage ? 16 : 6,
-                                opacity: i <= activeStage ? 1  : 0.35,
+                                width: i <= activeStage ? 18 : 7,
+                                opacity: i <= activeStage ? 1 : 0.35,
                             }}
                             transition={{ duration: 0.3 }}
-                            className={`h-2 rounded-full ${i <= activeStage ? 'bg-[#133E87]' : 'bg-slate-300'}`}
+                            className={`h-2 rounded-full ${i <= activeStage ? 'bg-[var(--bg-accent)]' : 'bg-[var(--border-color)]'}`}
                         />
                     ))}
                 </div>
 
-                {/* Progress Bar */}
-                <div className="w-full max-w-xs h-2 bg-slate-100 border border-slate-300 rounded-full overflow-hidden shadow-inner my-1.5">
+                <div className="w-full max-w-[220px] h-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-full overflow-hidden shadow-inner">
                     <motion.div
-                        className="h-full bg-[var(--bg-saffron)] rounded-full"
+                        className="h-full bg-[var(--bg-accent)] rounded-full"
                         animate={{ width: `${pct}%` }}
-                        transition={{ duration: 0.5, ease: 'easeInOut' }}
+                        transition={{ duration: 0.45, ease: 'easeInOut' }}
                     />
                 </div>
 
-                {/* Architecture E Badge & PDI Representation Path */}
-                <div className="mt-2 flex flex-col items-center gap-1">
-                    <div className="px-3 py-0.5 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
-                        <p className="text-[9px] font-black uppercase tracking-[0.25em] text-[var(--text-accent)]">
+                <div className="mt-4 flex flex-col items-center gap-2">
+                    <div className="px-3 py-1.5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-color)]">
+                        <p className="text-[9px] font-black uppercase tracking-[0.26em] text-[var(--text-primary)]">
                             ARCHITECTURE E · STAGE {activeStage + 1} OF {stageList.length}
                         </p>
                     </div>
-                    <div className="px-3 py-0.5 rounded-md bg-slate-100 border border-slate-200">
-                        <p className="text-[8.5px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                            REPRESENTATION PATH: <span className="text-[#133E87] font-black">{representationMode || (isVoice ? 'VOICE AUTHORITY / UNIFIED' : 'MATERIAL AUTHORITY')}</span>
+                    <div className="px-3 py-1 rounded-md bg-[var(--bg-secondary)] border border-[var(--border-color)]">
+                        <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
+                            REPRESENTATION PATH: <span className="text-[var(--text-primary)] font-black">{representationMode || 'DETERMINING...'}</span>
                         </p>
                     </div>
                 </div>

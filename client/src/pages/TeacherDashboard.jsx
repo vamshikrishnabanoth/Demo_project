@@ -26,19 +26,17 @@ export default function TeacherDashboard() {
     return (
         <DashboardLayout role="teacher">
             <div className="max-w-[100rem] mx-auto px-6 py-6 relative">
-                {/* Universal AI Creation Studio — Single Unified Input Option */}
                 <div className="space-y-4">
                     <div className="flex items-center gap-2.5 px-2">
                         <Cpu className="text-[var(--text-accent)]" size={18} />
                         <h2 className="text-xs font-black uppercase tracking-widest text-[#334155]">Universal AI Assessment Engine</h2>
                     </div>
 
-                    {/* Informational Container Card (Non-clickable container) */}
                     <div className="bg-gradient-to-br from-white via-slate-50 to-[var(--accent-sand)]/50 border-2 border-[var(--border-color)] rounded-[2.5rem] p-8 sm:p-10 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-8 relative overflow-hidden">
                         <div className="space-y-4 max-w-2xl">
                             <div className="flex flex-wrap items-center gap-3">
-                                <div className="p-3.5 rounded-2xl bg-[var(--bg-saffron)] text-white text-white-force shadow-md">
-                                    <Sparkles size={26} className="!text-white text-white-force" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+                                <div className="p-3.5 rounded-2xl bg-[var(--bg-saffron)] text-white shadow-md">
+                                    <Sparkles size={26} className="!text-white" style={{ color: '#ffffff', stroke: '#ffffff' }} />
                                 </div>
                                 <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-[var(--accent-sand)] text-[var(--text-accent)] border border-[var(--border-color)]">
                                     All-In-One Multimodal Input Studio
@@ -54,7 +52,6 @@ export default function TeacherDashboard() {
                                 </p>
                             </div>
 
-                            {/* Input Types Badges */}
                             <div className="flex flex-wrap gap-2 pt-2">
                                 {[
                                     { label: 'Topics & Concepts', icon: Book },
@@ -70,10 +67,9 @@ export default function TeacherDashboard() {
                             </div>
                         </div>
 
-                        {/* Button triggering modal */}
                         <button
                             onClick={() => setShowModal(true)}
-                            className="bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white-force teacher-launch-btn flex items-center gap-3 px-8 py-5 rounded-2xl active:scale-95 shadow-lg hover:shadow-xl transition-all shrink-0 cursor-pointer group border-none outline-none"
+                            className="bg-[var(--bg-saffron)] hover:bg-[var(--bg-saffron-hover)] text-white-force flex items-center gap-3 px-8 py-5 rounded-2xl active:scale-95 shadow-lg hover:shadow-xl transition-all shrink-0 cursor-pointer group border-none outline-none"
                             style={{ color: '#ffffff' }}
                         >
                             <span className="font-black text-sm tracking-wider uppercase" style={{ color: '#ffffff' }}>Create Quiz Now</span>
@@ -83,11 +79,9 @@ export default function TeacherDashboard() {
                 </div>
             </div>
 
-            {/* Premium Create Quiz Selection Modal */}
             <AnimatePresence>
                 {showModal && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        {/* Backdrop with Blur */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -96,15 +90,16 @@ export default function TeacherDashboard() {
                             className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
                         />
 
-                        {/* Modal Dialog Card */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 15 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 15 }}
                             transition={{ type: 'spring', duration: 0.4 }}
                             className="bg-white border-2 border-slate-200 w-full max-w-3xl rounded-[2.5rem] shadow-2xl relative overflow-hidden z-10 flex flex-col p-6 sm:p-8 md:p-10 gap-6"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="creation-mode-title"
                         >
-                            {/* Close Button */}
                             <button
                                 onClick={() => setShowModal(false)}
                                 className="absolute top-6 right-6 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 transition-all cursor-pointer border-none outline-none"
@@ -113,12 +108,11 @@ export default function TeacherDashboard() {
                                 <XIcon size={18} />
                             </button>
 
-                            {/* Header */}
                             <div className="space-y-1">
                                 <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-violet-50 text-violet-700 border border-violet-200">
                                     Assessment Studio
                                 </span>
-                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+                                <h3 id="creation-mode-title" className="text-2xl font-black text-slate-900 tracking-tight">
                                     Choose Creation Mode
                                 </h3>
                                 <p className="text-xs font-semibold text-slate-500">
@@ -126,9 +120,7 @@ export default function TeacherDashboard() {
                                 </p>
                             </div>
 
-                            {/* Cards Container */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-                                {/* Card 1: AI Creation Studio (Unified Multi-Modal Studio for Topics, Audio, PDFs & Docs) */}
                                 <div
                                     onClick={() => {
                                         setShowModal(false);
@@ -161,7 +153,6 @@ export default function TeacherDashboard() {
                                     </div>
                                 </div>
 
-                                {/* Card 2: Manual Quiz Builder */}
                                 <div
                                     onClick={() => {
                                         setShowModal(false);

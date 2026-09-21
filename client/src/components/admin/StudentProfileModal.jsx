@@ -25,7 +25,7 @@ export default function StudentProfileModal({ student, onClose, onEdit, onSuspen
                     className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
                 <motion.div initial={{ opacity: 0, scale: 0.95, y: 15 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
-                    className="relative z-10 w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col">
+                    className="relative z-10 w-full max-w-lg max-h-[calc(100dvh-2rem)] bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-y-auto flex flex-col">
 
                     {/* Banner */}
                     <div className="h-28 bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 relative p-6 flex items-start justify-between">

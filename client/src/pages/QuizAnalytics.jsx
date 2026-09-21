@@ -20,6 +20,13 @@ const MasteryRadarChart = lazy(() => import('../components/quiz/LazyCharts').the
 const QuestionPerformanceChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.QuestionPerformanceChart })));
 const TimeSpentChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.TimeSpentChart })));
 
+const formatDuration = (seconds) => {
+    if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return '—';
+    const totalSeconds = Math.max(0, Math.round(Number(seconds)));
+    if (totalSeconds < 60) return `${totalSeconds}s`;
+    return `${Math.floor(totalSeconds / 60)}m ${(totalSeconds % 60).toString().padStart(2, '0')}s`;
+};
+
 const ChartFallback = () => (
     <div className="w-full h-[280px] flex flex-col items-center justify-center gap-2 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
         <Loader2 className="animate-spin text-[var(--text-accent)]" size={24} />
@@ -344,7 +351,7 @@ export default function QuizAnalytics() {
                                 <Home size={16} /> Go to Home
                             </button>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter text-balance">
+                        <h1 className="type-page-title font-black text-white italic uppercase text-balance">
                             {cleanQuizTitle(analytics.quizTitle)}
                         </h1>
                         <p className="text-indigo-400 font-bold mt-2 uppercase tracking-widest text-sm italic">
@@ -373,8 +380,8 @@ export default function QuizAnalytics() {
                             bg: 'bg-emerald-100 border border-emerald-300 ring-2 ring-emerald-400/20' 
                         },
                         { title: 'Total Questions', value: analytics.totalQuestions, icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-200' },
-                        { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
-                        { title: 'Highest Score', value: `${analytics.highestScore}%`, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
+                        { title: 'Rank', value: analytics.studentRank ? `#${analytics.studentRank}` : '—', icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-200' },
+                        { title: 'Total Time Spent', value: formatDuration(analytics.studentAttempt?.totalTimeTaken), icon: Clock, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
                     ] : [
                         { title: 'Total Participants', value: analytics.totalParticipants, icon: Users, color: 'text-[var(--text-accent)]', bg: 'bg-[var(--accent-sand)] border border-[var(--border-color)]' },
                         { title: 'Average Score', value: `${analytics.averageScore}%`, icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 border border-teal-200' },
@@ -574,7 +581,9 @@ export default function QuizAnalytics() {
                     const studentAnswers = analytics?.studentAttempt?.answers || [];
                     const timeSpentData = (analytics?.questionPerformance || []).map((q, idx) => {
                         const studentAns = studentAnswers.find(a => a.questionText === q.questionText || a.questionIndex === idx);
-                        const timeSpent = studentAns ? (studentAns.timeTaken || 0) : (q.avgTimeSpent || 0);
+                        const timeSpent = studentAns && Object.prototype.hasOwnProperty.call(studentAns, 'timeTaken')
+                            ? studentAns.timeTaken
+                            : null;
                         const isCorrect = studentAns ? studentAns.isCorrect : null;
                         const status = studentAns ? (studentAns.selectedOption ? (studentAns.isCorrect ? 'Correct' : 'Incorrect') : 'Skipped') : 'Average Time';
                         return {
@@ -694,7 +703,9 @@ export default function QuizAnalytics() {
                                         (a.questionIndex !== undefined && Number(a.questionIndex) === idx) ||
                                         (a.questionText && q.questionText && a.questionText.toString().trim().toLowerCase() === q.questionText.toString().trim().toLowerCase())
                                     ));
-                                    const studentTime = studentAns ? `${studentAns.timeTaken || 0}s` : '0s';
+                                    const studentTime = studentAns && Object.prototype.hasOwnProperty.call(studentAns, 'timeTaken')
+                                        ? formatDuration(studentAns.timeTaken)
+                                        : '—';
                                     const isCorrect = studentAns ? studentAns.isCorrect : null;
                                     const isAnswered = studentAns && studentAns.selectedOption && studentAns.selectedOption !== '';
 
@@ -832,11 +843,11 @@ export default function QuizAnalytics() {
                             <div className="flex flex-wrap items-center gap-4 bg-slate-50 border-2 border-slate-200 rounded-2xl px-5 py-2.5 text-xs shadow-xs">
                                 <span className="font-black text-[#334155] uppercase tracking-widest text-[10px]" style={{ color: '#334155' }}>LEGEND:</span>
                                 <div className="flex items-center gap-2 text-emerald-800 font-black">
-                                    <span className="w-6 h-6 rounded-lg bg-emerald-100 border-2 border-emerald-400 text-emerald-700 flex items-center justify-center text-xs font-black shadow-xs">✓</span>
+                                    <span className="w-6 h-6 rounded-lg bg-emerald-100 border-2 border-emerald-400 text-emerald-700 flex items-center justify-center text-xs font-black shadow-xs"><CheckCircle2 size={14} aria-hidden="true" /></span>
                                     Correct
                                 </div>
                                 <div className="flex items-center gap-2 text-rose-800 font-black">
-                                    <span className="w-6 h-6 rounded-lg bg-rose-100 border-2 border-rose-400 text-rose-700 flex items-center justify-center text-xs font-black shadow-xs">✗</span>
+                                    <span className="w-6 h-6 rounded-lg bg-rose-100 border-2 border-rose-400 text-rose-700 flex items-center justify-center text-xs font-black shadow-xs"><XCircle size={14} aria-hidden="true" /></span>
                                     Incorrect
                                 </div>
                                 <div className="flex items-center gap-2 text-[#334155] font-black" style={{ color: '#334155' }}>
@@ -877,15 +888,15 @@ export default function QuizAnalytics() {
                                                         const isCorrect = studentAns?.isCorrect === true;
 
                                                         let dotClass = 'bg-slate-100 border-2 border-slate-300 text-slate-400';
-                                                        let iconText = '-';
+                                                        let iconText = <MinusCircle size={14} aria-hidden="true" />;
 
                                                         if (isAnswered) {
                                                             if (isCorrect) {
                                                                 dotClass = 'bg-emerald-100 border-2 border-emerald-400 text-emerald-700 font-black shadow-xs';
-                                                                iconText = '✓';
+                                                                iconText = <CheckCircle2 size={14} aria-hidden="true" />;
                                                             } else {
                                                                 dotClass = 'bg-rose-100 border-2 border-rose-400 text-rose-700 font-black shadow-xs';
-                                                                iconText = '✗';
+                                                                iconText = <XCircle size={14} aria-hidden="true" />;
                                                             }
                                                         }
 

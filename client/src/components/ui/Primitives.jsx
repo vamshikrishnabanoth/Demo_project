@@ -15,10 +15,10 @@ export const PremiumButton = ({
   type = 'button'
 }) => {
   const variants = {
-    primary: 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-lg active:shadow-inner',
-    secondary: 'bg-white/5 text-white border border-white/10 hover:bg-white/10',
+    primary: 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] border border-[var(--bg-accent)] shadow-[var(--student-shadow-soft)] active:shadow-inner',
+    secondary: 'bg-[var(--student-surface-alt)] text-[var(--text-primary)] border border-[var(--student-border)] hover:bg-[var(--student-surface)]',
     danger: 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20',
-    ghost: 'bg-white text-[var(--text-primary)] border-2 border-[var(--border-color)] hover:border-[var(--bg-accent)] hover:bg-slate-50'
+    ghost: 'bg-[var(--student-surface)] text-[var(--text-primary)] border border-[var(--student-border)] hover:border-[var(--bg-accent)] hover:bg-[var(--student-surface-alt)]'
   };
 
   return (
@@ -78,7 +78,7 @@ export const PremiumInput = ({
           onChange={onChange}
           placeholder={placeholder}
           className={`
-            w-full bg-white border border-[var(--border-color)] rounded-2xl py-4
+            w-full bg-[var(--student-surface)] border border-[var(--student-border)] rounded-2xl py-4
             ${Icon ? 'pl-12' : 'pl-5'} ${EndIcon ? 'pr-12' : 'pr-5'} 
             text-[var(--text-primary)] font-semibold tracking-wide focus:outline-none 
             focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)]
@@ -117,9 +117,9 @@ export const PremiumInput = ({
 export const GlassCard = ({ children, className = '', hover = true }) => {
   return (
     <motion.div
-      whileHover={hover ? { y: -5, transition: { duration: 0.25 } } : {}}
+      whileHover={hover ? { y: -3, transition: { duration: 0.25 } } : {}}
       className={`
-        glass-panel p-8 sm:p-12 rounded-[3rem] border border-[var(--border-color)]
+        glass-panel bg-[var(--student-surface)] p-5 sm:p-8 lg:p-12 rounded-[2rem] sm:rounded-[3rem] border border-[var(--student-border)]
         relative overflow-hidden group premium-transition ${className}
       `}
     >

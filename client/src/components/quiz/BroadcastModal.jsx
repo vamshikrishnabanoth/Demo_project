@@ -43,7 +43,7 @@ export default function BroadcastModal({ quiz, isOpen, onClose, onBroadcastSucce
 
         setTitle(`Quiz Release: ${quiz.title}`);
         setMessage(
-            `Dear Students,\n\nThe access details for the upcoming evaluation "${quiz.title}" are now available.\n\n📚 Topic: ${quiz.topic || 'General Assessment'}\n⏱️ Duration: ${quiz.duration || quiz.timerPerQuestion * quiz.questions?.length / 60 || 10} minutes\n\nPlease keep the access credentials secure and do not share them outside your group.`
+            `Dear Students,\n\nThe access details for the upcoming evaluation "${quiz.title}" are now available.\n\nTopic: ${quiz.topic || 'General Assessment'}\nDuration: ${quiz.duration || quiz.timerPerQuestion * quiz.questions?.length / 60 || 10} minutes\n\nPlease keep the access credentials secure and do not share them outside your group.`
         );
 
         // Fetch recipient count based on quiz targeting criteria
@@ -125,7 +125,7 @@ export default function BroadcastModal({ quiz, isOpen, onClose, onBroadcastSucce
             />
 
             {/* Modal Box */}
-            <div className="relative w-full max-w-4xl bg-[#0b0f19] border border-white/10 rounded-[3rem] p-6 md:p-10 shadow-2xl flex flex-col md:flex-row gap-10 overflow-y-auto max-h-[95vh] custom-scrollbar">
+            <div className="relative w-full max-w-4xl bg-[#0b0f19] border border-white/10 rounded-[2rem] sm:rounded-[3rem] p-5 sm:p-6 md:p-10 shadow-2xl flex flex-col md:flex-row gap-6 md:gap-10 overflow-y-auto max-h-[95dvh] custom-scrollbar">
                 
                 {/* Visual Accent Glow */}
                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-amber-400/5 rounded-full blur-[100px] pointer-events-none -z-10 animate-pulse"></div>

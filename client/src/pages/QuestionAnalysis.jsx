@@ -5,12 +5,19 @@ import DashboardLayout from '../components/DashboardLayout';
 import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import toast from 'react-hot-toast';
 import AuthContext from '../context/AuthContext';
+
+const formatDuration = (seconds) => {
+    if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return '—';
+    const totalSeconds = Math.max(0, Math.round(Number(seconds)));
+    if (totalSeconds < 60) return `${totalSeconds}s`;
+    return `${Math.floor(totalSeconds / 60)}m ${(totalSeconds % 60).toString().padStart(2, '0')}s`;
+};
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie
 } from 'recharts';
 import {
     ChevronLeft, CheckCircle, XCircle, AlertCircle, Clock, Target, Users, MinusCircle, ChevronRight, Search, Home,
-    Sparkles, BookOpen, Lightbulb, TrendingUp, AlertTriangle, CheckCircle2, Info
+    Sparkles, BookOpen, Lightbulb, TrendingUp, AlertTriangle, CheckCircle2, Info, MessageCircle, Send
 } from 'lucide-react';
 
 const PIE_COLORS = ['#10b981', '#f43f5e', '#64748b'];
@@ -48,8 +55,10 @@ export default function QuestionAnalysis() {
     const [totalQuestions, setTotalQuestions] = useState(1);
     
     // AI Review States
-    const [aiReview, setAiReview] = useState(null);
     const [loadingAi, setLoadingAi] = useState(false);
+    const [chatOpen, setChatOpen] = useState(false);
+    const [followUp, setFollowUp] = useState('');
+    const [chatMessages, setChatMessages] = useState([]);
 
     // List Search States
     const [searchCorrect, setSearchCorrect] = useState('');
@@ -64,7 +73,9 @@ export default function QuestionAnalysis() {
                 setData(res.data);
                 
                 // Reset AI review on index change
-                setAiReview(null);
+                setChatMessages([]);
+                setFollowUp('');
+                setChatOpen(false);
                 
                 // Fetch total questions for pagination
                 const quizRes = await api.get(`/quiz/${quizId}`);
@@ -81,18 +92,26 @@ export default function QuestionAnalysis() {
         fetchAnalysis();
     }, [quizId, questionIndex]);
 
-    const handleGetAIReview = async () => {
+    const handleGetAIReview = async (followUpQuestion = '') => {
         setLoadingAi(true);
         try {
-            const res = await api.get(`/analytics/question-review/${quizId}/${questionIndex}`, { timeout: 300000 });
-            setAiReview(res.data.review);
-            toast.success('AI Review Generated!', { icon: '🤖' });
+            const query = followUpQuestion ? `?followUp=${encodeURIComponent(followUpQuestion)}` : '';
+            const res = await api.get(`/analytics/question-review/${quizId}/${questionIndex}${query}`, { timeout: 30000 });
+            const answer = res.data.review;
+            setChatMessages((messages) => [...messages, { role: 'user', text: followUpQuestion }, { role: 'assistant', text: answer }]);
+            setFollowUp('');
         } catch (err) {
             console.error(err);
-            toast.error('Failed to generate AI Review.');
+            toast.error('Failed to get a grounded answer.');
         } finally {
             setLoadingAi(false);
         }
+    };
+
+    const handleFollowUpSubmit = (event) => {
+        event.preventDefault();
+        const questionText = followUp.trim();
+        if (questionText && !loadingAi) handleGetAIReview(questionText);
     };
 
     if (loading) {
@@ -181,16 +200,16 @@ export default function QuestionAnalysis() {
                                 <Home size={16} /> Go to Home
                             </button>
                         </div>
-                        <h1 className="text-4xl font-black text-[#0f172a] italic uppercase tracking-tighter text-balance" style={{ color: '#0f172a' }}>
+                        <h1 className="type-page-title font-black text-[#0f172a] italic uppercase text-balance" style={{ color: '#0f172a' }}>
                             Question <span className="text-[var(--text-accent)]">#{qIdx + 1}</span> Analysis
                         </h1>
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-3 w-full lg:w-auto">
                         <button 
                             disabled={qIdx <= 0}
                             onClick={() => navigate(`/analytics/question/${quizId}/${qIdx - 1}`)}
-                            className="bg-[#0f172a] hover:bg-[#374151] disabled:opacity-30 disabled:cursor-not-allowed text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm shadow-sm"
+                            className="flex-1 sm:flex-none bg-[#0f172a] hover:bg-[#374151] disabled:opacity-30 disabled:cursor-not-allowed text-white px-5 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center justify-center gap-2 text-sm shadow-sm"
                             style={{ color: '#ffffff' }}
                         >
                             <ChevronLeft size={16} /> Prev
@@ -198,7 +217,7 @@ export default function QuestionAnalysis() {
                         <button 
                             disabled={qIdx >= totalQuestions - 1}
                             onClick={() => navigate(`/analytics/question/${quizId}/${qIdx + 1}`)}
-                            className="bg-[#0f172a] hover:bg-[#374151] disabled:opacity-30 disabled:cursor-not-allowed text-white px-6 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center gap-2 text-sm shadow-sm"
+                            className="flex-1 sm:flex-none bg-[#0f172a] hover:bg-[#374151] disabled:opacity-30 disabled:cursor-not-allowed text-white px-5 py-3 rounded-2xl font-black italic uppercase tracking-tighter transition-all flex items-center justify-center gap-2 text-sm shadow-sm"
                             style={{ color: '#ffffff' }}
                         >
                             Next <ChevronRight size={16} />
@@ -223,14 +242,9 @@ export default function QuestionAnalysis() {
                         <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest border" style={{ backgroundColor: '#f1f5f9', color: '#0f172a', borderColor: '#cbd5e1' }}>
                             {question.points || 10} Points
                         </span>
-                        <button 
-                            onClick={handleGetAIReview} 
-                            disabled={loadingAi}
-                            className="ml-auto btn-ai-review"
-                        >
-                            <Sparkles size={14} className="transition-colors" />
-                            {loadingAi ? 'Reviewing...' : 'Ask AI Review'}
-                        </button>
+                        <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest border inline-flex items-center gap-1.5" style={{ backgroundColor: '#f1f5f9', color: '#0f172a', borderColor: '#cbd5e1' }}>
+                            <Clock size={13} aria-hidden="true" /> {formatDuration(userAnswer?.timeTaken)}
+                        </span>
                     </div>
 
                     <div className="mb-10 relative z-10">
@@ -297,11 +311,24 @@ export default function QuestionAnalysis() {
                             );
                         })}
                     </div>
+
+                    <div className="mt-8 flex justify-center relative z-10">
+                        <button
+                            type="button"
+                            onClick={() => setChatOpen(true)}
+                            disabled={loadingAi}
+                            aria-label="Analyze this question with AI"
+                            title="Analyze this question with AI"
+                            className="w-12 h-12 rounded-full bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent-hover)] hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-md flex items-center justify-center"
+                        >
+                            {loadingAi ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <MessageCircle size={21} aria-hidden="true" />}
+                        </button>
+                    </div>
                 </div>
 
 
                 {/* AI Review Section */}
-                {(loadingAi || aiReview) && (
+                {(chatOpen || loadingAi || chatMessages.length > 0) && (
                     <div className="bg-white border-2 border-[var(--border-color)] p-8 md:p-12 rounded-[3rem] relative overflow-hidden transition-all duration-500 animate-fadeIn shadow-sm">
                         <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none text-[var(--text-accent)]">
                             <Target size={150} />
@@ -316,7 +343,7 @@ export default function QuestionAnalysis() {
                                     <Sparkles size={18} />
                                 )}
                             </div>
-                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question Intelligence Report</h3>
+                            <h3 className="text-xl font-black text-[#0f172a] uppercase italic tracking-tighter" style={{ color: '#0f172a' }}>Question Answer</h3>
                         </div>
 
                         {loadingAi ? (
@@ -326,7 +353,7 @@ export default function QuestionAnalysis() {
                                 <div className="h-4 bg-slate-200 rounded-full w-2/3 animate-pulse"></div>
                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest animate-pulse">Analyzing question data and student responses...</p>
                             </div>
-                        ) : (() => {
+                        ) : false ? (() => {
                             // Strip emoji characters from text
                             const stripEmojis = (text) => text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}]/gu, '').trim();
 
@@ -341,7 +368,7 @@ export default function QuestionAnalysis() {
                                 return <Info size={15} className="text-slate-500" />;
                             };
 
-                            const lines = aiReview.split('\n');
+                            const lines = chatMessages[chatMessages.length - 1].text.split('\n');
                             return (
                                 <div className="max-h-[420px] overflow-y-auto premium-scrollbar pr-3 pb-2 scroll-smooth space-y-1">
                                     {lines.map((line, idx) => {
@@ -410,7 +437,33 @@ export default function QuestionAnalysis() {
                                     })}
                                 </div>
                             );
-                        })()}
+                        })() : null}
+
+                        {chatMessages.length > 0 && (
+                            <div className="mt-5 space-y-3 border-t border-slate-200 pt-5">
+                                {chatMessages.map((message, index) => (
+                                    <div key={`${message.role}-${index}`} className={`rounded-xl px-4 py-3 text-sm leading-relaxed ${message.role === 'user' ? 'ml-8 bg-slate-100 text-slate-700' : 'mr-8 bg-[var(--bg-secondary)] text-slate-700'}`}>
+                                        <p className="mb-1 text-[9px] font-black uppercase tracking-widest text-slate-400">{message.role === 'user' ? 'You' : 'AI answer'}</p>
+                                        <p>{message.text}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {chatOpen && (
+                            <form onSubmit={handleFollowUpSubmit} className="mt-6 flex items-center gap-2 border-t border-slate-200 pt-5">
+                                <input
+                                    value={followUp}
+                                    onChange={(event) => setFollowUp(event.target.value)}
+                                    placeholder="Ask a follow-up about this question..."
+                                    className="flex-1 min-w-0 rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)]"
+                                    disabled={loadingAi}
+                                />
+                                <button type="submit" disabled={!followUp.trim() || loadingAi} className="h-11 w-11 shrink-0 rounded-xl bg-[var(--bg-accent)] text-white flex items-center justify-center disabled:opacity-50" aria-label="Send follow-up question">
+                                    <Send size={16} aria-hidden="true" />
+                                </button>
+                            </form>
+                        )}
                     </div>
                 )}
 
@@ -437,24 +490,6 @@ export default function QuestionAnalysis() {
                             <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#10b981]"></div><span className="text-xs font-black text-[#334155] uppercase" style={{ color: '#334155' }}>Correct ({analytics.correctPercentage}%)</span></div>
                             <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#f43f5e]"></div><span className="text-xs font-black text-[#334155] uppercase" style={{ color: '#334155' }}>Wrong ({analytics.wrongPercentage}%)</span></div>
                             <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#64748b]"></div><span className="text-xs font-black text-[#334155] uppercase" style={{ color: '#334155' }}>Skipped ({analytics.skippedPercentage}%)</span></div>
-                        </div>
-                    </div>
-
-                    {/* Quick Stats */}
-                    <div className="flex flex-col gap-6">
-                        <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] flex-1 flex items-center gap-6 shadow-sm">
-                            <div className="p-4 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-200"><Users size={32} /></div>
-                            <div>
-                                <p className="text-[11px] font-black text-[#334155] uppercase tracking-widest mb-1" style={{ color: '#334155' }}>Total Attempts</p>
-                                <p className="text-4xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>{analytics.totalAttempts}</p>
-                            </div>
-                        </div>
-                        <div className="bg-white border-2 border-[var(--border-color)] p-6 rounded-[2.5rem] flex-1 flex items-center gap-6 shadow-sm">
-                            <div className="p-4 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200"><Clock size={32} /></div>
-                            <div>
-                                <p className="text-[11px] font-black text-[#334155] uppercase tracking-widest mb-1" style={{ color: '#334155' }}>Avg Time Spent</p>
-                                <p className="text-4xl font-black text-[#0f172a] italic" style={{ color: '#0f172a' }}>{analytics.avgTimeSpent}s</p>
-                            </div>
                         </div>
                     </div>
 

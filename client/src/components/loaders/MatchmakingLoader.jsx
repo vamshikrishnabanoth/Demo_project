@@ -1,4 +1,5 @@
 import React from 'react';
+import { Zap } from 'lucide-react';
 
 export default function MatchmakingLoader({ message = 'Finding Opponent...' }) {
   return (
@@ -32,7 +33,7 @@ export default function MatchmakingLoader({ message = 'Finding Opponent...' }) {
               color: 'var(--text-on-accent)',
             }}
           >
-            ⚡
+            <Zap size={32} aria-hidden="true" />
           </div>
           <p className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>Player</p>
         </div>

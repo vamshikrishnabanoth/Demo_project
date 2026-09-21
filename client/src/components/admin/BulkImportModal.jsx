@@ -3,7 +3,7 @@ import {
     X as XIcon, Upload, FileText, CheckCircle2, AlertTriangle,
     Download, ArrowRight, Loader2, Info, Hash, User,
     Mail, BookOpen, Grid, Calendar, BookMarked, Phone,
-    Heart, ShieldCheck, CheckSquare
+    Heart, ShieldCheck, CheckSquare, ChevronLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -207,7 +207,7 @@ export default function BulkImportModal({ onClose, onSuccess }) {
                                             <FileText size={24} />
                                         </div>
                                         <p className="text-sm font-bold text-slate-900 mt-1">
-                                            {fileName ? `📄 ${fileName}` : 'Click to Upload CSV / Excel File'}
+                                            {fileName ? <><FileText size={14} className="inline mr-1" aria-hidden="true" />{fileName}</> : 'Click to Upload CSV / Excel File'}
                                         </p>
                                         <p className="text-xs text-slate-500 font-medium">Accepts CSV formatted text files</p>
                                     </label>
@@ -247,7 +247,7 @@ export default function BulkImportModal({ onClose, onSuccess }) {
                                             </h4>
                                             {validationErrors.length > 0 && (
                                                 <p className="text-xs text-rose-700 font-semibold mt-0.5">
-                                                    ⚠️ {validationErrors.length} invalid row(s) flagged and excluded
+                                                    <AlertTriangle size={14} className="inline mr-1" aria-hidden="true" /> {validationErrors.length} invalid row(s) flagged and excluded
                                                 </p>
                                             )}
                                         </div>
@@ -312,7 +312,7 @@ export default function BulkImportModal({ onClose, onSuccess }) {
 
                                 <div className="flex items-center justify-between pt-2">
                                     <button onClick={() => setStep(1)} className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 cursor-pointer">
-                                        ← Back to Upload
+                                        <span className="inline-flex items-center gap-1"><ChevronLeft size={14} aria-hidden="true" /> Back to Upload</span>
                                     </button>
                                     <button onClick={handleExecuteImport} disabled={importing || validStudents.length === 0}
                                         className="px-8 py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow-md transition-all cursor-pointer flex items-center gap-2 disabled:opacity-40">

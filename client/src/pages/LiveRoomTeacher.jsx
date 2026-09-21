@@ -513,7 +513,7 @@ if (socket.connected) {
                     <div className="w-24 h-24 bg-[var(--bg-accent)]/10 rounded-[2rem] flex items-center justify-center mx-auto">
                         <Trophy className="text-[var(--text-accent)]" size={48} />
                     </div>
-                    <h1 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter text-gray-900 text-balance">Quiz <span className="text-[var(--text-accent)]">Ended</span></h1>
+                    <h1 className="type-page-title font-black italic uppercase text-gray-900 text-balance">Quiz <span className="text-[var(--text-accent)]">Ended</span></h1>
                     <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">The session has concluded. View results in the Performance tab.</p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
@@ -548,34 +548,34 @@ if (socket.connected) {
     if (isWaitingRoom) {
         return (
             <DashboardLayout role="teacher">
-                <div className="max-w-6xl mx-auto space-y-12 py-10">
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-16 text-center text-white shadow-2xl relative overflow-hidden">
-                        <div className="relative z-10 space-y-8">
-                            <div className="inline-block px-6 py-2 bg-[var(--bg-accent)]/10 rounded-full border border-[var(--bg-accent)]/30">
-                                <span className="text-[var(--text-accent)] font-black uppercase tracking-[0.3em] text-sm italic">Lobby is Open</span>
+                <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 py-6 sm:py-10">
+                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.2rem] p-8 sm:p-10 lg:p-12 text-center shadow-[0_18px_40px_rgba(15,23,42,0.06)] relative overflow-hidden">
+                        <div className="relative z-10 space-y-7">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm">
+                                <span className="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                                <span className="text-[var(--text-primary)] font-black uppercase tracking-[0.22em] text-[10px] italic">Lobby is Open</span>
                             </div>
-                            <h1 className="text-4xl sm:text-6xl font-black italic uppercase tracking-tighter text-balance" style={{ color: 'var(--text-primary)' }}>Waiting for <span className="text-[var(--text-accent)]">Participants</span></h1>
+                            <h1 className="type-page-title font-black italic uppercase text-balance" style={{ color: 'var(--text-primary)' }}>
+                                Waiting for <span className="text-[var(--text-accent)]">Participants</span>
+                            </h1>
                             <div className="flex flex-col items-center gap-4">
-                                <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-lg">Join Code</p>
-                                <div onClick={copyCode} className="bg-[var(--bg-primary)]/50 border-2 border-[var(--bg-accent)]/20 hover:bg-[var(--bg-accent)]/10 hover:border-[var(--bg-accent)]/50 transition-all rounded-3xl p-6 sm:p-8 cursor-pointer group active:scale-95 overflow-hidden">
-                                    <p className="text-5xl sm:text-7xl font-black tracking-[0.2em] sm:tracking-[0.4em] group-hover:scale-105 transition-transform italic underline decoration-[var(--text-accent)] decoration-4 sm:decoration-8 underline-offset-[16px] break-all" style={{ color: 'var(--text-primary)' }}>{joinCode}</p>
+                                <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.18em] text-[10px]">Join Code</p>
+                                <div onClick={copyCode} className="bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-[var(--bg-accent)]/50 transition-all rounded-2xl p-5 sm:p-7 cursor-pointer group active:scale-95 shadow-sm w-full max-w-lg">
+                                    <p className="text-4xl sm:text-6xl font-black tracking-[0.14em] sm:tracking-[0.2em] group-hover:scale-[1.02] transition-transform italic break-all text-[var(--text-primary)]">{joinCode}</p>
                                 </div>
                             </div>
-                            <div className="pt-8 flex flex-col items-center gap-6">
+                            <div className="pt-4 flex flex-col items-center gap-5">
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex flex-col sm:flex-row items-center gap-4 sm:gap-6 bg-gradient-to-r from-[var(--bg-accent)] via-[var(--bg-saffron)] to-[var(--bg-accent-hover)] text-white px-10 sm:px-16 py-5 sm:py-7 rounded-[2.5rem] hover:scale-105 transition-all shadow-2xl shadow-[var(--bg-accent)]/40 font-black text-2xl sm:text-3xl italic uppercase tracking-tighter active:scale-95 border-2 border-white/30 border-b-[6px] border-b-black/30 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    className="group flex flex-row items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                 >
-                                    <Play size={36} className="group-hover:translate-x-2 transition-transform text-white fill-white" />
+                                    <Play size={22} className="group-hover:translate-x-1 transition-transform text-white fill-white" />
                                     <span>START GAME</span>
                                 </button>
-                                <p className="text-[var(--text-secondary)] font-black uppercase tracking-widest text-sm">{participants.length} {participants.length === 1 ? 'Student' : 'Students'} Joined</p>
+                                <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.18em] text-[10px]">{participants.length} {participants.length === 1 ? 'Student' : 'Students'} Joined</p>
                             </div>
                         </div>
-                        {/* Background Decorations */}
-                        <div className="absolute -top-20 -left-20 w-80 h-80 bg-[var(--bg-accent)]/10 rounded-full blur-[100px]"></div>
-                        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-[var(--bg-accent)]/10 rounded-full blur-[100px]"></div>
                     </div>
 
                     {/* Participants in waiting room */}
@@ -623,7 +623,7 @@ if (socket.connected) {
                                     <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span> LIVE SESSION
                                 </div>
                             </div>
-                            <h1 className="text-4xl font-black text-[#0f172a] italic uppercase tracking-tighter truncate">
+                            <h1 className="type-page-title font-black text-[#0f172a] italic uppercase truncate">
                                 {cleanQuizTitle(quiz?.title) || 'Active Session'}
                             </h1>
                         </div>
@@ -642,78 +642,75 @@ if (socket.connected) {
 
                 {/* Offline Banner */}
                 {!isOnline && (
-                    <div className="bg-orange-500 rounded-2xl px-6 py-4 flex items-center gap-3 text-white font-bold text-sm">
+                    <div className="bg-[#f97316] rounded-2xl px-6 py-4 flex items-center gap-3 text-white font-bold text-sm">
                         <WifiOff size={18} />
                         You are offline — reconnecting...
                     </div>
                 )}
 
                 {/* Session Controls — High-Contrast Modern Control Panel */}
-                <div className="bg-slate-900 border-2 border-slate-800 rounded-[2.2rem] p-5 shadow-2xl text-white backdrop-blur-md">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        {/* Question Navigation */}
-                        <div className="flex items-center gap-3 bg-slate-800/90 border border-slate-700/80 rounded-2xl p-2 shadow-inner">
+                <div className="bg-[var(--bg-accent)] border border-[var(--bg-accent)] rounded-[1.7rem] p-3 sm:p-4 shadow-[0_18px_32px_rgba(15,23,42,0.12)] text-white">
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                        <div className="flex items-center justify-center gap-3 bg-white/8 border border-white/10 rounded-2xl p-2 shadow-inner w-full md:w-auto">
                             <button
                                 onClick={handlePrevSkippedQuestion}
                                 disabled={currentQuestion === 0}
-                                className="bg-slate-700/80 hover:bg-slate-600 text-white px-4 py-2 rounded-xl font-black uppercase tracking-wider text-xs transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-xs"
+                                className="bg-white/10 hover:bg-white/15 text-white px-4 py-2 rounded-xl font-black uppercase tracking-[0.18em] text-[10px] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5"
                                 title="Revisit skipped questions only"
                             >
                                 <ChevronLeft size={14} /> Back
                             </button>
-                            
-                            <div className="px-4 py-2 bg-slate-900/90 rounded-xl border border-slate-700/60 shadow-xs">
-                                <p className="text-amber-400 text-xs font-black uppercase tracking-widest">
-                                    Q{currentQuestion + 1} <span className="text-slate-500 font-bold">/</span> {quiz?.questions?.length || 0}
+
+                            <div className="px-3 py-2 bg-white/8 rounded-xl border border-white/10">
+                                <p className="text-amber-300 text-[10px] font-black uppercase tracking-[0.2em]">
+                                    Q{currentQuestion + 1} <span className="text-white/60 font-bold">/</span> {quiz?.questions?.length || 0}
                                 </p>
                             </div>
 
                             <button
                                 onClick={handleNextQuestion}
                                 disabled={currentQuestion >= (quiz?.questions?.length || 0) - 1}
-                                className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 py-2 rounded-xl font-black uppercase tracking-wider text-xs transition-all shadow-md active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1.5"
+                                className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl font-black uppercase tracking-[0.18em] text-[10px] transition-all shadow-md active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1.5"
                             >
                                 <span>Next</span>
                                 <ChevronRight size={14} strokeWidth={3} />
                             </button>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex items-center gap-3 flex-wrap justify-center">
+                        <div className="flex items-center justify-center gap-3 flex-wrap w-full md:w-auto">
                             <button
                                 onClick={handleIncreaseTime}
-                                className="bg-indigo-500/20 hover:bg-indigo-600/40 text-indigo-300 hover:text-white border border-indigo-500/40 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-2 text-xs"
+                                className="bg-white/10 hover:bg-white/15 text-white border border-white/10 px-4 py-2.5 rounded-xl font-black uppercase tracking-[0.18em] transition-all shadow-sm active:scale-95 flex items-center gap-2 text-[10px]"
                             >
                                 <Clock size={16} /> +30 SEC
                             </button>
 
                             <button
                                 onClick={handleEndQuiz}
-                                className="bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-2 text-xs"
+                                className="bg-rose-500/20 hover:bg-rose-500 text-rose-100 border border-rose-400/30 px-4 py-2.5 rounded-xl font-black uppercase tracking-[0.18em] transition-all shadow-sm active:scale-95 flex items-center gap-2 text-[10px]"
                             >
-                                <MinusCircle size={16} /> END SESSION
+                                <MinusCircle size={16} /> End Session
                             </button>
                         </div>
 
-                        {/* Status Badges */}
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center gap-3 w-full md:w-auto">
                             {liveInsights?.topStudent && (
-                                <div className="flex items-center gap-2.5 bg-emerald-500/20 border border-emerald-500/40 rounded-xl px-4 py-2.5 text-emerald-400">
-                                    <Award size={18} />
+                                <div className="flex items-center gap-2 bg-emerald-500/15 border border-emerald-400/30 rounded-xl px-3 py-2 text-emerald-200">
+                                    <Award size={16} />
                                     <div>
-                                        <p className="text-[8px] font-black uppercase tracking-widest opacity-80">Leader</p>
-                                        <p className="text-xs font-black uppercase tracking-wide">{liveInsights.topStudent}</p>
+                                        <p className="text-[7px] font-black uppercase tracking-[0.2em] opacity-80">Leader</p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.12em]">{liveInsights.topStudent}</p>
                                     </div>
                                 </div>
                             )}
 
-                            <div className="flex items-center gap-2 bg-slate-800/90 border border-slate-700 px-4 py-2.5 rounded-xl shadow-xs">
+                            <div className="flex items-center gap-2 bg-white/8 border border-white/10 px-3 py-2.5 rounded-xl shadow-xs">
                                 <span className="flex h-2.5 w-2.5 relative">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
                                 </span>
-                                <Users size={15} className="text-slate-300" />
-                                <span className="text-xs font-black uppercase tracking-widest text-slate-200">{participants.length} ONLINE</span>
+                                <Users size={14} className="text-white/70" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white">{participants.length} Online</span>
                             </div>
                         </div>
                     </div>

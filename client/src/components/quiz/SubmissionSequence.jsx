@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, CheckCircle2 } from 'lucide-react';
 
 // Pre-calculated static random offsets to ensure 100% pure rendering and avoid any Math.random checks
 const STATIC_PARTICLES = Array.from({ length: 24 }).map((_, i) => {
@@ -49,28 +49,28 @@ export default function SubmissionSequence({
     const tierConfig = {
         lightning: {
             label: 'LIGHTNING REFLEXES',
-            headline: 'Blazing Fast! ⚡',
+            headline: 'Blazing Fast!',
             sub: 'You locked in before most even read the question!',
             color: 'text-cyan-400',
             badge: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
         },
         fast: {
             label: 'SHARP RESPONSE',
-            headline: 'Fast & Focused 🎯',
+            headline: 'Fast & Focused',
             sub: 'Excellent reaction — you were ahead of the curve!',
             color: 'text-green-400',
             badge: 'bg-green-500/15 border-green-500/30 text-green-300',
         },
         normal: {
             label: 'ANSWER LOCKED',
-            headline: 'Steady & Sure ✅',
+            headline: 'Steady & Sure',
             sub: 'Deliberate choice submitted to the ledger.',
             color: 'text-[var(--text-accent,#D7AC28)]',
             badge: 'bg-[var(--bg-accent,#D7AC28)]/10 border-[var(--bg-accent,#D7AC28)]/30 text-[var(--text-accent,#D7AC28)]',
         },
         slow: {
             label: 'LATE RESPONSE',
-            headline: 'Submitted! Keep Pace 🐢',
+            headline: 'Submitted! Keep Pace',
             sub: 'Answer received — try to respond faster next time!',
             color: 'text-amber-400',
             badge: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
@@ -269,7 +269,7 @@ export default function SubmissionSequence({
                 {/* Subtitle status messages */}
                 <div className="space-y-0.5">
                     <p className="text-sm font-black text-white uppercase tracking-widest">
-                        {showCheck ? "TRANSMITTED SUCCESSFULLY ✓" : "ENCRYPTING ANSWER PACKET..."}
+                        {showCheck ? <span className="inline-flex items-center gap-2"><CheckCircle2 size={16} aria-hidden="true" /> TRANSMITTED SUCCESSFULLY</span> : "ENCRYPTING ANSWER PACKET..."}
                     </p>
                     <p className="text-xs font-bold text-white/40 uppercase tracking-[0.2em] italic">
                         {showCheck ? "Redirecting to mission debrief..." : "Locking options to immutable ledger..."}

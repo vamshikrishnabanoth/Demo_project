@@ -72,37 +72,37 @@ const DeveloperModeInspector = ({ taskId }) => {
                         <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-3 text-center">
                             <span className="text-[10px] text-slate-400 font-mono uppercase">Stage A Extractor</span>
                             <div className="flex items-center justify-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
-                                <ShieldCheck className="w-3.5 h-3.5" /> ✅ Active
+                                <ShieldCheck className="w-3.5 h-3.5" /> Active
                             </div>
                         </div>
                         <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-3 text-center">
                             <span className="text-[10px] text-slate-400 font-mono uppercase">Stage B Planner</span>
                             <div className="flex items-center justify-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
-                                <ShieldCheck className="w-3.5 h-3.5" /> ✅ Active
+                                <ShieldCheck className="w-3.5 h-3.5" /> Active
                             </div>
                         </div>
                         <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-3 text-center">
                             <span className="text-[10px] text-slate-400 font-mono uppercase">Circuit Breaker</span>
                             <div className="flex items-center justify-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
-                                <ShieldCheck className="w-3.5 h-3.5" /> ✅ Verified
+                                <ShieldCheck className="w-3.5 h-3.5" /> Verified
                             </div>
                         </div>
                         <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-3 text-center">
                             <span className="text-[10px] text-slate-400 font-mono uppercase">Agent 2 Creator</span>
                             <div className="flex items-center justify-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
-                                <ShieldCheck className="w-3.5 h-3.5" /> ✅ Executed
+                                <ShieldCheck className="w-3.5 h-3.5" /> Executed
                             </div>
                         </div>
                         <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-3 text-center">
                             <span className="text-[10px] text-slate-400 font-mono uppercase">Agent 3 Critic</span>
                             <div className="flex items-center justify-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
-                                <ShieldCheck className="w-3.5 h-3.5" /> ✅ Passed
+                                <ShieldCheck className="w-3.5 h-3.5" /> Passed
                             </div>
                         </div>
                         <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-3 text-center">
                             <span className="text-[10px] text-slate-400 font-mono uppercase">Node.js Refiner</span>
                             <div className="flex items-center justify-center gap-1 mt-1 text-emerald-400 font-bold text-xs">
-                                <ShieldCheck className="w-3.5 h-3.5" /> ✅ Rebalanced
+                                <ShieldCheck className="w-3.5 h-3.5" /> Rebalanced
                             </div>
                         </div>
                     </div>
