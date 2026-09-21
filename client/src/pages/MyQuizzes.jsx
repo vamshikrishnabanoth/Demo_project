@@ -34,6 +34,7 @@ import {
 import EmptyState from '../components/EmptyState';
 import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
 import { useApiQuery } from '../hooks/useApiQuery';
+import AnalyticsMetricCard from '../components/quiz/AnalyticsMetricCard';
 
 export default function MyQuizzes() {
     const navigate = useNavigate();
@@ -342,39 +343,32 @@ export default function MyQuizzes() {
                     </div>
                 </div>
 
-                {/* ── METRICS OVERVIEW CARDS ────────────────────────────────────────────── */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-1">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Total Quizzes</span>
-                        <div className="flex items-center justify-between">
-                            <span className="text-2xl font-black text-slate-900">{quizzes.length}</span>
-                            <FileText size={20} className="text-slate-400" />
-                        </div>
-                    </div>
-
-                    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-1">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Active Sessions</span>
-                        <div className="flex items-center justify-between">
-                            <span className="text-2xl font-black text-slate-900">{activeSessionsCount}</span>
-                            <Play size={20} className="text-slate-400" />
-                        </div>
-                    </div>
-
-                    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-1">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Saved Templates</span>
-                        <div className="flex items-center justify-between">
-                            <span className="text-2xl font-black text-slate-900">{savedTemplates.length}</span>
-                            <Bookmark size={20} className="text-slate-400" />
-                        </div>
-                    </div>
-
-                    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-1">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Student Attempts</span>
-                        <div className="flex items-center justify-between">
-                            <span className="text-2xl font-black text-slate-900">{totalCompletions}</span>
-                            <Users size={20} className="text-slate-400" />
-                        </div>
-                    </div>
+                {/* ── METRICS OVERVIEW CARDS — Disciplined Semantic Color System ────────── */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+                    <AnalyticsMetricCard
+                        title="Total Quizzes"
+                        value={quizzes.length}
+                        icon={FileText}
+                        color="violet"
+                    />
+                    <AnalyticsMetricCard
+                        title="Active Sessions"
+                        value={activeSessionsCount}
+                        icon={Play}
+                        color="orange"
+                    />
+                    <AnalyticsMetricCard
+                        title="Saved Templates"
+                        value={savedTemplates.length}
+                        icon={Bookmark}
+                        color="teal"
+                    />
+                    <AnalyticsMetricCard
+                        title="Student Attempts"
+                        value={totalCompletions}
+                        icon={Users}
+                        color="blue"
+                    />
                 </div>
 
                 {/* ── TAB & SEARCH CONTROLS ────────────────────────────────────────────────── */}
