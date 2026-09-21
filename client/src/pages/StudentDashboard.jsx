@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useContext, useRef, useCallback } from 'react';
+import { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -406,48 +406,8 @@ export default function StudentDashboard() {
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     className="w-full max-w-4xl space-y-8 text-center relative z-10 px-6"
                 >
-                    {/* Header System */}
-                    <div className="space-y-4">
-                        
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[var(--text-primary)] italic tracking-tight leading-tight">
-Student Dashboard
-</h1>
-                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.3em] text-[10px] max-w-md mx-auto">
-                            Attempt quizzes via code or launch cognitive AI games
-                        </p>
-                    </div>
-
-                    {/* Gamification Quick Stats Banner */}
-                    <div className="flex justify-center items-center gap-4 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl p-4 max-w-2xl mx-auto shadow-lg backdrop-blur-md flex-wrap">
-                        <div className="flex items-center gap-2">
-                            <Star className="text-yellow-600" size={22} fill="currentColor" />
-                            <div className="text-left">
-                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Total XP</p>
-                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{xp} <span className="text-xs text-yellow-600">XP</span></p>
-                            </div>
-                        </div>
-                        <div className="h-8 w-px bg-[var(--border-color)]"></div>
-                        <div className="flex items-center gap-2">
-                            <Rocket className="text-orange-600" size={22} fill="currentColor" />
-                            <div className="text-left">
-                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Current Streak</p>
-                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{streak} <span className="text-xs text-orange-600">DAYS</span></p>
-                            </div>
-                        </div>
-                        <div className="h-8 w-px bg-[var(--border-color)]"></div>
-                        <div className="flex items-center gap-2">
-                            <Trophy className="text-amber-600" size={22} fill="currentColor" />
-                            <div className="text-left">
-                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Best Streak</p>
-                                <p className="text-lg font-black text-[var(--text-primary)] italic leading-none">{highestStreak} <span className="text-xs text-amber-600">DAYS</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    
-
                     {/* Tab Controls */}
-                    <div className="flex justify-center gap-4 max-w-2xl mx-auto">
+                    <div className="flex justify-center gap-4 max-w-2xl mx-auto pt-4">
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('link'); }}
                             className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
@@ -783,46 +743,62 @@ Student Dashboard
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -15 }}
                                 transition={{ duration: 0.4 }}
-                                className="space-y-10 max-w-5xl mx-auto text-left"
+                                className="space-y-6 max-w-4xl mx-auto text-left"
                             >
-                                <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
-                                    {/* Daily Missions */}
-<div style={{display:"none"}}>
-                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <Target className="text-pink-500" size={28} />
-                                            <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase">Daily Missions</h2>
-                                        </div>
-                                        
-                                        {dailyMissions.map((m, idx) => (
-                                            <div key={m.id} className={`p-4 rounded-2xl border flex flex-col gap-2 relative overflow-hidden ${m.current >= m.target ? 'border-green-500/40 bg-green-500/8' : 'border-[var(--border-color)] bg-[var(--bg-primary)]'}`}>
-                                                <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <h3 className="font-bold text-[var(--text-primary)] text-sm flex items-center gap-2">
-                                                            {m.title}
-                                                            {m.required && <span className="bg-pink-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Main (Streak +1)</span>}
-                                                            {!m.required && <span className="bg-[var(--bg-accent)] text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Bonus</span>}
-                                                        </h3>
-                                                    </div>
-                                                    <span className={`text-xs font-black ${m.current >= m.target ? 'text-green-600' : 'text-[var(--text-secondary)]'}`}>
-                                                        {m.current} / {m.target}
-                                                    </span>
-                                                </div>
-                                                <div className="w-full bg-[var(--border-color)] h-2 rounded-full overflow-hidden">
-                                                    <div 
-                                                        className={`h-full ${m.current >= m.target ? 'bg-green-500' : 'bg-[var(--bg-accent)]'} transition-all duration-500`}
-                                                        style={{ width: `${Math.min((m.current / m.target) * 100, 100)}%` }}
-                                                    />
-                                                </div>
+                                {/* ─── GOLDEN LINE MILESTONE PROGRESSION BAR ─── */}
+                                <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500">
+                                                <Trophy size={24} className="text-amber-500" />
                                             </div>
-                                        ))}
+                                            <div>
+                                                <h2 className="text-xl font-black text-[var(--text-primary)] italic uppercase tracking-wide">
+                                                    Missions & Perks Progression
+                                                </h2>
+                                                <p className="text-xs text-[var(--text-secondary)] font-medium">
+                                                    Complete tasks & quizzes to unlock exclusive academic perks
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right self-end sm:self-auto">
+                                            <span className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-wider block">
+                                                Total Points Gained
+                                            </span>
+                                            <span className="text-xl font-black text-amber-500 italic">
+                                                {xp} <span className="text-xs text-[var(--text-secondary)] font-bold">/ 1300 PTS</span>
+                                            </span>
+                                        </div>
                                     </div>
 
+                                    {/* Golden Progress Line */}
+                                    <div className="w-full bg-[var(--bg-primary)] h-4 rounded-full border border-[var(--border-color)] overflow-hidden p-0.5 relative">
+                                        <motion.div 
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${Math.min((xp / 1300) * 100, 100)}%` }}
+                                            transition={{ duration: 1, ease: "easeOut" }}
+                                            className="h-full rounded-full relative overflow-hidden"
+                                            style={{
+                                                background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)',
+                                                boxShadow: '0 0 15px rgba(245, 158, 11, 0.6)'
+                                            }}
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+                                        </motion.div>
                                     </div>
-{/* Rewards Store */}
+
+                                    <div className="flex justify-between items-center text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                                        <span>0 PTS</span>
+                                        <span className="text-amber-500 font-black">{Math.min(Math.round((xp / 1300) * 100), 100)}% COMPLETED</span>
+                                        <span>1300 PTS (MAX MILESTONE)</span>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
+                                    {/* Rewards Store */}
                                     <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <Trophy className="text-yellow-600" size={28} />
+                                            <Star className="text-yellow-500" size={26} fill="currentColor" />
                                             <h2 className="text-2xl font-black text-[var(--text-primary)] italic uppercase">Rewards Store</h2>
                                         </div>
 
@@ -840,10 +816,10 @@ Student Dashboard
                                             };
 
                                             return [
-    { id: 'perk_late', name: 'Late Permission', cost: 700, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
-    { id: 'perk_half', name: 'Half Day Permission', cost: 900, icon: Clock, color: 'text-blue-400', border: 'border-blue-500', desc: 'Excuse yourself for a half day', monthlyLimit: 2 },
-    { id: 'perk_att', name: 'Attendance 5% hike', cost: 1300, icon: Target, color: 'text-green-400', border: 'border-green-500', desc: 'Increase your attendance by 5%', monthlyLimit: 1 },
-].map(perk => {
+                                                { id: 'perk_late', name: 'Late Permission', cost: 700, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
+                                                { id: 'perk_half', name: 'Half Day Permission', cost: 900, icon: Clock, color: 'text-blue-400', border: 'border-blue-500', desc: 'Excuse yourself for a half day', monthlyLimit: 2 },
+                                                { id: 'perk_att', name: 'Attendance 5% hike', cost: 1300, icon: Target, color: 'text-green-400', border: 'border-green-500', desc: 'Increase your attendance by 5%', monthlyLimit: 1 },
+                                            ].map(perk => {
                                                 const isStreakLocked = perk.streakOnly && streak < perk.streakOnly;
                                                 const redemptionsThisMonth = perk.monthlyLimit ? getRedemptionsThisMonth(perk.id) : 0;
                                                 const limitReached = perk.monthlyLimit ? redemptionsThisMonth >= perk.monthlyLimit : false;
@@ -857,13 +833,8 @@ Student Dashboard
                                                         <div>
                                                             <h3 className="font-bold text-[var(--text-primary)] text-sm">{perk.name}</h3>
                                                             <p className="text-[var(--text-secondary)] text-[10px] mt-0.5">{perk.desc}</p>
-                                                            {perk.monthlyLimit && (
-                                                                <p className="text-pink-400 text-[9px] font-black uppercase tracking-wider mt-1">
-                                                                    ΓÜá∩╕Å Only {perk.monthlyLimit} redeemable this month ΓÇó {redemptionsThisMonth}/{perk.monthlyLimit} used
-                                                                </p>
-                                                            )}
                                                             {isStreakLocked
-                                                                ? <p className="text-yellow-400 text-xs font-black italic mt-1">≡ƒöÆ Requires {perk.streakOnly}-Day Streak</p>
+                                                                ? <p className="text-yellow-400 text-xs font-black italic mt-1">Requires {perk.streakOnly}-Day Streak</p>
                                                                 : <p className="text-yellow-400 text-xs font-black italic mt-1">{perk.cost} PTS</p>
                                                             }
                                                         </div>
