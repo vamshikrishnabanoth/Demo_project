@@ -944,23 +944,23 @@ if (socket.connected) {
                                         <div className="flex items-center gap-1.5 flex-wrap">
                                             {quiz?.questions?.map((_, idx) => {
                                                 const data = progress[idx] || progress[idx.toString()];
-                                                const isAnswered = data?.answered === true || data?.isCorrect !== undefined || data?.skipped === true;
-                                                const isCorrect = data?.isCorrect === true;
-                                                const isSkipped = data?.skipped === true;
+                                                const isCorrect = data?.isCorrect === true || data?.isCorrect === 'true' || data?.isCorrect === 1;
+                                                const isSkipped = data?.skipped === true || data?.skipped === 'true';
+                                                const isAnswered = data?.answered === true || data?.isCorrect !== undefined || isSkipped;
 
                                                 let dotClass = 'bg-slate-100 border-slate-200 text-slate-400';
                                                 let Icon = null;
 
                                                 if (isAnswered) {
                                                     if (isCorrect) {
-                                                        dotClass = 'bg-emerald-500 border-emerald-500 text-white';
-                                                        Icon = <CheckCircle size={12} />;
+                                                        dotClass = 'bg-emerald-500 border-emerald-500 text-white shadow-sm font-black';
+                                                        Icon = <CheckCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     } else if (isSkipped) {
-                                                        dotClass = 'bg-amber-500 border-amber-500 text-white';
-                                                        Icon = <MinusCircle size={12} />;
+                                                        dotClass = 'bg-amber-500 border-amber-500 text-white shadow-sm font-black';
+                                                        Icon = <MinusCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     } else {
-                                                        dotClass = 'bg-rose-500 border-rose-500 text-white';
-                                                        Icon = <XCircle size={12} />;
+                                                        dotClass = 'bg-rose-500 border-rose-500 text-white shadow-sm font-black';
+                                                        Icon = <XCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     }
                                                 } else if (!p.isOnline && idx < currentQuestion) {
                                                     dotClass = 'bg-slate-50 border-slate-200 text-slate-300';
@@ -975,7 +975,7 @@ if (socket.connected) {
                                                             : `Q${idx + 1}: Not Answered`
                                                         }
                                                         className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black border-2 transition-all ${dotClass} ${idx === currentQuestion
-                                                            ? 'ring-2 ring-[var(--bg-accent)] ring-offset-1 scale-110 shadow-sm'
+                                                            ? 'ring-2 ring-amber-500 ring-offset-1 scale-110 shadow-md'
                                                             : ''
                                                         }`}
                                                     >
