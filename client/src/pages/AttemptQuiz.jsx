@@ -176,8 +176,9 @@ export default function AttemptQuiz() {
         // the proctoring gate (quiz.status === 'started') becomes true and
         // fullscreen is requested at the correct moment.
         socket.on('quiz_started', () => {
-            console.log('[AttemptQuiz] quiz_started event received — activating proctoring gate.');
+            console.log('[AttemptQuiz] quiz_started event received — activating active quiz.');
             setQuiz(prev => prev ? { ...prev, status: 'started' } : prev);
+            setWaitingForState(false);
         });
 
         socket.on('quiz_ended', async () => {
@@ -640,13 +641,8 @@ export default function AttemptQuiz() {
                         }
                     }
 
-                    setWaitingForState(true);
-                    // SAFETY TIMEOUT: If the server never sends change_question (e.g. room state missing),
-                    // clear the sync screen after 8 seconds so the student isn't stuck forever.
-                    setTimeout(() => {
-                        console.log('[DIAGNOSTIC-QUIZ] Safety timeout triggered. Clearing waitingForState screen.');
-                        setWaitingForState(false);
-                    }, 8000);
+                    // Ensure first question is displayed immediately without blocking sync screen
+                    setWaitingForState(false);
                     // join_room is sent in the dedicated authUser effect below so it fires even
                     // if authUser loads asynchronously after this fetchQuiz effect runs.
                     // Skip previousResult handling — live quiz session is restored

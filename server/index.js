@@ -915,7 +915,8 @@ io.to(realQuizId).emit(
                 data: { status: 'started', endTime: new Date(safetyEndTime) }
             });
             io.to(quizId).emit('quiz_started');
-            console.log(`[QuizStart] Quiz ${quizId} started. 1-hour safety timeout active.`);
+            io.to(quizId).emit('change_question', { questionIndex: 0 });
+            console.log(`[QuizStart] Quiz ${quizId} started on Question 1 (index 0). 1-hour safety timeout active.`);
         } catch (err) {
             console.error('Error starting quiz:', err);
         }

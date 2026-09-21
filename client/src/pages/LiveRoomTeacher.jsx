@@ -627,20 +627,20 @@ if (socket.connected) {
                     PRIMARY TEACHER CONTROLS — always visible, never buried.
                     Answers: Is session live? What question? What to do next?
                 */}
-                <div className="bg-[#0f172a] rounded-[2rem] px-5 py-4 shadow-2xl shadow-slate-900/30 mb-6">
+                <div className="bg-white border-2 border-slate-200/80 rounded-[2rem] px-6 py-4 shadow-sm mb-6">
                     <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 lg:gap-0 justify-between">
 
                         {/* LEFT: Session identity */}
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                             {/* Live badge */}
-                            <div className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500 text-white">
+                            <div className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500 text-white shadow-xs">
                                 <span className="w-2 h-2 rounded-full bg-white animate-ping" />
                                 <span className="text-[10px] font-black uppercase tracking-[0.25em]">Live</span>
                             </div>
                             {/* Title */}
                             <div className="min-w-0">
-                                <p className="text-white/40 text-[9px] font-black uppercase tracking-[0.3em] mb-0.5">Session</p>
-                                <h1 className="text-white font-black italic uppercase text-base sm:text-lg leading-tight truncate max-w-[280px]">
+                                <p className="text-slate-400 text-[9px] font-black uppercase tracking-[0.3em] mb-0.5">Session</p>
+                                <h1 className="text-slate-900 font-black italic uppercase text-base sm:text-lg leading-tight truncate max-w-[280px]">
                                     {cleanQuizTitle(quiz?.title) || 'Active Session'}
                                 </h1>
                             </div>
@@ -651,7 +651,7 @@ if (socket.connected) {
                             <button
                                 onClick={handlePrevSkippedQuestion}
                                 disabled={currentQuestion === 0}
-                                className="h-10 px-4 rounded-xl bg-white/8 hover:bg-white/15 border border-white/10 text-white font-black uppercase text-[10px] tracking-[0.15em] transition-all disabled:opacity-25 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95"
+                                className="h-10 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black uppercase text-[10px] tracking-[0.15em] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95 cursor-pointer"
                                 title="Go back to skipped questions"
                             >
                                 <ChevronLeft size={14} strokeWidth={3} />
@@ -659,17 +659,17 @@ if (socket.connected) {
                             </button>
 
                             {/* Question counter — the MOST important number on screen */}
-                            <div className="px-5 py-2 rounded-xl bg-amber-500 shadow-lg shadow-amber-500/30">
-                                <p className="text-slate-900 font-black text-lg leading-none tracking-tight">
+                            <div className="px-5 py-2 rounded-xl bg-amber-500 shadow-md shadow-amber-500/20">
+                                <p className="text-slate-950 font-black text-lg leading-none tracking-tight">
                                     Q<span className="text-2xl">{currentQuestion + 1}</span>
-                                    <span className="text-slate-900/50 font-bold text-sm"> / {quiz?.questions?.length || 0}</span>
+                                    <span className="text-slate-950/60 font-bold text-sm"> / {quiz?.questions?.length || 0}</span>
                                 </p>
                             </div>
 
                             <button
                                 onClick={handleNextQuestion}
                                 disabled={currentQuestion >= (quiz?.questions?.length || 0) - 1}
-                                className="h-10 px-5 rounded-xl bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white font-black uppercase text-[10px] tracking-[0.15em] transition-all disabled:opacity-25 disabled:pointer-events-none flex items-center gap-1.5 shadow-lg shadow-[var(--bg-accent)]/30 active:scale-95"
+                                className="h-10 px-5 rounded-xl bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white font-black uppercase text-[10px] tracking-[0.15em] transition-all disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1.5 shadow-md shadow-[var(--bg-accent)]/20 active:scale-95 cursor-pointer"
                             >
                                 Next
                                 <ChevronRight size={14} strokeWidth={3} />
@@ -680,21 +680,21 @@ if (socket.connected) {
                         <div className="flex items-center justify-end gap-3 flex-1 flex-wrap">
 
                             {/* Students online — critical at a glance */}
-                            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10">
+                            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-200">
                                 <span className="flex h-2 w-2 relative">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                                 </span>
-                                <Users size={13} className="text-white/60" />
-                                <span className="text-white font-black text-[11px] tracking-wider">{participants.length}</span>
-                                <span className="text-white/40 font-bold text-[10px] uppercase tracking-widest">Online</span>
+                                <Users size={13} className="text-slate-500" />
+                                <span className="text-slate-900 font-black text-[11px] tracking-wider">{participants.length}</span>
+                                <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Online</span>
                             </div>
 
                             {/* Live leader */}
                             {liveInsights?.topStudent && (
-                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/20">
-                                    <Award size={13} className="text-emerald-400" />
-                                    <span className="text-emerald-300 font-black text-[10px] uppercase tracking-wider truncate max-w-[80px]">
+                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200">
+                                    <Award size={13} className="text-emerald-600" />
+                                    <span className="text-emerald-700 font-black text-[10px] uppercase tracking-wider truncate max-w-[80px]">
                                         {liveInsights.topStudent}
                                     </span>
                                 </div>
@@ -703,7 +703,7 @@ if (socket.connected) {
                             {/* +30 sec */}
                             <button
                                 onClick={handleIncreaseTime}
-                                className="h-9 px-3 rounded-xl bg-white/8 hover:bg-white/14 border border-white/10 text-white font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5"
+                                className="h-9 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                             >
                                 <Clock size={14} />
                                 +30s
@@ -712,7 +712,7 @@ if (socket.connected) {
                             {/* End Session — separated visually to reduce mis-clicks */}
                             <button
                                 onClick={handleEndQuiz}
-                                className="h-9 px-4 rounded-xl bg-rose-500/15 hover:bg-rose-500 border border-rose-500/30 text-rose-300 hover:text-white font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5"
+                                className="h-9 px-4 rounded-xl bg-rose-50 hover:bg-rose-500 border border-rose-200 text-rose-600 hover:text-white font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                             >
                                 <MinusCircle size={14} />
                                 End
@@ -789,7 +789,7 @@ if (socket.connected) {
 
                 {/* ─── ACTIVE QUESTION CARD ────────────────────────────────────────────── */}
                 {quiz?.questions?.[currentQuestion] && (
-                    <div className="bg-white border-2 border-slate-100 rounded-[2rem] shadow-2xl shadow-slate-100/60 overflow-hidden mb-6">
+                    <div className="bg-white border-2 border-slate-100 rounded-[2rem] shadow-xl shadow-slate-100/60 overflow-hidden mb-6">
                         {/* Card header */}
                         <div className="bg-slate-50 border-b border-slate-100 px-7 py-4 flex items-center justify-between flex-wrap gap-3">
                             <div className="flex items-center gap-3">
@@ -815,21 +815,28 @@ if (socket.connected) {
                                 />
                             </div>
 
-                            {/* Options grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {/* Options grid with default creation colors */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                 {quiz.questions[currentQuestion].options?.map((option, idx) => {
                                     const label = String.fromCharCode(65 + idx);
-                                    const bgColors = ['bg-blue-50 border-blue-100', 'bg-violet-50 border-violet-100', 'bg-emerald-50 border-emerald-100', 'bg-amber-50 border-amber-100'];
-                                    const labelColors = ['bg-blue-500', 'bg-violet-500', 'bg-emerald-500', 'bg-amber-500'];
+                                    const optionThemes = [
+                                        { badge: 'bg-red-500 text-white', border: 'border-red-200 bg-red-50/70 hover:border-red-300' },
+                                        { badge: 'bg-blue-500 text-white', border: 'border-blue-200 bg-blue-50/70 hover:border-blue-300' },
+                                        { badge: 'bg-amber-500 text-white', border: 'border-amber-200 bg-amber-50/70 hover:border-amber-300' },
+                                        { badge: 'bg-emerald-500 text-white', border: 'border-emerald-200 bg-emerald-50/70 hover:border-emerald-300' },
+                                        { badge: 'bg-violet-500 text-white', border: 'border-violet-200 bg-violet-50/70 hover:border-violet-300' },
+                                        { badge: 'bg-pink-500 text-white', border: 'border-pink-200 bg-pink-50/70 hover:border-pink-300' },
+                                    ];
+                                    const theme = optionThemes[idx % optionThemes.length];
                                     return (
                                         <div
                                             key={idx}
-                                            className={`flex items-center gap-3 border-2 rounded-2xl p-4 transition-all ${bgColors[idx % 4]}`}
+                                            className={`flex items-center gap-3.5 border-2 rounded-2xl p-4 transition-all shadow-xs ${theme.border}`}
                                         >
-                                            <div className={`w-8 h-8 rounded-lg ${labelColors[idx % 4]} flex items-center justify-center text-white font-black text-sm flex-shrink-0`}>
+                                            <div className={`w-9 h-9 rounded-xl ${theme.badge} flex items-center justify-center font-black text-sm flex-shrink-0 shadow-xs`}>
                                                 {label}
                                             </div>
-                                            <span className="font-bold text-slate-700 text-sm leading-snug">{option}</span>
+                                            <span className="font-bold text-slate-800 text-sm leading-snug">{option}</span>
                                         </div>
                                     );
                                 })}
@@ -839,15 +846,15 @@ if (socket.connected) {
                 )}
 
                 {/* ─── LIVE STUDENT TRACKER ────────────────────────────────────────────── */}
-                <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-100/60 border-2 border-slate-100 overflow-hidden">
+                <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-100/60 border-2 border-slate-100 overflow-hidden">
                     {/* Tracker header */}
-                    <div className="bg-[#0f172a] px-7 py-5 flex items-center justify-between flex-wrap gap-4">
+                    <div className="bg-slate-50 border-b border-slate-200 px-7 py-5 flex items-center justify-between flex-wrap gap-4">
                         <div>
-                            <h2 className="text-lg font-black text-white italic uppercase tracking-tight flex items-center gap-2">
-                                <Users size={18} className="text-white/60" />
+                            <h2 className="text-lg font-black text-slate-900 italic uppercase tracking-tight flex items-center gap-2">
+                                <Users size={18} className="text-[var(--bg-accent)]" />
                                 Live Student Tracker
                             </h2>
-                            <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mt-1">
+                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-1">
                                 {allStudents.length} Total · {participants.length} Connected · Page {currentPage}/{totalPages}
                             </p>
                         </div>
@@ -857,11 +864,11 @@ if (socket.connected) {
                                 { color: 'bg-emerald-500', label: 'Correct' },
                                 { color: 'bg-rose-500', label: 'Wrong' },
                                 { color: 'bg-amber-500', label: 'Skipped' },
-                                { color: 'bg-slate-200', label: 'Pending' },
+                                { color: 'bg-slate-300', label: 'Pending' },
                             ].map(({ color, label }) => (
                                 <div key={label} className="flex items-center gap-1.5">
                                     <div className={`w-3 h-3 rounded-md ${color}`} />
-                                    <span className="text-[10px] font-bold text-white/70">{label}</span>
+                                    <span className="text-[10px] font-bold text-slate-600">{label}</span>
                                 </div>
                             ))}
                         </div>
