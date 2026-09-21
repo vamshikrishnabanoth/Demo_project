@@ -487,22 +487,22 @@ export default function QuizAnalytics() {
                     ]).map((kpi, idx) => (
                         <div
                             key={idx}
-                            className={`relative bg-white border ${kpi.accent.border} ${kpi.accent.hoverBorder} rounded-2xl p-5 sm:p-6 flex flex-col gap-4 shadow-[0_2px_12px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.10)] transition-all duration-200 overflow-hidden group`}
+                            className={`relative bg-white border ${kpi.accent.border} ${kpi.accent.hoverBorder} rounded-2xl p-4 sm:p-5 flex flex-row items-center gap-4 shadow-[0_2px_12px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.10)] transition-all duration-200 overflow-hidden group`}
                         >
-                            {/* Subtle top accent line */}
-                            <div className={`absolute top-0 left-0 right-0 h-[3px] ${kpi.accent.topLine} rounded-t-2xl opacity-70`} />
+                            {/* Subtle left accent bar */}
+                            <div className={`absolute top-0 left-0 bottom-0 w-[3px] ${kpi.accent.topLine} opacity-70`} />
 
-                            {/* Icon */}
-                            <div className={`self-start p-3 rounded-xl ${kpi.accent.iconBg} border ${kpi.accent.iconBorder} ${kpi.accent.iconColor} group-hover:scale-105 transition-transform duration-200 mt-1`}>
+                            {/* Icon — left side */}
+                            <div className={`shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${kpi.accent.iconBg} border ${kpi.accent.iconBorder} ${kpi.accent.iconColor} flex items-center justify-center group-hover:scale-105 transition-transform duration-200 ml-1`}>
                                 <kpi.icon size={22} strokeWidth={2.2} />
                             </div>
 
-                            {/* Text */}
-                            <div className="flex flex-col gap-1.5">
-                                <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-widest ${kpi.accent.label} leading-tight`}>
+                            {/* Text — right side */}
+                            <div className="flex flex-col gap-0.5 min-w-0">
+                                <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-widest ${kpi.accent.label} leading-tight truncate`}>
                                     {kpi.title}
                                 </p>
-                                <p className={`text-[1.75rem] sm:text-[2rem] font-black italic leading-none ${kpi.accent.number}`}>
+                                <p className={`text-2xl sm:text-[1.75rem] font-black italic leading-none ${kpi.accent.number}`}>
                                     {kpi.value}
                                 </p>
                             </div>
