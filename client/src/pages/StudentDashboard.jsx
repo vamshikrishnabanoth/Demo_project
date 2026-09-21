@@ -408,15 +408,10 @@ export default function StudentDashboard() {
                 >
                     {/* Header System */}
                     <div className="space-y-4">
-                        <motion.div 
-                            whileHover={{ scale: 1.05 }}
-                            className="w-20 h-20 bg-[var(--bg-accent)]/10 rounded-[1.8rem] border-2 border-[var(--bg-accent)]/30 flex items-center justify-center text-[var(--text-accent)] mx-auto mb-4 relative shadow-[0_0_30px_var(--bg-accent-glow)] group cursor-pointer"
-                        >
-                            <Trophy size={40} className="relative z-10" />
-                        </motion.div>
+                        
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[var(--text-primary)] italic tracking-tight leading-tight">
-                            Student <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">Game Arena</span>
-                        </h1>
+Student Dashboard
+</h1>
                         <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.3em] text-[10px] max-w-md mx-auto">
                             Attempt quizzes via code or launch cognitive AI games
                         </p>
@@ -449,45 +444,7 @@ export default function StudentDashboard() {
                         </div>
                     </div>
 
-                    {/* XP Progress toward Next Reward */}
-                    {(() => {
-                        const XP_REWARDS = [
-                            { name: 'Attendance Pass', cost: 1500 },
-                            { name: 'Late Pass', cost: 3000 },
-                        ];
-                        const nextReward = XP_REWARDS.find(r => xp < r.cost);
-                        if (!nextReward) return (
-                            <div className="max-w-2xl mx-auto px-2">
-                                <p className="text-center text-[10px] font-black text-amber-400 uppercase tracking-widest">
-                                    ≡ƒÅå All XP Rewards Unlocked! Maintain your streak for the Golden Perk.
-                                </p>
-                            </div>
-                        );
-                        const prevCost = XP_REWARDS[XP_REWARDS.indexOf(nextReward) - 1]?.cost || 0;
-                        const progress = Math.min(((xp - prevCost) / (nextReward.cost - prevCost)) * 100, 100);
-                        const xpLeft = nextReward.cost - xp;
-                        return (
-                            <div className="max-w-2xl mx-auto px-2 space-y-1.5">
-                                <div className="flex justify-between items-center">
-                                    <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
-                                        Next: <span className="text-amber-700 font-extrabold">{nextReward.name}</span>
-                                    </p>
-                                    <p className="text-[9px] font-black text-[var(--text-primary)]">
-                                        {xp.toLocaleString()} / {nextReward.cost.toLocaleString()} XP
-                                        <span className="text-amber-700 font-extrabold ml-2">ΓÇö {xpLeft.toLocaleString()} XP to go</span>
-                                    </p>
-                                </div>
-                                <div className="w-full bg-[var(--border-color)]/50 h-2 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${progress}%` }}
-                                        transition={{ duration: 1, ease: 'easeOut' }}
-                                        className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.4)]"
-                                    />
-                                </div>
-                            </div>
-                        );
-                    })()}
+                    
 
                     {/* Tab Controls */}
                     <div className="flex justify-center gap-4 max-w-2xl mx-auto">
@@ -502,17 +459,7 @@ export default function StudentDashboard() {
                         >
                             Join Quiz
                         </button>
-                        <button
-                            onClick={() => { if (!isLoading) setActiveTab('arena'); }}
-                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
-                                activeTab === 'arena'
-                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
-                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
-                            }`}
-                            style={activeTab === 'arena' ? { color: '#ffffff' } : {}}
-                        >
-                            Game Arena
-                        </button>
+                        <button style={{display:"none"}}></button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
                             className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-1.5 ${
@@ -640,7 +587,7 @@ export default function StudentDashboard() {
                                     )}
                                 </button>
                             </motion.div>
-                        ) : activeTab === 'arena' ? (
+                        ) : false ? (
                             <motion.div
                                 key="tab-arena"
                                 initial={{ opacity: 0, y: 15 }}
@@ -838,8 +785,9 @@ export default function StudentDashboard() {
                                 transition={{ duration: 0.4 }}
                                 className="space-y-10 max-w-5xl mx-auto text-left"
                             >
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
                                     {/* Daily Missions */}
+<div style={{display:"none"}}>
                                     <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
                                         <div className="flex items-center gap-3 mb-2">
                                             <Target className="text-pink-500" size={28} />
@@ -870,7 +818,8 @@ export default function StudentDashboard() {
                                         ))}
                                     </div>
 
-                                    {/* Rewards Store */}
+                                    </div>
+{/* Rewards Store */}
                                     <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-sm">
                                         <div className="flex items-center gap-3 mb-2">
                                             <Trophy className="text-yellow-600" size={28} />
@@ -891,10 +840,10 @@ export default function StudentDashboard() {
                                             };
 
                                             return [
-                                                { id: 'perk_att', name: '1 Hour Free Attendance', cost: 1500, icon: Clock, color: 'text-[var(--text-accent)]', border: 'border-[var(--border-color)]', desc: 'Excuse yourself from 1 hour of attendance', monthlyLimit: 1 },
-                                                { id: 'perk_late', name: '1 Day Late Pass', cost: 3000, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
-                                                { id: 'perk_golden', name: 'ΓÜí Golden Perk ΓÇö Free Streak Save', cost: 0, icon: Star, color: 'text-yellow-400', border: 'border-yellow-500', desc: 'One emergency streak save that costs 0 XP. Used automatically on your next missed day.', streakOnly: 30 },
-                                            ].map(perk => {
+    { id: 'perk_late', name: 'Late Permission', cost: 700, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
+    { id: 'perk_half', name: 'Half Day Permission', cost: 900, icon: Clock, color: 'text-blue-400', border: 'border-blue-500', desc: 'Excuse yourself for a half day', monthlyLimit: 2 },
+    { id: 'perk_att', name: 'Attendance 5% hike', cost: 1300, icon: Target, color: 'text-green-400', border: 'border-green-500', desc: 'Increase your attendance by 5%', monthlyLimit: 1 },
+].map(perk => {
                                                 const isStreakLocked = perk.streakOnly && streak < perk.streakOnly;
                                                 const redemptionsThisMonth = perk.monthlyLimit ? getRedemptionsThisMonth(perk.id) : 0;
                                                 const limitReached = perk.monthlyLimit ? redemptionsThisMonth >= perk.monthlyLimit : false;
@@ -915,7 +864,7 @@ export default function StudentDashboard() {
                                                             )}
                                                             {isStreakLocked
                                                                 ? <p className="text-yellow-400 text-xs font-black italic mt-1">≡ƒöÆ Requires {perk.streakOnly}-Day Streak</p>
-                                                                : <p className="text-yellow-400 text-xs font-black italic mt-1">{perk.cost} XP</p>
+                                                                : <p className="text-yellow-400 text-xs font-black italic mt-1">{perk.cost} PTS</p>
                                                             }
                                                         </div>
                                                     </div>
