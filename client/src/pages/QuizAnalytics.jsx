@@ -415,7 +415,7 @@ export default function QuizAnalytics() {
                                 <div style={{ minWidth: `${Math.max(500, analytics.scoreDistribution.length * 60)}px`, height: '300px' }}>
                                     <Suspense fallback={<ChartFallback />}>
                                         <ScoreDistributionChart 
-                                            data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: getThemePalette()[idx % getThemePalette().length] }))} 
+                                            data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: BLUE_SHADES[idx % BLUE_SHADES.length] }))} 
                                             tooltip={<CustomTooltip />} 
                                         />
                                     </Suspense>
