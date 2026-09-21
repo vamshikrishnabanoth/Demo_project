@@ -870,12 +870,37 @@ export default function QuizAnalytics() {
                                             <td className="p-4">
                                                 <div className="flex items-center gap-2 flex-wrap">
                                                     {analytics.questionPerformance.map((q, qIdx) => {
-                                                        const studentAns = (student.answers || []).find(a => a && (
-                                                            (a.questionIndex !== undefined && Number(a.questionIndex) === qIdx) ||
-                                                            (a.questionText && q.questionText && a.questionText.toString().trim().toLowerCase() === q.questionText.toString().trim().toLowerCase())
-                                                        ));
+                                                        // Multi-strategy answer matching:
+                                                        // 1. Match by questionIndex (handles numeric & string stored values)
+                                                        // 2. Fallback: match by questionText (case-insensitive, trimmed)
+                                                        // 3. Last resort: match by array position (legacy records without questionIndex)
+                                                        const answers = student.answers || [];
+                                                        
+                                                        let studentAns = answers.find(a => a &&
+                                                            a.questionIndex !== undefined &&
+                                                            Number(a.questionIndex) === qIdx
+                                                        );
+
+                                                        if (!studentAns) {
+                                                            studentAns = answers.find(a => a &&
+                                                                a.questionText && q.questionText &&
+                                                                a.questionText.toString().trim().toLowerCase() ===
+                                                                q.questionText.toString().trim().toLowerCase()
+                                                            );
+                                                        }
+
+                                                        // Position-based fallback: if none of the above matched,
+                                                        // and ALL answers in this row lack questionIndex, use index position
+                                                        if (!studentAns) {
+                                                            const noIndexAnswers = answers.filter(a => a && a.questionIndex === undefined);
+                                                            if (noIndexAnswers.length > 0 && answers.every(a => !a || a.questionIndex === undefined)) {
+                                                                studentAns = answers[qIdx];
+                                                            }
+                                                        }
+
                                                         const isAnswered = studentAns && studentAns.selectedOption && studentAns.selectedOption !== '';
-                                                        const isCorrect = studentAns?.isCorrect === true;
+                                                        // Coerce isCorrect to boolean: handles both boolean true and string "true"
+                                                        const isCorrect = studentAns?.isCorrect === true || studentAns?.isCorrect === 'true';
 
                                                         let dotClass = 'bg-slate-100 border-2 border-slate-300 text-slate-400';
                                                         let iconText = <MinusCircle size={14} aria-hidden="true" />;
