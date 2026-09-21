@@ -218,6 +218,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
+                                transition={{ duration: 0.15, ease: 'easeOut' }}
                                 onClick={() => setIsOpen(false)}
                                 className="fixed inset-0 bg-slate-950/50 backdrop-blur-[6px] z-[99998] cursor-pointer"
                             />
@@ -230,10 +231,10 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                 }}
                             >
                                 <motion.div 
-                                    initial={{ opacity: 0, scale: 0.98, y: -8 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.98, y: -8 }}
-                                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.15, ease: 'easeOut' }}
                                     className="pointer-events-auto relative w-full bg-white border-2 border-slate-200 rounded-3xl shadow-[0_25px_60px_-15px_rgba(15,23,42,0.35)] overflow-hidden flex flex-col"
                                     style={{
                                         width: 'min(900px, 92vw)',
