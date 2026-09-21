@@ -9,8 +9,11 @@ import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import confetti from 'canvas-confetti';
 import SubmissionSequence from '../components/quiz/SubmissionSequence';
 import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
+import QuizLifelines, { LIFELINE_COSTS } from '../components/quiz/QuizLifelines';
+import HintAiModal from '../components/quiz/HintAiModal';
 import { showError, showSuccess } from '../utils/alerts';
 import useExamProctoring from '../hooks/useExamProctoring';
 import throttle from '../utils/throttle';
@@ -64,6 +67,42 @@ export default function AttemptQuiz() {
 
     const hasInitializedTimer = useRef(false);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+    // Lifelines & Gamification State
+    const [userPoints, setUserPoints] = useState(() => (authUser?.points && authUser.points > 0 ? authUser.points : 120));
+    const [quizStreak, setQuizStreak] = useState(0);
+    const [hintsUsed, setHintsUsed] = useState({}); // { [qIdx]: { fiftyFifty?: string[], askAi?: bool, extraTime?: bool } }
+    const [showAiModal, setShowAiModal] = useState(false);
+    const [addedTimeNotice, setAddedTimeNotice] = useState(false);
+
+    // Celebration Confetti on completion
+    useEffect(() => {
+        if (finalRankResult && !isReviewMode) {
+            try {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            } catch (e) {
+                // ignore
+            }
+        }
+    }, [finalRankResult, isReviewMode]);
+
+    useEffect(() => {
+        if (result && !isReviewMode && result.score > 0) {
+            try {
+                confetti({
+                    particleCount: 90,
+                    spread: 75,
+                    origin: { y: 0.6 }
+                });
+            } catch (e) {
+                // ignore
+            }
+        }
+    }, [result, isReviewMode]);
 
     useEffect(() => {
         const handleOnline = () => setIsOnline(true);
@@ -827,6 +866,94 @@ export default function AttemptQuiz() {
         console.log("Manual navigation disabled in live mode.");
     };
 
+    // Lifeline Action Handlers
+    const handleUseFiftyFifty = useCallback(() => {
+        const currentQ = quiz?.questions?.[currentQuestion];
+        if (!currentQ || !currentQ.options || currentQ.options.length < 4) {
+            return toast.error('50/50 requires at least 4 options');
+        }
+        if (userPoints < LIFELINE_COSTS.FIFTY_FIFTY) {
+            return toast.error(`Insufficient points! Requires ${LIFELINE_COSTS.FIFTY_FIFTY} pts`);
+        }
+        if (hintsUsed[currentQuestion]?.fiftyFifty) {
+            return toast('50/50 already used for this question', { icon: 'ℹ️' });
+        }
+
+        const correctAnswer = currentQ.correctAnswer;
+        let wrongOptions = currentQ.options.filter(opt => opt !== correctAnswer);
+        if (wrongOptions.length < 2) {
+            wrongOptions = currentQ.options.slice(1);
+        }
+        const toEliminate = wrongOptions.slice(0, 2);
+
+        setUserPoints(prev => Math.max(0, prev - LIFELINE_COSTS.FIFTY_FIFTY));
+        setHintsUsed(prev => ({
+            ...prev,
+            [currentQuestion]: {
+                ...prev[currentQuestion],
+                fiftyFifty: toEliminate
+            }
+        }));
+        toast.success(`50/50 Activated: 2 choices eliminated (-${LIFELINE_COSTS.FIFTY_FIFTY} pts)`);
+    }, [quiz, currentQuestion, userPoints, hintsUsed]);
+
+    const handleUseAskAi = useCallback(() => {
+        if (userPoints < LIFELINE_COSTS.ASK_AI) {
+            return toast.error(`Insufficient points! Requires ${LIFELINE_COSTS.ASK_AI} pts`);
+        }
+        if (hintsUsed[currentQuestion]?.askAi) {
+            setShowAiModal(true);
+            return;
+        }
+
+        setUserPoints(prev => Math.max(0, prev - LIFELINE_COSTS.ASK_AI));
+        setHintsUsed(prev => ({
+            ...prev,
+            [currentQuestion]: {
+                ...prev[currentQuestion],
+                askAi: true
+            }
+        }));
+        setShowAiModal(true);
+        toast.success(`Neural Hint unlocked (-${LIFELINE_COSTS.ASK_AI} pts)`);
+    }, [userPoints, hintsUsed, currentQuestion]);
+
+    const handleUseExtraTime = useCallback(() => {
+        if (userPoints < LIFELINE_COSTS.EXTRA_TIME) {
+            return toast.error(`Insufficient points! Requires ${LIFELINE_COSTS.EXTRA_TIME} pts`);
+        }
+        if (hintsUsed[currentQuestion]?.extraTime) {
+            return toast('Extra time already added for this question', { icon: 'ℹ️' });
+        }
+
+        setUserPoints(prev => Math.max(0, prev - LIFELINE_COSTS.EXTRA_TIME));
+        setTimeLeft(prev => prev + 15);
+        setAddedTimeNotice(true);
+        setTimeout(() => setAddedTimeNotice(false), 2500);
+        setHintsUsed(prev => ({
+            ...prev,
+            [currentQuestion]: {
+                ...prev[currentQuestion],
+                extraTime: true
+            }
+        }));
+        toast.success(`+15 Seconds added to clock! (-${LIFELINE_COSTS.EXTRA_TIME} pts)`);
+    }, [userPoints, hintsUsed, currentQuestion]);
+
+    const handleUseSkip = useCallback(() => {
+        if (userPoints < LIFELINE_COSTS.SKIP) {
+            return toast.error(`Insufficient points! Requires ${LIFELINE_COSTS.SKIP} pts`);
+        }
+        if (!quiz || currentQuestion >= quiz.questions.length - 1) {
+            return toast('Cannot skip the final question', { icon: '⚠️' });
+        }
+
+        setUserPoints(prev => Math.max(0, prev - LIFELINE_COSTS.SKIP));
+        setCurrentQuestion(prev => prev + 1);
+        setTimeLeft(quiz?.timerPerQuestion || 30);
+        toast(`Skipped to next question (-${LIFELINE_COSTS.SKIP} pts)`, { icon: '⏩' });
+    }, [userPoints, quiz, currentQuestion]);
+
     async function submitQuiz() {
         if (submitting || isReviewMode) return;
         setSubmitting(true);
@@ -942,18 +1069,30 @@ export default function AttemptQuiz() {
                         </p>
                     </div>
 
-                    {/* Rank & Score Panel */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+                    {/* Rank, Score & Gamification Panel */}
+                    <div className="grid grid-cols-2 gap-3.5">
+                        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
                             <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mb-1">Your Rank</p>
-                            <p className="text-3xl sm:text-4xl font-black text-amber-600 italic">
+                            <p className="text-2xl sm:text-3xl font-black text-amber-600 italic">
                                 #{finalRankResult.rank} <span className="text-xs text-[var(--text-secondary)] font-semibold uppercase not-italic">/ {finalRankResult.totalParticipants}</span>
                             </p>
                         </div>
-                        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+                        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
                             <p className="text-[10px] text-[var(--text-secondary)] font-black uppercase tracking-[0.2em] mb-1">Score Obtained</p>
-                            <p className="text-3xl sm:text-4xl font-black text-indigo-600 italic">
+                            <p className="text-2xl sm:text-3xl font-black text-indigo-600 italic">
                                 {finalRankResult.score} <span className="text-xs text-[var(--text-secondary)] font-semibold uppercase not-italic">/ {finalRankResult.maxPossibleScore || (finalRankResult.totalQuestions * 10)}</span>
+                            </p>
+                        </div>
+                        <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-3.5 shadow-xs">
+                            <p className="text-[10px] text-amber-600 font-black uppercase tracking-[0.2em] mb-0.5">Points Left</p>
+                            <p className="text-xl sm:text-2xl font-black text-amber-700 italic">
+                                {userPoints} <span className="text-[10px] font-bold uppercase not-italic">PTS</span>
+                            </p>
+                        </div>
+                        <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-3.5 shadow-xs">
+                            <p className="text-[10px] text-rose-600 font-black uppercase tracking-[0.2em] mb-0.5">Streak Achieved</p>
+                            <p className="text-xl sm:text-2xl font-black text-rose-600 italic">
+                                {quizStreak > 0 ? `${quizStreak}x` : '—'} <span className="text-[10px] font-bold uppercase not-italic">FLAME</span>
                             </p>
                         </div>
                     </div>
@@ -1209,9 +1348,23 @@ export default function AttemptQuiz() {
                 </div>
                 <div className="flex items-center gap-4">
                     {timeLeft > 0 && !isReviewMode && !result && (
-                        <div className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1.5 border shadow-sm ${timeLeft < 60 ? 'bg-red-500/20 text-red-600 border-red-500/40 animate-pulse' : 'bg-emerald-500/20 text-emerald-700 border-emerald-500/40'}`}>
-                            <Clock size={14} className={timeLeft < 60 ? 'animate-bounce' : ''} />
-                            <span>{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
+                        <div className="relative">
+                            <div className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1.5 border shadow-sm ${timeLeft < 60 ? 'bg-red-500/20 text-red-600 border-red-500/40 animate-pulse' : 'bg-emerald-500/20 text-emerald-700 border-emerald-500/40'}`}>
+                                <Clock size={14} className={timeLeft < 60 ? 'animate-bounce' : ''} />
+                                <span>{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
+                            </div>
+                            <AnimatePresence>
+                                {addedTimeNotice && (
+                                    <motion.span
+                                        initial={{ opacity: 0, y: 5, scale: 0.8 }}
+                                        animate={{ opacity: 1, y: -18, scale: 1.05 }}
+                                        exit={{ opacity: 0, y: -26 }}
+                                        className="absolute -top-2 right-0 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-md pointer-events-none"
+                                    >
+                                        +15s
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
                         </div>
                     )}
                     {isReviewMode && (
@@ -1340,6 +1493,22 @@ export default function AttemptQuiz() {
                         </div>
                         <AdaptiveQuestionContainer questionText={question.questionText} />
 
+                        {!isReviewMode && (
+                            <QuizLifelines
+                                points={userPoints}
+                                streak={quizStreak}
+                                fiftyFiftyUsed={Boolean(hintsUsed[currentQuestion]?.fiftyFifty)}
+                                askAiUsed={Boolean(hintsUsed[currentQuestion]?.askAi)}
+                                extraTimeUsed={Boolean(hintsUsed[currentQuestion]?.extraTime)}
+                                disabled={isWaiting || submitting || (quiz?.isLive && answeredQuestions.has(currentQuestion))}
+                                optionsCount={question.options?.length || 0}
+                                onUseFiftyFifty={handleUseFiftyFifty}
+                                onUseAskAi={handleUseAskAi}
+                                onUseExtraTime={handleUseExtraTime}
+                                onUseSkip={handleUseSkip}
+                            />
+                        )}
+
                         {(!question.options || question.options.length <= 1) ? (
                             <div className="space-y-4 mb-4 relative z-10">
                                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Type Your Answer Below</label>
@@ -1358,6 +1527,7 @@ export default function AttemptQuiz() {
                                 {question.options.map((option, idx) => {
                                     const isSelected = answers[currentQuestion] === option;
                                     const isCorrect = questionResult?.correctOption === option;
+                                    const isEliminated = Boolean(hintsUsed[currentQuestion]?.fiftyFifty?.includes(option));
 
                                     // Theme-appropriate option styles
                                     const kahootStyles = [
@@ -1387,6 +1557,10 @@ export default function AttemptQuiz() {
                                             textColor = '#94a3b8';
                                             shapeFill = '#94a3b8';
                                         }
+                                    } else if (isEliminated) {
+                                        containerClass = 'bg-slate-100/60 border-dashed border-red-200 text-slate-400 line-through opacity-40 cursor-not-allowed pointer-events-none grayscale';
+                                        textColor = '#94a3b8';
+                                        shapeFill = '#cbd5e1';
                                     } else if (isSelected) {
                                         containerClass = 'bg-amber-500/10 border-2 border-amber-500 ring-4 ring-amber-500/20 shadow-md scale-[0.98]';
                                         textColor = '#0f172a';
@@ -1399,16 +1573,21 @@ export default function AttemptQuiz() {
                                     return (
                                         <motion.button
                                             key={`opt-${idx}-${option}`}
-                                            disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
+                                            disabled={isReviewMode || isWaiting || submitting || isSubmittedLive || isEliminated}
                                             onClick={() => handleOptionSelect(option)}
                                             style={{ willChange: 'transform' }}
                                             animate={{
                                                 scale: isSubmittedLive && isSelected ? 1.04 : isSelected ? 0.98 : 1,
-                                                opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.75 : 1
+                                                opacity: isEliminated ? 0.4 : answers[currentQuestion] && !isSelected && !isReviewMode ? 0.75 : 1
                                             }}
                                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                                             className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
                                         >
+                                            {isEliminated && (
+                                                <div className="absolute top-3 right-3 bg-red-500/10 text-red-600 border border-red-500/20 text-[9px] font-black uppercase px-2 py-0.5 rounded-full pointer-events-none">
+                                                    50/50 Eliminated
+                                                </div>
+                                            )}
                                             <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected && !isReviewMode ? 'bg-amber-500 text-white shadow-xs' : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
                                                 <ShapeIcon size={24} fill={shapeFill} strokeWidth={0} />
                                             </div>
@@ -1795,6 +1974,16 @@ export default function AttemptQuiz() {
                     </div>
                 </div>
             )}
+
+            {/* AI Conceptual Hint Modal */}
+            <HintAiModal
+                isOpen={showAiModal}
+                onClose={() => setShowAiModal(false)}
+                questionText={question?.questionText}
+                explanation={question?.explanation}
+                hint={question?.hint}
+                cost={LIFELINE_COSTS.ASK_AI}
+            />
         </div >
     );
 }
