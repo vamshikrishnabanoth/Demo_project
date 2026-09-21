@@ -3,6 +3,7 @@ import {
     PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
     AreaChart, Area
 } from 'recharts';
+import { BIN_COLORS } from '../../utils/binColors';
 
 export function ScoreDistributionChart({ data, tooltip, name = "Students" }) {
     return (
@@ -14,7 +15,7 @@ export function ScoreDistributionChart({ data, tooltip, name = "Students" }) {
                 <Tooltip content={tooltip} />
                 <Bar dataKey="count" name={name} radius={[8, 8, 0, 0]}>
                     {(data || []).map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill || 'var(--bg-accent)'} />
+                        <Cell key={`cell-${index}`} fill={entry.fill || BIN_COLORS[index % BIN_COLORS.length]} />
                     ))}
                 </Bar>
             </BarChart>
@@ -99,9 +100,10 @@ export function QuestionPerformanceChart({ data, themePalette, onQuestionClick, 
                 <YAxis stroke="#334155" tick={{ fill: '#334155', fontSize: 12, fontWeight: 700 }} tickLine={false} axisLine={false} />
                 <Tooltip content={CustomTooltip ? <CustomTooltip /> : undefined} cursor={{ fill: 'rgba(19,62,135,0.06)' }} />
                 <Bar dataKey="correct" name="Correct Answers" radius={[8, 8, 0, 0]} maxBarSize={50}>
-                    {data.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={themePalette[index % themePalette.length]} />
-                    ))}
+                    {data.map((entry, index) => {
+                        const palette = themePalette || BIN_COLORS;
+                        return <Cell key={`cell-${index}`} fill={entry.fill || palette[index % palette.length]} />;
+                    })}
                 </Bar>
             </BarChart>
         </ResponsiveContainer>

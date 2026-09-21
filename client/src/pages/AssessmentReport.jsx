@@ -16,6 +16,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import PremiumError from '../components/PremiumError';
 import { uiTerminology } from '../utils/uiTerminology';
+import { BIN_COLORS } from '../utils/binColors';
 
 const AssessmentReport = () => {
     const { id } = useParams();
@@ -73,19 +74,7 @@ const AssessmentReport = () => {
         { name: 'Incorrect', value: answers.filter(a => !a.isCorrect).length }
     ];
     const COLORS = ['#10b981', '#f43f5e'];
-
-    // Theme 1: Monochromatic Shades derived from Celestial Blue
-    const BLUE_SHADES = [
-        '#133E87', '#1d4ed8', '#2563eb', '#0284c7', '#3b82f6', '#0369a1', '#1e40af', '#0e7490', '#38bdf8', '#172554'
-    ];
-
-    // Theme 2: Monochromatic Shades derived from Tiranga Saffron
-    const SAFFRON_SHADES = [
-        '#D96B27', '#ea580c', '#f97316', '#c2410c', '#b84c12', '#fb923c', '#9a3412', '#d97706', '#ff8c00', '#7c2d12'
-    ];
-
-    const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
-    const GRAPH_SHADES = isSaffronTheme ? SAFFRON_SHADES : BLUE_SHADES;
+    const GRAPH_SHADES = BIN_COLORS;
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {

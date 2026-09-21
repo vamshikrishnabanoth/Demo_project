@@ -25,6 +25,7 @@ import PromoteModal from '../components/admin/PromoteModal';
 import StudentProfileModal from '../components/admin/StudentProfileModal';
 import { showConfirm, showSuccess } from '../utils/alerts';
 import { getSectionsForBranch } from '../utils/sectionUtils';
+import { BIN_COLORS } from '../utils/binColors';
 
 function getGreeting() {
     const hour = new Date().getHours();
@@ -376,7 +377,7 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
                                     }} />
                                     <Bar dataKey="value" radius={[10, 10, 0, 0]}>
                                         {stats.charts.yearDistribution.map((entry, index) => (
-                                            <Cell key={`year-bar-${entry.name}-${index}`} fill={['#fed7aa', '#bfdbfe', '#bbf7d0', '#ddd6fe'][index % 4]} />
+                                            <Cell key={`year-bar-${entry.name}-${index}`} fill={BIN_COLORS[index % BIN_COLORS.length]} />
                                         ))}
                                     </Bar>
                                 </BarChart>

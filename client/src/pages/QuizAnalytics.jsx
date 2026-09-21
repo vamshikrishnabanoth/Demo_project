@@ -34,35 +34,10 @@ const ChartFallback = () => (
     </div>
 );
 
-// Theme 1: Monochromatic Shades derived from Celestial Blue
-const BLUE_SHADES = [
-    '#133E87', '#1d4ed8', '#2563eb', '#0284c7', '#3b82f6', '#0369a1', '#1e40af', '#0e7490', '#38bdf8', '#172554'
-];
-
-// Theme 2: Monochromatic Shades derived from Tiranga Saffron
-const SAFFRON_SHADES = [
-    '#D96B27', '#ea580c', '#f97316', '#c2410c', '#b84c12', '#fb923c', '#9a3412', '#d97706', '#ff8c00', '#7c2d12'
-];
-
-// Section Mastery bin colors
-const SECTION_MASTERY_COLORS = [
-    '#FF0052',
-    '#FFD400',
-    '#00C68D',
-    '#0055DA',
-    'rgb(255, 91, 91)',
-    'rgb(240, 255, 195)',
-    'rgb(156, 207, 255)',
-    'rgb(104, 90, 255)',
-    'rgb(0, 234, 211)',
-    'rgb(255, 245, 183)',
-    'rgb(255, 68, 159)',
-    'rgb(0, 95, 153)'
-];
+import { BIN_COLORS, SECTION_MASTERY_COLORS } from '../utils/binColors';
 
 const getThemePalette = () => {
-    const isSaffronTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'india';
-    return isSaffronTheme ? SAFFRON_SHADES : BLUE_SHADES;
+    return BIN_COLORS;
 };
 const PIE_COLORS = ['#10b981', '#ef4444'];
 
@@ -431,7 +406,7 @@ export default function QuizAnalytics() {
                                 <div style={{ minWidth: `${Math.max(500, analytics.scoreDistribution.length * 60)}px`, height: '300px' }}>
                                     <Suspense fallback={<ChartFallback />}>
                                         <ScoreDistributionChart 
-                                            data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: BLUE_SHADES[idx % BLUE_SHADES.length] }))} 
+                                            data={(analytics.scoreDistribution || []).map((entry, idx) => ({ ...entry, fill: BIN_COLORS[idx % BIN_COLORS.length] }))} 
                                             tooltip={<CustomTooltip />} 
                                         />
                                     </Suspense>

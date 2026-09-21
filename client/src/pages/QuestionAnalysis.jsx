@@ -5,6 +5,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import toast from 'react-hot-toast';
 import AuthContext from '../context/AuthContext';
+import { BIN_COLORS } from '../utils/binColors';
 
 const formatDuration = (seconds) => {
     if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return '—';
@@ -139,7 +140,7 @@ export default function QuestionAnalysis() {
     ];
 
     const qIdx = parseInt(questionIndex) || 0;
-    const optionColors = ['#425B9A', '#76C0EC', '#FFF6DC', '#FF95A5'];
+    const optionColors = BIN_COLORS;
 
     // Filters for lists
     const filteredCorrect = studentInsights.correct.filter(name =>
