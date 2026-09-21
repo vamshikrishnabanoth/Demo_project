@@ -158,20 +158,31 @@ export default function GlobalSearch({ variant = 'navbar' }) {
     return (
         <>
             {variant === 'dashboard' ? (
-                /* Premium Full-Width Dashboard Search Trigger */
+                /* Production-Grade Floating Search Bar Control */
                 <div 
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Search quizzes, students, topics, questions (Press Ctrl+K)"
                     onClick={() => setIsOpen(true)}
-                    className="w-full max-w-none px-4 sm:px-6 h-12 sm:h-14 bg-[var(--bg-secondary)]/45 border border-[var(--border-color)] hover:border-[var(--text-accent)]/30 rounded-2xl sm:rounded-[1.25rem] cursor-pointer flex items-center justify-between transition-all duration-300 hover:scale-[1.005] hover:bg-[var(--bg-secondary)]/70 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] group relative z-20 select-none"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setIsOpen(true);
+                        }
+                    }}
+                    className="w-full h-12 sm:h-[52px] md:h-[54px] bg-white border border-slate-200/90 hover:border-slate-300 focus-visible:border-slate-800 focus-visible:ring-2 focus-visible:ring-slate-900/10 rounded-2xl px-4 sm:px-5 cursor-pointer flex items-center justify-between transition-all duration-200 ease-out shadow-[0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_4px_16px_rgba(15,23,42,0.07)] group select-none outline-none"
                 >
-                    <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1 pr-2">
-                        <Search size={18} className="text-[var(--text-secondary)]/45 group-hover:text-[var(--text-accent)] transition-colors shrink-0" />
-                        <span className="text-xs sm:text-sm font-semibold text-[var(--text-secondary)]/50 group-hover:text-[var(--text-primary)] transition-colors truncate">
-                            <span className="inline sm:hidden">Search quizzes, topics...</span>
+                    <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1 pr-2">
+                        <Search size={19} className="text-slate-400 group-hover:text-slate-700 transition-colors shrink-0" aria-hidden="true" />
+                        <span className="text-xs sm:text-sm font-medium text-slate-400 group-hover:text-slate-600 transition-colors truncate">
+                            <span className="inline sm:hidden">Search quizzes, students, topics...</span>
                             <span className="hidden sm:inline">Search by title, student, subject, topic, questions...</span>
                         </span>
                     </div>
-                    <div className="hidden sm:flex items-center gap-2 shrink-0">
-                        <kbd className="bg-[var(--bg-primary)]/80 border border-[var(--border-color)] px-2.5 py-1 rounded-lg text-[9px] font-black text-[var(--text-secondary)]/40 uppercase shadow-sm tracking-wider group-hover:border-[var(--text-accent)]/30 transition-all">Ctrl K</kbd>
+                    <div className="hidden sm:inline-flex items-center gap-1 shrink-0">
+                        <kbd className="inline-flex items-center bg-slate-100/90 border border-slate-200/80 px-2.5 py-1 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-wider group-hover:bg-slate-200/60 group-hover:text-slate-700 transition-colors shadow-2xs">
+                            Ctrl K
+                        </kbd>
                     </div>
                 </div>
             ) : (
@@ -179,17 +190,17 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                     {/* Desktop Search Trigger bar */}
                     <div 
                         onClick={() => setIsOpen(true)}
-                        className="hidden lg:flex items-center gap-3 bg-[var(--bg-secondary)] hover:bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-[var(--text-accent)]/40 px-4 py-2 rounded-2xl cursor-pointer w-64 transition-all duration-300 shadow-inner group"
+                        className="hidden lg:flex items-center gap-3 bg-[var(--bg-secondary)] hover:bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-slate-400/60 px-4 py-2 rounded-2xl cursor-pointer w-64 transition-all duration-200 shadow-xs group"
                     >
-                        <Search size={16} className="text-[var(--text-secondary)]/50 group-hover:text-[var(--text-accent)] transition-colors" />
+                        <Search size={16} className="text-[var(--text-secondary)]/50 group-hover:text-slate-700 transition-colors" />
                         <span className="text-xs font-bold text-[var(--text-secondary)]/60 group-hover:text-[var(--text-primary)] flex-1 transition-colors select-none">Search quizzes, students...</span>
-                        <kbd className="bg-[var(--bg-primary)] border border-[var(--border-color)] px-2 py-0.5 rounded-md text-[10px] font-black text-[var(--text-secondary)]/50 uppercase shadow-sm select-none">Ctrl K</kbd>
+                        <kbd className="bg-[var(--bg-primary)] border border-[var(--border-color)] px-2 py-0.5 rounded-md text-[10px] font-black text-[var(--text-secondary)]/50 uppercase shadow-xs select-none">Ctrl K</kbd>
                     </div>
 
                     {/* Mobile Search Icon Trigger */}
                     <button 
                         onClick={() => setIsOpen(true)}
-                        className="lg:hidden p-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-2xl border border-[var(--border-color)] hover:border-[var(--text-accent)]/30 transition-all duration-300"
+                        className="lg:hidden p-3 bg-white text-slate-600 hover:text-slate-900 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all duration-200 shadow-xs"
                         aria-label="Search site"
                     >
                         <Search size={20} />
@@ -208,14 +219,14 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 onClick={() => setIsOpen(false)}
-                                className="fixed inset-0 bg-black/45 backdrop-blur-[8px] z-[99998] cursor-pointer"
+                                className="fixed inset-0 bg-slate-950/50 backdrop-blur-[6px] z-[99998] cursor-pointer"
                             />
 
                             {/* Viewport-relative Centered Search Container Card */}
                             <div 
                                 className="fixed inset-x-0 flex justify-center px-4 pointer-events-none z-[99999]"
                                 style={{
-                                    top: 'clamp(70px, 8vh, 110px)',
+                                    top: 'clamp(60px, 8vh, 100px)',
                                 }}
                             >
                                 <motion.div 
@@ -223,7 +234,7 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.98, y: -8 }}
                                     transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                                    className="pointer-events-auto relative w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85),0_0_40px_-5px_var(--bg-accent-glow)] overflow-hidden flex flex-col"
+                                    className="pointer-events-auto relative w-full bg-white border-2 border-slate-200 rounded-3xl shadow-[0_25px_60px_-15px_rgba(15,23,42,0.35)] overflow-hidden flex flex-col"
                                     style={{
                                         width: 'min(900px, 92vw)',
                                         maxHeight: '80dvh',
@@ -232,15 +243,15 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     onKeyDown={handleKeyDown}
                                 >
                             {/* Input Field wrapper */}
-                            <div className="flex items-center gap-3 px-4 sm:px-6 min-h-16 py-3 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] relative select-none rounded-t-3xl shrink-0">
-                                <Search size={20} className="text-[var(--text-accent)] shrink-0 opacity-80" />
+                            <div className="flex items-center gap-3 px-4 sm:px-6 min-h-16 py-3 border-b border-slate-200 bg-white relative select-none rounded-t-3xl shrink-0">
+                                <Search size={20} className="text-slate-400 shrink-0" />
                                 <input 
                                     ref={inputRef}
                                     type="text"
-                                    placeholder="Search by title, student, subject, topic, faculty..."
+                                    placeholder="Search by title, student, subject, topic, questions..."
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
-                                    className="flex-1 bg-transparent global-search-input text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 font-bold focus:outline-none text-base border-none outline-none ring-0 focus:ring-0 p-0 h-full leading-normal"
+                                    className="flex-1 bg-transparent global-search-input text-slate-900 placeholder:text-slate-400 font-bold focus:outline-none text-base border-none outline-none ring-0 focus:ring-0 p-0 h-full leading-normal"
                                     aria-autocomplete="list"
                                     aria-controls="search-results-listbox"
                                 />

@@ -446,8 +446,8 @@
 }
 
 .workspace-staff .staff-search-strip {
-  background: rgba(255, 255, 255, 0.88);
-  border-bottom: 1px solid var(--ws-line);
+  background: transparent;
+  border: none;
   box-shadow: none;
 }
 

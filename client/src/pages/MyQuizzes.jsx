@@ -432,7 +432,7 @@ export default function MyQuizzes() {
                                 placeholder="Search quizzes..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-2xl py-2.5 pl-10 pr-4 text-xs font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#f97316] transition-all"
+                                className="w-full bg-white border border-slate-200/90 hover:border-slate-300 rounded-2xl py-2.5 pl-10 pr-4 text-xs font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-2xs"
                             />
                         </div>
                     </div>

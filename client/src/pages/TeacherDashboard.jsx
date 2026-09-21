@@ -25,7 +25,7 @@ export default function TeacherDashboard() {
 
     return (
         <DashboardLayout role="teacher">
-            <div className="max-w-[100rem] mx-auto px-6 py-6 relative">
+            <div className="w-full relative">
                 <div className="space-y-4">
                     <div className="flex items-center gap-2.5 px-2">
                         <Cpu className="text-[var(--text-accent)]" size={18} />

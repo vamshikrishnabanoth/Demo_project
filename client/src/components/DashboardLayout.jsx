@@ -254,17 +254,10 @@ export default function DashboardLayout({ children, role }) {
                 </div>
             </header>
 
-            {/* ── DEDICATED TOP SEARCH SECTION (ISOLATED) ──────────────────── */}
+            {/* ── FLOATING TOP SEARCH CONTROL ──────────────────── */}
             {location.pathname === '/teacher-dashboard' && (
-                <div 
-                    className="staff-search-strip w-full relative z-[90] bg-[var(--bg-primary)]/90 backdrop-blur-[18px]"
-                    style={{
-                        paddingTop: '24px',
-                        paddingBottom: '24px',
-                        marginBottom: '32px',
-                    }}
-                >
-                    <div className="w-full max-w-[900px] mx-auto px-4 sm:px-6">
+                <div className="w-full relative z-20 pt-5 sm:pt-6 pb-0 px-4 sm:px-6 lg:px-10">
+                    <div className="w-full max-w-[900px] mx-auto">
                         <GlobalSearch variant="dashboard" />
                     </div>
                 </div>
