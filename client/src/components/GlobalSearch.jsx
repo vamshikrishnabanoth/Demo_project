@@ -43,11 +43,22 @@ export default function GlobalSearch({ variant = 'navbar' }) {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // Focus input when modal opens
+    // Focus input and manage background scroll when modal opens
     useEffect(() => {
+        let timer;
         if (isOpen) {
-            setTimeout(() => inputRef.current?.focus(), 100);
+            const originalOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+
+            timer = setTimeout(() => {
+                inputRef.current?.focus({ preventScroll: true });
+            }, 60);
             setActiveIndex(0);
+
+            return () => {
+                if (timer) clearTimeout(timer);
+                document.body.style.overflow = originalOverflow;
+            };
         } else {
             setQuery('');
             setResults({ quizzes: [], users: [] });
@@ -212,72 +223,84 @@ export default function GlobalSearch({ variant = 'navbar' }) {
             {createPortal(
                 <AnimatePresence>
                     {isOpen && (
-                        <>
+                        <motion.div
+                            key="global-search-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                            className="fixed inset-0 z-[99999] flex flex-col items-center justify-start px-4 overflow-hidden"
+                            style={{
+                                paddingTop: 'clamp(60px, 8vh, 100px)',
+                            }}
+                            onClick={() => setIsOpen(false)}
+                        >
                             {/* Backdrop Blur Overlay */}
-                            <motion.div 
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.15, ease: 'easeOut' }}
-                                onClick={() => setIsOpen(false)}
-                                className="fixed inset-0 bg-slate-950/50 backdrop-blur-[6px] z-[99998] cursor-pointer"
+                            <div 
+                                className="fixed inset-0 bg-slate-950/50 backdrop-blur-[6px] -z-10 cursor-pointer"
+                                aria-hidden="true"
                             />
 
                             {/* Viewport-relative Centered Search Container Card */}
-                            <div 
-                                className="fixed inset-x-0 flex justify-center px-4 pointer-events-none z-[99999]"
+                            <motion.div 
+                                key="global-search-modal-card"
+                                initial={{ opacity: 0, scale: 0.98, y: -6 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.98, y: -6 }}
+                                transition={{ duration: 0.15, ease: 'easeOut' }}
+                                className="pointer-events-auto relative w-full bg-white border-2 border-slate-200 rounded-3xl shadow-[0_25px_60px_-15px_rgba(15,23,42,0.35)] overflow-hidden flex flex-col"
                                 style={{
-                                    top: 'clamp(60px, 8vh, 100px)',
+                                    width: 'min(900px, 92vw)',
+                                    maxHeight: '80dvh',
                                 }}
+                                ref={modalRef}
+                                onKeyDown={handleKeyDown}
+                                onClick={(e) => e.stopPropagation()}
                             >
-                                <motion.div 
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                                    className="pointer-events-auto relative w-full bg-white border-2 border-slate-200 rounded-3xl shadow-[0_25px_60px_-15px_rgba(15,23,42,0.35)] overflow-hidden flex flex-col"
-                                    style={{
-                                        width: 'min(900px, 92vw)',
-                                        maxHeight: '80dvh',
-                                    }}
-                                    ref={modalRef}
-                                    onKeyDown={handleKeyDown}
-                                >
-                            {/* Input Field wrapper */}
-                            <div className="flex items-center gap-3 px-4 sm:px-6 min-h-16 py-3 border-b border-slate-200 bg-white relative select-none rounded-t-3xl shrink-0">
-                                <Search size={20} className="text-slate-400 shrink-0" />
-                                <input 
-                                    ref={inputRef}
-                                    type="text"
-                                    placeholder="Search by title, student, subject, topic, questions..."
-                                    value={query}
-                                    onChange={(e) => setQuery(e.target.value)}
-                                    className="flex-1 bg-transparent global-search-input text-slate-900 placeholder:text-slate-400 font-bold focus:outline-none text-base border-none outline-none ring-0 focus:ring-0 p-0 h-full leading-normal"
-                                    aria-autocomplete="list"
-                                    aria-controls="search-results-listbox"
-                                />
-                                <div className="flex items-center gap-3 shrink-0">
-                                    {loading && (
-                                        <Loader2 className="animate-spin text-[var(--text-accent)] shrink-0" size={18} />
-                                    )}
-                                    {query && !loading && (
+                                {/* Input Field wrapper */}
+                                <div className="flex items-center gap-3 px-4 sm:px-6 min-h-16 py-3 border-b border-slate-200 bg-white relative select-none rounded-t-3xl shrink-0">
+                                    <Search size={20} className="text-slate-400 shrink-0" />
+                                    <input 
+                                        ref={inputRef}
+                                        type="text"
+                                        placeholder="Search by title, student, subject, topic, questions..."
+                                        value={query}
+                                        onChange={(e) => setQuery(e.target.value)}
+                                        className="flex-1 bg-transparent global-search-input text-slate-900 placeholder:text-slate-400 font-bold focus:outline-none text-base border-none outline-none ring-0 focus:ring-0 p-0 h-full leading-normal"
+                                        aria-autocomplete="list"
+                                        aria-controls="search-results-listbox"
+                                    />
+                                    <div className="flex items-center gap-3 shrink-0">
+                                        {loading && (
+                                            <Loader2 className="animate-spin text-[var(--text-accent)] shrink-0" size={18} />
+                                        )}
+                                        {query && !loading && (
+                                            <button 
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setQuery('');
+                                                    inputRef.current?.focus({ preventScroll: true });
+                                                }}
+                                                className="p-1.5 hover:bg-[var(--bg-primary)] rounded-lg transition-colors text-[var(--text-secondary)] shrink-0 flex items-center justify-center cursor-pointer"
+                                                title="Clear search"
+                                            >
+                                                <XIcon size={16} />
+                                            </button>
+                                        )}
                                         <button 
-                                            onClick={() => setQuery('')}
-                                            className="p-1.5 hover:bg-[var(--bg-primary)] rounded-lg transition-colors text-[var(--text-secondary)] shrink-0 flex items-center justify-center"
-                                            title="Clear search"
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsOpen(false);
+                                            }}
+                                            className="text-[10px] font-black uppercase text-[var(--text-primary)] tracking-wider bg-[var(--bg-primary)] border border-[var(--border-color)] px-3 py-1.5 rounded-lg select-none shadow-sm hover:border-[var(--text-accent)] transition-all cursor-pointer active:scale-95"
+                                            title="Close search"
                                         >
-                                            <XIcon size={16} />
+                                            ESC
                                         </button>
-                                    )}
-                                    <button 
-                                        onClick={() => setIsOpen(false)}
-                                        className="text-[10px] font-black uppercase text-[var(--text-primary)] tracking-wider bg-[var(--bg-primary)] border border-[var(--border-color)] px-3 py-1.5 rounded-lg select-none shadow-sm hover:border-[var(--text-accent)] transition-all cursor-pointer active:scale-95"
-                                        title="Close search"
-                                    >
-                                        ESC
-                                    </button>
+                                    </div>
                                 </div>
-                            </div>
 
                             {/* Suggestions and Results listbox */}
                             <div className="flex-1 overflow-y-auto premium-scrollbar p-6 space-y-6 max-h-[45vh]" id="search-results-listbox" role="listbox">
@@ -451,9 +474,8 @@ export default function GlobalSearch({ variant = 'navbar' }) {
                                     <span>Typo-Tolerant Engine Active</span>
                                 </div>
                             </div>
-                                </motion.div>
-                            </div>
-                        </>
+                            </motion.div>
+                        </motion.div>
                     )}
                 </AnimatePresence>,
                 document.body

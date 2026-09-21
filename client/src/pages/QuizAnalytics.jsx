@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 
 import { SecurityDashboard } from '../components/SecurityDashboard';
+import AnalyticsMetricCard from '../components/quiz/AnalyticsMetricCard';
 
 // Defer Recharts loading completely until QuizAnalytics mounts (saves 375 KB initial bundle)
 const ScoreDistributionChart = lazy(() => import('../components/quiz/LazyCharts').then(m => ({ default: m.ScoreDistributionChart })));
@@ -314,13 +315,13 @@ export default function QuizAnalytics() {
 
     return (
         <DashboardLayout role={userRole}>
-            <div className="space-y-12 pb-20 relative">
+            <div className="space-y-6 sm:space-y-7 pb-20 relative">
                 {/* Background effects — theme-aware */}
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none -z-10" style={{ background: 'var(--aurora-glow-1)' }}></div>
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none -z-10" style={{ background: 'var(--aurora-glow-2)' }}></div>
 
                 {/* Header */}
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 border-b border-white/10 pb-8">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-5 border-b border-white/10 pb-5 sm:pb-6">
                     <div>
                         <div className="flex flex-wrap items-center gap-4 mb-4">
                             {!isStudent && (
@@ -360,153 +361,66 @@ export default function QuizAnalytics() {
                     </div>
                 </div>
 
-                {/* KPI Overview Cards — Semantic Color System */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+                {/* KPI Overview Cards — Disciplined Semantic Color System (Compact Height ~110-120px) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5">
                     {(isStudent ? [
                         {
                             title: 'Your Score',
                             value: analytics.studentAttempt ? `${analytics.studentAttempt.score} PTS` : 'N/A',
                             icon: Award,
-                            accent: {
-                                iconBg: 'bg-amber-50',
-                                iconBorder: 'border-amber-200',
-                                iconColor: 'text-amber-600',
-                                label: 'text-amber-700',
-                                number: 'text-amber-800',
-                                border: 'border-amber-200/70',
-                                hoverBorder: 'hover:border-amber-300',
-                                topLine: 'bg-amber-400',
-                            }
+                            color: 'orange',
                         },
                         {
                             title: 'Total Questions',
                             value: analytics.totalQuestions,
                             icon: CheckCircle,
-                            accent: {
-                                iconBg: 'bg-violet-50',
-                                iconBorder: 'border-violet-200',
-                                iconColor: 'text-violet-600',
-                                label: 'text-violet-700',
-                                number: 'text-violet-900',
-                                border: 'border-violet-200/70',
-                                hoverBorder: 'hover:border-violet-300',
-                                topLine: 'bg-violet-400',
-                            }
+                            color: 'violet',
                         },
                         {
                             title: 'Rank',
                             value: analytics.studentRank ? `#${analytics.studentRank}` : '—',
                             icon: Trophy,
-                            accent: {
-                                iconBg: 'bg-blue-50',
-                                iconBorder: 'border-blue-200',
-                                iconColor: 'text-blue-600',
-                                label: 'text-blue-700',
-                                number: 'text-blue-900',
-                                border: 'border-blue-200/70',
-                                hoverBorder: 'hover:border-blue-300',
-                                topLine: 'bg-blue-400',
-                            }
+                            color: 'blue',
                         },
                         {
                             title: 'Total Time Spent',
                             value: formatDuration(analytics.studentAttempt?.totalTimeTaken),
                             icon: Clock,
-                            accent: {
-                                iconBg: 'bg-teal-50',
-                                iconBorder: 'border-teal-200',
-                                iconColor: 'text-teal-600',
-                                label: 'text-teal-700',
-                                number: 'text-teal-900',
-                                border: 'border-teal-200/70',
-                                hoverBorder: 'hover:border-teal-300',
-                                topLine: 'bg-teal-400',
-                            }
+                            color: 'teal',
                         },
                     ] : [
                         {
                             title: 'Total Participants',
                             value: analytics.totalParticipants,
                             icon: Users,
-                            accent: {
-                                iconBg: 'bg-blue-50',
-                                iconBorder: 'border-blue-200',
-                                iconColor: 'text-blue-600',
-                                label: 'text-blue-700',
-                                number: 'text-blue-900',
-                                border: 'border-blue-200/70',
-                                hoverBorder: 'hover:border-blue-300',
-                                topLine: 'bg-blue-400',
-                            }
+                            color: 'blue',
                         },
                         {
                             title: 'Average Score',
                             value: `${analytics.averageScore}%`,
                             icon: Target,
-                            accent: {
-                                iconBg: 'bg-teal-50',
-                                iconBorder: 'border-teal-200',
-                                iconColor: 'text-teal-600',
-                                label: 'text-teal-700',
-                                number: 'text-teal-900',
-                                border: 'border-teal-200/70',
-                                hoverBorder: 'hover:border-teal-300',
-                                topLine: 'bg-teal-400',
-                            }
+                            color: 'teal',
                         },
                         {
                             title: 'Highest Score',
                             value: `${analytics.highestScore}%`,
                             icon: Trophy,
-                            accent: {
-                                iconBg: 'bg-amber-50',
-                                iconBorder: 'border-amber-200',
-                                iconColor: 'text-amber-600',
-                                label: 'text-amber-700',
-                                number: 'text-amber-800',
-                                border: 'border-amber-200/70',
-                                hoverBorder: 'hover:border-amber-300',
-                                topLine: 'bg-amber-400',
-                            }
+                            color: 'orange',
                         },
                         {
                             title: 'Total Questions',
                             value: analytics.totalQuestions,
                             icon: CheckCircle,
-                            accent: {
-                                iconBg: 'bg-violet-50',
-                                iconBorder: 'border-violet-200',
-                                iconColor: 'text-violet-600',
-                                label: 'text-violet-700',
-                                number: 'text-violet-900',
-                                border: 'border-violet-200/70',
-                                hoverBorder: 'hover:border-violet-300',
-                                topLine: 'bg-violet-400',
-                            }
+                            color: 'violet',
                         },
                     ]).map((kpi, idx) => (
-                        <div
+                        <AnalyticsMetricCard
                             key={idx}
-                            className={`relative bg-white border ${kpi.accent.border} ${kpi.accent.hoverBorder} rounded-2xl p-4 sm:p-5 flex flex-row items-center gap-4 shadow-[0_2px_12px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.10)] transition-all duration-200 overflow-hidden group`}
-                        >
-                            {/* Subtle left accent bar */}
-                            <div className={`absolute top-0 left-0 bottom-0 w-[3px] ${kpi.accent.topLine} opacity-70`} />
-
-                            {/* Icon — left side */}
-                            <div className={`shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${kpi.accent.iconBg} border ${kpi.accent.iconBorder} ${kpi.accent.iconColor} flex items-center justify-center group-hover:scale-105 transition-transform duration-200 ml-1`}>
-                                <kpi.icon size={22} strokeWidth={2.2} />
-                            </div>
-
-                            {/* Text — right side */}
-                            <div className="flex flex-col gap-0.5 min-w-0">
-                                <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-widest ${kpi.accent.label} leading-tight truncate`}>
-                                    {kpi.title}
-                                </p>
-                                <p className={`text-2xl sm:text-[1.75rem] font-black italic leading-none ${kpi.accent.number}`}>
-                                    {kpi.value}
-                                </p>
-                            </div>
-                        </div>
+                            title={kpi.title}
+                            value={kpi.value}
+                            icon={kpi.icon}
+                            color={kpi.color}
+                        />
                     ))}
                 </div>
 
