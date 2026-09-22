@@ -127,7 +127,7 @@ export default function StudentDashboard() {
                     if (action.includes('saved')) {
                         toast.success(action, { duration: 5000 });
                     } else if (action.includes('reset')) {
-                        toast.error(action, { duration: 5000 });
+                        toast.error(`💔 ${action}`, { duration: 5000 });
                     }
                 });
             }
@@ -164,7 +164,7 @@ export default function StudentDashboard() {
             setPoints(remaining);
             setXp(remaining);
             setUnlockedPerks(prev => [...prev, res.data.perk]);
-            toast.success(`Redeemed: ${perkName}`);
+            toast.success(`🎉 Redeemed: ${perkName}`);
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Redemption failed');
         } finally {

@@ -11,7 +11,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import SubmissionSequence from '../components/quiz/SubmissionSequence';
 import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
-import FormattedOptionText from '../components/quiz/FormattedOptionText';
 import { showError, showSuccess } from '../utils/alerts';
 import useExamProctoring from '../hooks/useExamProctoring';
 import throttle from '../utils/throttle';
@@ -182,9 +181,6 @@ export default function AttemptQuiz() {
             setCurrentQuestion(0);
             currentQuestionRef.current = 0;
             setWaitingForState(false);
-            setAnsweredQuestions(new Set());
-            setAnswers({});
-            localStorage.removeItem(`quiz_answers_${id}`);
         });
 
         socket.on('quiz_ended', async () => {
@@ -1195,65 +1191,57 @@ export default function AttemptQuiz() {
                     You are offline — progress saved locally. Submissions paused until reconnected.
                 </div>
             )}
-            {/* Clean Academic Header Bar */}
-            <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between sticky z-[var(--z-header)] top-0 shadow-xs">
-                <div className="flex items-center gap-3 min-w-0">
+            <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky z-[var(--z-header)] top-0 shadow-xs" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
+                <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate('/student-dashboard')}
-                        className="p-2 hover:bg-slate-100 rounded-xl text-slate-700 transition-colors shrink-0 cursor-pointer"
-                        title="Return to Dashboard"
+                        className="p-2 hover:bg-slate-100 rounded-lg text-[#0f172a] transition-colors"
+                        style={{ color: '#0f172a' }}
                     >
-                        <ChevronLeft size={22} />
+                        <ChevronLeft size={24} />
                     </button>
-                    <div className="min-w-0">
-                        <h1 className="font-bold text-slate-900 text-sm sm:text-base md:text-lg leading-tight truncate">
-                            {cleanQuizTitle(quiz.title)}
-                        </h1>
-                        <p className="text-[11px] sm:text-xs text-slate-500 font-semibold tracking-normal mt-0.5">
-                            Question {currentQuestion + 1} of {quiz.questions.length} {isReviewMode && '• Review Mode'}
-                        </p>
+                    <div>
+                        <h2 className="font-bold text-[#0f172a] uppercase tracking-tight italic" style={{ color: '#0f172a' }}>{cleanQuizTitle(quiz.title)}</h2>
+                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{currentQuestion + 1} of {quiz.questions.length} Questions {isReviewMode && '• Review Mode'}</p>
                     </div>
                 </div>
-
-                <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+                <div className="flex items-center gap-4">
                     {timeLeft > 0 && !isReviewMode && !result && (
-                        <div className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold font-mono flex items-center gap-1.5 border shadow-xs ${
-                            timeLeft < 60 
-                                ? 'bg-red-500/10 text-red-600 border-red-500/30 animate-pulse' 
-                                : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30'
-                        }`}>
-                            <Clock size={14} className={timeLeft < 60 ? 'animate-bounce text-red-500' : 'text-emerald-600'} />
+                        <div className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1.5 border shadow-sm ${timeLeft < 60 ? 'bg-red-500/20 text-red-600 border-red-500/40 animate-pulse' : 'bg-emerald-500/20 text-emerald-700 border-emerald-500/40'}`}>
+                            <Clock size={14} className={timeLeft < 60 ? 'animate-bounce' : ''} />
                             <span>{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
                         </div>
                     )}
                     {isReviewMode && (
-                        <div className="bg-slate-900 text-white px-3.5 py-1.5 rounded-full text-xs font-bold font-mono">
-                            Score: {result.score} / {result.maxPossibleScore || (result.totalQuestions * 10)}
+                        <div className="bg-[#0f172a] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest italic">
+                            Yield: {result.score} / {result.maxPossibleScore || (result.totalQuestions * 10)}
                         </div>
                     )}
-                    <div className="hidden sm:block w-28 md:w-40 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                    <div className="w-48 h-2 bg-slate-200 rounded-full overflow-hidden">
                         <div
-                            className="h-full transition-all duration-300 bg-indigo-600"
+                            className="h-full transition-all duration-300 bg-[#0f172a]"
                             style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
                         />
                     </div>
-                    {/* Visual Progress Dots for medium+ screens */}
-                    <div className="hidden lg:flex items-center gap-1">
+                    {/* Visual Progress Dots */}
+                    <div className="hidden md:flex items-center gap-1">
                         {quiz.questions.map((_, idx) => (
                             <div
                                 key={`prog-${idx}`}
-                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'scale-125 ring-2 ring-indigo-600 ring-offset-1' : ''} ${answers[idx] ? 'bg-emerald-500' : 'bg-slate-200'}`}
+                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'scale-125 ring-2 ring-[#0f172a] ring-offset-2' : ''} ${answers[idx] ? 'bg-emerald-500' : 'bg-slate-300'}`}
                             />
                         ))}
                     </div>
+                    {/* Show logout ONLY when quiz is finished or in review mode */}
                     {(result || isReviewMode) && (
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs shadow-xs transition-all cursor-pointer shrink-0"
+                            className="flex items-center gap-1.5 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap ml-2"
                             aria-label="Log out"
+                            title="Log out"
                         >
-                            <LogOut size={14} />
-                            <span className="hidden sm:inline">Logout</span>
+                            <LogOut size={15} />
+                            <span>Logout</span>
                         </button>
                     )}
                 </div>
@@ -1261,7 +1249,7 @@ export default function AttemptQuiz() {
 
             {/* Strict Mode Waiting Overlay */}
             {quiz?.isLive && answeredQuestions.has(currentQuestion) && (
-                <div className="fixed inset-0 z-[var(--z-overlay)] bg-slate-950/90 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-white">
+                <div className="fixed inset-0 z-[var(--z-overlay)] bg-[var(--bg-primary)]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-[var(--text-primary)]">
                     <LiveQuizWaitAnimation
                         variant="synchronizing-answers"
                         answeredCount={answeredCount}
@@ -1273,24 +1261,23 @@ export default function AttemptQuiz() {
                 </div>
             )}
 
-            {/* Main Academic Examination Container */}
-            <main className="flex-1 flex flex-col items-center justify-start p-3 sm:p-6 md:p-8 pb-20 relative bg-slate-50/70">
-                <div className="max-w-4xl w-full mx-auto">
+            <main className="flex-1 flex flex-col items-center justify-start p-6 pb-24 relative bg-slate-50">
+                <div className="max-w-2xl w-full">
                     {isReviewMode && (
-                        <div className={`mb-6 p-4 sm:p-5 rounded-2xl flex items-center gap-3 border ${questionResult?.isCorrect
-                            ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
-                            : 'bg-rose-50 border-rose-300 text-rose-900'
+                        <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 border ${questionResult?.isCorrect
+                            ? 'bg-emerald-100 border-emerald-400 text-emerald-800'
+                            : 'bg-rose-100 border-rose-400 text-rose-800'
                             }`}>
-                            {questionResult?.isCorrect ? <CheckCircle size={22} className="text-emerald-600 shrink-0" /> : <XCircle size={22} className="text-rose-600 shrink-0" />}
+                            {questionResult?.isCorrect ? <CheckCircle size={20} /> : <XCircle size={20} />}
                             <div className="flex-1">
-                                <p className="text-sm font-bold text-slate-900">
-                                    {questionResult?.isCorrect ? 'Correct Answer' : 'Incorrect Answer'}
+                                <p className="text-sm font-black uppercase italic tracking-tight">
+                                    {questionResult?.isCorrect ? 'Tactical Success' : 'Neural Mismatch'}
                                 </p>
-                                <p className="text-xs font-semibold text-slate-600 mt-0.5">
-                                    Score: {questionResult?.isCorrect ? question.points : 0} / {question.points} Pts
+                                <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">
+                                    Yield: {questionResult?.isCorrect ? question.points : 0} / {question.points} Pts
                                 </p>
                             </div>
-                            <Award size={24} className="opacity-40" />
+                            <Award size={24} className="opacity-30" />
                         </div>
                     )}
 
@@ -1308,38 +1295,39 @@ export default function AttemptQuiz() {
 
                     {/* CORRECT/INCORRECT FEEDBACK OVERLAY — only for non-live quizzes */}
                     {showFeedback && !quiz?.isLive && (
-                        <div className={`absolute inset-0 z-[var(--z-overlay)] flex flex-col items-center justify-center rounded-3xl animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-emerald-600/95' : 'bg-rose-600/95'} backdrop-blur-md text-white shadow-2xl p-6 text-center`}>
-                            {isCorrectFeedback ? <CheckCircle size={72} className="mb-4 text-white" /> : <XCircle size={72} className="mb-4 text-white" />}
-                            <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-                                {isCorrectFeedback ? 'Correct!' : 'Incorrect'}
+                        <div className={`absolute inset-0 z-[var(--z-overlay)] flex flex-col items-center justify-center rounded-[3rem] animate-in zoom-in duration-300 ${isCorrectFeedback ? 'bg-emerald-600/95' : 'bg-rose-600/95'} backdrop-blur-md text-white shadow-2xl`}>
+                            {isCorrectFeedback ? <CheckCircle size={80} className="mb-4 text-white" /> : <XCircle size={80} className="mb-4 text-white" />}
+                            <h2 className="text-6xl font-black italic uppercase tracking-tighter text-white">
+                                {isCorrectFeedback ? 'Success' : 'Failed'}
                             </h2>
                             {!isCorrectFeedback && (
-                                <p className="mt-4 font-bold text-sm text-center px-6 text-white/90">
-                                    Correct Answer:<br />
-                                    <span className="text-xl underline decoration-white/30 text-white font-black">{quiz.questions[currentQuestion].correctAnswer}</span>
+                                <p className="mt-4 font-black uppercase tracking-[0.2em] text-[10px] text-center px-8 opacity-90 text-white">
+                                    CORRECT SEQUENCE:<br />
+                                    <span className="text-2xl underline decoration-white/30 tracking-tight text-white">{quiz.questions[currentQuestion].correctAnswer}</span>
                                 </p>
                             )}
-                            <div className="mt-6 flex items-center gap-2 text-white/70 font-bold text-xs uppercase tracking-wider">
-                                <Loader2 className="animate-spin" size={14} /> Loading Next Question...
+                            <div className="mt-8 flex items-center gap-2 text-white/60 font-black uppercase tracking-widest text-[10px]">
+                                <Loader2 className="animate-spin" size={12} /> Next Question...
                             </div>
                         </div>
                     )}
 
-                    {/* Primary Quiz Question Card */}
-                    <div className="bg-white border border-slate-200/90 rounded-3xl shadow-xl p-5 sm:p-8 md:p-10 mb-6 relative overflow-visible">
-                        <div className="flex items-center justify-between mb-6 flex-wrap gap-3 relative z-10">
-                            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold bg-indigo-50 border border-indigo-200/80 text-indigo-700">
-                                Question {currentQuestion + 1} of {quiz.questions.length}
+                    <div className="bg-white border-2 border-slate-200 rounded-[3rem] shadow-xl p-8 md:p-12 mb-8 relative overflow-visible" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-slate-100 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+                        
+                        <div className="flex items-center justify-between mb-8 flex-wrap gap-4 relative z-10">
+                            <span className="inline-block bg-slate-100 text-[#0f172a] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-slate-300">
+                                Sequence {currentQuestion + 1}
                             </span>
                             {quiz?.isLive && (
-                                <div className="flex flex-col items-end gap-1 min-w-[180px]">
-                                    <div className="flex justify-between w-full text-xs font-semibold text-slate-500">
+                                <div className="flex flex-col items-end gap-1.5 min-w-[200px]">
+                                    <div className="flex justify-between w-full text-[10px] font-black uppercase tracking-widest text-slate-500">
                                         <span>Progress:</span>
                                         <span>{answeredCount} of {totalStudents} Answered</span>
                                     </div>
                                     <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                                         <motion.div 
-                                            className="h-full bg-indigo-600"
+                                            className="h-full bg-gradient-to-r from-[#0f172a] to-blue-600"
                                             initial={{ width: 0 }}
                                             animate={{ width: `${totalStudents > 0 ? (answeredCount / totalStudents) * 100 : 0}%` }}
                                             transition={{ duration: 0.3 }}
@@ -1348,180 +1336,175 @@ export default function AttemptQuiz() {
                                 </div>
                             )}
                         </div>
-
-                        {/* Question Content Component */}
                         <AdaptiveQuestionContainer questionText={question.questionText} />
 
-                        {/* Options Section */}
                         {(!question.options || question.options.length <= 1) ? (
-                            <div className="space-y-3 mt-6 relative z-10">
-                                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Type Your Answer Below</label>
+                            <div className="space-y-4 mb-4 relative z-10">
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Type Your Answer Below</label>
                                 <input
                                     type="text"
                                     value={answers[currentQuestion] || ''}
                                     onChange={(e) => handleOptionSelect(e.target.value)}
                                     disabled={isReviewMode || isWaiting || submitting || (quiz?.isLive && answeredQuestions.has(currentQuestion))}
-                                    placeholder="Enter your response..."
-                                    className="w-full p-4 sm:p-5 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-indigo-600 transition-all font-semibold text-base text-slate-900 placeholder-slate-400 outline-none shadow-xs"
+                                    placeholder="Enter short answer..."
+                                    className="w-full p-6 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:bg-white focus:border-[#0f172a] transition-all font-bold text-lg text-[#0f172a] placeholder-slate-400 outline-none"
+                                    style={{ color: '#0f172a' }}
                                 />
                             </div>
-                        ) : (() => {
-                            // Smart layout: auto-detect if options contain long text, math formulas, code, or line breaks
-                            const hasLongOptions = (question.options || []).some(opt => 
-                                (opt || '').length > 65 || 
-                                (opt || '').includes('\n') || 
-                                (opt || '').includes('```') || 
-                                (opt || '').includes('$$') || 
-                                (opt || '').includes('\\frac') ||
-                                (opt || '').includes('\\sqrt')
-                            );
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                                {question.options.map((option, idx) => {
+                                    const isSelected = answers[currentQuestion] === option;
+                                    const isCorrect = questionResult?.correctOption === option;
 
-                            const optionGridClass = hasLongOptions 
-                                ? "grid grid-cols-1 gap-3 sm:gap-4 mt-6 relative z-10" 
-                                : "grid grid-cols-1 md:grid-cols-2 gap-3.5 mt-6 relative z-10";
+                                    // Theme-appropriate option styles
+                                    const kahootStyles = [
+                                        { icon: Triangle },
+                                        { icon: Diamond },
+                                        { icon: Circle },
+                                        { icon: Square }
+                                    ];
+                                    const style = kahootStyles[idx % 4];
+                                    const ShapeIcon = style.icon;
 
-                            const OPTION_LABELS = ['A', 'B', 'C', 'D', 'E', 'F'];
+                                    let containerClass = 'bg-white border-2 border-slate-200 shadow-sm text-[#0f172a] hover:border-[#0f172a] hover:bg-slate-50';
+                                    let textColor = '#0f172a';
+                                    let shapeFill = '#0f172a';
 
-                            return (
-                                <div className={optionGridClass}>
-                                    {question.options.map((option, idx) => {
-                                        const isSelected = answers[currentQuestion] === option;
-                                        const isCorrect = questionResult?.correctOption === option;
-                                        const optionLabel = OPTION_LABELS[idx] || String.fromCharCode(65 + idx);
-
-                                        let containerClass = 'bg-white border-2 border-slate-200 shadow-xs text-slate-900 hover:border-indigo-400 hover:bg-slate-50/80';
-                                        let textColor = '#0f172a';
-
-                                        if (isReviewMode) {
-                                            if (isCorrect) {
-                                                containerClass = 'bg-emerald-500 border-emerald-600 shadow-md text-white';
-                                                textColor = '#ffffff';
-                                            } else if (isSelected && !isCorrect) {
-                                                containerClass = 'bg-rose-500 border-rose-600 shadow-md text-white';
-                                                textColor = '#ffffff';
-                                            } else {
-                                                containerClass = 'bg-slate-100 text-slate-400 border-slate-200 opacity-60';
-                                                textColor = '#94a3b8';
-                                            }
-                                        } else if (isSelected) {
-                                            containerClass = 'bg-indigo-50/70 border-indigo-600 ring-2 ring-indigo-500/20 shadow-md';
-                                            textColor = '#0f172a';
+                                    if (isReviewMode) {
+                                        if (isCorrect) {
+                                            containerClass = 'bg-emerald-600 border-emerald-600 shadow-md text-white';
+                                            textColor = '#ffffff';
+                                            shapeFill = '#ffffff';
+                                        } else if (isSelected && !isCorrect) {
+                                            containerClass = 'bg-rose-600 border-rose-600 shadow-md text-white';
+                                            textColor = '#ffffff';
+                                            shapeFill = '#ffffff';
+                                        } else {
+                                            containerClass = 'bg-slate-100 text-slate-400 border-slate-200 opacity-50 grayscale';
+                                            textColor = '#94a3b8';
+                                            shapeFill = '#94a3b8';
                                         }
+                                    } else if (isSelected) {
+                                        containerClass = 'bg-amber-500/10 border-2 border-amber-500 ring-4 ring-amber-500/20 shadow-md scale-[0.98]';
+                                        textColor = '#0f172a';
+                                        shapeFill = '#d97706';
+                                    }
 
-                                        const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
+                                    // In live mode: lock only after submit, allow free re-selection before
+                                    const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
 
-                                        return (
-                                            <motion.button
-                                                key={`opt-${idx}-${option}`}
-                                                disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
-                                                onClick={() => handleOptionSelect(option)}
-                                                style={{ willChange: 'transform' }}
-                                                animate={{
-                                                    scale: isSubmittedLive && isSelected ? 1.01 : isSelected ? 0.99 : 1,
-                                                    opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.8 : 1
-                                                }}
-                                                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                                className={`relative min-h-0 h-auto text-left px-4 py-3.5 sm:px-5 sm:py-4 rounded-2xl border-2 transition-all duration-200 flex items-start sm:items-center gap-3.5 group cursor-pointer ${containerClass} disabled:cursor-not-allowed`}
-                                            >
-                                                {/* A/B/C/D Identifier Badge */}
-                                                <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 transition-all ${
-                                                    isSelected && !isReviewMode
-                                                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 border border-indigo-500'
-                                                        : isReviewMode && isCorrect
-                                                        ? 'bg-white text-emerald-700 font-extrabold'
-                                                        : isReviewMode && isSelected && !isCorrect
-                                                        ? 'bg-white text-rose-700 font-extrabold'
-                                                        : 'bg-slate-100 text-slate-700 border border-slate-200 group-hover:bg-indigo-100 group-hover:text-indigo-700 group-hover:border-indigo-200'
-                                                }`}>
-                                                    {optionLabel}
-                                                </div>
+                                    return (
+                                        <motion.button
+                                            key={`opt-${idx}-${option}`}
+                                            disabled={isReviewMode || isWaiting || submitting || isSubmittedLive}
+                                            onClick={() => handleOptionSelect(option)}
+                                            style={{ willChange: 'transform' }}
+                                            animate={{
+                                                scale: isSubmittedLive && isSelected ? 1.04 : isSelected ? 0.98 : 1,
+                                                opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.75 : 1
+                                            }}
+                                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                            className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
+                                        >
+                                            <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected && !isReviewMode ? 'bg-amber-500 text-white shadow-xs' : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
+                                                <ShapeIcon size={24} fill={shapeFill} strokeWidth={0} />
+                                            </div>
+                                            <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words whitespace-normal min-w-0 flex-1" style={{ color: textColor }}>
+                                                {option}
+                                            </span>
 
-                                                {/* Option Content with KaTeX & Sentence Case Typography */}
-                                                <div className="flex-1 min-w-0">
-                                                    <FormattedOptionText
-                                                        optionText={option}
-                                                        textColor={textColor}
-                                                    />
-                                                </div>
-
-                                                {/* Selection Badge */}
-                                                {isSelected && !isReviewMode && (
-                                                    <div className="ml-auto shrink-0 flex items-center gap-1 bg-indigo-600 text-white rounded-full px-2 py-0.5 text-xs shadow-sm">
-                                                        {isSubmittedLive ? <Lock size={12} className="text-white" /> : null}
+                                            {isSelected && !isReviewMode && (
+                                                <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-amber-500 text-white rounded-full px-2.5 py-1 shadow-md">
+                                                    {isSubmittedLive ? (
+                                                        <motion.div
+                                                            initial={{ rotate: -90, scale: 0 }}
+                                                            animate={{ rotate: 0, scale: 1 }}
+                                                            transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                                                            className="flex items-center justify-center text-white"
+                                                        >
+                                                            <Lock size={12} className="fill-white/20" />
+                                                        </motion.div>
+                                                    ) : null}
+                                                    <motion.div
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
+                                                    >
                                                         <CheckCircle size={14} className="text-white" />
-                                                    </div>
-                                                )}
-                                            </motion.button>
-                                        );
-                                    })}
-                                </div>
-                            );
-                        })()}
+                                                    </motion.div>
+                                                </div>
+                                            )}
+                                        </motion.button>
+                                    );
+                                })}
+                            </div>
+                        )}
 
-                        {/* Review Mode Solution Box */}
                         {isReviewMode && !questionResult?.isCorrect && (
-                            <div className="mt-6 p-4 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-center gap-3 text-emerald-950">
-                                <CheckCircle size={20} className="text-emerald-700 shrink-0" />
+                            <div className="mt-8 p-4 bg-emerald-100 border border-emerald-300 rounded-2xl flex items-center gap-4 text-emerald-900">
+                                <CheckCircle size={20} className="text-emerald-700" />
                                 <div>
-                                    <p className="text-xs font-bold uppercase tracking-wider text-emerald-800 mb-0.5">Correct Solution</p>
-                                    <p className="text-base font-semibold text-emerald-950">{questionResult?.correctOption}</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-800 mb-1">TACTICAL SOLUTION</p>
+                                    <p className="text-lg font-black italic uppercase tracking-tight leading-none text-emerald-950">{questionResult?.correctOption}</p>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Bottom Action & Navigation Bar */}
-                    <div className="flex items-center justify-between w-full gap-4">
+                    <div className="flex items-center justify-between w-full">
+                        {/* In live mode, student cannot navigate manually */}
                         <div className="w-10" />
 
-                        {/* Live mode submission state */}
+                        {/* Live mode: after submitting show Next Question button */}
                         {quiz?.isLive && answeredQuestions.has(currentQuestion) && !isLastQuestion ? (
-                            <div className="px-6 py-3 bg-slate-100 border border-slate-300 rounded-2xl text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2">
-                                <Clock size={16} className="text-indigo-600 animate-spin" />
-                                <span>Awaiting next question from teacher...</span>
+                            <div className="px-8 py-4 bg-slate-100 border-2 border-slate-300 rounded-2xl text-[#0f172a] font-black italic uppercase tracking-widest text-[11px] shadow-xs">
+                                Awaiting Tactical Commands...
                             </div>
                         ) : isLastQuestion ? (
                             isReviewMode ? (
                                 <button
                                     onClick={() => setIsReviewMode(false)}
-                                    className="flex items-center gap-2 bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-slate-800 transition-all shadow-lg active:scale-95 cursor-pointer"
+                                    className="flex items-center gap-3 bg-[#0f172a] text-white px-10 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
                                 >
-                                    <Home size={18} /> Exit Review
+                                    <Home size={20} /> Terminate Review
                                 </button>
                             ) : (
                                 <button
                                     onClick={quiz?.isLive ? handleSingleQuestionSubmit : submitQuiz}
                                     disabled={submitting || !answers[currentQuestion] || (!isOnline && quiz?.isLive)}
-                                    className="flex items-center gap-2.5 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-2xl font-bold text-sm transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    className="flex items-center gap-3 bg-[#0f172a] text-white px-10 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-slate-800 transition shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                 >
-                                    {submitting ? <Loader2 className="animate-spin" size={18} /> : (!isOnline && quiz?.isLive) ? <WifiOff size={18} /> : <Send size={18} />}
-                                    <span>{submitting ? 'Submitting...' : (!isOnline && quiz?.isLive) ? 'Offline' : (quiz?.isLive ? 'Submit Answer' : 'Submit Quiz')}</span>
+                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : (!isOnline && quiz?.isLive) ? <WifiOff size={20} /> : <Send size={20} />}
+                                    {submitting ? 'Transmitting...' : (!isOnline && quiz?.isLive) ? 'Link Severed' : (quiz?.isLive ? 'Submit Sequence' : 'Finalize Mission')}
                                 </button>
                             )
                         ) : (
                             isReviewMode ? (
-                                <div className="flex gap-3">
+                                // Review mode: allow manual prev/next
+                                <div className="flex gap-4">
                                     <button
                                         onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
                                         disabled={currentQuestion === 0}
-                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 disabled:opacity-40 transition-all shadow-xs"
+                                        className="flex items-center gap-2 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] bg-white border-2 border-slate-300 text-[#0f172a] hover:border-[#0f172a] disabled:opacity-30 transition-all shadow-xs"
+                                        style={{ color: '#0f172a' }}
                                     >
-                                        <ChevronLeft size={18} /> Previous
+                                        <ChevronLeft size={20} className="text-[#0f172a]" /> Previous
                                     </button>
                                     <button
                                         onClick={() => setCurrentQuestion(prev => prev + 1)}
-                                        className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all shadow-md cursor-pointer"
+                                        className="flex items-center gap-2 px-8 py-4 bg-[#0f172a] border border-[#0f172a] text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all shadow-md cursor-pointer"
                                     >
-                                        Next <ChevronRight size={18} />
+                                        Advance <ChevronRight size={20} />
                                     </button>
                                 </div>
                             ) : (
                                 <button
                                     onClick={handleSingleQuestionSubmit}
                                     disabled={isWaiting || !answers[currentQuestion] || (!isOnline && quiz?.isLive)}
-                                    className="flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-500 transition-all shadow-lg active:scale-95 disabled:opacity-50 bg-indigo-600 text-white cursor-pointer disabled:cursor-not-allowed"
+                                    className="flex items-center gap-3 px-10 py-5 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-slate-800 transition shadow-xl active:scale-95 disabled:opacity-50 bg-[#0f172a] text-white cursor-pointer disabled:cursor-not-allowed"
                                 >
-                                    {!isOnline && quiz?.isLive ? <><WifiOff size={18} /> Link Severed</> : <><span>Submit Answer</span> <Send size={18} /></>}
+                                    {!isOnline && quiz?.isLive ? <><WifiOff size={24} /> Link Severed</> : <>Initiate Submission <Send size={20} /></>}
                                 </button>
                             )
                         )}

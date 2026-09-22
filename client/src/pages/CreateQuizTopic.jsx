@@ -206,7 +206,7 @@ export default function CreateQuizTopic() {
     useEffect(() => {
         const handleOnline = () => {
             setIsOffline(false);
-            toast.success('Connection restored. Ready to sync voice recordings.');
+            toast.success('🌐 Connection restored. Ready to sync voice recordings.');
         };
         const handleOffline = () => {
             setIsOffline(true);

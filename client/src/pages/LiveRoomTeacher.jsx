@@ -633,8 +633,8 @@ if (socket.connected) {
                         {/* LEFT: Session identity */}
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                             {/* Live badge */}
-                            <div className="flex-shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black shadow-md shadow-emerald-500/20 border border-emerald-400/40">
-                                <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping" />
+                            <div className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500 text-white shadow-xs">
+                                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
                                 <span className="text-[10px] font-black uppercase tracking-[0.25em]">Live</span>
                             </div>
                             {/* Title */}
@@ -651,15 +651,15 @@ if (socket.connected) {
                             <button
                                 onClick={handlePrevSkippedQuestion}
                                 disabled={currentQuestion === 0}
-                                className="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 border border-slate-700 text-white font-black uppercase text-[11px] tracking-wider transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95 cursor-pointer shadow-md"
+                                className="h-10 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black uppercase text-[10px] tracking-[0.15em] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95 cursor-pointer"
                                 title="Go back to skipped questions"
                             >
                                 <ChevronLeft size={14} strokeWidth={3} />
                                 Back
                             </button>
 
-                            {/* Question counter */}
-                            <div className="px-5 py-2 rounded-xl bg-amber-500 shadow-md shadow-amber-500/20 border border-amber-400">
+                            {/* Question counter — the MOST important number on screen */}
+                            <div className="px-5 py-2 rounded-xl bg-amber-500 shadow-md shadow-amber-500/20">
                                 <p className="text-slate-950 font-black text-lg leading-none tracking-tight">
                                     Q<span className="text-2xl">{currentQuestion + 1}</span>
                                     <span className="text-slate-950/60 font-bold text-sm"> / {quiz?.questions?.length || 0}</span>
@@ -669,7 +669,7 @@ if (socket.connected) {
                             <button
                                 onClick={handleNextQuestion}
                                 disabled={currentQuestion >= (quiz?.questions?.length || 0) - 1}
-                                className="h-10 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-emerald-600 hover:from-amber-600 hover:to-emerald-700 text-white font-black uppercase text-[11px] tracking-wider transition-all disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1.5 shadow-md shadow-amber-500/20 active:scale-95 cursor-pointer border border-amber-400/40"
+                                className="h-10 px-5 rounded-xl bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white font-black uppercase text-[10px] tracking-[0.15em] transition-all disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1.5 shadow-md shadow-[var(--bg-accent)]/20 active:scale-95 cursor-pointer"
                             >
                                 Next
                                 <ChevronRight size={14} strokeWidth={3} />
@@ -679,40 +679,40 @@ if (socket.connected) {
                         {/* RIGHT: Actions + stats */}
                         <div className="flex items-center justify-end gap-3 flex-1 flex-wrap">
 
-                            {/* Students online metric badge */}
-                            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 font-black shadow-xs">
-                                <span className="flex h-2.5 w-2.5 relative">
+                            {/* Students online — critical at a glance */}
+                            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-200">
+                                <span className="flex h-2 w-2 relative">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                                 </span>
-                                <Users size={14} className="text-emerald-600" />
+                                <Users size={13} className="text-slate-500" />
                                 <span className="text-slate-900 font-black text-[11px] tracking-wider">{participants.length}</span>
-                                <span className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">Online</span>
+                                <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Online</span>
                             </div>
 
                             {/* Live leader */}
                             {liveInsights?.topStudent && (
-                                <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 font-black shadow-xs">
-                                    <Award size={14} className="text-amber-600" />
-                                    <span className="text-amber-700 font-black text-[10px] uppercase tracking-wider truncate max-w-[80px]">
+                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200">
+                                    <Award size={13} className="text-emerald-600" />
+                                    <span className="text-emerald-700 font-black text-[10px] uppercase tracking-wider truncate max-w-[80px]">
                                         {liveInsights.topStudent}
                                     </span>
                                 </div>
                             )}
 
-                            {/* +30 sec button */}
+                            {/* +30 sec */}
                             <button
                                 onClick={handleIncreaseTime}
-                                className="h-9 px-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-500 font-black uppercase text-[10px] tracking-wider transition-all shadow-md shadow-indigo-500/20 active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                                className="h-9 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                             >
                                 <Clock size={14} />
                                 +30s
                             </button>
 
-                            {/* End Session button */}
+                            {/* End Session — separated visually to reduce mis-clicks */}
                             <button
                                 onClick={handleEndQuiz}
-                                className="h-9 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white border border-rose-500 font-black uppercase text-[10px] tracking-wider transition-all shadow-md shadow-rose-500/20 active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                                className="h-9 px-4 rounded-xl bg-rose-50 hover:bg-rose-500 border border-rose-200 text-rose-600 hover:text-white font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                             >
                                 <MinusCircle size={14} />
                                 End
@@ -789,19 +789,19 @@ if (socket.connected) {
 
                 {/* ─── ACTIVE QUESTION CARD ────────────────────────────────────────────── */}
                 {quiz?.questions?.[currentQuestion] && (
-                    <div className="bg-white border-2 border-slate-200 rounded-[2rem] shadow-xl overflow-hidden mb-6">
-                        {/* Dark high-contrast Card header */}
-                        <div className="bg-slate-950 border-b border-slate-800 px-7 py-4 flex items-center justify-between flex-wrap gap-3">
+                    <div className="bg-white border-2 border-slate-100 rounded-[2rem] shadow-xl shadow-slate-100/60 overflow-hidden mb-6">
+                        {/* Card header */}
+                        <div className="bg-slate-50 border-b border-slate-100 px-7 py-4 flex items-center justify-between flex-wrap gap-3">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-md shadow-amber-500/30">
-                                    <span className="text-slate-950 font-black text-base">{currentQuestion + 1}</span>
+                                <div className="w-10 h-10 rounded-xl bg-[var(--bg-accent)] flex items-center justify-center shadow-md shadow-[var(--bg-accent)]/30">
+                                    <span className="text-white font-black text-sm">{currentQuestion + 1}</span>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-400">Active Question Preview</p>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Visible to Teacher Only · Answers Hidden</p>
+                                    <p className="text-[9px] font-black uppercase tracking-[0.35em] text-slate-400">Active Question</p>
+                                    <p className="text-xs font-black text-slate-500 uppercase tracking-wider">Visible to Teacher Only · Answers Hidden</p>
                                 </div>
                             </div>
-                            <span className="px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-wider border border-amber-500/30">
+                            <span className="px-3 py-1.5 rounded-full bg-[var(--bg-accent)]/10 text-[var(--bg-accent)] text-[10px] font-black uppercase tracking-wider border border-[var(--bg-accent)]/20">
                                 Q{currentQuestion + 1} of {quiz.questions.length}
                             </span>
                         </div>
@@ -811,21 +811,21 @@ if (socket.connected) {
                             <div className="mb-5">
                                 <FormattedQuestionText
                                     questionText={quiz.questions[currentQuestion].questionText}
-                                    textClassName="text-xl sm:text-2xl font-black text-slate-900 leading-snug"
+                                    textClassName="text-xl sm:text-2xl font-black text-[#0f172a] leading-snug"
                                 />
                             </div>
 
-                            {/* Options grid with bold high-contrast badges */}
+                            {/* Options grid with default creation colors */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                 {quiz.questions[currentQuestion].options?.map((option, idx) => {
                                     const label = String.fromCharCode(65 + idx);
                                     const optionThemes = [
-                                        { badge: 'bg-red-600 text-white font-black shadow-sm', border: 'border-red-300 bg-red-50/80 text-slate-900' },
-                                        { badge: 'bg-blue-600 text-white font-black shadow-sm', border: 'border-blue-300 bg-blue-50/80 text-slate-900' },
-                                        { badge: 'bg-amber-600 text-white font-black shadow-sm', border: 'border-amber-300 bg-amber-50/80 text-slate-900' },
-                                        { badge: 'bg-emerald-600 text-white font-black shadow-sm', border: 'border-emerald-300 bg-emerald-50/80 text-slate-900' },
-                                        { badge: 'bg-violet-600 text-white font-black shadow-sm', border: 'border-violet-300 bg-violet-50/80 text-slate-900' },
-                                        { badge: 'bg-pink-600 text-white font-black shadow-sm', border: 'border-pink-300 bg-pink-50/80 text-slate-900' },
+                                        { badge: 'bg-red-500 text-white', border: 'border-red-200 bg-red-50/70 hover:border-red-300' },
+                                        { badge: 'bg-blue-500 text-white', border: 'border-blue-200 bg-blue-50/70 hover:border-blue-300' },
+                                        { badge: 'bg-amber-500 text-white', border: 'border-amber-200 bg-amber-50/70 hover:border-amber-300' },
+                                        { badge: 'bg-emerald-500 text-white', border: 'border-emerald-200 bg-emerald-50/70 hover:border-emerald-300' },
+                                        { badge: 'bg-violet-500 text-white', border: 'border-violet-200 bg-violet-50/70 hover:border-violet-300' },
+                                        { badge: 'bg-pink-500 text-white', border: 'border-pink-200 bg-pink-50/70 hover:border-pink-300' },
                                     ];
                                     const theme = optionThemes[idx % optionThemes.length];
                                     return (
@@ -833,10 +833,10 @@ if (socket.connected) {
                                             key={idx}
                                             className={`flex items-center gap-3.5 border-2 rounded-2xl p-4 transition-all shadow-xs ${theme.border}`}
                                         >
-                                            <div className={`w-9 h-9 rounded-xl ${theme.badge} flex items-center justify-center font-black text-base flex-shrink-0 shadow-sm border border-white/20`}>
+                                            <div className={`w-9 h-9 rounded-xl ${theme.badge} flex items-center justify-center font-black text-sm flex-shrink-0 shadow-xs`}>
                                                 {label}
                                             </div>
-                                            <span className="font-bold text-slate-900 text-sm sm:text-base leading-snug">{option}</span>
+                                            <span className="font-bold text-slate-800 text-sm leading-snug">{option}</span>
                                         </div>
                                     );
                                 })}
@@ -845,48 +845,45 @@ if (socket.connected) {
                     </div>
                 )}
 
-                {/* ─── LIVE STUDENT TRACKER (MATCHING SCREENSHOT 3) ──────────── */}
-                <div className="bg-slate-950 rounded-[2rem] shadow-2xl border-2 border-slate-800 overflow-hidden text-white">
+                {/* ─── LIVE STUDENT TRACKER ────────────────────────────────────────────── */}
+                <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-100/60 border-2 border-slate-100 overflow-hidden">
                     {/* Tracker header */}
-                    <div className="bg-slate-900/90 border-b border-slate-800 px-7 py-5 flex items-center justify-between flex-wrap gap-4">
+                    <div className="bg-slate-50 border-b border-slate-200 px-7 py-5 flex items-center justify-between flex-wrap gap-4">
                         <div>
-                            <h2 className="text-xl font-black italic uppercase tracking-tight flex items-center gap-2 text-white">
-                                <Users size={20} className="text-amber-500" />
-                                <span className="text-amber-500">LIVE</span>
-                                <span>STUDENT TRACKER</span>
+                            <h2 className="text-lg font-black text-slate-900 italic uppercase tracking-tight flex items-center gap-2">
+                                <Users size={18} className="text-[var(--bg-accent)]" />
+                                Live Student Tracker
                             </h2>
-                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">
-                                {allStudents.length} TOTAL · {participants.length} CONNECTED · PAGE {currentPage}/{totalPages}
+                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-1">
+                                {allStudents.length} Total · {participants.length} Connected · Page {currentPage}/{totalPages}
                             </p>
                         </div>
                         {/* Legend */}
-                        <div className="flex items-center gap-4 flex-wrap text-xs font-bold">
+                        <div className="flex items-center gap-4 flex-wrap">
                             {[
                                 { color: 'bg-emerald-500', label: 'Correct' },
                                 { color: 'bg-rose-500', label: 'Wrong' },
                                 { color: 'bg-amber-500', label: 'Skipped' },
-                                { color: 'bg-slate-600', label: 'Not Attempted' },
+                                { color: 'bg-slate-300', label: 'Pending' },
                             ].map(({ color, label }) => (
                                 <div key={label} className="flex items-center gap-1.5">
-                                    <div className={`w-3.5 h-3.5 rounded-full ${color}`} />
-                                    <span className="text-slate-300 font-bold">{label}</span>
+                                    <div className={`w-3 h-3 rounded-md ${color}`} />
+                                    <span className="text-[10px] font-bold text-slate-600">{label}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     {/* Column headers */}
-                    <div className="bg-slate-900/50 border-b border-slate-800/80 px-7 py-3 grid grid-cols-[60px_minmax(120px,180px)_80px_1fr_90px] items-center gap-4 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                        <div>RANK</div>
-                        <div>STUDENT</div>
-                        <div className="text-center">STATUS</div>
-                        <div>QUESTIONS PROGRESS</div>
-                        <div className="text-right">SCORE</div>
+                    <div className="bg-slate-50 border-b border-slate-100 px-7 py-3 grid grid-cols-[auto_minmax(120px,180px)_60px_1fr_80px] items-center gap-4">
+                        {['Rank', 'Student', 'Status', `Q Progress (${quiz?.questions?.length || 0} Qs)`, 'Score'].map(h => (
+                            <div key={h} className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{h}</div>
+                        ))}
                     </div>
 
                     {/* Student rows */}
                     {paginatedStudents.length > 0 ? (
-                        <div className="divide-y divide-slate-900">
+                        <div className="divide-y divide-slate-50">
                             {paginatedStudents.map((p, pIdx) => {
                                 const globalIdx = (currentPage - 1) * studentsPerPage + pIdx;
                                 const rank = p.lb?.rank ?? (globalIdx + 1);
@@ -905,104 +902,108 @@ if (socket.connected) {
                                 return (
                                     <div
                                         key={p.id || p.username || pIdx}
-                                        className="px-7 py-4 grid grid-cols-[60px_minmax(120px,180px)_80px_1fr_90px] items-center gap-4 hover:bg-slate-900/60 transition-colors group"
+                                        className={`px-7 py-4 grid grid-cols-[auto_minmax(120px,180px)_60px_1fr_80px] items-center gap-4 hover:bg-slate-50/80 transition-colors group ${hasAnsweredCurrent ? '' : 'border-l-4 border-l-transparent'}`}
                                     >
                                         {/* Rank */}
-                                        <div className="flex items-center justify-start">
+                                        <div className="flex items-center justify-center w-10">
                                             {rank === 1 ? (
-                                                <div className="w-9 h-9 bg-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30">
-                                                    <Trophy size={18} className="text-slate-950 fill-slate-950" />
+                                                <div className="w-9 h-9 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-400/30">
+                                                    <Trophy size={16} className="text-white" />
                                                 </div>
                                             ) : rank === 2 ? (
-                                                <div className="w-9 h-9 bg-slate-700 border border-slate-600 rounded-full flex items-center justify-center font-black text-slate-200 text-xs">
-                                                    #2
+                                                <div className="w-9 h-9 bg-gradient-to-br from-slate-300 to-slate-400 rounded-xl flex items-center justify-center shadow">
+                                                    <span className="text-white font-black text-xs">#2</span>
                                                 </div>
                                             ) : rank === 3 ? (
-                                                <div className="w-9 h-9 bg-amber-900/80 border border-amber-700 rounded-full flex items-center justify-center font-black text-amber-200 text-xs">
-                                                    #3
+                                                <div className="w-9 h-9 bg-gradient-to-br from-amber-600 to-amber-700 rounded-xl flex items-center justify-center shadow">
+                                                    <span className="text-white font-black text-xs">#3</span>
                                                 </div>
                                             ) : (
-                                                <span className="text-slate-500 font-bold text-base font-mono">#{rank}</span>
+                                                <span className="text-slate-300 font-black text-lg italic">#{rank}</span>
                                             )}
                                         </div>
 
                                         {/* Student name */}
                                         <div className="min-w-0">
-                                            <p className="font-bold text-white text-sm font-mono truncate">{p.username || 'Unknown'}</p>
+                                            <p className="font-bold text-slate-800 text-sm truncate">{p.username || 'Unknown'}</p>
+                                            {p.id && <p className="text-[10px] text-slate-400 font-mono truncate">{p.id}</p>}
                                         </div>
 
                                         {/* Online status */}
                                         <div className="flex justify-center">
-                                            <div className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${p.isOnline
-                                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                                : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                                            <div className={`px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1 ${p.isOnline
+                                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                                : 'bg-rose-50 text-rose-500 border border-rose-200'
                                             }`}>
-                                                <div className={`w-2 h-2 rounded-full ${p.isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
+                                                <div className={`w-1.5 h-1.5 rounded-full ${p.isOnline ? 'bg-emerald-500' : 'bg-rose-500'}`} />
                                                 {p.isOnline ? 'ON' : 'OFF'}
                                             </div>
                                         </div>
 
-                                        {/* Question progress checkmark circles matching Screenshot 3 */}
-                                        <div className="flex items-center gap-2 flex-wrap">
+                                        {/* Question dots */}
+                                        <div className="flex items-center gap-1.5 flex-wrap">
                                             {quiz?.questions?.map((_, idx) => {
                                                 const data = progress[idx] || progress[idx.toString()];
                                                 const isCorrect = data?.isCorrect === true || data?.isCorrect === 'true' || data?.isCorrect === 1;
                                                 const isSkipped = data?.skipped === true || data?.skipped === 'true';
                                                 const isAnswered = data?.answered === true || data?.isCorrect !== undefined || isSkipped;
 
-                                                let circleStyle = 'bg-slate-800 border-slate-700 text-slate-500';
-                                                let IconSymbol = null;
+                                                let dotClass = 'bg-slate-100 border-slate-200 text-slate-400';
+                                                let Icon = null;
 
                                                 if (isAnswered) {
                                                     if (isCorrect) {
-                                                        circleStyle = 'bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-500/20';
-                                                        IconSymbol = <CheckCircle size={15} className="text-white" strokeWidth={3} />;
+                                                        dotClass = 'bg-emerald-500 border-emerald-500 text-white shadow-sm font-black';
+                                                        Icon = <CheckCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     } else if (isSkipped) {
-                                                        circleStyle = 'bg-amber-500 text-white border-amber-400 shadow-md shadow-amber-500/20';
-                                                        IconSymbol = <MinusCircle size={15} className="text-white" strokeWidth={3} />;
+                                                        dotClass = 'bg-amber-500 border-amber-500 text-white shadow-sm font-black';
+                                                        Icon = <MinusCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     } else {
-                                                        circleStyle = 'bg-rose-500 text-white border-rose-400 shadow-md shadow-rose-500/20';
-                                                        IconSymbol = <XCircle size={15} className="text-white" strokeWidth={3} />;
+                                                        dotClass = 'bg-rose-500 border-rose-500 text-white shadow-sm font-black';
+                                                        Icon = <XCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     }
+                                                } else if (!p.isOnline && idx < currentQuestion) {
+                                                    dotClass = 'bg-slate-50 border-slate-200 text-slate-300';
+                                                    Icon = <Minus size={10} />;
                                                 }
-
-                                                const isActive = idx === currentQuestion;
 
                                                 return (
                                                     <div
                                                         key={idx}
                                                         title={isAnswered
                                                             ? (isCorrect ? `Q${idx + 1}: Correct` : isSkipped ? `Q${idx + 1}: Skipped` : `Q${idx + 1}: Incorrect`)
-                                                            : `Q${idx + 1}: Pending`
+                                                            : `Q${idx + 1}: Not Answered`
                                                         }
-                                                        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all ${circleStyle} ${isActive
-                                                            ? 'ring-2 ring-emerald-400 ring-offset-2 ring-offset-slate-950 scale-110 shadow-lg shadow-emerald-500/30'
+                                                        className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black border-2 transition-all ${dotClass} ${idx === currentQuestion
+                                                            ? 'ring-2 ring-amber-500 ring-offset-1 scale-110 shadow-md'
                                                             : ''
                                                         }`}
                                                     >
-                                                        {IconSymbol ?? <span className="text-[11px] font-bold">{idx + 1}</span>}
+                                                        {Icon ?? (idx + 1)}
                                                     </div>
                                                 );
                                             })}
                                         </div>
 
-                                         {/* Score */}
-                                        <div className="text-right font-black font-mono text-base text-white">
-                                            {score} <span className="text-xs font-bold text-slate-400">pts</span>
+                                        {/* Score */}
+                                        <div className="text-center">
+                                            <span className="text-lg font-black text-[var(--bg-accent)] italic">{score}</span>
+                                            <span className="text-[10px] text-slate-400 font-bold ml-0.5">pts</span>
                                         </div>
                                     </div>
                                 );
                             })}
                         </div>
                     ) : (
-                        <div className="py-12 text-center text-slate-500 font-bold italic">
-                            No students connected yet...
+                        <div className="py-20 text-center">
+                            <Users className="mx-auto text-slate-200 mb-4" size={48} />
+                            <p className="text-slate-400 font-bold uppercase tracking-widest italic text-xs">No students have joined yet...</p>
                         </div>
                     )}
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="px-7 py-5 bg-slate-900 border-t border-slate-800 flex items-center justify-between gap-4">
+                        <div className="px-7 py-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-4">
                             <p className="text-xs text-slate-400 font-bold">
                                 Showing {(currentPage - 1) * studentsPerPage + 1}–{Math.min(currentPage * studentsPerPage, allStudents.length)} of {allStudents.length} students
                             </p>
@@ -1010,7 +1011,7 @@ if (socket.connected) {
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                                     disabled={currentPage === 1}
-                                    className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                                    className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
                                 >
                                     <ChevronLeft size={16} />
                                 </button>
@@ -1019,8 +1020,8 @@ if (socket.connected) {
                                         key={page}
                                         onClick={() => setCurrentPage(page)}
                                         className={`w-9 h-9 rounded-xl font-black text-sm transition shadow-sm ${page === currentPage
-                                            ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
-                                            : 'bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700'
+                                            ? 'bg-[var(--bg-accent)] text-white shadow-[var(--bg-accent)]/20'
+                                            : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
                                         }`}
                                     >
                                         {page}
@@ -1029,7 +1030,7 @@ if (socket.connected) {
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                                    className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
                                 >
                                     <ChevronRight size={16} />
                                 </button>

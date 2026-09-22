@@ -904,7 +904,7 @@ io.to(realQuizId).emit(
             }, ONE_HOUR_MS);
 
             // ── Initialize authoritative in-memory quiz state ─────────────────
-            quizState.initQuiz(quizId, quiz, { currentQuestion: 0, status: 'started', forceReset: true });
+            quizState.initQuiz(quizId, quiz, { currentQuestion: 0, status: 'started' });
             // ─────────────────────────────────────────────────────────────────
 
             const state = roomState.get(quizId) || {};
