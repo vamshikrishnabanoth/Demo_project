@@ -1615,10 +1615,7 @@ io.to(realQuizId).emit(
             socketToUser.delete(socket.id);
         }
 
-        socketToUser.delete(socket.id);
-    }
-
-    if (socket.userId && userSockets.has(socket.userId)) {
+        if (socket.userId && userSockets.has(socket.userId)) {
         const sockets = userSockets.get(socket.userId);
 
         sockets.delete(socket.id);
