@@ -180,6 +180,8 @@ export default function AttemptQuiz() {
             setQuiz(prev => prev ? { ...prev, status: 'started' } : prev);
             setCurrentQuestion(0);
             currentQuestionRef.current = 0;
+            setAnswers({});
+            setAnsweredQuestions(new Set());
             setWaitingForState(false);
         });
 

@@ -112,7 +112,11 @@ export default function LiveRoomStudent() {
         ensureSocketConnected();
 
         const handleQuizStarted = () => {
-            console.log('[LiveRoomStudent] Quiz started event received from server. Navigating to arena...');
+            console.log('[LiveRoomStudent] Quiz started event received from server. Clearing stale session storage & navigating to arena...');
+            if (quiz?.id) {
+                localStorage.removeItem(`quiz_answers_${quiz.id}`);
+                localStorage.removeItem(`live_quiz_session_${quiz.id}`);
+            }
             navigate(`/quiz/attempt/${quiz.id}`);
         };
 

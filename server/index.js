@@ -904,11 +904,19 @@ io.to(realQuizId).emit(
             }, ONE_HOUR_MS);
 
             // ── Initialize authoritative in-memory quiz state ─────────────────
-            quizState.initQuiz(quizId, quiz, { currentQuestion: 0, status: 'started' });
+            quizState.initQuiz(quizId, quiz, { currentQuestion: 0, status: 'started', forceReset: true });
             // ─────────────────────────────────────────────────────────────────
 
             const state = roomState.get(quizId) || {};
-            roomState.set(quizId, { ...state, status: 'started', currentQuestion: 0, safetyTimeout, startedAt: Date.now() });
+            roomState.set(quizId, {
+                ...state,
+                status: 'started',
+                currentQuestion: 0,
+                safetyTimeout,
+                startedAt: Date.now(),
+                progress: {},
+                leaderboard: []
+            });
 
             await prisma.quiz.update({
                 where: { id: quizId },
