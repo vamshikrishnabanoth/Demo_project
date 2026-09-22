@@ -31,22 +31,74 @@ export default function CreateQuizTopic() {
     const [inputs, setInputs] = useState([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
-    // ── Start with a clean source docket for every new quiz creation session ──────
+    // Load inputs on mount / user change with backend sync
     useEffect(() => {
-        if (authLoading) return;
+        if (authLoading) return; // Wait until AuthContext finishes hydration
         try {
-            // Clear old previously used docket files from previous quiz sessions
-            localStorage.removeItem(storageKey);
-            localStorage.removeItem('quiz_docket_inputs_guest');
-            if (user) {
-                api.delete('/quiz/docket').catch(() => {});
+            let loadedInputs = [];
+            const saved = localStorage.getItem(storageKey);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    loadedInputs = parsed;
+                }
             }
-            setInputs([]);
+
+            // If logged in and local storage for user is empty, check if guest storage had items to migrate
+            if (loadedInputs.length === 0 && user && userId !== 'guest') {
+                const guestSaved = localStorage.getItem('quiz_docket_inputs_guest');
+                if (guestSaved) {
+                    try {
+                        const guestParsed = JSON.parse(guestSaved);
+                        if (Array.isArray(guestParsed) && guestParsed.length > 0) {
+                            loadedInputs = guestParsed;
+                            localStorage.removeItem('quiz_docket_inputs_guest');
+                        }
+                    } catch (_) {}
+                }
+            }
+
+            if (loadedInputs.length > 0) {
+                setInputs(loadedInputs);
+            } else if (user) {
+                // Fetch from server if authenticated and nothing locally
+                api.get('/quiz/docket').then(res => {
+                    if (res.data?.success && Array.isArray(res.data.inputs) && res.data.inputs.length > 0) {
+                        setInputs(res.data.inputs);
+                    }
+                }).catch(() => {});
+            }
         } catch (e) {
-            console.error('Failed to clear previous docket inputs:', e);
+            console.error('Failed to load docket inputs:', e);
         }
         setIsHydrated(true);
-    }, [storageKey, authLoading, user]);
+    }, [storageKey, authLoading, user, userId]);
+
+    // Persist inputs to localStorage and server whenever they change
+    useEffect(() => {
+        if (!isHydrated || authLoading) return;
+        try {
+            const serializable = inputs.map(inp => {
+                const { file, ...rest } = inp;
+                // Preserve extracted text and metadata across reloads!
+                return {
+                    ...rest,
+                    schemaVersion: 2
+                };
+            });
+            localStorage.setItem(storageKey, JSON.stringify(serializable));
+
+            // Sync with backend if authenticated
+            if (user) {
+                const timer = setTimeout(() => {
+                    api.post('/quiz/docket', { inputs: serializable }).catch(() => {});
+                }, 600);
+                return () => clearTimeout(timer);
+            }
+        } catch (e) {
+            console.error('Failed to save docket inputs:', e);
+        }
+    }, [inputs, storageKey, user, isHydrated, authLoading]);
 
     // 2. Difficulty Focus ("Balanced", "Easy", "Medium", "Hard")
     const [difficulty, setDifficulty] = useState('Balanced');
@@ -507,20 +559,6 @@ export default function CreateQuizTopic() {
             recordedBlobsRef.current.delete(id);
         }
         setInputs(prev => prev.filter(item => item.id !== id));
-    };
-
-    const handleClearAllInputs = () => {
-        if (isGenerating) return;
-        recordedBlobsRef.current.clear();
-        setInputs([]);
-        try {
-            localStorage.removeItem(storageKey);
-            localStorage.removeItem('quiz_docket_inputs_guest');
-            if (user) {
-                api.delete('/quiz/docket').catch(() => {});
-            }
-        } catch (_) {}
-        toast.success('Cleared all source materials');
     };
 
     const handleDownloadRecording = (inputId, sourceName) => {
@@ -1140,22 +1178,9 @@ export default function CreateQuizTopic() {
                                 <span className="px-2.5 py-1 bg-[var(--accent-sand)] text-[var(--text-accent)] border border-[var(--border-color)] rounded-lg text-[9px] font-black uppercase tracking-wider">Input 1</span>
                                 <h2 className="text-base font-black text-[var(--text-primary)] uppercase italic tracking-wide">Source Content</h2>
                             </div>
-                            <div className="flex items-center gap-2">
-                                {inputs.length > 0 && (
-                                    <button
-                                        type="button"
-                                        disabled={isGenerating}
-                                        onClick={handleClearAllInputs}
-                                        className="text-[10px] font-black text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-full uppercase border border-red-200 transition-all cursor-pointer flex items-center gap-1 disabled:opacity-50"
-                                        title="Clear all source materials"
-                                    >
-                                        <Trash2 size={12} /> Clear All
-                                    </button>
-                                )}
-                                <span className="bg-[var(--bg-primary)] text-[var(--text-primary)] px-3 py-1 rounded-full text-xs font-black uppercase border border-[var(--border-color)]">
-                                    {inputs.length} {inputs.length === 1 ? 'Source' : 'Sources'}
-                                </span>
-                            </div>
+                            <span className="bg-[var(--bg-primary)] text-[var(--text-primary)] px-3 py-1 rounded-full text-xs font-black uppercase border border-[var(--border-color)]">
+                                {inputs.length} {inputs.length === 1 ? 'Source' : 'Sources'}
+                            </span>
                         </div>
 
                         {/* 1. VOICE AUDIO RECORDING WIDGET (4-Hour Memory-Safe & Offline Resilient) */}
