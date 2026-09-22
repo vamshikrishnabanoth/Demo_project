@@ -874,12 +874,19 @@ const autoBroadcastLiveQuiz = async (quiz, req) => {
                 if (assignedStudents && assignedStudents.includes(student.id)) {
                     return true;
                 }
-                if (assignedGroups && assignedGroups.length > 0 && student.studentBranch) {
-                    return assignedGroups.some(g => {
-                        const branchMatch = g.branch.toLowerCase() === student.studentBranch.toLowerCase();
-                        const secMatch = !g.section || g.section.toLowerCase() === (student.section || '').toLowerCase();
-                        return branchMatch && secMatch;
-                    });
+                if (assignedGroups && assignedGroups.length > 0) {
+                    try {
+                        const groups = typeof assignedGroups === 'string' ? JSON.parse(assignedGroups) : assignedGroups;
+                        const groupsArray = Array.isArray(groups) ? groups : [groups];
+                        return groupsArray.some(g => {
+                            const branchMatch = !g.branch || (student.studentBranch && g.branch.toLowerCase().trim() === student.studentBranch.toLowerCase().trim());
+                            const yearMatch = !g.year || (student.year && String(g.year).trim() === String(student.year).trim());
+                            const secMatch = !g.section || g.section.trim() === '' || (student.section && g.section.toLowerCase().trim() === student.section.toLowerCase().trim());
+                            return branchMatch && yearMatch && secMatch;
+                        });
+                    } catch (e) {
+                        return false;
+                    }
                 }
                 return false;
             };

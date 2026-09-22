@@ -39,6 +39,9 @@ export default function CreateQuizText() {
     const [aikenLoaded, setAikenLoaded] = useState(false);
     const [isGeneratedSource, setIsGeneratedSource] = useState(false);
     const [agentReport, setAgentReport] = useState(null);
+    const [targetYear, setTargetYear] = useState('');
+    const [targetBranch, setTargetBranch] = useState('');
+    const [targetSections, setTargetSections] = useState([]);
     const [assignedGroups, setAssignedGroups] = useState([]);
     const [assignedStudents, setAssignedStudents] = useState([]);
     const [isAssignDrawerOpen, setIsAssignDrawerOpen] = useState(false);
@@ -51,6 +54,24 @@ export default function CreateQuizText() {
     const [isPartialYield, setIsPartialYield] = useState(false);
     const [requestedCount, setRequestedCount] = useState(null);
     const [representationMode, setRepresentationMode] = useState(null);
+
+    const computedAssignedGroups = useCallback(() => {
+        if (assignedGroups && assignedGroups.length > 0) return assignedGroups;
+        if (!targetYear && !targetBranch && targetSections.length === 0) {
+            return [];
+        }
+        if (targetSections.length > 0) {
+            return targetSections.map(sec => ({
+                ...(targetYear ? { year: targetYear } : {}),
+                ...(targetBranch ? { branch: targetBranch } : {}),
+                section: sec
+            }));
+        }
+        const group = {};
+        if (targetYear) group.year = targetYear;
+        if (targetBranch) group.branch = targetBranch;
+        return Object.keys(group).length > 0 ? [group] : [];
+    }, [assignedGroups, targetYear, targetBranch, targetSections]);
 
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
@@ -289,7 +310,7 @@ export default function CreateQuizText() {
                 isAssessment: Boolean(isAssessment),
                 gameType: isAssessment ? gameType : 'standard',
                 isLive: !isAssessment,
-                assignedGroups: assignedGroups || [],
+                assignedGroups: computedAssignedGroups(),
                 assignedStudents: assignedStudents || [],
                 autoBroadcast: autoBroadcast !== false,
             });
@@ -343,7 +364,7 @@ export default function CreateQuizText() {
                 questions,
                 difficulty: 'Medium',
                 timerPerQuestion: parseInt(timerPerQuestion) || 30,
-                assignedGroups
+                assignedGroups: computedAssignedGroups()
             });
             toast.success(res.data.msg || 'Quiz template saved successfully!', { id: toastId });
             navigate('/my-quizzes');
@@ -625,6 +646,137 @@ export default function CreateQuizText() {
                                     </GlassCard>
                                 </div>
 
+                                {/* Target Audience & Class Filter Card */}
+                                <GlassCard className="p-5 border border-[var(--border-color)] bg-[var(--bg-secondary)] space-y-4">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
+                                        <div>
+                                            <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-2">
+                                                <Users size={18} className="text-[var(--text-accent)]" />
+                                                Target Audience & Class Filter
+                                            </h3>
+                                            <p className="text-[11px] text-[var(--text-secondary)] font-medium mt-0.5">
+                                                Target specific years, branches, or sections for this {isAssessment ? 'assignment' : 'live quiz'} broadcast.
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsAssignDrawerOpen(true)}
+                                                className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 hover:border-[var(--bg-accent)] text-slate-700 hover:text-[var(--text-accent)] text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-2xs"
+                                            >
+                                                <Users size={14} />
+                                                <span>Advanced / Pick Students</span>
+                                                {(assignedStudents.length > 0 || assignedGroups.length > 0) && (
+                                                    <span className="w-2 h-2 rounded-full bg-[var(--bg-accent)] animate-pulse" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        {/* Year Filter */}
+                                        <div>
+                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">
+                                                Target Year
+                                            </label>
+                                            <select
+                                                value={targetYear}
+                                                onChange={(e) => {
+                                                    setTargetYear(e.target.value);
+                                                    setAssignedGroups([]);
+                                                }}
+                                                className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] transition-all shadow-2xs"
+                                            >
+                                                <option value="">All Years (No Restriction)</option>
+                                                <option value="1">1st Year</option>
+                                                <option value="2">2nd Year</option>
+                                                <option value="3">3rd Year</option>
+                                                <option value="4">4th Year</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Branch Filter */}
+                                        <div>
+                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">
+                                                Target Branch
+                                            </label>
+                                            <select
+                                                value={targetBranch}
+                                                onChange={(e) => {
+                                                    setTargetBranch(e.target.value);
+                                                    setAssignedGroups([]);
+                                                }}
+                                                className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] transition-all shadow-2xs"
+                                            >
+                                                <option value="">All Branches</option>
+                                                <option value="CSE">CSE (Computer Science)</option>
+                                                <option value="CSM">CSM (AI & ML)</option>
+                                                <option value="CSD">CSD (Data Science)</option>
+                                                <option value="IT">IT (Information Tech)</option>
+                                                <option value="ECE">ECE (Electronics & Comm)</option>
+                                                <option value="EEE">EEE (Electrical)</option>
+                                                <option value="MECH">MECH (Mechanical)</option>
+                                                <option value="CIVIL">CIVIL (Civil Engg)</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Section Filter Chips */}
+                                        <div>
+                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">
+                                                Target Section(s)
+                                            </label>
+                                            <div className="flex flex-wrap items-center gap-1.5">
+                                                {['A', 'B', 'C', 'D', 'E'].map(sec => {
+                                                    const isSelected = targetSections.includes(sec);
+                                                    return (
+                                                        <button
+                                                            key={sec}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setAssignedGroups([]);
+                                                                if (isSelected) {
+                                                                    setTargetSections(targetSections.filter(s => s !== sec));
+                                                                } else {
+                                                                    setTargetSections([...targetSections, sec]);
+                                                                }
+                                                            }}
+                                                            className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                                                                isSelected
+                                                                    ? 'bg-[var(--bg-accent)] text-white shadow-xs'
+                                                                    : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-400'
+                                                            }`}
+                                                        >
+                                                            Sec {sec}
+                                                        </button>
+                                                    );
+                                                })}
+                                                {targetSections.length > 0 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setTargetSections([])}
+                                                        className="text-[10px] text-slate-400 hover:text-rose-500 font-bold px-2 py-1 underline"
+                                                    >
+                                                        Clear
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Broadcast Status Indicator */}
+                                    <div className="flex items-center justify-between pt-2 text-[11px] text-slate-500">
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                                            <span>
+                                                Targeting: <strong className="text-slate-800">
+                                                    {targetYear ? `${targetYear}th Year` : 'All Years'} • {targetBranch || 'All Branches'} • {targetSections.length > 0 ? `Sec ${targetSections.join(', ')}` : 'All Sections'}
+                                                </strong>
+                                                {assignedStudents.length > 0 && ` (+${assignedStudents.length} individually selected)`}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </GlassCard>
+
                                 {/* Assessment-Only: Games Arena Mode Selection */}
                                 {isAssessment && (
                                     <GlassCard className="p-5 border-2 border-violet-500/30 bg-violet-500/5">
@@ -858,7 +1010,16 @@ export default function CreateQuizText() {
                 </AnimatePresence>
             </div>
 
-
+            <StudentAssignDrawer
+                isOpen={isAssignDrawerOpen}
+                onClose={() => setIsAssignDrawerOpen(false)}
+                onSave={({ assignedGroups: groups, assignedStudents: studs }) => {
+                    setAssignedGroups(groups || []);
+                    setAssignedStudents(studs || []);
+                }}
+                initialGroups={computedAssignedGroups()}
+                initialStudents={assignedStudents}
+            />
         </DashboardLayout>
     );
 }
