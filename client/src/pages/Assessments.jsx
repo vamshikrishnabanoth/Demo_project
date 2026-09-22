@@ -233,9 +233,9 @@ export default function Assessments() {
         : 0;
 
     const stats = [
-        { label: 'Available', value: safeQuizzes.filter(q => !q.isLocked && !q.isExpired && !q.isAttempted).length, icon: Play, color: 'text-[var(--text-accent)]' },
-        { label: 'Completed', value: completedQuizzes.length, icon: CheckCircle, color: 'text-green-400' },
-        { label: 'Avg. Score', value: avgScore, icon: Trophy, color: 'text-blue-400', suffix: '%' }
+        { label: 'Available', value: safeQuizzes.filter(q => !q.isLocked && !q.isExpired && !q.isAttempted).length, icon: Play, color: 'text-indigo-600', bg: 'bg-indigo-50/80 border border-indigo-100' },
+        { label: 'Completed', value: completedQuizzes.length, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50/80 border border-emerald-100' },
+        { label: 'Avg. Score', value: avgScore, icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50/80 border border-amber-100', suffix: '%' }
     ];
 
     if (loading && safeQuizzes.length === 0) return (
@@ -313,8 +313,8 @@ export default function Assessments() {
                             transition={{ delay: i * 0.1 }}
                             className="bg-[var(--student-surface)] border border-[var(--student-border)] group relative p-6 rounded-[2rem] flex items-center gap-5 transition-all duration-300 shadow-[var(--student-shadow-soft)]"
                         >
-                            <div className={`w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center ${stat.color}`}>
-                                <stat.icon size={28} aria-hidden="true" />
+                            <div className={`w-14 h-14 rounded-2xl ${stat.bg} flex items-center justify-center ${stat.color} shadow-xs shrink-0`}>
+                                <stat.icon size={26} aria-hidden="true" />
                             </div>
                             <div>
                                 <p className="text-[10px] font-black text-[#555555] uppercase tracking-[0.2em] mb-1">{stat.label}</p>

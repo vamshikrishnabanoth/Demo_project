@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus, ShieldAlert, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus, ShieldAlert, ShieldCheck, AlertTriangle, Sparkles, RadioTower } from 'lucide-react';
 import api from '../utils/api';
 import socket, { ensureSocketConnected } from '../utils/socket';
 import AuthContext from '../context/AuthContext';
@@ -493,14 +493,39 @@ if (socket.connected) {
 
     if (loading) return (
         <DashboardLayout role="teacher">
-            <div className="flex flex-col items-center justify-center min-h-[70vh]">
-                <div className="relative">
-                    <div className="w-20 h-20 border-4 border-[var(--bg-accent)]/20 border-t-[var(--bg-accent)] rounded-full animate-spin"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <Users className="text-[var(--text-accent)]" size={24} />
+            <div className="flex items-center justify-center min-h-[75vh] px-4">
+                <div className="relative w-full max-w-md p-10 sm:p-12 bg-white/90 border border-slate-200/80 rounded-[2.5rem] shadow-2xl shadow-slate-200/80 backdrop-blur-xl text-center space-y-8 overflow-hidden">
+                    {/* Background Ambient Glow */}
+                    <div className="absolute -top-24 -left-24 w-60 h-60 bg-orange-400/20 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute -bottom-24 -right-24 w-60 h-60 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
+
+                    {/* Multi-Ring Dynamic Radar & Pulse Loader */}
+                    <div className="relative w-28 h-28 mx-auto flex items-center justify-center">
+                        <div className="absolute inset-0 rounded-full border-4 border-orange-500/20 animate-ping" />
+                        <div className="absolute inset-2 rounded-full border-2 border-dashed border-orange-500/40 animate-spin" style={{ animationDuration: '10s' }} />
+                        <div className="absolute inset-0 rounded-full border-4 border-t-orange-600 border-r-transparent border-b-emerald-500 border-l-transparent animate-spin" style={{ animationDuration: '2s' }} />
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 text-white flex items-center justify-center shadow-lg shadow-orange-500/30 relative z-10">
+                            <RadioTower className="w-8 h-8 text-white animate-pulse" />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2 relative z-10">
+                        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight italic">
+                            Initializing <span className="text-orange-600">Arena Lobby</span>
+                        </h3>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center justify-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-orange-500 animate-ping" />
+                            Establishing Real-Time Synchronization...
+                        </p>
+                    </div>
+
+                    {/* Progress Indicator Dots */}
+                    <div className="flex items-center justify-center gap-2 pt-2">
+                        <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                 </div>
-                <p className="mt-6 font-black text-gray-400 uppercase tracking-widest animate-pulse">Initializing Room...</p>
             </div>
         </DashboardLayout>
     );
@@ -551,9 +576,12 @@ if (socket.connected) {
                 <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 py-6 sm:py-10">
                     <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.2rem] p-8 sm:p-10 lg:p-12 text-center shadow-[0_18px_40px_rgba(15,23,42,0.06)] relative overflow-hidden">
                         <div className="relative z-10 space-y-7">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm">
-                                <span className="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                                <span className="text-[var(--text-primary)] font-black uppercase tracking-[0.22em] text-[10px] italic">Lobby is Open</span>
+                            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-emerald-300/80 bg-emerald-50/90 text-emerald-800 shadow-sm">
+                                <span className="relative flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                                </span>
+                                <span className="font-black uppercase tracking-[0.22em] text-[11px] italic">Lobby is Open</span>
                             </div>
                             <h1 className="type-page-title font-black italic uppercase text-balance" style={{ color: 'var(--text-primary)' }}>
                                 Waiting for <span className="text-[var(--text-accent)]">Participants</span>
@@ -566,9 +594,17 @@ if (socket.connected) {
                             </div>
                             <div className="pt-4 flex flex-col items-center gap-5">
                                 <button
-                                    onClick={handleStartQuiz}
-                                    disabled={participants.length === 0}
-                                    className="group flex flex-row items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    onClick={() => {
+                                        if (participants.length === 0) {
+                                            toast.error('Waiting for participants to join the lobby before starting the session.', {
+                                                id: 'lobby-empty-notice',
+                                                icon: <Users className="text-amber-500" size={18} />
+                                            });
+                                            return;
+                                        }
+                                        handleStartQuiz();
+                                    }}
+                                    className="group flex flex-row items-center justify-center gap-3 bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 hover:from-orange-700 hover:to-amber-700 text-white px-10 sm:px-14 py-4 rounded-[1.5rem] transition-all shadow-xl shadow-orange-600/25 font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 cursor-pointer border-b-4 border-orange-800"
                                 >
                                     <Play size={22} className="group-hover:translate-x-1 transition-transform text-white fill-white" />
                                     <span>START GAME</span>
