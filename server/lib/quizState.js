@@ -98,7 +98,7 @@ let isFlushRunning = false;
  */
 function initQuiz(quizId, quiz, opts = {}) {
     const existing = quizStore.get(quizId);
-    if (existing && existing.status === 'started') {
+    if (existing && existing.status === 'started' && !opts.forceReset) {
         // Already running — update quiz object (e.g. if questions changed)
         existing.quiz = quiz;
         return;

@@ -3,10 +3,8 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
     Trophy, Play, Users, Star, ArrowRight, Target, Sparkles, 
-    Zap, Rocket, Globe, Cpu, MessageSquare, Clock, BarChart3, 
-    ChevronRight, Search, LayoutGrid, FileText, Upload, Lock, FilePlus, Loader2,
-    Hash, Gauge, Database, Sliders, Book, FileCheck, ShieldCheck, Gift, Medal, AlertTriangle,
-    Clock3, BadgeCheck, Binoculars, TimerReset
+    Zap, Rocket, Globe, Brain, Cpu, MessageSquare, Clock, BarChart3, 
+    ChevronRight, Search, LayoutGrid, FileText, Upload, Lock, FilePlus, Loader2
 } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import api from '../utils/api';
@@ -72,7 +70,6 @@ export default function StudentDashboard() {
 
     // Gamification States
     const [xp, setXp] = useState(0);
-    const [points, setPoints] = useState(0);
     const [streak, setStreak] = useState(0);
     const [highestStreak, setHighestStreak] = useState(0);
     const [dailyMissions, setDailyMissions] = useState([]);
@@ -80,28 +77,11 @@ export default function StudentDashboard() {
     const [redeeming, setRedeeming] = useState(false);
     const [showTicket, setShowTicket] = useState(null); // holds perk object to show ticket
 
-    // Assessments States
-    const [assessments, setAssessments] = useState([]);
-    const [loadingAssessments, setLoadingAssessments] = useState(false);
-
-    const fetchAssessments = async () => {
-        setLoadingAssessments(true);
-        try {
-            const res = await api.get('/quiz/available');
-            setAssessments((res.data || []).filter(q => q.isAssessment));
-        } catch (err) {
-            console.error('Failed to load assessments', err);
-        } finally {
-            setLoadingAssessments(false);
-        }
-    };
-
     // Read-only: just hydrate UI state, no DB mutations
     const fetchGamification = async () => {
         try {
             const res = await api.get('/students/gamification');
             setXp(res.data.xp || 0);
-            setPoints(res.data.points ?? res.data.xp ?? 0);
             setStreak(res.data.streak || 0);
             setHighestStreak(res.data.highestStreak || 0);
             setDailyMissions(res.data.dailyMissions || []);
@@ -111,12 +91,11 @@ export default function StudentDashboard() {
         }
     };
 
-    // Called once per day when tab mounts — handles streak saves, resets, mission generation
+    // Called once per day when tab mounts ΓÇö handles streak saves, resets, mission generation
     const initGamification = async () => {
         try {
             const res = await api.post('/students/gamification/init');
             setXp(res.data.xp || 0);
-            setPoints(res.data.points ?? res.data.xp ?? 0);
             setStreak(res.data.streak || 0);
             setHighestStreak(res.data.highestStreak || 0);
             setDailyMissions(res.data.dailyMissions || []);
@@ -125,9 +104,9 @@ export default function StudentDashboard() {
             if (res.data.actionsTaken?.length > 0) {
                 res.data.actionsTaken.forEach(action => {
                     if (action.includes('saved')) {
-                        toast.success(action, { duration: 5000 });
+                        toast.success(`≡ƒ¢í∩╕Å ${action}`, { duration: 5000 });
                     } else if (action.includes('reset')) {
-                        toast.error(action, { duration: 5000 });
+                        toast.error(`≡ƒÆö ${action}`, { duration: 5000 });
                     }
                 });
             }
@@ -141,28 +120,22 @@ export default function StudentDashboard() {
         if (user?.id) {
             socket.emit('identify', user.id);
             fetchGamification();
-            fetchAssessments();
         }
     }, [user]);
 
+    // Run init when user switches to the gamification tab
     useEffect(() => {
         if (activeTab === 'gamification' && user?.id) {
             initGamification();
         }
-        if (activeTab === 'assessments' && user?.id) {
-            fetchAssessments();
-        }
     }, [activeTab]);
 
     const handleRedeemPerk = async (perkId, perkName, cost) => {
-        const currentPts = points || xp;
-        if (currentPts < cost) return toast.error('Not enough points to redeem this perk!');
+        if (xp < cost) return toast.error('Not enough XP!');
         setRedeeming(true);
         try {
             const res = await api.post('/students/redeem-perk', { perkId, perkName, cost });
-            const remaining = res.data.remainingPoints ?? res.data.remainingXp ?? (currentPts - cost);
-            setPoints(remaining);
-            setXp(remaining);
+            setXp(res.data.remainingXp);
             setUnlockedPerks(prev => [...prev, res.data.perk]);
             toast.success(`Redeemed: ${perkName}`);
         } catch (err) {
@@ -257,7 +230,7 @@ export default function StudentDashboard() {
         }
     };
 
-    // ── Polling Logics ──────────────────────────────────────────────────────
+    // ΓöÇΓöÇ Polling Logics ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
     const stopPolling = useCallback(() => {
         clearInterval(pollIntervalRef.current);
         clearInterval(elapsedRef.current);
@@ -346,7 +319,7 @@ export default function StudentDashboard() {
                 formData.append('type', 'topic');
             }
             formData.append('questionCount', '10');
-            formData.append('difficulty', 'Medium');
+            formData.append('difficulty', 'Medium'); // standard pool count and baseline
 
             const res = await api.post('/quiz/generate', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
@@ -359,6 +332,7 @@ export default function StudentDashboard() {
             startPolling(taskId, {
                 onComplete: (result) => {
                     setSubmitting(false);
+                    // Navigate to the correct game page, passing generated questions and material name
                     let targetPath = '/cyber-quest';
                     if (selectedGame === 'sprint-arena') targetPath = '/sprint-arena';
                     else if (selectedGame === 'match-up') targetPath = '/match-up-arena';
@@ -395,13 +369,14 @@ export default function StudentDashboard() {
             )}
             <div className="relative min-h-[75vh] flex items-center justify-center py-10 font-inter overflow-hidden">
                 
-                {/* ─── AMBIENT DECORATIONS ─────────────────────────────────── */}
+                {/* ΓöÇΓöÇΓöÇ AMBIENT DECORATIONS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <FloatingSymbol Icon={Cpu} top="15%" left="10%" delay={0} size={isSmallScreen ? 24 : 40} />
                     <FloatingSymbol Icon={Globe} top="25%" left="85%" delay={2} size={isSmallScreen ? 20 : 32} />
                     {!isSmallScreen && (
                         <>
                             <FloatingSymbol Icon={Rocket} top="70%" left="15%" delay={4} />
+                            <FloatingSymbol Icon={Brain} top="65%" left="80%" delay={1} />
                         </>
                     )}
                 </div>
@@ -413,36 +388,117 @@ export default function StudentDashboard() {
                     className="w-full max-w-4xl space-y-8 text-center relative z-10 px-6"
                 >
                     {/* Header System */}
-                    <div className="space-y-3">
-                        <h1 className="type-page-title font-black text-[var(--text-primary)] italic tracking-tight">
-                            Student <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">Dashboard</span>
+                    <div className="space-y-4">
+                        <motion.div 
+                            whileHover={{ scale: 1.05 }}
+                            className="w-20 h-20 bg-[var(--bg-accent)]/10 rounded-[1.8rem] border-2 border-[var(--bg-accent)]/30 flex items-center justify-center text-[var(--text-accent)] mx-auto mb-4 relative shadow-[0_0_30px_var(--bg-accent-glow)] group cursor-pointer"
+                        >
+                            <Trophy size={40} className="relative z-10" />
+                        </motion.div>
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                            STUDENT <span className="text-[var(--text-accent)] drop-shadow-[0_0_20px_var(--bg-accent-glow)]">GAME ARENA</span>
                         </h1>
-                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.3em] text-[10px] max-w-md mx-auto">
-                            Attempt quizzes via PIN code or redeem missions & academic perks
+                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-[0.4em] text-[10px] max-w-md mx-auto opacity-60">
+                            Attempt quizzes via Code or Launch cognitive AI games
                         </p>
                     </div>
 
+                    {/* Gamification Quick Stats Banner */}
+                    <div className="flex justify-center items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 max-w-2xl mx-auto shadow-lg backdrop-blur-md flex-wrap">
+                        <div className="flex items-center gap-2">
+                            <Star className="text-yellow-400" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Total XP</p>
+                                <p className="text-lg font-black text-white italic leading-none">{xp} <span className="text-xs text-yellow-400">XP</span></p>
+                            </div>
+                        </div>
+                        <div className="h-8 w-px bg-white/20"></div>
+                        <div className="flex items-center gap-2">
+                            <Rocket className="text-orange-500" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Current Streak</p>
+                                <p className="text-lg font-black text-white italic leading-none">{streak} <span className="text-xs text-orange-500">DAYS</span></p>
+                            </div>
+                        </div>
+                        <div className="h-8 w-px bg-white/20"></div>
+                        <div className="flex items-center gap-2">
+                            <Trophy className="text-amber-300" size={22} fill="currentColor" />
+                            <div className="text-left">
+                                <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest leading-none mb-1">Best Streak</p>
+                                <p className="text-lg font-black text-white italic leading-none">{highestStreak} <span className="text-xs text-amber-300">DAYS</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* XP Progress toward Next Reward */}
+                    {(() => {
+                        const XP_REWARDS = [
+                            { name: 'Attendance Pass', cost: 1500 },
+                            { name: 'Late Pass', cost: 3000 },
+                        ];
+                        const nextReward = XP_REWARDS.find(r => xp < r.cost);
+                        if (!nextReward) return (
+                            <div className="max-w-2xl mx-auto px-2">
+                                <p className="text-center text-[10px] font-black text-amber-400 uppercase tracking-widest">
+                                    ≡ƒÅå All XP Rewards Unlocked! Maintain your streak for the Golden Perk.
+                                </p>
+                            </div>
+                        );
+                        const prevCost = XP_REWARDS[XP_REWARDS.indexOf(nextReward) - 1]?.cost || 0;
+                        const progress = Math.min(((xp - prevCost) / (nextReward.cost - prevCost)) * 100, 100);
+                        const xpLeft = nextReward.cost - xp;
+                        return (
+                            <div className="max-w-2xl mx-auto px-2 space-y-1.5">
+                                <div className="flex justify-between items-center">
+                                    <p className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
+                                        Next: <span className="text-yellow-400">{nextReward.name}</span>
+                                    </p>
+                                    <p className="text-[9px] font-black text-white">
+                                        {xp.toLocaleString()} / {nextReward.cost.toLocaleString()} XP
+                                        <span className="text-yellow-400 ml-2">ΓÇö {xpLeft.toLocaleString()} XP to go</span>
+                                    </p>
+                                </div>
+                                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progress}%` }}
+                                        transition={{ duration: 1, ease: 'easeOut' }}
+                                        className="h-full bg-gradient-to-r from-yellow-500 to-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]"
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })()}
+
                     {/* Tab Controls */}
-                    <div className="flex justify-center gap-4 max-w-2xl mx-auto pt-2">
+                    <div className="flex justify-center gap-4 max-w-2xl mx-auto">
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('link'); }}
-                            className={`flex-1 py-3.5 px-6 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
                                 activeTab === 'link'
-                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_20px_rgba(234,88,12,0.25)] border-[var(--bg-accent)]'
-                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
+                                    ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
                             }`}
-                            style={activeTab === 'link' ? { color: '#ffffff' } : {}}
                         >
-                            <Zap size={16} /> Join Quiz
+                            Join Quiz
+                        </button>
+                        <button
+                            onClick={() => { if (!isLoading) setActiveTab('arena'); }}
+                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border ${
+                                activeTab === 'arena'
+                                    ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
+                            }`}
+                        >
+                            Game Arena
                         </button>
                         <button
                             onClick={() => { if (!isLoading) setActiveTab('gamification'); }}
-                            className={`flex-1 py-3.5 px-6 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`flex-1 py-4 rounded-2xl font-black uppercase tracking-wider text-xs italic transition-all duration-300 border flex items-center justify-center gap-2 ${
                                 activeTab === 'gamification'
-                                    ? 'bg-[var(--bg-accent)] !text-white shadow-[0_6px_20px_rgba(234,88,12,0.25)] border-[var(--bg-accent)]'
-                                    : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] border-[var(--border-color)]'
+                                    ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_0_20px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                    : 'bg-white/5 text-[var(--text-secondary)] hover:text-white border-white/5'
                             }`}
-                            style={activeTab === 'gamification' ? { color: '#ffffff' } : {}}
                         >
                             <Trophy size={16} /> Missions & Perks
                         </button>
@@ -462,7 +518,7 @@ export default function StudentDashboard() {
                                 <div className="relative">
                                     <motion.div 
                                         animate={controls}
-                                        className="relative flex justify-center gap-2 md:gap-4 cursor-pointer py-7 px-4 sm:px-6 bg-white rounded-3xl border border-slate-200 shadow-[0_6px_20px_rgba(15,23,42,0.06)] group"
+                                        className="relative flex justify-center gap-2 md:gap-4 cursor-pointer py-8 px-6 bg-white/[0.02] backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] group"
                                         onClick={() => inputRef.current?.focus()}
                                     >
                                         <input
@@ -491,12 +547,12 @@ export default function StudentDashboard() {
                                                     initial={false}
                                                     animate={{
                                                         scale: isActive ? 1.08 : 1,
-                                                        borderColor: isActive ? '#111827' : isFilled ? '#64748b' : '#d1d5db',
-                                                        backgroundColor: 'white',
-                                                        boxShadow: isActive ? '0 0 0 3px rgba(17,24,39,0.08)' : 'none'
+                                                        borderColor: isActive ? 'var(--bg-accent)' : isFilled ? 'var(--bg-accent)' : 'rgba(255,255,255,0.1)',
+                                                        backgroundColor: isActive ? 'rgba(255,255,255,0.05)' : isFilled ? 'rgba(255,255,255,0.02)' : 'transparent',
+                                                        boxShadow: isActive ? '0 0 25px var(--bg-accent-glow)' : 'none'
                                                     }}
                                                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                    className="w-10 md:w-12 h-14 md:h-[4.5rem] rounded-xl border-2 flex items-center justify-center relative overflow-hidden transition-colors hover:border-slate-500"
+                                                    className="w-10 md:w-12 h-14 md:h-18 rounded-xl border-2 backdrop-blur-md flex items-center justify-center relative overflow-hidden transition-colors"
                                                 >
                                                     <AnimatePresence mode="popLayout">
                                                         {joinCode[i] ? (
@@ -505,7 +561,7 @@ export default function StudentDashboard() {
                                                                 initial={{ opacity: 0, scale: 2, y: 10 }}
                                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                                                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                                                                className="text-xl md:text-3xl font-black text-[var(--text-primary)] italic tracking-tighter z-10"
+                                                                className="text-xl md:text-3xl font-black text-white italic tracking-tighter z-10"
                                                             >
                                                                 {joinCode[i]}
                                                             </motion.span>
@@ -514,7 +570,7 @@ export default function StudentDashboard() {
                                                                 <motion.div 
                                                                     animate={{ opacity: [1, 0, 1] }}
                                                                     transition={{ duration: 1, repeat: Infinity }}
-                                                                    className="w-0.5 h-6 bg-[#111827] rounded-full"
+                                                                    className="w-0.5 h-6 bg-[var(--bg-accent)] rounded-full"
                                                                 />
                                                             )
                                                         )}
@@ -526,7 +582,7 @@ export default function StudentDashboard() {
                                                                 initial={{ opacity: 0, scale: 0 }}
                                                                 animate={{ opacity: 1, scale: 1 }}
                                                                 exit={{ opacity: 0, scale: 0 }}
-                                                                className="absolute inset-0 bg-slate-900/[0.03] pointer-events-none"
+                                                                className="absolute inset-0 bg-gradient-to-t from-[var(--bg-accent)]/10 to-transparent pointer-events-none"
                                                             />
                                                         )}
                                                     </AnimatePresence>
@@ -539,25 +595,18 @@ export default function StudentDashboard() {
                                 <button
                                     onClick={() => handleJoin()}
                                     disabled={joinCode.length !== maxChars || isSubmitting}
-                                        className={`w-full h-16 rounded-[1.4rem] font-black text-lg italic uppercase tracking-[0.18em] flex items-center justify-center text-center transition-all duration-300 border border-[#ea580c]/80 bg-[#ea580c] text-white shadow-[0_12px_28px_rgba(194,65,12,0.28)] ${
-                                        joinCode.length === maxChars && !isSubmitting
-                                            ? 'hover:brightness-105 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer'
-                                            : 'opacity-90 cursor-not-allowed'
-                                    }`}
+                                    className={`w-full h-16 rounded-2xl font-black text-lg italic uppercase tracking-[0.2em] flex items-center justify-center gap-4 transition-all duration-500 btn-cinematic btn-glow
+                                        ${joinCode.length === maxChars && !isSubmitting
+                                            ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_20px_40px_var(--bg-accent-glow)]' 
+                                            : 'bg-white/[0.03] text-white/10 border border-white/5 cursor-not-allowed'}`}
                                 >
                                     {isSubmitting ? (
-                                        <div className="flex items-center justify-center gap-3 text-white">
-                                            <Zap className="animate-spin text-white" size={22} />
-                                            <span className="text-white font-black">CONNECTING TO ARENA...</span>
-                                        </div>
+                                        <Zap className="animate-spin" size={20} />
                                     ) : (
-                                        <div className="flex items-center justify-center gap-3 text-center w-full text-white">
-                                            <Sparkles size={22} className={`text-white ${joinCode.length === maxChars ? 'animate-pulse' : ''}`} />
-                                            <span className="text-white font-black tracking-[0.2em]">
-                                                ATTEMPT QUIZ
-                                            </span>
-                                            <ArrowRight size={20} className="text-white" />
-                                        </div>
+                                        <>
+                                            <Sparkles size={20} className={joinCode.length === maxChars ? 'animate-pulse' : ''} />
+                                            {uiTerminology.deployToArena.toUpperCase()}
+                                        </>
                                     )}
                                 </button>
                             </motion.div>
@@ -574,11 +623,11 @@ export default function StudentDashboard() {
                                     
                                     {/* Column 1: Document Uploader */}
                                     <div className="lg:col-span-2 space-y-6">
-                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 relative overflow-hidden group shadow-sm">
+                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel relative overflow-hidden group">
                                             <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
                                                 Step 1: Upload Study Material
                                             </label>
-                                            <div className="relative border-4 border-dashed border-[var(--border-color)] rounded-2xl hover:border-[var(--bg-accent)] transition-all bg-[var(--bg-primary)] group/upload">
+                                            <div className="relative border-4 border-dashed border-[var(--border-color)] rounded-2xl hover:border-[var(--bg-accent)]/50 transition-all bg-white/5 group/upload">
                                                 <input
                                                     type="file"
                                                     accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png,.txt"
@@ -589,17 +638,15 @@ export default function StudentDashboard() {
                                                 <div className="p-8 flex flex-col items-center gap-4 text-center">
                                                     {file ? (
                                                         <div className="flex flex-col items-center gap-3 animate-in fade-in zoom-in duration-300">
-                                                            <div className="w-14 h-14 rounded-2xl bg-[var(--accent-sand)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-accent)] shadow-xs">
-                                                                <FileCheck size={28} className="text-[var(--text-accent)]" />
+                                                            <div className="bg-[var(--bg-accent)] p-4 rounded-xl text-[var(--text-on-accent)] shadow-[0_5px_20px_var(--bg-accent-glow)]">
+                                                                <FilePlus size={32} />
                                                             </div>
-                                                            <p className="font-black text-sm text-[#0f172a] italic max-w-[200px] truncate" style={{ color: '#0f172a' }}>{file.name}</p>
-                                                            <div className="px-3 py-1 rounded-full bg-[var(--accent-sand)] border border-[var(--border-color)]">
-                                                                <p className="text-[9px] font-black text-[var(--text-accent)] uppercase tracking-widest">Material Locked In</p>
-                                                            </div>
+                                                            <p className="font-black text-sm text-[var(--text-primary)] italic max-w-[180px] truncate">{file.name}</p>
+                                                            <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-[9px]">Material Locked In</p>
                                                         </div>
                                                     ) : (
                                                         <>
-                                                            <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] p-4 rounded-xl text-[var(--text-secondary)] group-hover/upload:text-[var(--bg-accent)] transition-colors">
+                                                            <div className="bg-white/5 p-4 rounded-xl text-[var(--text-secondary)] group-hover/upload:text-[var(--bg-accent)] transition-colors">
                                                                 <Upload size={32} />
                                                             </div>
                                                             <div>
@@ -611,7 +658,7 @@ export default function StudentDashboard() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 relative overflow-hidden group shadow-sm">
+                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel relative overflow-hidden group">
                                             <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
                                                 OR YouTube Video Links (Max 2)
                                             </label>
@@ -622,7 +669,7 @@ export default function StudentDashboard() {
                                                             type="text"
                                                             value={url}
                                                             onChange={(e) => handleUpdateVideoUrl(i, e.target.value)}
-                                                            className="flex-1 p-4 bg-white border border-[var(--border-color)] rounded-xl focus:border-red-500 transition-all font-bold text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/60 outline-none"
+                                                            className="flex-1 p-4 bg-white/5 border border-white/10 rounded-xl focus:bg-white/10 focus:border-red-500 transition-all font-bold text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/30 outline-none"
                                                             placeholder="https://youtube.com/watch?v=..."
                                                             disabled={submitting}
                                                         />
@@ -644,7 +691,7 @@ export default function StudentDashboard() {
 
                                     {/* Column 2: Choose Game Mode */}
                                     <div className="lg:col-span-3 space-y-6">
-                                        <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 shadow-sm">
+                                        <div className="bg-white/5 rounded-3xl border border-[var(--border-color)] p-6 glass-panel">
                                             <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-4">
                                                 Step 2: Select Game Arena
                                             </label>
@@ -655,19 +702,19 @@ export default function StudentDashboard() {
                                                     onClick={() => setSelectedGame('cyber-quest')}
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'cyber-quest'
-                                                            ? 'border-cyan-500 bg-cyan-500/8 shadow-md'
-                                                            : 'border-[var(--border-color)] bg-[#f8fafc] hover:border-cyan-400/60'
+                                                            ? 'border-[var(--bg-accent)] bg-[var(--bg-accent)]/5 shadow-[0_0_20px_rgba(0,240,255,0.15)]'
+                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10'
                                                     }`}
                                                 >
-                                                    <div className="bg-cyan-100 text-cyan-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-inner">
+                                                    <div className="bg-[var(--bg-accent)]/10 text-[var(--text-accent)] w-12 h-12 rounded-xl flex items-center justify-center">
                                                         <Sparkles size={24} />
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Cyber Quest</h3>
-                                                            <span className="text-cyan-600 font-bold text-[8px] uppercase tracking-widest border border-cyan-500/30 bg-cyan-50 px-2 py-0.5 rounded">READY</span>
+                                                            <h3 className="font-black text-white uppercase italic text-sm tracking-wide">Cyber Quest</h3>
+                                                            <span className="text-[var(--text-accent)] font-bold text-[8px] uppercase tracking-widest border border-[var(--text-accent)]/30 px-2 py-0.5 rounded">READY</span>
                                                         </div>
-                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
+                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
                                                             Progress through 10 cyberpunk difficulty tiers. Use 50:50, Shield, and Skip lifelines to win.
                                                         </p>
                                                     </div>
@@ -678,19 +725,19 @@ export default function StudentDashboard() {
                                                     onClick={() => setSelectedGame('sprint-arena')}
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'sprint-arena'
-                                                            ? 'border-pink-500 bg-pink-500/5 shadow-md opacity-100'
-                                                            : 'border-[var(--border-color)] bg-[#fff7fb] hover:border-pink-400/60 opacity-80'
+                                                            ? 'border-pink-500 bg-pink-500/5 shadow-[0_0_20px_rgba(219,39,119,0.15)] opacity-100'
+                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10 opacity-70'
                                                     }`}
                                                 >
-                                                    <div className="bg-pink-100 text-pink-500 w-12 h-12 rounded-xl flex items-center justify-center shadow-inner">
-                                                        <TimerReset size={24} />
+                                                    <div className="bg-pink-600/10 text-pink-400 w-12 h-12 rounded-xl flex items-center justify-center">
+                                                        <Clock size={24} />
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Sprint Arena</h3>
-                                                            <span className="text-pink-500 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 bg-pink-50 px-2 py-0.5 rounded">READY</span>
+                                                            <h3 className="font-black text-slate-300 uppercase italic text-sm tracking-wide">Sprint Arena</h3>
+                                                            <span className="text-pink-400 font-bold text-[8px] uppercase tracking-widest border border-pink-500/30 px-2 py-0.5 rounded">READY</span>
                                                         </div>
-                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
+                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
                                                             Beat the ticking clock in rapid time-survival MCQ matches. Correct adds time, wrong subtracts.
                                                         </p>
                                                     </div>
@@ -701,16 +748,19 @@ export default function StudentDashboard() {
                                                     onClick={() => setSelectedGame('match-up')}
                                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex gap-4 items-center relative overflow-hidden ${
                                                         selectedGame === 'match-up'
-                                                            ? 'border-violet-500 bg-violet-500/5 shadow-md opacity-100'
-                                                            : 'border-[var(--border-color)] bg-[#faf5ff] hover:border-violet-400/60 opacity-80'
+                                                            ? 'border-purple-500 bg-purple-500/5 shadow-[0_0_20px_rgba(168,85,247,0.15)] opacity-100'
+                                                            : 'border-white/5 bg-white/[0.01] hover:border-white/10 opacity-70'
                                                     }`}
                                                 >
+                                                    <div className="bg-purple-600/10 text-purple-400 w-12 h-12 rounded-xl flex items-center justify-center">
+                                                        <Cpu size={24} />
+                                                    </div>
                                                     <div className="flex-1">
                                                         <div className="flex justify-between items-center">
-                                                            <h3 className="font-black text-[var(--text-primary)] uppercase italic text-sm tracking-wide">Match-Up Match</h3>
-                                                            <span className="text-violet-500 font-bold text-[8px] uppercase tracking-widest border border-violet-500/30 bg-violet-50 px-2 py-0.5 rounded">READY</span>
+                                                            <h3 className="font-black text-slate-300 uppercase italic text-sm tracking-wide">Match-Up Match</h3>
+                                                            <span className="text-purple-400 font-bold text-[8px] uppercase tracking-widest border border-purple-500/30 px-2 py-0.5 rounded">READY</span>
                                                         </div>
-                                                        <p className="text-[var(--text-secondary)] text-[10px] mt-1 font-medium leading-relaxed">
+                                                        <p className="text-slate-400 text-[10px] mt-1 font-medium leading-relaxed">
                                                             Visual cognitive card-matching memory board. Solve vocabulary and concepts in record times.
                                                         </p>
                                                     </div>
@@ -726,21 +776,21 @@ export default function StudentDashboard() {
                                     <button
                                         onClick={handleLaunchGame}
                                         disabled={(!file && videoUrls.every(u => !u.trim())) || submitting}
-                                        className={`group w-full sm:w-auto px-6 sm:px-16 py-4 sm:py-5 rounded-[1.4rem] font-black text-base sm:text-xl italic uppercase tracking-[0.18em] sm:tracking-[0.25em] flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 border border-[#ea580c]/80 bg-[#ea580c] text-white shadow-[0_12px_28px_rgba(194,65,12,0.28)] ${
-                                            (!file && videoUrls.every(u => !u.trim())) || submitting
-                                                ? 'opacity-90 cursor-not-allowed'
-                                            : 'hover:brightness-110 hover:scale-[1.02] hover:-translate-y-1 hover:border-white/80 hover:shadow-[0_18px_38px_rgba(249,115,22,0.42)] active:scale-[0.99] active:translate-y-0 cursor-pointer'
-                                        }`}
+                                        className={`px-16 py-5 rounded-2xl font-black text-xl italic uppercase tracking-[0.25em] flex items-center gap-4 transition-all duration-300 border btn-cinematic
+                                            ${(file || videoUrls.some(u => u.trim())) && !submitting
+                                                ? 'bg-[var(--bg-accent)] text-[var(--text-on-accent)] shadow-[0_15px_30px_var(--bg-accent-glow)] border-[var(--bg-accent)]'
+                                                : 'bg-white/5 text-white/10 border-white/5 cursor-not-allowed'
+                                            }`}
                                     >
                                         {submitting ? (
                                             <>
-                                                <Loader2 size={24} className="animate-spin text-white" />
-                                                <span className="text-white font-black">ANALYZING MATERIAL...</span>
+                                                <Loader2 size={24} className="animate-spin" />
+                                                ANALYZING MATERIAL...
                                             </>
                                         ) : (
                                             <>
-                                                <Play size={24} fill="#ffffff" className="text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:scale-110" />
-                                                <span className="text-white font-black">LAUNCH GAME MODE</span>
+                                                <Play size={24} fill="currentColor" />
+                                                LAUNCH GAME MODE
                                             </>
                                         )}
                                     </button>
@@ -753,245 +803,101 @@ export default function StudentDashboard() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -15 }}
                                 transition={{ duration: 0.4 }}
-                                className="space-y-8 max-w-5xl mx-auto text-left"
+                                className="space-y-10 max-w-5xl mx-auto text-left"
                             >
-                                {/* Missions & Perks Progression Card */}
-                                <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 shadow-sm">
-                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500">
-                                                <Trophy size={24} className="text-amber-500" />
-                                            </div>
-                                            <div>
-                                                <h2 className="text-xl font-black text-[var(--text-primary)] italic uppercase tracking-wide">
-                                                    Missions & Perks Progression
-                                                </h2>
-                                                <p className="text-xs text-[var(--text-secondary)] font-medium">
-                                                    Complete tasks & quizzes to unlock exclusive academic perks
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="text-right self-end sm:self-auto">
-                                            <span className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-wider block">
-                                                Total Points Gained
-                                            </span>
-                                            <span className="text-xl font-black text-amber-500 italic">
-                                                {(points || xp)} <span className="text-xs text-[var(--text-secondary)] font-bold">/ 1300 PTS</span>
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Golden Progress Line */}
-                                    <div className="w-full bg-[var(--bg-primary)] h-4 rounded-full border border-[var(--border-color)] overflow-hidden p-0.5 relative">
-                                        <motion.div 
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${Math.min(((points || xp) / 1300) * 100, 100)}%` }}
-                                            transition={{ duration: 1, ease: "easeOut" }}
-                                            className="h-full rounded-full relative overflow-hidden"
-                                            style={{
-                                                background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)',
-                                                boxShadow: '0 0 15px rgba(245, 158, 11, 0.6)'
-                                            }}
-                                        >
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
-                                        </motion.div>
-                                    </div>
-
-                                    <div className="flex justify-between items-center text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mt-2">
-                                        <span>0 PTS</span>
-                                        <span className="text-amber-500 font-black">{Math.min(Math.round(((points || xp) / 1300) * 100), 100)}% COMPLETED</span>
-                                        <span>1300 PTS (MAX MILESTONE)</span>
-                                    </div>
-                                </div>
-
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     {/* Daily Missions */}
-                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-5 sm:p-6 flex flex-col gap-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
-                                        <div className="flex items-center gap-3 mb-1">
-                                            <div className="rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] p-2 text-[var(--text-primary)] shadow-sm">
-                                                <ShieldCheck size={20} />
-                                            </div>
-                                            <h2 className="type-section-title font-black text-[var(--text-primary)] italic uppercase">Daily Missions</h2>
+                                    <div className="bg-white/5 rounded-3xl border border-white/10 p-6 glass-panel flex flex-col gap-4">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Target className="text-pink-500" size={28} />
+                                            <h2 className="text-2xl font-black text-white italic uppercase">Daily Missions</h2>
                                         </div>
-
-                                        {(() => {
-                                            const getMissionTheme = (mission) => {
-                                                const title = (mission?.title || '').toLowerCase();
-                                                const isAccuracy = title.includes('accuracy') || title.includes('precise') || title.includes('correct');
-                                                const isXp = title.includes('xp') || title.includes('earn') || title.includes('score');
-                                                const isCyber = title.includes('cyber') || title.includes('quest');
-
-                                                if (isAccuracy) {
-                                                    return {
-                                                        badge: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200',
-                                                        chip: 'bg-fuchsia-100 text-fuchsia-700',
-                                                        bar: 'bg-fuchsia-500',
-                                                        icon: 'text-fuchsia-600',
-                                                        soft: 'bg-fuchsia-50/70 border-fuchsia-100',
-                                                        progress: 'text-fuchsia-700'
-                                                    };
-                                                }
-
-                                                if (isXp) {
-                                                    return {
-                                                        badge: 'bg-amber-50 text-amber-700 border border-amber-200',
-                                                        chip: 'bg-amber-100 text-amber-700',
-                                                        bar: 'bg-amber-500',
-                                                        icon: 'text-amber-600',
-                                                        soft: 'bg-amber-50/70 border-amber-100',
-                                                        progress: 'text-amber-700'
-                                                    };
-                                                }
-
-                                                if (isCyber) {
-                                                    return {
-                                                        badge: 'bg-violet-50 text-violet-700 border border-violet-200',
-                                                        chip: 'bg-violet-100 text-violet-700',
-                                                        bar: 'bg-violet-500',
-                                                        icon: 'text-violet-600',
-                                                        soft: 'bg-violet-50/70 border-violet-100',
-                                                        progress: 'text-violet-700'
-                                                    };
-                                                }
-
-                                                return {
-                                                    badge: 'bg-slate-100 text-slate-700 border border-slate-200',
-                                                    chip: 'bg-slate-200 text-slate-700',
-                                                    bar: 'bg-slate-600',
-                                                    icon: 'text-slate-600',
-                                                    soft: 'bg-slate-50 border-slate-200',
-                                                    progress: 'text-slate-700'
-                                                };
-                                            };
-
-                                            return dailyMissions.map((m) => {
-                                                const isComplete = m.current >= m.target;
-                                                const theme = getMissionTheme(m);
-                                                const icon = m.required ? 'MAIN' : 'BONUS';
-
-                                                return (
-                                                    <div
-                                                        key={m.id}
-                                                        className={`p-3.5 sm:p-4 rounded-2xl border bg-[var(--bg-primary)] transition-all duration-300 ${
-                                                            isComplete ? `border-[var(--border-color)] ${theme.soft}` : 'border-[var(--border-color)] bg-[var(--bg-primary)]'
-                                                        }`}
-                                                    >
-                                                        <div className="flex items-start justify-between gap-3">
-                                                            <div className="min-w-0 flex-1">
-                                                                <div className="flex items-center gap-2 flex-wrap">
-                                                                    <div className={`h-2.5 w-2.5 rounded-full ${theme.chip}`} aria-hidden="true" />
-                                                                    <h3 className="font-extrabold text-[var(--text-primary)] text-sm sm:text-[0.95rem] leading-snug tracking-[-0.01em]">
-                                                                        {m.title}
-                                                                    </h3>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="flex items-center gap-2 shrink-0">
-                                                                <span className={`inline-flex items-center rounded-full px-2 py-1 text-[8px] font-black uppercase tracking-[0.14em] ${m.required ? 'bg-pink-50 text-pink-700 border border-pink-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
-                                                                    {icon}
-                                                                </span>
-                                                                {isComplete && (
-                                                                    <span className="inline-flex items-center justify-center rounded-full bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] p-1" aria-label="Completed mission">
-                                                                        <ShieldCheck size={12} className={theme.icon} />
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="mt-3 flex items-center justify-between gap-3">
-                                                            <div className="flex-1">
-                                                                <div className="h-2 w-full rounded-full bg-[var(--border-color)]/80 overflow-hidden">
-                                                                    <div
-                                                                        className={`h-full rounded-full transition-all duration-500 ease-out ${theme.bar}`}
-                                                                        style={{ width: `${Math.min((m.current / m.target) * 100, 100)}%` }}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <span className={`min-w-[3.5rem] text-right text-[11px] font-black ${isComplete ? theme.progress : 'text-[var(--text-secondary)]'}`}>
-                                                                {m.current} / {m.target}
-                                                            </span>
-                                                        </div>
+                                        
+                                        {dailyMissions.map((m, idx) => (
+                                            <div key={m.id} className={`p-4 rounded-2xl border flex flex-col gap-2 relative overflow-hidden ${m.current >= m.target ? 'border-green-500/50 bg-green-500/10' : 'border-white/10 bg-white/5'}`}>
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <h3 className="font-bold text-white text-sm flex items-center gap-2">
+                                                            {m.title}
+                                                            {m.required && <span className="bg-pink-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Main (Streak +1)</span>}
+                                                            {!m.required && <span className="bg-blue-500 text-white text-[8px] px-2 py-0.5 rounded-full uppercase tracking-widest">Bonus</span>}
+                                                        </h3>
                                                     </div>
-                                                );
-                                            });
-                                        })()}
+                                                    <span className={`text-xs font-black ${m.current >= m.target ? 'text-green-400' : 'text-slate-400'}`}>
+                                                        {m.current} / {m.target}
+                                                    </span>
+                                                </div>
+                                                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                                                    <div 
+                                                        className={`h-full ${m.current >= m.target ? 'bg-green-500' : 'bg-[var(--bg-accent)]'} transition-all duration-500`}
+                                                        style={{ width: `${Math.min((m.current / m.target) * 100, 100)}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
 
                                     {/* Rewards Store */}
-                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+                                    <div className="bg-white/5 rounded-3xl border border-white/10 p-6 glass-panel flex flex-col gap-4">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <div className="rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] p-2 text-[var(--text-primary)] shadow-sm">
-                                                <Gift size={22} />
-                                            </div>
-                                            <h2 className="type-section-title font-black text-[var(--text-primary)] italic uppercase">Rewards Store</h2>
+                                            <Trophy className="text-yellow-400" size={28} />
+                                            <h2 className="text-2xl font-black text-white italic uppercase">Rewards Store</h2>
                                         </div>
 
                                         {/* Perk Store */}
                                         {(() => {
-                                            const rewardThemes = {
-                                                perk_late: {
-                                                    iconBg: 'bg-violet-100',
-                                                    icon: 'text-violet-700',
-                                                    border: 'border-violet-200',
-                                                    status: 'text-violet-700'
-                                                },
-                                                perk_half: {
-                                                    iconBg: 'bg-blue-100',
-                                                    icon: 'text-blue-700',
-                                                    border: 'border-blue-200',
-                                                    status: 'text-blue-700'
-                                                },
-                                                perk_att: {
-                                                    iconBg: 'bg-emerald-100',
-                                                    icon: 'text-emerald-700',
-                                                    border: 'border-emerald-200',
-                                                    status: 'text-emerald-700'
-                                                },
-                                                default: {
-                                                    iconBg: 'bg-slate-100',
-                                                    icon: 'text-slate-700',
-                                                    border: 'border-slate-200',
-                                                    status: 'text-slate-700'
-                                                }
+                                            const getRedemptionsThisMonth = (perkId) => {
+                                                const now = new Date();
+                                                const currentYear = now.getFullYear();
+                                                const currentMonth = now.getMonth();
+                                                return unlockedPerks.filter(p => {
+                                                    if (p.id !== perkId) return false;
+                                                    const d = new Date(p.redeemedAt);
+                                                    return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+                                                }).length;
                                             };
 
-                                            const PERK_LIST = [
-                                                { id: 'perk_late', name: 'Late Permission', cost: 700, icon: FileText, desc: 'Submit any assignment 1 day late with no penalty' },
-                                                { id: 'perk_half', name: 'Half Day Permission', cost: 900, icon: Clock3, desc: 'Excuse yourself for a half day' },
-                                                { id: 'perk_att', name: 'Attendance 5% hike', cost: 1300, icon: Target, desc: 'Increase your overall attendance by 5%' },
-                                            ];
-
-                                            const currentPts = points || xp;
-
-                                            return PERK_LIST.map(perk => {
-                                                const canAfford = currentPts >= perk.cost;
-                                                const theme = rewardThemes[perk.id] || rewardThemes.default;
-                                                const IconComponent = perk.icon;
-
+                                            return [
+                                                { id: 'perk_att', name: '1 Hour Free Attendance', cost: 1500, icon: Clock, color: 'text-blue-400', border: 'border-blue-500', desc: 'Excuse yourself from 1 hour of attendance', monthlyLimit: 1 },
+                                                { id: 'perk_late', name: '1 Day Late Pass', cost: 3000, icon: FileText, color: 'text-purple-400', border: 'border-purple-500', desc: 'Submit any assignment 1 day late with no penalty', monthlyLimit: 2 },
+                                                { id: 'perk_golden', name: 'ΓÜí Golden Perk ΓÇö Free Streak Save', cost: 0, icon: Star, color: 'text-yellow-400', border: 'border-yellow-500', desc: 'One emergency streak save that costs 0 XP. Used automatically on your next missed day.', streakOnly: 30 },
+                                            ].map(perk => {
+                                                const isStreakLocked = perk.streakOnly && streak < perk.streakOnly;
+                                                const redemptionsThisMonth = perk.monthlyLimit ? getRedemptionsThisMonth(perk.id) : 0;
+                                                const limitReached = perk.monthlyLimit ? redemptionsThisMonth >= perk.monthlyLimit : false;
+                                                const canAfford = !isStreakLocked && !limitReached && xp >= perk.cost;
                                                 return (
-                                                    <div key={perk.id} className={`p-4 rounded-2xl border bg-white flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${theme.border} bg-[var(--bg-primary)]`}>
-                                                        <div className="flex items-center gap-4">
-                                                            <div className={`p-3 rounded-xl border ${theme.iconBg} ${theme.border} ${theme.icon}`}>
-                                                                <IconComponent size={24} />
-                                                            </div>
-                                                            <div>
-                                                                <h3 className="font-bold text-[var(--text-primary)] text-sm">{perk.name}</h3>
-                                                                <p className="text-[var(--text-secondary)] text-[10px] mt-0.5">{perk.desc}</p>
-                                                                <p className="text-amber-600 text-xs font-black italic mt-1">{perk.cost} PTS</p>
-                                                            </div>
+                                                <div key={perk.id} className={`p-4 rounded-2xl border bg-white/5 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${isStreakLocked ? 'border-yellow-500/30 opacity-70' : 'border-white/10'}`}>
+                                                    <div className="flex items-center gap-4">
+                                                        <div className={`p-3 rounded-xl bg-white/5 border ${perk.border} ${perk.color}`}>
+                                                            <perk.icon size={24} />
                                                         </div>
-                                                        <button
-                                                            onClick={() => canAfford && handleRedeemPerk(perk.id, perk.name, perk.cost)}
-                                                            disabled={!canAfford || redeeming}
-                                                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
-                                                                canAfford
-                                                                    ? 'bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent-hover)] shadow-md hover:-translate-y-0.5 cursor-pointer'
-                                                                    : 'bg-white text-[var(--text-secondary)] border border-[var(--border-color)] cursor-not-allowed opacity-60'
-                                                            }`}
-                                                        >
-                                                            {canAfford ? 'Redeem' : 'Locked'}
-                                                        </button>
+                                                        <div>
+                                                            <h3 className="font-bold text-white text-sm">{perk.name}</h3>
+                                                            <p className="text-slate-400 text-[10px] mt-0.5">{perk.desc}</p>
+                                                            {perk.monthlyLimit && (
+                                                                <p className="text-pink-400 text-[9px] font-black uppercase tracking-wider mt-1">
+                                                                    ΓÜá∩╕Å Only {perk.monthlyLimit} redeemable this month ΓÇó {redemptionsThisMonth}/{perk.monthlyLimit} used
+                                                                </p>
+                                                            )}
+                                                            {isStreakLocked
+                                                                ? <p className="text-yellow-400 text-xs font-black italic mt-1">≡ƒöÆ Requires {perk.streakOnly}-Day Streak</p>
+                                                                : <p className="text-yellow-400 text-xs font-black italic mt-1">{perk.cost} XP</p>
+                                                            }
+                                                        </div>
                                                     </div>
+                                                    <button
+                                                        onClick={() => !isStreakLocked && !limitReached && handleRedeemPerk(perk.id, perk.name, perk.cost)}
+                                                        disabled={!canAfford || redeeming}
+                                                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
+                                                            canAfford
+                                                                ? 'bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent)]/80' 
+                                                                : 'bg-white/10 text-slate-400 cursor-not-allowed'
+                                                        }`}
+                                                    >
+                                                        {isStreakLocked ? 'Locked' : limitReached ? 'Max Limit' : 'Redeem'}
+                                                    </button>
+                                                </div>
                                                 );
                                             });
                                         })()}
@@ -1072,7 +978,7 @@ export default function StudentDashboard() {
                                                 onClick={() => window.print()}
                                                 className="w-full py-3 bg-white text-black font-black uppercase text-sm rounded-lg hover:bg-gray-200 transition-colors"
                                             >
-                                                🖨 Print / Save as PDF
+                                                ≡ƒû¿ Print / Save as PDF
                                             </button>
                                         </div>
                                     </div>

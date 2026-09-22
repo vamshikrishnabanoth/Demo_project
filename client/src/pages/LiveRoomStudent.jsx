@@ -113,6 +113,9 @@ export default function LiveRoomStudent() {
 
         const handleQuizStarted = () => {
             console.log('[LiveRoomStudent] Quiz started event received from server. Navigating to arena...');
+            if (quiz?.id) {
+                localStorage.removeItem(`quiz_answers_${quiz.id}`);
+            }
             navigate(`/quiz/attempt/${quiz.id}`);
         };
 
