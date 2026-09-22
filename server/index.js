@@ -511,6 +511,56 @@ io.on('connection', async (socket) => {
         }
     });
 
+function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
+    if (!student) return false;
+    if (student.role === 'teacher' || student.role === 'admin') return true;
+
+    let studentIds = assignedStudents;
+    if (typeof studentIds === 'string') {
+        try { studentIds = JSON.parse(studentIds); } catch (_) { studentIds = []; }
+    }
+    const hasAssignedStudents = Array.isArray(studentIds) && studentIds.length > 0;
+    if (hasAssignedStudents && studentIds.includes(student.id)) {
+        return true;
+    }
+
+    let groups = assignedGroups;
+    if (typeof groups === 'string') {
+        try { groups = JSON.parse(groups); } catch (_) { groups = []; }
+    }
+    const hasAssignedGroups = Array.isArray(groups) && groups.length > 0;
+
+    if (!hasAssignedStudents && !hasAssignedGroups) {
+        return true;
+    }
+
+    if (hasAssignedGroups) {
+        const sYear = student.year ? String(student.year).trim() : '';
+        const sBranch = (student.studentBranch || '').trim().toLowerCase();
+        const sSection = (student.section || '').trim().toLowerCase();
+
+        const match = groups.some(g => {
+            if (g.year) {
+                const targetYear = String(g.year).trim();
+                if (!sYear || sYear !== targetYear) return false;
+            }
+            if (g.branch) {
+                const targetBranch = String(g.branch).trim().toLowerCase();
+                if (!sBranch || sBranch !== targetBranch) return false;
+            }
+            if (g.section && String(g.section).trim() !== '') {
+                const targetSection = String(g.section).trim().toLowerCase();
+                if (!sSection || sSection !== targetSection) return false;
+            }
+            return true;
+        });
+
+        if (match) return true;
+    }
+
+    return false;
+}
+
     socket.on('logout', async (userId) => {
         if (!userId) return;
         if (!socket.user || socket.user.id !== userId) {
@@ -524,25 +574,64 @@ io.on('connection', async (socket) => {
             userSockets.delete(userId);
             // Scoped broadcast: only to rooms this user participates in
             for (const [quizId, participants] of roomParticipants.entries()) {
-                let updated = false;
-                participants.forEach(p => {
-                    if (String(p._id || p.id) === String(userId)) {
-                        p.isOnline = false;
-                        p.socketId = null;
-                        p.lastSeen = Date.now();
-                        updated = true;
+                const state = roomState.get(quizId);
+                const isWaiting = !state || state.status === 'waiting';
+
+                if (isWaiting) {
+                    const filtered = participants.filter(p => String(p._id || p.id) !== String(userId) && (p.username || '').toLowerCase() !== (socket.user?.username || '').toLowerCase());
+                    roomParticipants.set(quizId, filtered);
+                    io.to(quizId).emit('participants_update', filtered);
+                } else {
+                    let updated = false;
+                    participants.forEach(p => {
+                        if (String(p._id || p.id) === String(userId)) {
+                            p.isOnline = false;
+                            p.socketId = null;
+                            p.lastSeen = Date.now();
+                            updated = true;
+                        }
+                    });
+                    if (updated) {
+                        io.to(quizId).emit('participants_update', participants);
                     }
-                });
-                if (updated) {
-                    io.to(quizId).emit('participants_update', participants);
                 }
             }
-            console.log(`User ${userId} logged out securely and marked offline`);
+            console.log(`User ${userId} logged out securely and updated in rooms`);
         } catch (err) {
             console.error('Error on logout status update:', err);
         }
     });
 
+    socket.on('leave_room', ({ quizId }) => {
+        if (!quizId) return;
+        let realQuizId = quizState.resolveQuizId(quizId);
+        socket.leave(realQuizId);
+
+        const verifiedUsername = (socket.user?.username || '').toString().trim();
+        const participants = roomParticipants.get(realQuizId);
+        if (participants && verifiedUsername) {
+            const state = roomState.get(realQuizId);
+            const isWaiting = !state || state.status === 'waiting';
+
+            if (isWaiting) {
+                const updated = participants.filter(
+                    p => (p.username || '').toLowerCase() !== verifiedUsername.toLowerCase()
+                );
+                roomParticipants.set(realQuizId, updated);
+                io.to(realQuizId).emit('participants_update', updated);
+                console.log(`Student ${verifiedUsername} explicitly left waiting room ${realQuizId}. Remaining: ${updated.length}`);
+            } else {
+                const p = participants.find(part => (part.username || '').toLowerCase() === verifiedUsername.toLowerCase());
+                if (p) {
+                    p.isOnline = false;
+                    p.socketId = null;
+                    p.lastSeen = Date.now();
+                    io.to(realQuizId).emit('participants_update', participants);
+                }
+            }
+        }
+        socketToUser.delete(socket.id);
+    });
 
     socket.on('join_room', async ({ quizId, user }) => {
         // SECURITY CHECK: Verify user identity matches socket.user payload safely
@@ -581,6 +670,25 @@ io.on('connection', async (socket) => {
                 } catch (err) {
                     console.error('Error resolving PIN in join_room:', err.message);
                 }
+            }
+        }
+
+        // AUDIENCE RESTRICTION CHECK FOR STUDENTS
+        if (socket.user.role === 'student') {
+            try {
+                const [studentUser, targetQuiz] = await Promise.all([
+                    prisma.user.findUnique({ where: { id: socket.user.id } }),
+                    prisma.quiz.findUnique({
+                        where: { id: realQuizId },
+                        select: { createdById: true, accessType: true, assignedGroups: true, assignedStudents: true }
+                    })
+                ]);
+                if (targetQuiz && !isStudentTargetedSocket(studentUser, targetQuiz.assignedGroups, targetQuiz.assignedStudents)) {
+                    console.warn(`[Audience Restriction] Blocked student ${socket.user.username} from joining room ${realQuizId}`);
+                    return socket.emit('error_alert', { msg: 'Access restricted: You are not in the targeted audience (Year / Branch / Section) for this quiz.' });
+                }
+            } catch (err) {
+                console.error('Error verifying audience access in join_room:', err.message);
             }
         }
 
@@ -1440,55 +1548,71 @@ io.to(realQuizId).emit(
         }
     });
 
-    // MEMORY LEAK REMEDIATION: Clean exit handler on leave_room
-    // NOTE: We mark offline instead of deleting so reconnecting users keep their spot
     socket.on('leave_room', ({ quizId }) => {
         if (!quizId) return;
-        socket.leave(quizId);
+        let realQuizId = quizState.resolveQuizId(quizId);
+        socket.leave(realQuizId);
         
-        const participants = roomParticipants.get(quizId);
+        const participants = roomParticipants.get(realQuizId);
         if (participants) {
-            const idx = participants.findIndex(p => p.socketId === socket.id);
-            if (idx !== -1) {
-                // Only mark offline — do NOT remove. Reconnects restore them.
-                participants[idx].isOnline = false;
-                participants[idx].socketId = null;
-                io.to(quizId).emit('participants_update', participants);
+            const state = roomState.get(realQuizId);
+            const isWaiting = !state || state.status === 'waiting';
+
+            if (isWaiting) {
+                const updated = participants.filter(p => p.socketId !== socket.id && (p.username || '').toLowerCase() !== (socket.user?.username || '').toLowerCase());
+                roomParticipants.set(realQuizId, updated);
+                io.to(realQuizId).emit('participants_update', updated);
+                console.log(`Socket ${socket.id} (${socket.user?.username}) left waiting room ${realQuizId}. Remaining: ${updated.length}`);
+            } else {
+                const idx = participants.findIndex(p => p.socketId === socket.id || (p.username || '').toLowerCase() === (socket.user?.username || '').toLowerCase());
+                if (idx !== -1) {
+                    participants[idx].isOnline = false;
+                    participants[idx].socketId = null;
+                    io.to(realQuizId).emit('participants_update', participants);
+                }
             }
-            console.log(`Socket ${socket.id} securely left room ${quizId}. Participant marked offline (not removed).`);
         }
         socketToUser.delete(socket.id);
     });
 
     socket.on('disconnect', async () => {
-    console.log('Socket disconnected:', socket.id);
+        console.log('Socket disconnected:', socket.id);
 
-    const userInfo = socketToUser.get(socket.id);
+        const userInfo = socketToUser.get(socket.id);
 
-    if (userInfo) {
-        const { quizId, username } = userInfo;
+        if (userInfo) {
+            const { quizId, username } = userInfo;
+            const participants = roomParticipants.get(quizId);
 
-        const participants = roomParticipants.get(quizId);
+            if (participants) {
+                const state = roomState.get(quizId);
+                const isWaiting = !state || state.status === 'waiting';
 
-        if (participants) {
-            const idx = participants.findIndex(
-                p => p.username === username
-            );
+                if (isWaiting) {
+                    // Waiting lobby: Remove completely from participant list
+                    const updatedParticipants = participants.filter(
+                        p => p.socketId !== socket.id && (p.username || '').toLowerCase() !== (username || '').toLowerCase()
+                    );
+                    roomParticipants.set(quizId, updatedParticipants);
+                    console.log(`${username} disconnected and removed from waiting room ${quizId}. Remaining: ${updatedParticipants.length}`);
+                    io.to(quizId).emit('participants_update', [...updatedParticipants]);
+                } else {
+                    const idx = participants.findIndex(
+                        p => (p.username || '').toLowerCase() === (username || '').toLowerCase()
+                    );
 
-            if (idx !== -1) {
-                participants[idx].isOnline = false;
-                participants[idx].lastSeen = Date.now();
-participants[idx].socketId = null;
+                    if (idx !== -1) {
+                        participants[idx].isOnline = false;
+                        participants[idx].lastSeen = Date.now();
+                        participants[idx].socketId = null;
 
-                console.log(
-                    `${username} marked offline temporarily`
-                );
-
-                io.to(quizId).emit(
-                    'participants_update',
-                    [...participants]
-                );
+                        console.log(`${username} marked offline temporarily in active game`);
+                        io.to(quizId).emit('participants_update', [...participants]);
+                    }
+                }
             }
+
+            socketToUser.delete(socket.id);
         }
 
         socketToUser.delete(socket.id);

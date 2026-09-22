@@ -80,8 +80,9 @@ export default function LiveRoomTeacher() {
 
         const handleParticipantsUpdate = throttle((participantsList = []) => {
             console.log('Participants Update:', participantsList);
+            const isLiveActive = quizRef.current?.status === 'started';
             const students = participantsList.filter(
-                p => p.role?.toLowerCase() !== 'teacher'
+                p => p.role?.toLowerCase() !== 'teacher' && (isLiveActive ? true : p.isOnline !== false)
             );
             setParticipants([...students]);
         }, 300);
