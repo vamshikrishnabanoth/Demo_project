@@ -176,8 +176,10 @@ export default function AttemptQuiz() {
         // the proctoring gate (quiz.status === 'started') becomes true and
         // fullscreen is requested at the correct moment.
         socket.on('quiz_started', () => {
-            console.log('[AttemptQuiz] quiz_started event received — activating active quiz.');
+            console.log('[AttemptQuiz] quiz_started event received — activating active quiz at Question 1.');
             setQuiz(prev => prev ? { ...prev, status: 'started' } : prev);
+            setCurrentQuestion(0);
+            currentQuestionRef.current = 0;
             setWaitingForState(false);
         });
 
