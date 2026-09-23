@@ -443,7 +443,7 @@ export default function AttemptQuiz() {
 
     const handleAutoSubmitAnswer = async () => {
         const currentAnswer = answers[currentQuestion] || '';
-        if (quiz.isLive && isOnline) {
+        if (quiz.isLive && isOnline && quiz.timerPerQuestion > 0) {
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
             socket.emit('submit_question_answer', {
@@ -458,7 +458,9 @@ export default function AttemptQuiz() {
         if (result || missionComplete) return; // Do nothing if quiz completed / waiting
         const isActiveLive = quiz?.isLive && quiz?.status !== 'finished';
         if (isActiveLive) {
-            handleAutoSubmitAnswer();
+            if (isFullscreen && quiz.timerPerQuestion > 0) {
+                handleAutoSubmitAnswer();
+            }
         } else {
             if (quiz.timerType === 'totalTime') {
                 // Hitting 0 globally is handled in the interval effect
@@ -540,10 +542,10 @@ export default function AttemptQuiz() {
 
     const handleEnterFullscreen = async () => {
         await requestFullscreenMode();
-        if (quiz?.isLive && currentQuestion === 0) {
+        if (quiz?.isLive) {
             setAnsweredQuestions(prev => {
                 const next = new Set(prev);
-                next.delete(0);
+                next.delete(currentQuestion);
                 return next;
             });
             const pqTime = quiz.timerPerQuestion || 30;
@@ -564,7 +566,7 @@ export default function AttemptQuiz() {
                         const elapsedSeconds = Math.floor((Date.now() - startedAtTime) / 1000);
                         totalSeconds = Math.max(0, totalSeconds - elapsedSeconds);
                     }
-                    if (quiz.endTime) {
+                    if (quiz.endTime && !quiz.isLive) {
                         const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
                         totalSeconds = Math.min(totalSeconds, maxRemaining);
                     }
@@ -575,7 +577,8 @@ export default function AttemptQuiz() {
             } else {
                 // Per question timer: reset on every question change
                 let pqTime = quiz.timerPerQuestion || 30;
-                if (quiz.endTime) {
+                // Only clamp self-paced quizzes with scheduled quiz.endTime
+                if (quiz.endTime && !quiz.isLive) {
                     const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
                     pqTime = Math.min(pqTime, maxRemaining);
                 }
@@ -583,7 +586,7 @@ export default function AttemptQuiz() {
                 targetEndTimeRef.current = Date.now() + (pqTime * 1000);
             }
         }
-    }, [currentQuestion, quiz, isReviewMode, result, id]); // Keeping currentQuestion for per-question mode
+    }, [currentQuestion, quiz, isReviewMode, result, id]);
 
     useEffect(() => {
         if (loading || isReviewMode || !quiz) return;

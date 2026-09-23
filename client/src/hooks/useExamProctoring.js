@@ -28,7 +28,13 @@ export default function useExamProctoring({
 } = {}) {
     const [tabSwitchCount, setTabSwitchCount] = useState(0);
     const [violationsCount, setViolationsCount] = useState(0);
-    const [isFullscreen, setIsFullscreen] = useState(true);
+    const [isFullscreen, setIsFullscreen] = useState(() => {
+        if (typeof document === 'undefined') return true;
+        const isMobile = (typeof window !== 'undefined' && window.innerWidth < 768) ||
+            (typeof navigator !== 'undefined' && (/iPad|iPhone|iPod/.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)));
+        if (isMobile) return true;
+        return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+    });
     const [isSplitScreen, setIsSplitScreen] = useState(false);
     const [lostFocusSeconds, setLostFocusSeconds] = useState(0);
     const [isTerminated, setIsTerminated] = useState(false);
