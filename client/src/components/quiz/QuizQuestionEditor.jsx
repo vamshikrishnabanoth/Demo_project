@@ -81,13 +81,12 @@ export default function QuizQuestionEditor({
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
     return (
-        <GlassCard className="relative overflow-hidden">
-            {/* Clean, Professional Top-Right Delete Action Button */}
-            <div className="absolute top-6 right-6 z-10">
+        <div className="relative overflow-hidden rounded-[1.5rem] border border-[#d9d9d5] bg-[#f3f3f1] p-4 shadow-[0_0_0_1px_rgba(15,23,42,0.02)] sm:rounded-[2rem] sm:p-6">
+            <div className="absolute -right-1 top-4 z-10 sm:top-5">
                 <button
                     type="button"
                     onClick={() => setShowConfirmDelete(true)}
-                    className="w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border-[3px] border-[#d7a17e] bg-[#f8e3db] text-[#d94a3d] shadow-[0_0_0_2px_rgba(255,255,255,0.9)] transition-all hover:scale-105 hover:bg-[#f1d1c6] active:scale-95 cursor-pointer sm:h-12 sm:w-12"
                     title="Remove Question"
                     aria-label="Remove Question"
                 >
@@ -128,21 +127,22 @@ export default function QuizQuestionEditor({
                 )}
             </AnimatePresence>
 
-            <div className="space-y-10">
-                <div className="flex items-start gap-6 pr-14">
-                    <div className="bg-[var(--bg-secondary)] w-16 h-16 rounded-2xl flex items-center justify-center text-[var(--text-primary)] font-black text-2xl border border-[var(--border-color)] italic shrink-0 shadow-sm">
+            <div className="space-y-6 pr-0 sm:pr-14">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#d9d9d5] bg-[#f4f4f2] text-2xl font-black italic text-[#1d1d1d] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] sm:h-16 sm:w-16 sm:text-3xl">
                         {index + 1}
                     </div>
+
                     <div className="flex-1 space-y-3">
-                        <label className="block text-xs font-black uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-                            {question.concept_tag || "Question Text / Code Snippet / Scenario"}
+                        <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-[#444444] sm:text-[11px] sm:tracking-[0.22em]">
+                            {question.concept_tag || 'Question Text / Code Snippet / Scenario'}
                         </label>
 
                         <AutoTextarea
                             placeholder="Enter question prompt or paste multi-line source code here..."
                             value={question.questionText}
                             onChange={(e) => onUpdate(index, 'questionText', e.target.value)}
-                            className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl p-4 font-sans font-bold text-base text-[var(--text-primary)] leading-relaxed focus:outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent-glow)] transition-all shadow-sm"
+                            className="w-full rounded-2xl border border-[#d9d9d5] bg-white p-3 text-sm font-medium text-[#1e1e1e] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-all placeholder:text-[#868d95] focus:border-[#f59e0b] focus:outline-none sm:p-4 sm:text-base"
                         />
 
                         {question.sourceEvidence && Array.isArray(question.sourceEvidence) && question.sourceEvidence.length > 0 && question.sourceEvidence[0]?.text && (
@@ -168,20 +168,20 @@ export default function QuizQuestionEditor({
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
                     {question.options.map((opt, oIndex) => (
                         <motion.div
                             key={oIndex}
                             layout
                             className={`
-                                flex items-start gap-4 p-4 rounded-2xl border transition-all group/opt relative h-auto bg-[var(--bg-primary)]
+                                flex items-center gap-3 rounded-[1.1rem] border p-3 transition-all sm:rounded-[1.4rem] sm:p-3.5
                                 ${kahootColors[oIndex % 6]}
-                                ${question.correctAnswer === opt && opt !== '' ? kahootSelectedBorders[oIndex % 6] : 'border-slate-200'}
+                                ${question.correctAnswer === opt && opt !== '' ? kahootSelectedBorders[oIndex % 6] : 'border-[#d9d9d5]'}
                             `}
                         >
                             <div
-                                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-base shrink-0 shadow-sm mt-0.5"
-                                style={{ backgroundColor: kahootBadgeColors[oIndex % 6], color: '#ffffff' }}
+                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-black text-white shadow-sm sm:h-9 sm:w-9 sm:text-sm"
+                                style={{ backgroundColor: kahootBadgeColors[oIndex % 6] }}
                             >
                                 {String.fromCharCode(65 + oIndex)}
                             </div>
@@ -190,23 +190,23 @@ export default function QuizQuestionEditor({
                                 value={opt}
                                 onChange={(e) => onUpdateOption(index, oIndex, e.target.value)}
                                 placeholder={`Option ${oIndex + 1}`}
-                                className="flex-1 bg-transparent border-none focus:ring-0 font-bold py-2 text-base leading-snug w-full"
+                                className="flex-1 border-none bg-transparent px-1 py-2 text-sm font-medium text-[#1f2937] focus:outline-none sm:text-base"
                                 style={{ color: '#1f2937', minHeight: '2.5rem' }}
                             />
 
-                            <div className="flex items-center gap-2 shrink-0 pt-1">
+                            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
                                 <input
                                     type="radio"
                                     name={`correct-${index}`}
                                     checked={question.correctAnswer === opt && opt !== ''}
                                     onChange={() => onUpdate(index, 'correctAnswer', opt)}
-                                    className="w-5 h-5 text-[var(--bg-accent)] bg-white border-slate-300 focus:ring-[var(--bg-accent)] cursor-pointer"
+                                    className="h-4 w-4 cursor-pointer accent-[#f97316] sm:h-5 sm:w-5"
                                 />
                                 {question.options.length > 2 && (
                                     <button
                                         type="button"
                                         onClick={() => onDeleteOption(index, oIndex)}
-                                        className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
+                                        className="rounded-full p-1.5 text-slate-400 transition-colors hover:bg-white/50 hover:text-red-500"
                                         aria-label={`Delete option ${oIndex + 1}`}
                                     >
                                         <Minus size={16} />
@@ -215,20 +215,20 @@ export default function QuizQuestionEditor({
                             </div>
                         </motion.div>
                     ))}
-
-                    {question.options.length < 6 && (
-                        <button
-                            type="button"
-                            onClick={() => onAddOption(index)}
-                            className="flex items-center justify-center gap-3 p-6 rounded-2xl border-2 border-dashed border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--bg-accent)]/60 hover:text-[var(--text-primary)] transition-all group/addopt bg-[var(--bg-secondary)]"
-                        >
-                            <Plus size={20} className="group-hover/addopt:scale-110 transition-transform" />
-                            <span className="font-black text-[10px] uppercase tracking-[0.22em]">Add Option</span>
-                        </button>
-                    )}
                 </div>
+
+                {question.options.length < 6 && (
+                    <button
+                        type="button"
+                        onClick={() => onAddOption(index)}
+                        className="flex w-full items-center justify-center gap-3 rounded-[1.1rem] border-2 border-dashed border-[#b8d9ea] bg-[#edf6fb] p-4 text-[#1e2430] transition-all hover:border-[#7bb7d8] hover:bg-[#e7f3fb] sm:rounded-[1.4rem] sm:p-5"
+                    >
+                        <Plus size={20} className="text-[#1f2937] sm:text-[22px]" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#1f2937] sm:text-[11px] sm:tracking-[0.22em]">Add Option</span>
+                    </button>
+                )}
             </div>
-        </GlassCard>
+        </div>
     );
 }
 
