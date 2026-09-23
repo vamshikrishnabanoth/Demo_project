@@ -31,48 +31,20 @@ export default function CreateQuizTopic() {
     const [inputs, setInputs] = useState([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
-    // Load inputs on mount / user change with backend sync
+    // Start each session with a clean source content panel. Do not preload stale uploaded files.
     useEffect(() => {
-        if (authLoading) return; // Wait until AuthContext finishes hydration
+        if (authLoading) return;
+
         try {
-            let loadedInputs = [];
-            const saved = localStorage.getItem(storageKey);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    loadedInputs = parsed;
-                }
-            }
-
-            // If logged in and local storage for user is empty, check if guest storage had items to migrate
-            if (loadedInputs.length === 0 && user && userId !== 'guest') {
-                const guestSaved = localStorage.getItem('quiz_docket_inputs_guest');
-                if (guestSaved) {
-                    try {
-                        const guestParsed = JSON.parse(guestSaved);
-                        if (Array.isArray(guestParsed) && guestParsed.length > 0) {
-                            loadedInputs = guestParsed;
-                            localStorage.removeItem('quiz_docket_inputs_guest');
-                        }
-                    } catch (_) {}
-                }
-            }
-
-            if (loadedInputs.length > 0) {
-                setInputs(loadedInputs);
-            } else if (user) {
-                // Fetch from server if authenticated and nothing locally
-                api.get('/quiz/docket').then(res => {
-                    if (res.data?.success && Array.isArray(res.data.inputs) && res.data.inputs.length > 0) {
-                        setInputs(res.data.inputs);
-                    }
-                }).catch(() => {});
-            }
+            localStorage.removeItem(storageKey);
+            localStorage.removeItem('quiz_docket_inputs_guest');
         } catch (e) {
-            console.error('Failed to load docket inputs:', e);
+            console.warn('Unable to clear stale quiz docket storage:', e);
         }
+
+        setInputs([]);
         setIsHydrated(true);
-    }, [storageKey, authLoading, user, userId]);
+    }, [storageKey, authLoading]);
 
     // Persist inputs to localStorage and server whenever they change
     useEffect(() => {
@@ -911,18 +883,13 @@ export default function CreateQuizTopic() {
             formData.append('files', inp.file);
         });
 
-        // 2. All document configurations (only actual document files or restored docket items, not pure text prompts)
-        const docInputs = inputs.filter(inp => 
-            inp.type !== 'voice' && 
-            inp.type !== 'audio' && 
-            inp.type !== 'text' && 
-            (inp.file || inp.documentId)
-        );
+        // 2. All document configurations (both live files and restored docket items)
+        const docInputs = inputs.filter(inp => inp.type !== 'voice' && inp.type !== 'audio' && (inp.file || inp.documentId || inp.content));
         const fileConfigs = docInputs.map(inp => ({
             name: inp.source_name,
             documentId: inp.documentId,
             startPage: inp.startPage || 1,
-            endPage: inp.endPage || inp.maxPages || 1
+            endPage: inp.endPage || inp.maxPages || 999
         }));
         formData.append('file_configs', JSON.stringify(fileConfigs));
 
@@ -1032,8 +999,7 @@ export default function CreateQuizTopic() {
             });
         } catch (err) {
             console.error(err);
-            const serverMsg = err.response?.data?.msg || err.response?.data?.error || (err.response?.data?.errors && err.response.data.errors.map(e => e.msg).join(', ')) || err.message;
-            toast.error(serverMsg || 'Failed to start generation. Please try again.');
+            toast.error('Failed to start generation. Please try again.');
             setSubmitting(false);
         }
     };

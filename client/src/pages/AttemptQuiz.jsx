@@ -269,18 +269,27 @@ export default function AttemptQuiz() {
                  ? (state.progress[authUser.id] || state.progress[authUser._id] || state.progress[authUser.username])
                  : null;
 
-             if (studentProgress) {
-                  // Restore answered tracking for logic
-                  const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
+             if (studentProgress && typeof studentProgress === 'object') {
+                  const answeredList = Object.keys(studentProgress)
+                      .map(Number)
+                      .filter(qIdx => Number.isInteger(qIdx) && qIdx >= 0)
+                      .filter(qIdx => {
+                          const entry = studentProgress?.[qIdx];
+                          const selected = entry?.selectedOption;
+                          return !!entry && entry.answered === true && selected !== undefined && selected !== null && String(selected).trim() !== '';
+                      });
+
                   console.log('[DIAGNOSTIC-QUIZ] Restoring answeredQuestions set list:', answeredList);
                   setAnsweredQuestions(new Set(answeredList));
 
-                  // Restore superficial answers mapping for UI dots visually
+                  // Restore only valid selections; blank/stale values stay empty so unanswered Q1 never appears as wrong.
                   setAnswers(prev => {
                       const recoveredAnswers = {};
                       Object.keys(studentProgress).forEach(qIdx => {
-                           if (studentProgress?.[qIdx]?.answered) {
-                                recoveredAnswers[qIdx] = studentProgress[qIdx].selectedOption || prev[qIdx] || true;
+                           const entry = studentProgress?.[qIdx];
+                           const selected = entry?.selectedOption;
+                           if (entry?.answered === true && selected !== undefined && selected !== null && String(selected).trim() !== '') {
+                                recoveredAnswers[qIdx] = selected;
                                 console.log(`[DIAGNOSTIC-QUIZ] Restored answers mapping for qIdx=${qIdx} with:`, recoveredAnswers[qIdx]);
                            }
                       });
@@ -290,6 +299,7 @@ export default function AttemptQuiz() {
                   });
              } else {
                   console.log('[DIAGNOSTIC-QUIZ] No progress state or matching student record to restore in restoreState.');
+                  setAnsweredQuestions(new Set());
              }
             
             setWaitingForState(false);
@@ -470,7 +480,13 @@ export default function AttemptQuiz() {
     }, [id, quiz]);
 
     const handleAutoSubmitAnswer = async () => {
-        const currentAnswer = answers[currentQuestion] || '';
+        const currentAnswer = answers[currentQuestion];
+        const hasSelectedAnswer = currentAnswer !== undefined && currentAnswer !== null && String(currentAnswer).trim() !== '';
+
+        if (!hasSelectedAnswer) {
+            return;
+        }
+
         if (quiz.isLive && isOnline && quiz.timerPerQuestion > 0) {
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
@@ -1406,42 +1422,34 @@ export default function AttemptQuiz() {
                                 {question.options.map((option, idx) => {
                                     const isSelected = answers[currentQuestion] === option;
                                     const isCorrect = questionResult?.correctOption === option;
-
-                                    // Theme-appropriate option styles
-                                    const kahootStyles = [
-                                        { icon: Triangle },
-                                        { icon: Diamond },
-                                        { icon: Circle },
-                                        { icon: Square }
+                                    const optionLabels = ['A', 'B', 'C', 'D'];
+                                    const optionColors = [
+                                        { badge: 'bg-[#ff7b54] text-white', card: 'border-[#ff7b54]/80 bg-[#fff3ee] shadow-[0_8px_18px_rgba(255,123,84,0.15)]', border: 'border-[#ff7b54]' },
+                                        { badge: 'bg-[#4f8ef7] text-white', card: 'border-[#4f8ef7]/80 bg-[#f3f8ff] shadow-[0_8px_18px_rgba(79,142,247,0.15)]', border: 'border-[#4f8ef7]' },
+                                        { badge: 'bg-[#f0b429] text-white', card: 'border-[#f0b429]/80 bg-[#fffaf0] shadow-[0_8px_18px_rgba(240,180,41,0.15)]', border: 'border-[#f0b429]' },
+                                        { badge: 'bg-[#2fbf8f] text-white', card: 'border-[#2fbf8f]/80 bg-[#edfdf8] shadow-[0_8px_18px_rgba(47,191,143,0.15)]', border: 'border-[#2fbf8f]' }
                                     ];
-                                    const style = kahootStyles[idx % 4];
-                                    const ShapeIcon = style.icon;
+                                    const tone = optionColors[idx % optionColors.length];
 
-                                    let containerClass = 'bg-white border-2 border-slate-200 shadow-sm text-[#0f172a] hover:border-[#0f172a] hover:bg-slate-50';
+                                    let containerClass = `${tone.card} border-2 text-[#0f172a] hover:border-[#0f172a] hover:bg-white`;
                                     let textColor = '#0f172a';
-                                    let shapeFill = '#0f172a';
 
                                     if (isReviewMode) {
                                         if (isCorrect) {
                                             containerClass = 'bg-emerald-600 border-emerald-600 shadow-md text-white';
                                             textColor = '#ffffff';
-                                            shapeFill = '#ffffff';
                                         } else if (isSelected && !isCorrect) {
                                             containerClass = 'bg-rose-600 border-rose-600 shadow-md text-white';
                                             textColor = '#ffffff';
-                                            shapeFill = '#ffffff';
                                         } else {
                                             containerClass = 'bg-slate-100 text-slate-400 border-slate-200 opacity-50 grayscale';
                                             textColor = '#94a3b8';
-                                            shapeFill = '#94a3b8';
                                         }
                                     } else if (isSelected) {
-                                        containerClass = 'bg-amber-500/10 border-2 border-amber-500 ring-4 ring-amber-500/20 shadow-md scale-[0.98]';
+                                        containerClass = `${tone.card} border-2 ${tone.border} ring-4 ring-offset-0 shadow-md scale-[0.99]`;
                                         textColor = '#0f172a';
-                                        shapeFill = '#d97706';
                                     }
 
-                                    // In live mode: lock only after submit, allow free re-selection before
                                     const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
 
                                     return (
@@ -1451,29 +1459,29 @@ export default function AttemptQuiz() {
                                             onClick={() => handleOptionSelect(option)}
                                             style={{ willChange: 'transform' }}
                                             animate={{
-                                                scale: isSubmittedLive && isSelected ? 1.04 : isSelected ? 0.98 : 1,
-                                                opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.75 : 1
+                                                scale: isSubmittedLive && isSelected ? 1.02 : isSelected ? 0.99 : 1,
+                                                opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.8 : 1
                                             }}
                                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                            className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
+                                            className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-4 py-4 rounded-[1.4rem] transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
                                         >
-                                            <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected && !isReviewMode ? 'bg-amber-500 text-white shadow-xs' : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
-                                                <ShapeIcon size={24} fill={shapeFill} strokeWidth={0} />
+                                            <div className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center font-black text-lg shadow-sm ${tone.badge}`}>
+                                                {optionLabels[idx]}
                                             </div>
                                             <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words whitespace-normal min-w-0 flex-1" style={{ color: textColor }}>
                                                 {option}
                                             </span>
 
                                             {isSelected && !isReviewMode && (
-                                                <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-amber-500 text-white rounded-full px-2.5 py-1 shadow-md">
+                                                <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-white/80 text-[#0f172a] rounded-full px-2 py-1 shadow-sm border border-slate-200">
                                                     {isSubmittedLive ? (
                                                         <motion.div
                                                             initial={{ rotate: -90, scale: 0 }}
                                                             animate={{ rotate: 0, scale: 1 }}
                                                             transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                                                            className="flex items-center justify-center text-white"
+                                                            className="flex items-center justify-center text-[#0f172a]"
                                                         >
-                                                            <Lock size={12} className="fill-white/20" />
+                                                            <Lock size={12} />
                                                         </motion.div>
                                                     ) : null}
                                                     <motion.div
@@ -1481,7 +1489,7 @@ export default function AttemptQuiz() {
                                                         animate={{ scale: 1 }}
                                                         transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
                                                     >
-                                                        <CheckCircle size={14} className="text-white" />
+                                                        <CheckCircle size={14} className="text-emerald-600" />
                                                     </motion.div>
                                                 </div>
                                             )}

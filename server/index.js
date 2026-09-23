@@ -1394,6 +1394,18 @@ io.to(realQuizId).emit(
         questionIndex = parseInt(questionIndex);
         if (isNaN(questionIndex) || questionIndex < 0) return;
 
+        const hasSelectedAnswer = answer !== null && answer !== undefined && String(answer).trim() !== '';
+        if (!hasSelectedAnswer) {
+            console.log(`[AnswerReject] Empty answer rejected for student=${studentId} q=${questionIndex}`);
+            socket.emit('answer_feedback', {
+                isFast: false,
+                isUnattempted: true,
+                message: '⏳ No answer selected yet. Please choose an option before submitting.',
+                timeTaken: 0,
+            });
+            return;
+        }
+
         // ── Resolve quiz ID (in-memory PIN cache — zero DB) ───────────────────
         const realQuizId = quizState.resolveQuizId(quizId);
 
