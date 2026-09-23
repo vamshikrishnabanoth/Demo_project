@@ -944,15 +944,14 @@ if (socket.connected) {
                                         <div className="flex items-center gap-1.5 flex-wrap">
                                             {quiz?.questions?.map((_, idx) => {
                                                 const data = progress[idx] || progress[idx.toString()];
-                                                const isCorrect = data?.isCorrect === true || data?.isCorrect === 'true' || data?.isCorrect === 1;
-                                                const isSkipped = data?.skipped === true || data?.skipped === 'true';
-                                                const isAnswered = data?.answered === true || data?.isCorrect !== undefined || isSkipped;
-                                                const isUnattempted = !isAnswered || isSkipped || data?.selectedOption === '' || data?.selectedOption === null || data?.selectedOption === undefined;
+                                                const isAnswered = Boolean(data && (data.answered === true || data.isCorrect !== undefined));
+                                                const isSkipped = Boolean(data?.skipped === true || data?.skipped === 'true');
+                                                const isCorrect = Boolean(isAnswered && !isSkipped && (data.isCorrect === true || data.isCorrect === 'true' || data.isCorrect === 1));
 
                                                 let dotClass = 'bg-slate-100 border-slate-200 text-slate-400';
                                                 let Icon = null;
 
-                                                if (isAnswered && !isUnattempted) {
+                                                if (isAnswered && !isSkipped) {
                                                     if (isCorrect) {
                                                         dotClass = 'bg-emerald-500 border-emerald-500 text-white shadow-sm font-black';
                                                         Icon = <CheckCircle size={13} className="text-white" strokeWidth={2.5} />;
@@ -968,7 +967,7 @@ if (socket.connected) {
                                                 return (
                                                     <div
                                                         key={idx}
-                                                        title={isAnswered && !isUnattempted
+                                                        title={isAnswered && !isSkipped
                                                             ? (isCorrect ? `Q${idx + 1}: Correct` : `Q${idx + 1}: Incorrect`)
                                                             : `Q${idx + 1}: Unattempted`
                                                         }

@@ -183,6 +183,14 @@ export default function AttemptQuiz() {
             setAnswers({});
             setAnsweredQuestions(new Set());
             setWaitingForState(false);
+            if (quizRef.current?.timerPerQuestion > 0) {
+                const pqTime = quizRef.current.timerPerQuestion;
+                targetEndTimeRef.current = Date.now() + (pqTime * 1000);
+                setTimeLeft(pqTime);
+            } else {
+                targetEndTimeRef.current = null;
+                setTimeLeft(0);
+            }
         });
 
         socket.on('quiz_ended', async () => {
@@ -208,12 +216,23 @@ export default function AttemptQuiz() {
             console.log('Teacher changed question to:', questionIndex);
             const nextIdx = parseInt(questionIndex);
             setCurrentQuestion(nextIdx);
+            currentQuestionRef.current = nextIdx;
 
             // Reset answered students count for the new question
             setAnsweredStudentsSet(new Set());
 
             // Clearing waitingForState here ensures first-time joiners are not stuck on the sync screen.
             setWaitingForState(false);
+
+            // Reset timer for the new question
+            if (quizRef.current?.timerPerQuestion > 0) {
+                const pqTime = quizRef.current.timerPerQuestion;
+                targetEndTimeRef.current = Date.now() + (pqTime * 1000);
+                setTimeLeft(pqTime);
+            } else {
+                targetEndTimeRef.current = null;
+                setTimeLeft(0);
+            }
 
             // Persist new position offline
             localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextIdx, answers }));
@@ -222,6 +241,7 @@ export default function AttemptQuiz() {
         socket.on('restoreState', (state) => {
             console.log('[DIAGNOSTIC-QUIZ] Reconnection restoreState event fired. Server payload:', state);
             setCurrentQuestion(state.currentQuestionIndex);
+            currentQuestionRef.current = state.currentQuestionIndex;
 
             // Update total student count
             const studentParticipants = (state.participants || []).filter(
@@ -250,7 +270,6 @@ export default function AttemptQuiz() {
                  : null;
 
              if (studentProgress) {
-                  
                   // Restore answered tracking for logic
                   const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
                   console.log('[DIAGNOSTIC-QUIZ] Restoring answeredQuestions set list:', answeredList);
@@ -276,8 +295,17 @@ export default function AttemptQuiz() {
             setWaitingForState(false);
             
             if (state.quizStatus === 'started') {
-                 targetEndTimeRef.current = Date.now() + (state.remainingTime * 1000);
-                 setTimeLeft(state.remainingTime);
+                 if (state.remainingTime > 0) {
+                     targetEndTimeRef.current = Date.now() + (state.remainingTime * 1000);
+                     setTimeLeft(state.remainingTime);
+                 } else if (quizRef.current?.timerPerQuestion > 0) {
+                     const pqTime = quizRef.current.timerPerQuestion;
+                     targetEndTimeRef.current = Date.now() + (pqTime * 1000);
+                     setTimeLeft(pqTime);
+                 } else {
+                     targetEndTimeRef.current = null;
+                     setTimeLeft(0);
+                 }
             } else if (state.quizStatus === 'finished') {
                  setLoadingRankResult(true);
                  const targetId = quizRef.current?.id || id;
