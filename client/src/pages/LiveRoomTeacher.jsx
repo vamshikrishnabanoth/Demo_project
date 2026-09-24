@@ -80,8 +80,9 @@ export default function LiveRoomTeacher() {
 
         const handleParticipantsUpdate = throttle((participantsList = []) => {
             console.log('Participants Update:', participantsList);
+            const isLiveActive = quizRef.current?.status === 'started';
             const students = participantsList.filter(
-                p => p.role?.toLowerCase() !== 'teacher'
+                p => p.role?.toLowerCase() !== 'teacher' && (isLiveActive ? true : p.isOnline !== false)
             );
             setParticipants([...students]);
         }, 300);
@@ -863,8 +864,7 @@ if (socket.connected) {
                             {[
                                 { color: 'bg-emerald-500', label: 'Correct' },
                                 { color: 'bg-rose-500', label: 'Wrong' },
-                                { color: 'bg-amber-500', label: 'Skipped' },
-                                { color: 'bg-slate-300', label: 'Pending' },
+                                { color: 'bg-slate-300', label: 'Unattempted / Skipped' },
                             ].map(({ color, label }) => (
                                 <div key={label} className="flex items-center gap-1.5">
                                     <div className={`w-3 h-3 rounded-md ${color}`} />
@@ -944,35 +944,32 @@ if (socket.connected) {
                                         <div className="flex items-center gap-1.5 flex-wrap">
                                             {quiz?.questions?.map((_, idx) => {
                                                 const data = progress[idx] || progress[idx.toString()];
-                                                const isCorrect = data?.isCorrect === true || data?.isCorrect === 'true' || data?.isCorrect === 1;
-                                                const isSkipped = data?.skipped === true || data?.skipped === 'true';
-                                                const isAnswered = data?.answered === true || data?.isCorrect !== undefined || isSkipped;
+                                                const isAnswered = Boolean(data && (data.answered === true || data.isCorrect !== undefined));
+                                                const isSkipped = Boolean(data?.skipped === true || data?.skipped === 'true');
+                                                const isCorrect = Boolean(isAnswered && !isSkipped && (data.isCorrect === true || data.isCorrect === 'true' || data.isCorrect === 1));
 
                                                 let dotClass = 'bg-slate-100 border-slate-200 text-slate-400';
                                                 let Icon = null;
 
-                                                if (isAnswered) {
+                                                if (isAnswered && !isSkipped) {
                                                     if (isCorrect) {
                                                         dotClass = 'bg-emerald-500 border-emerald-500 text-white shadow-sm font-black';
                                                         Icon = <CheckCircle size={13} className="text-white" strokeWidth={2.5} />;
-                                                    } else if (isSkipped) {
-                                                        dotClass = 'bg-amber-500 border-amber-500 text-white shadow-sm font-black';
-                                                        Icon = <MinusCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     } else {
                                                         dotClass = 'bg-rose-500 border-rose-500 text-white shadow-sm font-black';
                                                         Icon = <XCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     }
-                                                } else if (!p.isOnline && idx < currentQuestion) {
-                                                    dotClass = 'bg-slate-50 border-slate-200 text-slate-300';
-                                                    Icon = <Minus size={10} />;
+                                                } else {
+                                                    dotClass = 'bg-slate-100 border-slate-200 text-slate-400';
+                                                    Icon = null;
                                                 }
 
                                                 return (
                                                     <div
                                                         key={idx}
-                                                        title={isAnswered
-                                                            ? (isCorrect ? `Q${idx + 1}: Correct` : isSkipped ? `Q${idx + 1}: Skipped` : `Q${idx + 1}: Incorrect`)
-                                                            : `Q${idx + 1}: Not Answered`
+                                                        title={isAnswered && !isSkipped
+                                                            ? (isCorrect ? `Q${idx + 1}: Correct` : `Q${idx + 1}: Incorrect`)
+                                                            : `Q${idx + 1}: Unattempted`
                                                         }
                                                         className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black border-2 transition-all ${dotClass} ${idx === currentQuestion
                                                             ? 'ring-2 ring-amber-500 ring-offset-1 scale-110 shadow-md'

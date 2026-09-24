@@ -183,6 +183,14 @@ export default function AttemptQuiz() {
             setAnswers({});
             setAnsweredQuestions(new Set());
             setWaitingForState(false);
+            if (quizRef.current?.timerPerQuestion > 0) {
+                const pqTime = quizRef.current.timerPerQuestion;
+                targetEndTimeRef.current = Date.now() + (pqTime * 1000);
+                setTimeLeft(pqTime);
+            } else {
+                targetEndTimeRef.current = null;
+                setTimeLeft(0);
+            }
         });
 
         socket.on('quiz_ended', async () => {
@@ -208,12 +216,23 @@ export default function AttemptQuiz() {
             console.log('Teacher changed question to:', questionIndex);
             const nextIdx = parseInt(questionIndex);
             setCurrentQuestion(nextIdx);
+            currentQuestionRef.current = nextIdx;
 
             // Reset answered students count for the new question
             setAnsweredStudentsSet(new Set());
 
             // Clearing waitingForState here ensures first-time joiners are not stuck on the sync screen.
             setWaitingForState(false);
+
+            // Reset timer for the new question
+            if (quizRef.current?.timerPerQuestion > 0) {
+                const pqTime = quizRef.current.timerPerQuestion;
+                targetEndTimeRef.current = Date.now() + (pqTime * 1000);
+                setTimeLeft(pqTime);
+            } else {
+                targetEndTimeRef.current = null;
+                setTimeLeft(0);
+            }
 
             // Persist new position offline
             localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextIdx, answers }));
@@ -222,6 +241,7 @@ export default function AttemptQuiz() {
         socket.on('restoreState', (state) => {
             console.log('[DIAGNOSTIC-QUIZ] Reconnection restoreState event fired. Server payload:', state);
             setCurrentQuestion(state.currentQuestionIndex);
+            currentQuestionRef.current = state.currentQuestionIndex;
 
             // Update total student count
             const studentParticipants = (state.participants || []).filter(
@@ -250,7 +270,6 @@ export default function AttemptQuiz() {
                  : null;
 
              if (studentProgress) {
-                  
                   // Restore answered tracking for logic
                   const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
                   console.log('[DIAGNOSTIC-QUIZ] Restoring answeredQuestions set list:', answeredList);
@@ -276,8 +295,17 @@ export default function AttemptQuiz() {
             setWaitingForState(false);
             
             if (state.quizStatus === 'started') {
-                 targetEndTimeRef.current = Date.now() + (state.remainingTime * 1000);
-                 setTimeLeft(state.remainingTime);
+                 if (state.remainingTime > 0) {
+                     targetEndTimeRef.current = Date.now() + (state.remainingTime * 1000);
+                     setTimeLeft(state.remainingTime);
+                 } else if (quizRef.current?.timerPerQuestion > 0) {
+                     const pqTime = quizRef.current.timerPerQuestion;
+                     targetEndTimeRef.current = Date.now() + (pqTime * 1000);
+                     setTimeLeft(pqTime);
+                 } else {
+                     targetEndTimeRef.current = null;
+                     setTimeLeft(0);
+                 }
             } else if (state.quizStatus === 'finished') {
                  setLoadingRankResult(true);
                  const targetId = quizRef.current?.id || id;
@@ -443,7 +471,7 @@ export default function AttemptQuiz() {
 
     const handleAutoSubmitAnswer = async () => {
         const currentAnswer = answers[currentQuestion] || '';
-        if (quiz.isLive && isOnline) {
+        if (quiz.isLive && isOnline && quiz.timerPerQuestion > 0) {
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
             socket.emit('submit_question_answer', {
@@ -458,7 +486,9 @@ export default function AttemptQuiz() {
         if (result || missionComplete) return; // Do nothing if quiz completed / waiting
         const isActiveLive = quiz?.isLive && quiz?.status !== 'finished';
         if (isActiveLive) {
-            handleAutoSubmitAnswer();
+            if (isFullscreen && quiz.timerPerQuestion > 0) {
+                handleAutoSubmitAnswer();
+            }
         } else {
             if (quiz.timerType === 'totalTime') {
                 // Hitting 0 globally is handled in the interval effect
@@ -540,10 +570,10 @@ export default function AttemptQuiz() {
 
     const handleEnterFullscreen = async () => {
         await requestFullscreenMode();
-        if (quiz?.isLive && currentQuestion === 0) {
+        if (quiz?.isLive) {
             setAnsweredQuestions(prev => {
                 const next = new Set(prev);
-                next.delete(0);
+                next.delete(currentQuestion);
                 return next;
             });
             const pqTime = quiz.timerPerQuestion || 30;
@@ -564,7 +594,7 @@ export default function AttemptQuiz() {
                         const elapsedSeconds = Math.floor((Date.now() - startedAtTime) / 1000);
                         totalSeconds = Math.max(0, totalSeconds - elapsedSeconds);
                     }
-                    if (quiz.endTime) {
+                    if (quiz.endTime && !quiz.isLive) {
                         const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
                         totalSeconds = Math.min(totalSeconds, maxRemaining);
                     }
@@ -575,7 +605,8 @@ export default function AttemptQuiz() {
             } else {
                 // Per question timer: reset on every question change
                 let pqTime = quiz.timerPerQuestion || 30;
-                if (quiz.endTime) {
+                // Only clamp self-paced quizzes with scheduled quiz.endTime
+                if (quiz.endTime && !quiz.isLive) {
                     const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
                     pqTime = Math.min(pqTime, maxRemaining);
                 }
@@ -583,7 +614,7 @@ export default function AttemptQuiz() {
                 targetEndTimeRef.current = Date.now() + (pqTime * 1000);
             }
         }
-    }, [currentQuestion, quiz, isReviewMode, result, id]); // Keeping currentQuestion for per-question mode
+    }, [currentQuestion, quiz, isReviewMode, result, id]);
 
     useEffect(() => {
         if (loading || isReviewMode || !quiz) return;

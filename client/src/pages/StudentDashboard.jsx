@@ -102,7 +102,7 @@ export default function StudentDashboard() {
         try {
             const res = await api.get('/students/gamification');
             setXp(res.data.xp || 0);
-            setPoints(res.data.points ?? res.data.xp ?? 0);
+            setPoints(res.data.points ?? 0);
             setStreak(res.data.streak || 0);
             setHighestStreak(res.data.highestStreak || 0);
             setDailyMissions(res.data.dailyMissions || []);
@@ -117,7 +117,7 @@ export default function StudentDashboard() {
         try {
             const res = await api.post('/students/gamification/init');
             setXp(res.data.xp || 0);
-            setPoints(res.data.points ?? res.data.xp ?? 0);
+            setPoints(res.data.points ?? 0);
             setStreak(res.data.streak || 0);
             setHighestStreak(res.data.highestStreak || 0);
             setDailyMissions(res.data.dailyMissions || []);
@@ -156,14 +156,13 @@ export default function StudentDashboard() {
     }, [activeTab]);
 
     const handleRedeemPerk = async (perkId, perkName, cost) => {
-        const currentPts = points || xp;
+        const currentPts = points ?? 0;
         if (currentPts < cost) return toast.error('Not enough points to redeem this perk!');
         setRedeeming(true);
         try {
             const res = await api.post('/students/redeem-perk', { perkId, perkName, cost });
-            const remaining = res.data.remainingPoints ?? res.data.remainingXp ?? (currentPts - cost);
+            const remaining = res.data.remainingPoints ?? Math.max(0, currentPts - cost);
             setPoints(remaining);
-            setXp(remaining);
             const newPerk = res.data.perk;
             setUnlockedPerks(prev => [...prev, newPerk]);
             setShowTicket(newPerk);
@@ -779,7 +778,7 @@ export default function StudentDashboard() {
                                                 Total Points Gained
                                             </span>
                                             <span className="text-xl font-black text-amber-500 italic">
-                                                {(points || xp)} <span className="text-xs text-[var(--text-secondary)] font-bold">/ 1300 PTS</span>
+                                                {(points ?? 0)} <span className="text-xs text-[var(--text-secondary)] font-bold">/ 1300 PTS</span>
                                             </span>
                                         </div>
                                     </div>
@@ -788,13 +787,13 @@ export default function StudentDashboard() {
                                     <div className="w-full bg-[var(--bg-primary)] h-4 rounded-full border border-[var(--border-color)] overflow-hidden p-0.5 relative">
                                         <motion.div 
                                             initial={{ width: 0 }}
-                                            animate={{ width: `${Math.min(((points || xp) / 1300) * 100, 100)}%` }}
+                                            animate={{ width: `${Math.min(((points ?? 0) / 1300) * 100, 100)}%` }}
                                             transition={{ duration: 1, ease: "easeOut" }}
                                             className="h-full rounded-full relative overflow-hidden"
                                             style={{
-                                                background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)',
-                                                boxShadow: '0 0 15px rgba(245, 158, 11, 0.6)'
-                                            }}
+                                                 background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)',
+                                                 boxShadow: '0 0 15px rgba(245, 158, 11, 0.6)'
+                                             }}
                                         >
                                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
                                         </motion.div>
@@ -802,7 +801,7 @@ export default function StudentDashboard() {
 
                                     <div className="flex justify-between items-center text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mt-2">
                                         <span>0 PTS</span>
-                                        <span className="text-amber-500 font-black">{Math.min(Math.round(((points || xp) / 1300) * 100), 100)}% COMPLETED</span>
+                                        <span className="text-amber-500 font-black">{Math.min(Math.round(((points ?? 0) / 1300) * 100), 100)}% COMPLETED</span>
                                         <span>1300 PTS (MAX MILESTONE)</span>
                                     </div>
                                 </div>
@@ -872,7 +871,7 @@ export default function StudentDashboard() {
                                             },
                                         ];
 
-                                        const currentPts = points || xp;
+                                        const currentPts = points ?? 0;
 
                                         return (
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

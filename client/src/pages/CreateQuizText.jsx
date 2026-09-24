@@ -703,30 +703,44 @@ export default function CreateQuizText() {
                                             <select
                                                 value={targetBranch}
                                                 onChange={(e) => {
-                                                    setTargetBranch(e.target.value);
+                                                    const nextBranch = e.target.value;
+                                                    setTargetBranch(nextBranch);
+                                                    setTargetSections([]);
                                                     setAssignedGroups([]);
                                                 }}
                                                 className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] transition-all shadow-2xs"
                                             >
                                                 <option value="">All Branches</option>
-                                                <option value="CSE">CSE (Computer Science)</option>
-                                                <option value="CSM">CSM (AI & ML)</option>
-                                                <option value="CSD">CSD (Data Science)</option>
-                                                <option value="IT">IT (Information Tech)</option>
-                                                <option value="ECE">ECE (Electronics & Comm)</option>
-                                                <option value="EEE">EEE (Electrical)</option>
-                                                <option value="MECH">MECH (Mechanical)</option>
-                                                <option value="CIVIL">CIVIL (Civil Engg)</option>
+                                                <option value="CSE">CSE (Computer Science - Sec A to I)</option>
+                                                <option value="CSM">CSM (AI & ML - Sec A to E)</option>
+                                                <option value="CSD">CSD (Data Science - Sec A to E)</option>
+                                                <option value="IT">IT (Information Tech - Sec A to E)</option>
+                                                <option value="ECE">ECE (Electronics & Comm - Sec A to F)</option>
+                                                <option value="EEE">EEE (Electrical - Sec A to E)</option>
+                                                <option value="MECH">MECH (Mechanical - Sec A to E)</option>
+                                                <option value="CIVIL">CIVIL (Civil Engg - Sec A to E)</option>
                                             </select>
                                         </div>
 
                                         {/* Section Filter Chips */}
                                         <div>
-                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">
-                                                Target Section(s)
-                                            </label>
+                                            <div className="flex items-center justify-between mb-1.5">
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">
+                                                    Target Section(s)
+                                                </label>
+                                                <span className="text-[9px] font-bold text-slate-400">
+                                                    {targetBranch === 'CSE' ? '9 Sections Available' : targetBranch === 'CSM' ? '5 Sections Available' : ''}
+                                                </span>
+                                            </div>
                                             <div className="flex flex-wrap items-center gap-1.5">
-                                                {['A', 'B', 'C', 'D', 'E'].map(sec => {
+                                                {(targetBranch === 'CSE'
+                                                    ? ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+                                                    : targetBranch === 'ECE'
+                                                    ? ['A', 'B', 'C', 'D', 'E', 'F']
+                                                    : (targetBranch === 'CSM' || targetBranch === 'CSD' || targetBranch === 'IT' || targetBranch === 'EEE' || targetBranch === 'MECH' || targetBranch === 'CIVIL')
+                                                    ? ['A', 'B', 'C', 'D', 'E']
+                                                    : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+                                                ).map(sec => {
                                                     const isSelected = targetSections.includes(sec);
                                                     return (
                                                         <button
@@ -740,9 +754,9 @@ export default function CreateQuizText() {
                                                                     setTargetSections([...targetSections, sec]);
                                                                 }
                                                             }}
-                                                            className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                                                            className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
                                                                 isSelected
-                                                                    ? 'bg-[var(--bg-accent)] text-white shadow-xs'
+                                                                    ? 'bg-[var(--bg-accent)] text-white shadow-xs scale-105'
                                                                     : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-400'
                                                             }`}
                                                         >
@@ -754,7 +768,7 @@ export default function CreateQuizText() {
                                                     <button
                                                         type="button"
                                                         onClick={() => setTargetSections([])}
-                                                        className="text-[10px] text-slate-400 hover:text-rose-500 font-bold px-2 py-1 underline"
+                                                        className="text-[10px] text-slate-400 hover:text-rose-500 font-bold px-2 py-1 underline cursor-pointer"
                                                     >
                                                         Clear
                                                     </button>

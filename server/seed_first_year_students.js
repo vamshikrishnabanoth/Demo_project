@@ -102,4 +102,7 @@ const firstYearStudents = [
   { rollNo: "25BD1A0531", name: "MARTHI JISHNU BALAJI", section: "B" },
   { rollNo: "25BD1A0532", name: "MULAKALAPALLI REVANTH MANI TEJ", section: "B" },
   { rollNo: "25BD1A0533", name: "NANDALA DIKSHITH", section: "B" },
-  { rollNo: "25BD1A0534", name: "NIRNAKAR ANIRUDH", section: "B" },
+  { rollNo: "25BD1A0534", name: "NIRNAKAR ANIRUDH", section: "B" }
+];
+
+module.exports = firstYearStudents;
