@@ -1021,6 +1021,33 @@ io.to(realQuizId).emit(
                 data: { status: 'completed', completedAt: new Date() }
             });
 
+            // ── STEP 5B: Award Gamification Points (+1 pt per correct answer) ──
+            try {
+                const finishedResults = await prisma.result.findMany({
+                    where: { quizId },
+                    select: { studentId: true, answers: true }
+                });
+                for (const r of finishedResults) {
+                    if (!r.studentId) continue;
+                    let correctCount = 0;
+                    if (Array.isArray(r.answers)) {
+                        correctCount = r.answers.filter(a => a && (a.isCorrect === true || a.isCorrect === 'true' || a.isCorrect === 1)).length;
+                    }
+                    if (correctCount > 0) {
+                        await prisma.user.update({
+                            where: { id: r.studentId },
+                            data: {
+                                points: { increment: correctCount },
+                                xp: { increment: correctCount * 10 }
+                            }
+                        }).catch(e => console.error(`[Gamification] Failed awarding points to ${r.studentId}:`, e.message));
+                        console.log(`[Gamification] Awarded +${correctCount} points to student ${r.studentId} for live quiz`);
+                    }
+                }
+            } catch (ptsErr) {
+                console.error('[QuizEnd] Error awarding gamification points:', ptsErr.message);
+            }
+
             // ── STEP 6: Build final leaderboard from in-memory state (authoritative) ─
             // Fall back to DB if memory state is unavailable (e.g. server restarted).
             let finalLeaderboard;

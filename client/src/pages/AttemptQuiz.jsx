@@ -538,6 +538,20 @@ export default function AttemptQuiz() {
         onAutoSubmit: handleAutoSubmit
     });
 
+    const handleEnterFullscreen = async () => {
+        await requestFullscreenMode();
+        if (quiz?.isLive && currentQuestion === 0) {
+            setAnsweredQuestions(prev => {
+                const next = new Set(prev);
+                next.delete(0);
+                return next;
+            });
+            const pqTime = quiz.timerPerQuestion || 30;
+            setTimeLeft(pqTime);
+            targetEndTimeRef.current = Date.now() + (pqTime * 1000);
+        }
+    };
+
     // Timer Initialization (Split from focus logic)
     useEffect(() => {
         if (quiz && !isReviewMode && !result) {
@@ -583,6 +597,9 @@ export default function AttemptQuiz() {
             return;
         }
 
+        // GUARD: If proctoring is enabled but student is not in fullscreen, DO NOT countdown or auto-submit
+        if (!isFullscreen && !result && !isReviewMode) return;
+
         const timerId = setInterval(() => {
             if (targetEndTimeRef.current) {
                 const remaining = Math.max(0, Math.ceil((targetEndTimeRef.current - Date.now()) / 1000));
@@ -613,7 +630,7 @@ export default function AttemptQuiz() {
         }, 1000);
 
         return () => clearInterval(timerId);
-    }, [loading, isReviewMode, result, quiz, currentQuestion]);
+    }, [loading, isReviewMode, result, quiz, currentQuestion, isFullscreen]);
 
     useEffect(() => {
         const fetchQuiz = async () => {
@@ -1159,7 +1176,7 @@ export default function AttemptQuiz() {
                                 To maintain exam security and integrity, this examination must be taken in Fullscreen Mode on desktop browsers. Mobile and tablet devices operate in maximized view automatically.
                     </p>
                     <button
-                        onClick={requestFullscreenMode}
+                        onClick={handleEnterFullscreen}
                         className="px-6 sm:px-8 py-3.5 sm:py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black italic uppercase text-xs tracking-widest rounded-2xl shadow-2xl active:scale-95 transition-all cursor-pointer shrink-0"
                     >
                         Resume Fullscreen Exam
@@ -1760,40 +1777,6 @@ export default function AttemptQuiz() {
                         }
                     }}
                 />
-            )}
-
-            {/* Strict Fullscreen Enforcement Modal Overlay */}
-            {!isFullscreen && !loading && !submitting && !result && (
-                <div className="fixed inset-0 z-[10000] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 text-white text-center animate-in fade-in duration-300 min-h-[100dvh] w-full my-auto overflow-y-auto">
-                    <div className="bg-slate-900 border-2 border-red-500/40 rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-12 max-w-lg w-full shadow-2xl shadow-red-500/20 space-y-6 animate-in zoom-in-95 duration-300 my-auto">
-                        <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-500 mx-auto border border-red-500/30">
-                            <ShieldAlert size={44} className="animate-pulse" />
-                        </div>
-                        
-                        <div className="space-y-2">
-                            <h2 className="text-2xl sm:text-3xl font-black italic uppercase tracking-tight text-white">
-                                Fullscreen Mode Required
-                            </h2>
-                            <p className="text-slate-400 font-bold text-xs leading-relaxed uppercase tracking-wider">
-                                To maintain exam security and integrity, this examination must be taken in Fullscreen Mode on desktop browsers. Mobile and tablet devices operate in maximized view automatically.
-                            </p>
-                        </div>
-
-                        <div className="p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-xs font-bold text-red-300 text-left space-y-2">
-                            <p className="flex items-center gap-2"><AlertTriangle size={14} aria-hidden="true" /> Exiting fullscreen mode records an integrity alert.</p>
-                            <p className="flex items-center gap-2"><AlertTriangle size={14} aria-hidden="true" /> Switching tabs 2 times auto-submits exam.</p>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={requestFullscreenMode}
-                            className="w-full bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-rose-500 text-white font-black text-sm uppercase tracking-widest py-5 px-8 rounded-2xl shadow-xl shadow-red-600/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer border-2 border-white/20"
-                        >
-                            <Maximize size={22} />
-                            <span>Enter Fullscreen Mode</span>
-                        </button>
-                    </div>
-                </div>
             )}
         </div >
     );

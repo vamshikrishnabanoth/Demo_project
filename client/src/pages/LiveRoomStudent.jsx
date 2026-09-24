@@ -7,7 +7,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import AuthContext from '../context/AuthContext';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import LiveQuizWaitAnimation from '../components/loaders/LiveQuizWaitAnimation';
-import { ShieldCheck, Users, Trophy, Crown, Flame, Ban, CameraOff, ClipboardX, Monitor, Split, Lock } from 'lucide-react';
+import { ShieldCheck, Users, Trophy, Crown, Flame, Ban, CameraOff, ClipboardX, Monitor, Split, Lock, Maximize } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 
@@ -318,6 +318,27 @@ export default function LiveRoomStudent() {
                                 <p className="text-slate-600 max-w-lg mx-auto font-bold text-base sm:text-lg leading-relaxed">
                                     You're in the waiting room. The quiz will start once your teacher begins the session.
                                 </p>
+                                <div>
+                                    <button
+                                        type="button"
+                                        onClick={async () => {
+                                            try {
+                                                const docEl = document.documentElement;
+                                                const reqFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+                                                if (reqFS) {
+                                                    await reqFS.call(docEl);
+                                                    toast.success('Fullscreen mode activated! You are exam ready.');
+                                                }
+                                            } catch (e) {
+                                                toast.success('Ready for exam!');
+                                            }
+                                        }}
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest transition-all cursor-pointer shadow-lg active:scale-95 border-2 border-amber-300"
+                                    >
+                                        <Maximize size={16} />
+                                        <span>Enter Fullscreen & Get Ready</span>
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
