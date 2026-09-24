@@ -10,7 +10,6 @@ import toast from 'react-hot-toast';
 import throttle from '../utils/throttle';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import { SecurityDashboard } from '../components/SecurityDashboard';
-import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 
 import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 
@@ -81,9 +80,8 @@ export default function LiveRoomTeacher() {
 
         const handleParticipantsUpdate = throttle((participantsList = []) => {
             console.log('Participants Update:', participantsList);
-            const isLiveActive = quizRef.current?.status === 'started';
             const students = participantsList.filter(
-                p => p.role?.toLowerCase() !== 'teacher' && (isLiveActive ? true : p.isOnline !== false)
+                p => p.role?.toLowerCase() !== 'teacher'
             );
             setParticipants([...students]);
         }, 300);
@@ -495,7 +493,15 @@ if (socket.connected) {
 
     if (loading) return (
         <DashboardLayout role="teacher">
-            <WaitingRoomLoader message="Initializing Room..." />
+            <div className="flex flex-col items-center justify-center min-h-[70vh]">
+                <div className="relative">
+                    <div className="w-20 h-20 border-4 border-[var(--bg-accent)]/20 border-t-[var(--bg-accent)] rounded-full animate-spin"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <Users className="text-[var(--text-accent)]" size={24} />
+                    </div>
+                </div>
+                <p className="mt-6 font-black text-gray-400 uppercase tracking-widest animate-pulse">Initializing Room...</p>
+            </div>
         </DashboardLayout>
     );
 
@@ -653,10 +659,10 @@ if (socket.connected) {
                             </button>
 
                             {/* Question counter — the MOST important number on screen */}
-                            <div className="px-5 py-2 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-600 shadow-md shadow-indigo-500/30">
-                                <p className="text-white font-black text-lg leading-none tracking-tight">
+                            <div className="px-5 py-2 rounded-xl bg-amber-500 shadow-md shadow-amber-500/20">
+                                <p className="text-slate-950 font-black text-lg leading-none tracking-tight">
                                     Q<span className="text-2xl">{currentQuestion + 1}</span>
-                                    <span className="text-white/80 font-bold text-sm"> / {quiz?.questions?.length || 0}</span>
+                                    <span className="text-slate-950/60 font-bold text-sm"> / {quiz?.questions?.length || 0}</span>
                                 </p>
                             </div>
 
@@ -857,7 +863,8 @@ if (socket.connected) {
                             {[
                                 { color: 'bg-emerald-500', label: 'Correct' },
                                 { color: 'bg-rose-500', label: 'Wrong' },
-                                { color: 'bg-slate-300', label: 'Unattempted / Skipped' },
+                                { color: 'bg-amber-500', label: 'Skipped' },
+                                { color: 'bg-slate-300', label: 'Pending' },
                             ].map(({ color, label }) => (
                                 <div key={label} className="flex items-center gap-1.5">
                                     <div className={`w-3 h-3 rounded-md ${color}`} />
@@ -937,40 +944,38 @@ if (socket.connected) {
                                         <div className="flex items-center gap-1.5 flex-wrap">
                                             {quiz?.questions?.map((_, idx) => {
                                                 const data = progress[idx] || progress[idx.toString()];
-                                                const isAnswered = Boolean(data && (data.answered === true || data.isCorrect !== undefined));
-                                                const isSkipped = Boolean(data?.skipped === true || data?.skipped === 'true');
-                                                const isCorrect = Boolean(isAnswered && !isSkipped && (data.isCorrect === true || data.isCorrect === 'true' || data.isCorrect === 1));
+                                                const isCorrect = data?.isCorrect === true || data?.isCorrect === 'true' || data?.isCorrect === 1;
+                                                const isSkipped = data?.skipped === true || data?.skipped === 'true';
+                                                const isAnswered = data?.answered === true || data?.isCorrect !== undefined || isSkipped;
 
-                                                let dotClass = 'bg-slate-200 border-slate-300 text-slate-500';
+                                                let dotClass = 'bg-slate-100 border-slate-200 text-slate-400';
                                                 let Icon = null;
 
-                                                if (isAnswered && !isSkipped) {
+                                                if (isAnswered) {
                                                     if (isCorrect) {
                                                         dotClass = 'bg-emerald-500 border-emerald-500 text-white shadow-sm font-black';
                                                         Icon = <CheckCircle size={13} className="text-white" strokeWidth={2.5} />;
+                                                    } else if (isSkipped) {
+                                                        dotClass = 'bg-amber-500 border-amber-500 text-white shadow-sm font-black';
+                                                        Icon = <MinusCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     } else {
                                                         dotClass = 'bg-rose-500 border-rose-500 text-white shadow-sm font-black';
                                                         Icon = <XCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     }
-                                                } else if (isSkipped) {
-                                                    dotClass = 'bg-slate-400 border-slate-400 text-white';
-                                                    Icon = <Minus size={12} className="text-white" strokeWidth={2.5} />;
-                                                } else {
-                                                    dotClass = 'bg-slate-200 border-slate-300 text-slate-500';
-                                                    Icon = null;
+                                                } else if (!p.isOnline && idx < currentQuestion) {
+                                                    dotClass = 'bg-slate-50 border-slate-200 text-slate-300';
+                                                    Icon = <Minus size={10} />;
                                                 }
 
                                                 return (
                                                     <div
                                                         key={idx}
-                                                        title={isAnswered && !isSkipped
-                                                            ? (isCorrect ? `Q${idx + 1}: Correct` : `Q${idx + 1}: Incorrect`)
-                                                            : isSkipped
-                                                                ? `Q${idx + 1}: Skipped`
-                                                                : `Q${idx + 1}: Unattempted`
+                                                        title={isAnswered
+                                                            ? (isCorrect ? `Q${idx + 1}: Correct` : isSkipped ? `Q${idx + 1}: Skipped` : `Q${idx + 1}: Incorrect`)
+                                                            : `Q${idx + 1}: Not Answered`
                                                         }
                                                         className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black border-2 transition-all ${dotClass} ${idx === currentQuestion
-                                                            ? 'ring-2 ring-indigo-500 ring-offset-1 scale-110 shadow-md'
+                                                            ? 'ring-2 ring-amber-500 ring-offset-1 scale-110 shadow-md'
                                                             : ''
                                                         }`}
                                                     >

@@ -18,7 +18,6 @@ import toast from 'react-hot-toast';
 import socket from '../utils/socket';
 import { uiTerminology } from '../utils/uiTerminology';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
-import PerkQRCodeModal from '../components/quiz/PerkQRCodeModal';
 
 const FloatingSymbol = ({ Icon, top, left, delay, size = 32 }) => (
     <motion.div
@@ -102,7 +101,7 @@ export default function StudentDashboard() {
         try {
             const res = await api.get('/students/gamification');
             setXp(res.data.xp || 0);
-            setPoints(res.data.points ?? 0);
+            setPoints(res.data.points ?? res.data.xp ?? 0);
             setStreak(res.data.streak || 0);
             setHighestStreak(res.data.highestStreak || 0);
             setDailyMissions(res.data.dailyMissions || []);
@@ -117,7 +116,7 @@ export default function StudentDashboard() {
         try {
             const res = await api.post('/students/gamification/init');
             setXp(res.data.xp || 0);
-            setPoints(res.data.points ?? 0);
+            setPoints(res.data.points ?? res.data.xp ?? 0);
             setStreak(res.data.streak || 0);
             setHighestStreak(res.data.highestStreak || 0);
             setDailyMissions(res.data.dailyMissions || []);
@@ -156,16 +155,15 @@ export default function StudentDashboard() {
     }, [activeTab]);
 
     const handleRedeemPerk = async (perkId, perkName, cost) => {
-        const currentPts = points ?? 0;
+        const currentPts = points || xp;
         if (currentPts < cost) return toast.error('Not enough points to redeem this perk!');
         setRedeeming(true);
         try {
             const res = await api.post('/students/redeem-perk', { perkId, perkName, cost });
-            const remaining = res.data.remainingPoints ?? Math.max(0, currentPts - cost);
+            const remaining = res.data.remainingPoints ?? res.data.remainingXp ?? (currentPts - cost);
             setPoints(remaining);
-            const newPerk = res.data.perk;
-            setUnlockedPerks(prev => [...prev, newPerk]);
-            setShowTicket(newPerk);
+            setXp(remaining);
+            setUnlockedPerks(prev => [...prev, res.data.perk]);
             toast.success(`🎉 Redeemed: ${perkName}`);
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Redemption failed');
@@ -778,7 +776,7 @@ export default function StudentDashboard() {
                                                 Total Points Gained
                                             </span>
                                             <span className="text-xl font-black text-amber-500 italic">
-                                                {(points ?? 0)} <span className="text-xs text-[var(--text-secondary)] font-bold">/ 1300 PTS</span>
+                                                {(points || xp)} <span className="text-xs text-[var(--text-secondary)] font-bold">/ 1300 PTS</span>
                                             </span>
                                         </div>
                                     </div>
@@ -787,13 +785,13 @@ export default function StudentDashboard() {
                                     <div className="w-full bg-[var(--bg-primary)] h-4 rounded-full border border-[var(--border-color)] overflow-hidden p-0.5 relative">
                                         <motion.div 
                                             initial={{ width: 0 }}
-                                            animate={{ width: `${Math.min(((points ?? 0) / 1300) * 100, 100)}%` }}
+                                            animate={{ width: `${Math.min(((points || xp) / 1300) * 100, 100)}%` }}
                                             transition={{ duration: 1, ease: "easeOut" }}
                                             className="h-full rounded-full relative overflow-hidden"
                                             style={{
-                                                 background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)',
-                                                 boxShadow: '0 0 15px rgba(245, 158, 11, 0.6)'
-                                             }}
+                                                background: 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)',
+                                                boxShadow: '0 0 15px rgba(245, 158, 11, 0.6)'
+                                            }}
                                         >
                                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
                                         </motion.div>
@@ -801,168 +799,287 @@ export default function StudentDashboard() {
 
                                     <div className="flex justify-between items-center text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mt-2">
                                         <span>0 PTS</span>
-                                        <span className="text-amber-500 font-black">{Math.min(Math.round(((points ?? 0) / 1300) * 100), 100)}% COMPLETED</span>
+                                        <span className="text-amber-500 font-black">{Math.min(Math.round(((points || xp) / 1300) * 100), 100)}% COMPLETED</span>
                                         <span>1300 PTS (MAX MILESTONE)</span>
                                     </div>
                                 </div>
 
-                                {/* Rewards Store - Clean & Focused */}
-                                <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 sm:p-8 flex flex-col gap-6 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
-                                    <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-2.5 text-amber-500 shadow-sm">
-                                                <Gift size={24} />
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    {/* Daily Missions */}
+                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-5 sm:p-6 flex flex-col gap-3 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <div className="rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] p-2 text-[var(--text-primary)] shadow-sm">
+                                                <ShieldCheck size={20} />
                                             </div>
-                                            <div>
-                                                <h2 className="type-section-title font-black text-[var(--text-primary)] italic uppercase text-lg sm:text-xl">
-                                                    Available Academic Perks
-                                                </h2>
-                                                <p className="text-xs text-[var(--text-secondary)] font-medium">
-                                                    Redeem your accumulated points for verified college permissions & benefits
-                                                </p>
-                                            </div>
+                                            <h2 className="type-section-title font-black text-[var(--text-primary)] italic uppercase">Daily Missions</h2>
                                         </div>
-                                    </div>
 
-                                    {/* Perk Store - 3 Specific Perks */}
-                                    {(() => {
-                                        const rewardThemes = {
-                                            perk_late: {
-                                                iconBg: 'bg-violet-100',
-                                                icon: 'text-violet-700',
-                                                border: 'border-violet-200 hover:border-violet-400',
-                                                badge: 'bg-violet-50 text-violet-700 border-violet-200'
-                                            },
-                                            perk_half: {
-                                                iconBg: 'bg-blue-100',
-                                                icon: 'text-blue-700',
-                                                border: 'border-blue-200 hover:border-blue-400',
-                                                badge: 'bg-blue-50 text-blue-700 border-blue-200'
-                                            },
-                                            perk_att: {
-                                                iconBg: 'bg-emerald-100',
-                                                icon: 'text-emerald-700',
-                                                border: 'border-emerald-200 hover:border-emerald-400',
-                                                badge: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                            }
-                                        };
+                                        {(() => {
+                                            const getMissionTheme = (mission) => {
+                                                const title = (mission?.title || '').toLowerCase();
+                                                const isAccuracy = title.includes('accuracy') || title.includes('precise') || title.includes('correct');
+                                                const isXp = title.includes('xp') || title.includes('earn') || title.includes('score');
+                                                const isCyber = title.includes('cyber') || title.includes('quest');
 
-                                        const PERK_LIST = [
-                                            { 
-                                                id: 'perk_late', 
-                                                name: 'Late Permission', 
-                                                cost: 700, 
-                                                icon: FileText, 
-                                                desc: 'Submit any assignment or arrive 1 hour late with official academic waiver' 
-                                            },
-                                            { 
-                                                id: 'perk_half', 
-                                                name: 'Half-Day Permission', 
-                                                cost: 900, 
-                                                icon: Clock3, 
-                                                desc: 'Excuse yourself for a half-day session with authorized exemption' 
-                                            },
-                                            { 
-                                                id: 'perk_att', 
-                                                name: '5% Hike in Attendance', 
-                                                cost: 1300, 
-                                                icon: Target, 
-                                                desc: 'Directly boost your official academic attendance percentage by +5%' 
-                                            },
-                                        ];
+                                                if (isAccuracy) {
+                                                    return {
+                                                        badge: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200',
+                                                        chip: 'bg-fuchsia-100 text-fuchsia-700',
+                                                        bar: 'bg-fuchsia-500',
+                                                        icon: 'text-fuchsia-600',
+                                                        soft: 'bg-fuchsia-50/70 border-fuchsia-100',
+                                                        progress: 'text-fuchsia-700'
+                                                    };
+                                                }
 
-                                        const currentPts = points ?? 0;
+                                                if (isXp) {
+                                                    return {
+                                                        badge: 'bg-amber-50 text-amber-700 border border-amber-200',
+                                                        chip: 'bg-amber-100 text-amber-700',
+                                                        bar: 'bg-amber-500',
+                                                        icon: 'text-amber-600',
+                                                        soft: 'bg-amber-50/70 border-amber-100',
+                                                        progress: 'text-amber-700'
+                                                    };
+                                                }
 
-                                        return (
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                                                {PERK_LIST.map(perk => {
-                                                    const canAfford = currentPts >= perk.cost;
-                                                    const theme = rewardThemes[perk.id];
-                                                    const IconComponent = perk.icon;
+                                                if (isCyber) {
+                                                    return {
+                                                        badge: 'bg-violet-50 text-violet-700 border border-violet-200',
+                                                        chip: 'bg-violet-100 text-violet-700',
+                                                        bar: 'bg-violet-500',
+                                                        icon: 'text-violet-600',
+                                                        soft: 'bg-violet-50/70 border-violet-100',
+                                                        progress: 'text-violet-700'
+                                                    };
+                                                }
 
-                                                    return (
-                                                        <div 
-                                                            key={perk.id} 
-                                                            className={`p-5 rounded-3xl border bg-white flex flex-col justify-between transition-all duration-300 shadow-sm ${theme.border} bg-[var(--bg-primary)]`}
-                                                        >
-                                                            <div className="space-y-4">
-                                                                <div className="flex items-center justify-between">
-                                                                    <div className={`p-3.5 rounded-2xl border ${theme.iconBg} ${theme.badge} ${theme.icon} shadow-xs`}>
-                                                                        <IconComponent size={24} />
-                                                                    </div>
-                                                                    <span className="text-xs font-black text-amber-600 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full uppercase tracking-wider">
-                                                                        {perk.cost} PTS
-                                                                    </span>
-                                                                </div>
-                                                                <div>
-                                                                    <h3 className="font-black text-[var(--text-primary)] text-base italic uppercase tracking-tight">
-                                                                        {perk.name}
+                                                return {
+                                                    badge: 'bg-slate-100 text-slate-700 border border-slate-200',
+                                                    chip: 'bg-slate-200 text-slate-700',
+                                                    bar: 'bg-slate-600',
+                                                    icon: 'text-slate-600',
+                                                    soft: 'bg-slate-50 border-slate-200',
+                                                    progress: 'text-slate-700'
+                                                };
+                                            };
+
+                                            return dailyMissions.map((m) => {
+                                                const isComplete = m.current >= m.target;
+                                                const theme = getMissionTheme(m);
+                                                const icon = m.required ? 'MAIN' : 'BONUS';
+
+                                                return (
+                                                    <div
+                                                        key={m.id}
+                                                        className={`p-3.5 sm:p-4 rounded-2xl border bg-[var(--bg-primary)] transition-all duration-300 ${
+                                                            isComplete ? `border-[var(--border-color)] ${theme.soft}` : 'border-[var(--border-color)] bg-[var(--bg-primary)]'
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="flex items-center gap-2 flex-wrap">
+                                                                    <div className={`h-2.5 w-2.5 rounded-full ${theme.chip}`} aria-hidden="true" />
+                                                                    <h3 className="font-extrabold text-[var(--text-primary)] text-sm sm:text-[0.95rem] leading-snug tracking-[-0.01em]">
+                                                                        {m.title}
                                                                     </h3>
-                                                                    <p className="text-[var(--text-secondary)] text-xs font-medium mt-1 leading-relaxed">
-                                                                        {perk.desc}
-                                                                    </p>
                                                                 </div>
                                                             </div>
 
-                                                            <div className="pt-5 mt-4 border-t border-[var(--border-color)] flex items-center justify-between gap-3">
-                                                                <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-                                                                    {canAfford ? 'Eligible' : `Need ${perk.cost - currentPts} more pts`}
+                                                            <div className="flex items-center gap-2 shrink-0">
+                                                                <span className={`inline-flex items-center rounded-full px-2 py-1 text-[8px] font-black uppercase tracking-[0.14em] ${m.required ? 'bg-pink-50 text-pink-700 border border-pink-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+                                                                    {icon}
                                                                 </span>
-                                                                <button
-                                                                    onClick={() => canAfford && handleRedeemPerk(perk.id, perk.name, perk.cost)}
-                                                                    disabled={!canAfford || redeeming}
-                                                                    className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                                                                        canAfford
-                                                                            ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md hover:shadow-amber-500/20 active:scale-95'
-                                                                            : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-70'
-                                                                    }`}
-                                                                >
-                                                                    {redeeming ? 'Redeeming...' : canAfford ? 'Redeem Pass' : 'Locked'}
-                                                                </button>
+                                                                {isComplete && (
+                                                                    <span className="inline-flex items-center justify-center rounded-full bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] p-1" aria-label="Completed mission">
+                                                                        <ShieldCheck size={12} className={theme.icon} />
+                                                                    </span>
+                                                                )}
                                                             </div>
                                                         </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        );
-                                    })()}
 
-                                    {/* Inventory */}
-                                    {unlockedPerks.length > 0 && (
-                                        <div className="mt-2 pt-6 border-t border-[var(--border-color)]">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <Medal size={16} className="text-amber-500" />
-                                                <h3 className="text-xs font-black text-[var(--text-primary)] uppercase tracking-widest">
-                                                    Your Redeemed Passes ({unlockedPerks.length})
-                                                </h3>
+                                                        <div className="mt-3 flex items-center justify-between gap-3">
+                                                            <div className="flex-1">
+                                                                <div className="h-2 w-full rounded-full bg-[var(--border-color)]/80 overflow-hidden">
+                                                                    <div
+                                                                        className={`h-full rounded-full transition-all duration-500 ease-out ${theme.bar}`}
+                                                                        style={{ width: `${Math.min((m.current / m.target) * 100, 100)}%` }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <span className={`min-w-[3.5rem] text-right text-[11px] font-black ${isComplete ? theme.progress : 'text-[var(--text-secondary)]'}`}>
+                                                                {m.current} / {m.target}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            });
+                                        })()}
+                                    </div>
+
+                                    {/* Rewards Store */}
+                                    <div className="bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] p-6 flex flex-col gap-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] p-2 text-[var(--text-primary)] shadow-sm">
+                                                <Gift size={22} />
                                             </div>
-                                            <div className="flex flex-wrap gap-2.5">
-                                                {unlockedPerks.map((p, idx) => (
-                                                    <button 
-                                                        key={idx} 
-                                                        onClick={() => setShowTicket(p)}
-                                                        className="text-xs bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-white px-4 py-2 rounded-2xl flex items-center gap-2 transition-all font-bold shadow-sm cursor-pointer border border-white/10 active:scale-95"
-                                                    >
-                                                        <Trophy size={14} className="text-amber-400" /> 
-                                                        <span>{p.name}</span>
-                                                        <span className="text-[10px] opacity-75 font-mono">({p.uniqueId || 'PASS'})</span>
-                                                    </button>
-                                                ))}
-                                            </div>
+                                            <h2 className="type-section-title font-black text-[var(--text-primary)] italic uppercase">Rewards Store</h2>
                                         </div>
-                                    )}
+
+                                        {/* Perk Store */}
+                                        {(() => {
+                                            const rewardThemes = {
+                                                perk_late: {
+                                                    iconBg: 'bg-violet-100',
+                                                    icon: 'text-violet-700',
+                                                    border: 'border-violet-200',
+                                                    status: 'text-violet-700'
+                                                },
+                                                perk_half: {
+                                                    iconBg: 'bg-blue-100',
+                                                    icon: 'text-blue-700',
+                                                    border: 'border-blue-200',
+                                                    status: 'text-blue-700'
+                                                },
+                                                perk_att: {
+                                                    iconBg: 'bg-emerald-100',
+                                                    icon: 'text-emerald-700',
+                                                    border: 'border-emerald-200',
+                                                    status: 'text-emerald-700'
+                                                },
+                                                default: {
+                                                    iconBg: 'bg-slate-100',
+                                                    icon: 'text-slate-700',
+                                                    border: 'border-slate-200',
+                                                    status: 'text-slate-700'
+                                                }
+                                            };
+
+                                            const PERK_LIST = [
+                                                { id: 'perk_late', name: 'Late Permission', cost: 700, icon: FileText, desc: 'Submit any assignment 1 day late with no penalty' },
+                                                { id: 'perk_half', name: 'Half Day Permission', cost: 900, icon: Clock3, desc: 'Excuse yourself for a half day' },
+                                                { id: 'perk_att', name: 'Attendance 5% hike', cost: 1300, icon: Target, desc: 'Increase your overall attendance by 5%' },
+                                            ];
+
+                                            const currentPts = points || xp;
+
+                                            return PERK_LIST.map(perk => {
+                                                const canAfford = currentPts >= perk.cost;
+                                                const theme = rewardThemes[perk.id] || rewardThemes.default;
+                                                const IconComponent = perk.icon;
+
+                                                return (
+                                                    <div key={perk.id} className={`p-4 rounded-2xl border bg-white flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left justify-between ${theme.border} bg-[var(--bg-primary)]`}>
+                                                        <div className="flex items-center gap-4">
+                                                            <div className={`p-3 rounded-xl border ${theme.iconBg} ${theme.border} ${theme.icon}`}>
+                                                                <IconComponent size={24} />
+                                                            </div>
+                                                            <div>
+                                                                <h3 className="font-bold text-[var(--text-primary)] text-sm">{perk.name}</h3>
+                                                                <p className="text-[var(--text-secondary)] text-[10px] mt-0.5">{perk.desc}</p>
+                                                                <p className="text-amber-600 text-xs font-black italic mt-1">{perk.cost} PTS</p>
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => canAfford && handleRedeemPerk(perk.id, perk.name, perk.cost)}
+                                                            disabled={!canAfford || redeeming}
+                                                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
+                                                                canAfford
+                                                                    ? 'bg-[var(--bg-accent)] text-white hover:bg-[var(--bg-accent-hover)] shadow-md hover:-translate-y-0.5 cursor-pointer'
+                                                                    : 'bg-white text-[var(--text-secondary)] border border-[var(--border-color)] cursor-not-allowed opacity-60'
+                                                            }`}
+                                                        >
+                                                            {canAfford ? 'Redeem' : 'Locked'}
+                                                        </button>
+                                                    </div>
+                                                );
+                                            });
+                                        })()}
+
+                                        {/* Inventory */}
+                                        {unlockedPerks.length > 0 && (
+                                            <div className="mt-4 pt-4 border-t border-white/10">
+                                                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-3">Your Inventory</h3>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {unlockedPerks.map((p, idx) => (
+                                                        <button 
+                                                            key={idx} 
+                                                            onClick={() => setShowTicket(p)}
+                                                            className="text-[10px] bg-white/10 hover:bg-[var(--bg-accent)] text-white px-3 py-1.5 rounded flex items-center gap-2 transition-colors uppercase font-bold"
+                                                        >
+                                                            <Trophy size={12} /> {p.name}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </motion.div>
                         ) : null}
                     </AnimatePresence>
 
-                    {/* Scannable QR Code Modal */}
-                    <PerkQRCodeModal
-                        isOpen={Boolean(showTicket)}
-                        onClose={() => setShowTicket(null)}
-                        perk={showTicket}
-                        user={user}
-                    />
+                    {/* Ticket Modal */}
+                    <AnimatePresence>
+                        {showTicket && (
+                            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                                <motion.div 
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.9, opacity: 0 }}
+                                    className="bg-zinc-900 border border-white/20 p-8 rounded-3xl max-w-md w-full relative"
+                                    id="perk-ticket-node"
+                                >
+                                    <button 
+                                        onClick={() => setShowTicket(null)}
+                                        className="absolute top-4 right-4 text-white/50 hover:text-white"
+                                    >
+                                        &times;
+                                    </button>
+                                    
+                                    <div className="border-4 border-dashed border-[var(--bg-accent)] rounded-xl p-6 text-center space-y-4 relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-16 h-16 bg-[var(--bg-accent)]/20 blur-2xl rounded-full"></div>
+                                        <div className="absolute bottom-0 right-0 w-24 h-24 bg-purple-500/10 blur-3xl rounded-full"></div>
+                                        
+                                        <div className="w-16 h-16 mx-auto bg-[var(--bg-accent)] text-black rounded-full flex items-center justify-center shadow-[0_0_30px_var(--bg-accent-glow)]">
+                                            <Star size={32} fill="currentColor" />
+                                        </div>
+                                        
+                                        <div>
+                                            <h2 className="text-2xl font-black text-white italic uppercase">OFFICIAL PASS</h2>
+                                            <h3 className="text-lg text-[var(--text-accent)] font-bold mt-1">{showTicket.name}</h3>
+                                        </div>
+
+                                        {/* Status badge */}
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/40">
+                                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                                            <span className="text-green-400 text-[10px] font-black uppercase tracking-widest">{showTicket.status || 'UNUSED'}</span>
+                                        </div>
+                                        
+                                        <div className="pt-4 border-t border-white/10 text-left space-y-2.5">
+                                            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Issued To: <span className="text-white">{user?.name || user?.username}</span></p>
+                                            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Roll No: <span className="text-white">{user?.username}</span></p>
+                                            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Issue Date: <span className="text-white">{new Date(showTicket.redeemedAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}</span></p>
+                                            <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold">Expires On: <span className="text-red-400 font-black">{showTicket.expiryDate ? new Date(showTicket.expiryDate).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : 'N/A'}</span></p>
+                                            <div className="bg-white/5 rounded-lg px-3 py-2 mt-1">
+                                                <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-1">Verification Code</p>
+                                                <p className="text-[var(--text-accent)] font-black text-sm tracking-widest">{showTicket.uniqueId || showTicket.id?.toUpperCase()}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="pt-4">
+                                            <button 
+                                                onClick={() => window.print()}
+                                                className="w-full py-3 bg-white text-black font-black uppercase text-sm rounded-lg hover:bg-gray-200 transition-colors"
+                                            >
+                                                🖨 Print / Save as PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
 
                 </motion.div>
             </div>

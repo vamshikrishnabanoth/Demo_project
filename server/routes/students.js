@@ -233,9 +233,7 @@ router.get('/gamification', auth, async (req, res) => {
         if (!user) return res.status(404).json({ msg: 'User not found' });
 
         res.json({
-            xp: user.xp || 0,
-            points: user.points ?? 0,
-            attendancePct: user.attendancePct,
+            xp: user.xp, points: user.points, attendancePct: user.attendancePct,
             streak: user.streak,
             highestStreak: user.highestStreak || 0,
             dailyMissions: user.dailyMissions || [],
@@ -352,8 +350,7 @@ router.post('/gamification/init', auth, async (req, res) => {
         }
 
         res.json({
-            xp: xp || 0,
-            points: user.points ?? 0,
+            xp: xp,
             streak: streak,
             highestStreak: highestStreak,
             dailyMissions: missions,

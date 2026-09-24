@@ -114,17 +114,16 @@ export function TimeSpentChart({ data, onQuestionClick }) {
     const renderDot = (props) => {
         const { cx, cy, payload } = props;
         if (!cx || !cy || !payload) return null;
-        const numericTimeSpent = Number(payload.timeSpent ?? 0);
         let fillColor = '#10b981';
         if (payload.isCorrect === false) fillColor = '#ef4444';
-        if (payload.isCorrect === null || payload.status === 'Skipped' || payload.status === 'Average') fillColor = '#64748b';
+        if (payload.isCorrect === null || payload.status === 'Skipped') fillColor = '#64748b';
 
         return (
             <circle
                 key={`dot-${payload.index}`}
                 cx={cx}
                 cy={cy}
-                r={Math.min(6, Math.max(4, Math.round(numericTimeSpent > 0 ? 4 + numericTimeSpent / 35 : 4)))}
+                r={6}
                 fill={fillColor}
                 stroke="#ffffff"
                 strokeWidth={2}
@@ -143,18 +142,17 @@ export function TimeSpentChart({ data, onQuestionClick }) {
     const TimeTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
             const dataPoint = payload[0].payload;
-            const safeTime = Number(dataPoint?.timeSpent ?? 0);
             return (
                 <div className="bg-slate-900/90 text-white border border-purple-500/30 p-3.5 rounded-2xl shadow-2xl backdrop-blur-xl space-y-1">
                     <p className="font-black text-sm text-purple-300 italic">{dataPoint.name}</p>
                     <p className="text-xs font-bold text-slate-200">
-                        Time Spent (Seconds) : <span className="font-black text-amber-400">{safeTime}s</span>
+                        Time Spent (Seconds) : <span className="font-black text-amber-400">{dataPoint.timeSpent}s</span>
                     </p>
                     {dataPoint.status && (
                         <p className={`text-[11px] font-black uppercase tracking-wider ${
                             dataPoint.isCorrect ? 'text-emerald-400' : dataPoint.isCorrect === false ? 'text-rose-400' : 'text-slate-400'
                         }`}>
-                            {dataPoint.status} {dataPoint.isCorrect ? 'Correct' : dataPoint.isCorrect === false ? 'Incorrect' : dataPoint.status === 'Average' ? 'Average' : 'Skipped'}
+                            {dataPoint.status} {dataPoint.isCorrect ? 'Correct' : dataPoint.isCorrect === false ? 'Incorrect' : 'Skipped'}
                         </p>
                     )}
                     <p className="text-[9px] font-bold text-purple-400/80 italic mt-1">Click to analyze question</p>

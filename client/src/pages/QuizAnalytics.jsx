@@ -611,16 +611,15 @@ export default function QuizAnalytics() {
                     const studentAnswers = analytics?.studentAttempt?.answers || [];
                     const timeSpentData = (analytics?.questionPerformance || []).map((q, idx) => {
                         const studentAns = studentAnswers.find(a => a.questionText === q.questionText || a.questionIndex === idx);
-                        const timeSpent = Number(studentAns && Object.prototype.hasOwnProperty.call(studentAns, 'timeTaken')
+                        const timeSpent = studentAns && Object.prototype.hasOwnProperty.call(studentAns, 'timeTaken')
                             ? studentAns.timeTaken
-                            : q.avgTimeSpent ?? 0);
-                        const safeTimeSpent = Number.isFinite(timeSpent) ? Math.max(0, timeSpent) : 0;
+                            : null;
                         const isCorrect = studentAns ? studentAns.isCorrect : null;
-                        const status = studentAns ? (studentAns.selectedOption ? (studentAns.isCorrect ? 'Correct' : 'Incorrect') : 'Skipped') : 'Average';
+                        const status = studentAns ? (studentAns.selectedOption ? (studentAns.isCorrect ? 'Correct' : 'Incorrect') : 'Skipped') : 'Average Time';
                         return {
                             name: `Q${idx + 1}`,
                             index: idx,
-                            timeSpent: safeTimeSpent,
+                            timeSpent,
                             isCorrect,
                             status
                         };

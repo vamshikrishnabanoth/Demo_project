@@ -49,59 +49,6 @@ function sanitizeTranscriptEchoes(text) {
 }
 
 /**
- * Validates whether a student matches the audience criteria (Year, Branch, Section, or Assigned Students) for a quiz.
- */
-function isStudentTargeted(student, assignedGroups, assignedStudents) {
-    if (!student) return false;
-    if (student.role === 'teacher' || student.role === 'admin') return true;
-
-    let studentIds = assignedStudents;
-    if (typeof studentIds === 'string') {
-        try { studentIds = JSON.parse(studentIds); } catch (_) { studentIds = []; }
-    }
-    const hasAssignedStudents = Array.isArray(studentIds) && studentIds.length > 0;
-    if (hasAssignedStudents && studentIds.includes(student.id)) {
-        return true;
-    }
-
-    let groups = assignedGroups;
-    if (typeof groups === 'string') {
-        try { groups = JSON.parse(groups); } catch (_) { groups = []; }
-    }
-    const hasAssignedGroups = Array.isArray(groups) && groups.length > 0;
-
-    if (!hasAssignedStudents && !hasAssignedGroups) {
-        return true;
-    }
-
-    if (hasAssignedGroups) {
-        const sYear = student.year ? String(student.year).trim() : '';
-        const sBranch = (student.studentBranch || '').trim().toLowerCase();
-        const sSection = (student.section || '').trim().toLowerCase();
-
-        const match = groups.some(g => {
-            if (g.year) {
-                const targetYear = String(g.year).trim();
-                if (!sYear || sYear !== targetYear) return false;
-            }
-            if (g.branch) {
-                const targetBranch = String(g.branch).trim().toLowerCase();
-                if (!sBranch || sBranch !== targetBranch) return false;
-            }
-            if (g.section && String(g.section).trim() !== '') {
-                const targetSection = String(g.section).trim().toLowerCase();
-                if (!sSection || sSection !== targetSection) return false;
-            }
-            return true;
-        });
-
-        if (match) return true;
-    }
-
-    return false;
-}
-
-/**
  * Transcribes audio file locally using Python faster-whisper with cloud fallback to Groq Whisper
  */
 const transcribeAudioWithTimestamps = async (filePath) => {
@@ -927,19 +874,12 @@ const autoBroadcastLiveQuiz = async (quiz, req) => {
                 if (assignedStudents && assignedStudents.includes(student.id)) {
                     return true;
                 }
-                if (assignedGroups && assignedGroups.length > 0) {
-                    try {
-                        const groups = typeof assignedGroups === 'string' ? JSON.parse(assignedGroups) : assignedGroups;
-                        const groupsArray = Array.isArray(groups) ? groups : [groups];
-                        return groupsArray.some(g => {
-                            const branchMatch = !g.branch || (student.studentBranch && g.branch.toLowerCase().trim() === student.studentBranch.toLowerCase().trim());
-                            const yearMatch = !g.year || (student.year && String(g.year).trim() === String(student.year).trim());
-                            const secMatch = !g.section || g.section.trim() === '' || (student.section && g.section.toLowerCase().trim() === student.section.toLowerCase().trim());
-                            return branchMatch && yearMatch && secMatch;
-                        });
-                    } catch (e) {
-                        return false;
-                    }
+                if (assignedGroups && assignedGroups.length > 0 && student.studentBranch) {
+                    return assignedGroups.some(g => {
+                        const branchMatch = g.branch.toLowerCase() === student.studentBranch.toLowerCase();
+                        const secMatch = !g.section || g.section.toLowerCase() === (student.section || '').toLowerCase();
+                        return branchMatch && secMatch;
+                    });
                 }
                 return false;
             };
@@ -1296,15 +1236,6 @@ exports.joinByCode = async (req, res) => {
         const isAdmin = req.user.role === 'admin';
 
         if (!isCreator && !isAdmin) {
-            // Audience Restriction Check (Year, Branch, Section, Assigned Students)
-            const studentUser = await prisma.user.findUnique({ where: { id: req.user.id } });
-            if (!isStudentTargeted(studentUser, quiz.assignedGroups, quiz.assignedStudents)) {
-                console.warn(`[Join By Code Blocked] User ${req.user.id} (${studentUser?.studentBranch || 'NoBranch'} Sec ${studentUser?.section || 'NoSec'} Year ${studentUser?.year || 'NoYear'}) attempted unauthorized access to quiz ${quiz.id}`);
-                return res.status(403).json({
-                    msg: 'Access restricted: This quiz is restricted to specific classes (Year / Branch / Section). You are not in the targeted audience.'
-                });
-            }
-
             if (quiz.startTime && new Date(quiz.startTime) > now) {
                 return res.status(403).json({ msg: `This quiz is scheduled to start at ${new Date(quiz.startTime).toLocaleString()}.` });
             }
@@ -1722,14 +1653,6 @@ exports.getQuizById = async (req, res) => {
         const isAdmin = req.user.role === 'admin';
         
         if (!isCreator && !isAdmin) {
-            // Audience Restriction Check (Year, Branch, Section, Assigned Students)
-            const studentUser = await prisma.user.findUnique({ where: { id: req.user.id } });
-            if (!isStudentTargeted(studentUser, quiz.assignedGroups, quiz.assignedStudents)) {
-                return res.status(403).json({
-                    msg: 'Access restricted: You are not in the targeted audience (Year / Branch / Section) for this quiz.'
-                });
-            }
-
             const now = new Date();
             if (quiz.isAssessment) {
                 if (quiz.startTime && new Date(quiz.startTime) > now) {
@@ -3342,8 +3265,41 @@ exports.getLiveQuizzes = async (req, res) => {
                 // 2. Public quizzes are always visible
                 if (quiz.accessType === 'public') return true;
                 
-                // 3. Check audience targeting (Assigned Students or Assigned Groups: Year, Branch, Section)
-                return isStudentTargeted(user, quiz.assignedGroups, quiz.assignedStudents);
+                // 3. If restricted, check assignedStudents
+                if (quiz.assignedStudents && quiz.assignedStudents.includes(user.id)) return true;
+
+                // 4. If no targeting at all (empty assignedGroups and empty assignedStudents),
+                //    the quiz is a broadcast-to-all — visible to every student
+                const hasNoGroupTargeting = !quiz.assignedGroups ||
+                    (Array.isArray(quiz.assignedGroups) && quiz.assignedGroups.length === 0);
+                const hasNoStudentTargeting = !quiz.assignedStudents || quiz.assignedStudents.length === 0;
+                if (hasNoGroupTargeting && hasNoStudentTargeting) return true;
+                
+                // 5. Check assignedGroups targeting parameters
+                if (quiz.assignedGroups) {
+                    try {
+                        const groups = typeof quiz.assignedGroups === 'string' ? JSON.parse(quiz.assignedGroups) : quiz.assignedGroups;
+                        const groupsArray = Array.isArray(groups) ? groups : [groups];
+                        
+                        return groupsArray.some(group => {
+                            if (group.branch && user.studentBranch && group.branch.toLowerCase() !== user.studentBranch.toLowerCase()) {
+                                return false;
+                            }
+                            if (group.section && user.section && group.section.toLowerCase() !== user.section.toLowerCase()) {
+                                return false;
+                            }
+                            if (group.year && user.year && String(group.year) !== String(user.year)) {
+                                return false;
+                            }
+                            return true;
+                        });
+                    } catch (e) {
+                        return false;
+                    }
+                }
+                
+                // Default private quizzes are hidden
+                return false;
             });
         }
 

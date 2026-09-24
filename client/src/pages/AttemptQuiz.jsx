@@ -183,14 +183,6 @@ export default function AttemptQuiz() {
             setAnswers({});
             setAnsweredQuestions(new Set());
             setWaitingForState(false);
-            if (quizRef.current?.timerPerQuestion > 0) {
-                const pqTime = quizRef.current.timerPerQuestion;
-                targetEndTimeRef.current = Date.now() + (pqTime * 1000);
-                setTimeLeft(pqTime);
-            } else {
-                targetEndTimeRef.current = null;
-                setTimeLeft(0);
-            }
         });
 
         socket.on('quiz_ended', async () => {
@@ -216,23 +208,12 @@ export default function AttemptQuiz() {
             console.log('Teacher changed question to:', questionIndex);
             const nextIdx = parseInt(questionIndex);
             setCurrentQuestion(nextIdx);
-            currentQuestionRef.current = nextIdx;
 
             // Reset answered students count for the new question
             setAnsweredStudentsSet(new Set());
 
             // Clearing waitingForState here ensures first-time joiners are not stuck on the sync screen.
             setWaitingForState(false);
-
-            // Reset timer for the new question
-            if (quizRef.current?.timerPerQuestion > 0) {
-                const pqTime = quizRef.current.timerPerQuestion;
-                targetEndTimeRef.current = Date.now() + (pqTime * 1000);
-                setTimeLeft(pqTime);
-            } else {
-                targetEndTimeRef.current = null;
-                setTimeLeft(0);
-            }
 
             // Persist new position offline
             localStorage.setItem(`live_quiz_session_${id}`, JSON.stringify({ currentQuestion: nextIdx, answers }));
@@ -241,7 +222,6 @@ export default function AttemptQuiz() {
         socket.on('restoreState', (state) => {
             console.log('[DIAGNOSTIC-QUIZ] Reconnection restoreState event fired. Server payload:', state);
             setCurrentQuestion(state.currentQuestionIndex);
-            currentQuestionRef.current = state.currentQuestionIndex;
 
             // Update total student count
             const studentParticipants = (state.participants || []).filter(
@@ -269,27 +249,19 @@ export default function AttemptQuiz() {
                  ? (state.progress[authUser.id] || state.progress[authUser._id] || state.progress[authUser.username])
                  : null;
 
-             if (studentProgress && typeof studentProgress === 'object') {
-                  const answeredList = Object.keys(studentProgress)
-                      .map(Number)
-                      .filter(qIdx => Number.isInteger(qIdx) && qIdx >= 0)
-                      .filter(qIdx => {
-                          const entry = studentProgress?.[qIdx];
-                          const selected = entry?.selectedOption;
-                          return !!entry && entry.answered === true && selected !== undefined && selected !== null && String(selected).trim() !== '';
-                      });
-
+             if (studentProgress) {
+                  
+                  // Restore answered tracking for logic
+                  const answeredList = Object.keys(studentProgress).map(Number).filter(qIdx => studentProgress?.[qIdx]?.answered);
                   console.log('[DIAGNOSTIC-QUIZ] Restoring answeredQuestions set list:', answeredList);
                   setAnsweredQuestions(new Set(answeredList));
 
-                  // Restore only valid selections; blank/stale values stay empty so unanswered Q1 never appears as wrong.
+                  // Restore superficial answers mapping for UI dots visually
                   setAnswers(prev => {
                       const recoveredAnswers = {};
                       Object.keys(studentProgress).forEach(qIdx => {
-                           const entry = studentProgress?.[qIdx];
-                           const selected = entry?.selectedOption;
-                           if (entry?.answered === true && selected !== undefined && selected !== null && String(selected).trim() !== '') {
-                                recoveredAnswers[qIdx] = selected;
+                           if (studentProgress?.[qIdx]?.answered) {
+                                recoveredAnswers[qIdx] = studentProgress[qIdx].selectedOption || prev[qIdx] || true;
                                 console.log(`[DIAGNOSTIC-QUIZ] Restored answers mapping for qIdx=${qIdx} with:`, recoveredAnswers[qIdx]);
                            }
                       });
@@ -299,23 +271,13 @@ export default function AttemptQuiz() {
                   });
              } else {
                   console.log('[DIAGNOSTIC-QUIZ] No progress state or matching student record to restore in restoreState.');
-                  setAnsweredQuestions(new Set());
              }
             
             setWaitingForState(false);
             
             if (state.quizStatus === 'started') {
-                 if (state.remainingTime > 0) {
-                     targetEndTimeRef.current = Date.now() + (state.remainingTime * 1000);
-                     setTimeLeft(state.remainingTime);
-                 } else if (quizRef.current?.timerPerQuestion > 0) {
-                     const pqTime = quizRef.current.timerPerQuestion;
-                     targetEndTimeRef.current = Date.now() + (pqTime * 1000);
-                     setTimeLeft(pqTime);
-                 } else {
-                     targetEndTimeRef.current = null;
-                     setTimeLeft(0);
-                 }
+                 targetEndTimeRef.current = Date.now() + (state.remainingTime * 1000);
+                 setTimeLeft(state.remainingTime);
             } else if (state.quizStatus === 'finished') {
                  setLoadingRankResult(true);
                  const targetId = quizRef.current?.id || id;
@@ -480,14 +442,8 @@ export default function AttemptQuiz() {
     }, [id, quiz]);
 
     const handleAutoSubmitAnswer = async () => {
-        const currentAnswer = answers[currentQuestion];
-        const hasSelectedAnswer = currentAnswer !== undefined && currentAnswer !== null && String(currentAnswer).trim() !== '';
-
-        if (!hasSelectedAnswer) {
-            return;
-        }
-
-        if (quiz.isLive && isOnline && quiz.timerPerQuestion > 0) {
+        const currentAnswer = answers[currentQuestion] || '';
+        if (quiz.isLive && isOnline) {
             const token = localStorage.getItem('token');
             const userId = JSON.parse(atob(token.split('.')[1])).user.id;
             socket.emit('submit_question_answer', {
@@ -502,9 +458,7 @@ export default function AttemptQuiz() {
         if (result || missionComplete) return; // Do nothing if quiz completed / waiting
         const isActiveLive = quiz?.isLive && quiz?.status !== 'finished';
         if (isActiveLive) {
-            if (isFullscreen && quiz.timerPerQuestion > 0) {
-                handleAutoSubmitAnswer();
-            }
+            handleAutoSubmitAnswer();
         } else {
             if (quiz.timerType === 'totalTime') {
                 // Hitting 0 globally is handled in the interval effect
@@ -584,20 +538,6 @@ export default function AttemptQuiz() {
         onAutoSubmit: handleAutoSubmit
     });
 
-    const handleEnterFullscreen = async () => {
-        await requestFullscreenMode();
-        if (quiz?.isLive) {
-            setAnsweredQuestions(prev => {
-                const next = new Set(prev);
-                next.delete(currentQuestion);
-                return next;
-            });
-            const pqTime = quiz.timerPerQuestion || 30;
-            setTimeLeft(pqTime);
-            targetEndTimeRef.current = Date.now() + (pqTime * 1000);
-        }
-    };
-
     // Timer Initialization (Split from focus logic)
     useEffect(() => {
         if (quiz && !isReviewMode && !result) {
@@ -610,7 +550,7 @@ export default function AttemptQuiz() {
                         const elapsedSeconds = Math.floor((Date.now() - startedAtTime) / 1000);
                         totalSeconds = Math.max(0, totalSeconds - elapsedSeconds);
                     }
-                    if (quiz.endTime && !quiz.isLive) {
+                    if (quiz.endTime) {
                         const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
                         totalSeconds = Math.min(totalSeconds, maxRemaining);
                     }
@@ -621,8 +561,7 @@ export default function AttemptQuiz() {
             } else {
                 // Per question timer: reset on every question change
                 let pqTime = quiz.timerPerQuestion || 30;
-                // Only clamp self-paced quizzes with scheduled quiz.endTime
-                if (quiz.endTime && !quiz.isLive) {
+                if (quiz.endTime) {
                     const maxRemaining = Math.max(0, Math.floor((new Date(quiz.endTime).getTime() - Date.now()) / 1000));
                     pqTime = Math.min(pqTime, maxRemaining);
                 }
@@ -630,7 +569,7 @@ export default function AttemptQuiz() {
                 targetEndTimeRef.current = Date.now() + (pqTime * 1000);
             }
         }
-    }, [currentQuestion, quiz, isReviewMode, result, id]);
+    }, [currentQuestion, quiz, isReviewMode, result, id]); // Keeping currentQuestion for per-question mode
 
     useEffect(() => {
         if (loading || isReviewMode || !quiz) return;
@@ -643,9 +582,6 @@ export default function AttemptQuiz() {
             setTimeLeft(0);
             return;
         }
-
-        // GUARD: If proctoring is enabled but student is not in fullscreen, DO NOT countdown or auto-submit
-        if (!isFullscreen && !result && !isReviewMode) return;
 
         const timerId = setInterval(() => {
             if (targetEndTimeRef.current) {
@@ -677,7 +613,7 @@ export default function AttemptQuiz() {
         }, 1000);
 
         return () => clearInterval(timerId);
-    }, [loading, isReviewMode, result, quiz, currentQuestion, isFullscreen]);
+    }, [loading, isReviewMode, result, quiz, currentQuestion]);
 
     useEffect(() => {
         const fetchQuiz = async () => {
@@ -1223,7 +1159,7 @@ export default function AttemptQuiz() {
                                 To maintain exam security and integrity, this examination must be taken in Fullscreen Mode on desktop browsers. Mobile and tablet devices operate in maximized view automatically.
                     </p>
                     <button
-                        onClick={handleEnterFullscreen}
+                        onClick={requestFullscreenMode}
                         className="px-6 sm:px-8 py-3.5 sm:py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black italic uppercase text-xs tracking-widest rounded-2xl shadow-2xl active:scale-95 transition-all cursor-pointer shrink-0"
                     >
                         Resume Fullscreen Exam
@@ -1422,34 +1358,42 @@ export default function AttemptQuiz() {
                                 {question.options.map((option, idx) => {
                                     const isSelected = answers[currentQuestion] === option;
                                     const isCorrect = questionResult?.correctOption === option;
-                                    const optionLabels = ['A', 'B', 'C', 'D'];
-                                    const optionColors = [
-                                        { badge: 'bg-[#ff7b54] text-white', card: 'border-[#ff7b54]/80 bg-[#fff3ee] shadow-[0_8px_18px_rgba(255,123,84,0.15)]', border: 'border-[#ff7b54]' },
-                                        { badge: 'bg-[#4f8ef7] text-white', card: 'border-[#4f8ef7]/80 bg-[#f3f8ff] shadow-[0_8px_18px_rgba(79,142,247,0.15)]', border: 'border-[#4f8ef7]' },
-                                        { badge: 'bg-[#f0b429] text-white', card: 'border-[#f0b429]/80 bg-[#fffaf0] shadow-[0_8px_18px_rgba(240,180,41,0.15)]', border: 'border-[#f0b429]' },
-                                        { badge: 'bg-[#2fbf8f] text-white', card: 'border-[#2fbf8f]/80 bg-[#edfdf8] shadow-[0_8px_18px_rgba(47,191,143,0.15)]', border: 'border-[#2fbf8f]' }
-                                    ];
-                                    const tone = optionColors[idx % optionColors.length];
 
-                                    let containerClass = `${tone.card} border-2 text-[#0f172a] hover:border-[#0f172a] hover:bg-white`;
+                                    // Theme-appropriate option styles
+                                    const kahootStyles = [
+                                        { icon: Triangle },
+                                        { icon: Diamond },
+                                        { icon: Circle },
+                                        { icon: Square }
+                                    ];
+                                    const style = kahootStyles[idx % 4];
+                                    const ShapeIcon = style.icon;
+
+                                    let containerClass = 'bg-white border-2 border-slate-200 shadow-sm text-[#0f172a] hover:border-[#0f172a] hover:bg-slate-50';
                                     let textColor = '#0f172a';
+                                    let shapeFill = '#0f172a';
 
                                     if (isReviewMode) {
                                         if (isCorrect) {
                                             containerClass = 'bg-emerald-600 border-emerald-600 shadow-md text-white';
                                             textColor = '#ffffff';
+                                            shapeFill = '#ffffff';
                                         } else if (isSelected && !isCorrect) {
                                             containerClass = 'bg-rose-600 border-rose-600 shadow-md text-white';
                                             textColor = '#ffffff';
+                                            shapeFill = '#ffffff';
                                         } else {
                                             containerClass = 'bg-slate-100 text-slate-400 border-slate-200 opacity-50 grayscale';
                                             textColor = '#94a3b8';
+                                            shapeFill = '#94a3b8';
                                         }
                                     } else if (isSelected) {
-                                        containerClass = `${tone.card} border-2 ${tone.border} ring-4 ring-offset-0 shadow-md scale-[0.99]`;
+                                        containerClass = 'bg-amber-500/10 border-2 border-amber-500 ring-4 ring-amber-500/20 shadow-md scale-[0.98]';
                                         textColor = '#0f172a';
+                                        shapeFill = '#d97706';
                                     }
 
+                                    // In live mode: lock only after submit, allow free re-selection before
                                     const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
 
                                     return (
@@ -1459,29 +1403,29 @@ export default function AttemptQuiz() {
                                             onClick={() => handleOptionSelect(option)}
                                             style={{ willChange: 'transform' }}
                                             animate={{
-                                                scale: isSubmittedLive && isSelected ? 1.02 : isSelected ? 0.99 : 1,
-                                                opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.8 : 1
+                                                scale: isSubmittedLive && isSelected ? 1.04 : isSelected ? 0.98 : 1,
+                                                opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.75 : 1
                                             }}
                                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                            className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-4 py-4 rounded-[1.4rem] transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
+                                            className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
                                         >
-                                            <div className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center font-black text-lg shadow-sm ${tone.badge}`}>
-                                                {optionLabels[idx]}
+                                            <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected && !isReviewMode ? 'bg-amber-500 text-white shadow-xs' : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
+                                                <ShapeIcon size={24} fill={shapeFill} strokeWidth={0} />
                                             </div>
                                             <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words whitespace-normal min-w-0 flex-1" style={{ color: textColor }}>
                                                 {option}
                                             </span>
 
                                             {isSelected && !isReviewMode && (
-                                                <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-white/80 text-[#0f172a] rounded-full px-2 py-1 shadow-sm border border-slate-200">
+                                                <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-amber-500 text-white rounded-full px-2.5 py-1 shadow-md">
                                                     {isSubmittedLive ? (
                                                         <motion.div
                                                             initial={{ rotate: -90, scale: 0 }}
                                                             animate={{ rotate: 0, scale: 1 }}
                                                             transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                                                            className="flex items-center justify-center text-[#0f172a]"
+                                                            className="flex items-center justify-center text-white"
                                                         >
-                                                            <Lock size={12} />
+                                                            <Lock size={12} className="fill-white/20" />
                                                         </motion.div>
                                                     ) : null}
                                                     <motion.div
@@ -1489,7 +1433,7 @@ export default function AttemptQuiz() {
                                                         animate={{ scale: 1 }}
                                                         transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
                                                     >
-                                                        <CheckCircle size={14} className="text-emerald-600" />
+                                                        <CheckCircle size={14} className="text-white" />
                                                     </motion.div>
                                                 </div>
                                             )}
@@ -1816,6 +1760,40 @@ export default function AttemptQuiz() {
                         }
                     }}
                 />
+            )}
+
+            {/* Strict Fullscreen Enforcement Modal Overlay */}
+            {!isFullscreen && !loading && !submitting && !result && (
+                <div className="fixed inset-0 z-[10000] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 text-white text-center animate-in fade-in duration-300 min-h-[100dvh] w-full my-auto overflow-y-auto">
+                    <div className="bg-slate-900 border-2 border-red-500/40 rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-12 max-w-lg w-full shadow-2xl shadow-red-500/20 space-y-6 animate-in zoom-in-95 duration-300 my-auto">
+                        <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-red-500 mx-auto border border-red-500/30">
+                            <ShieldAlert size={44} className="animate-pulse" />
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <h2 className="text-2xl sm:text-3xl font-black italic uppercase tracking-tight text-white">
+                                Fullscreen Mode Required
+                            </h2>
+                            <p className="text-slate-400 font-bold text-xs leading-relaxed uppercase tracking-wider">
+                                To maintain exam security and integrity, this examination must be taken in Fullscreen Mode on desktop browsers. Mobile and tablet devices operate in maximized view automatically.
+                            </p>
+                        </div>
+
+                        <div className="p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-xs font-bold text-red-300 text-left space-y-2">
+                            <p className="flex items-center gap-2"><AlertTriangle size={14} aria-hidden="true" /> Exiting fullscreen mode records an integrity alert.</p>
+                            <p className="flex items-center gap-2"><AlertTriangle size={14} aria-hidden="true" /> Switching tabs 2 times auto-submits exam.</p>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={requestFullscreenMode}
+                            className="w-full bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-rose-500 text-white font-black text-sm uppercase tracking-widest py-5 px-8 rounded-2xl shadow-xl shadow-red-600/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer border-2 border-white/20"
+                        >
+                            <Maximize size={22} />
+                            <span>Enter Fullscreen Mode</span>
+                        </button>
+                    </div>
+                </div>
             )}
         </div >
     );
