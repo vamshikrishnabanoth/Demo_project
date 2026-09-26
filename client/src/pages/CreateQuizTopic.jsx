@@ -365,9 +365,12 @@ export default function CreateQuizTopic() {
             const formData = new FormData();
             formData.append('file', file);
 
+            // Scale timeout with file size: 5 min base + 1 min per 10 MB (for slow connections)
+            const uploadTimeoutMs = Math.max(300000, 300000 + Math.floor((file.size / (10 * 1024 * 1024)) * 60000));
+
             const transcribeRes = await api.post('/quiz/transcribe', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 300000
+                timeout: uploadTimeoutMs
             });
 
             if (transcribeRes.data && transcribeRes.data.text && transcribeRes.data.text.trim().length >= 5) {
@@ -398,7 +401,7 @@ export default function CreateQuizTopic() {
             const rawMsg = err.response?.data?.msg || err.response?.data?.error || err.message || '';
             const isFetchFail = err.message === 'Failed to fetch' || !err.response || rawMsg.includes('Failed to fetch');
             const errorMsg = isFetchFail
-                ? `Upload interrupted (${fileSizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or use a file under 500 MB.`
+                ? `Upload interrupted (${fileSizeMB} MB). The server connection was lost during transfer — this usually means the file is too large for your current network speed. Try compressing the audio to MP3 (128kbps) or use a faster/wired connection.`
                 : (rawMsg || 'Transcription failed');
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
