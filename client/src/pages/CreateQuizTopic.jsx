@@ -348,9 +348,9 @@ export default function CreateQuizTopic() {
         }
 
         // Client-side preflight check: direct upload limit
-        const MAX_DIRECT_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB safe direct upload ceiling
+        const MAX_DIRECT_UPLOAD_BYTES = 500 * 1024 * 1024; // 500 MB direct upload ceiling
         if (file.size > MAX_DIRECT_UPLOAD_BYTES) {
-            const warningMsg = `Large audio file (${fileSizeMB} MB) exceeds the 50 MB direct upload limit. Please compress audio (e.g. 16 kHz mono) or use a file under 50 MB.`;
+            const warningMsg = `Large audio file (${fileSizeMB} MB) exceeds the 500 MB direct upload limit. Please compress audio (e.g. 16 kHz mono) or use a file under 500 MB.`;
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
                 status: 'error',
@@ -398,7 +398,7 @@ export default function CreateQuizTopic() {
             const rawMsg = err.response?.data?.msg || err.response?.data?.error || err.message || '';
             const isFetchFail = err.message === 'Failed to fetch' || !err.response || rawMsg.includes('Failed to fetch');
             const errorMsg = isFetchFail
-                ? `Upload interrupted (${fileSizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or use a file under 50 MB.`
+                ? `Upload interrupted (${fileSizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or use a file under 500 MB.`
                 : (rawMsg || 'Transcription failed');
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
