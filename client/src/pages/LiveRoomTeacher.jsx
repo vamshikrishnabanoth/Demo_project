@@ -569,9 +569,9 @@ if (socket.connected) {
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex flex-row items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer opacity-70 hover:opacity-100"
+                                    className="btn-start-game group flex flex-row items-center justify-center gap-3 text-white px-8 sm:px-12 py-4 rounded-[1.5rem] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                 >
-                                    <Play size={22} className="group-hover:translate-x-1 transition-transform text-white fill-white" />
+                                    <Play size={22} className="group-hover:translate-x-1.5 transition-transform text-white fill-white" />
                                     <span>START GAME</span>
                                 </button>
                                 <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.18em] text-[10px]">{participants.length} {participants.length === 1 ? 'Student' : 'Students'} Joined</p>
