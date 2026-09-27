@@ -76,7 +76,7 @@ function CustomDropdownSelect({ value, onChange, options, ariaLabel }) {
     };
 
     return (
-        <div ref={containerRef} className="relative w-full">
+        <div ref={containerRef} className={`relative w-full ${isOpen ? 'z-50' : 'z-20'}`}>
             <button
                 type="button"
                 aria-haspopup="listbox"
@@ -84,24 +84,30 @@ function CustomDropdownSelect({ value, onChange, options, ariaLabel }) {
                 aria-label={ariaLabel}
                 onClick={() => setIsOpen(prev => !prev)}
                 onKeyDown={handleKeyDown}
-                className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 text-left shadow-[inset_0_1px_2px_rgba(15,23,42,0.02),0_8px_20px_rgba(15,23,42,0.02)] transition-all duration-200 ease-out hover:border-[#d7b48a] hover:shadow-[0_10px_22px_rgba(15,23,42,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white cursor-pointer"
+                className={`flex w-full h-11 items-center justify-between gap-2.5 rounded-xl border bg-[#fffdfb] px-3.5 text-left transition-all duration-200 cursor-pointer ${
+                    isOpen
+                        ? 'border-[#d29b5c] ring-2 ring-[#ea580c]/20 shadow-[0_4px_16px_rgba(234,88,12,0.08)]'
+                        : 'border-[#e2d5c3] hover:border-[#d4be9f] shadow-[inset_0_1px_2px_rgba(15,23,42,0.02),0_2px_6px_rgba(15,23,42,0.02)]'
+                }`}
             >
-                <span className="truncate text-xs font-black uppercase tracking-[0.12em] text-[#0f172a]">
+                <span className="truncate text-xs font-black uppercase tracking-wider text-[#0f172a]" title={selectedOption.label}>
                     {selectedOption.label}
                 </span>
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f3eee8] text-[#111111] transition-all duration-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] flex-shrink-0">
-                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                <span className={`flex h-6 w-6 items-center justify-center rounded-lg transition-all duration-200 shrink-0 ${
+                    isOpen ? 'bg-[var(--bg-accent)] text-white rotate-180' : 'bg-[#f3eee8] text-slate-700'
+                }`}>
+                    <ChevronDown className="h-3.5 w-3.5" />
                 </span>
             </button>
 
             {isOpen && (
-                <div className="absolute left-0 right-0 z-30 mt-2 max-h-60 overflow-y-auto rounded-[1.35rem] border border-[#e8dcc5] bg-[#fffdfb] shadow-[0_20px_40px_rgba(15,23,42,0.10)] ring-1 ring-[#f4ecdf] backdrop-blur-sm">
-                    <ul role="listbox" aria-label={ariaLabel} className="py-2">
+                <div className="absolute left-0 right-0 z-50 mt-1.5 max-h-56 overflow-y-auto rounded-xl border border-[#d8c8b2] bg-[#fffdfb] shadow-[0_20px_45px_rgba(15,23,42,0.22),0_4px_12px_rgba(15,23,42,0.08)] ring-1 ring-black/5 p-1 backdrop-blur-sm">
+                    <ul role="listbox" aria-label={ariaLabel} className="space-y-0.5">
                         {options.map((option) => {
                             const isSelected = value === option.value;
 
                             return (
-                                <li key={option.value} className="px-1.5">
+                                <li key={option.value}>
                                     <button
                                         type="button"
                                         role="option"
@@ -110,16 +116,16 @@ function CustomDropdownSelect({ value, onChange, options, ariaLabel }) {
                                             onChange(option.value);
                                             setIsOpen(false);
                                         }}
-                                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs font-black uppercase tracking-[0.12em] transition-all duration-200 cursor-pointer ${
+                                        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition-colors duration-150 cursor-pointer ${
                                             isSelected
-                                                ? 'bg-[#f5efe7] text-[#111111] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
-                                                : 'text-[#0f172a] hover:bg-[#f4f1ec] hover:text-[#111111]'
+                                                ? 'bg-[var(--bg-accent)]/10 text-[var(--bg-accent)] font-black'
+                                                : 'text-slate-800 font-semibold hover:bg-[#f3ede4] hover:text-slate-950'
                                         }`}
                                     >
-                                        <span className="truncate pr-2">{option.label}</span>
+                                        <span className="truncate pr-2 uppercase tracking-wide text-[11px]">{option.label}</span>
                                         {isSelected && (
-                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 text-[#111111] flex-shrink-0" aria-hidden="true">
-                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 text-[var(--bg-accent)] shrink-0" aria-hidden="true">
+                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         )}
                                     </button>
@@ -763,8 +769,8 @@ export default function CreateQuizText() {
                                 </div>
 
                                 {/* Target Audience & Class Filter Card */}
-                                <GlassCard className="p-5 border border-[var(--border-color)] bg-[var(--bg-secondary)] space-y-4 !overflow-visible">
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
+                                <div className="rounded-[1.75rem] sm:rounded-[2rem] border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4 sm:p-5 lg:p-6 space-y-4 relative z-30 shadow-xs overflow-visible">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
                                         <div>
                                             <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-2">
                                                 <Users size={18} className="text-[var(--text-accent)]" />
@@ -778,7 +784,7 @@ export default function CreateQuizText() {
                                             <button
                                                 type="button"
                                                 onClick={() => setIsAssignDrawerOpen(true)}
-                                                className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 hover:border-[var(--bg-accent)] text-slate-700 hover:text-[var(--text-accent)] text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-2xs"
+                                                className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:border-[var(--bg-accent)] text-slate-700 hover:text-[var(--text-accent)] text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
                                             >
                                                 <Users size={14} />
                                                 <span>Advanced / Pick Students</span>
@@ -789,12 +795,15 @@ export default function CreateQuizText() {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-start">
                                         {/* Year Filter */}
-                                        <div>
-                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">
-                                                Target Year
-                                            </label>
+                                        <div className="md:col-span-3 space-y-1.5">
+                                            <div className="flex items-center justify-between">
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-wider">
+                                                    Target Year
+                                                </label>
+                                                <span className="text-[9px] font-bold text-slate-400">Class</span>
+                                            </div>
                                             <CustomDropdownSelect
                                                 value={targetYear}
                                                 onChange={(val) => {
@@ -807,10 +816,13 @@ export default function CreateQuizText() {
                                         </div>
 
                                         {/* Branch Filter */}
-                                        <div>
-                                            <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">
-                                                Target Branch
-                                            </label>
+                                        <div className="md:col-span-4 space-y-1.5">
+                                            <div className="flex items-center justify-between">
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-wider">
+                                                    Target Branch
+                                                </label>
+                                                <span className="text-[9px] font-bold text-slate-400">Department</span>
+                                            </div>
                                             <CustomDropdownSelect
                                                 value={targetBranch}
                                                 onChange={(val) => {
@@ -824,16 +836,51 @@ export default function CreateQuizText() {
                                         </div>
 
                                         {/* Section Filter Chips */}
-                                        <div>
-                                            <div className="flex items-center justify-between mb-1.5">
-                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest">
+                                        <div className="md:col-span-5 space-y-1.5">
+                                            <div className="flex items-center justify-between">
+                                                <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-wider">
                                                     Target Section(s)
                                                 </label>
-                                                <span className="text-[9px] font-bold text-slate-400">
-                                                    {targetBranch === 'CSE' ? '9 Sections Available' : targetBranch === 'CSM' ? '5 Sections Available' : ''}
-                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[9px] font-bold text-slate-400">
+                                                        {targetSections.length > 0
+                                                            ? `${targetSections.length} Selected`
+                                                            : targetBranch === 'CSE'
+                                                            ? '9 Sections Available'
+                                                            : targetBranch === 'ECE'
+                                                            ? '6 Sections Available'
+                                                            : (targetBranch === 'CSM' || targetBranch === 'CSD' || targetBranch === 'IT' || targetBranch === 'EEE' || targetBranch === 'MECH' || targetBranch === 'CIVIL')
+                                                            ? '5 Sections Available'
+                                                            : 'All Available'}
+                                                    </span>
+                                                    {targetSections.length > 0 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setTargetSections([])}
+                                                            className="text-[9px] text-rose-500 hover:text-rose-600 font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer"
+                                                        >
+                                                            Reset
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="flex flex-wrap items-center gap-1.5">
+                                            <div className="min-h-11 px-2.5 py-1.5 rounded-xl border border-[#e2d5c3] bg-[#fffdfb] flex flex-wrap items-center gap-1.5 shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)]">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setAssignedGroups([]);
+                                                        setTargetSections([]);
+                                                    }}
+                                                    className={`h-7 px-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center ${
+                                                        targetSections.length === 0
+                                                            ? 'bg-slate-900 text-white shadow-2xs'
+                                                            : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                                                    }`}
+                                                    title="Target all sections"
+                                                >
+                                                    All
+                                                </button>
+
                                                 {(targetBranch === 'CSE'
                                                     ? ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
                                                     : targetBranch === 'ECE'
@@ -855,42 +902,36 @@ export default function CreateQuizText() {
                                                                     setTargetSections([...targetSections, sec]);
                                                                 }
                                                             }}
-                                                            className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                                                            className={`h-7 px-2.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center justify-center ${
                                                                 isSelected
-                                                                    ? 'bg-[var(--bg-accent)] text-white shadow-xs scale-105'
-                                                                    : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-400'
+                                                                    ? 'bg-[var(--bg-accent)] text-white border border-[var(--bg-accent)] shadow-2xs'
+                                                                    : 'bg-white hover:bg-[#f5efe7] text-slate-700 border border-[#e4d7c5] hover:border-[#d2b38b]'
                                                             }`}
                                                         >
                                                             Sec {sec}
                                                         </button>
                                                     );
                                                 })}
-                                                {targetSections.length > 0 && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setTargetSections([])}
-                                                        className="text-[10px] text-slate-400 hover:text-rose-500 font-bold px-2 py-1 underline cursor-pointer"
-                                                    >
-                                                        Clear
-                                                    </button>
-                                                )}
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Broadcast Status Indicator */}
-                                    <div className="flex items-center justify-between pt-2 text-[11px] text-slate-500">
-                                        <div className="flex items-center gap-2">
-                                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                                            <span>
-                                                Targeting: <strong className="text-slate-800">
+                                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 text-[11px] text-slate-500 border-t border-slate-200/70">
+                                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/80 border border-slate-200/80 shadow-2xs">
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                                            </span>
+                                            <span className="text-slate-600">
+                                                Targeting: <strong className="text-slate-900 font-black">
                                                     {targetYear ? `${targetYear}th Year` : 'All Years'} • {targetBranch || 'All Branches'} • {targetSections.length > 0 ? `Sec ${targetSections.join(', ')}` : 'All Sections'}
                                                 </strong>
                                                 {assignedStudents.length > 0 && ` (+${assignedStudents.length} individually selected)`}
                                             </span>
                                         </div>
                                     </div>
-                                </GlassCard>
+                                </div>
 
                                 {/* Assessment-Only: Games Arena Mode Selection */}
                                 {isAssessment && (
