@@ -569,7 +569,7 @@ if (socket.connected) {
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex flex-row items-center justify-center gap-3 bg-[#c2410c] hover:bg-[#9a3412] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer opacity-70 hover:opacity-100"
+                                    className="group flex flex-row items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer opacity-70 hover:opacity-100"
                                 >
                                     <Play size={22} className="group-hover:translate-x-1 transition-transform text-white fill-white" />
                                     <span>START GAME</span>
@@ -655,7 +655,7 @@ if (socket.connected) {
                             <button
                                 onClick={handlePrevSkippedQuestion}
                                 disabled={currentQuestion === 0}
-                                className="h-10 px-4 rounded-xl bg-[#c2410c] hover:bg-[#9a3412] text-white font-black uppercase text-[10px] tracking-[0.15em] transition-all shadow-md shadow-[#c2410c]/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                                className="h-10 px-4 rounded-xl bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white font-black uppercase text-[10px] tracking-[0.15em] transition-all shadow-md shadow-[var(--bg-accent)]/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95 cursor-pointer"
                                 title="Go back to skipped questions"
                             >
                                 <ChevronLeft size={14} strokeWidth={3} className="text-white" />
