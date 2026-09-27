@@ -553,7 +553,7 @@ if (socket.connected) {
                     <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[2.2rem] p-8 sm:p-10 lg:p-12 text-center shadow-[0_18px_40px_rgba(15,23,42,0.06)] relative overflow-hidden">
                         <div className="relative z-10 space-y-7">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm">
-                                <span className="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                                <span className="inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
                                 <span className="text-[var(--text-primary)] font-black uppercase tracking-[0.22em] text-[10px] italic">Lobby is Open</span>
                             </div>
                             <h1 className="type-page-title font-black italic uppercase text-balance" style={{ color: 'var(--text-primary)' }}>
@@ -569,7 +569,7 @@ if (socket.connected) {
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex flex-row items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer opacity-70 hover:opacity-100"
+                                    className="group flex flex-row items-center justify-center gap-3 bg-[#c2410c] hover:bg-[#9a3412] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer opacity-70 hover:opacity-100"
                                 >
                                     <Play size={22} className="group-hover:translate-x-1 transition-transform text-white fill-white" />
                                     <span>START GAME</span>
@@ -634,9 +634,12 @@ if (socket.connected) {
                         {/* LEFT: Session identity */}
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                             {/* Live badge */}
-                            <div className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500 text-white shadow-xs">
-                                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em]">Live</span>
+                            <div className="flex-shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-green-600 text-white shadow-md shadow-green-600/25">
+                                <span className="flex h-2.5 w-2.5 relative">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-200" />
+                                </span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white">Live</span>
                             </div>
                             {/* Title */}
                             <div className="min-w-0">
@@ -652,10 +655,10 @@ if (socket.connected) {
                             <button
                                 onClick={handlePrevSkippedQuestion}
                                 disabled={currentQuestion === 0}
-                                className="h-10 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black uppercase text-[10px] tracking-[0.15em] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                                className="h-10 px-4 rounded-xl bg-[#c2410c] hover:bg-[#9a3412] text-white font-black uppercase text-[10px] tracking-[0.15em] transition-all shadow-md shadow-[#c2410c]/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95 cursor-pointer"
                                 title="Go back to skipped questions"
                             >
-                                <ChevronLeft size={14} strokeWidth={3} />
+                                <ChevronLeft size={14} strokeWidth={3} className="text-white" />
                                 Back
                             </button>
 
@@ -681,21 +684,21 @@ if (socket.connected) {
                         <div className="flex items-center justify-end gap-3 flex-1 flex-wrap">
 
                             {/* Students online — critical at a glance */}
-                            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-300">
-                                <span className="flex h-2 w-2 relative">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-green-50 border-2 border-green-500 shadow-xs">
+                                <span className="flex h-2.5 w-2.5 relative">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600" />
                                 </span>
-                                <Users size={13} className="text-emerald-600" />
-                                <span className="text-emerald-800 font-black text-[11px] tracking-wider">{participants.length}</span>
-                                <span className="text-emerald-500 font-bold text-[10px] uppercase tracking-widest">Online</span>
+                                <Users size={14} className="text-green-700" />
+                                <span className="text-green-950 font-black text-[11px] tracking-wider">{participants.length}</span>
+                                <span className="text-green-700 font-bold text-[10px] uppercase tracking-widest">Online</span>
                             </div>
 
                             {/* Live leader */}
                             {liveInsights?.topStudent && (
-                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200">
-                                    <Award size={13} className="text-emerald-600" />
-                                    <span className="text-emerald-700 font-black text-[10px] uppercase tracking-wider truncate max-w-[80px]">
+                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-green-50 border border-green-400">
+                                    <Award size={13} className="text-green-700" />
+                                    <span className="text-green-800 font-black text-[10px] uppercase tracking-wider truncate max-w-[80px]">
                                         {liveInsights.topStudent}
                                     </span>
                                 </div>
@@ -932,10 +935,10 @@ if (socket.connected) {
                                         {/* Online status */}
                                         <div className="flex justify-center">
                                             <div className={`px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1 ${p.isOnline
-                                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                                ? 'bg-green-50 text-green-700 border border-green-300'
                                                 : 'bg-rose-50 text-rose-500 border border-rose-200'
                                             }`}>
-                                                <div className={`w-1.5 h-1.5 rounded-full ${p.isOnline ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                                                <div className={`w-1.5 h-1.5 rounded-full ${p.isOnline ? 'bg-green-500' : 'bg-rose-500'}`} />
                                                 {p.isOnline ? 'ON' : 'OFF'}
                                             </div>
                                         </div>

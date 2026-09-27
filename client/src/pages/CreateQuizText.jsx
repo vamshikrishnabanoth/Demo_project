@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -16,6 +16,122 @@ import JsonPastePanel from '../components/quiz/JsonPastePanel';
 import QuizQuestionEditor from '../components/quiz/QuizQuestionEditor';
 import AgentQualityBadge from '../components/quiz/AgentQualityBadge';
 import { uiTerminology } from '../utils/uiTerminology';
+
+const targetYearOptions = [
+    { value: '', label: 'All Years (No Restriction)' },
+    { value: '1', label: '1st Year' },
+    { value: '2', label: '2nd Year' },
+    { value: '3', label: '3rd Year' },
+    { value: '4', label: '4th Year' },
+];
+
+const targetBranchOptions = [
+    { value: '', label: 'All Branches' },
+    { value: 'CSE', label: 'CSE (Computer Science - Sec A to I)' },
+    { value: 'CSM', label: 'CSM (AI & ML - Sec A to E)' },
+    { value: 'CSD', label: 'CSD (Data Science - Sec A to E)' },
+    { value: 'IT', label: 'IT (Information Tech - Sec A to E)' },
+    { value: 'ECE', label: 'ECE (Electronics & Comm - Sec A to F)' },
+    { value: 'EEE', label: 'EEE (Electrical - Sec A to E)' },
+    { value: 'MECH', label: 'MECH (Mechanical - Sec A to E)' },
+    { value: 'CIVIL', label: 'CIVIL (Civil Engg - Sec A to E)' },
+];
+
+function CustomDropdownSelect({ value, onChange, options, ariaLabel }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef(null);
+
+    const selectedOption = options.find(option => option.value === value) || options[0];
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            setIsOpen(false);
+            return;
+        }
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const currentIndex = options.findIndex(option => option.value === value);
+            const direction = event.key === 'ArrowDown' ? 1 : -1;
+            const nextIndex = (currentIndex + direction + options.length) % options.length;
+            onChange(options[nextIndex].value);
+            setIsOpen(true);
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsOpen(prev => !prev);
+        }
+    };
+
+    return (
+        <div ref={containerRef} className="relative w-full">
+            <button
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                aria-label={ariaLabel}
+                onClick={() => setIsOpen(prev => !prev)}
+                onKeyDown={handleKeyDown}
+                className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 text-left shadow-[inset_0_1px_2px_rgba(15,23,42,0.02),0_8px_20px_rgba(15,23,42,0.02)] transition-all duration-200 ease-out hover:border-[#d7b48a] hover:shadow-[0_10px_22px_rgba(15,23,42,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white cursor-pointer"
+            >
+                <span className="truncate text-xs font-black uppercase tracking-[0.12em] text-[#0f172a]">
+                    {selectedOption.label}
+                </span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f3eee8] text-[#111111] transition-all duration-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] flex-shrink-0">
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                </span>
+            </button>
+
+            {isOpen && (
+                <div className="absolute left-0 right-0 z-30 mt-2 max-h-60 overflow-y-auto rounded-[1.35rem] border border-[#e8dcc5] bg-[#fffdfb] shadow-[0_20px_40px_rgba(15,23,42,0.10)] ring-1 ring-[#f4ecdf] backdrop-blur-sm">
+                    <ul role="listbox" aria-label={ariaLabel} className="py-2">
+                        {options.map((option) => {
+                            const isSelected = value === option.value;
+
+                            return (
+                                <li key={option.value} className="px-1.5">
+                                    <button
+                                        type="button"
+                                        role="option"
+                                        aria-selected={isSelected}
+                                        onClick={() => {
+                                            onChange(option.value);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs font-black uppercase tracking-[0.12em] transition-all duration-200 cursor-pointer ${
+                                            isSelected
+                                                ? 'bg-[#f5efe7] text-[#111111] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
+                                                : 'text-[#0f172a] hover:bg-[#f4f1ec] hover:text-[#111111]'
+                                        }`}
+                                    >
+                                        <span className="truncate pr-2">{option.label}</span>
+                                        {isSelected && (
+                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 text-[#111111] flex-shrink-0" aria-hidden="true">
+                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default function CreateQuizText() {
     const navigate = useNavigate();
@@ -647,7 +763,7 @@ export default function CreateQuizText() {
                                 </div>
 
                                 {/* Target Audience & Class Filter Card */}
-                                <GlassCard className="p-5 border border-[var(--border-color)] bg-[var(--bg-secondary)] space-y-4">
+                                <GlassCard className="p-5 border border-[var(--border-color)] bg-[var(--bg-secondary)] space-y-4 !overflow-visible">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
                                         <div>
                                             <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-2">
@@ -679,21 +795,15 @@ export default function CreateQuizText() {
                                             <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">
                                                 Target Year
                                             </label>
-                                            <select
+                                            <CustomDropdownSelect
                                                 value={targetYear}
-                                                onChange={(e) => {
-                                                    setTargetYear(e.target.value);
+                                                onChange={(val) => {
+                                                    setTargetYear(val);
                                                     setAssignedGroups([]);
                                                 }}
-                                                className="w-full bg-white border-2 border-slate-200 rounded-xl py-2.5 px-3.5 pr-10 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all shadow-sm hover:border-slate-300 cursor-pointer"
-                                                style={{ appearance: 'none', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '16px' }}
-                                            >
-                                                <option value="">All Years (No Restriction)</option>
-                                                <option value="1">1st Year</option>
-                                                <option value="2">2nd Year</option>
-                                                <option value="3">3rd Year</option>
-                                                <option value="4">4th Year</option>
-                                            </select>
+                                                options={targetYearOptions}
+                                                ariaLabel="Select Target Year"
+                                            />
                                         </div>
 
                                         {/* Branch Filter */}
@@ -701,27 +811,16 @@ export default function CreateQuizText() {
                                             <label className="block text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-widest mb-1.5">
                                                 Target Branch
                                             </label>
-                                            <select
+                                            <CustomDropdownSelect
                                                 value={targetBranch}
-                                                onChange={(e) => {
-                                                    const nextBranch = e.target.value;
-                                                    setTargetBranch(nextBranch);
+                                                onChange={(val) => {
+                                                    setTargetBranch(val);
                                                     setTargetSections([]);
                                                     setAssignedGroups([]);
                                                 }}
-                                                className="w-full bg-white border-2 border-slate-200 rounded-xl py-2.5 px-3.5 pr-10 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all shadow-sm hover:border-slate-300 cursor-pointer"
-                                                style={{ appearance: 'none', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '16px' }}
-                                            >
-                                                <option value="">All Branches</option>
-                                                <option value="CSE">CSE (Computer Science - Sec A to I)</option>
-                                                <option value="CSM">CSM (AI & ML - Sec A to E)</option>
-                                                <option value="CSD">CSD (Data Science - Sec A to E)</option>
-                                                <option value="IT">IT (Information Tech - Sec A to E)</option>
-                                                <option value="ECE">ECE (Electronics & Comm - Sec A to F)</option>
-                                                <option value="EEE">EEE (Electrical - Sec A to E)</option>
-                                                <option value="MECH">MECH (Mechanical - Sec A to E)</option>
-                                                <option value="CIVIL">CIVIL (Civil Engg - Sec A to E)</option>
-                                            </select>
+                                                options={targetBranchOptions}
+                                                ariaLabel="Select Target Branch"
+                                            />
                                         </div>
 
                                         {/* Section Filter Chips */}
