@@ -495,12 +495,7 @@ if (socket.connected) {
     if (loading) return (
         <DashboardLayout role="teacher">
             <div className="flex flex-col items-center justify-center min-h-[70vh]">
-                <div className="relative">
-                    <div className="w-20 h-20 border-4 border-[var(--bg-accent)]/20 border-t-[var(--bg-accent)] rounded-full animate-spin"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <Users className="text-[var(--text-accent)]" size={24} />
-                    </div>
-                </div>
+                <div className="loader"></div>
                 <p className="mt-6 font-black text-gray-400 uppercase tracking-widest animate-pulse">Initializing Room...</p>
             </div>
         </DashboardLayout>
