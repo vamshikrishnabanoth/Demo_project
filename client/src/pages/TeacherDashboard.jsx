@@ -95,62 +95,40 @@ export default function TeacherDashboard() {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 15 }}
                             transition={{ type: 'spring', duration: 0.4 }}
-                            className="bg-white border-2 border-slate-200 w-full max-w-3xl rounded-[2.5rem] shadow-2xl relative overflow-hidden z-10 flex flex-col p-6 sm:p-8 md:p-10 gap-6"
+                            className="bg-white border-2 border-slate-200 w-full max-w-md rounded-[2rem] shadow-2xl relative overflow-hidden z-10 flex flex-col p-5 sm:p-6 gap-4"
                             role="dialog"
                             aria-modal="true"
                             aria-labelledby="creation-mode-title"
                         >
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="absolute top-6 right-6 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 transition-all cursor-pointer border-none outline-none"
+                                className="absolute top-4 right-4 p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 transition-all cursor-pointer border-none outline-none"
                                 aria-label="Close dialog"
                             >
-                                <XIcon size={18} />
+                                <XIcon size={15} />
                             </button>
 
-                            <div className="space-y-1">
-                                <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-violet-50 text-violet-700 border border-violet-200">
-                                    Assessment Studio
-                                </span>
-                                <h3 id="creation-mode-title" className="text-2xl font-black text-slate-900 tracking-tight">
+                            <div>
+                                <h3 id="creation-mode-title" className="text-lg font-black text-slate-900 tracking-tight">
                                     Choose Creation Mode
                                 </h3>
-                                <p className="text-xs font-semibold text-slate-500">
-                                    Select how you would like to build and configure your assessment quiz.
-                                </p>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                            <div className="grid grid-cols-1 gap-2.5">
                                 <div
                                     onClick={() => {
                                         setShowModal(false);
                                         navigate('/create-quiz/topic');
                                     }}
-                                    className="group relative bg-gradient-to-br from-slate-50 to-white hover:from-white hover:to-white border-2 border-slate-200 hover:border-violet-500 rounded-3xl p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl active:scale-[0.98] select-none text-left"
+                                    className="group relative bg-white hover:bg-violet-50/60 border-2 border-slate-200 hover:border-violet-500 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md active:scale-[0.98] select-none"
                                 >
-                                    <div className="absolute inset-0 bg-violet-600/[0.01] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                                    <div className="flex items-center justify-between">
-                                        <div className="p-3.5 rounded-2xl bg-violet-50 border border-violet-100 text-violet-700 group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
-                                            <Sparkles size={24} />
-                                        </div>
-                                        <ArrowRight size={18} className="text-slate-400 group-hover:translate-x-1 group-hover:text-violet-600 transition-all" />
+                                    <div className="p-2.5 rounded-xl bg-violet-50 border border-violet-100 text-violet-700 group-hover:bg-violet-600 group-hover:text-white transition-all duration-200 flex-shrink-0">
+                                        <Sparkles size={18} />
                                     </div>
-                                    <div className="space-y-1.5">
-                                        <h4 className="font-extrabold text-slate-950 text-lg group-hover:text-violet-700 transition-colors">
-                                            AI Creation Studio
-                                        </h4>
-                                        <p className="text-xs text-slate-500 leading-relaxed font-semibold">
-                                            Auto-generate high-quality quizzes from lecture audio (.mp3, .m4a), live voice recordings, topics, or PDFs with AI.
-                                        </p>
-                                    </div>
-                                    <div className="mt-auto pt-3 flex flex-wrap gap-1.5">
-                                        {['Topics', 'Voice Audio', 'Lecture Uploads', 'PDFs & Docs'].map((tag) => (
-                                            <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-violet-50 group-hover:text-violet-700 px-2.5 py-1 rounded-md text-slate-600 transition-colors">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
+                                    <h4 className="font-extrabold text-slate-950 text-sm group-hover:text-violet-700 transition-colors flex-1">
+                                        AI Creation Studio
+                                    </h4>
+                                    <ArrowRight size={16} className="text-slate-300 group-hover:translate-x-1 group-hover:text-violet-600 transition-all flex-shrink-0" />
                                 </div>
 
                                 <div
@@ -158,31 +136,15 @@ export default function TeacherDashboard() {
                                         setShowModal(false);
                                         navigate('/create-quiz/text');
                                     }}
-                                    className="group relative bg-gradient-to-br from-slate-50 to-white hover:from-white hover:to-white border-2 border-slate-200 hover:border-emerald-500 rounded-3xl p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl active:scale-[0.98] select-none text-left"
+                                    className="group relative bg-white hover:bg-emerald-50/60 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl px-4 py-3.5 flex items-center gap-3.5 transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md active:scale-[0.98] select-none"
                                 >
-                                    <div className="absolute inset-0 bg-emerald-600/[0.01] rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                                    <div className="flex items-center justify-between">
-                                        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-                                            <Edit3 size={24} />
-                                        </div>
-                                        <ArrowRight size={18} className="text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all" />
+                                    <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200 flex-shrink-0">
+                                        <Edit3 size={18} />
                                     </div>
-                                    <div className="space-y-1.5">
-                                        <h4 className="font-extrabold text-slate-950 text-lg group-hover:text-emerald-700 transition-colors">
-                                            Manual Quiz Builder
-                                        </h4>
-                                        <p className="text-xs text-slate-500 leading-relaxed font-semibold">
-                                            Build custom quizzes manually, write questions & answers, upload Aiken files, or edit templates.
-                                        </p>
-                                    </div>
-                                    <div className="mt-auto pt-3 flex flex-wrap gap-1.5">
-                                        {['Aiken Format', 'JSON Paste', 'Manual Matrix'].map((tag) => (
-                                            <span key={tag} className="text-[9px] font-black uppercase tracking-wider bg-slate-100 group-hover:bg-emerald-50 group-hover:text-emerald-700 px-2.5 py-1 rounded-md text-slate-600 transition-colors">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
+                                    <h4 className="font-extrabold text-slate-950 text-sm group-hover:text-emerald-700 transition-colors flex-1">
+                                        Manual Quiz Builder
+                                    </h4>
+                                    <ArrowRight size={16} className="text-slate-300 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all flex-shrink-0" />
                                 </div>
                             </div>
                         </motion.div>

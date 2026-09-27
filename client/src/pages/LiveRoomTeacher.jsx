@@ -569,7 +569,7 @@ if (socket.connected) {
                                 <button
                                     onClick={handleStartQuiz}
                                     disabled={participants.length === 0}
-                                    className="group flex flex-row items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    className="group flex flex-row items-center justify-center gap-3 bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white px-8 sm:px-12 py-4 rounded-[1.5rem] transition-all shadow-[0_12px_22px_rgba(17,17,17,0.16)] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer opacity-70 hover:opacity-100"
                                 >
                                     <Play size={22} className="group-hover:translate-x-1 transition-transform text-white fill-white" />
                                     <span>START GAME</span>
@@ -681,14 +681,14 @@ if (socket.connected) {
                         <div className="flex items-center justify-end gap-3 flex-1 flex-wrap">
 
                             {/* Students online — critical at a glance */}
-                            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-200">
+                            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-300">
                                 <span className="flex h-2 w-2 relative">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                                 </span>
-                                <Users size={13} className="text-slate-500" />
-                                <span className="text-slate-900 font-black text-[11px] tracking-wider">{participants.length}</span>
-                                <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Online</span>
+                                <Users size={13} className="text-emerald-600" />
+                                <span className="text-emerald-800 font-black text-[11px] tracking-wider">{participants.length}</span>
+                                <span className="text-emerald-500 font-bold text-[10px] uppercase tracking-widest">Online</span>
                             </div>
 
                             {/* Live leader */}
@@ -704,7 +704,7 @@ if (socket.connected) {
                             {/* +30 sec */}
                             <button
                                 onClick={handleIncreaseTime}
-                                className="h-9 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                                className="h-9 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-700 hover:text-amber-800 font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                             >
                                 <Clock size={14} />
                                 +30s
@@ -713,7 +713,7 @@ if (socket.connected) {
                             {/* End Session — separated visually to reduce mis-clicks */}
                             <button
                                 onClick={handleEndQuiz}
-                                className="h-9 px-4 rounded-xl bg-rose-50 hover:bg-rose-500 border border-rose-200 text-rose-600 hover:text-white font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                                className="h-9 px-4 rounded-xl bg-rose-100 hover:bg-rose-600 border border-rose-300 text-rose-700 hover:text-white font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm"
                             >
                                 <MinusCircle size={14} />
                                 End
@@ -953,7 +953,7 @@ if (socket.connected) {
 
                                                 if (isAnswered && !isSkipped) {
                                                     if (isCorrect) {
-                                                        dotClass = 'bg-emerald-500 border-emerald-500 text-white shadow-sm font-black';
+                                                        dotClass = 'bg-green-500 border-2 border-amber-400 text-white shadow-[0_0_6px_rgba(34,197,94,0.4)] font-black';
                                                         Icon = <CheckCircle size={13} className="text-white" strokeWidth={2.5} />;
                                                     } else {
                                                         dotClass = 'bg-rose-500 border-rose-500 text-white shadow-sm font-black';

@@ -685,7 +685,8 @@ export default function CreateQuizText() {
                                                     setTargetYear(e.target.value);
                                                     setAssignedGroups([]);
                                                 }}
-                                                className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] transition-all shadow-2xs"
+                                                className="w-full bg-white border-2 border-slate-200 rounded-xl py-2.5 px-3.5 pr-10 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all shadow-sm hover:border-slate-300 cursor-pointer"
+                                                style={{ appearance: 'none', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '16px' }}
                                             >
                                                 <option value="">All Years (No Restriction)</option>
                                                 <option value="1">1st Year</option>
@@ -708,7 +709,8 @@ export default function CreateQuizText() {
                                                     setTargetSections([]);
                                                     setAssignedGroups([]);
                                                 }}
-                                                className="w-full bg-white border border-[var(--border-color)] rounded-xl py-2 px-3 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] transition-all shadow-2xs"
+                                                className="w-full bg-white border-2 border-slate-200 rounded-xl py-2.5 px-3.5 pr-10 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--bg-accent)] focus:ring-2 focus:ring-[var(--bg-accent)]/15 transition-all shadow-sm hover:border-slate-300 cursor-pointer"
+                                                style={{ appearance: 'none', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center', backgroundSize: '16px' }}
                                             >
                                                 <option value="">All Branches</option>
                                                 <option value="CSE">CSE (Computer Science - Sec A to I)</option>
