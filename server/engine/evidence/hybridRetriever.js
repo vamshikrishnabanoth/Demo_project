@@ -1,9 +1,10 @@
 /**
  * server/engine/evidence/hybridRetriever.js
  *
- * Content-Type-Aware Hybrid Retriever.
- * Fuses Dense (semantic term vector) and Sparse (Okapi BM25) retrieval using
- * Reciprocal Rank Fusion (RRF): RRF_score = 1 / (60 + rank).
+ * Content-Type-Aware Dual-Lexical Hybrid Retriever.
+ * Fuses Sparse Okapi BM25 and Lexical Term-Frequency (TF) Cosine Similarity
+ * using Reciprocal Rank Fusion (RRF): RRF_score = 1 / (60 + rank).
+ * (Note: Uses lexical sparse bag-of-words cosine matching, not dense semantic embeddings).
  * Applies a 1.3x - 1.5x ranking boost for required content types (tables, charts, diagrams).
  * Expands retrieved child chunks to enclosing parent narrative contexts.
  */
@@ -18,7 +19,11 @@ function tokenize(text = '') {
   return (text.toLowerCase().match(/\b\w{3,}\b/g) || []);
 }
 
-function computeDenseVectorScore(queryTokens, docTokens) {
+/**
+ * Computes cosine similarity between sparse term-frequency (TF) bag-of-words vectors.
+ * Truthfully labeled: lexical sparse term matching, not dense vector embedding.
+ */
+function computeLexicalCosineScore(queryTokens, docTokens) {
   if (queryTokens.length === 0 || docTokens.length === 0) return 0;
 
   const qFreq = new Map();
@@ -44,6 +49,9 @@ function computeDenseVectorScore(queryTokens, docTokens) {
   return denominator > 0 ? dotProduct / denominator : 0;
 }
 
+// Backward-compatibility alias
+const computeDenseVectorScore = computeLexicalCosineScore;
+
 class HybridRetriever {
   /**
    * Perform content-type-aware hybrid retrieval for an assessment target.
@@ -68,8 +76,11 @@ class HybridRetriever {
 
     // Check if query implies tabular or visual requirement
     const queryText = `${concept} ${instruction} ${subtopic}`.trim();
-    const isTableQuery = requiredType === 'table' || /\b(table|row|column|dataset|metrics|comparison)\b/i.test(queryText);
-    const isVisualQuery = requiredType === 'chart' || requiredType === 'diagram' || /\b(chart|graph|diagram|figure|flowchart)\b/i.test(queryText);
+
+    // Distinct table query check: avoid false positives on CS domain terms like "page table", "hash table", "routing table"
+    const isCurricularTableTerm = /\b(page table|hash table|routing table|symbol table|truth table|vector table)\b/i.test(queryText);
+    const isTableQuery = requiredType === 'table' || (!isCurricularTableTerm && /\b(data table|comparison table|tabular|rows and columns)\b/i.test(queryText));
+    const isVisualQuery = requiredType === 'chart' || requiredType === 'diagram' || /\b(chart|graph|diagram|flowchart)\b/i.test(queryText);
 
     const children = store.children;
     const qTokens = tokenize(queryText);
@@ -84,10 +95,10 @@ class HybridRetriever {
       bm25Ranks.set(id, idx + 1);
     });
 
-    // 2. Dense Semantic Vector Retrieval
-    const denseScores = children.map(child => {
+    // 2. Lexical Term-Frequency Cosine Retrieval (Sparse TF Vector Matching)
+    const lexicalScores = children.map(child => {
       const cTokens = tokenize(child.text || '');
-      let sim = computeDenseVectorScore(qTokens, cTokens);
+      let sim = computeLexicalCosineScore(qTokens, cTokens);
 
       // Boost if exact concept name appears in text
       if (concept && child.text && child.text.toLowerCase().includes(concept.toLowerCase())) {
@@ -100,11 +111,11 @@ class HybridRetriever {
       };
     });
 
-    denseScores.sort((a, b) => b.score - a.score);
-    const denseRanks = new Map();
-    denseScores.forEach((res, idx) => {
+    lexicalScores.sort((a, b) => b.score - a.score);
+    const lexicalRanks = new Map();
+    lexicalScores.forEach((res, idx) => {
       const id = res.child.evidenceId || res.child.childId;
-      denseRanks.set(id, idx + 1);
+      lexicalRanks.set(id, idx + 1);
     });
 
     // 3. Reciprocal Rank Fusion (RRF) with Content-Type Boost
@@ -112,10 +123,10 @@ class HybridRetriever {
 
     for (const child of children) {
       const id = child.evidenceId || child.childId;
-      const rankDense = denseRanks.get(id) || (children.length + 1);
+      const rankLexical = lexicalRanks.get(id) || (children.length + 1);
       const rankBM25 = bm25Ranks.get(id) || (children.length + 1);
 
-      let rrfScore = (1 / (rrfK + rankDense)) + (1 / (rrfK + rankBM25));
+      let rrfScore = (1 / (rrfK + rankLexical)) + (1 / (rrfK + rankBM25));
 
       // Content-type-aware ranking boost
       const cType = (child.contentType || '').toLowerCase();
@@ -136,7 +147,8 @@ class HybridRetriever {
         child,
         parent,
         rrfScore: Math.round(rrfScore * 100000) / 100000,
-        rankDense,
+        rankLexicalCosine: rankLexical,
+        rankDense: rankLexical, // backward-compatibility alias for existing callers
         rankBM25,
         appliedBoost,
         contentType: child.contentType || BlockTypes.PARAGRAPH,
@@ -151,5 +163,8 @@ class HybridRetriever {
     return fusedScores.slice(0, topK);
   }
 }
+
+HybridRetriever.computeLexicalCosineScore = computeLexicalCosineScore;
+HybridRetriever.computeDenseVectorScore = computeDenseVectorScore;
 
 module.exports = HybridRetriever;

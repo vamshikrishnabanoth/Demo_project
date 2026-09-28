@@ -42,11 +42,66 @@ const STOPWORDS = new Set([
   'take', 'taken', 'give', 'given', 'look', 'see', 'let'
 ]);
 
+function stemWord(word = '') {
+  if (!word || word.length <= 3) return word;
+  let w = word.toLowerCase();
+
+  // 1. Plural and 3rd person singular forms
+  if (w.endsWith('sses')) {
+    w = w.slice(0, -2);
+  } else if (w.endsWith('ies') && w.length > 4) {
+    w = w.slice(0, -3) + 'y';
+  } else if (w.endsWith('s') && !w.endsWith('ss') && !w.endsWith('us') && !w.endsWith('is') && w.length > 3) {
+    w = w.slice(0, -1);
+  }
+
+  // 2. Derivational suffix normalization
+  if (w.endsWith('ization') || w.endsWith('isation')) {
+    w = w.slice(0, -7);
+  } else if (w.endsWith('ational')) {
+    w = w.slice(0, -5);
+  } else if (w.endsWith('tional')) {
+    w = w.slice(0, -2);
+  }
+
+  // 3. Verb participles & past tense
+  if (w.endsWith('ing') && w.length > 5) {
+    w = w.slice(0, -3);
+    if (w.length > 3 && w[w.length - 1] === w[w.length - 2] && !['s', 'l', 'z'].includes(w[w.length - 1])) {
+      w = w.slice(0, -1);
+    }
+  } else if (w.endsWith('ed') && w.length > 4) {
+    w = w.slice(0, -2);
+    if (w.length > 3 && w[w.length - 1] === w[w.length - 2] && !['s', 'l', 'z'].includes(w[w.length - 1])) {
+      w = w.slice(0, -1);
+    }
+  }
+
+  // 4. Common noun & adjective endings
+  if (w.endsWith('tion') && w.length > 5) {
+    w = w.slice(0, -4);
+  } else if (w.endsWith('sion') && w.length > 5) {
+    w = w.slice(0, -4);
+  } else if (w.endsWith('ment') && w.length > 6) {
+    w = w.slice(0, -4);
+  } else if (w.endsWith('ity') && w.length > 5) {
+    w = w.slice(0, -3);
+  }
+
+  // Trailing 'e' normalization
+  if (w.endsWith('e') && w.length > 3) {
+    w = w.slice(0, -1);
+  }
+
+  return w;
+}
+
 function tokenize(text = '') {
   if (!text) return new Set();
   const normalized = String(text).replace(/([a-z])([A-Z])/g, '$1 $2');
   const words = normalized.toLowerCase().match(/\b[a-zA-Z_]{3,}\b/g) || [];
-  return new Set(words.filter(w => !STOPWORDS.has(w)));
+  const stems = words.filter(w => !STOPWORDS.has(w)).map(w => stemWord(w));
+  return new Set(stems.filter(s => s.length >= 3 && !STOPWORDS.has(s)));
 }
 
 class CrossMaterialAligner {
@@ -81,7 +136,7 @@ class CrossMaterialAligner {
         const sTokens = tokenize(s.text);
         if (sTokens.size === 0) continue;
 
-        // Jaccard similarity
+        // Jaccard similarity on morphological terms
         let overlap = 0;
         for (const t of aTokens) {
           if (sTokens.has(t)) overlap++;
@@ -89,24 +144,8 @@ class CrossMaterialAligner {
         const unionSize = new Set([...aTokens, ...sTokens]).size;
         const jaccard = overlap / Math.max(1, unionSize);
 
-        // Concept expansion heuristics: map spoken colloquial terms to formal slide terms
-        let expandedMatch = false;
-        if ((aTokens.has('bottleneck') || aTokens.has('squeeze')) && (sTokens.has('latent') || sTokens.has('dimension'))) {
-          expandedMatch = true;
-        }
-        if ((aTokens.has('divergence') || aTokens.has('kl') || aTokens.has('loss')) && (sTokens.has('kl') || sTokens.has('regularization'))) {
-          expandedMatch = true;
-        }
-        if ((aTokens.has('reparameterization') || aTokens.has('sample')) && (sTokens.has('sampling') || sTokens.has('epsilon'))) {
-          expandedMatch = true;
-        }
-        if ((aTokens.has('cycle') || aTokens.has('kruskal')) && (sTokens.has('disjoint') || sTokens.has('dsu') || sTokens.has('union'))) {
-          expandedMatch = true;
-        }
-
-        const score = jaccard + (expandedMatch ? 0.25 : 0.0);
-        if (score >= threshold) {
-          scoredSlides.push({ score, sEid });
+        if (jaccard >= threshold) {
+          scoredSlides.push({ score: jaccard, sEid });
         }
       }
 
@@ -270,15 +309,8 @@ class CrossMaterialAligner {
     // Detect technical artifacts (code blocks, equations, tabular tokens)
     const hasCode = /\b(?:def|class|function|const|let|var|import|return|void|public|static)\b|\bfor\s*\(|\bwhile\s*\(/i.test(docText);
     const hasMath = /\\frac|\\sum|\\int|\\sqrt|\\alpha|\\beta|\\theta|\bloss\s*=|entropy|divergence|\bE\s*\[|\bP\(|\bargmax/i.test(docText);
-    const hasDiagramHint = /\b(?:figure|diagram|chart|graph|architecture|pipeline|flowchart|table\s*\d+)\b/i.test(docText);
+    const hasDiagramHint = /\b(?:figure\s*\d+|diagram|flowchart|table\s*\d+)\b/i.test(docText);
     const hasArtifacts = hasCode || hasMath || hasDiagramHint;
-
-    // Concept expansion heuristics
-    let conceptExpansionHit = false;
-    if ((vTokens.has('bottleneck') || vTokens.has('squeeze')) && (dTokens.has('latent') || dTokens.has('dimension'))) conceptExpansionHit = true;
-    if ((vTokens.has('divergence') || vTokens.has('kl') || vTokens.has('loss')) && (dTokens.has('kl') || dTokens.has('regularization'))) conceptExpansionHit = true;
-    if ((vTokens.has('reparameterization') || vTokens.has('sample')) && (dTokens.has('sampling') || dTokens.has('epsilon'))) conceptExpansionHit = true;
-    if ((vTokens.has('cycle') || vTokens.has('kruskal')) && (dTokens.has('disjoint') || dTokens.has('dsu') || dTokens.has('union'))) conceptExpansionHit = true;
 
     // Section-level alignment evaluation for multi-section documents
     const sections = this.evaluateSectionAlignment(voiceText, docText, options);
@@ -290,23 +322,32 @@ class CrossMaterialAligner {
     let priority;
     let reason;
 
-    if (hasArtifacts && (shared.length >= 2 || conceptExpansionHit)) {
-      relationship = RELATIONSHIP_TYPES.SUPPORTING_ARTIFACT;
-      priority = PRIORITY_LEVELS.PRIORITY_2_ALIGNED_MATERIAL;
-      reason = `Supporting artifact detected (code/math/diagram) aligned with spoken concepts (${shared.length} shared tokens).`;
-    } else if (hasAlignedSections && hasUnrelatedSections) {
-      relationship = RELATIONSHIP_TYPES.PARTIALLY_ALIGNED_SECTION;
-      priority = PRIORITY_LEVELS.PRIORITY_2_ALIGNED_MATERIAL;
-      reason = `Partially related document: ${alignedSections.length}/${sections.length} sections align with lecture; unrelated sections deprioritized to Priority 5.`;
-    } else if (shared.length >= 8 && (overlapRatio >= 0.25 || jaccard >= 0.15)) {
+    // 1. Closely Aligned: High shared morphological domain vocabulary across voice and material
+    if (shared.length >= 5 && (overlapRatio >= 0.20 || jaccard >= 0.10)) {
       relationship = RELATIONSHIP_TYPES.CLOSELY_ALIGNED;
       priority = PRIORITY_LEVELS.PRIORITY_2_ALIGNED_MATERIAL;
       reason = `Closely aligned: ${shared.length} shared concepts across voice and material (overlap: ${(overlapRatio * 100).toFixed(1)}%).`;
-    } else if (conceptExpansionHit || (shared.length >= 4 && overlapRatio >= 0.15)) {
+    }
+    // 2. Supporting Artifact: Code/equations/diagrams with confirmed shared domain anchors
+    else if (hasArtifacts && shared.length >= 2) {
+      relationship = RELATIONSHIP_TYPES.SUPPORTING_ARTIFACT;
+      priority = PRIORITY_LEVELS.PRIORITY_2_ALIGNED_MATERIAL;
+      reason = `Supporting artifact detected (code/math/diagram) aligned with spoken concepts (${shared.length} shared tokens).`;
+    }
+    // 3. Partially Aligned Sections: Multi-section document where some sections align and others do not
+    else if (hasAlignedSections && hasUnrelatedSections) {
+      relationship = RELATIONSHIP_TYPES.PARTIALLY_ALIGNED_SECTION;
+      priority = PRIORITY_LEVELS.PRIORITY_2_ALIGNED_MATERIAL;
+      reason = `Partially related document: ${alignedSections.length}/${sections.length} sections align with lecture; unrelated sections deprioritized to Priority 5.`;
+    }
+    // 4. Different Explanation / Complementary Phrasing: Moderate overlap without identical verbatim phrasing
+    else if (shared.length >= 3 && (overlapRatio >= 0.12 || jaccard >= 0.08)) {
       relationship = RELATIONSHIP_TYPES.DIFFERENT_EXPLANATION;
       priority = PRIORITY_LEVELS.PRIORITY_3_DIFFERENT_EXPLANATION;
       reason = `Same concept with different surface explanation: ${shared.length} shared domain anchors with complementary phrasing.`;
-    } else {
+    }
+    // 5. Completely Unrelated
+    else {
       relationship = RELATIONSHIP_TYPES.COMPLETELY_UNRELATED;
       priority = PRIORITY_LEVELS.PRIORITY_5_UNRELATED;
       reason = `Completely unrelated material: only ${shared.length} shared tokens. Assigned Priority 5 (Lowest Priority).`;

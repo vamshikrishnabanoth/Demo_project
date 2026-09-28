@@ -67,37 +67,66 @@ class GroundingGate {
       return { isJustified: false, reason: 'INSUFFICIENT_READABLE_EVIDENCE: Session content too sparse to verify grounding' };
     }
 
-    // Stopwords list
+    // Stopwords list: common grammatical/conversational question words
     const stopwords = new Set([
       'which', 'what', 'where', 'when', 'after', 'before', 'during', 'should',
       'between', 'their', 'there', 'about', 'using', 'would', 'could', 'because',
       'primary', 'following', 'statement', 'correct', 'accurately', 'context',
-      'system', 'program', 'process', 'result', 'inside', 'dataset', 'placed'
+      'inside', 'outside', 'placed', 'allows', 'allowed', 'given', 'gives',
+      'the', 'and', 'for', 'are', 'all', 'not', 'but', 'into', 'than', 'then',
+      'also', 'each', 'can', 'will', 'just', 'such', 'only', 'more', 'some',
+      'any', 'been', 'has', 'had', 'does', 'did', 'doing', 'our', 'you',
+      'your', 'they', 'them', 'who', 'how', 'why', 'with', 'from', 'that',
+      'this', 'these', 'those', 'have', 'were', 'being', 'other', 'most',
+      'both', 'through', 'under', 'over', 'while', 'well', 'here', 'first',
+      'affect', 'currently'
     ]);
 
-    // Extract content keywords (>3 chars, not in stopwords)
+    // Extract substantive content terms (>2 chars, not in stopwords)
     const keywords = `${qText} ${ansText}`
+      .toLowerCase()
       .replace(/[^a-z0-9\s]/g, ' ')
       .split(/\s+/)
-      .filter(w => w.length > 3 && !stopwords.has(w));
+      .filter(w => w.length > 2 && !stopwords.has(w));
 
     if (keywords.length === 0) {
       return { isJustified: true, reason: 'No significant keywords to constrain' };
     }
 
-    // Check if key terms exist in session evidence
-    const matched = keywords.filter(kw => rawContent.includes(kw));
+    // Check presence against verifiable session evidence
+    const rawLower = rawContent.toLowerCase();
+    const matched = keywords.filter(kw => rawLower.includes(kw));
+    const unsupported = keywords.filter(kw => !rawLower.includes(kw));
     const matchRatio = matched.length / keywords.length;
 
-    // Check for foreign domain intrusion: if question has technical terms that appear 0 times in lecture
-    const foreignIndicators = ['$match', '$group', '$project', 'mongodb', 'mongoose', 'nosql'];
-    const hasForeignIndicator = foreignIndicators.some(f => (qText + ' ' + ansText).includes(f) && !rawContent.includes(f));
-
-    if (hasForeignIndicator) {
-      return { isJustified: false, reason: 'FOREIGN_TOPIC_CONTAMINATION: Detected domain terms absent from document' };
+    // 1. Total absence of evidence support
+    if (matched.length === 0) {
+      return {
+        isJustified: false,
+        reason: `ZERO_SESSION_OVERLAP: Match ratio 0.0% (found 0/${keywords.length} terms in evidence)`
+      };
     }
 
-    if (matchRatio < 0.15 && matched.length < 2) {
+    // 2. Evidence-based foreign domain contamination:
+    // Multiple substantive unsupported anchors (>=3) with weak evidence support (<3 matches or <30% overlap)
+    if (unsupported.length >= 3 && (matched.length < 3 || matchRatio < 0.30)) {
+      const sampleUnsupported = Array.from(new Set(unsupported)).slice(0, 4).join(', ');
+      return {
+        isJustified: false,
+        reason: `FOREIGN_TOPIC_CONTAMINATION: Multiple unsupported domain anchors (${sampleUnsupported}) absent from lecture evidence`
+      };
+    }
+
+    // 3. Severe under-grounding (< 20% overlap)
+    if (matchRatio < 0.20) {
+      return {
+        isJustified: false,
+        reason: `ZERO_SESSION_OVERLAP: Match ratio ${(matchRatio * 100).toFixed(1)}% (found ${matched.length}/${keywords.length} terms in evidence)`
+      };
+    }
+
+    // 4. Sparse match floor: only 1 keyword matched out of 4+ substantive terms
+    if (matched.length < 2 && matchRatio < 0.30) {
       return {
         isJustified: false,
         reason: `ZERO_SESSION_OVERLAP: Match ratio ${(matchRatio * 100).toFixed(1)}% (found ${matched.length}/${keywords.length} terms in evidence)`

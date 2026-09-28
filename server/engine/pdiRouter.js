@@ -90,14 +90,16 @@ class PdiRouter {
     const audio_signal = feats.has_audio ? 1.0 : 0.0;
     const ppt_signal = feats.has_ppt ? 1.0 : 0.0;
     const dialogue_signal = Math.min(1.0, feats.dialogue_interaction_density / 1.5);
-    const ped_marker_signal = Math.min(1.0, feats.pedagogical_marker_density / 1.0);
+    // Pedagogical density normalization denominator = 1.5, empirically calibrated
+    // against the current lecture corpus and controlled archetypes to prevent monologue ceiling
+    const ped_marker_signal = Math.min(1.0, feats.pedagogical_marker_density / 1.5);
     const static_code_penalty = feats.code_density * (1.0 - audio_signal);
 
     const pdi = Number((
       (0.50 * audio_signal) +
       (0.30 * ppt_signal) +
-      (0.15 * dialogue_signal) +
-      (0.05 * ped_marker_signal) -
+      (0.10 * dialogue_signal) +
+      (0.10 * ped_marker_signal) -
       (0.30 * static_code_penalty)
     ).toFixed(3));
 
