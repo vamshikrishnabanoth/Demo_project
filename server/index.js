@@ -336,6 +336,67 @@ const roomState = new Map(); // { quizId: { currentQuestion: 0, status: 'started
 // Map to track which room/user a socket belongs to
 const socketToUser = new Map(); // { socketId: { quizId, username } }
 
+// Debounce tracking for room participant broadcasts
+// Map<quizId, { timer: NodeJS.Timeout, firstScheduled: number }>
+const participantBroadcastDebouncers = new Map();
+const PARTICIPANTS_DEBOUNCE_MS = parseInt(process.env.PARTICIPANTS_DEBOUNCE_MS, 10) || 1500;
+const PARTICIPANTS_MAX_WAIT_MS = parseInt(process.env.PARTICIPANTS_MAX_WAIT_MS, 10) || 2500;
+
+/**
+ * Batches and debounces participants_update broadcasts to prevent O(N^2)
+ * broadcast storms when many students join a room in a short time window.
+ *
+ * Guarantees:
+ *  1. Always fetches the latest roomParticipants state at the time of broadcast.
+ *  2. If forceImmediate is true (e.g. start_quiz or end_quiz), cancels any pending
+ *     timer cleanly so no trailing duplicate broadcast occurs.
+ *  3. Bounded delay: fires within PARTICIPANTS_MAX_WAIT_MS even under continuous joins.
+ *
+ * @param {string} quizId
+ * @param {boolean} [forceImmediate=false]
+ */
+function broadcastParticipantsDebounced(quizId, forceImmediate = false) {
+    if (!quizId || !io) return;
+    const realQuizId = quizState.resolveQuizId(quizId);
+
+    const existing = participantBroadcastDebouncers.get(realQuizId);
+
+    const doBroadcast = () => {
+        const entry = participantBroadcastDebouncers.get(realQuizId);
+        if (entry?.timer) {
+            clearTimeout(entry.timer);
+        }
+        participantBroadcastDebouncers.delete(realQuizId);
+
+        // Always read the absolute latest state at broadcast time (prevents stale lists)
+        const currentParticipants = roomParticipants.get(realQuizId) || [];
+        io.to(realQuizId).emit('participants_update', currentParticipants);
+    };
+
+    if (forceImmediate) {
+        doBroadcast();
+        return;
+    }
+
+    const now = Date.now();
+    if (!existing) {
+        const timer = setTimeout(doBroadcast, PARTICIPANTS_DEBOUNCE_MS);
+        participantBroadcastDebouncers.set(realQuizId, {
+            timer,
+            firstScheduled: now
+        });
+    } else {
+        if (now - existing.firstScheduled >= PARTICIPANTS_MAX_WAIT_MS) {
+            doBroadcast();
+        } else {
+            clearTimeout(existing.timer);
+            const remaining = Math.max(50, PARTICIPANTS_MAX_WAIT_MS - (now - existing.firstScheduled));
+            const timer = setTimeout(doBroadcast, Math.min(PARTICIPANTS_DEBOUNCE_MS, remaining));
+            existing.timer = timer;
+        }
+    }
+}
+
 // HEARTBEAT SWEEPER: Every 5 seconds, check for stale connections
 setInterval(() => {
     const now = Date.now();
@@ -350,7 +411,7 @@ setInterval(() => {
             }
         });
         if (updated) {
-            io.to(quizId).emit('participants_update', participants);
+            broadcastParticipantsDebounced(quizId, false);
         }
     }
 }, 5000);
@@ -580,7 +641,7 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                 if (isWaiting) {
                     const filtered = participants.filter(p => String(p._id || p.id) !== String(userId) && (p.username || '').toLowerCase() !== (socket.user?.username || '').toLowerCase());
                     roomParticipants.set(quizId, filtered);
-                    io.to(quizId).emit('participants_update', filtered);
+                    broadcastParticipantsDebounced(quizId, false);
                 } else {
                     let updated = false;
                     participants.forEach(p => {
@@ -592,7 +653,7 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                         }
                     });
                     if (updated) {
-                        io.to(quizId).emit('participants_update', participants);
+                        broadcastParticipantsDebounced(quizId, false);
                     }
                 }
             }
@@ -602,179 +663,190 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
         }
     });
 
-    socket.on('leave_room', ({ quizId }) => {
-        if (!quizId) return;
-        let realQuizId = quizState.resolveQuizId(quizId);
-        socket.leave(realQuizId);
+    socket.on('leave_room', (data) => {
+        try {
+            const quizId = data?.quizId;
+            if (!quizId) return;
+            let realQuizId = quizState.resolveQuizId(quizId);
+            socket.leave(realQuizId);
 
-        const verifiedUsername = (socket.user?.username || '').toString().trim();
-        const participants = roomParticipants.get(realQuizId);
-        if (participants && verifiedUsername) {
-            const state = roomState.get(realQuizId);
-            const isWaiting = !state || state.status === 'waiting';
+            const verifiedUsername = (socket.user?.username || '').toString().trim();
+            const participants = roomParticipants.get(realQuizId);
+            if (participants && verifiedUsername) {
+                const state = roomState.get(realQuizId);
+                const isWaiting = !state || state.status === 'waiting';
 
-            if (isWaiting) {
-                const updated = participants.filter(
-                    p => (p.username || '').toLowerCase() !== verifiedUsername.toLowerCase()
-                );
-                roomParticipants.set(realQuizId, updated);
-                io.to(realQuizId).emit('participants_update', updated);
-                console.log(`Student ${verifiedUsername} explicitly left waiting room ${realQuizId}. Remaining: ${updated.length}`);
-            } else {
-                const p = participants.find(part => (part.username || '').toLowerCase() === verifiedUsername.toLowerCase());
-                if (p) {
-                    p.isOnline = false;
-                    p.socketId = null;
-                    p.lastSeen = Date.now();
-                    io.to(realQuizId).emit('participants_update', participants);
+                if (isWaiting) {
+                    const updated = participants.filter(
+                        p => (p.username || '').toLowerCase() !== verifiedUsername.toLowerCase()
+                    );
+                    roomParticipants.set(realQuizId, updated);
+                    broadcastParticipantsDebounced(realQuizId, false);
+                    console.log(`Student ${verifiedUsername} explicitly left waiting room ${realQuizId}. Remaining: ${updated.length}`);
+                } else {
+                    const p = participants.find(part => (part.username || '').toLowerCase() === verifiedUsername.toLowerCase());
+                    if (p) {
+                        p.isOnline = false;
+                        p.socketId = null;
+                        p.lastSeen = Date.now();
+                        broadcastParticipantsDebounced(realQuizId, false);
+                    }
                 }
             }
+            socketToUser.delete(socket.id);
+        } catch (err) {
+            console.error(`[Socket Error] leave_room error for socket ${socket.id}:`, err);
         }
-        socketToUser.delete(socket.id);
     });
 
-    socket.on('join_room', async ({ quizId, user }) => {
-        // SECURITY CHECK: Verify user identity matches socket.user payload safely
-        if (!socket.user) {
-            console.warn(`[Security Alert] Unauthenticated socket ${socket.id} attempted join_room`);
-            return socket.emit('error_alert', { msg: 'Authentication token missing or invalid.' });
-        }
+    socket.on('join_room', async (data) => {
+        try {
+            const { quizId, user } = data || {};
+            // SECURITY CHECK: Verify user identity matches socket.user payload safely
+            if (!socket.user) {
+                console.warn(`[Security Alert] Unauthenticated socket ${socket.id} attempted join_room`);
+                return socket.emit('error_alert', { msg: 'Authentication token missing or invalid.' });
+            }
+            if (!quizId) {
+                return socket.emit('error_alert', { msg: 'Quiz ID or PIN is required.' });
+            }
 
-        const clientUsername = (user?.username || socket.user.username || '').toString().trim();
-        const verifiedUsername = (socket.user.username || '').toString().trim();
+            const clientUsername = (user?.username || socket.user.username || '').toString().trim();
+            const verifiedUsername = (socket.user.username || '').toString().trim();
 
-        if (clientUsername.toLowerCase() !== verifiedUsername.toLowerCase()) {
-            console.warn(`[Security Alert] join_room username mismatch blocked for socket ${socket.id} (client: ${clientUsername}, token: ${verifiedUsername})`);
-            return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
-        }
+            if (clientUsername.toLowerCase() !== verifiedUsername.toLowerCase()) {
+                console.warn(`[Security Alert] join_room username mismatch blocked for socket ${socket.id} (client: ${clientUsername}, token: ${verifiedUsername})`);
+                return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
+            }
 
-        // Normalize 6-digit PIN or Quiz ID to actual database Quiz ID.
-        // First try in-memory cache (populated when teacher starts the quiz) — O(1), zero DB.
-        // Fall back to DB only when the quiz hasn't been started yet or cache miss.
-        let realQuizId = quizState.resolveQuizId(quizId);
-        if (realQuizId === quizId) {
-            // Cache miss — check if it looks like a UUID (already a quiz ID) or needs DB lookup
-            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(quizId);
-            if (!isUUID) {
-                // Only hit DB for non-UUID values (i.e. join codes / PINs)
+            // Normalize 6-digit PIN or Quiz ID to actual database Quiz ID.
+            // First try in-memory cache (populated when teacher starts the quiz) — O(1), zero DB.
+            // Fall back to DB only when the quiz hasn't been started yet or cache miss.
+            let realQuizId = quizState.resolveQuizId(quizId);
+            if (realQuizId === quizId) {
+                // Cache miss — check if it looks like a UUID (already a quiz ID) or needs DB lookup
+                const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(quizId);
+                if (!isUUID) {
+                    // Only hit DB for non-UUID values (i.e. join codes / PINs)
+                    try {
+                        const foundQuiz = await prisma.quiz.findFirst({
+                            where: { OR: [{ id: quizId }, { joinCode: quizId }] },
+                            select: { id: true, joinCode: true }
+                        });
+                        if (foundQuiz) {
+                            realQuizId = foundQuiz.id;
+                            // Cache it for future lookups (heartbeats, reconnects, etc.)
+                            if (foundQuiz.joinCode) quizState.registerPin(foundQuiz.joinCode, foundQuiz.id);
+                        }
+                    } catch (err) {
+                        console.error('Error resolving PIN in join_room:', err.message);
+                    }
+                }
+            }
+
+            // AUDIENCE RESTRICTION CHECK FOR STUDENTS
+            if (socket.user.role === 'student') {
                 try {
-                    const foundQuiz = await prisma.quiz.findFirst({
-                        where: { OR: [{ id: quizId }, { joinCode: quizId }] },
-                        select: { id: true, joinCode: true }
-                    });
-                    if (foundQuiz) {
-                        realQuizId = foundQuiz.id;
-                        // Cache it for future lookups (heartbeats, reconnects, etc.)
-                        if (foundQuiz.joinCode) quizState.registerPin(foundQuiz.joinCode, foundQuiz.id);
+                    const [studentUser, targetQuiz] = await Promise.all([
+                        prisma.user.findUnique({ where: { id: socket.user.id } }),
+                        prisma.quiz.findUnique({
+                            where: { id: realQuizId },
+                            select: { createdById: true, accessType: true, assignedGroups: true, assignedStudents: true }
+                        })
+                    ]);
+                    if (targetQuiz && !isStudentTargetedSocket(studentUser, targetQuiz.assignedGroups, targetQuiz.assignedStudents)) {
+                        console.warn(`[Audience Restriction] Blocked student ${socket.user.username} from joining room ${realQuizId}`);
+                        return socket.emit('error_alert', { msg: 'Access restricted: You are not in the targeted audience (Year / Branch / Section) for this quiz.' });
                     }
                 } catch (err) {
-                    console.error('Error resolving PIN in join_room:', err.message);
+                    console.error('Error verifying audience access in join_room:', err.message);
                 }
             }
-        }
 
-        // AUDIENCE RESTRICTION CHECK FOR STUDENTS
-        if (socket.user.role === 'student') {
-            try {
-                const [studentUser, targetQuiz] = await Promise.all([
-                    prisma.user.findUnique({ where: { id: socket.user.id } }),
-                    prisma.quiz.findUnique({
-                        where: { id: realQuizId },
-                        select: { createdById: true, accessType: true, assignedGroups: true, assignedStudents: true }
-                    })
-                ]);
-                if (targetQuiz && !isStudentTargetedSocket(studentUser, targetQuiz.assignedGroups, targetQuiz.assignedStudents)) {
-                    console.warn(`[Audience Restriction] Blocked student ${socket.user.username} from joining room ${realQuizId}`);
-                    return socket.emit('error_alert', { msg: 'Access restricted: You are not in the targeted audience (Year / Branch / Section) for this quiz.' });
+            socket.join(realQuizId);
+
+            // Fetch and emit lobby study summary to the user
+            prisma.quiz.findUnique({
+                where: { id: realQuizId },
+                select: { lobbySummary: true }
+            }).then(q => {
+                if (q && q.lobbySummary) {
+                    socket.emit('lobby_summary_update', { lobbySummary: q.lobbySummary });
                 }
-            } catch (err) {
-                console.error('Error verifying audience access in join_room:', err.message);
+            }).catch(err => {
+                console.error('Error fetching lobby summary on join_room:', err);
+            });
+
+            // Track this socket's association for disconnect cleanup
+            socketToUser.set(socket.id, { quizId: realQuizId, username: verifiedUsername });
+
+            if (!roomParticipants.has(realQuizId)) {
+                roomParticipants.set(realQuizId, []);
             }
-        }
 
-        socket.join(realQuizId);
+            const participants = roomParticipants.get(realQuizId);
+            const existingIdx = participants.findIndex(p => (p.username || '').toLowerCase() === verifiedUsername.toLowerCase());
 
-        // Fetch and emit lobby study summary to the user
-        prisma.quiz.findUnique({
-            where: { id: realQuizId },
-            select: { lobbySummary: true }
-        }).then(q => {
-            if (q && q.lobbySummary) {
-                socket.emit('lobby_summary_update', { lobbySummary: q.lobbySummary });
+            // Reconstruct secure user properties from JWT context
+            const secureUser = {
+                _id: socket.user.id,
+                username: socket.user.username,
+                role: socket.user.role
+            };
+
+            const userData = {
+                ...secureUser,
+                socketId: socket.id,
+                isOnline: true,
+                lastSeen: Date.now(),
+                joinedAt:
+                    existingIdx !== -1
+                        ? participants[existingIdx]?.joinedAt || Date.now()
+                        : Date.now()
+            };
+            if (existingIdx !== -1) {
+                participants[existingIdx] = userData;
+            } else {
+                participants.push(userData);
             }
-        }).catch(err => {
-            console.error('Error fetching lobby summary on join_room:', err);
-        });
 
-        // Track this socket's association for disconnect cleanup
-        socketToUser.set(socket.id, { quizId: realQuizId, username: verifiedUsername });
+            console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${realQuizId}. Total participants: ${participants.length}`);
+            // Always send the full current participant list directly to the socket that just joined,
+            // so the student/teacher sees themselves immediately without waiting for the debounced broadcast.
+            const cleanedParticipants = [...participants];
+            socket.emit('participants_update', cleanedParticipants);
 
-        if (!roomParticipants.has(realQuizId)) {
-            roomParticipants.set(realQuizId, []);
-        }
+            // Debounced room-wide broadcast prevents O(N^2) broadcast storm when 400 students join
+            broadcastParticipantsDebounced(realQuizId, false);
 
-        const participants = roomParticipants.get(realQuizId);
-        const existingIdx = participants.findIndex(p => (p.username || '').toLowerCase() === verifiedUsername.toLowerCase());
+            // SYNC STATE
+            const state = roomState.get(realQuizId);
+            if (state) {
+                if (state.status === 'started') socket.emit('quiz_started');
+                if (state.currentQuestion !== undefined) socket.emit('change_question', { questionIndex: state.currentQuestion });
 
-        // Reconstruct secure user properties from JWT context
-        const secureUser = {
-            _id: socket.user.id,
-            username: socket.user.username,
-            role: socket.user.role
-        };
-
-        const userData = {
-    ...secureUser,
-    socketId: socket.id,
-    isOnline: true,
-    lastSeen: Date.now(),
-    joinedAt:
-        existingIdx !== -1
-            ? participants[existingIdx]?.joinedAt || Date.now()
-            : Date.now()
-};
-        if (existingIdx !== -1) {
-            participants[existingIdx] = userData;
-        } else {
-            participants.push(userData);
-        }
-
-        console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${realQuizId}. Total participants: ${participants.length}`);
-        // Always send the full current participant list directly to the socket that just joined,
-        // so the teacher always sees the latest list even if they join after students.
-        const cleanedParticipants = [...participants];
-
-socket.emit('participants_update', cleanedParticipants);
-
-io.to(realQuizId).emit(
-    'participants_update',
-    cleanedParticipants
-);
-
-        // SYNC STATE
-        const state = roomState.get(realQuizId);
-        if (state) {
-            if (state.status === 'started') socket.emit('quiz_started');
-            if (state.currentQuestion !== undefined) socket.emit('change_question', { questionIndex: state.currentQuestion });
-
-            // MASTER TIMER SYNC
-            if (state.endTime) {
-                const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
-                socket.emit('sync_timer', { timeLeft });
+                // MASTER TIMER SYNC
+                if (state.endTime) {
+                    const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
+                    socket.emit('sync_timer', { timeLeft });
+                }
+                // Send persisted progress to teacher
+                if (state.progress) {
+                    console.log(`Sending progress history to secure ${socket.user.username}`);
+                    socket.emit('progress_history', state.progress);
+                }
+                // Sync leaderboard for all participants (Teacher and Students) on join/reconnect
+                if (state.leaderboard) {
+                    socket.emit('question_leaderboard', {
+                        questionIndex: state.currentQuestion || 0,
+                        leaderboard: state.leaderboard,
+                        liveInsights: state.liveInsights || null
+                    });
+                }
             }
-            // Send persisted progress to teacher
-            if (state.progress) {
-                console.log(`Sending progress history to secure ${socket.user.username}`);
-                socket.emit('progress_history', state.progress);
-            }
-            // Sync leaderboard for all participants (Teacher and Students) on join/reconnect
-            if (state.leaderboard) {
-                socket.emit('question_leaderboard', {
-                    questionIndex: state.currentQuestion || 0,
-                    leaderboard: state.leaderboard,
-                    liveInsights: state.liveInsights || null
-                });
-            }
+        } catch (err) {
+            console.error(`[Socket Error] join_room error for socket ${socket.id}:`, err);
+            socket.emit('error_alert', { msg: 'Failed to join live room. Please try again.' });
         }
     });
 
@@ -797,7 +869,7 @@ io.to(realQuizId).emit(
                 p.lastSeen = Date.now();
                 if (!p.isOnline) {
                     p.isOnline = true;
-                    io.to(realQuizId).emit('participants_update', participants);
+                    broadcastParticipantsDebounced(realQuizId, false);
                 }
             }
         }
@@ -835,15 +907,15 @@ io.to(realQuizId).emit(
         };
 
         const userData = {
-    ...secureUser,
-    socketId: socket.id,
-    isOnline: true,
-    lastSeen: Date.now(),
-    joinedAt:
-        existingIdx !== -1
-            ? participants[existingIdx]?.joinedAt || Date.now()
-            : Date.now()
-};
+            ...secureUser,
+            socketId: socket.id,
+            isOnline: true,
+            lastSeen: Date.now(),
+            joinedAt:
+                existingIdx !== -1
+                    ? participants[existingIdx]?.joinedAt || Date.now()
+                    : Date.now()
+        };
         if (existingIdx !== -1) {
             participants[existingIdx] = userData;
         } else {
@@ -851,10 +923,7 @@ io.to(realQuizId).emit(
         }
 
         console.log(`Secure User ${socket.user.username} (${socket.user.role}) reconnected to room ${quizId}. ID: ${socket.user.id}`);
-        io.to(quizId).emit(
-    'participants_update',
-    [...participants]
-);
+        broadcastParticipantsDebounced(quizId, false);
 
         const sendRestoreState = async () => {
             let state = roomState.get(quizId) || {};
@@ -1030,6 +1099,9 @@ io.to(realQuizId).emit(
                 where: { id: quizId },
                 data: { status: 'started', endTime: new Date(safetyEndTime) }
             });
+            // Flush any pending participant broadcast immediately on start_quiz and cancel trailing timer
+            broadcastParticipantsDebounced(quizId, true);
+
             io.to(quizId).emit('quiz_started');
             io.to(quizId).emit('change_question', { questionIndex: 0 });
             console.log(`[QuizStart] Quiz ${quizId} started on Question 1 (index 0). 1-hour safety timeout active.`);
@@ -1051,6 +1123,9 @@ io.to(realQuizId).emit(
                 console.warn(`[Security Alert] Socket ${socket.id} attempted to end unauthorized quiz ${quizId}`);
                 return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
             }
+
+            // Flush and cancel any pending participant debouncer
+            broadcastParticipantsDebounced(quizId, true);
 
             // ── STEP 1: Clear safety timer & stop accepting new submissions ────
             const existingRoomState = roomState.get(quizId);
@@ -1378,121 +1453,129 @@ io.to(realQuizId).emit(
     // Flow: JWT auth → in-memory validation → in-memory grade → in-memory result
     //       → immediate WS response → async DB queue (non-blocking)
     // ────────────────────────────────────────────────────────────────────────────
-    socket.on('submit_question_answer', ({ quizId, studentId, questionIndex, answer, timeRemaining }) => {
-        // ── SECURITY: Verify authenticated user identity ─────────────────────
-        if (!socket.user || socket.user.id !== studentId) {
-            console.warn(`[Security Alert] submit_question_answer spoofing blocked for socket ${socket.id} (studentId: ${studentId})`);
-            return socket.emit('error_alert', { msg: 'Unauthorized action.' });
-        }
-
-        // ── RATE LIMIT: prevent answer-spam DoS (500ms per-socket cooldown) ──
-        if (isSocketRateLimited(socket.id, 'submit_question_answer', 500)) {
-            return; // Silent drop — legitimate clients debounce on submit
-        }
-
-        // ── Input normalization ───────────────────────────────────────────────
-        questionIndex = parseInt(questionIndex);
-        if (isNaN(questionIndex) || questionIndex < 0) return;
-
-        // ── Resolve quiz ID (in-memory PIN cache — zero DB) ───────────────────
-        const realQuizId = quizState.resolveQuizId(quizId);
-
-        // ── Validate quiz is active in memory ─────────────────────────────────
-        const memState = quizState.getQuizState(realQuizId);
-        if (!memState) {
-            // Quiz not in memory — fall back to legacy path for robustness
-            // (e.g. server restarted during an active quiz)
-            _submitAnswerLegacy({ socket, quizId, studentId, questionIndex, answer, timeRemaining, realQuizId });
-            return;
-        }
-
-        // ── Get quiz data for timer calculation (from memory — no DB read) ────
-        const quizData = memState.quiz;
-        const timerMax = quizData.duration > 0 ? (quizData.duration * 60) : (quizData.timerPerQuestion || 30);
-        const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
-        const username = socket.user.username || socket.user.name || studentId;
-
-        // ── Process answer in memory (synchronous — no DB, no await) ──────────
-        const result = quizState.processAnswer({
-            quizId:        realQuizId,
-            studentId,
-            username,
-            questionIndex,
-            answer,
-            qTimeTaken,
-            gradeAnswer,
-        });
-
-        if (!result.accepted) {
-            if (result.reason === 'duplicate') {
-                console.log(`[STRICT MODE] Duplicate answer blocked: student=${studentId} q=${questionIndex}`);
-            } else if (result.reason === 'quiz_ended') {
-                console.log(`[AnswerReject] Quiz ended — answer rejected for student=${studentId}`);
+    socket.on('submit_question_answer', (payload) => {
+        try {
+            const { quizId, studentId, questionIndex: rawQIdx, answer, timeRemaining } = payload || {};
+            // ── SECURITY: Verify authenticated user identity ─────────────────────
+            if (!socket.user || socket.user.id !== studentId) {
+                console.warn(`[Security Alert] submit_question_answer spoofing blocked for socket ${socket.id} (studentId: ${studentId})`);
+                return socket.emit('error_alert', { msg: 'Unauthorized action.' });
             }
-            return;
-        }
 
-        // ── Grading diagnostics (only in development) ─────────────────────────
-        if (process.env.NODE_ENV !== 'production') {
-            const q = Array.isArray(quizData.questions) ? quizData.questions[questionIndex] : null;
-            console.log(`[GRADE] student=${studentId} q=${questionIndex} answer="${answer}" correct="${q?.correctAnswer}" isCorrect=${result.isCorrect} points=${result.points}`);
-        }
+            // ── RATE LIMIT: prevent answer-spam DoS (500ms per-socket cooldown) ──
+            if (isSocketRateLimited(socket.id, 'submit_question_answer', 500)) {
+                return; // Silent drop — legitimate clients debounce on submit
+            }
 
-        // ── Update legacy roomState progress (for teacher dashboard compat) ───
-        const currentRoomState = roomState.get(realQuizId) || {};
-        const updatedProgress = quizState.getProgress(realQuizId);
-        roomState.set(realQuizId, { ...currentRoomState, progress: updatedProgress });
+            // ── Input normalization ───────────────────────────────────────────────
+            const questionIndex = parseInt(rawQIdx);
+            if (isNaN(questionIndex) || questionIndex < 0) {
+                return socket.emit('error_alert', { msg: 'Invalid question index.' });
+            }
 
-        // ── Immediate: emit result to this student ────────────────────────────
-        // Speed feedback calculation (uses in-memory progress for peer comparison)
-        const isUnattempted = answer === null || answer === undefined || String(answer).trim() === '';
-        const otherTimes = [];
-        const participants = roomParticipants.get(realQuizId) || [];
-        participants.forEach(p => {
-            const idKey = p._id || p.id;
-            if (idKey && idKey.toString() !== studentId.toString()) {
-                const prog = updatedProgress[idKey.toString()];
-                if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
-                    otherTimes.push(prog[questionIndex].timeTaken);
+            // ── Resolve quiz ID (in-memory PIN cache — zero DB) ───────────────────
+            const realQuizId = quizState.resolveQuizId(quizId);
+
+            // ── Validate quiz is active in memory ─────────────────────────────────
+            const memState = quizState.getQuizState(realQuizId);
+            if (!memState) {
+                // Quiz not in memory — fall back to legacy path for robustness
+                // (e.g. server restarted during an active quiz)
+                _submitAnswerLegacy({ socket, quizId, studentId, questionIndex, answer, timeRemaining, realQuizId });
+                return;
+            }
+
+            // ── Get quiz data for timer calculation (from memory — no DB read) ────
+            const quizData = memState.quiz;
+            const timerMax = quizData.duration > 0 ? (quizData.duration * 60) : (quizData.timerPerQuestion || 30);
+            const qTimeTaken = Math.max(0, timerMax - (timeRemaining || 0));
+            const username = socket.user.username || socket.user.name || studentId;
+
+            // ── Process answer in memory (synchronous — no DB, no await) ──────────
+            const result = quizState.processAnswer({
+                quizId:        realQuizId,
+                studentId,
+                username,
+                questionIndex,
+                answer,
+                qTimeTaken,
+                gradeAnswer,
+            });
+
+            if (!result.accepted) {
+                if (result.reason === 'duplicate') {
+                    console.log(`[STRICT MODE] Duplicate answer blocked: student=${studentId} q=${questionIndex}`);
+                } else if (result.reason === 'quiz_ended') {
+                    console.log(`[AnswerReject] Quiz ended — answer rejected for student=${studentId}`);
                 }
+                return;
             }
-        });
-        const isFast = !isUnattempted && (otherTimes.length > 0
-            ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
-            : (qTimeTaken <= timerMax * 0.3));
 
-        const fastMessages = ['⚡ Fast Answer! Lightning speed!', '⚡ Quick Response Bonus! Unstoppable!', '🚀 Speed Demon! Lock and load for the next one!', '🔥 Absolute Heat! Superb speed!'];
-        const slowMessages = ["🐢 Smooth and steady, but let's pick up the pace next time!", '⏰ Took your time! Try to lock it in quicker!', '💡 Great focus, but speed is key!'];
-        const unattemptedMessages = ["⏳ Time is up! You didn't select an answer.", '❌ Question unanswered! Lock in a choice before the timer expires.'];
-        const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
+            // ── Grading diagnostics (only in development) ─────────────────────────
+            if (process.env.NODE_ENV !== 'production') {
+                const q = Array.isArray(quizData.questions) ? quizData.questions[questionIndex] : null;
+                console.log(`[GRADE] student=${studentId} q=${questionIndex} answer="${answer}" correct="${q?.correctAnswer}" isCorrect=${result.isCorrect} points=${result.points}`);
+            }
 
-        socket.emit('answer_feedback', {
-            isFast,
-            isUnattempted,
-            message: messageList[Math.floor(Math.random() * messageList.length)],
-            timeTaken: qTimeTaken,
-        });
+            // ── Update legacy roomState progress (for teacher dashboard compat) ───
+            const currentRoomState = roomState.get(realQuizId) || {};
+            const updatedProgress = quizState.getProgress(realQuizId);
+            roomState.set(realQuizId, { ...currentRoomState, progress: updatedProgress });
 
-        // ── Immediate: notify teacher of student progress ─────────────────────
-        io.to(realQuizId).emit('student_progress_update', {
-            studentId:     studentId.toString(),
-            username:      username,
-            questionIndex,
-            answered:      true,
-            isCorrect:     result.isCorrect,
-        });
+            // ── Immediate: emit result to this student ────────────────────
+            // Speed feedback calculation (uses in-memory progress for peer comparison)
+            const isUnattempted = answer === null || answer === undefined || String(answer).trim() === '';
+            const otherTimes = [];
+            const participants = roomParticipants.get(realQuizId) || [];
+            participants.forEach(p => {
+                const idKey = p._id || p.id;
+                if (idKey && idKey.toString() !== studentId.toString()) {
+                    const prog = updatedProgress[idKey.toString()];
+                    if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
+                        otherTimes.push(prog[questionIndex].timeTaken);
+                    }
+                }
+            });
+            const isFast = !isUnattempted && (otherTimes.length > 0
+                ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
+                : (qTimeTaken <= timerMax * 0.3));
 
-        // ── Throttled: broadcast leaderboard to all (not on every answer) ─────
-        // Prevents broadcasting a full sorted array to 1000 clients every ms.
-        if (quizState.shouldBroadcastLeaderboard(realQuizId)) {
-            const leaderboard = quizState.getLeaderboard(realQuizId);
-            // Also update legacy roomState leaderboard for reconnect sync
-            roomState.set(realQuizId, { ...(roomState.get(realQuizId) || {}), leaderboard });
-            io.to(realQuizId).emit('question_leaderboard', { questionIndex, leaderboard });
+            const fastMessages = ['⚡ Fast Answer! Lightning speed!', '⚡ Quick Response Bonus! Unstoppable!', '🚀 Speed Demon! Lock and load for the next one!', '🔥 Absolute Heat! Superb speed!'];
+            const slowMessages = ["🐢 Smooth and steady, but let's pick up the pace next time!", '⏰ Took your time! Try to lock it in quicker!', '💡 Great focus, but speed is key!'];
+            const unattemptedMessages = ["⏳ Time is up! You didn't select an answer.", '❌ Question unanswered! Lock in a choice before the timer expires.'];
+            const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
+
+            socket.emit('answer_feedback', {
+                isFast,
+                isUnattempted,
+                message: messageList[Math.floor(Math.random() * messageList.length)],
+                timeTaken: qTimeTaken,
+            });
+
+            // ── Immediate: notify teacher of student progress ─────────────────────
+            io.to(realQuizId).emit('student_progress_update', {
+                studentId:     studentId.toString(),
+                username:      username,
+                questionIndex,
+                answered:      true,
+                isCorrect:     result.isCorrect,
+            });
+
+            // ── Throttled: broadcast leaderboard to all (not on every answer) ─────
+            // Prevents broadcasting a full sorted array to 1000 clients every ms.
+            if (quizState.shouldBroadcastLeaderboard(realQuizId)) {
+                const leaderboard = quizState.getLeaderboard(realQuizId);
+                // Also update legacy roomState leaderboard for reconnect sync
+                roomState.set(realQuizId, { ...(roomState.get(realQuizId) || {}), leaderboard });
+                io.to(realQuizId).emit('question_leaderboard', { questionIndex, leaderboard });
+            }
+
+            // ── Persistence is already queued inside processAnswer() ──────────────
+            // No DB calls here. The write buffer will flush within FLUSH_INTERVAL_MS.
+        } catch (err) {
+            console.error(`[Socket Error] submit_question_answer error for socket ${socket.id}:`, err);
+            socket.emit('error_alert', { msg: 'Failed to process answer submission.' });
         }
-
-        // ── Persistence is already queued inside processAnswer() ──────────────
-        // No DB calls here. The write buffer will flush within FLUSH_INTERVAL_MS.
     });
 
     // Handle student submission of new question (added by student)
@@ -1548,33 +1631,6 @@ io.to(realQuizId).emit(
         }
     });
 
-    socket.on('leave_room', ({ quizId }) => {
-        if (!quizId) return;
-        let realQuizId = quizState.resolveQuizId(quizId);
-        socket.leave(realQuizId);
-        
-        const participants = roomParticipants.get(realQuizId);
-        if (participants) {
-            const state = roomState.get(realQuizId);
-            const isWaiting = !state || state.status === 'waiting';
-
-            if (isWaiting) {
-                const updated = participants.filter(p => p.socketId !== socket.id && (p.username || '').toLowerCase() !== (socket.user?.username || '').toLowerCase());
-                roomParticipants.set(realQuizId, updated);
-                io.to(realQuizId).emit('participants_update', updated);
-                console.log(`Socket ${socket.id} (${socket.user?.username}) left waiting room ${realQuizId}. Remaining: ${updated.length}`);
-            } else {
-                const idx = participants.findIndex(p => p.socketId === socket.id || (p.username || '').toLowerCase() === (socket.user?.username || '').toLowerCase());
-                if (idx !== -1) {
-                    participants[idx].isOnline = false;
-                    participants[idx].socketId = null;
-                    io.to(realQuizId).emit('participants_update', participants);
-                }
-            }
-        }
-        socketToUser.delete(socket.id);
-    });
-
     socket.on('disconnect', async () => {
         console.log('Socket disconnected:', socket.id);
 
@@ -1595,7 +1651,7 @@ io.to(realQuizId).emit(
                     );
                     roomParticipants.set(quizId, updatedParticipants);
                     console.log(`${username} disconnected and removed from waiting room ${quizId}. Remaining: ${updatedParticipants.length}`);
-                    io.to(quizId).emit('participants_update', [...updatedParticipants]);
+                    broadcastParticipantsDebounced(quizId, false);
                 } else {
                     const idx = participants.findIndex(
                         p => (p.username || '').toLowerCase() === (username || '').toLowerCase()
@@ -1607,7 +1663,7 @@ io.to(realQuizId).emit(
                         participants[idx].socketId = null;
 
                         console.log(`${username} marked offline temporarily in active game`);
-                        io.to(quizId).emit('participants_update', [...participants]);
+                        broadcastParticipantsDebounced(quizId, false);
                     }
                 }
             }
@@ -1793,29 +1849,40 @@ server.headersTimeout = 600000;  // 10 minutes (must be > requestTimeout)
 server.requestTimeout = 600000;  // 10 minutes (time to receive full request body)
 server.keepAliveTimeout = 620000; // slightly above headersTimeout
 
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT} (0.0.0.0)`);
-    const routerMode = process.env.ROUTER_MODE || 'baseline';
-    console.log(`[Router Configuration] ROUTER_MODE="${routerMode}" | PDI_ROUTER_ENABLED=${routerMode === 'pdi'}`);
-    console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
+if (process.env.NODE_ENV !== 'test') {
+    server.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server running on port ${PORT} (0.0.0.0)`);
+        const routerMode = process.env.ROUTER_MODE || 'baseline';
+        console.log(`[Router Configuration] ROUTER_MODE="${routerMode}" | PDI_ROUTER_ENABLED=${routerMode === 'pdi'}`);
+        console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
 
-    // Automatic Prisma Database Schema Synchronization
-    setImmediate(() => {
-        try {
-            const prismaSyncCommand = process.platform === 'win32'
-                ? `cd /d "${__dirname}" && npx prisma db push --skip-generate`
-                : `cd "${__dirname}" && npx prisma db push --skip-generate`;
+        // Automatic Prisma Database Schema Synchronization
+        setImmediate(() => {
+            try {
+                const prismaSyncCommand = process.platform === 'win32'
+                    ? `cd /d "${__dirname}" && npx prisma db push --skip-generate`
+                    : `cd "${__dirname}" && npx prisma db push --skip-generate`;
 
-            console.log('🔄 Syncing database schema via prisma db push...');
-            exec(prismaSyncCommand, (error, stdout, stderr) => {
-                if (error) {
-                    console.warn('⚠️ [Prisma Sync Note]:', error.message);
-                    return;
-                }
-                console.log('✅ [Prisma DB]: Database schema is in sync with schema.prisma.');
-            });
-        } catch (err) {
-            console.warn('⚠️ Failed to initiate database sync:', err.message);
-        }
+                console.log('🔄 Syncing database schema via prisma db push...');
+                exec(prismaSyncCommand, (error, stdout, stderr) => {
+                    if (error) {
+                        console.warn('⚠️ [Prisma Sync Note]:', error.message);
+                        return;
+                    }
+                    console.log('✅ [Prisma DB]: Database schema is in sync with schema.prisma.');
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to initiate database sync:', err.message);
+            }
+        });
     });
-});
+}
+
+module.exports = {
+    app,
+    server,
+    io,
+    broadcastParticipantsDebounced,
+    roomParticipants,
+    participantBroadcastDebouncers
+};

@@ -291,25 +291,41 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             const textParts = [];
             let cumulativeDuration = 0;
 
-            // Transcribe oversized chunks in parallel with Promise.all
-            console.log(`🎙️ [Whisper Large-v3] Launching parallel transcription for ${chunks.length} chunks...`);
-            const chunkResults = await Promise.all(chunks.map(async (chunk, i) => {
-                const chunkNum = i + 1;
-                console.log(`🎙️ [Whisper Large-v3] Transcribing Chunk ${chunkNum}/${chunks.length} (${(chunk.sizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
+            // Bounded concurrency worker pool (WHISPER_CONCURRENCY || 2)
+            // Caps simultaneous Groq in-flight requests to prevent 429 rate limit storms
+            // and allocates results at chunkResults[currentIndex] to preserve exact original chronological order.
+            const maxConcurrency = Math.max(1, parseInt(process.env.WHISPER_CONCURRENCY, 10) || 2);
+            const poolSize = Math.min(maxConcurrency, chunks.length);
+            console.log(`🎙️ [Whisper Large-v3] Launching bounded transcription for ${chunks.length} chunks (concurrency: ${poolSize}, max: ${maxConcurrency})...`);
 
-                const chunkData = await callGroqWithRetry(() => ({
-                    file: fs.createReadStream(chunk.filePath),
-                    model: 'whisper-large-v3',
-                    response_format: 'verbose_json'
-                }), 2);
+            const chunkResults = new Array(chunks.length);
+            let nextChunkIndex = 0;
 
-                const chunkText = sanitizeTranscriptEchoes((chunkData.text || '').trim());
-                const chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
-                const chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : 0);
+            const workers = Array.from({ length: poolSize }, async (_, workerId) => {
+                while (true) {
+                    const currentIndex = nextChunkIndex++;
+                    if (currentIndex >= chunks.length) break;
 
-                console.log(`✅ [Whisper Large-v3] Chunk ${chunkNum}/${chunks.length} transcribed: ${chunkText.length} chars, ${chunkDuration.toFixed(1)}s, ${chunkSegs.length} segments`);
-                return { chunk, chunkText, chunkSegs, chunkDuration, i };
-            }));
+                    const chunk = chunks[currentIndex];
+                    const chunkNum = currentIndex + 1;
+                    console.log(`🎙️ [Whisper Large-v3][Worker ${workerId + 1}] Transcribing Chunk ${chunkNum}/${chunks.length} (${(chunk.sizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
+
+                    const chunkData = await callGroqWithRetry(() => ({
+                        file: fs.createReadStream(chunk.filePath),
+                        model: 'whisper-large-v3',
+                        response_format: 'verbose_json'
+                    }), 2);
+
+                    const chunkText = sanitizeTranscriptEchoes((chunkData.text || '').trim());
+                    const chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
+                    const chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : 0);
+
+                    console.log(`✅ [Whisper Large-v3][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} transcribed: ${chunkText.length} chars, ${chunkDuration.toFixed(1)}s, ${chunkSegs.length} segments`);
+                    chunkResults[currentIndex] = { chunk, chunkText, chunkSegs, chunkDuration, i: currentIndex };
+                }
+            });
+
+            await Promise.all(workers);
 
             // Assemble chunks in original chronological order with boundary deduplication
             for (let i = 0; i < chunkResults.length; i++) {
@@ -4156,47 +4172,81 @@ exports.clearUserDocket = async (req, res) => {
     }
 };
 
+function sanitizeLectureTitle(rawTitle) {
+    if (!rawTitle || typeof rawTitle !== 'string') return '';
+    let title = rawTitle.trim();
+    // 1. Strip common download/converter prefixes
+    title = title.replace(/^(?:Y2Mate\.is|YouTube|SSYouTube)\s*[-–—_]\s*/i, '');
+    // 2. Strip audio/document extensions
+    title = title.replace(/\.(?:mp3|m4a|wav|webm|ogg|aac|flac|pdf|docx|pptx|ppt|txt)$/i, '');
+    // 3. Strip dates like 18-8-26, 2024-05-12, 12_05_2024
+    title = title.replace(/\b\d{1,4}[-_/.]\d{1,2}[-_/.]\d{1,4}\b/g, '');
+    // 4. Strip generic recording identifiers like rec_01, audio_1, track_2
+    title = title.replace(/\b(?:rec(?:ording)?|audio|track|voice)[-_ ]*\d*\b/gi, '');
+    // 5. Replace underscores, hyphens, and multiple dots with space
+    title = title.replace(/[-_.]+/g, ' ');
+    // 6. Clean excess whitespace
+    title = title.replace(/\s+/g, ' ').trim();
+    return title;
+}
+
 exports.analyzeDepth = async (req, res) => {
     try {
         const { text, title } = req.body;
         const analysis = depthAnalyzer.analyzeLecture(text || '');
         
-        // Generate clean 1-line overview and key topics for UI preview
         let whatWasTaught = '';
         let keyTopics = [];
         const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
         const recommendedQuestions = wordCount > 3000 ? '5 to 25 Questions' : (wordCount > 1000 ? '5 to 15 Questions' : '3 to 10 Questions');
 
-        if (analysis.isAcademic && wordCount > 25) {
-            try {
-                const cleanTitle = (title || '').replace(/^(?:Y2Mate\.is\s*[-–—]\s*)+/i, '').replace(/[-_]/g, ' ').trim();
-                const snippet = (text || '').substring(0, 1500).replace(/\s+/g, ' ');
-                const aiRes = await Promise.race([
-                    llmRouter.complete({
-                        systemPrompt: 'You are an academic curriculum summarizer. Return a valid JSON object with whatWasTaught (1 clear, professional sentence, 18-25 words describing what was taught) and keyTopics (array of 3-4 clean high-level topics, 2-5 words each). Do NOT output markdown or preface. Format: {"whatWasTaught": "...", "keyTopics": ["..."]}',
-                        prompt: `Title: ${cleanTitle}\nExcerpt: ${snippet}`,
-                        responseFormat: 'json',
-                        temperature: 0.2
-                    }),
-                    new Promise((_, reject) => setTimeout(() => reject(new Error('Summary timeout')), 3500))
-                ]);
-                let parsed = typeof aiRes === 'string' ? JSON.parse(aiRes) : aiRes;
-                if (parsed?.whatWasTaught) whatWasTaught = parsed.whatWasTaught;
-                if (Array.isArray(parsed?.keyTopics) && parsed.keyTopics.length > 0) keyTopics = parsed.keyTopics;
-            } catch (summaryErr) {
-                console.warn('AI summary fallback used:', summaryErr.message);
-            }
-        }
+        if (analysis.isAcademic) {
+            // 1. Extract valid distinct key topics strictly from transcript concepts
+            const rawFocus = Array.isArray(analysis.detectedFocus) ? analysis.detectedFocus : [];
+            const meaningfulFocus = rawFocus.filter(t => t && typeof t === 'string' && t.trim() !== 'Instructional Content');
 
-        // Deterministic fallback if AI summary unavailable
-        if (!whatWasTaught && analysis.isAcademic) {
-            const cleanTitle = (title || 'Classroom Lecture').replace(/^(?:Y2Mate\.is\s*[-–—]\s*)+/i, '').replace(/[-_]/g, ' ').trim();
-            whatWasTaught = `A comprehensive lecture exploring ${cleanTitle} with detailed conceptual explanations, operational mechanisms, and step-by-step traces.`;
-            keyTopics = [
-                `${cleanTitle} Principles`,
-                'Algorithmic Mechanisms & Rules',
-                'Worked Examples & Applications'
-            ];
+            if (meaningfulFocus.length > 0) {
+                keyTopics = meaningfulFocus.slice(0, 4);
+            } else if (analysis.curricularSegments && analysis.curricularSegments.length > 0) {
+                // Secondary extraction from curricular segments if detectedFocus had only generic terms
+                const segmentTerms = [];
+                for (const seg of analysis.curricularSegments) {
+                    const terms = seg.classification?.matchedTerms || [];
+                    for (const term of terms) {
+                        if (term && term.length > 3 && !segmentTerms.includes(term)) {
+                            segmentTerms.push(term);
+                        }
+                    }
+                }
+                if (segmentTerms.length > 0) {
+                    keyTopics = segmentTerms.slice(0, 4);
+                }
+            }
+
+            // 2. Clean fallback title for display context only if no transcript concepts were extracted
+            const cleanTitle = sanitizeLectureTitle(title || '');
+
+            if (keyTopics.length === 0) {
+                if (cleanTitle) {
+                    keyTopics = [`${cleanTitle} Principles`, 'Core Operational Rules', 'Worked Examples'];
+                } else {
+                    keyTopics = ['Core Principles', 'Operational Rules', 'Worked Applications'];
+                }
+            }
+
+            // 3. Construct authoritative, professional 1-line overview from actual concepts
+            const characteristics = analysis.lectureDepth?.characteristics || {};
+            const procedureDesc = characteristics.procedures === 'Strong' ? 'step-by-step procedures' : 'conceptual foundations';
+            const exampleDesc = characteristics.examples === 'Present' ? 'practical examples' : 'operational mechanisms';
+
+            if (meaningfulFocus.length > 0) {
+                const topicSummary = meaningfulFocus.slice(0, 3).join(', ');
+                whatWasTaught = `A structured lecture exploring ${topicSummary} with ${procedureDesc} and ${exampleDesc}.`;
+            } else if (cleanTitle) {
+                whatWasTaught = `A structured lecture exploring ${cleanTitle} with ${procedureDesc} and ${exampleDesc}.`;
+            } else {
+                whatWasTaught = `A comprehensive lecture exploring core domain concepts with ${procedureDesc} and ${exampleDesc}.`;
+            }
         }
 
         return res.json({

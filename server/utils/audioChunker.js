@@ -75,8 +75,94 @@ function findNextFrameSync(buffer, startOffset) {
     return -1;
 }
 
+const SCAN_BUFFER_SIZE = 64 * 1024;
+
+/**
+ * Scans an open file descriptor from startOffset to find the next valid MP3 frame sync,
+ * reading small 64KB buffers without loading the full file into memory.
+ * 
+ * @param {number} fd - File descriptor opened for reading
+ * @param {number} startOffset - Byte offset to start scanning from
+ * @param {number} totalSize - Total size of the file in bytes
+ * @returns {number} Byte offset of the valid frame sync in the file, or -1 if none found
+ */
+function findFrameSyncInFd(fd, startOffset, totalSize) {
+    let currentPos = Math.max(0, startOffset);
+    const maxScan = totalSize - 4;
+    const scanBuf = Buffer.alloc(SCAN_BUFFER_SIZE);
+    const checkBuf = Buffer.alloc(4);
+
+    while (currentPos < maxScan) {
+        const toRead = Math.min(scanBuf.length, totalSize - currentPos);
+        const bytesRead = fs.readSync(fd, scanBuf, 0, toRead, currentPos);
+        if (bytesRead < 4) break;
+
+        const limit = bytesRead - 4;
+        for (let i = 0; i <= limit; i++) {
+            if (scanBuf[i] === 0xFF && (scanBuf[i + 1] & 0xE0) === 0xE0) {
+                const parsed = parseFrameHeader(scanBuf, i);
+                if (parsed && parsed.frameLength > 0) {
+                    const candidatePos = currentPos + i;
+                    const nextFramePos = candidatePos + parsed.frameLength;
+
+                    if (nextFramePos + 4 <= totalSize) {
+                        if (i + parsed.frameLength + 4 <= bytesRead) {
+                            const nextParsed = parseFrameHeader(scanBuf, i + parsed.frameLength);
+                            if (nextParsed) {
+                                return candidatePos;
+                            }
+                        } else {
+                            const checkRead = fs.readSync(fd, checkBuf, 0, 4, nextFramePos);
+                            if (checkRead === 4 && parseFrameHeader(checkBuf, 0)) {
+                                return candidatePos;
+                            }
+                        }
+                    } else if (nextFramePos >= totalSize) {
+                        return candidatePos;
+                    }
+                }
+            }
+        }
+
+        if (bytesRead === scanBuf.length) {
+            currentPos += (bytesRead - 3);
+        } else {
+            break;
+        }
+    }
+
+    return -1;
+}
+
+/**
+ * Copies a byte range from an open file descriptor to a new destination file
+ * in streaming 64KB increments, keeping heap allocation constant and minimal.
+ * 
+ * @param {number} inFd - Source file descriptor
+ * @param {string} outPath - Destination file path
+ * @param {number} startOffset - Byte offset to start copying from
+ * @param {number} endOffset - Byte offset to end copying (exclusive)
+ */
+function copyChunkSlice(inFd, outPath, startOffset, endOffset) {
+    const outFd = fs.openSync(outPath, 'w');
+    const copyBuf = Buffer.alloc(64 * 1024);
+    try {
+        let pos = startOffset;
+        while (pos < endOffset) {
+            const toRead = Math.min(copyBuf.length, endOffset - pos);
+            const bytesRead = fs.readSync(inFd, copyBuf, 0, toRead, pos);
+            if (bytesRead <= 0) break;
+            fs.writeSync(outFd, copyBuf, 0, bytesRead);
+            pos += bytesRead;
+        }
+    } finally {
+        fs.closeSync(outFd);
+    }
+}
+
 /**
  * Chunks an MP3 file into valid MP3 sub-files with configurable target size and temporal overlap.
+ * Uses streaming file descriptor operations with 64KB buffers to avoid loading large files into memory.
  * 
  * @param {string} inputPath - Absolute path to the original MP3 file
  * @param {Object} options
@@ -90,84 +176,108 @@ function chunkMp3(inputPath, options = {}) {
     const overlapSeconds = options.overlapSeconds !== undefined ? options.overlapSeconds : 2.0;
     const outputDir = options.outputDir || path.dirname(inputPath);
 
-    const fileBuffer = fs.readFileSync(inputPath);
-    const totalSize = fileBuffer.length;
-
-    // Detect and skip ID3v2 metadata header if present
-    let dataStart = 0;
-    if (fileBuffer.slice(0, 3).toString() === 'ID3') {
-        const s0 = fileBuffer[6];
-        const s1 = fileBuffer[7];
-        const s2 = fileBuffer[8];
-        const s3 = fileBuffer[9];
-        const id3Size = (s0 << 21) | (s1 << 14) | (s2 << 7) | s3;
-        dataStart = 10 + id3Size;
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    // Align to the very first valid audio frame
-    const firstFramePos = findNextFrameSync(fileBuffer, dataStart);
-    if (firstFramePos !== -1) {
-        dataStart = firstFramePos;
-    }
+    const stats = fs.statSync(inputPath);
+    const totalSize = stats.size;
 
-    const chunks = [];
-    let currentStart = dataStart;
-    let chunkIndex = 0;
+    let fd = null;
+    try {
+        fd = fs.openSync(inputPath, 'r');
 
-    // Estimate average bitrate to calculate byte size for temporal overlap
-    const firstFrame = parseFrameHeader(fileBuffer, dataStart);
-    const estimatedBitrate = firstFrame ? firstFrame.bitrate : 128000;
-    const overlapBytesEstimate = Math.floor((estimatedBitrate / 8) * overlapSeconds);
+        // Detect and skip ID3v2 metadata header if present
+        let dataStart = 0;
+        const id3Header = Buffer.alloc(10);
+        const id3Read = fs.readSync(fd, id3Header, 0, 10, 0);
+        if (id3Read >= 10 && id3Header.slice(0, 3).toString() === 'ID3') {
+            const s0 = id3Header[6];
+            const s1 = id3Header[7];
+            const s2 = id3Header[8];
+            const s3 = id3Header[9];
+            const id3Size = (s0 << 21) | (s1 << 14) | (s2 << 7) | s3;
+            dataStart = 10 + id3Size;
+        }
 
-    while (currentStart < totalSize) {
-        chunkIndex++;
-        let targetEnd = currentStart + targetChunkBytes;
+        // Align to the very first valid audio frame
+        const firstFramePos = findFrameSyncInFd(fd, dataStart, totalSize);
+        if (firstFramePos !== -1) {
+            dataStart = firstFramePos;
+        }
 
-        if (targetEnd >= totalSize) {
-            // Final chunk
-            const chunkSlice = fileBuffer.slice(currentStart, totalSize);
-            const chunkFilename = `chunk_${chunkIndex}_${Date.now()}_final.mp3`;
+        const chunks = [];
+        let currentStart = dataStart;
+        let chunkIndex = 0;
+
+        // Estimate average bitrate to calculate byte size for temporal overlap
+        let estimatedBitrate = 128000;
+        const firstFrameBuf = Buffer.alloc(4);
+        if (dataStart + 4 <= totalSize) {
+            fs.readSync(fd, firstFrameBuf, 0, 4, dataStart);
+            const firstFrame = parseFrameHeader(firstFrameBuf, 0);
+            if (firstFrame && firstFrame.bitrate) {
+                estimatedBitrate = firstFrame.bitrate;
+            }
+        }
+        const overlapBytesEstimate = Math.floor((estimatedBitrate / 8) * overlapSeconds);
+
+        while (currentStart < totalSize) {
+            chunkIndex++;
+            let targetEnd = currentStart + targetChunkBytes;
+
+            if (targetEnd >= totalSize) {
+                // Final chunk
+                const chunkFilename = `chunk_${chunkIndex}_${Date.now()}_final.mp3`;
+                const chunkFilePath = path.join(outputDir, chunkFilename);
+                copyChunkSlice(fd, chunkFilePath, currentStart, totalSize);
+                const sizeBytes = totalSize - currentStart;
+
+                chunks.push({
+                    chunkIndex,
+                    filePath: chunkFilePath,
+                    sizeBytes,
+                    isFinal: true
+                });
+                break;
+            }
+
+            // Search for a valid frame boundary at or just before targetEnd
+            let framePos = findFrameSyncInFd(fd, Math.max(currentStart, targetEnd - 5000), totalSize);
+            if (framePos === -1 || framePos > targetEnd + 50000) {
+                framePos = targetEnd;
+            }
+
+            const chunkFilename = `chunk_${chunkIndex}_${Date.now()}.mp3`;
             const chunkFilePath = path.join(outputDir, chunkFilename);
-            fs.writeFileSync(chunkFilePath, chunkSlice);
+            copyChunkSlice(fd, chunkFilePath, currentStart, framePos);
+            const sizeBytes = framePos - currentStart;
 
             chunks.push({
                 chunkIndex,
                 filePath: chunkFilePath,
-                sizeBytes: chunkSlice.length,
-                isFinal: true
+                sizeBytes,
+                isFinal: false
             });
-            break;
+
+            // Set start of next chunk with configured overlap (aligned to a clean frame)
+            let nextStartCandidate = framePos - overlapBytesEstimate;
+            if (nextStartCandidate <= currentStart) {
+                nextStartCandidate = framePos; // Ensure forward progress
+            }
+
+            const nextAlignedFrame = findFrameSyncInFd(fd, nextStartCandidate, totalSize);
+            currentStart = (nextAlignedFrame !== -1 && nextAlignedFrame < framePos) ? nextAlignedFrame : framePos;
         }
 
-        // Search for a valid frame boundary at or just before targetEnd
-        let framePos = findNextFrameSync(fileBuffer, targetEnd - 5000);
-        if (framePos === -1 || framePos > targetEnd + 50000) {
-            framePos = targetEnd;
+        return chunks;
+    } finally {
+        if (fd !== null) {
+            try {
+                fs.closeSync(fd);
+            } catch (_) {}
         }
-
-        const chunkSlice = fileBuffer.slice(currentStart, framePos);
-        const chunkFilename = `chunk_${chunkIndex}_${Date.now()}.mp3`;
-        const chunkFilePath = path.join(outputDir, chunkFilename);
-        fs.writeFileSync(chunkFilePath, chunkSlice);
-
-        chunks.push({
-            chunkIndex,
-            filePath: chunkFilePath,
-            sizeBytes: chunkSlice.length,
-            isFinal: false
-        });
-
-        // Set start of next chunk with configured overlap (aligned to a clean frame)
-        let nextStartCandidate = framePos - overlapBytesEstimate;
-        if (nextStartCandidate <= currentStart) {
-            nextStartCandidate = framePos; // Ensure forward progress
-        }
-
-        const nextAlignedFrame = findNextFrameSync(fileBuffer, nextStartCandidate);
-        currentStart = (nextAlignedFrame !== -1 && nextAlignedFrame < framePos) ? nextAlignedFrame : framePos;
     }
-
-    return chunks;
 }
 
 /**
@@ -284,6 +394,8 @@ module.exports = {
     chunkM4a,
     compressForWhisper,
     parseFrameHeader,
-    findNextFrameSync
+    findNextFrameSync,
+    findFrameSyncInFd,
+    copyChunkSlice
 };
 

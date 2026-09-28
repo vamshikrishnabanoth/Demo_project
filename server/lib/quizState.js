@@ -34,8 +34,17 @@ const FLUSH_CONCURRENCY  = 3;      // Max simultaneous DB write operations
 const MAX_RETRIES        = 3;      // Max retry attempts per failed write
 const RETRY_BASE_MS      = 500;    // Base delay for exponential backoff
 const MAX_BUFFER_SIZE    = 5000;   // Safety cap: total pending writes across all quizzes
-const DRAIN_TIMEOUT_MS   = 12000;  // Max time to drain buffer on quiz end
-const LEADERBOARD_THROTTLE_MS = 400; // Min ms between full leaderboard broadcasts per quiz
+let LEADERBOARD_THROTTLE_MS = parseInt(process.env.LEADERBOARD_THROTTLE_MS, 10) || 1000; // Operational throttle: min ms between full leaderboard broadcasts per quiz
+
+function getLeaderboardThrottleMs() {
+    return LEADERBOARD_THROTTLE_MS;
+}
+
+function setLeaderboardThrottleMs(ms) {
+    if (typeof ms === 'number' && ms >= 0) {
+        LEADERBOARD_THROTTLE_MS = ms;
+    }
+}
 
 // ─── In-Memory Quiz State Store ───────────────────────────────────────────────
 // Map<quizId, QuizMemoryState>
@@ -677,6 +686,8 @@ module.exports = {
     getLeaderboard,
     shouldBroadcastLeaderboard,
     forceLeaderboardBroadcast,
+    getLeaderboardThrottleMs,
+    setLeaderboardThrottleMs,
 
     // Student access
     getStudentState,

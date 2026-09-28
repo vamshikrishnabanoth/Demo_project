@@ -78,6 +78,13 @@ ${evidenceContext}
 
       const parsed = safeParseJson(responseText);
 
+      if (!parsed || typeof parsed !== 'object' || !parsed.status) {
+        throw new Error('AGENT3_MALFORMED_RESPONSE: Parsed JSON does not contain valid evaluation status');
+      }
+
+      parsed.verificationMethod = 'LLM_EVALUATION';
+      parsed.isFallback = false;
+
       // Hard enforcement on unsupported foreign tier or low student answerability on foundational
       if (parsed.tier === 'UNSUPPORTED_FOREIGN') {
         parsed.status = 'FAIL';
@@ -89,16 +96,113 @@ ${evidenceContext}
 
       return parsed;
     } catch (err) {
-      console.warn(`⚠️ [Agent 3] LLM evaluation call notice: ${err.message}. Passing question via heuristic fallback.`);
+      console.warn(`⚠️ [Agent 3] LLM evaluation unavailable (${err.message}). Engaging deterministic grounding fallback.`);
+      return this._deterministicGroundingFallback(candidateMCQ, target, evidenceContext, err.message);
+    }
+  }
+
+  /**
+   * Deterministic grounding check used strictly as a truthful fallback
+   * when LLM evaluation is unavailable (e.g., timeout, rate-limit, network error).
+   * Measures actual token overlap between candidate question/answer and retrieved evidence.
+   */
+  _deterministicGroundingFallback(candidateMCQ, target, evidenceText, errorReason) {
+    // 1. Pre-check validation: malformed MCQs fail immediately
+    const preCheck = deterministicValidator.runPreChecks(candidateMCQ);
+    if (!preCheck.isValid) {
       return {
-        status: 'PASS',
-        tier: 'EVIDENCE_DERIVED',
-        studentAnswerability: 'HIGH',
-        failureReason: null,
-        repairInstruction: null,
-        groundingScore: 0.90
+        status: 'FAIL',
+        tier: 'UNSUPPORTED_FOREIGN',
+        studentAnswerability: 'LOW',
+        failureReason: `AGENT3_FALLBACK_FAIL: Pre-checks failed (${preCheck.errors.join('; ')}) after LLM evaluation failed (${errorReason})`,
+        repairInstruction: 'Format question with exactly 4 distinct options and matching correctAnswer',
+        groundingScore: 0.0,
+        verificationMethod: 'UNAUDITED_HEURISTIC_FALLBACK',
+        isFallback: true,
+        auditNotice: `LLM evaluation failed (${errorReason}). Pre-checks rejected the candidate question.`
       };
     }
+
+    const cleanEvidence = (evidenceText || '').toLowerCase();
+    if (cleanEvidence.length < 20) {
+      return {
+        status: 'FAIL',
+        tier: 'UNSUPPORTED_FOREIGN',
+        studentAnswerability: 'LOW',
+        failureReason: `AGENT3_FALLBACK_FAIL: Insufficient readable evidence context after LLM evaluation failed (${errorReason})`,
+        repairInstruction: `Ensure evidence contains sufficient context for concept ${target?.concept || 'target'}`,
+        groundingScore: 0.0,
+        verificationMethod: 'UNAUDITED_HEURISTIC_FALLBACK',
+        isFallback: true,
+        auditNotice: `LLM evaluation failed (${errorReason}). Insufficient evidence context to verify grounding.`
+      };
+    }
+
+    // 2. Extract content tokens (>3 chars, non-stopwords) from question, options, and target concept
+    const stopwords = new Set([
+      'which', 'what', 'where', 'when', 'after', 'before', 'during', 'should',
+      'between', 'their', 'there', 'about', 'using', 'would', 'could', 'because',
+      'primary', 'following', 'statement', 'correct', 'accurately', 'context',
+      'system', 'program', 'process', 'result', 'inside', 'dataset', 'placed',
+      'that', 'this', 'with', 'from', 'have', 'been', 'does', 'than', 'into'
+    ]);
+
+    const qText = (candidateMCQ.questionText || '').toLowerCase();
+    const ansText = (candidateMCQ.correctAnswer || '').toLowerCase();
+
+    const rawTokens = `${qText} ${ansText}`
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 3 && !stopwords.has(w));
+
+    const uniqueTokens = [...new Set(rawTokens)];
+
+    if (uniqueTokens.length === 0) {
+      return {
+        status: 'FAIL',
+        tier: 'UNSUPPORTED_FOREIGN',
+        studentAnswerability: 'LOW',
+        failureReason: `AGENT3_FALLBACK_FAIL: No assessable content terms found to evaluate grounding after LLM failure (${errorReason})`,
+        repairInstruction: `Include concrete domain terms for ${target?.concept || 'concept'} in the question`,
+        groundingScore: 0.0,
+        verificationMethod: 'UNAUDITED_HEURISTIC_FALLBACK',
+        isFallback: true,
+        auditNotice: `LLM evaluation failed (${errorReason}). No assessable content tokens found.`
+      };
+    }
+
+    // 3. Measure actual overlap against verifiable evidence text
+    const matchedTokens = uniqueTokens.filter(t => cleanEvidence.includes(t));
+    const matchRatio = Number((matchedTokens.length / uniqueTokens.length).toFixed(2));
+
+    // Baseline grounding: requires at least 0.15 overlap and at least 1 matched token
+    const isGrounded = matchRatio >= 0.15 && matchedTokens.length >= 1;
+
+    if (!isGrounded) {
+      return {
+        status: 'FAIL',
+        tier: 'UNSUPPORTED_FOREIGN',
+        studentAnswerability: 'LOW',
+        failureReason: `AGENT3_FALLBACK_FAIL: LLM evaluation failed (${errorReason}) and candidate MCQ has insufficient evidence overlap (${matchedTokens.length}/${uniqueTokens.length} terms matched, ${(matchRatio * 100).toFixed(0)}% < 15%)`,
+        repairInstruction: `Ground question and answer strictly in session evidence for ${target?.concept || 'target'}`,
+        groundingScore: matchRatio,
+        verificationMethod: 'UNAUDITED_HEURISTIC_FALLBACK',
+        isFallback: true,
+        auditNotice: `LLM evaluation unavailable (${errorReason}). Deterministic fallback rejected question due to insufficient evidence overlap (${(matchRatio * 100).toFixed(0)}%).`
+      };
+    }
+
+    return {
+      status: 'PASS',
+      tier: 'VERIFICATION_FALLBACK',
+      studentAnswerability: 'MEDIUM',
+      failureReason: null,
+      repairInstruction: null,
+      groundingScore: matchRatio,
+      verificationMethod: 'UNAUDITED_HEURISTIC_FALLBACK',
+      isFallback: true,
+      auditNotice: `LLM evaluation unavailable (${errorReason}). Question passed via deterministic lexical evidence match (${matchedTokens.length}/${uniqueTokens.length} terms, ${(matchRatio * 100).toFixed(0)}% overlap).`
+    };
   }
 
   /**
@@ -128,7 +232,8 @@ ${evidenceContext}
       DIRECT_EVIDENCE: 0,
       EVIDENCE_DERIVED: 0,
       FOUNDATIONAL_PREREQUISITE: 0,
-      RELATED_EXTENSION: 0
+      RELATED_EXTENSION: 0,
+      VERIFICATION_FALLBACK: 0
     };
     quizQuestions.forEach(q => {
       const tier = q.metadata?.tier || 'EVIDENCE_DERIVED';
