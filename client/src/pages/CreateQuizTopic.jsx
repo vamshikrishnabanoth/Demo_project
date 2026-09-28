@@ -106,9 +106,13 @@ export default function CreateQuizTopic() {
     // 3. Question Count (Integer, default 10, range 1-30)
     const [questionCount, setQuestionCount] = useState(10);
 
-    // Dynamic Lecture Depth & Detected Focus
+    // Dynamic Lecture Depth & Curriculum Overview
     const [lectureDepth, setLectureDepth] = useState(null);
     const [detectedFocus, setDetectedFocus] = useState([]);
+    const [whatWasTaught, setWhatWasTaught] = useState('');
+    const [keyTopics, setKeyTopics] = useState([]);
+    const [lectureWordCount, setLectureWordCount] = useState(0);
+    const [recommendedQuestions, setRecommendedQuestions] = useState('');
 
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
@@ -238,6 +242,10 @@ export default function CreateQuizTopic() {
         if (!hasVoice) {
             setLectureDepth(null);
             setDetectedFocus([]);
+            setWhatWasTaught('');
+            setKeyTopics([]);
+            setLectureWordCount(0);
+            setRecommendedQuestions('');
             return;
         }
 
@@ -249,25 +257,40 @@ export default function CreateQuizTopic() {
         if (voiceTexts.length > 25) {
             const timer = setTimeout(async () => {
                 try {
-                    const res = await api.post('/quiz/analyze-depth', { text: voiceTexts });
+                    const primaryVoiceName = inputs.find(inp => inp.type === 'voice' || inp.type === 'audio')?.source_name || '';
+                    const res = await api.post('/quiz/analyze-depth', { text: voiceTexts, title: primaryVoiceName });
                     if (res.data && res.data.isAcademic) {
                         setLectureDepth(res.data.lectureDepth);
                         setDetectedFocus(res.data.detectedFocus || []);
+                        setWhatWasTaught(res.data.whatWasTaught || '');
+                        setKeyTopics(res.data.keyTopics || []);
+                        setLectureWordCount(res.data.wordCount || voiceTexts.trim().split(/\s+/).length);
+                        setRecommendedQuestions(res.data.recommendedQuestions || '');
                     } else if (res.data && !res.data.isAcademic) {
                         setLectureDepth({ rating: 'Non-Academic', score: 10, characteristics: {} });
                         setDetectedFocus([]);
+                        setWhatWasTaught('');
+                        setKeyTopics([]);
+                        setLectureWordCount(0);
+                        setRecommendedQuestions('');
                     }
                 } catch (_) {
                     // Local fallback
                     const words = voiceTexts.trim().split(/\s+/).length;
                     const rating = words > 150 ? 'Comprehensive' : (words > 50 ? 'Developing' : 'Introductory');
-                    setLectureDepth({ rating, score: words > 150 ? 80 : (words > 50 ? 60 : 40), characteristics: { conceptExplanation: 'Moderate', reasoning: 'Present' } });
+                    setLectureDepth({ rating, score: words > 150 ? 80 : (words > 50 ? 60 : 40), characteristics: { conceptExplanation: 'Strong', reasoning: 'Light', examples: 'Present', procedures: 'Strong' } });
+                    setLectureWordCount(words);
+                    setRecommendedQuestions(words > 3000 ? '5 to 25 Questions' : (words > 1000 ? '5 to 15 Questions' : '3 to 10 Questions'));
                 }
             }, 600);
             return () => clearTimeout(timer);
         } else {
             setLectureDepth(null);
             setDetectedFocus([]);
+            setWhatWasTaught('');
+            setKeyTopics([]);
+            setLectureWordCount(0);
+            setRecommendedQuestions('');
         }
     }, [inputs]);
 
@@ -1019,6 +1042,10 @@ export default function CreateQuizTopic() {
                             isVoice: hasVoice,
                             agentReport: result.agentReport || null,
                             lectureDepth: hasVoice ? (result.lectureDepth || lectureDepth) : null,
+                            whatWasTaught: whatWasTaught || result.whatWasTaught || null,
+                            keyTopics: (keyTopics && keyTopics.length > 0) ? keyTopics : (result.keyTopics || []),
+                            recommendedQuestions: recommendedQuestions || result.recommendedQuestions || null,
+                            wordCount: lectureWordCount || result.wordCount || 0,
                             notice: result.notice || (result.questions && result.questions.length < questionCount ? `${result.questions.length} grounded questions were generated from the available learning material. Additional questions were withheld to prevent hallucination without supporting evidence.` : null),
                             alignmentWarning: result.alignmentWarning || null,
                             unalignedDocuments: result.unalignedDocuments || [],
@@ -1497,42 +1524,70 @@ export default function CreateQuizTopic() {
                             )}
                         </div>
 
-                        {/* 4. LECTURE PROFILE & DEPTH CARD (Voice input only) */}
+                        {/* 4. LECTURE CONTENT & ASSESSMENT SCOPE CARD (Voice input only) */}
                         {inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
-                            <div className="p-4 bg-purple-50/70 border-2 border-purple-200 rounded-2xl space-y-2.5 shadow-xs transition-all">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-black text-purple-900 uppercase tracking-widest flex items-center gap-1.5">
-                                        <Sparkles size={14} className="text-purple-600" />
-                                        Lecture Profile: <span className="font-bold text-purple-700">{lectureDepth.rating}</span>
+                            <div className="p-4.5 bg-[#fff8f3] border-2 border-[#f5d0b5] rounded-3xl space-y-3.5 shadow-xs transition-all animate-in fade-in duration-200">
+                                <div className="flex items-center justify-between pb-1 border-b border-[#f5d0b5]/70">
+                                    <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider flex items-center gap-2">
+                                        <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
+                                        Lecture Profile: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
                                     </span>
-                                    <span className="text-[10px] font-mono font-black text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-300">
+                                    <span className="text-[10px] font-mono font-black text-[#9a3412] bg-[#fbf0e8] px-2.5 py-0.5 rounded-full border border-[#f5d0b5]">
                                         Depth: {lectureDepth.score}/100
                                     </span>
                                 </div>
 
-                                {detectedFocus && detectedFocus.length > 0 && (
-                                    <div className="flex flex-wrap gap-1.5 pt-1">
-                                        {detectedFocus.map((f, i) => (
-                                            <span key={i} className="text-[9px] font-bold text-slate-700 bg-white px-2 py-0.5 rounded-lg border border-purple-200">
-                                                • {f}
-                                            </span>
-                                        ))}
+                                {/* 1. What Was Taught (1-Line Pedagogical Overview) */}
+                                <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
+                                    <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                        <span>📖</span> What Was Taught
+                                    </p>
+                                    <p className="text-xs font-semibold text-slate-800 leading-relaxed">
+                                        {whatWasTaught || `A comprehensive lecture exploring ${inputs.map(i => i.source_name).filter(Boolean)[0] || 'core concepts'} with detailed conceptual foundations, operational mechanisms, and step-by-step traces.`}
+                                    </p>
+                                </div>
+
+                                {/* 2. Key Topics to be Assessed / Subtopics */}
+                                {((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
+                                    <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
+                                        <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                            <span>🎯</span> Key Topics to be Assessed
+                                        </p>
+                                        <div className="flex flex-wrap gap-2 pt-0.5">
+                                            {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus).map((topic, i) => (
+                                                <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
+                                                    <span>{topic}</span>
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
 
+                                {/* 3. Assessment Scope & Content Volume */}
+                                <div className="bg-white/90 px-3.5 py-2.5 rounded-2xl border border-orange-200/70 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600 shadow-2xs">
+                                    <span className="flex items-center gap-1.5 text-slate-700">
+                                        <span>📊</span> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</span>
+                                    </span>
+                                    <span className="flex items-center gap-1.5 text-slate-700">
+                                        <span>🎯</span> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions || '5 to 25 Questions (Strong Evidence Base)'}</span>
+                                    </span>
+                                </div>
+
+                                {/* 4. Pedagogical Depth Characteristics */}
                                 {lectureDepth.characteristics && (
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1 text-[9px] font-bold text-slate-600">
-                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
-                                            Concepts: <span className="font-black text-purple-800">{lectureDepth.characteristics.conceptExplanation || 'Developing'}</span>
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] font-bold text-slate-600">
+                                        <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                            Concepts: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.conceptExplanation || 'Strong'}</span>
                                         </div>
-                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
-                                            Reasoning: <span className="font-black text-purple-800">{lectureDepth.characteristics.reasoning || 'Present'}</span>
+                                        <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                            Reasoning: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.reasoning || 'Light'}</span>
                                         </div>
-                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
-                                            Examples: <span className="font-black text-purple-800">{lectureDepth.characteristics.examples || 'Light'}</span>
+                                        <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                            Examples: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.examples || 'Present'}</span>
                                         </div>
-                                        <div className="bg-white/80 p-1.5 rounded-lg border border-purple-100">
-                                            Procedures: <span className="font-black text-purple-800">{lectureDepth.characteristics.procedures || 'Light'}</span>
+                                        <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                            Procedures: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.procedures || 'Strong'}</span>
                                         </div>
                                     </div>
                                 )}

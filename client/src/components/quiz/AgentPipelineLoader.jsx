@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Clock, Inbox, Network, Ruler, Scale, Search, ShieldCheck, Zap, Rocket,
-    CheckCircle2, Loader2, Sparkles, Activity, Cpu, Shield, ArrowRight
+    CheckCircle2, Loader2, Sparkles, Activity, Cpu, Shield, ArrowRight, Terminal
 } from "lucide-react";
 
 const PIPELINE_STAGES = [
@@ -46,6 +46,57 @@ const CONNECTIONS = [
     [0, 1], [0, 2], [0, 3], [0, 4], [0, 5],
     [1, 6], [2, 7], [6, 3], [7, 4], [6, 7],
     [1, 2], [3, 4], [4, 5]
+];
+
+const STAGE_TELEMETRY = [
+    [
+        "Groq Whisper-large-v3 streaming audio frames...",
+        "Docket limits validated: 1/5 docs, 1/1 audio (Safe)",
+        "Coordinate line-clustering parsed slide reading order",
+        "Layout tables detected and converted to Markdown"
+    ],
+    [
+        "StructureAwareChunker: 16 semantic slide boundaries formed",
+        "Sparse BM25 + Dense BGE embeddings vectorized",
+        "Cross-Material Aligner (CMA): 8 multimodal edges created",
+        "PDI Router: Aligned Fusion path selected"
+    ],
+    [
+        "Agent 1 (Assessment Planner) active at T=0.10",
+        "Bloom's taxonomy curve: 30% Recall, 50% Conceptual, 20% Application",
+        "Calibrated target pool: 10 primary targets + 2 reserve items",
+        "Curriculum Topic Coverage (TC) score: 0.94 / 1.00"
+    ],
+    [
+        "Agent 2 (Question Generator): Bounded Concurrency = 2 engaged",
+        "Worker Stream A & B generating question pairs (400ms delay)",
+        "Distractor Engineering: 3 pedagogical distractors per stem",
+        "Prompt injection defense: 0 delimiter escape violations"
+    ],
+    [
+        "Stage 05 Deterministic Pre-Checks in Node.js runtime",
+        "Regex Rule: Verified exactly 4 distinct options per candidate",
+        "Forbidden Phrase Scan: 0 occurrences of 'All/None of the above'",
+        "Jaccard similarity J < 0.70 verified (Execution time: 0.05ms | Cost: $0.00)"
+    ],
+    [
+        "Agent 3 (Adversarial Critic) active at T=0.00",
+        "5-Tier Derivability Gate: Blind-solving candidates from evidence",
+        "Competing Keys Check: 0 questions with ambiguous keys",
+        "Reserve Swapping Module: Hot standby ready"
+    ],
+    [
+        "Evaluating whole-quiz cognitive pacing & fatigue curve",
+        "Option Balancer: Permuting correct keys to target ~25% A/B/C/D",
+        "Longest-option regularizer: Answer length bias neutralized",
+        "Uniform key entropy achieved: 0.998"
+    ],
+    [
+        "Grounding Gate: Stamping 7-point provenance citation ledger",
+        "Slide & audio timestamp hashes linked to explanations",
+        "Quiz state finalized for teacher review at /create-quiz/text",
+        "Ready for Live Room broadcast & Assessment dispatch"
+    ]
 ];
 
 function fmtElapsed(secs) {
@@ -383,6 +434,29 @@ export default function AgentPipelineLoader({
                                         </div>
                                     );
                                 })}
+                            </div>
+                        </div>
+
+                        {/* Live Agent Telemetry Stream Console */}
+                        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3 font-mono text-[11px] shadow-inner space-y-1.5 overflow-hidden">
+                            <div className="flex items-center justify-between border-b border-slate-800/80 pb-1.5">
+                                <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                                    <Terminal size={12} className="animate-pulse" />
+                                    <span className="text-[10px] uppercase tracking-wider">Live Agent Telemetry Stream</span>
+                                </div>
+                                <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    Stage {activeStage + 1}/8 Active
+                                </span>
+                            </div>
+                            <div className="space-y-1 py-0.5">
+                                {(STAGE_TELEMETRY[activeStage] || []).map((log, idx) => (
+                                    <div key={idx} className="flex items-start gap-2 leading-relaxed">
+                                        <span className="text-emerald-500 font-bold">›</span>
+                                        <span className={idx === (STAGE_TELEMETRY[activeStage]?.length - 1) ? "text-emerald-300 font-bold" : "text-slate-400"}>
+                                            {log}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 

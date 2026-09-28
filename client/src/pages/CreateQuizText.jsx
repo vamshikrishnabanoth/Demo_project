@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -15,6 +15,7 @@ import AikenPastePanel from '../components/quiz/AikenPastePanel';
 import JsonPastePanel from '../components/quiz/JsonPastePanel';
 import QuizQuestionEditor from '../components/quiz/QuizQuestionEditor';
 import AgentQualityBadge from '../components/quiz/AgentQualityBadge';
+import PipelineObservabilityModal from '../components/quiz/PipelineObservabilityModal';
 import { uiTerminology } from '../utils/uiTerminology';
 
 const targetYearOptions = [
@@ -168,14 +169,18 @@ export default function CreateQuizText() {
     const [assignedStudents, setAssignedStudents] = useState([]);
     const [isAssignDrawerOpen, setIsAssignDrawerOpen] = useState(false);
     const [regeneratingIdx, setRegeneratingIdx] = useState(null);
-    const [finalValidation, setFinalValidation] = useState(null);
     const [lectureDepth, setLectureDepth] = useState(null);
+    const [whatWasTaught, setWhatWasTaught] = useState('');
+    const [keyTopics, setKeyTopics] = useState([]);
+    const [recommendedQuestions, setRecommendedQuestions] = useState('');
+    const [lectureWordCount, setLectureWordCount] = useState(0);
     const [isVoice, setIsVoice] = useState(false);
     const [pipelineNotice, setPipelineNotice] = useState(null);
     const [alignmentWarning, setAlignmentWarning] = useState(null);
     const [isPartialYield, setIsPartialYield] = useState(false);
     const [requestedCount, setRequestedCount] = useState(null);
     const [representationMode, setRepresentationMode] = useState(null);
+    const [showObservability, setShowObservability] = useState(false);
 
     const computedAssignedGroups = useCallback(() => {
         if (assignedGroups && assignedGroups.length > 0) return assignedGroups;
@@ -247,6 +252,18 @@ export default function CreateQuizText() {
             }
             if (location.state.lectureDepth) {
                 setLectureDepth(location.state.lectureDepth);
+            }
+            if (location.state.whatWasTaught) {
+                setWhatWasTaught(location.state.whatWasTaught);
+            }
+            if (location.state.keyTopics && Array.isArray(location.state.keyTopics)) {
+                setKeyTopics(location.state.keyTopics);
+            }
+            if (location.state.recommendedQuestions) {
+                setRecommendedQuestions(location.state.recommendedQuestions);
+            }
+            if (location.state.wordCount) {
+                setLectureWordCount(location.state.wordCount);
             }
             if (location.state.notice) {
                 setPipelineNotice(location.state.notice);
@@ -514,6 +531,15 @@ export default function CreateQuizText() {
                         </h1>
                     </div>
                     <div className="flex items-center gap-3 z-10">
+                        <button
+                            type="button"
+                            onClick={() => setShowObservability(true)}
+                            className="px-4 py-2.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-[10px] uppercase tracking-[0.16em] border border-emerald-500/40 shadow-md shadow-emerald-500/10 flex items-center gap-2 cursor-pointer transition-all active:scale-[0.98] shrink-0"
+                            title="Inspect 8-Stage Architecture Flow & Live Telemetry"
+                        >
+                            <Activity size={14} className="text-emerald-500 dark:text-emerald-400 animate-pulse" />
+                            <span>Pipeline Flow</span>
+                        </button>
                         {(aikenLoaded || isGeneratedSource) && (
                             <button
                                 type="button"
@@ -1072,30 +1098,76 @@ export default function CreateQuizText() {
 
                                 {/* ── Teaching Depth (Voice Quizzes Only) ── */}
                                 {isVoice && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
-                                    <div className="p-5 bg-purple-50/80 border-2 border-purple-200 rounded-3xl space-y-3 shadow-xs animate-in fade-in duration-200">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-xs font-black text-purple-900 uppercase tracking-widest flex items-center gap-2">
-                                                <Sparkles size={16} className="text-purple-600" />
-                                                Teaching Depth: <span className="font-bold text-purple-700">{lectureDepth.rating}</span>
+                                    <div className="p-4.5 bg-[#fff8f3] border-2 border-[#f5d0b5] rounded-3xl space-y-3.5 shadow-xs transition-all animate-in fade-in duration-200">
+                                        <div className="flex items-center justify-between pb-1 border-b border-[#f5d0b5]/70">
+                                            <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider flex items-center gap-2">
+                                                <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
+                                                Lecture Profile: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
                                             </span>
-                                            <span className="text-xs font-mono font-black text-purple-700 bg-purple-100 px-3 py-1 rounded-full border border-purple-300">
-                                                Score: {lectureDepth.score}/100
+                                            <span className="text-[10px] font-mono font-black text-[#9a3412] bg-[#fbf0e8] px-2.5 py-0.5 rounded-full border border-[#f5d0b5]">
+                                                Depth: {lectureDepth.score}/100
                                             </span>
                                         </div>
 
+                                        {/* What Was Taught */}
+                                        {whatWasTaught && (
+                                            <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                    <span>📖</span> What Was Taught
+                                                </p>
+                                                <p className="text-xs font-semibold text-slate-800 leading-relaxed">
+                                                    {whatWasTaught}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Key Topics / Subtopics */}
+                                        {keyTopics && keyTopics.length > 0 && (
+                                            <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                    <span>🎯</span> Key Topics Assessed
+                                                </p>
+                                                <div className="flex flex-wrap gap-2 pt-0.5">
+                                                    {keyTopics.map((topic, i) => (
+                                                        <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
+                                                            <span>{topic}</span>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Scope & Volume */}
+                                        {(lectureWordCount > 0 || recommendedQuestions) && (
+                                            <div className="bg-white/90 px-3 py-2 rounded-2xl border border-orange-200/70 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600 shadow-2xs">
+                                                {lectureWordCount > 0 && (
+                                                    <span className="flex items-center gap-1.5 text-slate-700">
+                                                        <span>📊</span> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount.toLocaleString()} words</span>
+                                                    </span>
+                                                )}
+                                                {recommendedQuestions && (
+                                                    <span className="flex items-center gap-1.5 text-slate-700">
+                                                        <span>🎯</span> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions}</span>
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Characteristics */}
                                         {lectureDepth.characteristics && (
                                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] font-bold text-slate-600">
-                                                <div className="bg-white/90 p-2 rounded-xl border border-purple-100">
-                                                    Concepts: <span className="font-black text-purple-800">{lectureDepth.characteristics.conceptExplanation || 'Developing'}</span>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                                    Concepts: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.conceptExplanation || 'Strong'}</span>
                                                 </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-purple-100">
-                                                    Reasoning: <span className="font-black text-purple-800">{lectureDepth.characteristics.reasoning || 'Present'}</span>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                                    Reasoning: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.reasoning || 'Light'}</span>
                                                 </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-purple-100">
-                                                    Examples: <span className="font-black text-purple-800">{lectureDepth.characteristics.examples || 'Light'}</span>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                                    Examples: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.examples || 'Present'}</span>
                                                 </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-purple-100">
-                                                    Procedures: <span className="font-black text-purple-800">{lectureDepth.characteristics.procedures || 'Light'}</span>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                                    Procedures: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.procedures || 'Strong'}</span>
                                                 </div>
                                             </div>
                                         )}
@@ -1175,6 +1247,16 @@ export default function CreateQuizText() {
                 }}
                 initialGroups={computedAssignedGroups()}
                 initialStudents={assignedStudents}
+            />
+
+            <PipelineObservabilityModal
+                isOpen={showObservability}
+                onClose={() => setShowObservability(false)}
+                questions={questions}
+                title={title}
+                agentReport={agentReport}
+                isVoice={isVoice}
+                duration={duration}
             />
         </DashboardLayout>
     );
