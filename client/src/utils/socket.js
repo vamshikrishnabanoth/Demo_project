@@ -1,8 +1,14 @@
 import { io } from 'socket.io-client';
 
-const PRODUCTION_SOCKET_URL = 'https://quiz-backend-qgro.onrender.com';
+const PRODUCTION_SOCKET_URL = 'https://demo-project-3izc.onrender.com';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const isProductionDomain = typeof window !== 'undefined' && (
+    window.location.hostname.includes('vercel.app') ||
+    window.location.hostname.includes('render.com') ||
+    !['localhost', '127.0.0.1'].includes(window.location.hostname)
+);
+
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (isProductionDomain ? PRODUCTION_SOCKET_URL : 'http://localhost:5000');
 
 const socket = io(SOCKET_URL, {
     auth: (cb) => {
