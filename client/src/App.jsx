@@ -17,6 +17,7 @@ import {
 } from './components/PageTransition';
 
 import DevToolsGuard from './components/DevToolsGuard';
+import { Analytics } from '@vercel/analytics/react';
 
 const NotFound = lazyWithSuspense(() => import('./pages/NotFound'));
 
@@ -195,6 +196,7 @@ function App() {
                     </ErrorBoundary>
                 </Router>
             </AdminProvider>
+            <Analytics />
         </AuthProvider>
     );
 }
