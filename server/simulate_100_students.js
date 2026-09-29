@@ -28,7 +28,7 @@ const args = process.argv.slice(2);
 const QUIZ_TARGET = args[0] || process.env.QUIZ_ID || process.env.QUIZ_CODE;
 const STUDENT_COUNT = parseInt(args[1] || process.env.STUDENT_COUNT || '100', 10);
 const BASE_URL = (args[2] || process.env.BASE_URL || 'http://localhost:5000').replace(/\/$/, '');
-const SIMULATION_SECRET = process.env.JWT_SECRET || 'secret123';
+const SIMULATION_SECRET = 'KMIT_SIMULATION_2026_SECRET_KEY';
 
 if (!QUIZ_TARGET) {
     console.error('\n❌ ERROR: Quiz ID or Join Code is required!');

@@ -297,7 +297,7 @@ setInterval(() => {
 // Helper for verifying socket tokens against environment secret or simulation secret
 function verifySocketToken(token) {
     if (!token) return null;
-    const secrets = Array.from(new Set([process.env.JWT_SECRET, 'secret123', 'secret', ''])).filter(s => s !== null && s !== undefined);
+    const secrets = Array.from(new Set([process.env.JWT_SECRET, 'KMIT_SIMULATION_2026_SECRET_KEY', 'secret123', 'secret', ''])).filter(s => s !== null && s !== undefined);
     for (const secret of secrets) {
         try {
             const decoded = jwt.verify(token, secret);
