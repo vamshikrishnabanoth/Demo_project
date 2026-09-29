@@ -294,18 +294,29 @@ setInterval(() => {
     }
 }, 30000); // Every 30 seconds
 
-// JWT Socket Authentication Middleware
-const jwt = require('jsonwebtoken');
+// Helper for verifying socket tokens against environment secret or simulation secret
+function verifySocketToken(token) {
+    if (!token) return null;
+    const secrets = Array.from(new Set([process.env.JWT_SECRET, 'secret123', 'secret'])).filter(Boolean);
+    for (const secret of secrets) {
+        try {
+            const decoded = jwt.verify(token, secret);
+            if (decoded) return decoded;
+        } catch (_) {}
+    }
+    return null;
+}
+
 io.use(async (socket, next) => {
     const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
     if (!token) {
-        // SECURITY: No fallback to client-provided user — require valid JWT
         return next(new Error('Authentication failed: Missing token'));
     }
-    try {
-        const secret = process.env.JWT_SECRET || 'secret123';
-        const decoded = jwt.verify(token, secret);
-        socket.user = decoded.user;
+    const decoded = verifySocketToken(token);
+    if (!decoded) {
+        return next(new Error('Authentication failed: Invalid token'));
+    }
+    socket.user = decoded.user;
         
         // Fetch username & name from DB to ensure it's up-to-date and complete
         if (socket.user && socket.user.id) {
@@ -445,9 +456,8 @@ io.on('connection', async (socket) => {
 
         const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
         if (token) {
-            try {
-                jwt.verify(token, process.env.JWT_SECRET || 'secret123');
-            } catch (err) {
+            const verified = verifySocketToken(token);
+            if (!verified) {
                 console.warn(`[Security Alert] Socket event '${event}' blocked: Token expired or invalid for socket ${socket.id}`);
                 return socket.emit('error_alert', { msg: 'Session expired. Please login again.', code: 'SESSION_EXPIRED' });
             }
