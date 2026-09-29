@@ -303,7 +303,8 @@ io.use(async (socket, next) => {
         return next(new Error('Authentication failed: Missing token'));
     }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const secret = process.env.JWT_SECRET || 'secret123';
+        const decoded = jwt.verify(token, secret);
         socket.user = decoded.user;
         
         // Fetch username & name from DB to ensure it's up-to-date and complete
@@ -445,7 +446,7 @@ io.on('connection', async (socket) => {
         const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
         if (token) {
             try {
-                jwt.verify(token, process.env.JWT_SECRET || 'secret');
+                jwt.verify(token, process.env.JWT_SECRET || 'secret123');
             } catch (err) {
                 console.warn(`[Security Alert] Socket event '${event}' blocked: Token expired or invalid for socket ${socket.id}`);
                 return socket.emit('error_alert', { msg: 'Session expired. Please login again.', code: 'SESSION_EXPIRED' });
@@ -683,7 +684,7 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                         select: { createdById: true, accessType: true, assignedGroups: true, assignedStudents: true }
                     })
                 ]);
-                if (targetQuiz && !isStudentTargetedSocket(studentUser, targetQuiz.assignedGroups, targetQuiz.assignedStudents)) {
+                if (studentUser && targetQuiz && !isStudentTargetedSocket(studentUser, targetQuiz.assignedGroups, targetQuiz.assignedStudents)) {
                     console.warn(`[Audience Restriction] Blocked student ${socket.user.username} from joining room ${realQuizId}`);
                     return socket.emit('error_alert', { msg: 'Access restricted: You are not in the targeted audience (Year / Branch / Section) for this quiz.' });
                 }
