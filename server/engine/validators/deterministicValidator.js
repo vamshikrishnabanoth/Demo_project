@@ -10,6 +10,8 @@
 
 'use strict';
 
+const crypto = require('crypto');
+
 class DeterministicValidator {
   normalizeCorrectAnswer(mcq) {
     if (!mcq || !Array.isArray(mcq.options) || mcq.options.length === 0 || !mcq.correctAnswer) {
@@ -81,6 +83,12 @@ class DeterministicValidator {
       if (uniqueOptions.size < 4) {
         errors.push('Duplicate option choices detected');
       }
+
+      // Check option exclusivity and ambiguous nesting (Phase 3.3 Gate)
+      const ambiguityCheck = this.detectOptionAmbiguity(mcq.questionText || mcq.stem, mcq.options, mcq.correctAnswer);
+      if (ambiguityCheck.classification === 'POTENTIAL_MULTI_KEY') {
+        errors.push(`POTENTIAL_MULTI_KEY: ${ambiguityCheck.reason}`);
+      }
     }
 
     if (!mcq.correctAnswer || typeof mcq.correctAnswer !== 'string') {
@@ -92,6 +100,146 @@ class DeterministicValidator {
     return {
       isValid: errors.length === 0,
       errors: errors
+    };
+  }
+
+  _extractFlags(cmdStr) {
+    const tokens = String(cmdStr || '').split(/\s+/);
+    return tokens.filter(t => t.startsWith('-')).map(t => t.split('=')[0]);
+  }
+
+  /**
+   * Phase 3.3: Deterministic Option-Relationship Ambiguity Detector.
+   * Classifies option sets into:
+   * - 'NO_NESTING': Options are mutually distinct without additive parameter/flag subsumption.
+   *   (NOTE: Does NOT mean zero textual overlap; means containment is non-additive, e.g. math/code subexpressions).
+   * - 'EXPLICITLY_DISCRIMINATED': Contained option is explicitly distinguished by criteria in the stem.
+   * - 'POTENTIAL_MULTI_KEY': Contained option exhibits unconstrained nesting risking dual valid keys.
+   * - 'UNCERTAIN': Ambiguous or complex overlap, deferred to Agent 3.
+   *
+   * @param {String} stem - Question stem text
+   * @param {Array<String>} options - Array of 4 option strings
+   * @param {String} correctAnswer - Target correct answer string
+   * @returns {Object} { classification, reason, offendingPair }
+   */
+  detectOptionAmbiguity(stem = '', options = [], correctAnswer = '') {
+    if (!Array.isArray(options) || options.length < 2) {
+      return { classification: 'NO_NESTING', reason: 'Insufficient options to evaluate', offendingPair: null };
+    }
+
+    const cleanStem = String(stem || '').toLowerCase();
+    const stemTokens = cleanStem
+      .replace(/[^a-z0-9]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length >= 3);
+
+    const nestedPairs = [];
+
+    for (let i = 0; i < options.length; i++) {
+      for (let j = 0; j < options.length; j++) {
+        if (i === j) continue;
+        const o1 = String(options[i] || '').trim();
+        const o2 = String(options[j] || '').trim();
+        if (!o1 || !o2 || o1 === o2) continue;
+        if (o1.length < 5 || o2.length <= o1.length) continue;
+
+        const o1Lower = o1.toLowerCase();
+        const o2Lower = o2.toLowerCase();
+
+        // 1. Command Flag Subsumption (Generic CLI Invariant)
+        // Same command executable with dash-prefixed flags where o1 flags are a strict subset of o2 flags
+        const o1Words = o1.split(/\s+/);
+        const o2Words = o2.split(/\s+/);
+        const hasFlags = (o1.includes('--') || o1.includes(' -')) && (o2.includes('--') || o2.includes(' -'));
+
+        if (o1Words[0].toLowerCase() === o2Words[0].toLowerCase() && hasFlags) {
+          const flags1 = this._extractFlags(o1);
+          const flags2 = this._extractFlags(o2);
+          const f1Lower = flags1.map(f => f.toLowerCase());
+          const f2Lower = flags2.map(f => f.toLowerCase());
+
+          if (flags1.length > 0 && flags2.length > flags1.length) {
+            const isFlagSubset = f1Lower.every(f => f2Lower.includes(f));
+            if (isFlagSubset) {
+              const extraFlags = flags2.filter(f => !f1Lower.includes(f.toLowerCase()));
+              const rawDiffTokens = extraFlags
+                .map(f => f.replace(/^\-+/, '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().split(/[\s_\-]+/))
+                .flat()
+                .filter(w => w.length >= 3);
+
+              const o1Tokens = new Set(o1Lower.replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(w => w.length >= 3));
+              const distinctDiffTokens = [...new Set(rawDiffTokens)].filter(t => !o1Tokens.has(t));
+              const diffTokens = distinctDiffTokens.length > 0 ? distinctDiffTokens : [...new Set(rawDiffTokens)];
+
+              nestedPairs.push({ shortOpt: o1, longOpt: o2, diffTokens, type: 'FLAG_SUBSUMPTION' });
+              continue;
+            }
+          }
+        }
+
+        // 2. Whitespace-separated prefix flag/parameter extension (e.g. 'git init' -> 'git init --bare')
+        if (o2Lower.startsWith(o1Lower) && /\s/.test(o2Lower[o1Lower.length])) {
+          const remainder = o2.substring(o1Lower.length).trim();
+          // Exclude arithmetic operator chains like '+ z' or '- z'
+          const isArithmeticChain = /^[\+\*\/\%\^]/.test(remainder) || /^\-\s/.test(remainder);
+
+          // Additive parameter extension requires remainder to be a flag or structured parameter
+          const isFlagExtension = remainder.startsWith('--') || /^\-[a-zA-Z]/.test(remainder);
+
+          if (!isArithmeticChain && isFlagExtension) {
+            const rawTokens = remainder
+              .replace(/([a-z])([A-Z])/g, '$1 $2')
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, ' ')
+              .split(/\s+/)
+              .filter(w => w.length >= 3);
+            const o1Tokens = new Set(o1Lower.replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(w => w.length >= 3));
+            const distinctDiffTokens = [...new Set(rawTokens)].filter(t => !o1Tokens.has(t));
+            const diffTokens = distinctDiffTokens.length > 0 ? distinctDiffTokens : [...new Set(rawTokens)];
+
+            nestedPairs.push({
+              shortOpt: o1,
+              longOpt: o2,
+              diffTokens: diffTokens.length > 0 ? diffTokens : [...new Set(rawTokens)],
+              type: 'PREFIX_ADDITIVE_EXTENSION'
+            });
+          }
+        }
+      }
+    }
+
+    if (nestedPairs.length === 0) {
+      return {
+        classification: 'NO_NESTING',
+        reason: 'No additive option/parameter subsumption detected',
+        offendingPair: null
+      };
+    }
+
+    // Evaluate each nested pair against the stem
+    for (const pair of nestedPairs) {
+      const { shortOpt, longOpt, diffTokens } = pair;
+      const isDiscriminated = diffTokens.length > 0 && diffTokens.some(dt => {
+        return stemTokens.some(st => {
+          if (st === dt) return true;
+          if (st.length >= 4 && dt.length >= 4 && st.startsWith(dt)) return true;
+          return false;
+        });
+      });
+
+      if (!isDiscriminated) {
+        return {
+          classification: 'POTENTIAL_MULTI_KEY',
+          reason: `Options "${shortOpt}" and "${longOpt}" exhibit unconstrained nesting; the distinguishing parameter (${diffTokens.join(', ') || 'unspecified difference'}) is not constrained in the stem`,
+          offendingPair: [shortOpt, longOpt]
+        };
+      }
+    }
+
+    return {
+      classification: 'EXPLICITLY_DISCRIMINATED',
+      reason: 'Contained options are explicitly distinguished by criteria in the stem',
+      offendingPair: null
     };
   }
 
@@ -271,20 +419,289 @@ class DeterministicValidator {
   }
 
   /**
-   * Run Deterministic Post-Checks & Option Randomization.
+   * In-place Fisher-Yates shuffle using cryptographic randomness.
+   * @param {Array} array
+   * @returns {Array} Shuffled array
+   */
+  shuffleArrayCrypto(array) {
+    if (!Array.isArray(array) || array.length <= 1) return array;
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = crypto.randomInt(0, i + 1);
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
+  }
+
+  /**
+   * Normalizes raw MCQ into authoritative semantic representation:
+   * { correctAnswerText, distractorTexts }
+   * Enforces strict contract: 4 options, exactly one match for correctAnswer, exactly 3 distinct distractors.
+   * Idempotence-safe: If already assigned (__positionAssigned === true), returns as-is.
+   *
+   * @param {Object} mcq - Candidate MCQ object
+   * @returns {Object} Normalized MCQ with mcq.semanticIdentity
+   */
+  normalizeSemanticMCQ(mcq) {
+    if (!mcq || typeof mcq !== 'object') {
+      const err = new Error('KEY_ASSIGNMENT_INTEGRITY_ERROR: MCQ payload is null or not an object');
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    // Idempotence guard: if already positioned and verified, return as-is
+    if (mcq.__positionAssigned === true && mcq.semanticIdentity) {
+      return mcq;
+    }
+
+    if (!Array.isArray(mcq.options) || mcq.options.length !== 4) {
+      const err = new Error(`KEY_ASSIGNMENT_INTEGRITY_ERROR: Expected exactly 4 options, found ${Array.isArray(mcq.options) ? mcq.options.length : 0}`);
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    // Normalize string representations before semantic extraction
+    this.normalizeCorrectAnswer(mcq);
+
+    const rawAns = (mcq.correctAnswerText || mcq.correctAnswer || '').toString().trim();
+    if (!rawAns) {
+      const err = new Error('KEY_ASSIGNMENT_INTEGRITY_ERROR: Missing correctAnswer in candidate MCQ');
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    const normOptions = mcq.options.map(o => String(o || '').trim());
+
+    // Find all matches for correctAnswerText in options
+    const matchingIndices = [];
+    normOptions.forEach((opt, idx) => {
+      if (opt === rawAns || opt.toLowerCase() === rawAns.toLowerCase()) {
+        matchingIndices.push(idx);
+      }
+    });
+
+    // Strict Contract: Exactly ONE option must match correctAnswerText
+    if (matchingIndices.length !== 1) {
+      const err = new Error(`KEY_ASSIGNMENT_INTEGRITY_ERROR: Expected exactly one match for correctAnswer "${rawAns}", found ${matchingIndices.length}`);
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    const exactCorrectText = normOptions[matchingIndices[0]];
+    const distractorTexts = normOptions.filter((_, idx) => idx !== matchingIndices[0]);
+
+    // Invariant: Exactly three distractors
+    if (distractorTexts.length !== 3) {
+      const err = new Error(`KEY_ASSIGNMENT_INTEGRITY_ERROR: Expected exactly 3 distractors, found ${distractorTexts.length}`);
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    // Invariant: Distractors must be mutually distinct (no duplicate choices)
+    const uniqueDistractors = new Set(distractorTexts.map(d => d.toLowerCase()));
+    if (uniqueDistractors.size !== 3) {
+      const err = new Error('KEY_ASSIGNMENT_INTEGRITY_ERROR: Distractors contain duplicate choices');
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    mcq.semanticIdentity = {
+      correctAnswerText: exactCorrectText,
+      distractorTexts: distractorTexts
+    };
+
+    return mcq;
+  }
+
+  /**
+   * Balanced Target-Key Allocation Planner.
+   * Computes the most even possible distribution across {A, B, C, D}:
+   *   max(count) - min(count) <= 1
+   * Cryptographically selects which keys receive the extra remainder slots,
+   * and cryptographically permutes the final target sequence to prevent repeating patterns.
+   *
+   * @param {number} quizCount - Number of questions (N)
+   * @returns {Array<string>} Array of N target keys (e.g. ['C', 'A', 'D', 'B', 'A'])
+   */
+  planBalancedKeyDistribution(quizCount) {
+    const N = parseInt(quizCount, 10);
+    if (isNaN(N) || N <= 0) {
+      return [];
+    }
+
+    const KEYS = ['A', 'B', 'C', 'D'];
+    const baseCount = Math.floor(N / 4);
+    const remainder = N % 4;
+
+    // Initialize counts with base quota
+    const counts = { A: baseCount, B: baseCount, C: baseCount, D: baseCount };
+
+    // If remainder > 0, randomly choose which remainder keys receive +1
+    if (remainder > 0) {
+      const shuffledKeys = this.shuffleArrayCrypto([...KEYS]);
+      for (let i = 0; i < remainder; i++) {
+        counts[shuffledKeys[i]] += 1;
+      }
+    }
+
+    // Assert mathematical invariant: max(count) - min(count) <= 1
+    const countValues = Object.values(counts);
+    const maxCount = Math.max(...countValues);
+    const minCount = Math.min(...countValues);
+    if (maxCount - minCount > 1) {
+      const err = new Error(`KEY_PLANNER_INVARIANT_VIOLATION: max(${maxCount}) - min(${minCount}) > 1 for N=${N}`);
+      err.code = 'KEY_PLANNER_INVARIANT_VIOLATION';
+      throw err;
+    }
+
+    // Build target sequence
+    const plannedKeys = [];
+    for (const key of KEYS) {
+      for (let c = 0; c < counts[key]; c++) {
+        plannedKeys.push(key);
+      }
+    }
+
+    // Cryptographically permute the target sequence to eliminate fixed positional patterns
+    this.shuffleArrayCrypto(plannedKeys);
+
+    return plannedKeys;
+  }
+
+  /**
+   * Assigns question to target presentation key and verifies post-assignment integrity.
+   * 1. Target key placement (options[targetIndex] = correctAnswerText).
+   * 2. Crypto Fisher-Yates permutation of the 3 distractors across the remaining 3 slots.
+   * 3. Hard post-assignment reference integrity assertions.
+   * 4. Exclusivity re-verification ensuring single-key validity is preserved.
+   * Idempotence-safe: If already assigned (__positionAssigned === true), returns as-is.
+   *
+   * @param {Object} mcq - Candidate MCQ object
+   * @param {String} targetKey - Target presentation key ('A', 'B', 'C', or 'D')
+   * @returns {Object} Transformed, synchronized MCQ
+   */
+  assignAndVerifyKeyPositions(mcq, targetKey) {
+    if (!mcq || typeof mcq !== 'object') {
+      const err = new Error('KEY_ASSIGNMENT_INTEGRITY_ERROR: Invalid MCQ');
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    // Idempotence guard: if already positioned, return without re-assignment
+    if (mcq.__positionAssigned === true) {
+      return mcq;
+    }
+
+    const KEY_TO_INDEX = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+    const targetIndex = KEY_TO_INDEX[targetKey];
+    if (targetIndex === undefined) {
+      const err = new Error(`KEY_ASSIGNMENT_INTEGRITY_ERROR: Invalid targetKey "${targetKey}"`);
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    // Normalize semantic identity
+    this.normalizeSemanticMCQ(mcq);
+
+    const { correctAnswerText, distractorTexts } = mcq.semanticIdentity;
+
+    // Pre-assignment exclusivity check
+    const preAmbiguity = this.detectOptionAmbiguity(mcq.questionText || mcq.stem, mcq.options, mcq.correctAnswer);
+
+    // Permute the 3 distractors cryptographically
+    const shuffledDistractors = this.shuffleArrayCrypto([...distractorTexts]);
+
+    // Assemble presentation options array
+    const newOptions = new Array(4);
+    newOptions[targetIndex] = correctAnswerText;
+
+    let dIdx = 0;
+    for (let i = 0; i < 4; i++) {
+      if (i !== targetIndex) {
+        newOptions[i] = shuffledDistractors[dIdx++];
+      }
+    }
+
+    // Post-Assignment Hard Integrity Assertions
+    if (newOptions.length !== 4) {
+      const err = new Error('KEY_ASSIGNMENT_INTEGRITY_ERROR: Output options length is not 4');
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    if (newOptions[targetIndex] !== correctAnswerText) {
+      const err = new Error(`KEY_ASSIGNMENT_INTEGRITY_ERROR: Target slot ${targetKey} (${targetIndex}) does not match correctAnswerText`);
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    const matchCount = newOptions.filter(o => o === correctAnswerText).length;
+    if (matchCount !== 1) {
+      const err = new Error(`KEY_ASSIGNMENT_INTEGRITY_ERROR: Exactly one option must match correctAnswerText, found ${matchCount}`);
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    const uniqueCount = new Set(newOptions.map(o => String(o).trim().toLowerCase())).size;
+    if (uniqueCount !== 4) {
+      const err = new Error('KEY_ASSIGNMENT_INTEGRITY_ERROR: Assigned options are not distinct');
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    // Post-assignment exclusivity re-verification
+    const postAmbiguity = this.detectOptionAmbiguity(mcq.questionText || mcq.stem, newOptions, correctAnswerText);
+    if (preAmbiguity.classification !== 'POTENTIAL_MULTI_KEY' && postAmbiguity.classification === 'POTENTIAL_MULTI_KEY') {
+      const err = new Error(`KEY_ASSIGNMENT_INTEGRITY_ERROR: Positional assignment created unexpected option ambiguity: ${postAmbiguity.reason}`);
+      err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+      throw err;
+    }
+
+    // Synchronize fields for all downstream consumers
+    mcq.options = newOptions;
+    mcq.correctAnswer = correctAnswerText; // full text string for Stage 07 & Grading Layer 1
+    mcq.correctAnswerText = correctAnswerText; // authoritative semantic identity
+    mcq.correctAnswerKey = targetKey; // presentation key
+    mcq.correct_answer = targetKey; // presentation key for benchmark M8 & UI
+    mcq.correct_answer_text = correctAnswerText; // explicit benchmark compatibility
+    mcq.__positionAssigned = true; // idempotence guard
+
+    return mcq;
+  }
+
+  /**
+   * Whole-quiz balanced key assignment coordinator.
+   * Plans balanced key allocation for quiz length N (max - min <= 1),
+   * assigns each question to its target slot, and validates reference integrity.
+   *
+   * @param {Array} quizQuestions - Array of passing candidate MCQs
+   * @returns {Array} Balanced, transformed MCQs
+   */
+  balanceAndAssignKeyPositions(quizQuestions = []) {
+    if (!Array.isArray(quizQuestions) || quizQuestions.length === 0) {
+      return [];
+    }
+
+    const N = quizQuestions.length;
+    const plannedKeys = this.planBalancedKeyDistribution(N);
+
+    const assignedQuestions = quizQuestions.map((q, idx) => {
+      const copy = { ...q };
+      const targetKey = plannedKeys[idx];
+      return this.assignAndVerifyKeyPositions(copy, targetKey);
+    });
+
+    return assignedQuestions;
+  }
+
+  /**
+   * Run Deterministic Post-Checks & Option Randomization (Stable Stage 06 Interface).
    * @param {Array} quizQuestions - Array of passing MCQ objects
-   * @returns {Array} Shuffled & normalized MCQs
+   * @returns {Array} Balanced & normalized MCQs
    */
   runPostChecks(quizQuestions = []) {
-    return quizQuestions.map(q => {
-      const copy = { ...q };
-      if (Array.isArray(copy.options)) {
-        // Shuffle options to ensure balanced A/B/C/D distribution
-        const shuffled = [...copy.options].sort(() => Math.random() - 0.5);
-        copy.options = shuffled;
-      }
-      return copy;
-    });
+    return this.balanceAndAssignKeyPositions(quizQuestions);
   }
 }
 
