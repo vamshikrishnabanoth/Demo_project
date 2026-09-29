@@ -297,7 +297,7 @@ setInterval(() => {
 // Helper for verifying socket tokens against environment secret or simulation secret
 function verifySocketToken(token) {
     if (!token) return null;
-    const secrets = Array.from(new Set([process.env.JWT_SECRET, 'secret123', 'secret'])).filter(Boolean);
+    const secrets = Array.from(new Set([process.env.JWT_SECRET, 'secret123', 'secret', ''])).filter(s => s !== null && s !== undefined);
     for (const secret of secrets) {
         try {
             const decoded = jwt.verify(token, secret);
@@ -315,6 +315,7 @@ io.use(async (socket, next) => {
     try {
         const decoded = verifySocketToken(token);
         if (!decoded) {
+            console.warn(`[SOCKET AUTH FAIL] verifySocketToken returned null for socket ${socket.id}. Token length: ${token?.length}`);
             return next(new Error('Authentication failed: Invalid token'));
         }
         socket.user = decoded.user;
@@ -337,7 +338,7 @@ io.use(async (socket, next) => {
         
         next();
     } catch (err) {
-        // SECURITY: No fallback — reject invalid tokens
+        console.error('[SOCKET AUTH EXCEPTION]:', err);
         return next(new Error('Authentication failed: Invalid token'));
     }
 });
