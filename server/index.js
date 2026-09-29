@@ -312,11 +312,12 @@ io.use(async (socket, next) => {
     if (!token) {
         return next(new Error('Authentication failed: Missing token'));
     }
-    const decoded = verifySocketToken(token);
-    if (!decoded) {
-        return next(new Error('Authentication failed: Invalid token'));
-    }
-    socket.user = decoded.user;
+    try {
+        const decoded = verifySocketToken(token);
+        if (!decoded) {
+            return next(new Error('Authentication failed: Invalid token'));
+        }
+        socket.user = decoded.user;
         
         // Fetch username & name from DB to ensure it's up-to-date and complete
         if (socket.user && socket.user.id) {
