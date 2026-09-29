@@ -652,14 +652,17 @@ function _sleep(ms) {
 startFlushWorker();
 
 // ─── Graceful shutdown hook ───────────────────────────────────────────────────
-process.on('SIGTERM', async () => {
-    console.log('[QuizState] SIGTERM received — draining write buffer...');
+let isShuttingDown = false;
+async function handleGracefulShutdown(signal) {
+    if (isShuttingDown) process.exit(0);
+    isShuttingDown = true;
+    console.log(`[QuizState] ${signal} received — draining write buffer...`);
     await shutdown();
-});
-process.on('SIGINT', async () => {
-    console.log('[QuizState] SIGINT received — draining write buffer...');
-    await shutdown();
-});
+    process.exit(0);
+}
+
+process.on('SIGTERM', () => handleGracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => handleGracefulShutdown('SIGINT'));
 
 // ─── Exports ─────────────────────────────────────────────────────────────────
 module.exports = {
