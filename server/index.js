@@ -12,6 +12,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
