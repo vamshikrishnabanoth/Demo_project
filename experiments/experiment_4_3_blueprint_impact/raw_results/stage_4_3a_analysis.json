@@ -1,0 +1,1120 @@
+{
+  "experiment_id": "experiment_4_3_blueprint_impact",
+  "stage": "Stage_4.3A_Blueprint_Impact_Audit",
+  "timestamp": "2026-09-30T17:34:01.881Z",
+  "condition_summaries": {
+    "Condition_A_Baseline": {
+      "bdas_gt": {
+        "mean": 0.9,
+        "std": 0.16733200530681513
+      },
+      "uniqueness": {
+        "mean": 0.9349365528119399,
+        "std": 0.020979088698736485
+      },
+      "latency_ms": {
+        "mean": 29350.666666666668,
+        "std": 14958.304485023249
+      },
+      "target_count": {
+        "mean": 5,
+        "std": 0
+      },
+      "raw_bdas_gt": [
+        1,
+        0.6,
+        1,
+        1,
+        0.8,
+        1
+      ]
+    },
+    "Condition_B_Oracle": {
+      "bdas_gt": {
+        "mean": 0.9666666666666667,
+        "std": 0.08164965809277258
+      },
+      "uniqueness": {
+        "mean": 0.9374714179507895,
+        "std": 0.04488546688878887
+      },
+      "latency_ms": {
+        "mean": 25480.166666666668,
+        "std": 16776.627353752203
+      },
+      "target_count": {
+        "mean": 4.833333333333333,
+        "std": 0.408248290463863
+      },
+      "raw_bdas_gt": [
+        1,
+        1,
+        1,
+        1,
+        0.8,
+        1
+      ]
+    },
+    "Condition_C_C4": {
+      "bdas_gt": {
+        "mean": 0.9333333333333332,
+        "std": 0.10327955589886444
+      },
+      "uniqueness": {
+        "mean": 0.933461013387484,
+        "std": 0.044724818256949316
+      },
+      "latency_ms": {
+        "mean": 33663.833333333336,
+        "std": 9056.051334144848
+      },
+      "target_count": {
+        "mean": 4.5,
+        "std": 1.224744871391589
+      },
+      "raw_bdas_gt": [
+        1,
+        0.8,
+        1,
+        1,
+        0.8,
+        1
+      ]
+    },
+    "Condition_D_C5": {
+      "bdas_gt": {
+        "mean": 0.9333333333333332,
+        "std": 0.10327955589886444
+      },
+      "uniqueness": {
+        "mean": 0.9331434787399924,
+        "std": 0.02571713753529053
+      },
+      "latency_ms": {
+        "mean": 42143,
+        "std": 10742.372084414132
+      },
+      "target_count": {
+        "mean": 5,
+        "std": 0
+      },
+      "raw_bdas_gt": [
+        1,
+        0.8,
+        1,
+        1,
+        0.8,
+        1
+      ]
+    },
+    "Condition_E_Permuted": {
+      "bdas_gt": {
+        "mean": 0.8999999999999999,
+        "std": 0.1095445115010332
+      },
+      "uniqueness": {
+        "mean": 0.9400803160006116,
+        "std": 0.021630120682906664
+      },
+      "latency_ms": {
+        "mean": 38494.333333333336,
+        "std": 11215.928738480226
+      },
+      "target_count": {
+        "mean": 5,
+        "std": 0
+      },
+      "raw_bdas_gt": [
+        0.8,
+        1,
+        0.8,
+        1,
+        1,
+        0.8
+      ]
+    }
+  },
+  "paired_comparisons": {
+    "Condition_B_Oracle": {
+      "diffs": [
+        0,
+        0.4,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_diff": 0.06666666666666667,
+      "std_diff": 0.16329931618554522,
+      "cohens_dz": 0.40824829046386296,
+      "direction": {
+        "higher": 1,
+        "equal": 5,
+        "lower": 0
+      }
+    },
+    "Condition_C_C4": {
+      "diffs": [
+        0,
+        0.20000000000000007,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_diff": 0.03333333333333335,
+      "std_diff": 0.08164965809277262,
+      "cohens_dz": 0.4082482904638631,
+      "direction": {
+        "higher": 1,
+        "equal": 5,
+        "lower": 0
+      }
+    },
+    "Condition_D_C5": {
+      "diffs": [
+        0,
+        0.20000000000000007,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_diff": 0.03333333333333335,
+      "std_diff": 0.08164965809277262,
+      "cohens_dz": 0.4082482904638631,
+      "direction": {
+        "higher": 1,
+        "equal": 5,
+        "lower": 0
+      }
+    },
+    "Condition_E_Permuted": {
+      "diffs": [
+        -0.19999999999999996,
+        0.4,
+        -0.19999999999999996,
+        0,
+        0.19999999999999996,
+        -0.19999999999999996
+      ],
+      "mean_diff": 1.850371707708594e-17,
+      "std_diff": 0.25298221281347033,
+      "cohens_dz": 7.314236392868127e-17,
+      "direction": {
+        "higher": 2,
+        "equal": 1,
+        "lower": 3
+      }
+    }
+  },
+  "dimension_totals": {
+    "Condition_A_Baseline": {
+      "Conceptual": 10,
+      "Cause / Effect": 4,
+      "Comparison / Tradeoff": 6,
+      "Scenario Analysis": 1,
+      "Application": 4,
+      "Prediction": 0,
+      "Flow / Trace": 3,
+      "Foundational Prerequisite": 1,
+      "Evidence-Derived Inference": 0
+    },
+    "Condition_B_Oracle": {
+      "Conceptual": 6,
+      "Cause / Effect": 3,
+      "Comparison / Tradeoff": 6,
+      "Scenario Analysis": 1,
+      "Application": 7,
+      "Prediction": 0,
+      "Flow / Trace": 3,
+      "Foundational Prerequisite": 3,
+      "Evidence-Derived Inference": 0
+    },
+    "Condition_C_C4": {
+      "Conceptual": 7,
+      "Cause / Effect": 5,
+      "Comparison / Tradeoff": 4,
+      "Scenario Analysis": 1,
+      "Application": 4,
+      "Prediction": 0,
+      "Flow / Trace": 4,
+      "Foundational Prerequisite": 2,
+      "Evidence-Derived Inference": 0
+    },
+    "Condition_D_C5": {
+      "Conceptual": 6,
+      "Cause / Effect": 2,
+      "Comparison / Tradeoff": 7,
+      "Scenario Analysis": 3,
+      "Application": 3,
+      "Prediction": 0,
+      "Flow / Trace": 4,
+      "Foundational Prerequisite": 5,
+      "Evidence-Derived Inference": 0
+    },
+    "Condition_E_Permuted": {
+      "Conceptual": 11,
+      "Cause / Effect": 1,
+      "Comparison / Tradeoff": 4,
+      "Scenario Analysis": 2,
+      "Application": 4,
+      "Prediction": 0,
+      "Flow / Trace": 5,
+      "Foundational Prerequisite": 1,
+      "Evidence-Derived Inference": 0
+    }
+  },
+  "bloom_totals": {
+    "Condition_A_Baseline": {
+      "Remember": 1,
+      "Understand": 12,
+      "Apply": 9,
+      "Analyze": 5,
+      "Evaluate": 3
+    },
+    "Condition_B_Oracle": {
+      "Remember": 3,
+      "Understand": 10,
+      "Apply": 8,
+      "Analyze": 6,
+      "Evaluate": 2
+    },
+    "Condition_C_C4": {
+      "Remember": 5,
+      "Understand": 8,
+      "Apply": 6,
+      "Analyze": 5,
+      "Evaluate": 3
+    },
+    "Condition_D_C5": {
+      "Remember": 4,
+      "Understand": 11,
+      "Apply": 6,
+      "Analyze": 5,
+      "Evaluate": 4
+    },
+    "Condition_E_Permuted": {
+      "Remember": 2,
+      "Understand": 11,
+      "Apply": 8,
+      "Analyze": 6,
+      "Evaluate": 3
+    }
+  },
+  "package_rows": [
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_A_Baseline",
+      "targetCount": 5,
+      "latency_ms": 5070,
+      "bdas_gt": 1,
+      "bdas_sig": null,
+      "uniqueness": 0.9078985170316441,
+      "dim_dist": {
+        "Conceptual": 3,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 0,
+        "Scenario Analysis": 0,
+        "Application": 2,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 3,
+        "Apply": 1,
+        "Analyze": 0,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_B_Oracle",
+      "targetCount": 5,
+      "latency_ms": 4512,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9198744882568413,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 0,
+        "Scenario Analysis": 0,
+        "Application": 4,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 2,
+        "Apply": 2,
+        "Analyze": 0,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_C_C4",
+      "targetCount": 5,
+      "latency_ms": 21725,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9003781512605042,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 0,
+        "Scenario Analysis": 0,
+        "Application": 2,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 2,
+        "Apply": 3,
+        "Analyze": 0,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_D_C5",
+      "targetCount": 5,
+      "latency_ms": 29997,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9025344611528823,
+      "dim_dist": {
+        "Conceptual": 3,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 0,
+        "Scenario Analysis": 0,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 3,
+        "Apply": 1,
+        "Analyze": 0,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_E_Permuted",
+      "targetCount": 5,
+      "latency_ms": 34409,
+      "bdas_gt": 0.8,
+      "bdas_sig": 1,
+      "uniqueness": 0.9340978672170623,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_A_Baseline",
+      "targetCount": 5,
+      "latency_ms": 24957,
+      "bdas_gt": 0.6,
+      "bdas_sig": null,
+      "uniqueness": 0.9308677944862154,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 1,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0,
+        "Conceptual|Application": 1
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 1,
+        "Apply": 2,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_B_Oracle",
+      "targetCount": 5,
+      "latency_ms": 38935,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.8582673603038051,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 2,
+        "Scenario Analysis": 0,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 2,
+        "Apply": 0,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_C_C4",
+      "targetCount": 5,
+      "latency_ms": 38413,
+      "bdas_gt": 0.8,
+      "bdas_sig": 0.8,
+      "uniqueness": 0.8634709653092006,
+      "dim_dist": {
+        "Conceptual": 0,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 1,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_D_C5",
+      "targetCount": 5,
+      "latency_ms": 37479,
+      "bdas_gt": 0.8,
+      "bdas_sig": 0.8,
+      "uniqueness": 0.9024615460219175,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 1,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 2,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_E_Permuted",
+      "targetCount": 5,
+      "latency_ms": 44746,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9162616713352009,
+      "dim_dist": {
+        "Conceptual": 5,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 0,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 5,
+        "Apply": 0,
+        "Analyze": 0,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_A_Baseline",
+      "targetCount": 5,
+      "latency_ms": 34364,
+      "bdas_gt": 1,
+      "bdas_sig": null,
+      "uniqueness": 0.9605158730158732,
+      "dim_dist": {
+        "Conceptual": 2,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 1,
+        "Apply": 2,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_B_Oracle",
+      "targetCount": 4,
+      "latency_ms": 39071,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9568452380952381,
+      "dim_dist": {
+        "Conceptual": 0,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 1,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_C_C4",
+      "targetCount": 2,
+      "latency_ms": 35421,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.95,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 0,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 0,
+        "Analyze": 0,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_D_C5",
+      "targetCount": 5,
+      "latency_ms": 40608,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9523832034165862,
+      "dim_dist": {
+        "Conceptual": 0,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 2,
+        "Scenario Analysis": 1,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_E_Permuted",
+      "targetCount": 5,
+      "latency_ms": 43893,
+      "bdas_gt": 0.8,
+      "bdas_sig": 0.8,
+      "uniqueness": 0.9414249639249638,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 0,
+        "Scenario Analysis": 1,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0,
+        "Debug / Code Trace": 1
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 1,
+        "Apply": 2,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_A_Baseline",
+      "targetCount": 5,
+      "latency_ms": 50651,
+      "bdas_gt": 1,
+      "bdas_sig": null,
+      "uniqueness": 0.9531818181818181,
+      "dim_dist": {
+        "Conceptual": 2,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 2,
+        "Apply": 2,
+        "Analyze": 1,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_B_Oracle",
+      "targetCount": 5,
+      "latency_ms": 5190,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9736263736263737,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 2,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 1,
+        "Apply": 3,
+        "Analyze": 1,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_C_C4",
+      "targetCount": 5,
+      "latency_ms": 47318,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9894444444444443,
+      "dim_dist": {
+        "Conceptual": 0,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_D_C5",
+      "targetCount": 5,
+      "latency_ms": 61775,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9641269841269843,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 1,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 2,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 2,
+        "Apply": 2,
+        "Analyze": 1,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_E_Permuted",
+      "targetCount": 5,
+      "latency_ms": 53940,
+      "bdas_gt": 1,
+      "bdas_sig": 0.8,
+      "uniqueness": 0.9758333333333333,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 1,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 1,
+        "Apply": 3,
+        "Analyze": 1,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_A_Baseline",
+      "targetCount": 5,
+      "latency_ms": 34291,
+      "bdas_gt": 0.8,
+      "bdas_sig": null,
+      "uniqueness": 0.9147043337639312,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 2,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_B_Oracle",
+      "targetCount": 5,
+      "latency_ms": 39264,
+      "bdas_gt": 0.8,
+      "bdas_sig": 0.8,
+      "uniqueness": 0.9799749373433585,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 2,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_C_C4",
+      "targetCount": 5,
+      "latency_ms": 26263,
+      "bdas_gt": 0.8,
+      "bdas_sig": 1,
+      "uniqueness": 0.9569251336898394,
+      "dim_dist": {
+        "Conceptual": 2,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_D_C5",
+      "targetCount": 5,
+      "latency_ms": 44591,
+      "bdas_gt": 0.8,
+      "bdas_sig": 0.8,
+      "uniqueness": 0.9429884312229848,
+      "dim_dist": {
+        "Conceptual": 0,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 1,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_E_Permuted",
+      "targetCount": 5,
+      "latency_ms": 31503,
+      "bdas_gt": 1,
+      "bdas_sig": 0.4,
+      "uniqueness": 0.9510861552859129,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 0,
+        "Scenario Analysis": 0,
+        "Application": 1,
+        "Prediction": 0,
+        "Flow / Trace": 2,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 1,
+        "Apply": 2,
+        "Analyze": 1,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_A_Baseline",
+      "targetCount": 5,
+      "latency_ms": 26771,
+      "bdas_gt": 1,
+      "bdas_sig": null,
+      "uniqueness": 0.942450980392157,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 2,
+        "Comparison / Tradeoff": 2,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 3,
+        "Apply": 1,
+        "Analyze": 1,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_B_Oracle",
+      "targetCount": 5,
+      "latency_ms": 25909,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9362401100791194,
+      "dim_dist": {
+        "Conceptual": 2,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 2,
+        "Apply": 1,
+        "Analyze": 2,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_C_C4",
+      "targetCount": 5,
+      "latency_ms": 32843,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9405473856209152,
+      "dim_dist": {
+        "Conceptual": 3,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 1,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 2,
+        "Apply": 0,
+        "Analyze": 2,
+        "Evaluate": 0
+      }
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_D_C5",
+      "targetCount": 5,
+      "latency_ms": 38408,
+      "bdas_gt": 1,
+      "bdas_sig": 1,
+      "uniqueness": 0.9343662464985995,
+      "dim_dist": {
+        "Conceptual": 1,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 2,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 1,
+        "Evidence-Derived Inference": 0
+      },
+      "bloom_dist": {
+        "Remember": 1,
+        "Understand": 2,
+        "Apply": 0,
+        "Analyze": 1,
+        "Evaluate": 1
+      }
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_E_Permuted",
+      "targetCount": 5,
+      "latency_ms": 22475,
+      "bdas_gt": 0.8,
+      "bdas_sig": 0.4,
+      "uniqueness": 0.9217779049071956,
+      "dim_dist": {
+        "Conceptual": 2,
+        "Cause / Effect": 0,
+        "Comparison / Tradeoff": 2,
+        "Scenario Analysis": 0,
+        "Application": 0,
+        "Prediction": 0,
+        "Flow / Trace": 0,
+        "Foundational Prerequisite": 0,
+        "Evidence-Derived Inference": 0,
+        "Evidence‑Derived Inference": 1
+      },
+      "bloom_dist": {
+        "Remember": 0,
+        "Understand": 2,
+        "Apply": 0,
+        "Analyze": 2,
+        "Evaluate": 1
+      }
+    }
+  ]
+}

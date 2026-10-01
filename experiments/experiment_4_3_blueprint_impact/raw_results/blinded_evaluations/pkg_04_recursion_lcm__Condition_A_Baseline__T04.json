@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Implement a recursive string‑reversal function using the base case length = 1 and building the result on return.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the base case length = 1 which is explicitly mentioned in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires understanding of recursion base‑case behavior, but mainly recall rather than deep reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what to return when length equals 1."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect common misconceptions (empty string, first character) making them plausible, though one is obviously far off."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Evidence supports only one correct answer—return the original single‑character string; all distractors are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question frames a realistic programming scenario rather than a rote definition, though it is a standard textbook example."
+    }
+  },
+  "latency_ms": 2507,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the base case length = 1 which is explicitly mentioned in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires understanding of recursion base‑case behavior, but mainly recall rather than deep reasoning.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about what to return when length equals 1.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options reflect common misconceptions (empty string, first character) making them plausible, though one is obviously far off.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Evidence supports only one correct answer—return the original single‑character string; all distractors are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question frames a realistic programming scenario rather than a rote definition, though it is a standard textbook example.\"}\n}"
+}

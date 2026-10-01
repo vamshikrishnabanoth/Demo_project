@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Interpret reported reconstruction accuracy percentages across autoencoder types and relate them to latent‑space modeling improvements.",
+  "target_dimension": "Evidence‑Derived Inference",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "Based on the evidence, which factor most directly explains why variational autoencoders achieve higher reconstruction accuracy than deterministic (fully connected) autoencoders?",
+    "options": [
+      "They introduce a probabilistic latent space that models the data distribution, enabling the decoder to generate more realistic reconstructions.",
+      "They employ deeper convolutional layers in the encoder, which alone raises reconstruction quality.",
+      "They increase the dimensionality of the latent vector while keeping it deterministic.",
+      "They replace the reconstruction loss with a classification loss that directly optimizes image similarity."
+    ],
+    "correctAnswer": "They introduce a probabilistic latent space that models the data distribution, enabling the decoder to generate more realistic reconstructions.",
+    "explanation": "The evidence states that variational autoencoders focus on the latent space by using a probabilistic (continuous) representation, which improves reconstruction fidelity to 70‑90% compared to 50‑60% for deterministic fully‑connected autoencoders. The other options describe changes not mentioned or not responsible for the reported accuracy gain.",
+    "metadata": {
+      "dimension": "Evidence‑Derived Inference",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Hard",
+      "concept": "Interpret reported reconstruction accuracy percentages across autoencoder types and relate them to latent‑space modeling improvements."
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 8247,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"Based on the evidence, which factor most directly explains why variational autoencoders achieve higher reconstruction accuracy than deterministic (fully connected) autoencoders?\",\n  \"options\": [\n    \"They introduce a probabilistic latent space that models the data distribution, enabling the decoder to generate more realistic reconstructions.\",\n    \"They employ deeper convolutional layers in the encoder, which alone raises reconstruction quality.\",\n    \"They increase the dimensionality of the latent vector while keeping it deterministic.\",\n    \"They replace the reconstruction loss with a classification loss that directly optimizes image similarity.\"\n  ],\n  \"correctAnswer\": \"They introduce a probabilistic latent space that models the data distribution, enabling the decoder to generate more realistic reconstructions.\",\n  \"explanation\": \"The evidence states that variational autoencoders focus on the latent space by using a probabilistic (continuous) representation, which improves reconstruction fidelity to 70‑90% compared to 50‑60% for deterministic fully‑connected autoencoders. The other options describe changes not mentioned or not responsible for the reported accuracy gain.\",\n  \"metadata\": {\n    \"dimension\": \"Evidence‑Derived Inference\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

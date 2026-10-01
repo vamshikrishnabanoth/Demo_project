@@ -1,0 +1,36 @@
+{
+  "unit_id": "GT-D04",
+  "benchmark": "BENCH_03",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "STUDENT_INTERACT",
+    "PRACTICE",
+    "CODE_TRACE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Now let's try to understand greatest common divisor."
+    },
+    {
+      "label": "STUDENT_INTERACT",
+      "quote": "One, twelve, six, two, four, three or three, four, whatever."
+    },
+    {
+      "label": "PRACTICE",
+      "quote": "Let's try to write a pseudo code and then you write recursion for it."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "First, what am I going to check? What is minimum? What is maximum? ... Then eight modular four equal equal to zero. Yes. Return four."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"STUDENT_INTERACT\", \"PRACTICE\", \"CODE_TRACE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Now let's try to understand greatest common divisor.\"\n    },\n    {\n      \"label\": \"STUDENT_INTERACT\",\n      \"quote\": \"One, twelve, six, two, four, three or three, four, whatever.\"\n    },\n    {\n      \"label\": \"PRACTICE\",\n      \"quote\": \"Let's try to write a pseudo code and then you write recursion for it.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"First, what am I going to check? What is minimum? What is maximum? ... Then eight modular four equal equal to zero. Yes. Return four.\"\n    }\n  ]\n}",
+  "latency_ms": 29082,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

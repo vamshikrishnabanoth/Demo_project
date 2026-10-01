@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_C_C4",
+  "target_id": "T01",
+  "target_concept": "Identify the problem statement of the Longest Common Prefix and the expected output for given string sets",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks for the definition and example of the longest common prefix, exactly as described in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding the concept and distinguishing it from similar but incorrect ideas, not mere recall of wording."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options represent common misconceptions (any prefix, shortest string, longest suffix), making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option D correctly restates the problem and gives a valid example; the others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "While the task is straightforward, it authentically assesses comprehension rather than rote definition recall."
+    }
+  },
+  "latency_ms": 1325,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks for the definition and example of the longest common prefix, exactly as described in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding the concept and distinguishing it from similar but incorrect ideas, not mere recall of wording.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The question stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options represent common misconceptions (any prefix, shortest string, longest suffix), making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option D correctly restates the problem and gives a valid example; the others are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"While the task is straightforward, it authentically assesses comprehension rather than rote definition recall.\"}\n}"
+}

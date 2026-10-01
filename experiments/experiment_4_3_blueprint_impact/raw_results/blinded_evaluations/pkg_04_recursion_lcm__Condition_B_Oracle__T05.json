@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T05",
+  "target_concept": "Design a recursive palindrome checker that uses a base case of length = 1 (true) and compares first and last characters before recursing on the inner substring.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the base case length = 1, which is explicitly stated in the evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Requires simple recall of a fact; no reasoning or problem‑solving beyond remembering the base case."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "A) could be a plausible confusion with length = 0; C) and D) are less plausible but still serve as distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option B is correct according to the evidence; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question is a straightforward factual recall, offering little novelty or authentic application."
+    }
+  },
+  "latency_ms": 1937,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the base case length = 1, which is explicitly stated in the evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":2,\"rationale\":\"Requires simple recall of a fact; no reasoning or problem‑solving beyond remembering the base case.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":3,\"rationale\":\"A) could be a plausible confusion with length = 0; C) and D) are less plausible but still serve as distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option B is correct according to the evidence; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The question is a straightforward factual recall, offering little novelty or authentic application.\"}\n}"
+}

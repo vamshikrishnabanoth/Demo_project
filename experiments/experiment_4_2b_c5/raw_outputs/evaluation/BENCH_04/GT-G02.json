@@ -1,0 +1,31 @@
+{
+  "unit_id": "GT-G02",
+  "benchmark": "BENCH_04",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "REAL_WORLD_APP",
+    "ASK_WHY"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Git config is a command which is used to give details, give your details to the Git tool... it is because whenever you are doing any changes in the project and you are saving the changes, to keep track of those changes, to know who has done that particular change"
+    },
+    {
+      "label": "REAL_WORLD_APP",
+      "quote": "whenever you are doing any changes in the project and you are saving the changes, to keep track of those changes, to know who has done that particular change"
+    },
+    {
+      "label": "ASK_WHY",
+      "quote": "Okay, so why do I need to give my details?"
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"REAL_WORLD_APP\", \"ASK_WHY\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Git config is a command which is used to give details, give your details to the Git tool... it is because whenever you are doing any changes in the project and you are saving the changes, to keep track of those changes, to know who has done that particular change\"\n    },\n    {\n      \"label\": \"REAL_WORLD_APP\",\n      \"quote\": \"whenever you are doing any changes in the project and you are saving the changes, to keep track of those changes, to know who has done that particular change\"\n    },\n    {\n      \"label\": \"ASK_WHY\",\n      \"quote\": \"Okay, so why do I need to give my details?\"\n    }\n  ]\n}",
+  "latency_ms": 1821,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

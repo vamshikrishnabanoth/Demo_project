@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T01",
+  "target_concept": "Identify the command to verify Git is installed and interpret its output",
+  "target_dimension": "Foundational Prerequisite",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which command should you run to verify that Git is installed on your system and see its version number?",
+    "options": [
+      "git --version",
+      "git config --global",
+      "git init",
+      "git status"
+    ],
+    "correctAnswer": "git --version",
+    "explanation": "The command 'git --version' queries the Git executable; if Git is installed it prints the installed version number (e.g., git version 2.41.0). The other commands perform configuration, repository initialization, or status checks and do not directly verify installation.",
+    "metadata": {
+      "dimension": "Foundational Prerequisite",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Identify the command to verify Git is installed and interpret its output"
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 10213,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Which command should you run to verify that Git is installed on your system and see its version number?\",\n  \"options\": [\n    \"git --version\",\n    \"git config --global\",\n    \"git init\",\n    \"git status\"\n  ],\n  \"correctAnswer\": \"git --version\",\n  \"explanation\": \"The command 'git --version' queries the Git executable; if Git is installed it prints the installed version number (e.g., git version 2.41.0). The other commands perform configuration, repository initialization, or status checks and do not directly verify installation.\",\n  \"metadata\": {\n    \"dimension\": \"Foundational Prerequisite\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T01",
+  "target_concept": "Define and interpret the mean of the latent Gaussian distribution in a VAE.",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "In a variational autoencoder, what does the mean (μ) of the latent Gaussian distribution represent?",
+    "options": [
+      "The average latent code that captures the central tendency of the encoded data",
+      "The spread or variability of the latent codes around the average",
+      "A deterministic point that the decoder reconstructs without any randomness",
+      "The weight matrix used in the encoder network to map inputs to latent space"
+    ],
+    "correctAnswer": "The average latent code that captures the central tendency of the encoded data",
+    "explanation": "The mean (μ) of the latent Gaussian distribution specifies the central location of that distribution, i.e., the average latent representation for a given input. It reflects the central tendency, while variance describes the spread. It is not a deterministic point nor a network weight.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Easy",
+      "concept": "Define and interpret the mean of the latent Gaussian distribution in a VAE."
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11569,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"In a variational autoencoder, what does the mean (μ) of the latent Gaussian distribution represent?\",\n  \"options\": [\n    \"The average latent code that captures the central tendency of the encoded data\",\n    \"The spread or variability of the latent codes around the average\",\n    \"A deterministic point that the decoder reconstructs without any randomness\",\n    \"The weight matrix used in the encoder network to map inputs to latent space\"\n  ],\n  \"correctAnswer\": \"The average latent code that captures the central tendency of the encoded data\",\n  \"explanation\": \"The mean (μ) of the latent Gaussian distribution specifies the central location of that distribution, i.e., the average latent representation for a given input. It reflects the central tendency, while variance describes the spread. It is not a deterministic point nor a network weight.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

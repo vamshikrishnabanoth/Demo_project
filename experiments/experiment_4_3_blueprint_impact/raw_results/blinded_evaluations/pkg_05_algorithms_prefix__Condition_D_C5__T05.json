@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Compare hash‑set based approach with binary‑search and built‑in string API approaches in terms of time efficiency, readability, and maintainability.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 2,
+      "rationale": "The lecture mentions hash‑set, hash‑map, and binary‑search but does not explicitly evaluate their time efficiency, readability, or maintainability, so the question extends beyond the provided evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires weighing trade‑offs among multiple criteria, which involves conceptual reasoning rather than simple recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clearly worded, self‑contained, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "All four options present plausible but differing claims about the approaches, making them reasonable distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 1,
+      "rationale": "Given the evidence, no single option is definitively supported; the correct answer is not uniquely justified."
+    },
+    "d6_question_novelty": {
+      "score": 3,
+      "rationale": "The question asks for an evaluative comparison, which is more authentic than a rote definition, but it is not especially novel."
+    }
+  },
+  "latency_ms": 2097,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 2, \"rationale\": \"The lecture mentions hash‑set, hash‑map, and binary‑search but does not explicitly evaluate their time efficiency, readability, or maintainability, so the question extends beyond the provided evidence.\"},\n  \"d2_cognitive_demand\": {\"score\": 3, \"rationale\": \"Answering requires weighing trade‑offs among multiple criteria, which involves conceptual reasoning rather than simple recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clearly worded, self‑contained, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\": 4, \"rationale\": \"All four options present plausible but differing claims about the approaches, making them reasonable distractors.\"},\n  \"d5_single_key_determinism\": {\"score\": 1, \"rationale\": \"Given the evidence, no single option is definitively supported; the correct answer is not uniquely justified.\"},\n  \"d6_question_novelty\": {\"score\": 3, \"rationale\": \"The question asks for an evaluative comparison, which is more authentic than a rote definition, but it is not especially novel.\"}\n}"
+}

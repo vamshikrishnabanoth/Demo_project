@@ -1,0 +1,21 @@
+{
+  "unit_id": "GT-G05",
+  "benchmark": "BENCH_04",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "The next one you have is git add... from working directory, if you want to move your project into staging area, then you have to use a command called git add"
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"The next one you have is git add... from working directory, if you want to move your project into staging area, then you have to use a command called git add\"\n    }\n  ]\n}",
+  "latency_ms": 19203,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

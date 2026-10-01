@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T01",
+  "target_concept": "Git is a distributed version control system that tracks changes across a project.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 3,
+      "rationale": "The lecture mentions Git as a distributed VCS, but does not explicitly explain the full‑copy rationale; the question aligns broadly but adds unstated detail."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of distributed vs centralized VCS concepts, not mere recall of a phrase."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, grammatically correct, and asks a single, well‑defined question."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect common misconceptions about central servers, file types, and automatic merging, making them plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Exactly one option matches the definition; the others are definitively incorrect given the evidence."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question probes authentic conceptual understanding rather than rote definition."
+    }
+  },
+  "latency_ms": 1839,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 3, \"rationale\": \"The lecture mentions Git as a distributed VCS, but does not explicitly explain the full‑copy rationale; the question aligns broadly but adds unstated detail.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires understanding of distributed vs centralized VCS concepts, not mere recall of a phrase.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, grammatically correct, and asks a single, well‑defined question.\"},\n  \"d4_distractor_plausibility\": {\"score\": 4, \"rationale\": \"Incorrect options reflect common misconceptions about central servers, file types, and automatic merging, making them plausible.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Exactly one option matches the definition; the others are definitively incorrect given the evidence.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The question probes authentic conceptual understanding rather than rote definition.\"}\n}"
+}

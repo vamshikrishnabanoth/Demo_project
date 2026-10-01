@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-G08",
+  "benchmark": "BENCH_04",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Now say suppose you forgot how to use a particular command in git. Then simply write git space help space that command name. So it will give you, it will open the manual page of your git and it will give you the complete details of what is that command, how to use it, what is its syntax, it will give you some examples, what are the various options of that particular command."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "Now I will take a small example and demonstrate how exactly these different types of commands are used. ... observe these two windows. The top window is your git bash, your local git tool and the second one is a folder. ... I have created a folder with the name called as sample example which I will be using as my git repository. ... This folder should now be converted into a git repository."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Now say suppose you forgot how to use a particular command in git. Then simply write git space help space that command name. So it will give you, it will open the manual page of your git and it will give you the complete details of what is that command, how to use it, what is its syntax, it will give you some examples, what are the various options of that particular command.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"Now I will take a small example and demonstrate how exactly these different types of commands are used. ... observe these two windows. The top window is your git bash, your local git tool and the second one is a folder. ... I have created a folder with the name called as sample example which I will be using as my git repository. ... This folder should now be converted into a git repository.\"\n    }\n  ]\n}",
+  "latency_ms": 20248,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

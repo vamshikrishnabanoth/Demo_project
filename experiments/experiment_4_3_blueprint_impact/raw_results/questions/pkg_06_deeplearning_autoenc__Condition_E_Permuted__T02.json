@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T02",
+  "target_concept": "Explain the significance of variance in the latent Gaussian distribution of a VAE.",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "In a variational autoencoder, what does the variance term in the latent Gaussian distribution represent?",
+    "options": [
+      "It determines the dimensionality of the latent space.",
+      "It captures how spread out the latent variables are around the mean.",
+      "It controls the learning rate of the encoder.",
+      "It specifies the exact pixel values of the reconstructed image."
+    ],
+    "correctAnswer": "It captures how spread out the latent variables are around the mean.",
+    "explanation": "The evidence explains that variance measures how far data points are spread from the mean in the latent space, which is the role of the variance term in the VAE's Gaussian latent distribution.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Easy",
+      "concept": "Explain the significance of variance in the latent Gaussian distribution of a VAE."
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 6730,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"In a variational autoencoder, what does the variance term in the latent Gaussian distribution represent?\",\n  \"options\": [\n    \"It determines the dimensionality of the latent space.\",\n    \"It captures how spread out the latent variables are around the mean.\",\n    \"It controls the learning rate of the encoder.\",\n    \"It specifies the exact pixel values of the reconstructed image.\"\n  ],\n  \"correctAnswer\": \"It captures how spread out the latent variables are around the mean.\",\n  \"explanation\": \"The evidence explains that variance measures how far data points are spread from the mean in the latent space, which is the role of the variance term in the VAE's Gaussian latent distribution.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

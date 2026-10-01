@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_C_C4",
+  "target_id": "T03",
+  "target_concept": "Explain why Git requires global user name and email configuration before committing changes",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Why does Git require you to configure user.name and user.email globally before you can make a commit?",
+    "options": [
+      "Because Git needs to record the author's identity for each commit to track who made the changes.",
+      "Because setting these values enables Git to automatically merge branches without conflicts.",
+      "Because Git uses the global configuration to determine the default remote repository URL.",
+      "Because Git will reject commits if the user name contains spaces, so the global setting avoids this error."
+    ],
+    "correctAnswer": "Because Git needs to record the author's identity for each commit to track who made the changes.",
+    "explanation": "Git records the author information (name and email) with every commit so that the history shows who made each change. This requires the user.name and user.email settings to be defined globally (or locally) before committing.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain why Git requires global user name and email configuration before committing changes"
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11617,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Why does Git require you to configure user.name and user.email globally before you can make a commit?\",\n  \"options\": [\n    \"Because Git needs to record the author's identity for each commit to track who made the changes.\",\n    \"Because setting these values enables Git to automatically merge branches without conflicts.\",\n    \"Because Git uses the global configuration to determine the default remote repository URL.\",\n    \"Because Git will reject commits if the user name contains spaces, so the global setting avoids this error.\"\n  ],\n  \"correctAnswer\": \"Because Git needs to record the author's identity for each commit to track who made the changes.\",\n  \"explanation\": \"Git records the author information (name and email) with every commit so that the history shows who made each change. This requires the user.name and user.email settings to be defined globally (or locally) before committing.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

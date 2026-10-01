@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-G09",
+  "benchmark": "BENCH_04",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "So before that let's start with knowing what is the git version."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "I will simply type git space hyphen hyphen version. And when I type enter you can see this is the latest version of your git."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"So before that let's start with knowing what is the git version.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"I will simply type git space hyphen hyphen version. And when I type enter you can see this is the latest version of your git.\"\n    }\n  ]\n}",
+  "latency_ms": 27370,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

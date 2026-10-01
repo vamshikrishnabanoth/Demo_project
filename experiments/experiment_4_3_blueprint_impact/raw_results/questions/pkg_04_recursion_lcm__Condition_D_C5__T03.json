@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_D_C5",
+  "target_id": "T03",
+  "target_concept": "Differentiate when a problem requires GCD (equal partitioning) versus LCM (timing/scheduling)",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "A factory needs to schedule maintenance for two machines. Machine A requires service every 12 days and Machine B requires service every 18 days. Which mathematical concept should be used to determine after how many days both machines will need maintenance on the same day?",
+    "options": [
+      "Greatest Common Divisor (GCD) to find the largest shared interval",
+      "Least Common Multiple (LCM) to find the first common maintenance day",
+      "Average of the two intervals",
+      "Sum of the two intervals"
+    ],
+    "correctAnswer": "Least Common Multiple (LCM) to find the first common maintenance day",
+    "explanation": "When the problem involves timing, scheduling, or finding when two periodic events coincide, the appropriate tool is the Least Common Multiple (LCM). Here we need the first day both maintenance cycles align, which is the LCM of 12 and 18 (which is 36 days). GCD is used for equal partitioning, not for scheduling coincidences.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Differentiate when a problem requires GCD (equal partitioning) versus LCM (timing/scheduling)"
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 15302,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"A factory needs to schedule maintenance for two machines. Machine A requires service every 12 days and Machine B requires service every 18 days. Which mathematical concept should be used to determine after how many days both machines will need maintenance on the same day?\",\n  \"options\": [\n    \"Greatest Common Divisor (GCD) to find the largest shared interval\",\n    \"Least Common Multiple (LCM) to find the first common maintenance day\",\n    \"Average of the two intervals\",\n    \"Sum of the two intervals\"\n  ],\n  \"correctAnswer\": \"Least Common Multiple (LCM) to find the first common maintenance day\",\n  \"explanation\": \"When the problem involves timing, scheduling, or finding when two periodic events coincide, the appropriate tool is the Least Common Multiple (LCM). Here we need the first day both maintenance cycles align, which is the LCM of 12 and 18 (which is 36 days). GCD is used for equal partitioning, not for scheduling coincidences.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

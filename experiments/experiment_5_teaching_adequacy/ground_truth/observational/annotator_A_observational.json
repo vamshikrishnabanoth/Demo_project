@@ -1,0 +1,569 @@
+{
+  "annotator_id": "Annotator_A_Curriculum_Specialist",
+  "annotation_timestamp": "2026-10-01T07:45:00Z",
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "concept_units": [
+        "Art 21 statutory text ('no person', 'procedure established by law')",
+        "Constituent Assembly debates (B.N. Rau, Frankfurter, rejection of Due Process)",
+        "A.K. Gopalan case (1950) & literalist statutory interpretation",
+        "Silo Theory of Fundamental Rights (mutual exclusivity between Arts 19 and 21)",
+        "Maneka Gandhi case (1978) & passport impoundment facts",
+        "Substantive due process interpretation & Golden Triangle doctrine (Arts 14, 19, 21)",
+        "Statutory limitations on personal liberty"
+      ],
+      "episodes": [
+        {
+          "start": 0,
+          "end": 45,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Art 21 statutory text",
+          "revisitation": false
+        },
+        {
+          "start": 45,
+          "end": 120,
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Constituent Assembly debates & Due Process rejection",
+          "revisitation": false
+        },
+        {
+          "start": 120,
+          "end": 215,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "A.K. Gopalan case & literalist statutory interpretation",
+          "revisitation": false
+        },
+        {
+          "start": 215,
+          "end": 270,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Silo Theory of Fundamental Rights",
+          "revisitation": false
+        },
+        {
+          "start": 270,
+          "end": 380,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Maneka Gandhi case & overturning Gopalan",
+          "revisitation": true
+        },
+        {
+          "start": 380,
+          "end": 440,
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Golden Triangle doctrine & substantive fairness",
+          "revisitation": true
+        },
+        {
+          "start": 440,
+          "end": 480,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Statutory limitations on personal liberty",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "No person shall be deprived of his life or personal liberty except according to procedure established by law."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Article 21 extends universally to citizens and foreign nationals alike... personal liberty under Article 21"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "evidence": "Drafting Committee deliberately rejected 'due process' and adopted 'procedure established by law'"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "evidence": "Fundamental Rights are not isolated islands... Golden Triangle between Article 14, Article 19, and Article 21"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "procedure prescribed by law... cannot be arbitrary, fanciful, or oppressive. It must satisfy the test of fairness, reasonableness, and natural justice under Article 14"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "A.K. Gopalan v. State of Madras in 1950... Maneka Gandhi v. Union of India in 1978... impounded under Section 10(3)(c)"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "evidence": "Article 21 does not grant an absolute, unrestrained immunity. Where a valid statutory law exists... personal liberty may be constitutionally regulated"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "evidence": "wellspring from which countless unenumerated rights later flowed... Puttaswamy judgment (mentioned in passing)"
+        }
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "concept_units": [
+        "Matrix as vector transformation function",
+        "Eigenvector definition (invariant directional scaling: Ax = lambda x)",
+        "Geometric examples (projection lambda=1,0; reflection; 90-deg rotation lambda=+-i)",
+        "Characteristic equation det(A - lambda I) = 0 via singular nullspace requirement",
+        "Characteristic polynomial expansion and root solving",
+        "Trace and determinant invariant checks",
+        "Eigenvector solution via singular (A - lambda I)x = 0"
+      ],
+      "episodes": [
+        {
+          "start": 0,
+          "end": 55,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Matrix as vector transformation",
+          "revisitation": false
+        },
+        {
+          "start": 55,
+          "end": 110,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Eigenvector definition & geometric projection",
+          "revisitation": false
+        },
+        {
+          "start": 110,
+          "end": 155,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Rotation matrix with imaginary eigenvalues",
+          "revisitation": false
+        },
+        {
+          "start": 155,
+          "end": 230,
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Characteristic equation det(A - lambda I) = 0",
+          "revisitation": false
+        },
+        {
+          "start": 230,
+          "end": 320,
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "2x2 numerical calculation & trace/det check",
+          "revisitation": false
+        },
+        {
+          "start": 320,
+          "end": 420,
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Eigenvector nullspace solving for [5,2] and [1,1]",
+          "revisitation": true
+        },
+        {
+          "start": 420,
+          "end": 460,
+          "intellectual_activity": "GENERALIZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Matrix factorization preview",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "A x = lambda x. The non-zero vector x is called an eigenvector... lambda is the eigenvalue."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "multiplying by the matrix does not change the vector's direction; it only scales it by some constant number lambda."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "evidence": "characteristic polynomial: lambda^2 - lambda - 2 = (lambda - 2)(lambda + 1) = 0."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "(A - lambda I) x = 0... matrix must be singular! And a matrix is singular if and only if its determinant is zero."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "We are looking for an eigenvector x that is NOT the zero vector... non-zero vector x in the nullspace of (A - lambda I)."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "A = [4, -5; 2, -3]... lambda_1 = 2 with v_1 = [5, 2]^T, lambda_2 = -1 with v_2 = [1, 1]^T."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "evidence": "90-degree rotation matrix... no real vector can stay parallel... eigenvalues are imaginary, plus and minus i."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "evidence": "factor A = S Lambda S^-1 and compute powers of matrices (mentioned in preview)"
+        }
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "concept_units": [
+        "Breadth-First Search ripple analogy & level-order definition",
+        "FIFO Queue requirement vs LIFO Stack (DFS distinction)",
+        "Queue invariant (non-decreasing distance, at most two consecutive levels d and d+1)",
+        "Visited array/set invariant (cycle prevention, duplicate avoidance)",
+        "5-node graph step-by-step execution trace",
+        "Computational complexity O(V + E) and space O(V)",
+        "Disconnected graph limitation"
+      ],
+      "episodes": [
+        {
+          "start": 0,
+          "end": 50,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "BFS ripple analogy & level-order definition",
+          "revisitation": false
+        },
+        {
+          "start": 50,
+          "end": 110,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "FIFO Queue requirement vs Stack",
+          "revisitation": false
+        },
+        {
+          "start": 110,
+          "end": 175,
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Queue invariant & Visited set necessity",
+          "revisitation": false
+        },
+        {
+          "start": 175,
+          "end": 320,
+          "intellectual_activity": "TRACE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "5-node graph execution trace",
+          "revisitation": true
+        },
+        {
+          "start": 320,
+          "end": 395,
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Complexity analysis O(V+E)",
+          "revisitation": false
+        },
+        {
+          "start": 395,
+          "end": 450,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Disconnected graph limitation",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Breadth-First Search, or BFS... First-In, First-Out. That is why Breadth-First Search strictly requires a FIFO Queue."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Ripples expand outward uniformly in concentric circles... visits vertices in order of their distance from S."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "evidence": "Queue: Q = [A]... Visited boolean array or hash set... adjacency list"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Queue contains vertices from at most two consecutive levels: d and d+1. All at d are expanded before d+1."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "If we do not mark a vertex as visited, the algorithm would loop infinitely inside a cycle, or enqueue the exact same vertex multiple times."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 5,
+          "evidence": "Step 1: pop A, enqueue B,C. Step 2: pop B, enqueue D. Step 3: pop C, see D visited. Step 4: pop D, enqueue E. Step 5: pop E."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 3,
+          "evidence": "If the graph had a disconnected component... this single BFS call would not visit them."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 0,
+          "evidence": "No evidence observed."
+        }
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "concept_units": [
+        "Breadth-First Search ripple analogy & level-order definition",
+        "FIFO Queue requirement vs LIFO Stack (DFS distinction)",
+        "Queue invariant (non-decreasing distance, at most two consecutive levels d and d+1)",
+        "Visited array/set invariant (cycle prevention, duplicate avoidance)",
+        "5-node graph step-by-step execution trace",
+        "Computational complexity O(V + E) and space O(V)",
+        "Disconnected graph limitation"
+      ],
+      "episodes": [
+        {
+          "start": 0,
+          "end": 50,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "BFS ripple analogy & level-order definition",
+          "revisitation": false
+        },
+        {
+          "start": 50,
+          "end": 110,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "FIFO Queue requirement vs Stack",
+          "revisitation": false
+        },
+        {
+          "start": 110,
+          "end": 175,
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Queue invariant & Visited set necessity",
+          "revisitation": false
+        },
+        {
+          "start": 175,
+          "end": 320,
+          "intellectual_activity": "TRACE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "5-node graph execution trace",
+          "revisitation": true
+        },
+        {
+          "start": 320,
+          "end": 395,
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Complexity analysis O(V+E)",
+          "revisitation": false
+        },
+        {
+          "start": 395,
+          "end": 450,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Disconnected graph limitation",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Breadth-First Search, or BFS... First-In, First-Out. That is why Breadth-First Search strictly requires a FIFO Queue."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Ripples expand outward uniformly in concentric circles... visits vertices in order of their distance from S."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "evidence": "Queue: Q = [A]... Visited boolean array or hash set... adjacency list"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Queue contains vertices from at most two consecutive levels: d and d+1. All at d are expanded before d+1."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "If we do not mark a vertex as visited, the algorithm would loop infinitely inside a cycle, or enqueue the exact same vertex multiple times."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 5,
+          "evidence": "Step 1: pop A, enqueue B,C. Step 2: pop B, enqueue D. Step 3: pop C, see D visited. Step 4: pop D, enqueue E. Step 5: pop E."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 3,
+          "evidence": "If the graph had a disconnected component... this single BFS call would not visit them."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 0,
+          "evidence": "No evidence observed."
+        }
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "concept_units": [
+        "Fully connected autoencoder architecture & 2D flattening drawback",
+        "Convolutional autoencoder spatial feature learning & limitations",
+        "Variational Autoencoder continuous latent space motivation",
+        "Probabilistic bottleneck: Gaussian mean (mu) and variance (sigma^2)",
+        "Standard Gaussian prior N(0, I) and empty space gaps problem",
+        "Loss function decomposition: Reconstruction loss + KL divergence regularizer",
+        "Reparameterization trick preview"
+      ],
+      "episodes": [
+        {
+          "start": 0,
+          "end": 147,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "FC vs Conv autoencoders & flattening failure",
+          "revisitation": false
+        },
+        {
+          "start": 147,
+          "end": 258,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "VAE continuous latent space motivation",
+          "revisitation": false
+        },
+        {
+          "start": 258,
+          "end": 430,
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Gaussian parameterization (mu, sigma^2) & KL regularization",
+          "revisitation": true
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "first autoencoder that comes into picture is fully connected autoencoder... third type is Variational Autoencoders, or VAEs"
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "we do not want to look at one fixed point where the data is available. We want to understand the probability distribution of data in the latent space."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "evidence": "predicting two vectors: the mean (mu) of the data distribution, and the variance (sigma squared) of the data distribution."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "loss function of a VAE has two components: First, reconstruction loss... Second, the KL divergence... which acts as a regularizer"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "If we do not regularize, the network will simply set variance to zero and push classes infinitely far apart... empty gaps where sampling produces gibberish."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 4,
+          "evidence": "predicting Gaussian parameters for image pixel compression"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "evidence": "main reason why fully connected autoencoders fail is because the 2D dimension of image is directly flattened, losing all spatial neighborhood"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 2,
+          "evidence": "reparameterization trick allows backpropagation through random sampling (mentioned in closing)"
+        }
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "concept_units": [
+        "Law of Demand vs Price Elasticity concept (responsiveness magnitude)",
+        "Percentage change definition Ed = (% change Q) / (% change P)",
+        "Unit-free comparison justification",
+        "Base dependency problem & Midpoint Formula solution",
+        "Numerical worked calculation (price $10->$14, quantity 100->60, |Ed|=1.50)",
+        "Elastic (|Ed|>1), inelastic (|Ed|<1), and unit elastic (|Ed|=1) classification",
+        "Total Revenue Test (TR = P * Q; inelastic vs elastic revenue consequences)",
+        "Consumer surplus & Deadweight Loss triangle from price ceiling"
+      ],
+      "episodes": [
+        {
+          "start": 0,
+          "end": 60,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Law of Demand vs Price Elasticity concept",
+          "revisitation": false
+        },
+        {
+          "start": 60,
+          "end": 120,
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Percentage change formula & Midpoint method",
+          "revisitation": false
+        },
+        {
+          "start": 120,
+          "end": 210,
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Numerical calculation of Ed = -1.50",
+          "revisitation": false
+        },
+        {
+          "start": 210,
+          "end": 290,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Elastic vs inelastic classification",
+          "revisitation": false
+        },
+        {
+          "start": 290,
+          "end": 380,
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Total Revenue Test & price/quantity effects",
+          "revisitation": true
+        },
+        {
+          "start": 380,
+          "end": 470,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Consumer surplus & Deadweight Loss triangle",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "price elasticity of demand, which we denote as E_d"
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "degree of responsiveness is what we measure through elasticity... percentage change in quantity demanded divided by percentage change in price"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "evidence": "Midpoint Formula: E_d = [ (Q_2 - Q_1) / ((Q_1 + Q_2)/2) ] / [ (P_2 - P_1) / ((P_1 + P_2)/2) ]"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Total revenue is Price times Quantity: TR = P * Q... If demand is inelastic, quantity effect is small... TR increases. If elastic, TR falls."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "Percentages make elasticity unit-free... Midpoint resolves base-dependency problem."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "price $10 to $14, quantity 100 to 60... percentage Q is -50%, percentage P is +33.3%... E_d = -1.50, absolute value is 1.50."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 5,
+          "evidence": "binding price ceiling below market equilibrium... lost social surplus that benefits no one is Deadweight Loss triangle"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "evidence": "tax incidence depends directly on relative elasticities (mentioned in preview)"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T02",
+  "target_concept": "Explain why the length of the smallest input string bounds the maximum possible LCP length and how to compute it.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly tests the lecture point that the shortest string length bounds the LCP length."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the concept to specific strings, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question is clearly worded and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect common misconceptions about LCP length."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only one option (4 characters) is correct; all others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "Authentic application of the concept rather than a trivial definition."
+    }
+  },
+  "latency_ms": 3048,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly tests the lecture point that the shortest string length bounds the LCP length.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying the concept to specific strings, not mere recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The question is clearly worded and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options reflect common misconceptions about LCP length.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only one option (4 characters) is correct; all others are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"Authentic application of the concept rather than a trivial definition.\"}\n}"
+}

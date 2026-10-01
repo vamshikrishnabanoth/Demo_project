@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T01",
+  "target_concept": "Identify and return the longest common prefix among a set of strings",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Given the array ['interview', 'integrate', 'integral', 'internal'], which of the following Python functions correctly returns their longest common prefix?",
+    "options": [
+      "def longest_common_prefix(strs):\n    if not strs: return ''\n    prefix = strs[0]\n    for s in strs[1:]:\n        while not s.startswith(prefix):\n            prefix = prefix[:-1]\n            if not prefix:\n                return ''\n    return prefix",
+      "def longest_common_prefix(strs):\n    return ''",
+      "def longest_common_prefix(strs):\n    return strs[0] if strs else ''",
+      "def longest_common_prefix(strs):\n    return ''.join(set(strs[0]) & set(strs[1]))"
+    ],
+    "correctAnswer": "def longest_common_prefix(strs):\n    if not strs: return ''\n    prefix = strs[0]\n    for s in strs[1:]:\n        while not s.startswith(prefix):\n            prefix = prefix[:-1]\n            if not prefix:\n                return ''\n    return prefix",
+    "explanation": "The correct function iteratively trims the candidate prefix until all strings start with it, which yields 'inte' for the given array. The other options either always return an empty string, return the first string without checking others, or compute an unrelated set intersection.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Identify and return the longest common prefix among a set of strings"
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 6540,
+  "retry_count": 3,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Given the array ['interview', 'integrate', 'integral', 'internal'], which of the following Python functions correctly returns their longest common prefix?\",\n  \"options\": [\n    \"def longest_common_prefix(strs):\\n    if not strs: return ''\\n    prefix = strs[0]\\n    for s in strs[1:]:\\n        while not s.startswith(prefix):\\n            prefix = prefix[:-1]\\n            if not prefix:\\n                return ''\\n    return prefix\",\n    \"def longest_common_prefix(strs):\\n    return ''\",\n    \"def longest_common_prefix(strs):\\n    return strs[0] if strs else ''\",\n    \"def longest_common_prefix(strs):\\n    return ''.join(set(strs[0]) & set(strs[1]))\"\n  ],\n  \"correctAnswer\": \"def longest_common_prefix(strs):\\n    if not strs: return ''\\n    prefix = strs[0]\\n    for s in strs[1:]:\\n        while not s.startswith(prefix):\\n            prefix = prefix[:-1]\\n            if not prefix:\\n                return ''\\n    return prefix\",\n  \"explanation\": \"The correct function iteratively trims the candidate prefix until all strings start with it, which yields 'inte' for the given array. The other options either always return an empty string, return the first string without checking others, or compute an unrelated set intersection.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

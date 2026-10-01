@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_05_deep_learning_vaes",
+  "domain": "AI / Machine Learning",
+  "subject": "Deep Generative Models",
+  "topic": "Autoencoders and Variational Autoencoders (VAEs)",
+  "learner_level": "Undergraduate / Postgraduate CSE (Final Year Elective)",
+  "syllabus_context": "Unit V: Generative Deep Learning. Unsupervised representation learning, dimensionality reduction, structural failure modes of fully connected and convolutional autoencoders, continuous latent space geometry, Gaussian prior modeling, KL divergence regularization, reparameterization trick.",
+  "declared_learning_objective": "Explain why classical autoencoders fail at smooth generative interpolation, derive the variational autoencoder objective mapping inputs to Gaussian distributions (mu, sigma^2), and justify the role of Kullback-Leibler (KL) divergence in regularizing the latent space.",
+  "provenance": {
+    "mode": "AUTHENTIC_RECORDING",
+    "source_type": "CLASSROOM_RECORDING",
+    "source": "KMIT Faculty Lecture Series (Asha Mam, Units GT-A01 to GT-A03)",
+    "institution": "Keshav Memorial Institute of Technology, Hyderabad",
+    "access_date": "2026-09-28",
+    "license_or_usage_basis": "Institutional Research Agreement"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Colloquial speech patterns transcribed verbatim; mathematical formulas referenced verbally."
+  }
+}

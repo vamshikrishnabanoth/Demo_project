@@ -1,0 +1,184 @@
+{
+  "dataset_metadata": {
+    "title": "Phase 4 Experiment 4.2b Step 2: C5 Non-Benchmark Calibration Dataset",
+    "version": "1.1.0",
+    "created_at": "2026-09-30T00:06:00Z",
+    "anti_leakage_rule": "Strictly non-benchmark CS domains. Zero overlap with BENCH_04 (Git CLI) or BENCH_03 (Recursion/GCD/LCM). Evaluation units GT-G00..GT-G09 and GT-D01..GT-D07 are completely excluded.",
+    "total_examples": 8,
+    "boundary_families": [
+      "STUDENT_INTERACT",
+      "REAL_WORLD_APP",
+      "DEMONSTRATE",
+      "PRACTICE"
+    ]
+  },
+  "examples": [
+    {
+      "id": "CALIB-A1",
+      "boundary_family": "STUDENT_INTERACT",
+      "boundary_type": "NEGATIVE_BOUNDARY",
+      "domain": "Loop variable initialization",
+      "transcript_text": "Let us look at why this variable is needed. Because the loop terminates when the counter reaches zero, this variable stores the final result for the caller.",
+      "expected_labels": [
+        "EXPLAIN"
+      ],
+      "prohibited_labels": [
+        "STUDENT_INTERACT"
+      ],
+      "rationale": "The instructor explains variable necessity and self-answers without student interaction or turn-taking. Posing an explanation to the room must NOT be labeled STUDENT_INTERACT.",
+      "expected_evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "Because the loop terminates when the counter reaches zero, this variable stores the final result for the caller"
+        }
+      ]
+    },
+    {
+      "id": "CALIB-A2",
+      "boundary_family": "STUDENT_INTERACT",
+      "boundary_type": "POSITIVE_BOUNDARY",
+      "domain": "Function return values and student dialogue",
+      "transcript_text": "Vikram, what is the output of this function when n equals three? Student Vikram answers: It returns six. Teacher: Exactly right, Vikram. It multiplies three by two.",
+      "expected_labels": [
+        "EXPLAIN",
+        "STUDENT_INTERACT"
+      ],
+      "prohibited_labels": [],
+      "rationale": "Explicit student turn-taking, student responds with an answer, and instructor directly validates and builds upon the student input.",
+      "expected_evidence": [
+        {
+          "label": "STUDENT_INTERACT",
+          "quote": "Vikram, what is the output of this function when n equals three? Student Vikram answers: It returns six. Teacher: Exactly right, Vikram"
+        },
+        {
+          "label": "EXPLAIN",
+          "quote": "It multiplies three by two"
+        }
+      ]
+    },
+    {
+      "id": "CALIB-B1",
+      "boundary_family": "REAL_WORLD_APP",
+      "boundary_type": "NEGATIVE_BOUNDARY",
+      "domain": "Relational database overview",
+      "transcript_text": "Relational database systems are widely utilized by software engineers and tech companies to store structured records on servers.",
+      "expected_labels": [
+        "EXPLAIN"
+      ],
+      "prohibited_labels": [
+        "REAL_WORLD_APP"
+      ],
+      "rationale": "Generic passing mention of software engineers and tech companies without a concrete operational scenario or practical workflow.",
+      "expected_evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "Relational database systems are widely utilized by software engineers and tech companies to store structured records on servers"
+        }
+      ]
+    },
+    {
+      "id": "CALIB-B2",
+      "boundary_family": "REAL_WORLD_APP",
+      "boundary_type": "POSITIVE_BOUNDARY",
+      "domain": "Airline reservation transaction locking",
+      "transcript_text": "To see why database locking is essential in production, consider an airline reservation system where two passengers attempt to purchase the exact same seat simultaneously. Without serialized transactions, both bookings succeed and the airline double-books the seat.",
+      "expected_labels": [
+        "EXPLAIN",
+        "REAL_WORLD_APP"
+      ],
+      "prohibited_labels": [],
+      "rationale": "Concrete operational application scenario (airline reservation, concurrent seat purchase, double-booking failure mode).",
+      "expected_evidence": [
+        {
+          "label": "REAL_WORLD_APP",
+          "quote": "consider an airline reservation system where two passengers attempt to purchase the exact same seat simultaneously. Without serialized transactions, both bookings succeed and the airline double-books the seat"
+        },
+        {
+          "label": "EXPLAIN",
+          "quote": "To see why database locking is essential in production"
+        }
+      ]
+    },
+    {
+      "id": "CALIB-C1",
+      "boundary_family": "DEMONSTRATE",
+      "boundary_type": "NEGATIVE_BOUNDARY",
+      "domain": "Python file open syntax",
+      "transcript_text": "In Python, the open function takes a file path string and a mode flag like r for reading, returning a file stream object.",
+      "expected_labels": [
+        "EXPLAIN"
+      ],
+      "prohibited_labels": [
+        "DEMONSTRATE"
+      ],
+      "rationale": "Pure verbal syntax and parameter description. No execution, command running, or output inspection.",
+      "expected_evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "In Python, the open function takes a file path string and a mode flag like r for reading, returning a file stream object"
+        }
+      ]
+    },
+    {
+      "id": "CALIB-C2",
+      "boundary_family": "DEMONSTRATE",
+      "boundary_type": "POSITIVE_BOUNDARY",
+      "domain": "Terminal execution and console output",
+      "transcript_text": "Watch the terminal screen now. I am typing python3 script.py and pressing enter. Look at the output: it prints Connection established successfully. This confirms that our network socket bound to the designated port and completed the TCP handshake.",
+      "expected_labels": [
+        "DEMONSTRATE",
+        "EXPLAIN"
+      ],
+      "prohibited_labels": [],
+      "rationale": "Active terminal typing and output inspection (DEMONSTRATE) coupled with an explicit conceptual explanation of socket binding and TCP handshaking (EXPLAIN).",
+      "expected_evidence": [
+        {
+          "label": "DEMONSTRATE",
+          "quote": "Watch the terminal screen now. I am typing python3 script.py and pressing enter. Look at the output: it prints Connection established successfully"
+        },
+        {
+          "label": "EXPLAIN",
+          "quote": "This confirms that our network socket bound to the designated port and completed the TCP handshake"
+        }
+      ]
+    },
+    {
+      "id": "CALIB-D1",
+      "boundary_family": "PRACTICE",
+      "boundary_type": "NEGATIVE_BOUNDARY",
+      "domain": "Binary search algorithm mechanics",
+      "transcript_text": "Binary search locates an element in a sorted list by repeatedly comparing the target against the middle element and halving the search space.",
+      "expected_labels": [
+        "EXPLAIN"
+      ],
+      "prohibited_labels": [
+        "PRACTICE"
+      ],
+      "rationale": "Explaining algorithmic mechanics. No task or exercise given to students.",
+      "expected_evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "Binary search locates an element in a sorted list by repeatedly comparing the target against the middle element and halving the search space"
+        }
+      ]
+    },
+    {
+      "id": "CALIB-D2",
+      "boundary_family": "PRACTICE",
+      "boundary_type": "POSITIVE_BOUNDARY",
+      "domain": "In-class coding lab exercise",
+      "transcript_text": "Open your code editors now. Take the next five minutes to write this binary search function on your own laptops, and then we will check your code.",
+      "expected_labels": [
+        "PRACTICE"
+      ],
+      "prohibited_labels": [],
+      "rationale": "Explicit directive to students to open editors and write code during a 5-minute practice window.",
+      "expected_evidence": [
+        {
+          "label": "PRACTICE",
+          "quote": "Open your code editors now. Take the next five minutes to write this binary search function on your own laptops, and then we will check your code"
+        }
+      ]
+    }
+  ]
+}

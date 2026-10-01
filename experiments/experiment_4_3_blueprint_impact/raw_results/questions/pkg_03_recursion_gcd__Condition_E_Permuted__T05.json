@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Debug a recursive string‑reversal routine and determine whether the result is a palindrome.",
+  "target_dimension": "Debug / Code Trace",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "Given a recursive function that reverses a string, what is the result of reversing the input string \"I a b I m x a l I n a r\" and does the result form a palindrome?",
+    "options": [
+      "The reversed string is 'ranIlaxmIbaI', which is not a palindrome.",
+      "The reversed string is 'ranIlaxmIbaI', which is a palindrome.",
+      "The recursive function will exceed the maximum recursion depth for this input.",
+      "Reversing any string always produces a palindrome."
+    ],
+    "correctAnswer": "The reversed string is 'ranIlaxmIbaI', which is not a palindrome.",
+    "explanation": "Reversing the characters yields \"ranIlaxmIbaI\". Since this string differs from the original, it is not a palindrome.",
+    "metadata": {
+      "dimension": "Debug / Code Trace",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Medium",
+      "concept": "Debug a recursive string‑reversal routine and determine whether the result is a palindrome."
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "FAILED",
+    "failureCode": "INSUFFICIENT_READABLE_EVIDENCE",
+    "rejectedCount": 1,
+    "reasons": [
+      "FOREIGN_TOPIC_CONTAMINATION: Multiple unsupported domain anchors (function, reverses, string, reversing) absent from lecture evidence"
+    ]
+  },
+  "latency_ms": 2403,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"Given a recursive function that reverses a string, what is the result of reversing the input string \\\"I a b I m x a l I n a r\\\" and does the result form a palindrome?\",\n  \"options\": [\n    \"The reversed string is 'ranIlaxmIbaI', which is not a palindrome.\",\n    \"The reversed string is 'ranIlaxmIbaI', which is a palindrome.\",\n    \"The recursive function will exceed the maximum recursion depth for this input.\",\n    \"Reversing any string always produces a palindrome.\"\n  ],\n  \"correctAnswer\": \"The reversed string is 'ranIlaxmIbaI', which is not a palindrome.\",\n  \"explanation\": \"Reversing the characters yields \\\"ranIlaxmIbaI\\\". Since this string differs from the original, it is not a palindrome.\",\n  \"metadata\": {\n    \"dimension\": \"Debug / Code Trace\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

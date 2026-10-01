@@ -1,0 +1,21 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "STUDENT_INTERACT"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "I'll explain what the problem is for those who did not come. You're given a bunch of strings, and what you need to return is the prefix, which is common amongst all of them."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "If you're given data, the output would basically be HL, because that is common in all three."
+    },
+    {
+      "label": "STUDENT_INTERACT",
+      "quote": "How many finished both of them using binary search? Nobody."
+    }
+  ]
+}

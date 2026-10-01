@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T02",
+  "target_concept": "Demonstrate how to stage all changes versus a single file using git add.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "Which command will stage only the file named a.txt in the repository?",
+    "options": [
+      "git add .",
+      "git add a.txt",
+      "git commit -m \"update\"",
+      "git status"
+    ],
+    "correctAnswer": "git add a.txt",
+    "explanation": "According to the evidence, using 'git add a.txt' adds only the changes of that specific file to the staging area, whereas 'git add .' stages all changes. 'git commit' records staged changes, and 'git status' only displays repository state.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Demonstrate how to stage all changes versus a single file using git add."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12313,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"Which command will stage only the file named a.txt in the repository?\",\n  \"options\": [\n    \"git add .\",\n    \"git add a.txt\",\n    \"git commit -m \\\"update\\\"\",\n    \"git status\"\n  ],\n  \"correctAnswer\": \"git add a.txt\",\n  \"explanation\": \"According to the evidence, using 'git add a.txt' adds only the changes of that specific file to the staging area, whereas 'git add .' stages all changes. 'git commit' records staged changes, and 'git status' only displays repository state.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,51 @@
+{
+  "unit_id": "GT-D04",
+  "benchmark": "BENCH_03",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "COMPARE",
+    "PRACTICE",
+    "CODE_TRACE",
+    "STUDENT_INTERACT",
+    "REINFORCE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Now let's try to understand greatest common divisor."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "Eight and twelve greatest common divisor. Four is the common guy."
+    },
+    {
+      "label": "COMPARE",
+      "quote": "It's not an efficient one. I'll show you an efficient one which follows a UK algorithm."
+    },
+    {
+      "label": "PRACTICE",
+      "quote": "Let's try to write a pseudo code and then you write recursion for it."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "I will check over here if 12 modulo eight is equal equal zero. If yes, then 12 becomes my No... then I will go for a further call to GCD, and now at this point, I will say eight comma. What will I pass? I will not pass 12. I will pass 12 modulo eight."
+    },
+    {
+      "label": "STUDENT_INTERACT",
+      "quote": "How are you going to find this one? What would you write in the for loop to get the JCD?"
+    },
+    {
+      "label": "REINFORCE",
+      "quote": "If maximum modulo minimum is equal equal to zero. If yes, return minimum."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\",\"DEMONSTRATE\",\"COMPARE\",\"PRACTICE\",\"CODE_TRACE\",\"STUDENT_INTERACT\",\"REINFORCE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Now let's try to understand greatest common divisor.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"Eight and twelve greatest common divisor. Four is the common guy.\"\n    },\n    {\n      \"label\": \"COMPARE\",\n      \"quote\": \"It's not an efficient one. I'll show you an efficient one which follows a UK algorithm.\"\n    },\n    {\n      \"label\": \"PRACTICE\",\n      \"quote\": \"Let's try to write a pseudo code and then you write recursion for it.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"I will check over here if 12 modulo eight is equal equal zero. If yes, then 12 becomes my No... then I will go for a further call to GCD, and now at this point, I will say eight comma. What will I pass? I will not pass 12. I will pass 12 modulo eight.\"\n    },\n    {\n      \"label\": \"STUDENT_INTERACT\",\n      \"quote\": \"How are you going to find this one? What would you write in the for loop to get the JCD?\"\n    },\n    {\n      \"label\": \"REINFORCE\",\n      \"quote\": \"If maximum modulo minimum is equal equal to zero. If yes, return minimum.\"\n    }\n  ]\n}",
+  "latency_ms": 25219,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

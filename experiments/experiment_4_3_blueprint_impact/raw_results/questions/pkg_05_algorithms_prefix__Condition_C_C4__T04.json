@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_C_C4",
+  "target_id": "T04",
+  "target_concept": "Outline the outer‑loop over character positions and inner‑loop over strings, including the break condition when a mismatch occurs",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "Based on the described algorithm, which statement accurately describes the condition that causes the nested loops to terminate early?",
+    "options": [
+      "The loops break as soon as the hash set size becomes greater than one, indicating a mismatch among the characters at the current position.",
+      "The outer loop stops only after processing every character of the longest input string, regardless of any mismatches.",
+      "The inner loop terminates when the string builder reaches a length equal to the smallest input string.",
+      "The algorithm continues even when the first characters differ, returning the partially built string."
+    ],
+    "correctAnswer": "The loops break as soon as the hash set size becomes greater than one, indicating a mismatch among the characters at the current position.",
+    "explanation": "The evidence states that after adding characters from each string to a hash set, if the set size is not one (i.e., characters differ), the algorithm breaks out of both loops (line 23). Therefore the early exit occurs when the set size exceeds one, signalling a mismatch at the current character index.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Hard",
+      "concept": "Outline the outer‑loop over character positions and inner‑loop over strings, including the break condition when a mismatch occurs"
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14497,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"Based on the described algorithm, which statement accurately describes the condition that causes the nested loops to terminate early?\",\n  \"options\": [\n    \"The loops break as soon as the hash set size becomes greater than one, indicating a mismatch among the characters at the current position.\",\n    \"The outer loop stops only after processing every character of the longest input string, regardless of any mismatches.\",\n    \"The inner loop terminates when the string builder reaches a length equal to the smallest input string.\",\n    \"The algorithm continues even when the first characters differ, returning the partially built string.\"\n  ],\n  \"correctAnswer\": \"The loops break as soon as the hash set size becomes greater than one, indicating a mismatch among the characters at the current position.\",\n  \"explanation\": \"The evidence states that after adding characters from each string to a hash set, if the set size is not one (i.e., characters differ), the algorithm breaks out of both loops (line 23). Therefore the early exit occurs when the set size exceeds one, signalling a mismatch at the current character index.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

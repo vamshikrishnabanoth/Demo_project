@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_D_C5",
+  "target_id": "T03",
+  "target_concept": "Differentiate when a problem requires GCD (equal partitioning) versus LCM (timing/scheduling)",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly tests the lecture’s distinction between GCD for equal partitioning and LCM for timing/scheduling."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the concept to a realistic scenario rather than mere recall, but no complex computation."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "GCD is a plausible misconception; average and sum are less likely but still reasonable distractors for novices."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only LCM is correct per the evidence; all other options are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Uses an authentic real‑world maintenance scheduling context rather than a trivial definition."
+    }
+  },
+  "latency_ms": 2040,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly tests the lecture’s distinction between GCD for equal partitioning and LCM for timing/scheduling.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying the concept to a realistic scenario rather than mere recall, but no complex computation.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The question stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"GCD is a plausible misconception; average and sum are less likely but still reasonable distractors for novices.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only LCM is correct per the evidence; all other options are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"Uses an authentic real‑world maintenance scheduling context rather than a trivial definition.\"}\n}"
+}

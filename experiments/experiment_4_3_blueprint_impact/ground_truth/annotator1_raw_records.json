@@ -1,0 +1,99 @@
+{
+  "annotator_id": "ANNOTATOR_01",
+  "role": "Independent Curriculum Expert",
+  "date": "2026-09-30",
+  "units": {
+    "GT-T02": {
+      "unit_id": "GT-T02",
+      "instructor": "Tapadia Sir",
+      "labels": [
+        "EXPLAIN",
+        "CODE_TRACE",
+        "EDGE_CASE"
+      ],
+      "evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "the first thing you would need to find out is what is the length of the smallest string? Because the longest common prefix cannot be larger than the smallest string. So, there is no point processing all the characters of every string because what you might end up getting into is array index out of bounds if you're not very careful about it.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "CODE_TRACE",
+          "quote": "We have a hash set created. We add h to it. h gets added. I add one more h. What does set guarantee? No duplicates. So, the second h does not get added. The third h does not get added... But when I go for the fourth character, it would be L, P and L. So, what would the set contain? Two elements. One, L and one, P. Size is not one.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "EDGE_CASE",
+          "quote": "what you might end up getting into is array index out of bounds if you're not very careful about it. So, what do you do? We first find out what is the length of the smallest string, and only process those many characters",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    },
+    "GT-T03": {
+      "unit_id": "GT-T03",
+      "instructor": "Tapadia Sir",
+      "labels": [
+        "EXPLAIN",
+        "DEMONSTRATE",
+        "CODE_TRACE"
+      ],
+      "evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "The outer loop is number of characters you want to process. The inner loop is one character at a time of all the three strings. And I take that character and dump it into my hash set. Is that clear? And after that, what are we doing? If the size is one, it means it is repeating in all.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "DEMONSTRATE",
+          "quote": "Can you take us to that method? Great. Guys, go through this code. I'm saying the smallest is string zero... Okay, scroll down. Yeah. What do we do?... Where does the break take you out of? Out of each loop, line 23.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "CODE_TRACE",
+          "quote": "What is that array contain? Hello, helpful and hell. I get the first one. Hello, what is the first character of it? H. Add it to the set... I get the second string and I add the first character of the second string. Again, H. I get the third string. Hell, add the first character.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    },
+    "GT-A02": {
+      "unit_id": "GT-A02",
+      "instructor": "Asha Mam",
+      "labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "Now, the main idea here is the important factor here for understanding the reconstruction is latent space. So, this variational auto encoders focused on what do I do with this latent space rather than just changing the values. What extra thing I can do with the latent space because the encoders does just the conversion of the input latent space.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "COMPARE",
+          "quote": "First fully auto encoders, very blurry images, second convolutional auto encoders, a little bit improvement by changing the latent space... unlike fully connected where the accuracy is only around 60 or 50. 70 percent or 80 percent till 90 percent accuracy of reconstructed images is done using this auto encoders, which are called as variational auto encoders.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    },
+    "GT-A03": {
+      "unit_id": "GT-A03",
+      "instructor": "Asha Mam",
+      "labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "I want to understand the probability of distribution of data in the latent space. So, the improvement in the latent space is done not just by one point, but understanding mean and variance of that particular data... And the KL divergence makes sure that the mean and the variance of the data are close to what? Close to the normal distribution.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "COMPARE",
+          "quote": "So, the normal encoders focuses only on one data point. Whereas, the variational auto encoders focus on what? The mean of the data distribution of the pixels and as well as more the variance... Instead of generating the fixed latent space, what does variational auto encoder do? We try to find the probability distribution",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_D_C5",
+  "target_id": "T02",
+  "target_concept": "Explain the recursive Euclidean algorithm using min/max and modulo operations",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly tests the recursive Euclidean algorithm using max/min and modulo, which is the core content of the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the taught algorithm to a new pair of numbers, demanding procedural reasoning beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously asks for the correct sequence of recursive calls for GCD(9,12)."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect common misconceptions about order of arguments and handling of the modulo step, making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Given the algorithmic description, only option A is correct; the other three are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The task asks students to apply the algorithm to a new example, providing an authentic assessment rather than a simple definition recall."
+    }
+  },
+  "latency_ms": 1799,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly tests the recursive Euclidean algorithm using max/min and modulo, which is the core content of the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying the taught algorithm to a new pair of numbers, demanding procedural reasoning beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously asks for the correct sequence of recursive calls for GCD(9,12).\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options reflect common misconceptions about order of arguments and handling of the modulo step, making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Given the algorithmic description, only option A is correct; the other three are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The task asks students to apply the algorithm to a new example, providing an authentic assessment rather than a simple definition recall.\"}\n}"
+}

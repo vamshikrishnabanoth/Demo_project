@@ -1,0 +1,37 @@
+{
+  "package_id": "pkg_06_economics_elasticity",
+  "total_duration_seconds": 470,
+  "raw_transcript": "Good afternoon. Today we are addressing a concept central to all economic decision-making: price elasticity of demand.\n\nWe already know the Law of Demand: holding other factors equal, when the price of a good rises, the quantity demanded falls. That gives us a downward-sloping demand curve. But for a business setting prices, or for a government imposing a tax, knowing simply that quantity falls is not enough. You need to know: by how much does it fall? Does it drop by a tiny trickle, or does it drop off a cliff?\n\nThat degree of responsiveness is what we measure through elasticity.\nSpecifically, price elasticity of demand, which we denote as E_d, is defined as the percentage change in quantity demanded divided by the percentage change in price:\nE_d = (% change in Q) / (% change in P).\n\nNow, why do we use percentage changes rather than simple slopes? Because slope depends on units! If you measure oil in barrels vs. gallons, or price in dollars vs. cents, the slope changes completely. Percentages make elasticity unit-free and comparable across all goods.\n\nHowever, there is an arithmetic trap with simple percentage changes. Suppose a price rises from $4 to $5. That is an increase of $1 / $4 = 25%. But if price falls from $5 to $4, that is a decrease of $1 / $5 = 20%! You get different elasticity numbers for the exact same two points on a demand curve depending on the direction of change.\n\nTo resolve this base-dependency problem, economists use the Midpoint Formula. Instead of dividing by the initial point, you divide by the average of the initial and new values:\nE_d = [ (Q_2 - Q_1) / ((Q_1 + Q_2) / 2) ] / [ (P_2 - P_1) / ((P_1 + P_2) / 2) ].\n\nLet us do a numerical calculation. Suppose at a price of $10, consumers buy 100 units of a textbook. When the publisher increases the price to $14, quantity demanded drops to 60 units.\nWhat is the price elasticity of demand?\nChange in quantity: 60 - 100 = -40. Average quantity: (100 + 60) / 2 = 80.\nSo percentage change in quantity is -40 / 80 = -0.50, or -50%.\nChange in price: 14 - 10 = +4. Average price: (10 + 14) / 2 = 12.\nPercentage change in price is +4 / 12 = +0.333, or +33.3%.\nDivide them: E_d = -0.50 / +0.333 = -1.50.\n\nBecause demand slopes downward, price and quantity move in opposite directions, so elasticity is always negative. Economists usually drop the minus sign and talk about the absolute value: |E_d| = 1.50.\n\nHow do we interpret this number?\nWhenever |E_d| is greater than 1, demand is elastic. That means consumers are sensitive to price: a 1% price rise causes a greater than 1% drop in quantity. Goods with many close substitutes—like a specific brand of soda—tend to be elastic.\nWhen |E_d| is less than 1, demand is inelastic. Consumers are relatively insensitive to price: a 1% price increase leads to less than a 1% drop in quantity. Necessities with few substitutes—like insulin, electricity, or gasoline in the short run—are inelastic.\nWhen |E_d| equals exactly 1, demand is unit elastic.\n\nNow, why does this matter so crucially to revenue?\nTotal revenue is Price times Quantity: TR = P * Q.\nWhen you raise price, you gain revenue on each unit sold (the price effect), but you sell fewer units (the quantity effect).\nIf demand is inelastic (|E_d| < 1), the quantity effect is small! The gain from higher price outweighs the loss from fewer sales, so Total Revenue increases!\nIf demand is elastic (|E_d| > 1), the quantity drop is huge! It overwhelms the price increase, so Total Revenue falls!\nThis is the famous Total Revenue Test: to increase revenue, raise price if demand is inelastic, and lower price if demand is elastic.\n\nFinally, what happens to societal welfare when prices are distorted?\nConsumer surplus is the total benefit consumers receive above the price they pay—the area beneath the demand curve and above the market price.\nWhen a government introduces a binding price ceiling below market equilibrium, quantity supplied contracts. Even though consumers who get the good pay less, many mutually beneficial trades are prevented from taking place.\nThis lost social surplus that benefits no one is Deadweight Loss—represented geometrically by the deadweight loss triangle between the supply and demand curves. Next lecture, we will see how tax incidence depends directly on the relative elasticities of buyers versus sellers.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 60,
+      "text": "Good afternoon. Today we are addressing a concept central to all economic decision-making: price elasticity of demand. Law of Demand tells direction; elasticity tells magnitude..."
+    },
+    {
+      "start": 60,
+      "end": 120,
+      "text": "Definition: E_d = (% change in Q) / (% change in P). Why percentages? Unit-free comparison. Why midpoint formula? Base dependency problem..."
+    },
+    {
+      "start": 120,
+      "end": 210,
+      "text": "Numerical calculation: price $10 -> $14, quantity 100 -> 60. Midpoint calculation yields E_d = -1.50. Absolute value is 1.50..."
+    },
+    {
+      "start": 210,
+      "end": 290,
+      "text": "Interpretation: |E_d| > 1 is elastic (substitutes, price sensitive). |E_d| < 1 is inelastic (necessities, insensitive). |E_d| = 1 is unit elastic..."
+    },
+    {
+      "start": 290,
+      "end": 380,
+      "text": "Total Revenue Test: TR = P * Q. Inelastic: raising P increases TR. Elastic: raising P decreases TR. Maximum revenue occurs at unit elasticity..."
+    },
+    {
+      "start": 380,
+      "end": 470,
+      "text": "Welfare and Deadweight Loss: consumer surplus area. Price ceiling restricts quantity, preventing mutually beneficial trades. Deadweight loss triangle..."
+    }
+  ]
+}

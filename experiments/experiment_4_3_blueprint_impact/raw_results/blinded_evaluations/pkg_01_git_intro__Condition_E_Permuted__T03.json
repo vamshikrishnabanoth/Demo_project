@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T03",
+  "target_concept": "Create a new local repository using the appropriate command and describe the result",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the git init command and its confirmation message, which are explicitly described in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires recall of the correct command and its output; involves basic conceptual understanding but no deep reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, specific, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options present realistic alternative git commands with plausible messages, reflecting common misconceptions."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only one option matches the evidence; the others are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question frames a practical, authentic task rather than a simple definition, though it remains a common introductory scenario."
+    }
+  },
+  "latency_ms": 12304,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the git init command and its confirmation message, which are explicitly described in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires recall of the correct command and its output; involves basic conceptual understanding but no deep reasoning.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, specific, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options present realistic alternative git commands with plausible messages, reflecting common misconceptions.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only one option matches the evidence; the others are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question frames a practical, authentic task rather than a simple definition, though it remains a common introductory scenario.\"}\n}"
+}

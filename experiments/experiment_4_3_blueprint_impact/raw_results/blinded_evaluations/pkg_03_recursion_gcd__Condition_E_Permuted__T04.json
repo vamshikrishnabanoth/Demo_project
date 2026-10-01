@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Identify and model a real‑world scenario that requires equal sharing and map it to an LCM or GCD computation.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks for the LCM of 8 and 12, which is explicitly discussed in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the LCM concept to a real‑world scenario rather than mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The problem statement is concise, unambiguous, and self‑contained."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options are reasonable multiples that might be guessed, reflecting common misconceptions."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only 24 satisfies both divisibility conditions; the other three choices are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "Presents an authentic application of LCM, though the format is a standard textbook style."
+    }
+  },
+  "latency_ms": 1709,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks for the LCM of 8 and 12, which is explicitly discussed in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying the LCM concept to a real‑world scenario rather than mere recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The problem statement is concise, unambiguous, and self‑contained.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options are reasonable multiples that might be guessed, reflecting common misconceptions.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only 24 satisfies both divisibility conditions; the other three choices are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"Presents an authentic application of LCM, though the format is a standard textbook style.\"}\n}"
+}

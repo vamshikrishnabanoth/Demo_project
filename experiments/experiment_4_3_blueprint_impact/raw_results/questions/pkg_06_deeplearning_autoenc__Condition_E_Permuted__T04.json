@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Compare fully‑connected and convolutional autoencoders regarding how they handle image dimensionality and reconstruction quality.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "According to the provided evidence, why do convolutional autoencoders preserve spatial structure of images better than fully‑connected autoencoders?",
+    "options": [
+      "Fully‑connected encoders flatten the 2‑D image into a 1‑D vector, destroying spatial relationships, while convolutional encoders apply local filters that keep the 2‑D layout intact.",
+      "Fully‑connected encoders use pooling layers to retain spatial hierarchy, whereas convolutional encoders rely on dense connections that lose locality.",
+      "Both encoder types treat the image as a simple list of pixel values, so neither preserves spatial information better than the other.",
+      "Convolutional encoders improve spatial fidelity by randomly dropping pixels during encoding, unlike fully‑connected encoders."
+    ],
+    "correctAnswer": "Fully‑connected encoders flatten the 2‑D image into a 1‑D vector, destroying spatial relationships, while convolutional encoders apply local filters that keep the 2‑D layout intact.",
+    "explanation": "The evidence states that fully‑connected autoencoders fail because the 2‑D image is directly converted into a single dimension, losing spatial structure. Convolutional encoders avoid this by operating on the 2‑D image with convolutional filters, preserving locality and spatial relationships, leading to better reconstruction of spatial features.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Compare fully‑connected and convolutional autoencoders regarding how they handle image dimensionality and reconstruction quality."
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11717,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"According to the provided evidence, why do convolutional autoencoders preserve spatial structure of images better than fully‑connected autoencoders?\",\n  \"options\": [\n    \"Fully‑connected encoders flatten the 2‑D image into a 1‑D vector, destroying spatial relationships, while convolutional encoders apply local filters that keep the 2‑D layout intact.\",\n    \"Fully‑connected encoders use pooling layers to retain spatial hierarchy, whereas convolutional encoders rely on dense connections that lose locality.\",\n    \"Both encoder types treat the image as a simple list of pixel values, so neither preserves spatial information better than the other.\",\n    \"Convolutional encoders improve spatial fidelity by randomly dropping pixels during encoding, unlike fully‑connected encoders.\"\n  ],\n  \"correctAnswer\": \"Fully‑connected encoders flatten the 2‑D image into a 1‑D vector, destroying spatial relationships, while convolutional encoders apply local filters that keep the 2‑D layout intact.\",\n  \"explanation\": \"The evidence states that fully‑connected autoencoders fail because the 2‑D image is directly converted into a single dimension, losing spatial structure. Convolutional encoders avoid this by operating on the 2‑D image with convolutional filters, preserving locality and spatial relationships, leading to better reconstruction of spatial features.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

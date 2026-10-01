@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_D_C5",
+  "target_id": "T02",
+  "target_concept": "Explain the recursive Euclidean algorithm using min/max and modulo operations",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "Using the recursive Euclidean algorithm that always applies max mod min, which of the following outlines the correct sequence of recursive calls to find GCD(9, 12)?",
+    "options": [
+      "Call GCD(9,12) → GCD(9,3) → GCD(3,0) → GCD is 3",
+      "Call GCD(12,9) → GCD(9,12) → GCD(9,3) → GCD is 9",
+      "Call GCD(9,12) → GCD(12,9) → GCD(12,3) → GCD is 3",
+      "Call GCD(9,12) → GCD(9,3) → GCD(3,9) → GCD is 3"
+    ],
+    "correctAnswer": "Call GCD(9,12) → GCD(9,3) → GCD(3,0) → GCD is 3",
+    "explanation": "The algorithm first identifies max=12 and min=9, computes 12 % 9 = 3 and recurses with (9,3). Next, max=9 and min=3, computes 9 % 3 = 0 and recurses with (3,0). When the modulo result is zero, the minimum (3) is the GCD. This matches the first option.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Explain the recursive Euclidean algorithm using min/max and modulo operations"
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12579,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"Using the recursive Euclidean algorithm that always applies max mod min, which of the following outlines the correct sequence of recursive calls to find GCD(9, 12)?\",\n  \"options\": [\n    \"Call GCD(9,12) → GCD(9,3) → GCD(3,0) → GCD is 3\",\n    \"Call GCD(12,9) → GCD(9,12) → GCD(9,3) → GCD is 9\",\n    \"Call GCD(9,12) → GCD(12,9) → GCD(12,3) → GCD is 3\",\n    \"Call GCD(9,12) → GCD(9,3) → GCD(3,9) → GCD is 3\"\n  ],\n  \"correctAnswer\": \"Call GCD(9,12) → GCD(9,3) → GCD(3,0) → GCD is 3\",\n  \"explanation\": \"The algorithm first identifies max=12 and min=9, computes 12 % 9 = 3 and recurses with (9,3). Next, max=9 and min=3, computes 9 % 3 = 0 and recurses with (3,0). When the modulo result is zero, the minimum (3) is the GCD. This matches the first option.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T03",
+  "target_concept": "Identify what git diff compares and how it is used to view changes between versions",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "According to the provided evidence, what does the command `git diff` display, and when would a developer typically run it?",
+    "options": [
+      "It shows the differences between the working directory and the index (staged changes).",
+      "It displays the changes between the current file and its previous committed version, allowing developers to review recent edits.",
+      "It lists all untracked files in the repository.",
+      "It shows the same output as git status, so developers use it to see which files are staged."
+    ],
+    "correctAnswer": "It displays the changes between the current file and its previous committed version, allowing developers to review recent edits.",
+    "explanation": "The evidence states that `git diff` \"will compare the changes of your current file with the previous version\" and is used \"to see the difference between your previous commit and the current commit.\" Therefore, the correct answer describes this behavior. The other options describe different Git commands or misconceptions.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Identify what git diff compares and how it is used to view changes between versions"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13196,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"According to the provided evidence, what does the command `git diff` display, and when would a developer typically run it?\",\n  \"options\": [\n    \"It shows the differences between the working directory and the index (staged changes).\",\n    \"It displays the changes between the current file and its previous committed version, allowing developers to review recent edits.\",\n    \"It lists all untracked files in the repository.\",\n    \"It shows the same output as git status, so developers use it to see which files are staged.\"\n  ],\n  \"correctAnswer\": \"It displays the changes between the current file and its previous committed version, allowing developers to review recent edits.\",\n  \"explanation\": \"The evidence states that `git diff` \\\"will compare the changes of your current file with the previous version\\\" and is used \\\"to see the difference between your previous commit and the current commit.\\\" Therefore, the correct answer describes this behavior. The other options describe different Git commands or misconceptions.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

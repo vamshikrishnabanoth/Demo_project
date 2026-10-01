@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_D_C5",
+  "target_id": "T01",
+  "target_concept": "Compare fully connected and convolutional autoencoders and explain why fully connected autoencoders often fail.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 2,
+      "rationale": "The evidence notes lower reconstruction accuracy of fully connected autoencoders but does not explicitly state that flattening and loss of spatial relationships is the cause."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires inferring the underlying reason from general knowledge of autoencoder architectures, not just recalling a verbatim statement."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question stem is clear, concise, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "All three distractors represent plausible but incorrect reasons that a learner might mistakenly believe."
+    },
+    "d5_single_key_determinism": {
+      "score": 4,
+      "rationale": "Given the context, option A is the most defensible answer, though the evidence does not directly confirm it, leaving slight ambiguity."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question asks for an authentic comparison rather than a simple definition, showing reasonable pedagogical relevance."
+    }
+  },
+  "latency_ms": 31329,
+  "retry_count": 16,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 2, \"rationale\": \"The evidence notes lower reconstruction accuracy of fully connected autoencoders but does not explicitly state that flattening and loss of spatial relationships is the cause.\"},\n  \"d2_cognitive_demand\": {\"score\": 3, \"rationale\": \"Answering requires inferring the underlying reason from general knowledge of autoencoder architectures, not just recalling a verbatim statement.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The question stem is clear, concise, and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\": 5, \"rationale\": \"All three distractors represent plausible but incorrect reasons that a learner might mistakenly believe.\"},\n  \"d5_single_key_determinism\": {\"score\": 4, \"rationale\": \"Given the context, option A is the most defensible answer, though the evidence does not directly confirm it, leaving slight ambiguity.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The question asks for an authentic comparison rather than a simple definition, showing reasonable pedagogical relevance.\"}\n}"
+}

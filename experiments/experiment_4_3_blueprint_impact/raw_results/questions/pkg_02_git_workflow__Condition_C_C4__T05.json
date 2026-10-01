@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_C_C4",
+  "target_id": "T05",
+  "target_concept": "Differentiate between `git reset` (reverts staged changes) and `git restore` (reverts working‑tree changes)",
+  "target_dimension": "Scenario Analysis",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "A student has edited a file, staged the changes with `git add .` but decides not to commit them. Which Git command should they use to unstage the changes while keeping the modifications in the working tree, and why?",
+    "options": [
+      "git reset",
+      "git restore",
+      "git commit",
+      "git checkout"
+    ],
+    "correctAnswer": "git reset",
+    "explanation": "`git reset` (without additional arguments) resets the index to match the HEAD commit, thereby removing the staged changes while leaving the working‑tree files untouched. This matches the scenario where the student wants to unstage but not discard the edits. `git restore` would revert the working‑tree files, `git commit` would create a new commit, and `git checkout` (without a path) would switch branches, none of which achieve the required unstaging.",
+    "metadata": {
+      "dimension": "Scenario Analysis",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Medium",
+      "concept": "Differentiate between `git reset` (reverts staged changes) and `git restore` (reverts working‑tree changes)"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14695,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"A student has edited a file, staged the changes with `git add .` but decides not to commit them. Which Git command should they use to unstage the changes while keeping the modifications in the working tree, and why?\",\n  \"options\": [\n    \"git reset\",\n    \"git restore\",\n    \"git commit\",\n    \"git checkout\"\n  ],\n  \"correctAnswer\": \"git reset\",\n  \"explanation\": \"`git reset` (without additional arguments) resets the index to match the HEAD commit, thereby removing the staged changes while leaving the working‑tree files untouched. This matches the scenario where the student wants to unstage but not discard the edits. `git restore` would revert the working‑tree files, `git commit` would create a new commit, and `git checkout` (without a path) would switch branches, none of which achieve the required unstaging.\",\n  \"metadata\": {\n    \"dimension\": \"Scenario Analysis\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

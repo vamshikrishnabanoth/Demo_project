@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T02",
+  "target_concept": "Identify the condition that determines a common multiple using modulo operations",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "According to the evidence, which logical test determines whether a candidate number is a common multiple of two given integers?",
+    "options": [
+      "The candidate number modulo each integer equals zero",
+      "The candidate number is greater than both integers",
+      "The candidate number divided by each integer leaves a remainder of one",
+      "The candidate number is a prime number"
+    ],
+    "correctAnswer": "The candidate number modulo each integer equals zero",
+    "explanation": "The evidence shows the test: 'if I modulo a equal equal to zero and I modulo b equal equal to zero' which verifies that the number is divisible by both integers, i.e., a common multiple.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Identify the condition that determines a common multiple using modulo operations"
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11727,
+  "retry_count": 0,
+  "raw_response": "{\"targetId\":\"T02\",\"questionText\":\"According to the evidence, which logical test determines whether a candidate number is a common multiple of two given integers?\",\"options\":[\"The candidate number modulo each integer equals zero\",\"The candidate number is greater than both integers\",\"The candidate number divided by each integer leaves a remainder of one\",\"The candidate number is a prime number\"],\"correctAnswer\":\"The candidate number modulo each integer equals zero\",\"explanation\":\"The evidence shows the test: 'if I modulo a equal equal to zero and I modulo b equal equal to zero' which verifies that the number is divisible by both integers, i.e., a common multiple.\",\"metadata\":{\"dimension\":\"Cause / Effect\",\"cognitiveLevel\":\"Remember\",\"targetDifficulty\":\"Easy\"}}"
+}

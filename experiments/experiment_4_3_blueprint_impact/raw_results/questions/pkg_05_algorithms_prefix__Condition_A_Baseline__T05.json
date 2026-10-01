@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T05",
+  "target_concept": "Evaluate trade‑offs between time efficiency, readability, and maintainability when choosing an implementation for longest common prefix",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "Given two implementations of the longest common prefix problem—a hash‑set based approach that collects characters at each position into a set, and a binary‑search based approach that searches over possible prefix lengths— which implementation should be preferred when the primary concerns are code readability and maintainability rather than raw execution speed?",
+    "options": [
+      "Hash‑set implementation",
+      "Binary‑search implementation",
+      "Iterative vertical‑scanning implementation",
+      "Recursive divide‑and‑conquer implementation"
+    ],
+    "correctAnswer": "Hash‑set implementation",
+    "explanation": "The evidence asks students to evaluate trade‑offs beyond time efficiency, emphasizing implementation simplicity, readability, and maintenance. The hash‑set approach uses a straightforward per‑character set check, which is easier to understand and modify than the more abstract binary‑search method, making it the preferable choice when readability and maintainability are prioritized.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Hard",
+      "concept": "Evaluate trade‑offs between time efficiency, readability, and maintainability when choosing an implementation for longest common prefix"
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13744,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"Given two implementations of the longest common prefix problem—a hash‑set based approach that collects characters at each position into a set, and a binary‑search based approach that searches over possible prefix lengths— which implementation should be preferred when the primary concerns are code readability and maintainability rather than raw execution speed?\",\n  \"options\": [\n    \"Hash‑set implementation\",\n    \"Binary‑search implementation\",\n    \"Iterative vertical‑scanning implementation\",\n    \"Recursive divide‑and‑conquer implementation\"\n  ],\n  \"correctAnswer\": \"Hash‑set implementation\",\n  \"explanation\": \"The evidence asks students to evaluate trade‑offs beyond time efficiency, emphasizing implementation simplicity, readability, and maintenance. The hash‑set approach uses a straightforward per‑character set check, which is easier to understand and modify than the more abstract binary‑search method, making it the preferable choice when readability and maintainability are prioritized.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

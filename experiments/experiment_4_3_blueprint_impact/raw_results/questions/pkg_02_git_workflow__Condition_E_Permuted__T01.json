@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T01",
+  "target_concept": "Explain the purpose of the git add command and what area of the repository it affects",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "What is the primary purpose of the git add command and which part of the repository does it affect?",
+    "options": [
+      "It moves changes from the working directory into the staging area",
+      "It creates a new commit directly in the repository",
+      "It shows differences between the working directory and the last commit",
+      "It permanently deletes files from the repository"
+    ],
+    "correctAnswer": "It moves changes from the working directory into the staging area",
+    "explanation": "According to the evidence, git add is used to move changes made in the working directory to the staging area, where they are prepared for a future commit. It does not create commits, show diffs, or delete files.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain the purpose of the git add command and what area of the repository it affects"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12344,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"What is the primary purpose of the git add command and which part of the repository does it affect?\",\n  \"options\": [\n    \"It moves changes from the working directory into the staging area\",\n    \"It creates a new commit directly in the repository\",\n    \"It shows differences between the working directory and the last commit\",\n    \"It permanently deletes files from the repository\"\n  ],\n  \"correctAnswer\": \"It moves changes from the working directory into the staging area\",\n  \"explanation\": \"According to the evidence, git add is used to move changes made in the working directory to the staging area, where they are prepared for a future commit. It does not create commits, show diffs, or delete files.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

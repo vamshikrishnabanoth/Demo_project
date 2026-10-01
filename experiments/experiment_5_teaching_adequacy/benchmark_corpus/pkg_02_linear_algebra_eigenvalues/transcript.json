@@ -1,0 +1,42 @@
+{
+  "package_id": "pkg_02_linear_algebra_eigenvalues",
+  "total_duration_seconds": 460,
+  "raw_transcript": "Welcome back. Today we enter one of the great central chapters of linear algebra: eigenvalues and eigenvectors.\n\nThink about what a matrix does. A matrix acts on a vector $x$ like a function. It takes $x$ in, and it produces an output vector $A x$. In almost all cases, the output vector $A x$ points in a completely different direction from the original vector $x$. The transformation rotates it, stretches it, turns it.\n\nExcept for very special vectors. There exist certain special vectors $x$ where the output $A x$ is parallel to $x$. That is, multiplying by the matrix does not change the vector's direction; it only scales it by some constant number lambda.\n\nThat fundamental relationship is the eigenvalue equation:\nA x = lambda x.\n\nThe non-zero vector $x$ is called an eigenvector of $A$, and the scalar multiplier lambda is called the eigenvalue. If lambda is 2, the matrix doubles the vector along that line. If lambda is 1, the vector doesn't change at all. If lambda is negative, it reverses direction.\n\nLet us look at some geometric intuition first. Take a projection matrix $P$ that projects every vector in 3D space down onto the xy-plane. What are its eigenvectors? If a vector already lies in the xy-plane, projecting it changes nothing: $P x = x$, so lambda = 1. What if a vector points straight along the z-axis, perpendicular to the plane? Its projection is zero: $P x = 0 = 0 x$, so lambda = 0! Every vector in the plane is an eigenvector with eigenvalue 1, and the normal vector is an eigenvector with eigenvalue 0.\n\nNow, consider a 90-degree rotation matrix $Q$. Can a real non-zero vector rotate by 90 degrees and still point in its original direction? Of course not! No real vector can stay parallel to itself after a 90-degree rotation. And the mathematics reflects that: the eigenvalues of a 90-degree rotation matrix are imaginary, plus and minus i.\n\nSo how do we find eigenvalues and eigenvectors algebraically for an arbitrary square matrix $A$?\n\nWe start with the equation $A x = lambda x$. Let us bring everything to one side:\n(A - lambda I) x = 0.\n\nWhere $I$ is the identity matrix. Now look at that equation carefully. We are looking for an eigenvector $x$ that is NOT the zero vector. The zero vector is always a trivial solution, but it tells us nothing. We want a non-zero vector $x$ in the nullspace of $(A - lambda I)$.\n\nWhen does a square matrix have a non-zero vector in its nullspace? Only when the matrix is singular! And a matrix is singular if and only if its determinant is zero.\n\nThat gives us our master equation for eigenvalues:\ndet(A - lambda I) = 0.\n\nThis is the characteristic equation. When you expand this determinant, you get a polynomial in lambda—the characteristic polynomial. For an $n \times n$ matrix, it is a polynomial of degree $n$, which means there are $n$ roots, counting multiplicity.\n\nLet us do a concrete numerical example. Take the $2 \times 2$ matrix $A$:\nFirst row: 4, -5.\nSecond row: 2, -3.\n\nWe set up $(A - lambda I)$:\nFirst row: 4 - lambda, -5.\nSecond row: 2, -3 - lambda.\n\nCompute the determinant:\ndet(A - lambda I) = (4 - lambda)(-3 - lambda) - (-5)(2).\nMultiply it out:\nlambda^2 - lambda - 12 + 10 = lambda^2 - lambda - 2.\nFactor the polynomial:\n(lambda - 2)(lambda + 1) = 0.\n\nSo we find two distinct eigenvalues: lambda_1 = 2, and lambda_2 = -1.\n\nBefore finding eigenvectors, check the two universal properties:\nFirst, the sum of the eigenvalues must equal the trace of the matrix. The trace is the sum of diagonal entries: 4 + (-3) = 1. And our eigenvalues: 2 + (-1) = 1. It matches!\nSecond, the product of the eigenvalues must equal the determinant: 2 * (-1) = -2. The determinant of $A$ is 4*(-3) - (-5)*2 = -12 + 10 = -2. It matches!\n\nNow step two: find the eigenvectors.\nFor lambda_1 = 2, we solve $(A - 2I) x = 0$:\nThe matrix is:\nRow 1: 4 - 2 = 2, -5.\nRow 2: 2, -3 - 2 = -5.\nNotice that row 2 is identical to row 1—the matrix is indeed singular, exactly as required!\nThe equation is 2 x_1 - 5 x_2 = 0.\nA non-zero solution is x_1 = 5, x_2 = 2.\nSo our first eigenvector is v_1 = [5, 2]^T.\n\nFor lambda_2 = -1, we solve $(A - (-1)I) x = (A + I) x = 0$:\nRow 1: 4 + 1 = 5, -5.\nRow 2: 2, -3 + 1 = -2.\nDivide row 1 by 5: x_1 - x_2 = 0, so x_1 = x_2.\nA non-zero solution is v_2 = [1, 1]^T.\n\nSo we have found the complete eigensystem: lambda = 2 with eigenvector [5, 2], and lambda = -1 with eigenvector [1, 1]. Next time, we will see how these eigenvectors allow us to factor $A = S Lambda S^{-1}$ and compute powers of matrices effortlessly.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 55,
+      "text": "Welcome back. Today we enter one of the great central chapters of linear algebra: eigenvalues and eigenvectors. A matrix acts on a vector x like a function..."
+    },
+    {
+      "start": 55,
+      "end": 110,
+      "text": "That fundamental relationship is the eigenvalue equation: A x = lambda x. Let us look at some geometric intuition first. Take a projection matrix P onto the xy-plane..."
+    },
+    {
+      "start": 110,
+      "end": 155,
+      "text": "Consider a 90-degree rotation matrix Q. Can a real non-zero vector rotate by 90 degrees and still point in its original direction? Of course not! Eigenvalues are +/- i..."
+    },
+    {
+      "start": 155,
+      "end": 230,
+      "text": "So how do we find eigenvalues algebraically? (A - lambda I) x = 0. For non-zero x, matrix must be singular: det(A - lambda I) = 0. This is the characteristic equation..."
+    },
+    {
+      "start": 230,
+      "end": 320,
+      "text": "Let us do a concrete numerical example. A = [4, -5; 2, -3]. det(A - lambda I) = lambda^2 - lambda - 2 = (lambda - 2)(lambda + 1) = 0. Eigenvalues are 2 and -1. Check trace and determinant..."
+    },
+    {
+      "start": 320,
+      "end": 420,
+      "text": "Now step two: find the eigenvectors. For lambda_1 = 2, (A - 2I)x = 0 -> [2, -5; 2, -5]x = 0 -> v_1 = [5, 2]. For lambda_2 = -1, (A + I)x = 0 -> v_2 = [1, 1]..."
+    },
+    {
+      "start": 420,
+      "end": 460,
+      "text": "So we have found the complete eigensystem. Next time we will factor A = S Lambda S^-1 and compute matrix powers."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_C_C4",
+  "target_id": "T04",
+  "target_concept": "Use `git diff` to compare the current working files against the previous commit",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 2,
+      "rationale": "Lecture mentions git diff compares changes but does not describe the '+'/'-' line format, so the question tests unstated detail."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires applying knowledge of diff output rather than mere recall, but the reasoning is straightforward."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, specific, and unambiguous about the scenario and expected output."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options reflect common misconceptions about diff output, making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option C correctly describes the diff output; the others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "The question presents an authentic, applied git usage scenario rather than a trivial definition."
+    }
+  },
+  "latency_ms": 47893,
+  "retry_count": 13,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 2, \"rationale\": \"Lecture mentions git diff compares changes but does not describe the '+'/'-' line format, so the question tests unstated detail.\"},\n  \"d2_cognitive_demand\": {\"score\": 3, \"rationale\": \"Requires applying knowledge of diff output rather than mere recall, but the reasoning is straightforward.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, specific, and unambiguous about the scenario and expected output.\"},\n  \"d4_distractor_plausibility\": {\"score\": 5, \"rationale\": \"Incorrect options reflect common misconceptions about diff output, making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Only option C correctly describes the diff output; the others are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\": 5, \"rationale\": \"The question presents an authentic, applied git usage scenario rather than a trivial definition.\"}\n}"
+}

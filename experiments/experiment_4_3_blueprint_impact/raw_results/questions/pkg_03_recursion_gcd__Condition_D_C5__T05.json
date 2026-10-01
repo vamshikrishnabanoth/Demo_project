@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Evaluate the efficiency of starting the search at 1 versus using a tighter upper bound, and compare loop‑based and recursive implementations.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "For the pair (4,6), which implementation strategy results in the fewest iterations when searching for the least common multiple?",
+    "options": [
+      "Starting from 1 using a loop",
+      "Starting from max(a,b) using a loop",
+      "Starting from 1 using recursion",
+      "Starting from max(a,b) using recursion"
+    ],
+    "correctAnswer": "Starting from max(a,b) using a loop",
+    "explanation": "Both loop‑based and recursive searches perform the same number of divisibility checks; the only factor that changes the iteration count is the lower bound of the search. Starting at max(4,6)=6 skips the unnecessary checks from 1 to 5, so any method that begins at max(a,b) uses fewer iterations than starting at 1.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Hard",
+      "concept": "Evaluate the efficiency of starting the search at 1 versus using a tighter upper bound, and compare loop‑based and recursive implementations."
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 16035,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"For the pair (4,6), which implementation strategy results in the fewest iterations when searching for the least common multiple?\",\n  \"options\": [\n    \"Starting from 1 using a loop\",\n    \"Starting from max(a,b) using a loop\",\n    \"Starting from 1 using recursion\",\n    \"Starting from max(a,b) using recursion\"\n  ],\n  \"correctAnswer\": \"Starting from max(a,b) using a loop\",\n  \"explanation\": \"Both loop‑based and recursive searches perform the same number of divisibility checks; the only factor that changes the iteration count is the lower bound of the search. Starting at max(4,6)=6 skips the unnecessary checks from 1 to 5, so any method that begins at max(a,b) uses fewer iterations than starting at 1.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

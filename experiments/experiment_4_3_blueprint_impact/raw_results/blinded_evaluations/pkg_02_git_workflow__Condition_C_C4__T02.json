@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_C_C4",
+  "target_id": "T02",
+  "target_concept": "Use `git add .` to stage all modified files in the working directory",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks which command stages all modified files, exactly matching the lecture statement ‘git add . stages all changes.’"
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires recall of a specific command rather than deep conceptual reasoning; moderate cognitive load."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, self‑contained, and unambiguous about the scenario and what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options are realistic alternatives that learners might confuse (git add -A, git add *, git commit -a)."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Based on the provided evidence only ‘git add .’ is justified; all other choices are demonstrably unsupported."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Presents an authentic workflow scenario rather than a simple definition recall."
+    }
+  },
+  "latency_ms": 1955,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks which command stages all modified files, exactly matching the lecture statement ‘git add . stages all changes.’\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires recall of a specific command rather than deep conceptual reasoning; moderate cognitive load.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, self‑contained, and unambiguous about the scenario and what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options are realistic alternatives that learners might confuse (git add -A, git add *, git commit -a).\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Based on the provided evidence only ‘git add .’ is justified; all other choices are demonstrably unsupported.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"Presents an authentic workflow scenario rather than a simple definition recall.\"}\n}"
+}

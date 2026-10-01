@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T02",
+  "target_concept": "State the purpose of the `git --version` command",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks about the purpose of `git --version`, which the lecture explicitly explains as checking installation and showing the version."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires recall of a specific command purpose; modest conceptual understanding but no deep reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, unambiguous, and grammatically correct."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options represent other common Git commands, making them plausible misconceptions for learners."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is supported by the evidence; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 3,
+      "rationale": "The question tests a basic factual recall rather than a novel or higher‑order application."
+    }
+  },
+  "latency_ms": 1834,
+  "retry_count": 1,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks about the purpose of `git --version`, which the lecture explicitly explains as checking installation and showing the version.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires recall of a specific command purpose; modest conceptual understanding but no deep reasoning.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, unambiguous, and grammatically correct.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options represent other common Git commands, making them plausible misconceptions for learners.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A is supported by the evidence; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":3,\"rationale\":\"The question tests a basic factual recall rather than a novel or higher‑order application.\"}\n}"
+}

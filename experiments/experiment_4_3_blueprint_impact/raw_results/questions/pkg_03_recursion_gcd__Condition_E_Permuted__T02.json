@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T02",
+  "target_concept": "Apply an iterative algorithm that increments a candidate integer and uses modulo checks to find the LCM of two numbers.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "Which of the following pseudocode fragments correctly implements the iterative search for the least common multiple (LCM) of two positive integers a and b as described in the evidence?",
+    "options": [
+      "Initialize I to 1; while true: if I % a == 0 and I % b == 0: return I; else I = I + 1",
+      "Initialize I to a*b; while I > 0: if I % a == 0 and I % b == 0: return I; else I = I - a",
+      "Initialize I to max(a, b); while I <= a*b: if I % a == 0 and I % b == 0: return I; else I = I + max(a, b)",
+      "Initialize I to 0; repeat: I = I + a; if I % b == 0: return I"
+    ],
+    "correctAnswer": "Initialize I to 1; while true: if I % a == 0 and I % b == 0: return I; else I = I + 1",
+    "explanation": "The evidence specifies starting the search from 1 and incrementing the candidate integer by one each iteration, checking that both I % a and I % b equal zero before returning I. Option 1 follows exactly this procedure. Options 2, 3, and 4 use different starting points or step sizes that were not described and may miss the smallest common multiple or change the algorithm's behavior.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Apply an iterative algorithm that increments a candidate integer and uses modulo checks to find the LCM of two numbers."
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14942,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"Which of the following pseudocode fragments correctly implements the iterative search for the least common multiple (LCM) of two positive integers a and b as described in the evidence?\",\n  \"options\": [\n    \"Initialize I to 1; while true: if I % a == 0 and I % b == 0: return I; else I = I + 1\",\n    \"Initialize I to a*b; while I > 0: if I % a == 0 and I % b == 0: return I; else I = I - a\",\n    \"Initialize I to max(a, b); while I <= a*b: if I % a == 0 and I % b == 0: return I; else I = I + max(a, b)\",\n    \"Initialize I to 0; repeat: I = I + a; if I % b == 0: return I\"\n  ],\n  \"correctAnswer\": \"Initialize I to 1; while true: if I % a == 0 and I % b == 0: return I; else I = I + 1\",\n  \"explanation\": \"The evidence specifies starting the search from 1 and incrementing the candidate integer by one each iteration, checking that both I % a and I % b equal zero before returning I. Option 1 follows exactly this procedure. Options 2, 3, and 4 use different starting points or step sizes that were not described and may miss the smallest common multiple or change the algorithm's behavior.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T03",
+  "target_concept": "Implement the recursive Euclidean algorithm using modulo reduction to compute GCD",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "According to the recursive Euclidean algorithm described in the evidence, which statement correctly defines the base case for the GCD function?",
+    "options": [
+      "If maximum modulo minimum equals zero, return the minimum.",
+      "If minimum modulo maximum equals zero, return the maximum.",
+      "If maximum equals minimum, return the maximum.",
+      "If maximum modulo minimum does not equal zero, return the maximum."
+    ],
+    "correctAnswer": "If maximum modulo minimum equals zero, return the minimum.",
+    "explanation": "The evidence specifies that the recursion stops when the larger number modulo the smaller number is zero; at that point the smaller number (the minimum) is the greatest common divisor and should be returned.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Implement the recursive Euclidean algorithm using modulo reduction to compute GCD"
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12513,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"According to the recursive Euclidean algorithm described in the evidence, which statement correctly defines the base case for the GCD function?\",\n  \"options\": [\n    \"If maximum modulo minimum equals zero, return the minimum.\",\n    \"If minimum modulo maximum equals zero, return the maximum.\",\n    \"If maximum equals minimum, return the maximum.\",\n    \"If maximum modulo minimum does not equal zero, return the maximum.\"\n  ],\n  \"correctAnswer\": \"If maximum modulo minimum equals zero, return the minimum.\",\n  \"explanation\": \"The evidence specifies that the recursion stops when the larger number modulo the smaller number is zero; at that point the smaller number (the minimum) is the greatest common divisor and should be returned.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

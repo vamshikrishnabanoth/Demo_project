@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_C_C4",
+  "target_id": "T02",
+  "target_concept": "Explain the efficient Euclidean algorithm for GCD, including the max‑mod‑min reduction step.",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "Why does repeatedly replacing the larger of two positive integers with the remainder of dividing it by the smaller (the max % min step) guarantee that the algorithm ends with the greatest common divisor?",
+    "options": [
+      "Because each remainder eliminates at least one non‑common divisor, narrowing the set of possible common divisors until only the greatest remains.",
+      "Because the algorithm repeatedly swaps the numbers, which eventually makes both numbers equal to their least common multiple.",
+      "Because the remainder is always a divisor of the larger number, so the process directly finds a common divisor without changing the GCD.",
+      "Because the set of common divisors of the two numbers does not change after taking the remainder, and the remainders strictly decrease, forcing termination at the greatest common divisor."
+    ],
+    "correctAnswer": "Because the set of common divisors of the two numbers does not change after taking the remainder, and the remainders strictly decrease, forcing termination at the greatest common divisor.",
+    "explanation": "In the Euclidean algorithm, replacing (max, min) with (min, max % min) preserves all common divisors; the remainder is smaller than the previous max, so the pair strictly decreases. The process must stop when the remainder becomes zero, at which point the other number is the greatest common divisor.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain the efficient Euclidean algorithm for GCD, including the max‑mod‑min reduction step."
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 2371,
+  "retry_count": 1,
+  "raw_response": "{\"targetId\":\"T02\",\"questionText\":\"Why does repeatedly replacing the larger of two positive integers with the remainder of dividing it by the smaller (the max % min step) guarantee that the algorithm ends with the greatest common divisor?\",\"options\":[\"Because each remainder eliminates at least one non‑common divisor, narrowing the set of possible common divisors until only the greatest remains.\",\"Because the algorithm repeatedly swaps the numbers, which eventually makes both numbers equal to their least common multiple.\",\"Because the remainder is always a divisor of the larger number, so the process directly finds a common divisor without changing the GCD.\",\"Because the set of common divisors of the two numbers does not change after taking the remainder, and the remainders strictly decrease, forcing termination at the greatest common divisor.\"],\"correctAnswer\":\"Because the set of common divisors of the two numbers does not change after taking the remainder, and the remainders strictly decrease, forcing termination at the greatest common divisor.\",\"explanation\":\"In the Euclidean algorithm, replacing (max, min) with (min, max % min) preserves all common divisors; the remainder is smaller than the previous max, so the pair strictly decreases. The process must stop when the remainder becomes zero, at which point the other number is the greatest common divisor.\",\"metadata\":{\"dimension\":\"Cause / Effect\",\"cognitiveLevel\":\"Understand\",\"targetDifficulty\":\"Medium\"}}"
+}

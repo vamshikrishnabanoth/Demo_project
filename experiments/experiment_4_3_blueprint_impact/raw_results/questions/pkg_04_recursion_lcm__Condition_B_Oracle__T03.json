@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Analyze problem scenarios to decide whether to use GCD (equal partitioning) or LCM (timing/interval scheduling) as the appropriate mathematical tool.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Which of the following real‑world situations requires using the greatest common divisor (GCD) rather than the least common multiple (LCM)?",
+    "options": [
+      "Dividing 48 apples equally among 6 friends so each gets the same number.",
+      "Determining after how many minutes two traffic lights, one flashing every 45 seconds and the other every 60 seconds, will flash together.",
+      "Calculating the smallest number of minutes after which a bus that arrives every 12 minutes and a train that arrives every 18 minutes will both be at the station.",
+      "Finding the earliest time two runners, one completing a lap in 30 seconds and the other in 40 seconds, will be at the starting line together."
+    ],
+    "correctAnswer": "Dividing 48 apples equally among 6 friends so each gets the same number.",
+    "explanation": "The evidence states that problems involving sharing or dividing items equally call for the GCD (referred to as JCD). Scenario 1 is an equal‑partitioning problem, so the appropriate tool is the GCD. The other scenarios describe timing or interval coincidences, which require the LCM.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Analyze problem scenarios to decide whether to use GCD (equal partitioning) or LCM (timing/interval scheduling) as the appropriate mathematical tool."
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 15360,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Which of the following real‑world situations requires using the greatest common divisor (GCD) rather than the least common multiple (LCM)?\",\n  \"options\": [\n    \"Dividing 48 apples equally among 6 friends so each gets the same number.\",\n    \"Determining after how many minutes two traffic lights, one flashing every 45 seconds and the other every 60 seconds, will flash together.\",\n    \"Calculating the smallest number of minutes after which a bus that arrives every 12 minutes and a train that arrives every 18 minutes will both be at the station.\",\n    \"Finding the earliest time two runners, one completing a lap in 30 seconds and the other in 40 seconds, will be at the starting line together.\"\n  ],\n  \"correctAnswer\": \"Dividing 48 apples equally among 6 friends so each gets the same number.\",\n  \"explanation\": \"The evidence states that problems involving sharing or dividing items equally call for the GCD (referred to as JCD). Scenario 1 is an equal‑partitioning problem, so the appropriate tool is the GCD. The other scenarios describe timing or interval coincidences, which require the LCM.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

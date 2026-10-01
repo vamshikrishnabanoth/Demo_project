@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T02",
+  "target_concept": "Demonstrate how to stage all changes versus a single file using git add.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly tests the distinction between staging all changes (git add .) and staging a single file (git add <filename>), which is explicitly covered in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of Git staging semantics rather than mere recall; the learner must infer which command targets a single file."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguous about the desired action."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Each incorrect option represents a common misconception about Git commands, making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only 'git add a.txt' correctly stages the specified file; the other options are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The scenario reflects an authentic Git workflow, though the concept is standard rather than highly novel."
+    }
+  },
+  "latency_ms": 7052,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly tests the distinction between staging all changes (git add .) and staging a single file (git add <filename>), which is explicitly covered in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of Git staging semantics rather than mere recall; the learner must infer which command targets a single file.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguous about the desired action.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Each incorrect option represents a common misconception about Git commands, making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only 'git add a.txt' correctly stages the specified file; the other options are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The scenario reflects an authentic Git workflow, though the concept is standard rather than highly novel.\"}\n}"
+}

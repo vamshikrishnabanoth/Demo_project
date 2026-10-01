@@ -1,0 +1,23 @@
+{
+  "id": "CALIB-A1",
+  "boundary_family": "STUDENT_INTERACT",
+  "boundary_type": "NEGATIVE_BOUNDARY",
+  "expected_labels": [
+    "EXPLAIN"
+  ],
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "prohibited_labels": [
+    "STUDENT_INTERACT"
+  ],
+  "is_exact_match": true,
+  "has_boundary_violation": false,
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Because the loop terminates when the counter reaches zero, this variable stores the final result for the caller."
+    }
+  ],
+  "latency_ms": 1891
+}

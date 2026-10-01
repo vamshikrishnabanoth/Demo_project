@@ -1,0 +1,23 @@
+{
+  "id": "CALIB-B1",
+  "boundary_family": "REAL_WORLD_APP",
+  "boundary_type": "NEGATIVE_BOUNDARY",
+  "expected_labels": [
+    "EXPLAIN"
+  ],
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "prohibited_labels": [
+    "REAL_WORLD_APP"
+  ],
+  "is_exact_match": true,
+  "has_boundary_violation": false,
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Relational database systems are widely utilized by software engineers and tech companies to store structured records on servers."
+    }
+  ],
+  "latency_ms": 7966
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_D_C5",
+  "target_id": "T01",
+  "target_concept": "State the definition of the Longest Common Prefix problem, including input type and required output.",
+  "target_dimension": "Foundational Prerequisite",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which of the following statements correctly defines the Longest Common Prefix problem?",
+    "options": [
+      "Given an array of strings, return the longest string that appears as a prefix of every string in the array.",
+      "Given a single string, return the longest substring that appears more than once within it.",
+      "Given a set of strings, return the shortest string that is a suffix of all strings.",
+      "Given multiple strings, return any common prefix, regardless of length."
+    ],
+    "correctAnswer": "Given an array of strings, return the longest string that appears as a prefix of every string in the array.",
+    "explanation": "The Longest Common Prefix problem asks for the longest prefix that is shared by all strings in the given collection. The input is a list/array of strings, and the required output is that longest common prefix (or an empty string if none exists).",
+    "metadata": {
+      "dimension": "Foundational Prerequisite",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "State the definition of the Longest Common Prefix problem, including input type and required output."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13580,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Which of the following statements correctly defines the Longest Common Prefix problem?\",\n  \"options\": [\n    \"Given an array of strings, return the longest string that appears as a prefix of every string in the array.\",\n    \"Given a single string, return the longest substring that appears more than once within it.\",\n    \"Given a set of strings, return the shortest string that is a suffix of all strings.\",\n    \"Given multiple strings, return any common prefix, regardless of length.\"\n  ],\n  \"correctAnswer\": \"Given an array of strings, return the longest string that appears as a prefix of every string in the array.\",\n  \"explanation\": \"The Longest Common Prefix problem asks for the longest prefix that is shared by all strings in the given collection. The input is a list/array of strings, and the required output is that longest common prefix (or an empty string if none exists).\",\n  \"metadata\": {\n    \"dimension\": \"Foundational Prerequisite\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

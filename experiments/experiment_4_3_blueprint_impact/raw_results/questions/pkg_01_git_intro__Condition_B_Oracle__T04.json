@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "`git init` creates an empty local repository ready to track changes.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "You initialize a new empty directory with the command `git init`. Which of the following confirms that the repository was successfully created?",
+    "options": [
+      "A .git directory appears in the project root.",
+      "A remote named origin is automatically added.",
+      "The current branch is set to \"main\" by default.",
+      "Git automatically creates an initial commit."
+    ],
+    "correctAnswer": "A .git directory appears in the project root.",
+    "explanation": "Running `git init` creates an empty local repository and the presence of the hidden `.git` folder in the directory indicates that the repository was successfully initialized. No remote, default branch, or initial commit is created automatically.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "`git init` creates an empty local repository ready to track changes."
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 3474,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"You initialize a new empty directory with the command `git init`. Which of the following confirms that the repository was successfully created?\",\n  \"options\": [\n    \"A .git directory appears in the project root.\",\n    \"A remote named origin is automatically added.\",\n    \"The current branch is set to \\\"main\\\" by default.\",\n    \"Git automatically creates an initial commit.\"\n  ],\n  \"correctAnswer\": \"A .git directory appears in the project root.\",\n  \"explanation\": \"Running `git init` creates an empty local repository and the presence of the hidden `.git` folder in the directory indicates that the repository was successfully initialized. No remote, default branch, or initial commit is created automatically.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

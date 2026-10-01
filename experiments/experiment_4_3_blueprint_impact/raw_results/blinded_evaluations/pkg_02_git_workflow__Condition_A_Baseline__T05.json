@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T05",
+  "target_concept": "Explain how to undo staged changes using git reset and how to restore file content using git restore.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly tests undoing staged changes with git reset and discarding file content with git restore, which the lecture evidence specifies."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of command semantics and correct flag usage, not just rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The scenario and ask are clearly stated; grammar and wording are unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect common misconceptions about reset flags and alternative commands, making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 4,
+      "rationale": "Only option A aligns with the evidence; other choices are demonstrably incorrect given the taught commands, though alternative valid Git workflows exist."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Presents an authentic workflow problem rather than a simple definition recall."
+    }
+  },
+  "latency_ms": 6660,
+  "retry_count": 3,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly tests undoing staged changes with git reset and discarding file content with git restore, which the lecture evidence specifies.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of command semantics and correct flag usage, not just rote recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The scenario and ask are clearly stated; grammar and wording are unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options reflect common misconceptions about reset flags and alternative commands, making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":4,\"rationale\":\"Only option A aligns with the evidence; other choices are demonstrably incorrect given the taught commands, though alternative valid Git workflows exist.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"Presents an authentic workflow problem rather than a simple definition recall.\"}\n}"
+}

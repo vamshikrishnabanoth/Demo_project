@@ -1,0 +1,541 @@
+{
+  "reconstruction_timestamp": "2026-10-01T07:52:50.584Z",
+  "lead_model": "openai/gpt-oss-120b",
+  "temperature": 0,
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "topic": "Article 21: Protection of Life and Personal Liberty",
+      "domain": "Law / Indian Polity",
+      "root_concept": "Article 21: Protection of Life and Personal Liberty",
+      "concept_count": 6,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Text of Article 21",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The lecturer read the exact constitutional provision, establishing the literal wording that guarantees protection of life and personal liberty.",
+          "evidence_quotes": [
+            {
+              "quote": "Good morning everyone. Today we are examining what many jurists consider the heartbeat of the Indian Constitution: Article 21. Let us first read the text itself carefully...",
+              "approx_start_sec": 0,
+              "approx_end_sec": 45
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Framing Choice vs U.S. Due Process",
+          "parent_id": "root",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "The lecturer explained why the framers opted for the phrase “life and personal liberty” instead of adopting the American ‘due process of law’ formulation.",
+          "evidence_quotes": [
+            {
+              "quote": "Why did our constitutional framers choose this specific phrasing instead of the American concept of 'due process of law'?",
+              "approx_start_sec": 45,
+              "approx_end_sec": 120
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Constituent Assembly Debate & Sir B.N. Rau’s US Visit",
+          "parent_id": "C02",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "Reference to the historical discussion in the Constituent Assembly and Sir B.N. Rau’s fact‑finding trip to the United States that informed the drafting choice.",
+          "evidence_quotes": [
+            {
+              "quote": "In our Constituent Assembly debates, constitutional advisor Sir B.N. Rau traveled to the United States...",
+              "approx_start_sec": 45,
+              "approx_end_sec": 120
+            }
+          ],
+          "confidence": "MEDIUM"
+        },
+        {
+          "concept_id": "C04",
+          "name": "A.K. Gopalan v. State of Madras (1950) – Literal Interpretation",
+          "parent_id": "root",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "observed_summary": "The lecturer described the Supreme Court’s first major reading of Article 21, noting the literal and formalistic approach taken by Chief Justice Kania.",
+          "evidence_quotes": [
+            {
+              "quote": "Now, how was this interpreted initially by our Supreme Court? That brings us directly to the landmark case of A.K. Gopalan v. State of Madras in 1950. The majority judgment, delivered by Chief Justice Kania, took an extremely literal and formalistic view...",
+              "approx_start_sec": 120,
+              "approx_end_sec": 215
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C05",
+          "name": "Silo Theory (Doctrine of Mutual Exclusivity)",
+          "parent_id": "C04",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "The lecture introduced the scholarly label ‘Silo Theory’, explaining that the Court treated each Fundamental Right as a separate, non‑overlapping compartment.",
+          "evidence_quotes": [
+            {
+              "quote": "Furthermore, Gopalan established what scholars call the 'Silo Theory' or the doctrine of mutual exclusivity. The Court held that the Fundamental Rights in Part III were distinct, water‑tight compartments...",
+              "approx_start_sec": 215,
+              "approx_end_sec": 270
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C06",
+          "name": "Maneka Gandhi v. Union of India (1978) – Transformative Interpretation",
+          "parent_id": "root",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "observed_summary": "The lecturer highlighted the 1978 decision that overturned Gopalan, expanding Article 21 to include procedural fairness and linking it with other rights.",
+          "evidence_quotes": [
+            {
+              "quote": "The watershed transformation finally occurred in 1978 in Maneka Gandhi v. Union of India. Maneka Gandhi was a journalist whose passport was impounded by the central government... The seven‑judge bench completely overturned Gopalan...",
+              "approx_start_sec": 270,
+              "approx_end_sec": 380
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3465,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "topic": "Eigenvalues and Eigenvectors of Linear Operators",
+      "domain": "Mathematics / Physical Sciences",
+      "root_concept": "Eigenvalues and Eigenvectors of Linear Operators",
+      "concept_count": 5,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Eigenvalue equation A x = λ x",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The lecture introduced the fundamental relationship defining eigenvalues and eigenvectors as A x = λ x.",
+          "evidence_quotes": [
+            {
+              "quote": "That fundamental relationship is the eigenvalue equation: A x = lambda x.",
+              "approx_start_sec": 55,
+              "approx_end_sec": 65
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Geometric intuition for eigenvalues (projection and rotation examples)",
+          "parent_id": "root",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "The instructor used a projection matrix onto the xy‑plane and a 90° rotation matrix to illustrate how eigenvectors point in invariant directions and how rotation can yield complex eigenvalues.",
+          "evidence_quotes": [
+            {
+              "quote": "Let us look at some geometric intuition first. Take a projection matrix P onto the xy-plane...",
+              "approx_start_sec": 55,
+              "approx_end_sec": 70
+            },
+            {
+              "quote": "Consider a 90-degree rotation matrix Q. Can a real non-zero vector rotate by 90 degrees and still point in its original direction? Of course not! Eigenvalues are +/- i...",
+              "approx_start_sec": 110,
+              "approx_end_sec": 130
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Characteristic equation det(A − λ I) = 0",
+          "parent_id": "root",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "The lecture derived that for a non‑zero eigenvector the matrix (A − λ I) must be singular, leading to the determinant condition det(A − λ I)=0, called the characteristic equation.",
+          "evidence_quotes": [
+            {
+              "quote": "So how do we find eigenvalues algebraically? (A - lambda I) x = 0. For non-zero x, matrix must be singular: det(A - lambda I) = 0. This is the characteristic equation...",
+              "approx_start_sec": 155,
+              "approx_end_sec": 170
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C04",
+          "name": "Computing eigenvalues via characteristic polynomial (example matrix)",
+          "parent_id": "C03",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "observed_summary": "A concrete 2×2 matrix A = [[4,‑5],[2,‑3]] was used; its characteristic polynomial λ² − λ − 2 was factored to obtain eigenvalues λ=2 and λ=‑1.",
+          "evidence_quotes": [
+            {
+              "quote": "Let us do a concrete numerical example. A = [4, -5; 2, -3]. det(A - lambda I) = lambda^2 - lambda - 2 = (lambda - 2)(lambda + 1) = 0. Eigenvalues are 2 and -1.",
+              "approx_start_sec": 230,
+              "approx_end_sec": 260
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C05",
+          "name": "Finding eigenvectors by solving (A − λ I)x = 0",
+          "parent_id": "root",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "For each eigenvalue the lecturer set up the homogeneous system (A − λ I)x = 0, reduced it, and read off a basis vector for the eigenspace.",
+          "evidence_quotes": [
+            {
+              "quote": "Now step two: find the eigenvectors. For lambda_1 = 2, (A - 2I)x = 0 -> [2, -5; 2, -5]x = 0 -> v_1 = [5, 2]. For lambda_2 = -1, (A + I)x = 0 -> v_2 = [1, 1]...",
+              "approx_start_sec": 320,
+              "approx_end_sec": 380
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3294,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "domain": "Computer Science / Algorithms",
+      "root_concept": "Breadth-First Search (BFS) Graph Traversal",
+      "concept_count": 4,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Definition and purpose of BFS",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "Introduced BFS as a fundamental graph traversal algorithm that visits vertices in order of their distance from a source in an unweighted graph.",
+          "evidence_quotes": [
+            {
+              "quote": "Today we are studying one of the fundamental traversal algorithms in computer science: Breadth-First Search, or BFS.",
+              "approx_start_sec": 0,
+              "approx_end_sec": 12
+            },
+            {
+              "quote": "Given an unweighted graph and source S, BFS visits in order of distance.",
+              "approx_start_sec": 55,
+              "approx_end_sec": 65
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Use of a FIFO queue in BFS",
+          "parent_id": "root",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "Explained that BFS relies on a first‑in‑first‑out queue to achieve layer‑by‑layer exploration, contrasting it with a stack used for DFS.",
+          "evidence_quotes": [
+            {
+              "quote": "Layer by layer requires FIFO Queue...",
+              "approx_start_sec": 70,
+              "approx_end_sec": 78
+            },
+            {
+              "quote": "Why not a stack? Stack gives DFS.",
+              "approx_start_sec": 68,
+              "approx_end_sec": 73
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Critical invariant: non‑decreasing distance order in the queue",
+          "parent_id": "C02",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "Stated that the queue must always maintain vertices in non‑decreasing order of their distance from the source.",
+          "evidence_quotes": [
+            {
+              "quote": "Queue maintains non‑decreasing distance order.",
+              "approx_start_sec": 115,
+              "approx_end_sec": 120
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C04",
+          "name": "Queue contains at most two consecutive distance levels (d and d+1)",
+          "parent_id": "C03",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "Described that at any moment the queue holds vertices from at most two adjacent layers, the current distance d and the next distance d+1.",
+          "evidence_quotes": [
+            {
+              "quote": "Queue has at most two consecutive levels (d and d+1).",
+              "approx_start_sec": 122,
+              "approx_end_sec": 128
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3173,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "domain": "Computer Science / Algorithms",
+      "root_concept": "Breadth-First Search (BFS) Graph Traversal",
+      "concept_count": 3,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Breadth-First Search (BFS) traversal algorithm",
+          "parent_id": "root",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "BFS is introduced as a fundamental graph traversal that visits vertices in order of their distance from a source in an unweighted graph.",
+          "evidence_quotes": [
+            {
+              "quote": "Today we are studying one of the fundamental traversal algorithms in computer science: Breadth-First Search, or BFS.",
+              "approx_start_sec": 0,
+              "approx_end_sec": 12
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "FIFO queue as the core data structure for BFS",
+          "parent_id": "root",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "The algorithm relies on a first‑in‑first‑out queue to achieve the layer‑by‑layer order of exploration.",
+          "evidence_quotes": [
+            {
+              "quote": "Layer by layer requires FIFO Queue...",
+              "approx_start_sec": 55,
+              "approx_end_sec": 62
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "BFS invariant: queue maintains non‑decreasing distance order",
+          "parent_id": "root",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "The queue always holds vertices whose distances from the source are non‑decreasing, ensuring correct breadth‑first ordering.",
+          "evidence_quotes": [
+            {
+              "quote": "Queue maintains non-decreasing distance order.",
+              "approx_start_sec": 115,
+              "approx_end_sec": 120
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3025,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 18
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "topic": "Autoencoders and Variational Autoencoders (VAEs)",
+      "domain": "AI / Machine Learning",
+      "root_concept": "Autoencoders and Variational Autoencoders (VAEs)",
+      "concept_count": 5,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Autoencoder architecture (encoder‑latent‑decoder)",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The lecture introduced the basic autoencoder structure consisting of an encoder, a latent space, and a decoder.",
+          "evidence_quotes": [
+            {
+              "quote": "So, let me talk about the autoencoders. Fully connected autoencoder architecture: encoder, latent space, decoder.",
+              "approx_start_sec": 0,
+              "approx_end_sec": 15
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Fully connected autoencoder and flattening effect",
+          "parent_id": "C01",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "In a fully connected autoencoder, flattening the input discards spatial information.",
+          "evidence_quotes": [
+            {
+              "quote": "Flattening loses spatial information.",
+              "approx_start_sec": 30,
+              "approx_end_sec": 35
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Convolutional autoencoder preserving spatial features",
+          "parent_id": "C01",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "Convolutional autoencoders retain spatial relationships by using convolutional layers instead of flattening.",
+          "evidence_quotes": [
+            {
+              "quote": "Convolutional autoencoders preserve spatial features...",
+              "approx_start_sec": 40,
+              "approx_end_sec": 45
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C04",
+          "name": "Latent space representation: deterministic vs probabilistic",
+          "parent_id": "C01",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "Standard autoencoders map inputs to a single deterministic point in latent space, whereas VAEs map to a probability distribution.",
+          "evidence_quotes": [
+            {
+              "quote": "Normal autoencoders map to a single deterministic point. VAE maps to a probability distribution...",
+              "approx_start_sec": 150,
+              "approx_end_sec": 165
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C05",
+          "name": "Variational Autoencoder (VAE) and continuous latent space",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The lecture defined VAEs as models that use a continuous latent space and learn a distribution over that space.",
+          "evidence_quotes": [
+            {
+              "quote": "Variational Autoencoders: focus on continuous latent space.",
+              "approx_start_sec": 147,
+              "approx_end_sec": 155
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3121,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 3
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "topic": "Price Elasticity of Demand and Market Welfare",
+      "domain": "Economics / Social Sciences",
+      "root_concept": "Price Elasticity of Demand and Market Welfare",
+      "concept_count": 6,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Price elasticity of demand (definition)",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "Introduced as the central concept that measures the magnitude of quantity response to price changes, distinct from the direction given by the Law of Demand.",
+          "evidence_quotes": [
+            {
+              "quote": "Good afternoon. Today we are addressing a concept central to all economic decision-making: price elasticity of demand.",
+              "approx_start_sec": 0,
+              "approx_end_sec": 10
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Elasticity formula E_d = (%ΔQ) / (%ΔP)",
+          "parent_id": "C01",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "Provided the standard percentage‑change ratio that quantifies elasticity, emphasizing its unit‑free nature.",
+          "evidence_quotes": [
+            {
+              "quote": "Definition: E_d = (% change in Q) / (% change in P). Why percentages? Unit‑free comparison.",
+              "approx_start_sec": 60,
+              "approx_end_sec": 70
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Midpoint (arc) formula for elasticity",
+          "parent_id": "C02",
+          "epistemic_dimension": "JUSTIFICATION_WHY",
+          "observed_summary": "Explained the need for the midpoint method to avoid base‑dependency problems when calculating percentage changes.",
+          "evidence_quotes": [
+            {
+              "quote": "Why midpoint formula? Base dependency problem...",
+              "approx_start_sec": 60,
+              "approx_end_sec": 75
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C04",
+          "name": "Numerical calculation of elasticity (example)",
+          "parent_id": "C02",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "observed_summary": "Worked a concrete example: price rises from $10 to $14, quantity falls from 100 to 60, yielding E_d = -1.50 (absolute value 1.50).",
+          "evidence_quotes": [
+            {
+              "quote": "Numerical calculation: price $10 -> $14, quantity 100 -> 60. Midpoint calculation yields E_d = -1.50. Absolute value is 1.50...",
+              "approx_start_sec": 120,
+              "approx_end_sec": 150
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C05",
+          "name": "Interpretation of elasticity magnitude",
+          "parent_id": "C01",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "Classified |E_d| > 1 as elastic (price‑sensitive, substitutes), |E_d| < 1 as inelastic (necessities, price‑insensitive), and |E_d| = 1 as unit‑elastic.",
+          "evidence_quotes": [
+            {
+              "quote": "Interpretation: |E_d| > 1 is elastic (substitutes, price sensitive). |E_d| < 1 is inelastic (necessities, insensitive). |E_d| = 1 is unit elastic...",
+              "approx_start_sec": 210,
+              "approx_end_sec": 240
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C06",
+          "name": "Total Revenue test and its relation to elasticity",
+          "parent_id": "C01",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "Linked elasticity to total revenue (TR = P·Q): when demand is inelastic, raising price raises TR; when elastic, raising price lowers TR; maximum TR occurs at unit elasticity.",
+          "evidence_quotes": [
+            {
+              "quote": "Total Revenue Test: TR = P * Q. Inelastic: raising P increases TR. Elastic: raising P decreases TR. Maximum revenue occurs at unit elasticity...",
+              "approx_start_sec": 290,
+              "approx_end_sec": 330
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3064,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 22
+      }
+    }
+  }
+}

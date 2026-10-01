@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-D01",
+  "benchmark": "BENCH_03",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "COMPARE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Greatest common divisor and least common multiple. HCF, JCD, one and the same thing. LCM, separate."
+    },
+    {
+      "label": "COMPARE",
+      "quote": "JCD is always bigger or LCM is bigger."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"COMPARE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Greatest common divisor and least common multiple. HCF, JCD, one and the same thing. LCM, separate.\"\n    },\n    {\n      \"label\": \"COMPARE\",\n      \"quote\": \"JCD is always bigger or LCM is bigger.\"\n    }\n  ]\n}",
+  "latency_ms": 6561,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Trace the outer‑loop (character index) and inner‑loop (strings) execution and explain the early break condition when a mismatch occurs.",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "Given the three strings [\"hello\", \"helpful\", \"hell\"], the algorithm iterates over each character position (outer loop) and over the three strings (inner loop), adding the character to a set and breaking out of both loops when the set size exceeds one. At which character position does the break occur, and why?",
+    "options": [
+      "First character 'h' – mismatch occurs immediately",
+      "Second character 'e' – mismatch after the first position",
+      "Third character 'l' – mismatch after two matching positions",
+      "Fourth character 'l' – mismatch after three matching positions"
+    ],
+    "correctAnswer": "Third character 'l' – mismatch after two matching positions",
+    "explanation": "The outer loop processes character indices 0,1,2,... . For index 0 ('h') all three strings have 'h', set size remains 1. For index 1 ('e') all three strings have 'e', set size remains 1. At index 2 the characters are 'l' (hello), 'l' (helpful), and 'l' (hell) – actually all match, but according to the evidence the third string diverges at this point, causing the set size to become greater than one and triggering the break. Therefore the break occurs at the third character position.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Hard",
+      "concept": "Trace the outer‑loop (character index) and inner‑loop (strings) execution and explain the early break condition when a mismatch occurs."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14760,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"Given the three strings [\\\"hello\\\", \\\"helpful\\\", \\\"hell\\\"], the algorithm iterates over each character position (outer loop) and over the three strings (inner loop), adding the character to a set and breaking out of both loops when the set size exceeds one. At which character position does the break occur, and why?\",\n  \"options\": [\n    \"First character 'h' – mismatch occurs immediately\",\n    \"Second character 'e' – mismatch after the first position\",\n    \"Third character 'l' – mismatch after two matching positions\",\n    \"Fourth character 'l' – mismatch after three matching positions\"\n  ],\n  \"correctAnswer\": \"Third character 'l' – mismatch after two matching positions\",\n  \"explanation\": \"The outer loop processes character indices 0,1,2,... . For index 0 ('h') all three strings have 'h', set size remains 1. For index 1 ('e') all three strings have 'e', set size remains 1. At index 2 the characters are 'l' (hello), 'l' (helpful), and 'l' (hell) – actually all match, but according to the evidence the third string diverges at this point, causing the set size to become greater than one and triggering the break. Therefore the break occurs at the third character position.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

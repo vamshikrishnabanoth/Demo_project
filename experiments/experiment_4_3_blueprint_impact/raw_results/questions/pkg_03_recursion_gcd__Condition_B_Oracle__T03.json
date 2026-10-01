@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Describe the iterative algorithm (for‑loop) to find LCM by incrementing a candidate I",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Which of the following pseudocode fragments correctly implements the iterative for‑loop algorithm described for finding the least common multiple (LCM) of two integers a and b by incrementing a candidate I from 1 upward?",
+    "options": [
+      "for I = 1; I <= 100; I++: if I % a == 0 and I % b == 0: return I",
+      "for I = 1; I <= 100; I++: if I % a == 0 or I % b == 0: return I",
+      "for I = a; I <= a*b; I += a: if I % b == 0: return I",
+      "for I = 1; I <= 100; I += 2: if I % a == 0 and I % b == 0: return I"
+    ],
+    "correctAnswer": "for I = 1; I <= 100; I++: if I % a == 0 and I % b == 0: return I",
+    "explanation": "The evidence specifies a simple search starting at I = 1, incrementing I by one (I++), and returning I when both I modulo a and I modulo b equal zero. Option A follows this exact pattern. Option B uses logical OR, which would return a common multiple that is not necessarily the least. Option C steps I by a, which is a different optimization not described in the target. Option D increments by 2, skipping possible odd candidates and thus may miss the correct LCM.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Describe the iterative algorithm (for‑loop) to find LCM by incrementing a candidate I"
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13480,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Which of the following pseudocode fragments correctly implements the iterative for‑loop algorithm described for finding the least common multiple (LCM) of two integers a and b by incrementing a candidate I from 1 upward?\",\n  \"options\": [\n    \"for I = 1; I <= 100; I++: if I % a == 0 and I % b == 0: return I\",\n    \"for I = 1; I <= 100; I++: if I % a == 0 or I % b == 0: return I\",\n    \"for I = a; I <= a*b; I += a: if I % b == 0: return I\",\n    \"for I = 1; I <= 100; I += 2: if I % a == 0 and I % b == 0: return I\"\n  ],\n  \"correctAnswer\": \"for I = 1; I <= 100; I++: if I % a == 0 and I % b == 0: return I\",\n  \"explanation\": \"The evidence specifies a simple search starting at I = 1, incrementing I by one (I++), and returning I when both I modulo a and I modulo b equal zero. Option A follows this exact pattern. Option B uses logical OR, which would return a common multiple that is not necessarily the least. Option C steps I by a, which is a different optimization not described in the target. Option D increments by 2, skipping possible odd candidates and thus may miss the correct LCM.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

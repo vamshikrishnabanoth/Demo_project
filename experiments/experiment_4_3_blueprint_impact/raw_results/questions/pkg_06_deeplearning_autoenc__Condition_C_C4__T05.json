@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T05",
+  "target_concept": "Explain how KL divergence regularizes the VAE latent distribution to match a normal Gaussian",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "According to the provided evidence, what specific effect does the KL‑divergence term have on the latent variables of a variational auto‑encoder?",
+    "options": [
+      "It forces the latent mean and variance to be close to a standard normal distribution",
+      "It maximizes the reconstruction loss to improve image fidelity",
+      "It makes the latent variables deterministic rather than probabilistic",
+      "It aligns the latent distribution directly with the empirical data distribution without any prior"
+    ],
+    "correctAnswer": "It forces the latent mean and variance to be close to a standard normal distribution",
+    "explanation": "The evidence states that the KL divergence \"makes sure that the mean and the variance of the data are close to the normal distribution.\" In a VAE this term regularizes the approximate posterior so that its mean and variance match those of a standard Gaussian prior, which is exactly the first option.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Hard",
+      "concept": "Explain how KL divergence regularizes the VAE latent distribution to match a normal Gaussian"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11535,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"According to the provided evidence, what specific effect does the KL‑divergence term have on the latent variables of a variational auto‑encoder?\",\n  \"options\": [\n    \"It forces the latent mean and variance to be close to a standard normal distribution\",\n    \"It maximizes the reconstruction loss to improve image fidelity\",\n    \"It makes the latent variables deterministic rather than probabilistic\",\n    \"It aligns the latent distribution directly with the empirical data distribution without any prior\"\n  ],\n  \"correctAnswer\": \"It forces the latent mean and variance to be close to a standard normal distribution\",\n  \"explanation\": \"The evidence states that the KL divergence \\\"makes sure that the mean and the variance of the data are close to the normal distribution.\\\" In a VAE this term regularizes the approximate posterior so that its mean and variance match those of a standard Gaussian prior, which is exactly the first option.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

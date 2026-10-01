@@ -1,0 +1,37 @@
+{
+  "lecture_id": "lecture_bfs_graph_traversal",
+  "total_duration_seconds": 450,
+  "raw_transcript": "Hello everyone. Today we are studying one of the fundamental traversal algorithms in computer science: Breadth-First Search, or BFS.\n\nImagine you drop a stone into a calm pond. Ripples expand outward uniformly in concentric circles. First all points at radius 1 are reached, then radius 2, then radius 3. That is exactly how Breadth-First Search explores a graph.\n\nGiven an unweighted graph and a starting source vertex $S$, BFS visits vertices in order of their distance from $S$. First $S$ at distance 0, then all direct neighbors of $S$ at distance 1, then all vertices at distance 2, and so forth.\n\nWhy can we not simply use any data structure? What happens if you use a Stack?\nIf you use a LIFO stack, the last vertex discovered is the first one you explore next. That dives deep down a single path—that is Depth-First Search (DFS).\nTo explore layer by layer, we must explore in the exact order of discovery: First-In, First-Out. That is why Breadth-First Search strictly requires a FIFO Queue.\n\nNow, what is the critical invariant that guarantees correctness?\nThe FIFO queue maintains vertices in non-decreasing order of distance from the source. At any point during BFS execution, the queue contains vertices from at most two consecutive levels: some vertices at distance $d$, followed by some vertices at distance $d+1$. All vertices at distance $d$ are popped and expanded before any vertex at distance $d+1$ is expanded. This invariant guarantees that the first time BFS discovers any vertex, it has found the shortest path in terms of number of edges.\n\nNow consider the second essential component: the Visited tracker.\nWhy must we maintain a visited boolean array or hash set?\nUnlike a tree, a general graph can have cycles, and multiple vertices can have edges to the same destination vertex. If we do not mark a vertex as visited, the algorithm would loop infinitely inside a cycle, or enqueue the exact same vertex multiple times from different neighbors, causing redundant computation or queue overflow.\n\nLet us walk through a concrete worked example on this 5-node graph drawn on the board.\nWe have vertices A, B, C, D, and E.\nThe edges are:\nA is connected to B and C.\nB is connected to D.\nC is connected to D.\nD is connected to E.\n\nLet our source vertex be A.\nWe initialize our Queue: Q = [A].\nWe mark A as visited: Visited = {A}.\n\nStep 1: Dequeue the front node, which is A.\nLook at all unvisited neighbors of A.\nThey are B and C.\nWe mark B and C as visited: Visited = {A, B, C}.\nWe enqueue B and C: Q = [B, C]. Distance to both B and C is 1.\n\nStep 2: Dequeue front node B.\nLook at neighbors of B. Neighbor A is already visited. Neighbor D is unvisited.\nMark D as visited: Visited = {A, B, C, D}.\nEnqueue D: Q = [C, D]. Distance to D is 2.\n\nStep 3: Dequeue front node C.\nLook at neighbors of C. Neighbor A is visited.\nNeighbor D is also already in the visited set!\nBecause D was already visited through B, C does NOT enqueue D again. This is where the visited invariant protects us.\nC has no other unvisited neighbors.\nQueue is now: Q = [D].\n\nStep 4: Dequeue front node D.\nLook at neighbors of D. B and C are visited.\nNeighbor E is unvisited.\nMark E as visited: Visited = {A, B, C, D, E}.\nEnqueue E: Q = [E]. Distance to E is 3.\n\nStep 5: Dequeue front node E.\nE has only neighbor D, which is visited. No new neighbors to add.\nQueue is now empty: Q = [].\n\nThe traversal terminates. The discovery order was: A, B, C, D, E.\nAnd notice the shortest path distances: A is at 0, B and C are at 1, D is at 2, and E is at 3.\n\nNow, what is the computational complexity of BFS?\nLet $V$ be the number of vertices and $E$ be the number of edges.\nEvery reachable vertex enters the queue exactly once and is dequeued exactly once: that takes $O(V)$ time.\nWhen a vertex is dequeued, we scan its adjacency list to inspect all its incident edges. In an undirected graph, every edge is examined exactly twice (once from each endpoint). The total sum of degrees across all vertices is $2E$.\nTherefore, the total time complexity of BFS using an adjacency list is:\nO(V + E).\n\nWhat about space complexity? In the worst case, such as a star graph where the center connects to $V-1$ leaves, the queue may hold $O(V)$ vertices simultaneously. The visited array also requires $O(V)$ space. Thus, space complexity is $O(V)$.\n\nOne brief remark: notice that this traversal only visited nodes reachable from source A. If the graph had a disconnected component, say nodes F and G unconnected to A, this single BFS call would not visit them. To traverse a disconnected graph completely, one would wrap the BFS in an outer loop over all vertices. Next class, we will examine depth-first search and topological sorting.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 50,
+      "text": "Hello everyone. Today we are studying one of the fundamental traversal algorithms in computer science: Breadth-First Search, or BFS. Concentric ripples in a pond..."
+    },
+    {
+      "start": 50,
+      "end": 110,
+      "text": "Given an unweighted graph and source S, BFS visits in order of distance. Why not a stack? Stack gives DFS. Layer by layer requires FIFO Queue..."
+    },
+    {
+      "start": 110,
+      "end": 175,
+      "text": "What is the critical invariant? Queue maintains non-decreasing distance order. Queue has at most two consecutive levels (d and d+1). Visited set prevents infinite loops in cycles..."
+    },
+    {
+      "start": 175,
+      "end": 320,
+      "text": "Let us walk through a concrete worked example on this 5-node graph: A, B, C, D, E. Step 1: pop A, push B and C. Step 2: pop B, push D. Step 3: pop C, see D visited. Step 4: pop D, push E. Step 5: pop E..."
+    },
+    {
+      "start": 320,
+      "end": 395,
+      "text": "What is computational complexity? Every vertex enqueued once: O(V). Sum of degrees examined is 2E: O(E). Total time O(V+E). Space O(V) for queue and visited array..."
+    },
+    {
+      "start": 395,
+      "end": 450,
+      "text": "Remark on disconnected components: nodes F and G would not be reached without an outer loop over all vertices. Next class we examine DFS."
+    }
+  ]
+}

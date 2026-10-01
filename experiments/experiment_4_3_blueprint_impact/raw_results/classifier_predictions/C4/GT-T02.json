@@ -1,0 +1,44 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "COMPARE",
+    "DEMONSTRATE",
+    "EDGE_CASE",
+    "REINFORCE",
+    "CODE_TRACE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "the first thing you would need to find out is what is the length of the smallest string? Because the longest common prefix cannot be larger than the smallest string."
+    },
+    {
+      "label": "EXPLAIN",
+      "quote": "there is no point processing all the characters of every string because what you might end up getting into is array index out of bounds if you're not very careful about it."
+    },
+    {
+      "label": "COMPARE",
+      "quote": "every time you're given a problem, don't jump into writing code. Think about how to solve it using different data structures or maybe different algorithms."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "We have a hash set created. We add h to it. h gets added. I add one more h. What does set guarantee? No duplicates."
+    },
+    {
+      "label": "EDGE_CASE",
+      "quote": "array index out of bounds if you're not very careful about it"
+    },
+    {
+      "label": "EDGE_CASE",
+      "quote": "if there is a mismatch at any point, no point looking at the rest of the suffixes."
+    },
+    {
+      "label": "REINFORCE",
+      "quote": "code has to be maintained. And if a code is easy to maintain, then it has a much longer shelf life than a code which is gobbled up."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "What would the size be? Two. So, obviously, you know it is not common."
+    }
+  ]
+}

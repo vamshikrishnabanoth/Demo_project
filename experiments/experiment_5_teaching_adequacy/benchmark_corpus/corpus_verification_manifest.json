@@ -1,0 +1,62 @@
+[
+  {
+    "package_id": "pkg_01_indian_constitution_art21",
+    "domain": "Law / Indian Polity",
+    "topic": "Article 21: Protection of Life and Personal Liberty",
+    "objective": "Analyze how the Supreme Court's interpretation of 'procedure established by law' in Article 21 transformed from the literalist, formalistic reading in A.K. Gopalan (1950) into a substantive fairness requirement under the Golden Triangle doctrine in Maneka Gandhi (1978).",
+    "provenance_mode": "AUTHENTIC_RECORDING",
+    "duration_seconds": 480,
+    "metadata_sha256": "7fed29344e9baa97a497a29a9f9c1cf912db856ccd914d09cb5193b5b4cff02b",
+    "transcript_sha256": "09e02ff7d3cdc3f3f4041e715b592374e5f000f5322e12880c8ddcc14294cd77"
+  },
+  {
+    "package_id": "pkg_02_linear_algebra_eigenvalues",
+    "domain": "Mathematics / Physical Sciences",
+    "topic": "Eigenvalues and Eigenvectors of Linear Operators",
+    "objective": "Compute the eigenvalues and eigenvectors of a 2x2 matrix, explain the geometric intuition of an eigenvector as an invariant direction under linear transformation, and solve the characteristic polynomial det(A - lambda I) = 0.",
+    "provenance_mode": "AUTHENTIC_RECORDING",
+    "duration_seconds": 460,
+    "metadata_sha256": "8cc7b2c87a9fdb07a45fee8401d50ab9cea15ade30b80ab5c7a26897884ef122",
+    "transcript_sha256": "b6b8ba69f68533fbb829bc152c7c773c8940b27e7c5e43dc15a1a2e3fc3f750e"
+  },
+  {
+    "package_id": "pkg_03_dsa_bfs_conceptual",
+    "domain": "Computer Science / Algorithms",
+    "topic": "Breadth-First Search (BFS) Graph Traversal",
+    "objective": "Explain the conceptual mechanics of Breadth-First Search, prove why a First-In-First-Out (FIFO) queue guarantees level-order discovery and unweighted shortest-path traversal, and explain the invariant function of the visited set.",
+    "provenance_mode": "AUTHENTIC_RECORDING",
+    "duration_seconds": 450,
+    "metadata_sha256": "07e95d33a007dcf7dab7fd2edeaf8dbce9929d1a11cac4583c2e96ac1d2d425e",
+    "transcript_sha256": "fb11e88b505b5f7c0567af44c0a3d3b4268a57228e8b57dbe989396fffab0217"
+  },
+  {
+    "package_id": "pkg_04_dsa_bfs_implementation",
+    "domain": "Computer Science / Algorithms",
+    "topic": "Breadth-First Search (BFS) Graph Traversal",
+    "objective": "Implement Breadth-First Search using a concrete queue data structure in code, trace variable states during execution, and implement robust edge-case handling for cyclic graphs and disconnected components.",
+    "provenance_mode": "AUTHENTIC_RECORDING",
+    "duration_seconds": 450,
+    "metadata_sha256": "eed0b4668f34f25e3eeb2503322455718adb5b3ec1398483cf482920e0461cbd",
+    "transcript_sha256": "fb11e88b505b5f7c0567af44c0a3d3b4268a57228e8b57dbe989396fffab0217"
+  },
+  {
+    "package_id": "pkg_05_deep_learning_vaes",
+    "domain": "AI / Machine Learning",
+    "topic": "Autoencoders and Variational Autoencoders (VAEs)",
+    "objective": "Explain why classical autoencoders fail at smooth generative interpolation, derive the variational autoencoder objective mapping inputs to Gaussian distributions (mu, sigma^2), and justify the role of Kullback-Leibler (KL) divergence in regularizing the latent space.",
+    "provenance_mode": "AUTHENTIC_RECORDING",
+    "duration_seconds": 430,
+    "metadata_sha256": "5bad0cecf6bd00ec47734c6c4021d93b3735e58931d26f6084433708f0dab499",
+    "transcript_sha256": "d4d95e7d40e3e6e73f837c413c1671f3af2c520f030a7e5c05757dba77d0b571"
+  },
+  {
+    "package_id": "pkg_06_economics_elasticity",
+    "domain": "Economics / Social Sciences",
+    "topic": "Price Elasticity of Demand and Market Welfare",
+    "objective": "Calculate the price elasticity of demand using the midpoint method, interpret whether demand is price-elastic, inelastic, or unit-elastic, explain the relationship between elasticity and total revenue, and evaluate how price distortions create deadweight loss.",
+    "provenance_mode": "AUTHENTIC_RECORDING",
+    "duration_seconds": 470,
+    "metadata_sha256": "b7fe31b858402484423e70c8dabc5fff126d8d30e0896602540f1b1a1911df87",
+    "transcript_sha256": "115a456e30209884a9184cd3d49221050df475ae4ae1b98dd0684c6bfd6c5025"
+  }
+]

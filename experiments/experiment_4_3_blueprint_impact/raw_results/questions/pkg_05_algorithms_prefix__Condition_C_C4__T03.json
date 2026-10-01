@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_C_C4",
+  "target_id": "T03",
+  "target_concept": "Describe how a hash set is used to determine if characters at a given position are common across all strings",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "According to the evidence, which statement correctly describes how a hash set is used to determine if a character at a given position is common across all strings?",
+    "options": [
+      "Plausible alternative concept",
+      "Distinct contrasting mechanism",
+      "Valid factual formulation",
+      "Common conceptual misconception"
+    ],
+    "correctAnswer": "Valid factual formulation",
+    "explanation": "The evidence states that a hash set is created, each string's character at the current position is added to the set, and because a set does not allow duplicates, if after processing all strings the set size is one, the character occurs in every string at that position. This accurately captures the factual use of a hash set for checking common characters.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Describe how a hash set is used to determine if characters at a given position are common across all strings"
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12706,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"According to the evidence, which statement correctly describes how a hash set is used to determine if a character at a given position is common across all strings?\",\n  \"options\": [\n    \"Plausible alternative concept\",\n    \"Distinct contrasting mechanism\",\n    \"Valid factual formulation\",\n    \"Common conceptual misconception\"\n  ],\n  \"correctAnswer\": \"Valid factual formulation\",\n  \"explanation\": \"The evidence states that a hash set is created, each string's character at the current position is added to the set, and because a set does not allow duplicates, if after processing all strings the set size is one, the character occurs in every string at that position. This accurately captures the factual use of a hash set for checking common characters.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

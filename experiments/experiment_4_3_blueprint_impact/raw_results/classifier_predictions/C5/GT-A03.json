@@ -1,0 +1,16 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "COMPARE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "When you talk about the normal encoder, you understand where exactly the data point is. But when we talk about the KL divergence concept in the variational auto encoders, we understand about the mean of the data distribution and also the variance of the data distribution."
+    },
+    {
+      "label": "COMPARE",
+      "quote": "The normal encoders focuses only on one data point. Whereas, the variational auto encoders focus on the mean of the data distribution of the pixels and also the variance."
+    }
+  ]
+}

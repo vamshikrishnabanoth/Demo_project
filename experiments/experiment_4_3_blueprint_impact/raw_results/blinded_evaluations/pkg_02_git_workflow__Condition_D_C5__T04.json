@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_D_C5",
+  "target_id": "T04",
+  "target_concept": "Evaluate when to use `git reset` versus `git restore` to revert staged or working‑directory changes.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 1,
+      "rationale": "The lecture transcript never mentions git reset or git restore, so the question tests material not covered."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Answering requires knowledge of git reset vs restore, which is beyond the presented evidence and thus low cognitive alignment."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clearly written, self‑contained, and unambiguous about the situation."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "All distractors are plausible git commands that a learner might consider, making discrimination necessary."
+    },
+    "d5_single_key_determinism": {
+      "score": 2,
+      "rationale": "Given the evidence, no option is definitively supported; the correct answer cannot be uniquely justified."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The scenario reflects a realistic workflow question rather than a simple definition recall."
+    }
+  },
+  "latency_ms": 16859,
+  "retry_count": 30,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 1, \"rationale\": \"The lecture transcript never mentions git reset or git restore, so the question tests material not covered.\"},\n  \"d2_cognitive_demand\": {\"score\": 2, \"rationale\": \"Answering requires knowledge of git reset vs restore, which is beyond the presented evidence and thus low cognitive alignment.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clearly written, self‑contained, and unambiguous about the situation.\"},\n  \"d4_distractor_plausibility\": {\"score\": 4, \"rationale\": \"All distractors are plausible git commands that a learner might consider, making discrimination necessary.\"},\n  \"d5_single_key_determinism\": {\"score\": 2, \"rationale\": \"Given the evidence, no option is definitively supported; the correct answer cannot be uniquely justified.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The scenario reflects a realistic workflow question rather than a simple definition recall.\"}\n}"
+}

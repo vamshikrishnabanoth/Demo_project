@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Describe how KL divergence regularizes the latent Gaussian to match a standard normal distribution",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "In a variational autoencoder, why is the KL‑divergence term added to the loss when training the model for generative sampling?",
+    "options": [
+      "It encourages the encoder to produce latent codes that are close to a standard normal distribution, so that new samples can be drawn from this known prior.",
+      "It reduces the reconstruction error by directly minimizing the pixel‑wise difference between input and output.",
+      "It forces the decoder to generate deterministic outputs, eliminating randomness in the generated images.",
+      "It aligns the latent mean with the exact pixel values of the input image, ensuring a one‑to‑one mapping."
+    ],
+    "correctAnswer": "It encourages the encoder to produce latent codes that are close to a standard normal distribution, so that new samples can be drawn from this known prior.",
+    "explanation": "The KL‑divergence regularizer penalizes deviations of the latent Gaussian’s mean and variance from those of a standard normal distribution. This ensures the latent space follows a known prior, allowing random sampling during generation. The evidence states that KL divergence makes sure the mean and variance are close to a normal distribution, which is precisely why this regularization is needed for generative sampling.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Describe how KL divergence regularizes the latent Gaussian to match a standard normal distribution"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13045,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"In a variational autoencoder, why is the KL‑divergence term added to the loss when training the model for generative sampling?\",\n  \"options\": [\n    \"It encourages the encoder to produce latent codes that are close to a standard normal distribution, so that new samples can be drawn from this known prior.\",\n    \"It reduces the reconstruction error by directly minimizing the pixel‑wise difference between input and output.\",\n    \"It forces the decoder to generate deterministic outputs, eliminating randomness in the generated images.\",\n    \"It aligns the latent mean with the exact pixel values of the input image, ensuring a one‑to‑one mapping.\"\n  ],\n  \"correctAnswer\": \"It encourages the encoder to produce latent codes that are close to a standard normal distribution, so that new samples can be drawn from this known prior.\",\n  \"explanation\": \"The KL‑divergence regularizer penalizes deviations of the latent Gaussian’s mean and variance from those of a standard normal distribution. This ensures the latent space follows a known prior, allowing random sampling during generation. The evidence states that KL divergence makes sure the mean and variance are close to a normal distribution, which is precisely why this regularization is needed for generative sampling.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

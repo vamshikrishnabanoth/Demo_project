@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T01",
+  "target_concept": "Define the longest common prefix problem and its required output",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks for the definition and output specification that the lecture explicitly provides."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires recalling a stated definition; it involves basic comprehension but no deeper reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options represent common misconceptions (shortest string, any substring, first character) making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Given the evidence, only option C is correct; the others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The item tests rote recall of a definition rather than applying the concept in a novel or authentic context."
+    }
+  },
+  "latency_ms": 1647,
+  "retry_count": 0,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":5,\"rationale\":\"The question directly asks for the definition and output specification that the lecture explicitly provides.\"},\"d2_cognitive_demand\":{\"score\":3,\"rationale\":\"Answering requires recalling a stated definition; it involves basic comprehension but no deeper reasoning.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about what is being asked.\"},\"d4_distractor_plausibility\":{\"score\":5,\"rationale\":\"Incorrect options represent common misconceptions (shortest string, any substring, first character) making them plausible distractors.\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Given the evidence, only option C is correct; the others are definitively wrong.\"},\"d6_question_novelty\":{\"score\":2,\"rationale\":\"The item tests rote recall of a definition rather than applying the concept in a novel or authentic context.\"}}"
+}

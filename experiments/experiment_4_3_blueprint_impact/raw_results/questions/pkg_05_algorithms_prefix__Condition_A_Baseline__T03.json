@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T03",
+  "target_concept": "Describe how a hash set is used to detect a common character at a given position across all strings",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "When using a hash set to determine whether all strings share the same character at a specific index, which statement correctly describes the condition that indicates the character is common?",
+    "options": [
+      "After adding the character from each string at the given position, the hash set will have size one if and only if that character appears in every string.",
+      "The character is common when the hash set size equals the number of strings processed.",
+      "If the hash set remains empty after processing, it indicates the character is common across all strings.",
+      "Using a hash map to count occurrences and checking for a count equal to the number of strings is the correct way to detect a common character."
+    ],
+    "correctAnswer": "After adding the character from each string at the given position, the hash set will have size one if and only if that character appears in every string.",
+    "explanation": "A hash set stores unique elements; when the same character from each string is added, duplicates are ignored. Therefore, if after processing all strings the set size is exactly one, it means every string contributed the same character, confirming it is common at that position.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Describe how a hash set is used to detect a common character at a given position across all strings"
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13183,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"When using a hash set to determine whether all strings share the same character at a specific index, which statement correctly describes the condition that indicates the character is common?\",\n  \"options\": [\n    \"After adding the character from each string at the given position, the hash set will have size one if and only if that character appears in every string.\",\n    \"The character is common when the hash set size equals the number of strings processed.\",\n    \"If the hash set remains empty after processing, it indicates the character is common across all strings.\",\n    \"Using a hash map to count occurrences and checking for a count equal to the number of strings is the correct way to detect a common character.\"\n  ],\n  \"correctAnswer\": \"After adding the character from each string at the given position, the hash set will have size one if and only if that character appears in every string.\",\n  \"explanation\": \"A hash set stores unique elements; when the same character from each string is added, duplicates are ignored. Therefore, if after processing all strings the set size is exactly one, it means every string contributed the same character, confirming it is common at that position.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

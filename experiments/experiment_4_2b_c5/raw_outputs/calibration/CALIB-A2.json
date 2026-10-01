@@ -1,0 +1,27 @@
+{
+  "id": "CALIB-A2",
+  "boundary_family": "STUDENT_INTERACT",
+  "boundary_type": "POSITIVE_BOUNDARY",
+  "expected_labels": [
+    "EXPLAIN",
+    "STUDENT_INTERACT"
+  ],
+  "predicted_labels": [
+    "STUDENT_INTERACT",
+    "EXPLAIN"
+  ],
+  "prohibited_labels": [],
+  "is_exact_match": true,
+  "has_boundary_violation": false,
+  "evidence": [
+    {
+      "label": "STUDENT_INTERACT",
+      "quote": "Vikram, what is the output of this function when n equals three? Student Vikram answers: It returns six."
+    },
+    {
+      "label": "EXPLAIN",
+      "quote": "It multiplies three by two."
+    }
+  ],
+  "latency_ms": 1651
+}

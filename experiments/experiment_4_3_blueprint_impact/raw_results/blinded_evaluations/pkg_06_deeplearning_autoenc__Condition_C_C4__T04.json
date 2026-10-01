@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T04",
+  "target_concept": "Define Gaussian mean and variance in the VAE latent space and state their significance for image reconstruction",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 4,
+      "rationale": "The question targets the definition of Gaussian mean in VAE latent space, which aligns with the lecture's focus on latent space and the stated target evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires conceptual understanding of the role of the mean versus variance, not mere verbatim recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options (spread, loss value, activation function) are plausible misconceptions that test discrimination."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A correctly describes the Gaussian mean; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question frames an authentic conceptual inquiry about VAE latent representations rather than a trivial definition recall."
+    }
+  },
+  "latency_ms": 2134,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 4, \"rationale\": \"The question targets the definition of Gaussian mean in VAE latent space, which aligns with the lecture's focus on latent space and the stated target evidence.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires conceptual understanding of the role of the mean versus variance, not mere verbatim recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\": 4, \"rationale\": \"Incorrect options (spread, loss value, activation function) are plausible misconceptions that test discrimination.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Only option A correctly describes the Gaussian mean; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The question frames an authentic conceptual inquiry about VAE latent representations rather than a trivial definition recall.\"}\n}"
+}

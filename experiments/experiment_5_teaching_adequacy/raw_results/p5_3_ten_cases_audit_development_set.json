@@ -1,0 +1,331 @@
+{
+  "audit_timestamp": "2026-10-01T13:33:06.847Z",
+  "evaluation_nature": "DEVELOPMENT-SET CALIBRATION ONLY (Preserves frozen Phase 5 benchmark)",
+  "sample_size": 10,
+  "original_false_positive_count": 10,
+  "calibrated_false_positive_count": 3,
+  "remediated_cases_count": 7,
+  "remediation_rate": "70.00%",
+  "cases": [
+    {
+      "case_id": 1,
+      "package": "pkg_01_indian_constitution_art21",
+      "dimension": "MEANING",
+      "root_cause_classification": {
+        "provisional": "Category A: Depth-Anchor Rigidity",
+        "confirmed": true,
+        "subtype": "Category A: Depth-Anchor Rigidity"
+      },
+      "normative_expectation": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "Concepts explained and justified but without systemic interaction between literal and substantive meanings; depth falls short of required level 4."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture provided a theoretical rationale for the framers’ choice of wording in Article 21 (Level 5) and explained the Silo Theory as a systemic interaction of rights (Level 4), thereby exceeding the required Level 4 depth.",
+        "raw_model_score": 0.92,
+        "uncertainty_rationale": "Minor ambiguity exists in classifying the Silo Theory explanation as Level 4 versus Level 5, but the presence of a Level 5 justification for the phrasing guarantees coverage of the required depth."
+      }
+    },
+    {
+      "case_id": 2,
+      "package": "pkg_01_indian_constitution_art21",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "root_cause_classification": {
+        "provisional": "Category C1: Pipeline Handoff / Granularity Gap",
+        "confirmed": true,
+        "subtype": "Category C1: Pipeline Handoff / Granularity Gap"
+      },
+      "normative_expectation": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "Searched the transcript for concept C03 (Constituent Assembly Debate & Sir B.N. Rau’s US Visit) but no episode referenced it; therefore no observable evidence."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture demonstrates Level 4 depth by mapping the structural evolution of Article 21 through the dynamic interaction between the 'Silo Theory' (mutual exclusivity of rights) established in A.K. Gopalan and its subsequent systemic dismantling in Maneka Gandhi, illustrating how the interpretation shifted from isolated compartments to an integrated framework of procedural fairness.",
+        "raw_model_score": 1,
+        "uncertainty_rationale": "The evidence clearly shows the lecturer explaining the structural relationship between different fundamental rights (the 'compartments') and how the Maneka Gandhi judgment altered this structure by linking Article 21 with Articles 14 and 19, which fits the Level 4 definition of dynamic interaction/systemic flow."
+      }
+    },
+    {
+      "case_id": 3,
+      "package": "pkg_01_indian_constitution_art21",
+      "dimension": "RELATIONSHIPS_MECHANISM",
+      "root_cause_classification": {
+        "provisional": "Category C2: Concept Extraction Omission",
+        "confirmed": true,
+        "subtype": "Category C2: Concept Extraction Omission"
+      },
+      "normative_expectation": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No concept or episode addressing the dynamic relationship among Articles 14, 19, and 21 was found in the record."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture provided a theoretical rationale for the framers’ choice of wording (justifying the ‘life and personal liberty’ phrase over U.S. due process) and for the transformative shift in interpretation from Gopalan to Maneka Gandhi, thereby meeting Level 5 justification; it also applied these cases to illustrate the evolving mechanism, satisfying the required depth of 5.",
+        "raw_model_score": 0.92,
+        "uncertainty_rationale": "None – the evidence clearly demonstrates Level 5 justification and application, matching the expected depth."
+      }
+    },
+    {
+      "case_id": 4,
+      "package": "pkg_01_indian_constitution_art21",
+      "dimension": "JUSTIFICATION_WHY",
+      "root_cause_classification": {
+        "provisional": "Category B: Holistic Teaching Weaving",
+        "confirmed": true,
+        "subtype": "Category B: Holistic Teaching Weaving"
+      },
+      "normative_expectation": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The lecture did not present a philosophical or judicial reasoning justification for the shift to substantive due‑process."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture explicitly justified the framers’ choice of wording in Article 21, contextualized the historical debate and Sir B.N. Rau’s US visit, and explained the shift from a literal, silo‑theoretic interpretation in Gopalan to a purposive, procedural‑fairness rationale in Maneka Gandhi—meeting the rubric’s Level 5 theoretical justification criterion.",
+        "raw_model_score": 0.92,
+        "uncertainty_rationale": "None—evidence directly matches Level 5 justification requirements."
+      }
+    },
+    {
+      "case_id": 5,
+      "package": "pkg_01_indian_constitution_art21",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "root_cause_classification": {
+        "provisional": "Category A: Depth-Anchor Rigidity & Formal-Proof Bias",
+        "confirmed": true,
+        "subtype": "Category A: Depth-Anchor Rigidity & Formal-Proof Bias"
+      },
+      "normative_expectation": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 5,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "Lecturer explained Gopalan and applied Maneka Gandhi, providing comparative insight but without a fully worked case analysis required for depth 6."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 6,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 6,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture presents a comparative judicial case analysis of A.K. Gopalan v. State of Madras and Maneka Gandhi v. Union of India, including factual scenarios (passport impounding) and a discussion of the shift from literal to transformative interpretation, satisfying Level 6 application.",
+        "raw_model_score": 0.95,
+        "uncertainty_rationale": "None"
+      }
+    },
+    {
+      "case_id": 6,
+      "package": "pkg_03_dsa_bfs_conceptual",
+      "dimension": "MEANING",
+      "root_cause_classification": {
+        "provisional": "Category A: Depth-Anchor Rigidity",
+        "confirmed": true,
+        "subtype": "Category A: Depth-Anchor Rigidity"
+      },
+      "normative_expectation": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The lecture gave a basic definition of BFS but did not elaborate on its conceptual significance beyond purpose."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture included a live demonstration of BFS queue operations (pop A, push B and C) and a clear explanation of the invariant that the queue maintains non‑decreasing distance order, satisfying the rubric’s Level 3 requirement of univariate mechanism/steps.",
+        "raw_model_score": 0.85,
+        "uncertainty_rationale": "The evidence explicitly shows step‑by‑step queue manipulation, which unambiguously meets Level 3; no higher level (dynamic flow or theoretical justification) is evident, so the observed depth is confidently set at 3."
+      }
+    },
+    {
+      "case_id": 7,
+      "package": "pkg_03_dsa_bfs_conceptual",
+      "dimension": "RELATIONSHIPS_MECHANISM",
+      "root_cause_classification": {
+        "provisional": "Category A: Depth-Anchor Rigidity & Formal-Proof Bias",
+        "confirmed": true,
+        "subtype": "Category A: Depth-Anchor Rigidity & Formal-Proof Bias"
+      },
+      "normative_expectation": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 4,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C03 stated the non‑decreasing distance invariant but did not provide a formal derivation or deeper mechanistic explanation."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The instructor identified the key invariant that the BFS queue maintains non‑decreasing distance order (C03) and noted that the queue holds at most two consecutive distance levels (C04), but the presentation did not provide a dynamic flow analogy, code trace, or theoretical justification that would elevate the depth to Level 5.",
+        "raw_model_score": 0.6,
+        "uncertainty_rationale": "While the invariant is a critical mechanism, the evidence lacks a worked code trace or a dynamic ripple‑expansion analogy, so it is conservatively rated as Level 3 rather than Level 4 or 5."
+      }
+    },
+    {
+      "case_id": 8,
+      "package": "pkg_03_dsa_bfs_conceptual",
+      "dimension": "JUSTIFICATION_WHY",
+      "root_cause_classification": {
+        "provisional": "Category B: Holistic Teaching Weaving",
+        "confirmed": true,
+        "subtype": "Category B: Holistic Teaching Weaving"
+      },
+      "normative_expectation": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No segment of the recording offered a theoretical justification for why BFS yields shortest‑path distances in unweighted graphs."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 4,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The lecture includes dynamic demonstration of the FIFO queue (E04) and explanation of the non‑decreasing distance invariant (E03), which together provide a Level‑4 systemic flow but lack an explicit theoretical justification for why BFS guarantees layer‑by‑layer traversal (no Level‑5 rationale or invariant‑based proof is presented).",
+        "raw_model_score": 0.42,
+        "uncertainty_rationale": "The evidence shows only procedural and structural explanations; no worked code trace or formal invariant proof is provided to meet Level‑5 justification."
+      }
+    },
+    {
+      "case_id": 9,
+      "package": "pkg_04_dsa_bfs_implementation",
+      "dimension": "IDENTIFICATION",
+      "root_cause_classification": {
+        "provisional": "Category C3: Analyzer Semantic Parsing Bias",
+        "confirmed": true,
+        "subtype": "Category C3: Analyzer Semantic Parsing Bias"
+      },
+      "normative_expectation": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "Search of the lecture transcript found no explicit naming or definition of BFS as a distinct algorithm; the term appears only within explanations of its meaning."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 2,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture explicitly identifies Breadth‑First Search as a fundamental traversal algorithm, names the FIFO queue as its core data structure, and states the queue invariant of non‑decreasing distance order, satisfying Level 2 identification.",
+        "raw_model_score": 1,
+        "uncertainty_rationale": "None"
+      }
+    },
+    {
+      "case_id": 10,
+      "package": "pkg_05_deep_learning_vaes",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "root_cause_classification": {
+        "provisional": "Category A: Depth-Anchor Rigidity",
+        "confirmed": true,
+        "subtype": "Category A: Depth-Anchor Rigidity"
+      },
+      "normative_expectation": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "pedagogical_rationale": "Essential instructional goal"
+      },
+      "original_frozen_evaluation": {
+        "observed_depth": 1,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The record contains only definitional mentions; no worked example, code trace, or case analysis of autoencoders/VAEs was found."
+      },
+      "ground_truth_adjudication": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "human_adjudication_notes": "Human ground truth evidence"
+      },
+      "calibrated_development_set_evaluation": {
+        "observed_depth": 5,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "Episodes cover definitions, mechanisms, comparison, and justification of VAE concepts but do not include a worked application or case interpretation, falling short of the required Level 6 depth.",
+        "raw_model_score": 0.8333333333333334,
+        "uncertainty_rationale": "None"
+      }
+    }
+  ]
+}

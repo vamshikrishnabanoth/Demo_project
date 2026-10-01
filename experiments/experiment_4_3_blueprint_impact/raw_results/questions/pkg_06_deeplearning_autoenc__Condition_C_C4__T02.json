@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T02",
+  "target_concept": "Compare fully connected and convolutional autoencoders in terms of dimensionality handling and reconstruction quality",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "According to the provided evidence, why does a convolutional autoencoder preserve spatial structure better than a fully connected autoencoder?",
+    "options": [
+      "Because convolutional layers apply filters to local neighborhoods, maintaining the 2‑D spatial relationships of the input image.",
+      "Because fully connected layers use dropout to retain spatial information during encoding.",
+      "Because flattening the image into a one‑dimensional vector inherently preserves the original pixel adjacency.",
+      "Because convolutional autoencoders rely on recurrent connections to capture temporal dynamics."
+    ],
+    "correctAnswer": "Because convolutional layers apply filters to local neighborhoods, maintaining the 2‑D spatial relationships of the input image.",
+    "explanation": "The evidence states that fully connected autoencoders flatten the 2‑D image into a single dimension, losing spatial structure, whereas convolutional encoders keep the 2‑D layout and use convolution operations to extract local features, thereby preserving spatial relationships.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Compare fully connected and convolutional autoencoders in terms of dimensionality handling and reconstruction quality"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11761,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"According to the provided evidence, why does a convolutional autoencoder preserve spatial structure better than a fully connected autoencoder?\",\n  \"options\": [\n    \"Because convolutional layers apply filters to local neighborhoods, maintaining the 2‑D spatial relationships of the input image.\",\n    \"Because fully connected layers use dropout to retain spatial information during encoding.\",\n    \"Because flattening the image into a one‑dimensional vector inherently preserves the original pixel adjacency.\",\n    \"Because convolutional autoencoders rely on recurrent connections to capture temporal dynamics.\"\n  ],\n  \"correctAnswer\": \"Because convolutional layers apply filters to local neighborhoods, maintaining the 2‑D spatial relationships of the input image.\",\n  \"explanation\": \"The evidence states that fully connected autoencoders flatten the 2‑D image into a single dimension, losing spatial structure, whereas convolutional encoders keep the 2‑D layout and use convolution operations to extract local features, thereby preserving spatial relationships.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

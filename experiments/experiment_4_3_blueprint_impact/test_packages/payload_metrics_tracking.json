@@ -1,0 +1,170 @@
+{
+  "pkg_01_git_intro": {
+    "Condition_A_Baseline": {
+      "behavior_count": 0,
+      "evidence_span_count": 0,
+      "payload_char_count": 0
+    },
+    "Condition_B_Oracle": {
+      "behavior_count": 2,
+      "evidence_span_count": 2,
+      "payload_char_count": 722
+    },
+    "Condition_C_C4": {
+      "behavior_count": 5,
+      "evidence_span_count": 5,
+      "payload_char_count": 1454
+    },
+    "Condition_D_C5": {
+      "behavior_count": 4,
+      "evidence_span_count": 4,
+      "payload_char_count": 1244
+    },
+    "Condition_E_Permuted": {
+      "source_package": "pkg_02_git_workflow",
+      "behavior_count": 5,
+      "evidence_span_count": 5,
+      "payload_char_count": 1666
+    }
+  },
+  "pkg_02_git_workflow": {
+    "Condition_A_Baseline": {
+      "behavior_count": 0,
+      "evidence_span_count": 0,
+      "payload_char_count": 0
+    },
+    "Condition_B_Oracle": {
+      "behavior_count": 5,
+      "evidence_span_count": 5,
+      "payload_char_count": 1666
+    },
+    "Condition_C_C4": {
+      "behavior_count": 5,
+      "evidence_span_count": 5,
+      "payload_char_count": 1394
+    },
+    "Condition_D_C5": {
+      "behavior_count": 3,
+      "evidence_span_count": 3,
+      "payload_char_count": 961
+    },
+    "Condition_E_Permuted": {
+      "source_package": "pkg_03_recursion_gcd",
+      "behavior_count": 9,
+      "evidence_span_count": 9,
+      "payload_char_count": 2931
+    }
+  },
+  "pkg_03_recursion_gcd": {
+    "Condition_A_Baseline": {
+      "behavior_count": 0,
+      "evidence_span_count": 0,
+      "payload_char_count": 0
+    },
+    "Condition_B_Oracle": {
+      "behavior_count": 9,
+      "evidence_span_count": 9,
+      "payload_char_count": 2931
+    },
+    "Condition_C_C4": {
+      "behavior_count": 9,
+      "evidence_span_count": 9,
+      "payload_char_count": 2279
+    },
+    "Condition_D_C5": {
+      "behavior_count": 6,
+      "evidence_span_count": 6,
+      "payload_char_count": 1613
+    },
+    "Condition_E_Permuted": {
+      "source_package": "pkg_04_recursion_lcm",
+      "behavior_count": 11,
+      "evidence_span_count": 11,
+      "payload_char_count": 3557
+    }
+  },
+  "pkg_04_recursion_lcm": {
+    "Condition_A_Baseline": {
+      "behavior_count": 0,
+      "evidence_span_count": 0,
+      "payload_char_count": 0
+    },
+    "Condition_B_Oracle": {
+      "behavior_count": 11,
+      "evidence_span_count": 11,
+      "payload_char_count": 3557
+    },
+    "Condition_C_C4": {
+      "behavior_count": 9,
+      "evidence_span_count": 9,
+      "payload_char_count": 2456
+    },
+    "Condition_D_C5": {
+      "behavior_count": 6,
+      "evidence_span_count": 6,
+      "payload_char_count": 1683
+    },
+    "Condition_E_Permuted": {
+      "source_package": "pkg_05_algorithms_prefix",
+      "behavior_count": 4,
+      "evidence_span_count": 4,
+      "payload_char_count": 1362
+    }
+  },
+  "pkg_05_algorithms_prefix": {
+    "Condition_A_Baseline": {
+      "behavior_count": 0,
+      "evidence_span_count": 0,
+      "payload_char_count": 0
+    },
+    "Condition_B_Oracle": {
+      "behavior_count": 4,
+      "evidence_span_count": 4,
+      "payload_char_count": 1362
+    },
+    "Condition_C_C4": {
+      "behavior_count": 7,
+      "evidence_span_count": 7,
+      "payload_char_count": 2016
+    },
+    "Condition_D_C5": {
+      "behavior_count": 5,
+      "evidence_span_count": 5,
+      "payload_char_count": 1498
+    },
+    "Condition_E_Permuted": {
+      "source_package": "pkg_06_deeplearning_autoenc",
+      "behavior_count": 2,
+      "evidence_span_count": 2,
+      "payload_char_count": 717
+    }
+  },
+  "pkg_06_deeplearning_autoenc": {
+    "Condition_A_Baseline": {
+      "behavior_count": 0,
+      "evidence_span_count": 0,
+      "payload_char_count": 0
+    },
+    "Condition_B_Oracle": {
+      "behavior_count": 2,
+      "evidence_span_count": 2,
+      "payload_char_count": 717
+    },
+    "Condition_C_C4": {
+      "behavior_count": 4,
+      "evidence_span_count": 4,
+      "payload_char_count": 1180
+    },
+    "Condition_D_C5": {
+      "behavior_count": 2,
+      "evidence_span_count": 2,
+      "payload_char_count": 718
+    },
+    "Condition_E_Permuted": {
+      "source_package": "pkg_01_git_intro",
+      "behavior_count": 2,
+      "evidence_span_count": 2,
+      "payload_char_count": 722
+    }
+  }
+}

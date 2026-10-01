@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_D_C5",
+  "target_id": "T04",
+  "target_concept": "Trace the algorithm: outer loop over character positions up to the smallest length, inner loop over each string, and break when a mismatch occurs.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks for the result of the outer‑loop/inner‑loop character‑comparison algorithm described in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires tracing the loop logic and reasoning about mismatches, not mere recall, but stays within a single‑step procedural reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously specifies the input and the task."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options reflect common misconceptions (e.g., returning the smallest whole string, the first string, or only the first character)."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only one answer ('hel') is supported by the algorithm; the other three are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "The item asks students to apply an algorithmic concept to a concrete example, an authentic assessment of understanding."
+    }
+  },
+  "latency_ms": 2445,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks for the result of the outer‑loop/inner‑loop character‑comparison algorithm described in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires tracing the loop logic and reasoning about mismatches, not mere recall, but stays within a single‑step procedural reasoning.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously specifies the input and the task.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options reflect common misconceptions (e.g., returning the smallest whole string, the first string, or only the first character).\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only one answer ('hel') is supported by the algorithm; the other three are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"The item asks students to apply an algorithmic concept to a concrete example, an authentic assessment of understanding.\"}\n}"
+}

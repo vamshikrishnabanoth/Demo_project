@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T03",
+  "target_concept": "Identify the role of Gaussian mean and variance in modeling the latent space of a VAE",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 2,
+      "rationale": "The lecture discusses latent space in VAEs but does not explicitly explain Gaussian mean and variance, so the question only loosely aligns with the presented material."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires understanding the probabilistic role of mean and variance in latent‑space modeling, a moderate level of conceptual reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clearly worded, self‑contained, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "Some distractors (e.g., fixed constants) reflect plausible misconceptions, though others are less realistic, making overall plausibility moderate."
+    },
+    "d5_single_key_determinism": {
+      "score": 2,
+      "rationale": "Given the transcript, only one answer matches standard VAE theory, but the evidence does not explicitly confirm that the other options are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question asks for a basic definition rather than an authentic, novel application of VAE concepts."
+    }
+  },
+  "latency_ms": 1949,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":2,\"rationale\":\"The lecture discusses latent space in VAEs but does not explicitly explain Gaussian mean and variance, so the question only loosely aligns with the presented material.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Answering requires understanding the probabilistic role of mean and variance in latent‑space modeling, a moderate level of conceptual reasoning.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clearly worded, self‑contained, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":3,\"rationale\":\"Some distractors (e.g., fixed constants) reflect plausible misconceptions, though others are less realistic, making overall plausibility moderate.\"},\n  \"d5_single_key_determinism\": {\"score\":2,\"rationale\":\"Given the transcript, only one answer matches standard VAE theory, but the evidence does not explicitly confirm that the other options are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The question asks for a basic definition rather than an authentic, novel application of VAE concepts.\"}\n}"
+}

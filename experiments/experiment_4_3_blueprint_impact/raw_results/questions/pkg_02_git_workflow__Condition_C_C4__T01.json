@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_C_C4",
+  "target_id": "T01",
+  "target_concept": "Identify the three areas of a Git workflow: working directory, staging area, and repository",
+  "target_dimension": "Foundational Prerequisite",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which of the following correctly lists all three areas of the Git workflow as described in the session?",
+    "options": [
+      "Working directory, staging area, and repository",
+      "Working directory, commit history, and remote server",
+      "Branch, tag, and remote",
+      "Staging area, repository, and remote origin"
+    ],
+    "correctAnswer": "Working directory, staging area, and repository",
+    "explanation": "The session explicitly states that the Git workflow consists of three areas: the working directory, the staging area, and the repository. The other options include elements that are not part of this three‑area model.",
+    "metadata": {
+      "dimension": "Foundational Prerequisite",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Medium",
+      "concept": "Identify the three areas of a Git workflow: working directory, staging area, and repository"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 10647,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Which of the following correctly lists all three areas of the Git workflow as described in the session?\",\n  \"options\": [\n    \"Working directory, staging area, and repository\",\n    \"Working directory, commit history, and remote server\",\n    \"Branch, tag, and remote\",\n    \"Staging area, repository, and remote origin\"\n  ],\n  \"correctAnswer\": \"Working directory, staging area, and repository\",\n  \"explanation\": \"The session explicitly states that the Git workflow consists of three areas: the working directory, the staging area, and the repository. The other options include elements that are not part of this three‑area model.\",\n  \"metadata\": {\n    \"dimension\": \"Foundational Prerequisite\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

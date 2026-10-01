@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Use a HashSet to determine if all characters at a given index are identical across strings.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 4,
+      "rationale": "Question directly tests the stated use of a HashSet to collect distinct characters at a given index, matching the target evidence though not explicitly covered in the lecture narrative."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires applying knowledge of zero‑based indexing and HashSet uniqueness, modest reasoning beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options represent common misconceptions (all same, all different, impossible count) and are not obviously dismissible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Given the strings and index, only one answer (size = 2) is defensibly correct; all distractors are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question applies the HashSet concept in a concrete scenario rather than merely asking for a definition, showing reasonable authenticity."
+    }
+  },
+  "latency_ms": 1608,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 4, \"rationale\": \"Question directly tests the stated use of a HashSet to collect distinct characters at a given index, matching the target evidence though not explicitly covered in the lecture narrative.\"},\n  \"d2_cognitive_demand\": {\"score\": 3, \"rationale\": \"Requires applying knowledge of zero‑based indexing and HashSet uniqueness, modest reasoning beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is concise, grammatically correct, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\": 4, \"rationale\": \"Incorrect options represent common misconceptions (all same, all different, impossible count) and are not obviously dismissible.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Given the strings and index, only one answer (size = 2) is defensibly correct; all distractors are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The question applies the HashSet concept in a concrete scenario rather than merely asking for a definition, showing reasonable authenticity.\"}\n}"
+}

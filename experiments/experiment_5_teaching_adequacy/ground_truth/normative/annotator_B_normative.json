@@ -1,0 +1,318 @@
+{
+  "annotator_id": "Annotator_B_Measurement_Specialist",
+  "annotation_timestamp": "2026-10-01T07:22:00Z",
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Statutory recognition of Article 21 text.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Personal liberty semantic evolution from formal freedom to human dignity.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Procedure established by law clause vs Due Process clause.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Tripartite organic connection between Arts 14, 19, and 21.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Constitutional rationale against arbitrary state action.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Case law application (Gopalan literalism vs Maneka substantive justice).",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Constitutional limitations: lawful state deprivation.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 2,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Unenumerated rights synthesis (Puttaswamy) is peripheral to core evolution.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Ax = lambda x terminology.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Geometric scaling along invariant axes.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Characteristic polynomial det(A - lambda I) = 0 formulation.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Singular matrix requirement for non-trivial eigenvector solutions.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Mathematical necessity of det(A - lambda I) = 0.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Full 2x2 matrix calculation of eigenvalues and eigenvectors.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 3,
+          "alignment": "RECOMMENDED",
+          "rationale": "Rotation matrices (imaginary eigenvalues).",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 2,
+          "alignment": "OPTIONAL",
+          "rationale": "Matrix powers and spectral theorem.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "BFS traversal and queue naming.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Layer-by-layer exploration meaning.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Queue, visited set, and adjacency list components.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "FIFO queue invariant maintaining distance order.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Shortest-path guarantee and cycle prevention justifications.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Step-by-step trace on sample graph.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 2,
+          "alignment": "OPTIONAL",
+          "rationale": "Disconnected graph traversal.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 1,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Novel traversal problems out of scope.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "BFS implementation terminology.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Breadth-first search operational meaning.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Queue methods, visited boolean array, adjacency list implementation.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Queue loop invariant, enqueue/dequeue state transitions.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Why visited array prevents infinite looping and queue overflow.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Concrete variable tracing and code implementation.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Cyclic and disconnected graph edge cases.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 2,
+          "alignment": "OPTIONAL",
+          "rationale": "Shortest path reconstruction in code.",
+          "confidence": "MEDIUM"
+        }
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Autoencoder and VAE terminology.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Continuous probabilistic latent space.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Encoder outputting mu and sigma^2, decoder reconstructing image.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Reconstruction loss plus KL divergence regularizer.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Why deterministic point bottlenecks fail and why KL pulls toward N(0,I).",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Tracing latent distributions for Gaussian regularization.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Fully connected autoencoder spatial compression failures.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "OPTIONAL",
+          "rationale": "Reparameterization trick for gradient flow.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Law of demand and price elasticity definition.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Responsiveness concept.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Midpoint formula structure.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Total revenue test across elastic vs inelastic demand.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Why percentages eliminate unit dependency and midpoint eliminates base dependency.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Midpoint calculation and classification (|Ed| > 1, < 1, = 1).",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Deadweight loss from artificial price controls.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 2,
+          "alignment": "OPTIONAL",
+          "rationale": "Tax incidence transfer.",
+          "confidence": "MEDIUM"
+        }
+      }
+    }
+  }
+}

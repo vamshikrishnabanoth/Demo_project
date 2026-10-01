@@ -1,0 +1,26 @@
+[
+  {
+    "artifact": "normative/annotator_A_normative.json",
+    "sha256": "0a5939937bf98689d4fa23244175e80ecb19c467a35060bf74ef1ffc62cc3616"
+  },
+  {
+    "artifact": "normative/annotator_B_normative.json",
+    "sha256": "a4a88dfc4980dbf7d13de424ef0b82fe45d3945609503bd4b324515f5ddc95bc"
+  },
+  {
+    "artifact": "normative/normative_reference_profiles.json",
+    "sha256": "6e7b0c20c730d78e06f7ba78453d3128941f932bdfa57b8bbaa319b7303836a5"
+  },
+  {
+    "artifact": "observational/annotator_A_observational.json",
+    "sha256": "dbd4fc856df85b63e429a87310d5b7afa4d52e5d11fb99ee1f04b94806d7186a"
+  },
+  {
+    "artifact": "observational/annotator_B_observational.json",
+    "sha256": "971ea7199f8c3c82c547b33e69b0f2c950aa586735fb26ab441828ba41b9aab5"
+  },
+  {
+    "artifact": "observational/observational_reference_evidence.json",
+    "sha256": "ae0536e7f102c53d102bbd4f33d4ef1cb113398d49f930c41480fe615ca48e15"
+  }
+]

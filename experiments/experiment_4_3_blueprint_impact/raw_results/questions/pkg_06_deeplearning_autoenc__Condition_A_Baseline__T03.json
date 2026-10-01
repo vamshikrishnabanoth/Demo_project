@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T03",
+  "target_concept": "Identify the role of Gaussian mean and variance in modeling the latent space of a VAE",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "In the context of variational autoencoders, how are the Gaussian mean and variance interpreted for the latent‑space distribution?",
+    "options": [
+      "The mean gives the average latent vector location, and the variance measures how much the latent values are spread around that mean.",
+      "The mean sets the reconstruction loss weight, while the variance controls the learning rate of the encoder.",
+      "Both mean and variance are fixed constants that do not change during training.",
+      "The variance defines the number of latent dimensions, and the mean determines the pixel intensity of the output."
+    ],
+    "correctAnswer": "The mean gives the average latent vector location, and the variance measures how much the latent values are spread around that mean.",
+    "explanation": "Evidence states that the mean of the data distribution is the average sample (V) and the variance describes how spread the data is from the mean. In a VAE, the Gaussian mean therefore represents the average position of latent codes, while the variance captures their dispersion, enabling probabilistic modeling of the latent space.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Easy",
+      "concept": "Identify the role of Gaussian mean and variance in modeling the latent space of a VAE"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11928,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"In the context of variational autoencoders, how are the Gaussian mean and variance interpreted for the latent‑space distribution?\",\n  \"options\": [\n    \"The mean gives the average latent vector location, and the variance measures how much the latent values are spread around that mean.\",\n    \"The mean sets the reconstruction loss weight, while the variance controls the learning rate of the encoder.\",\n    \"Both mean and variance are fixed constants that do not change during training.\",\n    \"The variance defines the number of latent dimensions, and the mean determines the pixel intensity of the output.\"\n  ],\n  \"correctAnswer\": \"The mean gives the average latent vector location, and the variance measures how much the latent values are spread around that mean.\",\n  \"explanation\": \"Evidence states that the mean of the data distribution is the average sample (V) and the variance describes how spread the data is from the mean. In a VAE, the Gaussian mean therefore represents the average position of latent codes, while the variance captures their dispersion, enabling probabilistic modeling of the latent space.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

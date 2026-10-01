@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-D05",
+  "benchmark": "BENCH_03",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "COMPARE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "One problem talks about sharing stuff equally... it means that you are asked to find the LCM"
+    },
+    {
+      "label": "COMPARE",
+      "quote": "So there are two types of problems that we have. One problem talks about sharing stuff equally... When it comes to timing, scheduling, time intervals... it means that you are asked to find the LCM"
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"COMPARE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"One problem talks about sharing stuff equally... it means that you are asked to find the LCM\"\n    },\n    {\n      \"label\": \"COMPARE\",\n      \"quote\": \"So there are two types of problems that we have. One problem talks about sharing stuff equally... When it comes to timing, scheduling, time intervals... it means that you are asked to find the LCM\"\n    }\n  ]\n}",
+  "latency_ms": 26388,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

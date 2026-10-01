@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_C_C4",
+  "target_id": "T03",
+  "target_concept": "Connect the concept of LCM to real‑world scheduling problems such as round‑robin and job intervals.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Machine A starts a task every 8 minutes and Machine B starts a task every 12 minutes. Assuming both start together at time 0, after how many minutes will they next start a task simultaneously?",
+    "options": [
+      "24 minutes",
+      "8 minutes",
+      "12 minutes",
+      "96 minutes"
+    ],
+    "correctAnswer": "24 minutes",
+    "explanation": "The next simultaneous start occurs at the least common multiple (LCM) of the two periods. LCM(8,12)=24, so after 24 minutes both machines will start a task together again. The other options reflect common misconceptions: using the smaller period (8), the larger period (12), or the product of the periods (96).",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Connect the concept of LCM to real‑world scheduling problems such as round‑robin and job intervals."
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 1816,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Machine A starts a task every 8 minutes and Machine B starts a task every 12 minutes. Assuming both start together at time 0, after how many minutes will they next start a task simultaneously?\",\n  \"options\": [\n    \"24 minutes\",\n    \"8 minutes\",\n    \"12 minutes\",\n    \"96 minutes\"\n  ],\n  \"correctAnswer\": \"24 minutes\",\n  \"explanation\": \"The next simultaneous start occurs at the least common multiple (LCM) of the two periods. LCM(8,12)=24, so after 24 minutes both machines will start a task together again. The other options reflect common misconceptions: using the smaller period (8), the larger period (12), or the product of the periods (96).\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

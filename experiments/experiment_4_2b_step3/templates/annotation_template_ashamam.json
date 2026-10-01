@@ -1,0 +1,221 @@
+{
+  "benchmark_id": "BENCH_06",
+  "instructor": "Asha Mam",
+  "source_audio_file": "Audio/voice+ppt/Ashamam_VAE/ashamam_VAE.mp3",
+  "taxonomy": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "COMPARE",
+    "DEBUG",
+    "PREDICT_CHANGE",
+    "ASK_WHY",
+    "PRACTICE",
+    "REAL_WORLD_APP",
+    "EDGE_CASE",
+    "CODE_TRACE",
+    "STUDENT_INTERACT",
+    "REINFORCE"
+  ],
+  "annotation_instructions": [
+    "Read transcript and inspect audio timestamps.",
+    "Assign all canonical behaviors that are supported by observable evidence. No arbitrary label limit.",
+    "For every assigned behavior, provide at least one evidence item with start, end, and verbatim quote.",
+    "Adhere strictly to positive and negative boundary rules in Section 4 of the protocol."
+  ],
+  "total_units": 8,
+  "status": "PENDING_HUMAN_ANNOTATION",
+  "units": [
+    {
+      "benchmark": "BENCH_06",
+      "unit_id": "GT-A01",
+      "instructor": "Asha Mam",
+      "topic_description": "Autoencoder Structural Comparison: Fully Connected vs. Convolutional Architectures",
+      "start": 0,
+      "end": 147,
+      "duration": 147,
+      "word_count": 1,
+      "transcript_text": "So, let me talk about the hotline codeus, first hotline codeus that comes into picture is fully connected hotline codeus, which where the architecture is, encoder law, latent space, decoder law. What is encoder do? The encoder takes the image and converts the flattens of image, performs encoding and then gives it to one. And generates one latent space that is the compressed form and latent space output is given as input to decoder and decoder will try to reconstruct the image where the reconstruction was deliberately failed. The first main reason why fully auto encoder fail is because the 2d dimension of image is directly converted into one, the quantity dimension for dealing with the encoder plot. Hence, with this particular drawback, we are going for convolutional order encoder where the 2d image is not directly converted into one, but what we do? We perform what? Commolition operation, pulley cooperation, understanding the features and then converted that to one and then we have given it to encoder and then got latent space and then that. Still the convolutional order encoder is decoder. So, what we do? We try to change the latent space where we observe the improvements, but the reconstructed image was not that clarity or what we were able to understand what is there in the image, but not exactly the later original input image is. Now, when we talk about auto encoders, why do we use auto encoders? When we talk about image processing, we have lots of images to process. When we want to train a model, we have to give lot training data or huge training data where one size of the image may be huge, so the training time becomes complex. So, in order to reduce the computational complexity of training large number of images, what do we try to do? We try to compress the image. I think decode the original image so that when you compress the image, the size of the image would be reduced and we are able to understand the features also. Now, there are applications where I want to extract the images as original images, almost like what original images because my convolutional auto encoders were not able to do that",
+      "annotations": [
+        {
+          "behavior": "",
+          "evidence": [
+            {
+              "start": null,
+              "end": null,
+              "quote": ""
+            }
+          ]
+        }
+      ],
+      "annotator_notes": ""
+    },
+    {
+      "benchmark": "BENCH_06",
+      "unit_id": "GT-A02",
+      "instructor": "Asha Mam",
+      "topic_description": "Variational Autoencoders: Motivation for Continuous Latent Representations",
+      "start": 147,
+      "end": 258,
+      "duration": 111,
+      "word_count": 1,
+      "transcript_text": "and my fully connected auto encoders were also not able to do that. So, the third type of auto encoders that came into picture, which reconnects the original image up till 70 or 60 percent as the original image, unlike fully connected where the accuracy is only around 60 or 50. 70 percent or 80 percent till 90 percent accuracy of reconstructed images is done using this auto encoders, which are called as variational auto encoders. So, gradually we are trying to reconstruct the image from the compressed data with improved quality. First fully auto encoders, very blurry images, second convolutional auto encoders, a little bit improvement by changing the latent space. Now, the main idea here is the important factor here for understanding the reconstruction is latent space. So, this variational auto encoders focused on what do I do with this latent space rather than just changing the values. What extra thing I can do with the latent space because the encoders does just the conversion of the input latent space. So, the entire compression is done in what the latent space. So, what do I do in this latent space such that the decoder works well and the reconstructed image would be as much as similar to the original image. So, when this idea came into picture, variational auto encoder comes into picture. Now, what does this variational auto encoders do? Variational auto encoders does not just change the latent space dimension, but works are how is this latent space working? And what are the other parameters that have to focus on this latent space so that the image quality will be improved. Now, what exactly happens?",
+      "annotations": [
+        {
+          "behavior": "",
+          "evidence": [
+            {
+              "start": null,
+              "end": null,
+              "quote": ""
+            }
+          ]
+        }
+      ],
+      "annotator_notes": ""
+    },
+    {
+      "benchmark": "BENCH_06",
+      "unit_id": "GT-A03",
+      "instructor": "Asha Mam",
+      "topic_description": "Latent Space Modeling: Gaussian Mean, Variance, and KL Regularization",
+      "start": 258,
+      "end": 430,
+      "duration": 172,
+      "word_count": 1,
+      "transcript_text": "When you talk about the normal encoder, you understand where exactly the data point is. But when we talk about the KL divergence concept in the variational auto encoders, we understand about the mean of the data distribution and also the variance of the data distribution. What is mean and what is variance? V is the average sample and what is the variance? How spread the data is from the V? Because when we talk about the image, we talk about the pixels. So, when I compress the data, I do not want to look at the one point where the data is exactly available. I just want to look at the probability, understand the words and I am talking. I want to understand the probability of distribution of data in the latent space. So, the improvement in the latent space is done not just by one point, but understanding mean and variance of that particular data. Now, how do we check this? The mean and variance should be close to the normal distribution, normal and the original input. So, I am not checking one point, I am checking mean and variance of the data and that should be close to what the normal distribution of the input data. So, when you find that particular thing, your latent space has the original input content of the normal image in the reduced form. So, the normal encoders focuses only on one data point. Whereas, the variational auto encoders focus on what? The mean of the data distribution of the pixels and as well as more the variance. And the KL divergence makes sure that the mean and the variance of the data are close to what? Close to the normal distribution. So, when this kind of compression is done in the latent space, it will generate the images with as much as accuracy as the original image in the compressed form. Okay, now let us get into the concept first before we get into the code. So, how is the latent space generally generated in normal auto encoder? First we take the input image, we give it to the encoder and the encoder we give us what? Fixed a latent space or latent vector which is again given to what? The encoder and the image is reconstructed. But when we talk about variational auto encoder, what is it doing? It takes the image, gives it to the encoder and what is encoder doing? It finds the probability distribution by assuming what?",
+      "annotations": [
+        {
+          "behavior": "",
+          "evidence": [
+            {
+              "start": null,
+              "end": null,
+              "quote": ""
+            }
+          ]
+        }
+      ],
+      "annotator_notes": ""
+    },
+    {
+      "benchmark": "BENCH_06",
+      "unit_id": "GT-A04",
+      "instructor": "Asha Mam",
+      "topic_description": "Compression Trade-offs: Detailed Feature Retention vs. Blurry Output",
+      "start": 430,
+      "end": 580,
+      "duration": 150,
+      "word_count": 1,
+      "transcript_text": "and then give it to the encoder to get the reconstructed image. So, what is the change in the architecture? Instead of generating the fixed latent space, what does variational auto encoder do? We try to find the probability distribution of the pixels of the image generated from the encoder and then generate the samples which are almost similar to what the encoder is in a compressed form. Now, you will be able to derive or get proper reconstructed images. Look at this, A learns what? Just a point of data. But, A learns what? Distribution and what distribution? Probability is distribution. It is not just checking for one chance and fixed latent. What is the possibility of this if I put it here? Suppose we have a shoot, we have taken an image of a shoot. When you compress the particular image of the shoot, first download it, we found the detail, we lost the details like laces. Yes or no? Second, when you talk about T-shirt, the overall shape of the T-shirt was displayed, but the logo on the T-shirt was missing. So, when you are compressing it with the fixed latent space, that happens. But, when you focus on fixed it, when you focus on probability of occurrence of the shape, probability of occurrence of other details in the image, then you will be able to extract the details, that is what happens in one. Variational autoencoders. Are you all here with this diagram? With this architecture, look, don't. Add tupper stays silent when asked with the questions when I come. Tell this, the normal encoders will have one. Encoder, take the image, give it to encoder, generate fixed latent space, give it to D-coder, and the reconstructed image, which will be very lossy. Okay, that is the reason we go for one. Variational autoencoders, which does not generate one fixed latent space, but generates what probability distributions of the pixels, and also generates a sample size of this pixel, so that the decoder works better and gives us one. Improve the results with less lossy, the reconstructed image. The important point of the explain is what. Ae learns only one point of the pixel, whereas, Ae learns one, the probability distribution. So, we take latent time, which is equal to 2.",
+      "annotations": [
+        {
+          "behavior": "",
+          "evidence": [
+            {
+              "start": null,
+              "end": null,
+              "quote": ""
+            }
+          ]
+        }
+      ],
+      "annotator_notes": ""
+    },
+    {
+      "benchmark": "BENCH_06",
+      "unit_id": "GT-A05",
+      "instructor": "Asha Mam",
+      "topic_description": "The Reparameterization Formulation: Stochastic Sampling and Backpropagation Flow",
+      "start": 580,
+      "end": 780,
+      "duration": 200,
+      "word_count": 1,
+      "transcript_text": "So, each image is ultimately represented what? Today, dimension. Okay, normal encoder might produce one fixed point, as that is as I gave. I told you, when you take should image, we take an encoder and we have fixed latent representation of that particular image. Okay, only one or two pixels, the borders are focused here. But when you talk about variational autoencoders, what am I doing here? I take what? You know, I take the image, encoder, probability distribution. I also constant what? Variants, added generate the sample space, which is again given to what? The decoder and the decoder will reconstruct the image. Now, focus on the second most important point. Variational autoencoders learns what? Structured probability distribution of a latent space instead of what? Fixed latent space. What is that? Structured probability distribution with respect to auto, with respect to calculating, mean and variates of the pixels in the given data. Now, why do we need probability distribution? How does that help? Okay, suppose the encoder learns what? She has this latent space, she or has this latent space, trouser has this latent space in the fashion and then I stick data set. Okay, now the decoder will just reconstruct these points. So, on the other hand, only the important architecture is displayed and the other fine details of the image are being lost. But what happens if we give the decoder other details? Look at this. What is the difference that you observe here? Shew is this, I mean, the important pixels focused on shew are this, shew are this, this and trouser is this. There are huge gaps. It is only focusing on the main border architecture. Okay, at the launch of spaces before shew, shew, shirt and cloth, trouser verities, understanding the pixel representation of images. So, instead of doing that, we are trying to make the latent space smooth and organized by checking the probability distribution. Now, when you look at this, look at this. The shew, it's not only three or four pixels, the number of pixels are gradually reduced. Okay, the shew also. There are only two or three pixels, which are identified. The borders are generated. But we are able to generate more number of pixels. We are able to understand, of course, antipixels are normally. We need what, compress to form. So, that is a reason if you take 10 pixels, for example, your normal autoencoder will give you two pixels. Whereas, variation of autoencoders will give you four or five from that particular 10. Understanding the borders, understanding the, see, well, you have to take 10,000 pixels. Because, 10,000 people are confused. This is what the data says. That is the reason we are only one particular latent space. Okay, so, we randomly choose your point from the probability distribution and ask the encoder two things. What image corresponds to this particular point? So, this is the generative ability of one variational autoencoder. Now, while I was talking about the distributions. Probability distributions. Okay, so, we take into consideration two probability distributions here.",
+      "annotations": [
+        {
+          "behavior": "",
+          "evidence": [
+            {
+              "start": null,
+              "end": null,
+              "quote": ""
+            }
+          ]
+        }
+      ],
+      "annotator_notes": ""
+    },
+    {
+      "benchmark": "BENCH_06",
+      "unit_id": "GT-A06",
+      "instructor": "Asha Mam",
+      "topic_description": "VAE Objective Function: Pixel Reconstruction Loss and KL Divergence Balance",
+      "start": 780,
+      "end": 1050,
+      "duration": 270,
+      "word_count": 1,
+      "transcript_text": "Okay, combining those two probability distributions, we have this KL divergence. What is that? What is that? KL divergence. What is KL? What is KL stands for? Kullback. Library. Library divergence. Now, we will see what is that particular thing as I told you. Look at this. Now, my distributions give us this. In the given end samples, starting from 0 to I the point, I want all my pixels to be represented in the original image. Okay, now, your probability distribution of the A says, my compressed form should be as close as to what the normal distribution, which is given as, see, look at this. Who comes into picture first? The encoder. So, with respect to input, I want to generate a latent space, which should be close to what? The normal distribution. And how is the normal distribution given as? For all the samples and starting from 0 to I will design. So, what is that? What is that? What is that here? The latent space. What is that here? Input. So, with respect to input, I want to generate latent space, which should be close to what? The normal distribution. So, starting from 0 to I to sample, I want everything to be covered. So, though it is compressed form, it should be as close as to what? The normal distribution. So, your image, here comes to an image, will be as close as to what? The original image with greater clarity. Okay. So, we try to make what? Q of Z given X is equal to what? P of Z. What is P of Z? The normal distribution. What is Q of Z given X? The KL divergence of what inputter learns. Okay. See, I do not say equal. We say what? Approximately equal to. We do not construct the original image. Compressed on the plot, obviously, there will be some loss. Okay. So, I want my reconstructed image or I want my inputter to generate the samples for the latent space, which should be as close as or approximately equal to what? The normal distribution. So, KL divergence measures how these two distributions are? What two distributions? The inputter generated form and the normal distribution form. So, KL stands for fillback, libeler, divergence. Okay. Now, it measures the difference between two probability distribution. KL divergence is given as this. KL divergence D, KL, P, KNet, Q. What is that? D, K. Okay. How differently is distribution from the original data? Now, look at this. KL divergence is given as 1. Q of Z given X with respect to 1. P of Z, which is normal distribution. Okay. This is distribution land by 1. The inputter, this is the prior or the normal. Distribution. So, usually the prior distribution is given as 1, n of 0, i. So, KL divergence is not exactly a distance, but it is not because it is not symmetric. I am not exactly measuring the pixel pixel values. I am just finding the probability distribution to make sure that the normal distribution is equal to the input and base distribution. So, this will not be equal, but it will be approximately equal to 2. Are you all clear with this? Yes or no? Yes. Okay. Now, KL divergence is equal to 0 means what? The distributions are identical. So, KL will never be equal to 0. It will have some minimum value. So, larger value of KL means what? More difference on more laws. So, what do we have to try to do? KL will never be 0. K should not be higher. We have to make sure that the KL laws that we are trying to generate should be as less as possible. The less the KL loss is, the more the reconstructed image looks similar to what originally. The input original image. So, why does VA need KL divergence? Imagine we only use reconstruction laws. The models is I only care about what? Reconstructing the image.",
+      "annotations": [
+        {
+          "behavior": "",
+          "evidence": [
+            {
+              "start": null,
+              "end": null,
+              "quote": ""
+            }
+          ]
+        }
+      ],
+      "annotator_notes": ""
+    },
+    {
+      "benchmark": "BENCH_06",
+      "unit_id": "GT-A07",
+      "instructor": "Asha Mam",
+      "topic_description": "Encoder Implementation: Custom Layer Definition and Latent Parameter Output",
+      "start": 1050,
+      "end": 1350,
+      "duration": 300,
+      "word_count": 1,
+      "transcript_text": "No matter how it is there, I will just reconstruct it. Leave it like that. Like fully automated photos. But for that, it is creating what? Irregular latent space. So, in order to create proper latent space, what do we do? We go for what? VAE. Which keeps what? The latent distribution close to normal distribution. That is the job of what KL divergence. So, KL has two jobs. Reconstruction, but also what? Regularization. Is that here? So, reconstruction is done along with KL divergence reconstruction. So, VAE loss is given as what? The reconstructed loss plus K loss of what? KL divergence. I already have this concept. Let us get back to the code now. Yes. So, do we change anything in first 10 steps that we do? Where do we change? We take the image. We reshape the image. We change the dimensions. We re-mormalize the image. All that things would be same. Where are we changing the code? When it comes to the inputter, the latent space, where we add what? The KL divergence. Let us look into the code now. What is step one? Import the libraries. What libraries am I importing? I am importing. Nugby. I am importing. Math plot length. Pattern has already the dataset. But I am taking the dataset from tensile flow directly. So, I am not using pandas here. So, I am using the same dataset. Fascinating. Fascinating. Okay. I am importing. Layers have already. For building the corner. And then I am loading the dataset. And converting the data into training tests. I am normalizing the pixels to one. Like all the pixels should be of same size. I am normalizing that, dividing it by 255. They are grayscale images. So, I am adding the dimensions 28 by 28 by 1. I am reshaping that. I am adding the dimensions in the expected dimensions. And then I am adding the VA parameters. What are the VA parameters? They get dimensions and the core. And also work. Import, shape. So, what are the VA parameters? Obviously, I want latent space. That is important. So, I am giving the dimensions and I am changing what? I am also giving what? Input shape. Now, let's start with the input. Okay. So, first I take the input layer. That is the input layer. I am giving the shape. Input shape of the image 28 by 28 by 1. Whatever it is there. And I am giving that particular thing as what? Input. Input. Okay. Now, I am taking the layers. First, directly I am flattening because this is not convolutional. I am not adding convolutional layer and pooling layer. And directly flattening what? Then, go to inputs and giving it to the dense layers. Okay. Where I use which activation function? Reload as usual. Okay. Now, this is what I am changing here in the input. After input or what am I planning to do? I want to generate what? The probability distribution and generate sample. Okay. So, first I calculate the mean. Second I calculate the variance. Okay. So, these are the two blocks that we are adding extra. What is that? Mean of the length. See, first I am doing the latent distribution here from the input. And I am calculating what? The mean of the latent distribution and variance of the latent distribution. So, how do I do that? Layers dot dense. With respect to this latent dimension, calculate what? Z of mean. Similarly, Z of low variance. So, I calculate what mean and variance for calculating the probability. After I calculate my mean and law, we will reparameterize. What will do? We will reparameterize the samples. And I understand the samples in a better way. How do we do that? We are defining the function. Okay. We are defining the class.",
+      "annotations": [
+        {
+          "behavior": "",
+          "evidence": [
+            {
+              "start": null,
+              "end": null,
+              "quote": ""
+            }
+          ]
+        }
+      ],
+      "annotator_notes": ""
+    },
+    {
+      "benchmark": "BENCH_06",
+      "unit_id": "GT-A08",
+      "instructor": "Asha Mam",
+      "topic_description": "Decoder Network Assembly and Latent Manifold Grid Visualization",
+      "start": 1350,
+      "end": 1642,
+      "duration": 292,
+      "word_count": 1,
+      "transcript_text": "Okay. Look at this. Define call with respect to the inputs. Consider what the mean and variance of the input values given. So, that is the reason. I do not want only one sample. I want probability of the samples. So, I have calculated the variance. Now, I will apply a function where for every sample, I will check for the probability of what? This mean and variance. So, mean and variance of these inputs, now I will introduce a transient noise. Is that why I am introducing noise? We are using this error. Why am I introducing noise? Now look at this. One pixel. Okay. One row second. 28 and 28 are 20. 28 rows and 28 columns. So, I take row by row or column by column. Usually, it is row by row. Once I complete one row, before I shift to the next row, I should add some space there for which I introduce what? Noise. So, when I add the pixel by pixel representation of the data, when I am calculating the mean and variance of it, I have to introduce some random noise so that the mean could be generated. So, on the other hand, we do this. I am taking the function called variable called epsilon and randomly I am introducing some noise in applying that to the mean values that I have generated. After that, there is a formula for reparitalization with respect to z-meat. I am doing that with respect to this noise added and then I will return this z-sample. I see the architecture here. Look at this. After the probability distribution, what do I calculate? The sample z. Now, this is how I calculate the sample z with respect to what? With respect to applying mean and variance on all the input pixels, introducing some noise and a performing what? Reparitalization trick. I am going to return what? The sample. Now, I am done with what? Then we will create the input error only. Okay. The new input error with respect to what? With respect to the samples generated. Now, here in the new input error, what do I give? I give z-meat, variance and the new sample and I print the input error. After that, I directly give it to what? The input error. Is there anything that we have to do in the input error? Only this difference is what? The input error, probability distribution, sampling and the ticker. So, the decoder would be normal as usual. Okay. And after that, I create the decoder, create the layers, the decoder model, create the decoder model and now define VA. What is defined VA? Inquoder, probability, sample, ticker. Now, let's see that. First is what? Inquoder. Next is what? Inquoder. Within this new input only, I added probability distribution also. I am not putting that again. Okay. Now, inquoder, what are the performance metrics I want? I want to calculate what? Total loss. And then, how is the loss corresponding to which two losses? What are they? Last but not the last one. Last but not the last one. Reconstruction loss. Okay. What is the total loss? And that should be sufficient of what? Reconstruction loss and chaos. Okay. And then, I want to print all those tracker metrics. What are the tracker metrics? The total loss? Reconstruction loss and chaos. Okay. And then, I use decoder for reconstruction. I train the model. I compile the model. The rest of the steps will be in a session as your previous model. Is it clear, everybody? So, this is how we develop what? The variational auto encoders. What it? So, I will send you the PDF to the CRs. Please look into this. See, all these are extra that I give it. How is that loss calculated in the main jelly for you to understand? Okay. You can just go through that. I will send you this to the document. Certain complete the exercise in the same fashion. And I use to do it. Okay. Do you see that? Do you see that? Do you see that? Do you see that? Do you see that? Do you see that? Do you see that? Do you see that? Do you see that? Yes.",
+      "annotations": [
+        {
+          "behavior": "",
+          "evidence": [
+            {
+              "start": null,
+              "end": null,
+              "quote": ""
+            }
+          ]
+        }
+      ],
+      "annotator_notes": ""
+    }
+  ]
+}

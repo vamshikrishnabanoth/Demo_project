@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T05",
+  "target_concept": "Describe the information provided by `git status` regarding staged and unstaged changes",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "According to the provided evidence, what information does the `git status` command display?",
+    "options": [
+      "It shows only the commit history of the repository",
+      "It lists only the files that have been staged for the next commit",
+      "It shows both staged and unstaged changes, indicating which changes have not yet been saved into the repository",
+      "It displays the remote branches and their synchronization status"
+    ],
+    "correctAnswer": "It shows both staged and unstaged changes, indicating which changes have not yet been saved into the repository",
+    "explanation": "The evidence states that `git status` \"will tell you what are the changes you have made and which changes have not yet been saved into the repository,\" which corresponds to showing both staged (saved) and unstaged (not yet saved) changes.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Describe the information provided by `git status` regarding staged and unstaged changes"
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 1560,
+  "retry_count": 1,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"According to the provided evidence, what information does the `git status` command display?\",\n  \"options\": [\n    \"It shows only the commit history of the repository\",\n    \"It lists only the files that have been staged for the next commit\",\n    \"It shows both staged and unstaged changes, indicating which changes have not yet been saved into the repository\",\n    \"It displays the remote branches and their synchronization status\"\n  ],\n  \"correctAnswer\": \"It shows both staged and unstaged changes, indicating which changes have not yet been saved into the repository\",\n  \"explanation\": \"The evidence states that `git status` \\\"will tell you what are the changes you have made and which changes have not yet been saved into the repository,\\\" which corresponds to showing both staged (saved) and unstaged (not yet saved) changes.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_D_C5",
+  "target_id": "T02",
+  "target_concept": "Explain why Git requires user name and email via git config and how to set them globally.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The lecture explicitly explains the git config --global user.name syntax, matching the question content."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying knowledge of flags, keys, and quoting rather than mere recall, but stays at procedural level."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, unambiguous, and clearly asks for the correct command."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Each incorrect option reflects common misconceptions (missing flag, wrong key, missing quotes)."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A satisfies all criteria; the others are definitively incorrect per the evidence."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Authentic task of configuring Git globally, not a trivial definition recall."
+    }
+  },
+  "latency_ms": 11531,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The lecture explicitly explains the git config --global user.name syntax, matching the question content.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying knowledge of flags, keys, and quoting rather than mere recall, but stays at procedural level.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, unambiguous, and clearly asks for the correct command.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Each incorrect option reflects common misconceptions (missing flag, wrong key, missing quotes).\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A satisfies all criteria; the others are definitively incorrect per the evidence.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"Authentic task of configuring Git globally, not a trivial definition recall.\"}\n}"
+}

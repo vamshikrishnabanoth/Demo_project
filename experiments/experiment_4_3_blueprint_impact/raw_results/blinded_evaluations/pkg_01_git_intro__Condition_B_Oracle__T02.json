@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T02",
+  "target_concept": "The `git --version` command reports the installed Git version.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 3,
+      "rationale": "Lecture mentions that git --version reports the installed version but does not explicitly state the exact output format, making alignment moderate."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Requires simple recall of the exact string format, little conceptual reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options are plausible variations that a learner might mistakenly recall."
+    },
+    "d5_single_key_determinism": {
+      "score": 4,
+      "rationale": "One option is definitively correct given common Git behavior, and the others are clearly incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question tests rote recall of a command's output rather than deeper understanding or application."
+    }
+  },
+  "latency_ms": 2352,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 3, \"rationale\": \"Lecture mentions that git --version reports the installed version but does not explicitly state the exact output format, making alignment moderate.\"},\n  \"d2_cognitive_demand\": {\"score\": 2, \"rationale\": \"Requires simple recall of the exact string format, little conceptual reasoning.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\": 4, \"rationale\": \"Incorrect options are plausible variations that a learner might mistakenly recall.\"},\n  \"d5_single_key_determinism\": {\"score\": 4, \"rationale\": \"One option is definitively correct given common Git behavior, and the others are clearly incorrect.\"},\n  \"d6_question_novelty\": {\"score\": 2, \"rationale\": \"The question tests rote recall of a command's output rather than deeper understanding or application.\"}\n}"
+}

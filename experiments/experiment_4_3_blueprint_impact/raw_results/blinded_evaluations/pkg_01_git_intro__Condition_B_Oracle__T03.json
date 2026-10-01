@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "`git config --global user.name` and `git config --global user.email` set the author information for commits.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 3,
+      "rationale": "The lecture covers setting global user.name and user.email, but does not explicitly discuss verifying with git config --list, so alignment is partial."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of correct flag usage and appropriate verification command, beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options represent realistic misconceptions (system scope, using git log, omitting email)."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A satisfies all requirements; the others are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question presents an authentic task of configuring Git, not just a definition recall."
+    }
+  },
+  "latency_ms": 8823,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 3, \"rationale\": \"The lecture covers setting global user.name and user.email, but does not explicitly discuss verifying with git config --list, so alignment is partial.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires understanding of correct flag usage and appropriate verification command, beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\": 5, \"rationale\": \"Incorrect options represent realistic misconceptions (system scope, using git log, omitting email).\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Only option A satisfies all requirements; the others are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The question presents an authentic task of configuring Git, not just a definition recall.\"}\n}"
+}

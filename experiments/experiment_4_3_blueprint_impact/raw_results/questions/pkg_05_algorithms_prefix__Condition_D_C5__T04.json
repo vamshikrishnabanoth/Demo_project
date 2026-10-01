@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_D_C5",
+  "target_id": "T04",
+  "target_concept": "Trace the algorithm: outer loop over character positions up to the smallest length, inner loop over each string, and break when a mismatch occurs.",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "Given the array of strings [\"hello\", \"helpful\", \"hell\"], what string does the described algorithm return after tracing its outer and inner loops?",
+    "options": [
+      "hel",
+      "hell",
+      "hello",
+      "h"
+    ],
+    "correctAnswer": "hel",
+    "explanation": "The smallest string is \"hell\" (length 4). The algorithm compares characters at each index across all strings. Indices 0, 1, and 2 contain 'h', 'e', and 'l' respectively in all three strings, so they are appended to the StringBuilder. At index 3, \"hello\" and \"hell\" have 'l' but \"helpful\" has 'p', causing a mismatch and breaking out of the loops. The builder therefore contains \"hel\", which is returned.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Hard",
+      "concept": "Trace the algorithm: outer loop over character positions up to the smallest length, inner loop over each string, and break when a mismatch occurs."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12966,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"Given the array of strings [\\\"hello\\\", \\\"helpful\\\", \\\"hell\\\"], what string does the described algorithm return after tracing its outer and inner loops?\",\n  \"options\": [\n    \"hel\",\n    \"hell\",\n    \"hello\",\n    \"h\"\n  ],\n  \"correctAnswer\": \"hel\",\n  \"explanation\": \"The smallest string is \\\"hell\\\" (length 4). The algorithm compares characters at each index across all strings. Indices 0, 1, and 2 contain 'h', 'e', and 'l' respectively in all three strings, so they are appended to the StringBuilder. At index 3, \\\"hello\\\" and \\\"hell\\\" have 'l' but \\\"helpful\\\" has 'p', causing a mismatch and breaking out of the loops. The builder therefore contains \\\"hel\\\", which is returned.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

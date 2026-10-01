@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Compare the current working tree with the previous commit using git diff and explain the output",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly addresses the target evidence about using git diff to compare the working tree with the previous commit."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of git diff’s purpose and interpreting its output, beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, self‑contained, and unambiguous about the scenario and what is asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options reflect common misconceptions (untracked files, commit logs, committing changes) and are plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is correct given the evidence; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "The question presents an authentic, applied task rather than a trivial definition recall."
+    }
+  },
+  "latency_ms": 15033,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly addresses the target evidence about using git diff to compare the working tree with the previous commit.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of git diff’s purpose and interpreting its output, beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, self‑contained, and unambiguous about the scenario and what is asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options reflect common misconceptions (untracked files, commit logs, committing changes) and are plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A is correct given the evidence; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"The question presents an authentic, applied task rather than a trivial definition recall.\"}\n}"
+}

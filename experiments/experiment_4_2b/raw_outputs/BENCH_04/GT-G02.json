@@ -1,0 +1,36 @@
+{
+  "unit_id": "GT-G02",
+  "benchmark": "BENCH_04",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "ASK_WHY",
+    "REAL_WORLD_APP"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Git config is a command which is used to give details, give your details to the Git tool."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "you have to give git config space hyphen hyphen global ... user.name and in double quotes, you can give your name."
+    },
+    {
+      "label": "ASK_WHY",
+      "quote": "Okay, so why do I need to give my details?"
+    },
+    {
+      "label": "REAL_WORLD_APP",
+      "quote": "to keep track of those changes, to know who has done that particular change, your Git has to know your information."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\", \"ASK_WHY\", \"REAL_WORLD_APP\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Git config is a command which is used to give details, give your details to the Git tool.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"you have to give git config space hyphen hyphen global ... user.name and in double quotes, you can give your name.\"\n    },\n    {\n      \"label\": \"ASK_WHY\",\n      \"quote\": \"Okay, so why do I need to give my details?\"\n    },\n    {\n      \"label\": \"REAL_WORLD_APP\",\n      \"quote\": \"to keep track of those changes, to know who has done that particular change, your Git has to know your information.\"\n    }\n  ]\n}",
+  "latency_ms": 2085,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

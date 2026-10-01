@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T02",
+  "target_concept": "Compare fully connected and convolutional autoencoders in terms of dimensionality handling and reconstruction quality",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The stem directly asks about the spatial‑structure advantage of convolutional autoencoders, which is explicitly discussed in the evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of how flattening vs convolution affects spatial relationships, not mere verbatim recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question is clearly worded, self‑contained, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect common misconceptions (dropout, flattening preserving adjacency, recurrent connections) that a learner might plausibly consider."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is supported by the evidence; the other three are definitively contradicted."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question probes an authentic conceptual distinction rather than a simple definition, though the topic is standard in autoencoder teaching."
+    }
+  },
+  "latency_ms": 2976,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The stem directly asks about the spatial‑structure advantage of convolutional autoencoders, which is explicitly discussed in the evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of how flattening vs convolution affects spatial relationships, not mere verbatim recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The question is clearly worded, self‑contained, and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options reflect common misconceptions (dropout, flattening preserving adjacency, recurrent connections) that a learner might plausibly consider.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A is supported by the evidence; the other three are definitively contradicted.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question probes an authentic conceptual distinction rather than a simple definition, though the topic is standard in autoencoder teaching.\"}\n}"
+}

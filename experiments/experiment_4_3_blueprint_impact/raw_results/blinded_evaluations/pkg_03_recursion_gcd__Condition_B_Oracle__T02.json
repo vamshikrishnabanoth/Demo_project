@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T02",
+  "target_concept": "Identify the condition that determines a common multiple using modulo operations",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks about the modulo‑zero test for a common multiple, which is explicitly described in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Answering requires simple recall of a stated condition rather than deeper reasoning or problem solving."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously asks which logical test identifies a common multiple."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "The incorrect options represent common misconceptions (size comparison, remainder of one, primality) that a learner might consider, making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is supported by the evidence; the other three are definitively false given the lecture content."
+    },
+    "d6_question_novelty": {
+      "score": 3,
+      "rationale": "The question addresses a fundamental concept rather than a novel scenario, but it is still an authentic application of the taught material."
+    }
+  },
+  "latency_ms": 1570,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks about the modulo‑zero test for a common multiple, which is explicitly described in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":2,\"rationale\":\"Answering requires simple recall of a stated condition rather than deeper reasoning or problem solving.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously asks which logical test identifies a common multiple.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"The incorrect options represent common misconceptions (size comparison, remainder of one, primality) that a learner might consider, making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A is supported by the evidence; the other three are definitively false given the lecture content.\"},\n  \"d6_question_novelty\": {\"score\":3,\"rationale\":\"The question addresses a fundamental concept rather than a novel scenario, but it is still an authentic application of the taught material.\"}\n}"
+}

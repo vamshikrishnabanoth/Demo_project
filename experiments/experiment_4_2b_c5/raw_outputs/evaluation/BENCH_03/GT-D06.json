@@ -1,0 +1,31 @@
+{
+  "unit_id": "GT-D06",
+  "benchmark": "BENCH_03",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "CODE_TRACE",
+    "EDGE_CASE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Now comes one more aspect of recursion. Make the problem extremely small, solve that problem, and repeat it for next."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "I will pass here. Hello. Don't go inside. What will I print, guys? Hello. And then I will give a call with a substring one. Then I print LO. Then I pass what? LLO. Then I print LLO. Then I pass LO. Then I pass LO. O. Then I print l o. Then I pass o. I print o. Then I pass empty string. And then I start returning from there."
+    },
+    {
+      "label": "EDGE_CASE",
+      "quote": "If s t r dot length becomes empty is equal equal to zero, I will return return empty."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"CODE_TRACE\", \"EDGE_CASE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Now comes one more aspect of recursion. Make the problem extremely small, solve that problem, and repeat it for next.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"I will pass here. Hello. Don't go inside. What will I print, guys? Hello. And then I will give a call with a substring one. Then I print LO. Then I pass what? LLO. Then I print LLO. Then I pass LO. Then I pass LO. O. Then I print l o. Then I pass o. I print o. Then I pass empty string. And then I start returning from there.\"\n    },\n    {\n      \"label\": \"EDGE_CASE\",\n      \"quote\": \"If s t r dot length becomes empty is equal equal to zero, I will return return empty.\"\n    }\n  ]\n}",
+  "latency_ms": 11006,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

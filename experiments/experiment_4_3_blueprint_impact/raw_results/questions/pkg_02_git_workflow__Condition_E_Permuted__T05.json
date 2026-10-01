@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Clarify how git restore can undo modifications to a file and return it to a previous state",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "According to the session transcript, what is the effect of executing the command `git restore .`?",
+    "options": [
+      "It discards uncommitted changes in the working directory, restoring files to their last committed state",
+      "It stages all modified files so they will be included in the next commit",
+      "It permanently removes the file from the repository's history",
+      "It creates a new branch named '.'"
+    ],
+    "correctAnswer": "It discards uncommitted changes in the working directory, restoring files to their last committed state",
+    "explanation": "The transcript shows the user running `git restore .` and observing that the newly added line in a.txt is deleted, indicating that the command reverts the file to its previous committed version, discarding uncommitted modifications.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Clarify how git restore can undo modifications to a file and return it to a previous state"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13048,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"According to the session transcript, what is the effect of executing the command `git restore .`?\",\n  \"options\": [\n    \"It discards uncommitted changes in the working directory, restoring files to their last committed state\",\n    \"It stages all modified files so they will be included in the next commit\",\n    \"It permanently removes the file from the repository's history\",\n    \"It creates a new branch named '.'\"\n  ],\n  \"correctAnswer\": \"It discards uncommitted changes in the working directory, restoring files to their last committed state\",\n  \"explanation\": \"The transcript shows the user running `git restore .` and observing that the newly added line in a.txt is deleted, indicating that the command reverts the file to its previous committed version, discarding uncommitted modifications.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

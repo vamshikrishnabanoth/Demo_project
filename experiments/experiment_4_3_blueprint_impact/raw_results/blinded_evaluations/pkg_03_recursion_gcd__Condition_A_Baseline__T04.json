@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Convert the iterative LCM search into a recursive function, specifying base case and recursive step",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The base‑case condition discussed in the lecture is exactly the divisibility check, matching the question’s correct option."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of recursion and identifying the logical stopping condition, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect plausible but mistaken alternatives mentioned in the transcript (fixed limit, a*b bound, arbitrary call count)."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only one option aligns with the evidence; the others are demonstrably incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The task of converting an iterative LCM search to recursion is an authentic programming exercise rather than a rote definition."
+    }
+  },
+  "latency_ms": 1672,
+  "retry_count": 9,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The base‑case condition discussed in the lecture is exactly the divisibility check, matching the question’s correct option.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of recursion and identifying the logical stopping condition, not mere recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options reflect plausible but mistaken alternatives mentioned in the transcript (fixed limit, a*b bound, arbitrary call count).\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only one option aligns with the evidence; the others are demonstrably incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The task of converting an iterative LCM search to recursion is an authentic programming exercise rather than a rote definition.\"}\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "Analyze how `git diff` shows differences between the previous commit and the current working state.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "When interpreting a typical `git diff` output, which of the following statements correctly describes how added and removed lines are indicated?",
+    "options": [
+      "Lines prefixed with '+' are added, and lines prefixed with '-' are removed.",
+      "Lines prefixed with '-' are added, and lines prefixed with '+' are removed.",
+      "Lines prefixed with '!' indicate modifications, while lines prefixed with '?' indicate untracked files.",
+      "Git diff does not show line prefixes; it only lists the names of changed files."
+    ],
+    "correctAnswer": "Lines prefixed with '+' are added, and lines prefixed with '-' are removed.",
+    "explanation": "In a `git diff` display, each line that begins with a '+' represents content added in the working state, and each line that begins with a '-' represents content removed from the previous commit. This convention lets users quickly see what has changed between versions.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Analyze how `git diff` shows differences between the previous commit and the current working state."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12579,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"When interpreting a typical `git diff` output, which of the following statements correctly describes how added and removed lines are indicated?\",\n  \"options\": [\n    \"Lines prefixed with '+' are added, and lines prefixed with '-' are removed.\",\n    \"Lines prefixed with '-' are added, and lines prefixed with '+' are removed.\",\n    \"Lines prefixed with '!' indicate modifications, while lines prefixed with '?' indicate untracked files.\",\n    \"Git diff does not show line prefixes; it only lists the names of changed files.\"\n  ],\n  \"correctAnswer\": \"Lines prefixed with '+' are added, and lines prefixed with '-' are removed.\",\n  \"explanation\": \"In a `git diff` display, each line that begins with a '+' represents content added in the working state, and each line that begins with a '-' represents content removed from the previous commit. This convention lets users quickly see what has changed between versions.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

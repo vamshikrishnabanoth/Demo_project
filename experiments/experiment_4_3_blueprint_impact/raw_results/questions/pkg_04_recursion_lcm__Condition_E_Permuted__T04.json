@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Differentiate when to use GCD (equal partitioning) versus LCM (interval scheduling) in real‑world problems",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "Given the following scenarios, which one should be solved using the greatest common divisor (GCD) rather than the least common multiple (LCM)?",
+    "options": [
+      "Dividing a collection of identical items equally among a group of people",
+      "Determining the earliest time two periodic events will occur simultaneously",
+      "Finding the smallest number of items that can be packaged in groups of two different sizes without leftovers",
+      "Scheduling tasks in a round‑robin fashion to minimize total completion time"
+    ],
+    "correctAnswer": "Dividing a collection of identical items equally among a group of people",
+    "explanation": "The evidence states that GCD is used for \"division equally\" or equal partitioning of resources, whereas LCM is applied to timing, interval, and scheduling problems. Scenario A involves equal partitioning, making GCD the appropriate tool; the other scenarios involve finding a common multiple or scheduling, which require LCM.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Differentiate when to use GCD (equal partitioning) versus LCM (interval scheduling) in real‑world problems"
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11192,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"Given the following scenarios, which one should be solved using the greatest common divisor (GCD) rather than the least common multiple (LCM)?\",\n  \"options\": [\n    \"Dividing a collection of identical items equally among a group of people\",\n    \"Determining the earliest time two periodic events will occur simultaneously\",\n    \"Finding the smallest number of items that can be packaged in groups of two different sizes without leftovers\",\n    \"Scheduling tasks in a round‑robin fashion to minimize total completion time\"\n  ],\n  \"correctAnswer\": \"Dividing a collection of identical items equally among a group of people\",\n  \"explanation\": \"The evidence states that GCD is used for \\\"division equally\\\" or equal partitioning of resources, whereas LCM is applied to timing, interval, and scheduling problems. Scenario A involves equal partitioning, making GCD the appropriate tool; the other scenarios involve finding a common multiple or scheduling, which require LCM.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

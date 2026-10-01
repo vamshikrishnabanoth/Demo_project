@@ -1,0 +1,27 @@
+{
+  "id": "CALIB-C2",
+  "boundary_family": "DEMONSTRATE",
+  "boundary_type": "POSITIVE_BOUNDARY",
+  "expected_labels": [
+    "DEMONSTRATE",
+    "EXPLAIN"
+  ],
+  "predicted_labels": [
+    "DEMONSTRATE",
+    "EXPLAIN"
+  ],
+  "prohibited_labels": [],
+  "is_exact_match": true,
+  "has_boundary_violation": false,
+  "evidence": [
+    {
+      "label": "DEMONSTRATE",
+      "quote": "I am typing python3 script.py and pressing enter. Look at the output: it prints Connection established successfully"
+    },
+    {
+      "label": "EXPLAIN",
+      "quote": "This confirms that our network socket bound to the designated port and completed the TCP handshake"
+    }
+  ],
+  "latency_ms": 17043
+}

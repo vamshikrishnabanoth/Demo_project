@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Run git --version to verify that Git is installed and identify the installed version number.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The lecture explicitly describes the git --version command for checking installation and version."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "The task mainly requires recall of a specific command rather than deeper reasoning or problem solving."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "All distractors are legitimate Git commands that a learner might mistakenly think relate to version checking."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only one option (git --version) is correct; the others are definitively incorrect for the stated purpose."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question is a basic factual recall rather than an authentic, novel application of the concept."
+    }
+  },
+  "latency_ms": 13639,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The lecture explicitly describes the git --version command for checking installation and version.\"},\n  \"d2_cognitive_demand\": {\"score\":2,\"rationale\":\"The task mainly requires recall of a specific command rather than deeper reasoning or problem solving.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The question stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"All distractors are legitimate Git commands that a learner might mistakenly think relate to version checking.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only one option (git --version) is correct; the others are definitively incorrect for the stated purpose.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The question is a basic factual recall rather than an authentic, novel application of the concept.\"}\n}"
+}

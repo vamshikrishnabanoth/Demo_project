@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T02",
+  "target_concept": "Explain how `git add` moves changes from the Working Directory to the Staging Area, including adding all files versus a single file.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks about the command that stages all changes, which is explicitly explained in the lecture segment."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires recalling a specific command rather than deep conceptual reasoning, but the need to discriminate among similar options adds modest demand."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, unambiguous, and clearly specifies the task of staging all modified files."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "The incorrect options are plausible alternatives that a learner might consider, reflecting common misconceptions about git add syntax."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Based on the provided evidence, only 'git add .' is supported as the correct way to stage all files; the other choices are definitively unsupported."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question tests straightforward recall of a command rather than an authentic, higher‑order application of the concept."
+    }
+  },
+  "latency_ms": 11332,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks about the command that stages all changes, which is explicitly explained in the lecture segment.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Answering requires recalling a specific command rather than deep conceptual reasoning, but the need to discriminate among similar options adds modest demand.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, unambiguous, and clearly specifies the task of staging all modified files.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"The incorrect options are plausible alternatives that a learner might consider, reflecting common misconceptions about git add syntax.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Based on the provided evidence, only 'git add .' is supported as the correct way to stage all files; the other choices are definitively unsupported.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The question tests straightforward recall of a command rather than an authentic, higher‑order application of the concept.\"}\n}"
+}

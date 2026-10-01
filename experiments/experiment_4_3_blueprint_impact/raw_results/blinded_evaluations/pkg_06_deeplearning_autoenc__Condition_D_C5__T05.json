@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Contrast deterministic point encoding with probabilistic distribution encoding in terms of reconstruction fidelity.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the contrast between deterministic point encoding and probabilistic distribution encoding, which is the explicit target evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding that modeling mean and variance captures data variability, not just recalling a fact; involves conceptual reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clearly phrased, self‑contained, and unambiguous about what is being compared."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect plausible misconceptions (e.g., deeper network, loss without regularization) though one (D) is obviously absurd."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is supported by the evidence; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question frames an authentic conceptual inquiry about reconstruction fidelity rather than a simple definition recall."
+    }
+  },
+  "latency_ms": 1989,
+  "retry_count": 4,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the contrast between deterministic point encoding and probabilistic distribution encoding, which is the explicit target evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding that modeling mean and variance captures data variability, not just recalling a fact; involves conceptual reasoning.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clearly phrased, self‑contained, and unambiguous about what is being compared.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options reflect plausible misconceptions (e.g., deeper network, loss without regularization) though one (D) is obviously absurd.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A is supported by the evidence; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question frames an authentic conceptual inquiry about reconstruction fidelity rather than a simple definition recall.\"}\n}"
+}

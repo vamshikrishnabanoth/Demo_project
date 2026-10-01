@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T02",
+  "target_concept": "Explain how variational autoencoders achieve higher reconstruction accuracy than fully‑connected and convolutional autoencoders",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "Based on the evidence, which statement correctly compares the reconstruction accuracy of fully‑connected, convolutional, and variational autoencoders?",
+    "options": [
+      "Variational autoencoders reconstruct images with 70–90% accuracy, which is higher than the ~50–60% accuracy of fully‑connected autoencoders and the modest improvement of convolutional autoencoders.",
+      "Fully‑connected autoencoders achieve higher reconstruction accuracy than variational autoencoders because they use deterministic latent representations.",
+      "Convolutional autoencoders typically reach 70–90% reconstruction accuracy, matching variational autoencoders.",
+      "All three autoencoder types achieve similar reconstruction accuracy, around 50%."
+    ],
+    "correctAnswer": "Variational autoencoders reconstruct images with 70–90% accuracy, which is higher than the ~50–60% accuracy of fully‑connected autoencoders and the modest improvement of convolutional autoencoders.",
+    "explanation": "The evidence states that fully‑connected autoencoders achieve about 50–60% reconstruction accuracy, convolutional autoencoders provide a slight improvement, and variational autoencoders reach 70–90% accuracy. Therefore, only the first option accurately reflects these reported percentages.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Explain how variational autoencoders achieve higher reconstruction accuracy than fully‑connected and convolutional autoencoders"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13986,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"Based on the evidence, which statement correctly compares the reconstruction accuracy of fully‑connected, convolutional, and variational autoencoders?\",\n  \"options\": [\n    \"Variational autoencoders reconstruct images with 70–90% accuracy, which is higher than the ~50–60% accuracy of fully‑connected autoencoders and the modest improvement of convolutional autoencoders.\",\n    \"Fully‑connected autoencoders achieve higher reconstruction accuracy than variational autoencoders because they use deterministic latent representations.\",\n    \"Convolutional autoencoders typically reach 70–90% reconstruction accuracy, matching variational autoencoders.\",\n    \"All three autoencoder types achieve similar reconstruction accuracy, around 50%.\"\n  ],\n  \"correctAnswer\": \"Variational autoencoders reconstruct images with 70–90% accuracy, which is higher than the ~50–60% accuracy of fully‑connected autoencoders and the modest improvement of convolutional autoencoders.\",\n  \"explanation\": \"The evidence states that fully‑connected autoencoders achieve about 50–60% reconstruction accuracy, convolutional autoencoders provide a slight improvement, and variational autoencoders reach 70–90% accuracy. Therefore, only the first option accurately reflects these reported percentages.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

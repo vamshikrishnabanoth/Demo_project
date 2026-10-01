@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Design a recursive palindrome check with base case length 1 returning true and comparing first/last characters",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks about the base case (length 1) and its return value, which is explicitly described in the evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Answering requires simple recall of a fact rather than deeper conceptual reasoning or problem solving."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, unambiguous, and self‑contained, asking which statement defines the base case and its return value."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "Some distractors (e.g., length 0 returning false) could be plausible misconceptions, but others are obviously incorrect, reducing overall plausibility."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is supported by the evidence; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question tests a straightforward definition rather than an authentic, higher‑order application of the concept."
+    }
+  },
+  "latency_ms": 1878,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks about the base case (length 1) and its return value, which is explicitly described in the evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":2,\"rationale\":\"Answering requires simple recall of a fact rather than deeper conceptual reasoning or problem solving.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, unambiguous, and self‑contained, asking which statement defines the base case and its return value.\"},\n  \"d4_distractor_plausibility\": {\"score\":3,\"rationale\":\"Some distractors (e.g., length 0 returning false) could be plausible misconceptions, but others are obviously incorrect, reducing overall plausibility.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A is supported by the evidence; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The question tests a straightforward definition rather than an authentic, higher‑order application of the concept.\"}\n}"
+}

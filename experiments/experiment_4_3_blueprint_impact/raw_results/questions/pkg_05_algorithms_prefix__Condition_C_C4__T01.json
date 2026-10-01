@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_C_C4",
+  "target_id": "T01",
+  "target_concept": "Identify the problem statement of the Longest Common Prefix and the expected output for given string sets",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which of the following statements correctly restates the Longest Common Prefix problem and provides a valid example output?",
+    "options": [
+      "Return any common prefix among the strings; e.g., for ['dog','cat','bird'] the output is 'd'.",
+      "Return the shortest string that appears in the list; e.g., for ['apple','app','apricot'] the output is 'app'.",
+      "Return the longest common suffix among all strings; e.g., for ['running','jogging','walking'] the output is 'ing'.",
+      "Return the longest common prefix among all strings; for example, given ['flower','flow','flight'] the output is 'fl'."
+    ],
+    "correctAnswer": "Return the longest common prefix among all strings; for example, given ['flower','flow','flight'] the output is 'fl'.",
+    "explanation": "The problem asks for the longest prefix that is common to every string in the input set. The example shows that 'fl' is the longest prefix shared by 'flower', 'flow', and 'flight'. The other options describe unrelated concepts or incorrect behaviors.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Identify the problem statement of the Longest Common Prefix and the expected output for given string sets"
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13199,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Which of the following statements correctly restates the Longest Common Prefix problem and provides a valid example output?\",\n  \"options\": [\n    \"Return any common prefix among the strings; e.g., for ['dog','cat','bird'] the output is 'd'.\",\n    \"Return the shortest string that appears in the list; e.g., for ['apple','app','apricot'] the output is 'app'.\",\n    \"Return the longest common suffix among all strings; e.g., for ['running','jogging','walking'] the output is 'ing'.\",\n    \"Return the longest common prefix among all strings; for example, given ['flower','flow','flight'] the output is 'fl'.\"\n  ],\n  \"correctAnswer\": \"Return the longest common prefix among all strings; for example, given ['flower','flow','flight'] the output is 'fl'.\",\n  \"explanation\": \"The problem asks for the longest prefix that is common to every string in the input set. The example shows that 'fl' is the longest prefix shared by 'flower', 'flow', and 'flight'. The other options describe unrelated concepts or incorrect behaviors.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

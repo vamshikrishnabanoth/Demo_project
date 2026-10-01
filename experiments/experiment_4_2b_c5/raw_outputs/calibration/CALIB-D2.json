@@ -1,0 +1,21 @@
+{
+  "id": "CALIB-D2",
+  "boundary_family": "PRACTICE",
+  "boundary_type": "POSITIVE_BOUNDARY",
+  "expected_labels": [
+    "PRACTICE"
+  ],
+  "predicted_labels": [
+    "PRACTICE"
+  ],
+  "prohibited_labels": [],
+  "is_exact_match": true,
+  "has_boundary_violation": false,
+  "evidence": [
+    {
+      "label": "PRACTICE",
+      "quote": "Take the next five minutes to write this binary search function on your own laptops"
+    }
+  ],
+  "latency_ms": 14360
+}

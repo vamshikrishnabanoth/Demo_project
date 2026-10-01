@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "`git init` creates an empty local repository ready to track changes.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 4,
+      "rationale": "Question targets the effect of git init, which is taught, though the specific .git folder indicator is not explicitly stated in the transcript"
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of git init’s side‑effects rather than rote recall"
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "Stem is clear, concise, and unambiguous"
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options reflect common misconceptions about init behavior"
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is correct given the evidence; others are definitively false"
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Authentic, application‑oriented question rather than a simple definition"
+    }
+  },
+  "latency_ms": 14993,
+  "retry_count": 0,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":4,\"rationale\":\"Question targets the effect of git init, which is taught, though the specific .git folder indicator is not explicitly stated in the transcript\"},\"d2_cognitive_demand\":{\"score\":4,\"rationale\":\"Requires understanding of git init’s side‑effects rather than rote recall\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"Stem is clear, concise, and unambiguous\"},\"d4_distractor_plausibility\":{\"score\":5,\"rationale\":\"Incorrect options reflect common misconceptions about init behavior\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Only option A is correct given the evidence; others are definitively false\"},\"d6_question_novelty\":{\"score\":5,\"rationale\":\"Authentic, application‑oriented question rather than a simple definition\"}}"
+}

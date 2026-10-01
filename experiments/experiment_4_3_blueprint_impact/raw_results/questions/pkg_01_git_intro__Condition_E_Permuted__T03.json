@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T03",
+  "target_concept": "Create a new local repository using the appropriate command and describe the result",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Which command should you run in a new folder to create a local Git repository, and what console message confirms that the repository was created?",
+    "options": [
+      "Run `git init`; Git reports 'Initialized empty Git repository.'",
+      "Run `git clone`; Git reports 'Cloning into repository...'",
+      "Run `git add .`; Git reports 'nothing to commit, working tree clean.'",
+      "Run `git status`; Git reports 'On branch master.'"
+    ],
+    "correctAnswer": "Run `git init`; Git reports 'Initialized empty Git repository.'",
+    "explanation": "The correct command is `git init`, which initializes a new empty repository and displays a message such as 'Initialized empty Git repository', as described in the evidence.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Create a new local repository using the appropriate command and describe the result"
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13166,
+  "retry_count": 0,
+  "raw_response": "{\"targetId\":\"T03\",\"questionText\":\"Which command should you run in a new folder to create a local Git repository, and what console message confirms that the repository was created?\",\"options\":[\"Run `git init`; Git reports 'Initialized empty Git repository.'\",\"Run `git clone`; Git reports 'Cloning into repository...'\",\"Run `git add .`; Git reports 'nothing to commit, working tree clean.'\",\"Run `git status`; Git reports 'On branch master.'\"],\"correctAnswer\":\"Run `git init`; Git reports 'Initialized empty Git repository.'\",\"explanation\":\"The correct command is `git init`, which initializes a new empty repository and displays a message such as 'Initialized empty Git repository', as described in the evidence.\",\"metadata\":{\"dimension\":\"Application\",\"cognitiveLevel\":\"Apply\",\"targetDifficulty\":\"Medium\"}}"
+}

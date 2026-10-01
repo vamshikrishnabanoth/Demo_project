@@ -1,0 +1,27 @@
+{
+  "id": "CALIB-B2",
+  "boundary_family": "REAL_WORLD_APP",
+  "boundary_type": "POSITIVE_BOUNDARY",
+  "expected_labels": [
+    "EXPLAIN",
+    "REAL_WORLD_APP"
+  ],
+  "predicted_labels": [
+    "EXPLAIN",
+    "REAL_WORLD_APP"
+  ],
+  "prohibited_labels": [],
+  "is_exact_match": true,
+  "has_boundary_violation": false,
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "To see why database locking is essential in production, consider an airline reservation system where two passengers attempt to purchase the exact same seat simultaneously"
+    },
+    {
+      "label": "REAL_WORLD_APP",
+      "quote": "airline reservation system where two passengers attempt to purchase the exact same seat simultaneously. Without serialized transactions, both bookings succeed and the airline double‑books the seat"
+    }
+  ],
+  "latency_ms": 7408
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_D_C5",
+  "target_id": "T01",
+  "target_concept": "State the definition of the Longest Common Prefix problem, including input type and required output.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question asks for the definition of the Longest Common Prefix problem, which is explicitly described in the lecture segment."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires recalling a definition; it does not demand deep reasoning or problem solving beyond basic comprehension."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous, asking directly for the correct definition."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options represent common misconceptions (substring repeats, suffix focus, any common prefix), making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A matches the lecture definition; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The item is a straightforward definition recall, offering limited novelty or authentic application."
+    }
+  },
+  "latency_ms": 2017,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question asks for the definition of the Longest Common Prefix problem, which is explicitly described in the lecture segment.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Answering requires recalling a definition; it does not demand deep reasoning or problem solving beyond basic comprehension.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous, asking directly for the correct definition.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options represent common misconceptions (substring repeats, suffix focus, any common prefix), making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A matches the lecture definition; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The item is a straightforward definition recall, offering limited novelty or authentic application.\"}\n}"
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T03",
+  "target_concept": "Explain why variational autoencoders were introduced and how they improve reconstruction accuracy over earlier autoencoders",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks about the reconstruction accuracy advantage of VAEs, which is explicitly described in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Answering requires simple recall/comparison of stated accuracy percentages, with minimal conceptual reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about the advantage being queried."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options are plausible misconceptions (e.g., computational complexity) but are clearly not supported by the evidence."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Evidence unequivocally supports option A as the only correct choice; all other options are contradicted."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question is a straightforward factual recall rather than an authentic, novel application of the concept."
+    }
+  },
+  "latency_ms": 2490,
+  "retry_count": 15,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks about the reconstruction accuracy advantage of VAEs, which is explicitly described in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":2,\"rationale\":\"Answering requires simple recall/comparison of stated accuracy percentages, with minimal conceptual reasoning.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about the advantage being queried.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options are plausible misconceptions (e.g., computational complexity) but are clearly not supported by the evidence.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Evidence unequivocally supports option A as the only correct choice; all other options are contradicted.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The question is a straightforward factual recall rather than an authentic, novel application of the concept.\"}\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_C_C4",
+  "target_id": "T01",
+  "target_concept": "Identify the definitions of Greatest Common Divisor (GCD) and Least Common Multiple (LCM) and their relationship as opposite concepts",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which of the following statements correctly defines the relationship between the greatest common divisor (GCD) and the least common multiple (LCM) of two numbers?",
+    "options": [
+      "The GCD of two numbers is the largest integer that divides both, while the LCM is the smallest integer that is a multiple of both.",
+      "The GCD is the smallest integer that divides both numbers, and the LCM is the largest integer that both numbers divide.",
+      "Both GCD and LCM are always equal for any pair of positive integers.",
+      "The GCD is found by adding the two numbers, whereas the LCM is found by multiplying them."
+    ],
+    "correctAnswer": "The GCD of two numbers is the largest integer that divides both, while the LCM is the smallest integer that is a multiple of both.",
+    "explanation": "The greatest common divisor (GCD) is the greatest integer that evenly divides both numbers, and the least common multiple (LCM) is the smallest integer that is a multiple of both numbers. This reflects their opposite roles as described in the evidence.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Identify the definitions of Greatest Common Divisor (GCD) and Least Common Multiple (LCM) and their relationship as opposite concepts"
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12797,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Which of the following statements correctly defines the relationship between the greatest common divisor (GCD) and the least common multiple (LCM) of two numbers?\",\n  \"options\": [\n    \"The GCD of two numbers is the largest integer that divides both, while the LCM is the smallest integer that is a multiple of both.\",\n    \"The GCD is the smallest integer that divides both numbers, and the LCM is the largest integer that both numbers divide.\",\n    \"Both GCD and LCM are always equal for any pair of positive integers.\",\n    \"The GCD is found by adding the two numbers, whereas the LCM is found by multiplying them.\"\n  ],\n  \"correctAnswer\": \"The GCD of two numbers is the largest integer that divides both, while the LCM is the smallest integer that is a multiple of both.\",\n  \"explanation\": \"The greatest common divisor (GCD) is the greatest integer that evenly divides both numbers, and the least common multiple (LCM) is the smallest integer that is a multiple of both numbers. This reflects their opposite roles as described in the evidence.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

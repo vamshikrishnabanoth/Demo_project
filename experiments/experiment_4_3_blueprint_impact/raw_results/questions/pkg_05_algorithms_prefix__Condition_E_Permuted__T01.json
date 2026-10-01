@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T01",
+  "target_concept": "Define the Longest Common Prefix problem and its expected output for given string sets.",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "According to the evidence, which statement correctly defines the Longest Common Prefix problem?",
+    "options": [
+      "Given a set of strings, return the longest string that appears as a prefix in all of them.",
+      "Given a set of strings, return the shortest string that appears as a suffix in any of them.",
+      "Given a single string, return the longest palindrome within it.",
+      "Given a set of strings, return any common prefix, regardless of length."
+    ],
+    "correctAnswer": "Given a set of strings, return the longest string that appears as a prefix in all of them.",
+    "explanation": "The problem asks for the longest prefix that is common to every string in the given set, as described in the session: \"return the prefix, which is common amongst all of them\" and \"if there are multiple such prefixes, you need to return the longest prefix.\"",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Define the Longest Common Prefix problem and its expected output for given string sets."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12280,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"According to the evidence, which statement correctly defines the Longest Common Prefix problem?\",\n  \"options\": [\n    \"Given a set of strings, return the longest string that appears as a prefix in all of them.\",\n    \"Given a set of strings, return the shortest string that appears as a suffix in any of them.\",\n    \"Given a single string, return the longest palindrome within it.\",\n    \"Given a set of strings, return any common prefix, regardless of length.\"\n  ],\n  \"correctAnswer\": \"Given a set of strings, return the longest string that appears as a prefix in all of them.\",\n  \"explanation\": \"The problem asks for the longest prefix that is common to every string in the given set, as described in the session: \\\"return the prefix, which is common amongst all of them\\\" and \\\"if there are multiple such prefixes, you need to return the longest prefix.\\\"\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

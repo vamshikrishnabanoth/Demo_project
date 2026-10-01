@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_D_C5",
+  "target_id": "T04",
+  "target_concept": "Transform the iterative LCM search into a recursive function, clearly specifying the base case and recursive step.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 3,
+      "rationale": "The evidence discusses an iterative LCM search and the divisibility condition, but does not explicitly cover recursion; the base‑case condition is inferred rather than directly taught."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the observed divisibility check to identify the appropriate recursive base case, demanding conceptual transfer rather than verbatim recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question stem is clear, grammatically correct, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "All three distractors are plausible misconceptions about termination conditions, making them reasonable foils."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option B is supported by the evidence; the other options are demonstrably incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question asks students to translate an iterative condition into a recursive base case, offering a modestly authentic application rather than a simple definition."
+    }
+  },
+  "latency_ms": 2176,
+  "retry_count": 4,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":3,\"rationale\":\"The evidence discusses an iterative LCM search and the divisibility condition, but does not explicitly cover recursion; the base‑case condition is inferred rather than directly taught.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying the observed divisibility check to identify the appropriate recursive base case, demanding conceptual transfer rather than verbatim recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The question stem is clear, grammatically correct, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"All three distractors are plausible misconceptions about termination conditions, making them reasonable foils.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option B is supported by the evidence; the other options are demonstrably incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question asks students to translate an iterative condition into a recursive base case, offering a modestly authentic application rather than a simple definition.\"}\n}"
+}

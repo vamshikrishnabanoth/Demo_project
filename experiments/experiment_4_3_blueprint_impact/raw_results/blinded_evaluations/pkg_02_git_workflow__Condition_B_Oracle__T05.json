@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T05",
+  "target_concept": "Differentiate between `git reset` and `git restore` for reverting staged and working‑directory changes.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 1,
+      "rationale": "Lecture transcript never mentions git reset or git restore, so the question tests material not covered in the evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires understanding of staging vs working‑directory effects, but does not demand deep procedural reasoning beyond basic git knowledge."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously asks which command unstages without altering file contents."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "All distractors are real git commands that learners might mistakenly consider, making them plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 4,
+      "rationale": "Given standard git behavior, only git reset (or git restore --staged) would work; the listed options contain a single unambiguous correct answer."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Presents a realistic workflow scenario rather than a rote definition, reflecting authentic usage."
+    }
+  },
+  "latency_ms": 2004,
+  "retry_count": 4,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":1,\"rationale\":\"Lecture transcript never mentions git reset or git restore, so the question tests material not covered in the evidence.\"},\"d2_cognitive_demand\":{\"score\":3,\"rationale\":\"Requires understanding of staging vs working‑directory effects, but does not demand deep procedural reasoning beyond basic git knowledge.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously asks which command unstages without altering file contents.\"},\"d4_distractor_plausibility\":{\"score\":5,\"rationale\":\"All distractors are real git commands that learners might mistakenly consider, making them plausible.\"},\"d5_single_key_determinism\":{\"score\":4,\"rationale\":\"Given standard git behavior, only git reset (or git restore --staged) would work; the listed options contain a single unambiguous correct answer.\"},\"d6_question_novelty\":{\"score\":5,\"rationale\":\"Presents a realistic workflow scenario rather than a rote definition, reflecting authentic usage.\"}}"
+}

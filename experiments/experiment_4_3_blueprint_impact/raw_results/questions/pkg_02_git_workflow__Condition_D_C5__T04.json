@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_D_C5",
+  "target_id": "T04",
+  "target_concept": "Evaluate when to use `git reset` versus `git restore` to revert staged or working‑directory changes.",
+  "target_dimension": "Scenario Analysis",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "You edited a.txt, added a new line, and staged the change with `git add .`. Before committing, you decide to discard both the staged change and the new line in the working directory. Which sequence of git commands should you use according to the provided scenario?",
+    "options": [
+      "Run `git reset` followed by `git restore .` to unstage and discard the changes.",
+      "Run `git restore .` alone, which both unstages and removes the changes.",
+      "Run `git reset --hard HEAD` to discard staged and working‑directory changes.",
+      "Run `git add .` again to revert the previous staging."
+    ],
+    "correctAnswer": "Run `git reset` followed by `git restore .` to unstage and discard the changes.",
+    "explanation": "The evidence shows that `git reset` is used to revert staged changes (making the file appear red again), and `git restore .` is then used to delete the new line from the working directory. Therefore, the correct sequence is to run `git reset` first and then `git restore .`.",
+    "metadata": {
+      "dimension": "Scenario Analysis",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Hard",
+      "concept": "Evaluate when to use `git reset` versus `git restore` to revert staged or working‑directory changes."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13534,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"You edited a.txt, added a new line, and staged the change with `git add .`. Before committing, you decide to discard both the staged change and the new line in the working directory. Which sequence of git commands should you use according to the provided scenario?\",\n  \"options\": [\n    \"Run `git reset` followed by `git restore .` to unstage and discard the changes.\",\n    \"Run `git restore .` alone, which both unstages and removes the changes.\",\n    \"Run `git reset --hard HEAD` to discard staged and working‑directory changes.\",\n    \"Run `git add .` again to revert the previous staging.\"\n  ],\n  \"correctAnswer\": \"Run `git reset` followed by `git restore .` to unstage and discard the changes.\",\n  \"explanation\": \"The evidence shows that `git reset` is used to revert staged changes (making the file appear red again), and `git restore .` is then used to delete the new line from the working directory. Therefore, the correct sequence is to run `git reset` first and then `git restore .`.\",\n  \"metadata\": {\n    \"dimension\": \"Scenario Analysis\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_01_indian_constitution_art21",
+  "domain": "Law / Indian Polity",
+  "subject": "Constitutional Law of India",
+  "topic": "Article 21: Protection of Life and Personal Liberty",
+  "learner_level": "Undergraduate LL.B. (Semester 3)",
+  "syllabus_context": "Unit II: Fundamental Rights (Articles 19–22). Evolution of personal liberty from Gopalan to Maneka Gandhi, procedure established by law versus due process of law, the Golden Triangle doctrine (Articles 14, 19, 21), and post-Maneka substantive due process expansions.",
+  "declared_learning_objective": "Analyze how the Supreme Court's interpretation of 'procedure established by law' in Article 21 transformed from the literalist, formalistic reading in A.K. Gopalan (1950) into a substantive fairness requirement under the Golden Triangle doctrine in Maneka Gandhi (1978).",
+  "provenance": {
+    "mode": "AUTHENTIC_RECORDING",
+    "source_type": "OPEN_COURSEWARE",
+    "source": "NPTEL Constitutional Law Lecture Series, Module on Fundamental Rights",
+    "institution": "National Law School of India University / IIT Kharagpur Law Faculty",
+    "access_date": "2026-09-15",
+    "license_or_usage_basis": "CC BY-NC-SA Educational Research Exemption"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Slide bullet points occasionally summarized verbally without reading statutory text verbatim."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "lock_version": "1.0.0",
+  "locked_at": "2026-09-29T18:41:11.417Z",
+  "status": "LOCKED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "sampling_configuration": "nominally deterministic sampling configuration (temperature=0)",
+  "response_format": "json_object",
+  "hashes": {
+    "system_prompt_sha256": "0074bdf4ed78821cabb000c1500ba18a0aeccf14658c773c31df9ceed0f53623",
+    "calibration_dataset_sha256": "5cf545ed2bb7383ad981951de651f64c01e52583a08cfd9fc49f093c378487cb",
+    "canonical_taxonomy_sha256": "57dba85d3fc92d1e9568e105f342d7ecc686f8cf03b185426dee7145487039e6",
+    "runner_script_sha256": "224640c560a65dbaf46dac30be04684b25862ac6b6a3d445e7ac2d709d49fb9f"
+  },
+  "verification_rule": "Evaluation runner must verify all hashes before running on frozen 17 units."
+}

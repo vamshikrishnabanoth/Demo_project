@@ -1,0 +1,71 @@
+{
+  "total_units": 4,
+  "total_binary_decisions": 48,
+  "contingency_table": {
+    "both_positive": 8,
+    "both_negative": 38,
+    "annotator1_only": 2,
+    "annotator2_only": 0
+  },
+  "percentage_agreement": 95.83,
+  "expected_agreement_pe": 0.6944,
+  "cohen_kappa": 0.8636,
+  "interpretation": "Almost Perfect Agreement (Landis & Koch, 1977; Fleiss, 1981)",
+  "per_unit_jaccard": {
+    "GT-T02": 0.6667,
+    "GT-T03": 0.6667,
+    "GT-A02": 1,
+    "GT-A03": 1
+  },
+  "mean_jaccard_similarity": 0.8334,
+  "per_behavior_agreement": {
+    "EXPLAIN": {
+      "match": 4,
+      "total": 4
+    },
+    "DEMONSTRATE": {
+      "match": 4,
+      "total": 4
+    },
+    "COMPARE": {
+      "match": 4,
+      "total": 4
+    },
+    "DEBUG": {
+      "match": 4,
+      "total": 4
+    },
+    "PREDICT_CHANGE": {
+      "match": 4,
+      "total": 4
+    },
+    "ASK_WHY": {
+      "match": 4,
+      "total": 4
+    },
+    "PRACTICE": {
+      "match": 4,
+      "total": 4
+    },
+    "REAL_WORLD_APP": {
+      "match": 4,
+      "total": 4
+    },
+    "EDGE_CASE": {
+      "match": 3,
+      "total": 4
+    },
+    "CODE_TRACE": {
+      "match": 3,
+      "total": 4
+    },
+    "STUDENT_INTERACT": {
+      "match": 4,
+      "total": 4
+    },
+    "REINFORCE": {
+      "match": 4,
+      "total": 4
+    }
+  }
+}

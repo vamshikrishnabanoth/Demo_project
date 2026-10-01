@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Convert the iterative LCM search into a recursive function, specifying base case and recursive step",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "When converting the iterative LCM search (which loops i from 1 upward and returns i when i % a == 0 and i % b == 0) into a recursive function, which of the following should be used as the base case condition?",
+    "options": [
+      "Return i when i % a == 0 and i % b == 0",
+      "Terminate recursion when i reaches 100",
+      "Stop recursion when i exceeds a * b",
+      "Return after a fixed number of recursive calls regardless of i"
+    ],
+    "correctAnswer": "Return i when i % a == 0 and i % b == 0",
+    "explanation": "The evidence shows the iterative version returns the first i that is divisible by both a and b. In the recursive version, the base case must check the same condition (i % a == 0 && i % b == 0). Using 100 or a * b are merely upper bounds, not the logical stopping condition, and a fixed number of calls does not guarantee correctness.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Hard",
+      "concept": "Convert the iterative LCM search into a recursive function, specifying base case and recursive step"
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14434,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"When converting the iterative LCM search (which loops i from 1 upward and returns i when i % a == 0 and i % b == 0) into a recursive function, which of the following should be used as the base case condition?\",\n  \"options\": [\n    \"Return i when i % a == 0 and i % b == 0\",\n    \"Terminate recursion when i reaches 100\",\n    \"Stop recursion when i exceeds a * b\",\n    \"Return after a fixed number of recursive calls regardless of i\"\n  ],\n  \"correctAnswer\": \"Return i when i % a == 0 and i % b == 0\",\n  \"explanation\": \"The evidence shows the iterative version returns the first i that is divisible by both a and b. In the recursive version, the base case must check the same condition (i % a == 0 && i % b == 0). Using 100 or a * b are merely upper bounds, not the logical stopping condition, and a fixed number of calls does not guarantee correctness.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

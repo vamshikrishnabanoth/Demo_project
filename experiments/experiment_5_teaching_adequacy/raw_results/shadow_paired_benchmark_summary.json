@@ -1,0 +1,21 @@
+{
+  "test_timestamp": "2026-10-01T13:45:53.859Z",
+  "sample_size": 5,
+  "shadow_off_latency_ms": {
+    "mean": 1034.2143399999998,
+    "p95": 3023.6158,
+    "min": 535.1713,
+    "max": 3023.6158
+  },
+  "shadow_on_latency_ms": {
+    "mean": 535.9930800000002,
+    "p95": 546.6545999999998,
+    "min": 531.4105,
+    "max": 546.6545999999998
+  },
+  "delta_mean_latency_ms": -498.2212599999996,
+  "queue_overflow_capped": true,
+  "timeout_abort_controller_functional": true,
+  "secrets_leakage_detected": 0,
+  "verdict": "ZERO_LIVE_INTERFERENCE_AND_RESOURCE_BOUNDED_PROVEN"
+}

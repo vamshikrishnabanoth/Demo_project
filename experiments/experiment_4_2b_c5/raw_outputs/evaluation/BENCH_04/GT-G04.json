@@ -1,0 +1,21 @@
+{
+  "unit_id": "GT-G04",
+  "benchmark": "BENCH_04",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "It will tell you what are the changes that you have made and which changes have not yet been saved into the repository"
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"It will tell you what are the changes that you have made and which changes have not yet been saved into the repository\"\n    }\n  ]\n}",
+  "latency_ms": 19566,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

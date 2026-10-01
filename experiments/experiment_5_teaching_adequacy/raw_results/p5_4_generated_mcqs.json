@@ -1,0 +1,491 @@
+{
+  "generated_at": "2026-10-01T12:56:14.982Z",
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "topic": "Article 21: Protection of Life and Personal Liberty",
+      "items": [
+        {
+          "targetId": "pkg_01_indian_constitution_art21_EASY",
+          "questionText": "According to the Supreme Court's decision in Maneka Gandhi v. Union of India, what is required of the procedure prescribed by law for depriving a person of life or liberty?",
+          "options": [
+            "The procedure may be arbitrary and oppressive.",
+            "The procedure must satisfy the test of fairness, reasonableness, and natural justice under Article 14.",
+            "The procedure must be based on the earlier ruling in A.K. Gopalan v. State of Madras.",
+            "The procedure must grant absolute, unrestrained immunity to the individual."
+          ],
+          "correctAnswer": "The procedure must satisfy the test of fairness, reasonableness, and natural justice under Article 14.",
+          "explanation": "In Maneka Gandhi v. Union of India, Justice Bhagwati held that any procedure prescribed by law for depriving a person of life or liberty cannot be arbitrary, fanciful, or oppressive; it must satisfy the test of fairness, reasonableness, and natural justice under Article 14, thereby overturning the literal approach of the earlier Gopalan case.",
+          "metadata": {
+            "dimension": "IDENTIFICATION",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Maneka Gandhi v. Union of India – substantive fairness interpretation of Article 21"
+          },
+          "blueprint_id": "pkg_01_indian_constitution_art21_EASY",
+          "cognitive_tier": "EASY",
+          "epistemic_dimension": "IDENTIFICATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "Lecture evidence directly cites Maneka Gandhi as the case effecting the substantive fairness shift."
+          }
+        },
+        {
+          "targetId": "pkg_01_indian_constitution_art21_MEDIUM",
+          "questionText": "How did the Supreme Court's interpretation of \"procedure established by law\" in Article 21 change from the A.K. Gopalan case to the Maneka Gandhi case?",
+          "options": [
+            "The Court shifted from a literal, formalistic interpretation to a substantive one that requires the procedure to be fair, reasonable, and in accordance with natural justice.",
+            "The Court required a judicial hearing before any deprivation of liberty.",
+            "The Court held that any law passed by Parliament sufficed, regardless of fairness.",
+            "The Court held that \"procedure established by law\" was not applicable to Article 21."
+          ],
+          "correctAnswer": "The Court shifted from a literal, formalistic interpretation to a substantive one that requires the procedure to be fair, reasonable, and in accordance with natural justice.",
+          "explanation": "In A.K. Gopalan, the Court adopted a literal, formalistic view, treating \"procedure established by law\" as any law enacted by Parliament. In Maneka Gandhi, the Court overruled this, holding that the procedure must be fair, reasonable, and satisfy natural justice, thereby adopting a substantive interpretation.",
+          "metadata": {
+            "dimension": "MEANING",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Interpretation of \"procedure established by law\" in Article 21"
+          },
+          "blueprint_id": "pkg_01_indian_constitution_art21_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "epistemic_dimension": "MEANING",
+          "evidence_uncertainty": {
+            "has_uncertainty": true,
+            "uncertainty_rationale": "The lecture material describes the literal view in Gopalan and the substantive shift in Maneka Gandhi but does not explicitly link the two or illustrate the systematic interaction required to reach depth level 4."
+          }
+        },
+        {
+          "targetId": "pkg_01_indian_constitution_art21_HARD",
+          "questionText": "Which statement best describes the evolution of the interpretation of \"procedure established by law\" under Article 21 from the 1950 A.K. Gopalan case to the 1978 Maneka Gandhi case?",
+          "options": [
+            "The concept remained unchanged, still literal and formalistic.",
+            "The concept shifted from a rigid, compartmentalized view to a flexible, fairness-based test.",
+            "The concept was abandoned entirely in favor of a different constitutional provision.",
+            "The concept was limited to only criminal procedures."
+          ],
+          "correctAnswer": "The concept shifted from a rigid, compartmentalized view to a flexible, fairness-based test.",
+          "explanation": "In A.K. Gopalan v. State of Madras (1950), the Supreme Court adopted a literal, formalistic approach, treating Fundamental Rights as separate, water‑tight compartments and accepting a narrow \"procedure established by law\" that could be arbitrary. By contrast, in Maneka Gandhi v. Union of India (1978), the seven‑judge bench overturned that stance, holding that the procedure must be fair, reasonable, and not arbitrary, thereby expanding the scope of Article 21 beyond a rigid, compartmentalized doctrine.",
+          "metadata": {
+            "dimension": "APPLICATION_INTERPRETATION",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Hard",
+            "concept": "Evolution of 'procedure established by law' under Article 21"
+          },
+          "blueprint_id": "pkg_01_indian_constitution_art21_HARD",
+          "cognitive_tier": "HARD",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": true,
+            "uncertainty_rationale": "The lecture provides a comparative overview but stops short of a detailed, step‑by‑step case analysis of Gopalan and Maneka Gandhi required for depth 6, leaving a gap in demonstrated mastery."
+          }
+        }
+      ]
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "topic": "Eigenvalues and Eigenvectors of Linear Operators",
+      "items": [
+        {
+          "targetId": "pkg_02_linear_algebra_eigenvalues_EASY",
+          "questionText": "Which of the following statements correctly expresses the eigenvalue equation for a matrix A and a nonzero vector x?",
+          "options": [
+            "The eigenvalue equation is A x = λ x.",
+            "The eigenvalue equation is A x = λ I.",
+            "The eigenvalue equation is det(A - λ I) = 0.",
+            "The eigenvalue equation is A x = λ x + I."
+          ],
+          "correctAnswer": "The eigenvalue equation is A x = λ x.",
+          "explanation": "The eigenvalue equation states that a matrix A acting on a nonzero vector x yields the same vector scaled by the eigenvalue λ, i.e., A x = λ x. The other options either mix up the identity matrix, refer to the characteristic equation, or add an extraneous term, and therefore are incorrect.",
+          "metadata": {
+            "dimension": "IDENTIFICATION",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Eigenvalue Equation"
+          },
+          "blueprint_id": "pkg_02_linear_algebra_eigenvalues_EASY",
+          "cognitive_tier": "EASY",
+          "epistemic_dimension": "IDENTIFICATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          }
+        },
+        {
+          "targetId": "pkg_02_linear_algebra_eigenvalues_MEDIUM",
+          "questionText": "For the matrix A = [[4, -5], [2, -3]], which of the following correctly lists its eigenvalues and a corresponding eigenvector for each eigenvalue?",
+          "options": [
+            "Eigenvalues are 2 and -1 with eigenvectors [5,2] and [1,1]",
+            "Eigenvalues are 3 and -2 with eigenvectors [4,1] and [2,3]",
+            "Eigenvalues are 2 and -1 with eigenvectors [1,2] and [5,1]",
+            "Eigenvalues are 0 and 1 with eigenvectors [0,1] and [1,0]"
+          ],
+          "correctAnswer": "Eigenvalues are 2 and -1 with eigenvectors [5,2] and [1,1]",
+          "explanation": "The characteristic equation det(A-λI)=λ^2-λ-2=0 gives λ=2 and λ=-1. Solving (A-2I)x=0 yields eigenvector proportional to [5,2]; solving (A+I)x=0 yields eigenvector proportional to [1,1]. The other options either give incorrect eigenvalues or incorrect eigenvectors.",
+          "metadata": {
+            "dimension": "STRUCTURE_COMPONENTS",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Eigenvalue Equation"
+          },
+          "blueprint_id": "pkg_02_linear_algebra_eigenvalues_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          }
+        },
+        {
+          "targetId": "pkg_02_linear_algebra_eigenvalues_HARD",
+          "questionText": "Which of the following statements correctly describes the eigenvectors of the matrix A = [[4, -5], [2, -3]]?",
+          "options": [
+            "They are directions that remain invariant under the transformation defined by A.",
+            "They are directions that rotate by 90 degrees under the transformation.",
+            "They are directions that are orthogonal to the image of A.",
+            "They are directions that are mapped to zero by A."
+          ],
+          "correctAnswer": "They are directions that remain invariant under the transformation defined by A.",
+          "explanation": "For a matrix A, an eigenvector v satisfies Av = λv. This means that the action of A on v only scales its magnitude, leaving its direction unchanged. Thus, eigenvectors point along invariant directions of the linear transformation. In the example, the eigenvectors [5,2] and [1,1] satisfy this property for eigenvalues 2 and –1 respectively.",
+          "metadata": {
+            "dimension": "APPLICATION_INTERPRETATION",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Hard",
+            "concept": "Eigenvalue Equation"
+          },
+          "blueprint_id": "pkg_02_linear_algebra_eigenvalues_HARD",
+          "cognitive_tier": "HARD",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "The lecture explicitly demonstrates the full procedure and interpretation, supporting testing at this depth."
+          }
+        }
+      ]
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "items": [
+        {
+          "targetId": "pkg_03_dsa_bfs_conceptual_EASY",
+          "questionText": "In Breadth‑First Search, which data structure is used to ensure vertices are explored in non‑decreasing order of distance from the source?",
+          "options": [
+            "FIFO queue",
+            "LIFO stack",
+            "Priority queue",
+            "Recursive call stack"
+          ],
+          "correctAnswer": "FIFO queue",
+          "explanation": "Breadth‑First Search uses a FIFO queue to maintain the order of vertices to visit, guaranteeing that vertices are processed layer by layer in non‑decreasing distance from the source, as described in the session evidence.",
+          "metadata": {
+            "dimension": "IDENTIFICATION",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Breadth‑First Search conceptual mechanics"
+          },
+          "blueprint_id": "pkg_03_dsa_bfs_conceptual_EASY",
+          "cognitive_tier": "EASY",
+          "epistemic_dimension": "IDENTIFICATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          }
+        },
+        {
+          "targetId": "pkg_03_dsa_bfs_conceptual_MEDIUM",
+          "questionText": "In Breadth-First Search, what is the primary role of the FIFO queue used during traversal?",
+          "options": [
+            "It ensures nodes are visited in depth-first order.",
+            "It guarantees that nodes are processed in non-decreasing order of distance from the source.",
+            "It allows revisiting nodes to explore all possible paths.",
+            "It stores only nodes at the current depth level, discarding others."
+          ],
+          "correctAnswer": "It guarantees that nodes are processed in non-decreasing order of distance from the source.",
+          "explanation": "BFS uses a FIFO queue to maintain the order in which vertices are discovered, ensuring that vertices are processed level by level. This preserves the non-decreasing distance property from the source node.",
+          "metadata": {
+            "dimension": "STRUCTURE_COMPONENTS",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Breadth-First Search conceptual mechanics"
+          },
+          "blueprint_id": "pkg_03_dsa_bfs_conceptual_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          }
+        },
+        {
+          "targetId": "pkg_03_dsa_bfs_conceptual_HARD",
+          "questionText": "Why does a FIFO queue guarantee level-order discovery and unweighted shortest-path traversal in BFS?",
+          "options": [
+            "A stack would also guarantee level-order traversal because it processes vertices in reverse order of discovery.",
+            "The visited set is unnecessary because the queue alone prevents revisiting vertices.",
+            "Using a FIFO queue ensures that vertices are processed in the order they were discovered, which preserves the non-decreasing distance property and yields the shortest path in an unweighted graph.",
+            "BFS can only find shortest paths in directed graphs, not undirected ones."
+          ],
+          "correctAnswer": "Using a FIFO queue ensures that vertices are processed in the order they were discovered, which preserves the non-decreasing distance property and yields the shortest path in an unweighted graph.",
+          "explanation": "In BFS each vertex is enqueued only after all vertices at a smaller distance have been dequeued. The FIFO property keeps vertices in non‑decreasing distance order, so when a vertex is dequeued all shorter paths have already been explored. Consequently the first time a vertex is reached is via the shortest path in an unweighted graph, and vertices are visited level by level.",
+          "metadata": {
+            "dimension": "APPLICATION_INTERPRETATION",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Hard",
+            "concept": "Fundamental Mechanics of Breadth‑First Search"
+          },
+          "blueprint_id": "pkg_03_dsa_bfs_conceptual_HARD",
+          "cognitive_tier": "HARD",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          }
+        }
+      ]
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "items": [
+        {
+          "targetId": "pkg_04_dsa_bfs_implementation_EASY",
+          "questionText": "During a Breadth‑First Search starting at node A on the 5‑node graph A, B, C, D, E, which node is visited at depth 3?",
+          "options": [
+            "Node B",
+            "Node C",
+            "Node D",
+            "Node E"
+          ],
+          "correctAnswer": "Node E",
+          "explanation": "In the given graph, BFS explores nodes level by level. Starting from A (depth 0), the first level contains B and C (depth 1). The next level contains D (depth 2). The following level contains E (depth 3). Thus, node E is the only node visited at depth 3.",
+          "metadata": {
+            "dimension": "MEANING",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Breadth-First Search (BFS) Traversal"
+          },
+          "blueprint_id": "pkg_04_dsa_bfs_implementation_EASY",
+          "cognitive_tier": "EASY",
+          "epistemic_dimension": "MEANING",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          }
+        },
+        {
+          "targetId": "pkg_04_dsa_bfs_implementation_MEDIUM",
+          "questionText": "During a breadth‑first search (BFS) of an unweighted graph, which invariant guarantees that nodes are visited in non‑decreasing order of distance from the source, particularly when exploring up to depth 4?",
+          "options": [
+            "The stack alternates between nodes of even and odd distance from the source.",
+            "The queue alternates between nodes of even and odd distance from the source.",
+            "The queue always contains nodes whose distances from the source are in non‑decreasing order.",
+            "The visited set is unnecessary because the queue prevents revisiting nodes."
+          ],
+          "correctAnswer": "The queue always contains nodes whose distances from the source are in non‑decreasing order.",
+          "explanation": "BFS uses a FIFO queue. When a vertex is dequeued, all its undiscovered neighbors are enqueued. This process ensures that the queue never holds a vertex whose distance is greater than a vertex that was enqueued earlier, so the distances in the queue are non‑decreasing. This invariant is what guarantees breadth‑first ordering, even when the search reaches depth 4.",
+          "metadata": {
+            "dimension": "RELATIONSHIPS_MECHANISM",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Breadth-First Search (BFS) traversal algorithm"
+          },
+          "blueprint_id": "pkg_04_dsa_bfs_implementation_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          }
+        },
+        {
+          "targetId": "pkg_04_dsa_bfs_implementation_HARD",
+          "questionText": "During a breadth‑first search (BFS) on an unweighted graph, what is the maximum number of distinct distance levels that can simultaneously reside in the FIFO queue at any point in the traversal?",
+          "options": [
+            "Only the current level",
+            "Two consecutive levels (d and d+1)",
+            "All levels up to the current depth",
+            "No levels, the queue is always empty"
+          ],
+          "correctAnswer": "Two consecutive levels (d and d+1)",
+          "explanation": "BFS explores vertices level by level. When a vertex at distance d is dequeued, all its unvisited neighbors at distance d+1 are enqueued. Thus the queue can contain vertices from the current level d and the next level d+1, but never vertices from earlier or later levels. Therefore the maximum number of distinct distance levels present in the queue is two. The other options are incorrect: the queue can contain more than one level, it cannot contain all levels up to the current depth, and it is not empty during traversal.",
+          "metadata": {
+            "dimension": "APPLICATION_INTERPRETATION",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Hard",
+            "concept": "Breadth-First Search (BFS) Traversal and Implementation"
+          },
+          "blueprint_id": "pkg_04_dsa_bfs_implementation_HARD",
+          "cognitive_tier": "HARD",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": true,
+            "uncertainty_rationale": "The instructional record contains only introductory remarks about BFS and queue ordering; it provides no observable evidence of students being asked to implement BFS, trace queue states, or handle cyclic/disconnected graphs, so testing at this application‑interpretation depth would not reflect taught content."
+          }
+        }
+      ]
+    },
+    "pkg_05_deep_learning_vaes": {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "topic": "Autoencoders and Variational Autoencoders (VAEs)",
+      "items": [
+        {
+          "targetId": "pkg_05_deep_learning_vaes_EASY",
+          "questionText": "Why do classical autoencoders fail to provide smooth generative interpolation compared to variational autoencoders?",
+          "options": [
+            "Because classical autoencoders use fully connected layers that lose spatial information.",
+            "Because classical autoencoders use a KL divergence term that forces latent space to N(0,I).",
+            "Because classical autoencoders map each input to a single deterministic point in latent space, creating gaps that prevent smooth interpolation, whereas VAEs encode a probability distribution ensuring a continuous latent space.",
+            "Because classical autoencoders cannot reconstruct inputs accurately."
+          ],
+          "correctAnswer": "Because classical autoencoders map each input to a single deterministic point in latent space, creating gaps that prevent smooth interpolation, whereas VAEs encode a probability distribution ensuring a continuous latent space.",
+          "explanation": "Classical autoencoders produce a single deterministic latent vector for each input, leaving empty regions in latent space that break smooth interpolation. Variational autoencoders encode a probability distribution and use a KL‑divergence regularizer to keep the latent space close to a standard normal, creating a continuous manifold that supports smooth generative interpolation.",
+          "metadata": {
+            "dimension": "IDENTIFICATION",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Identification of classical autoencoders vs. variational autoencoders"
+          },
+          "blueprint_id": "pkg_05_deep_learning_vaes_EASY",
+          "cognitive_tier": "EASY",
+          "epistemic_dimension": "IDENTIFICATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "Lecture material explicitly defines both models, supporting testing at this tier."
+          }
+        },
+        {
+          "targetId": "pkg_05_deep_learning_vaes_MEDIUM",
+          "questionText": "In the context of Variational Autoencoders (VAEs), how does the mapping of input data to the latent space fundamentally differ from that of a standard autoencoder?",
+          "options": [
+            "VAEs map input data to a single deterministic point in the latent space, whereas standard autoencoders map to a probability distribution.",
+            "VAEs map input data to a probabilistic distribution over latent variables, whereas standard autoencoders map to a single deterministic point.",
+            "Both VAEs and standard autoencoders map input data to a probabilistic distribution, but VAEs use a larger latent dimensionality.",
+            "VAEs map input data to a discrete set of latent codes, whereas standard autoencoders map to a continuous deterministic point."
+          ],
+          "correctAnswer": "VAEs map input data to a probabilistic distribution over latent variables, whereas standard autoencoders map to a single deterministic point.",
+          "explanation": "The evidence explicitly states that normal autoencoders map to a single deterministic point, while VAEs map to a probabilistic distribution over latent variables (specifically predicting Gaussian parameters like mean and variance). This distinction is the core mechanism that allows VAEs to enforce a continuous latent space via KL divergence regularization.",
+          "metadata": {
+            "dimension": "RELATIONSHIPS_MECHANISM",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Fundamentals of Autoencoders"
+          },
+          "blueprint_id": "pkg_05_deep_learning_vaes_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          }
+        },
+        {
+          "targetId": "pkg_05_deep_learning_vaes_HARD",
+          "questionText": "In the context of Variational Autoencoders (VAEs), how does the mapping of the latent space fundamentally differ from that of a normal autoencoder, and what is the specific role of the KL divergence regularizer in this architecture?",
+          "options": [
+            "VAEs map inputs to a single deterministic point in the latent space, while the KL divergence regularizer is used to maximize the spatial information lost during the flattening process.",
+            "VAEs map inputs to a probability distribution defined by Gaussian parameters (mean mu and variance sigma^2), and the KL divergence regularizer forces the latent space to remain close to N(0, I) to prevent gaps and enable generative sampling.",
+            "VAEs map inputs to a continuous latent space without defining specific distribution parameters, and the KL divergence regularizer is applied to ensure the decoder preserves spatial features similar to convolutional autoencoders.",
+            "VAEs map inputs to a deterministic point but use a higher-dimensional latent space than normal autoencoders, with the KL divergence regularizer serving to minimize the reconstruction error of the fully connected encoder."
+          ],
+          "correctAnswer": "VAEs map inputs to a probability distribution defined by Gaussian parameters (mean mu and variance sigma^2), and the KL divergence regularizer forces the latent space to remain close to N(0, I) to prevent gaps and enable generative sampling.",
+          "explanation": "The evidence explicitly states that while normal autoencoders map to a single deterministic point, VAEs map to a probability distribution by predicting Gaussian parameters (mean mu and variance sigma^2). Furthermore, the text specifies that the KL divergence regularizer forces the latent space close to N(0, I), which prevents gaps and enables generative sampling. The other options incorrectly attribute deterministic mapping to VAEs, misidentify the role of KL divergence, or confuse VAEs with convolutional autoencoders.",
+          "metadata": {
+            "dimension": "APPLICATION_INTERPRETATION",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Hard",
+            "concept": "Autoencoders Overview"
+          },
+          "blueprint_id": "pkg_05_deep_learning_vaes_HARD",
+          "cognitive_tier": "HARD",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": true,
+            "uncertainty_rationale": "The lecture only contains a brief definitional mention of autoencoders and VAEs; it lacks worked examples, code traces, or case analyses needed to assess students' ability to apply and interpret the VAE objective and KL regularization as taught."
+          }
+        }
+      ]
+    },
+    "pkg_06_economics_elasticity": {
+      "package_id": "pkg_06_economics_elasticity",
+      "topic": "Price Elasticity of Demand and Market Welfare",
+      "items": [
+        {
+          "targetId": "pkg_06_economics_elasticity_EASY",
+          "questionText": "Which of the following statements correctly defines the price elasticity of demand?",
+          "options": [
+            "Price elasticity of demand measures the magnitude of the quantity response to a change in price.",
+            "Price elasticity of demand measures the magnitude of the price response to a change in quantity.",
+            "Price elasticity of demand measures the magnitude of the quantity response to a change in income.",
+            "Price elasticity of demand measures the magnitude of the price response to a change in income."
+          ],
+          "correctAnswer": "Price elasticity of demand measures the magnitude of the quantity response to a change in price.",
+          "explanation": "The definition given in the evidence states that price elasticity of demand is the ratio of the percentage change in quantity demanded to the percentage change in price.",
+          "metadata": {
+            "dimension": "IDENTIFICATION",
+            "cognitiveLevel": "Remember",
+            "targetDifficulty": "Easy",
+            "concept": "Price Elasticity of Demand"
+          },
+          "blueprint_id": "pkg_06_economics_elasticity_EASY",
+          "cognitive_tier": "EASY",
+          "epistemic_dimension": "IDENTIFICATION",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "The lecture explicitly defines the concept and provides the formula, supporting assessment of this content."
+          }
+        },
+        {
+          "targetId": "pkg_06_economics_elasticity_MEDIUM",
+          "questionText": "A pharmaceutical company sells a life-saving medication with a price elasticity of demand of -0.5. If the company increases the price of the medication by 10%, what is the expected impact on total revenue?",
+          "options": [
+            "Total revenue will decrease because the percentage drop in quantity demanded exceeds the percentage increase in price.",
+            "Total revenue will increase because the percentage drop in quantity demanded is smaller than the percentage increase in price.",
+            "Total revenue will remain unchanged because the product is a necessity with no available substitutes.",
+            "Total revenue will decrease because the price increase causes a proportional decrease in quantity demanded."
+          ],
+          "correctAnswer": "Total revenue will increase because the percentage drop in quantity demanded is smaller than the percentage increase in price.",
+          "explanation": "The absolute value of the elasticity is 0.5, which is less than 1, indicating inelastic demand. According to the Total Revenue Test described in the evidence, when demand is inelastic, a price increase leads to an increase in total revenue because the percentage decrease in quantity demanded is smaller than the percentage increase in price.",
+          "metadata": {
+            "dimension": "RELATIONSHIPS_MECHANISM",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Medium",
+            "concept": "Price Elasticity of Demand"
+          },
+          "blueprint_id": "pkg_06_economics_elasticity_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "Lecture material explicitly covers the relationship between elasticity and total revenue, supporting assessment of this content."
+          }
+        },
+        {
+          "targetId": "pkg_06_economics_elasticity_HARD",
+          "questionText": "Based on the relationship between price elasticity and market welfare described in Episode E06, which statement correctly identifies the boundary condition where total revenue is maximized and the market is at the specific equilibrium point referenced regarding welfare effects?",
+          "options": [
+            "Total revenue is maximized when demand is perfectly inelastic, as quantity remains constant regardless of price increases.",
+            "Total revenue is maximized at unit elasticity, which is the specific equilibrium point referenced in the context of welfare effects and deadweight loss.",
+            "Total revenue is maximized when demand is perfectly elastic, allowing consumers to purchase infinite quantity at a fixed price.",
+            "Total revenue is maximized when demand is highly elastic, as the percentage increase in quantity demanded outweighs the percentage decrease in price."
+          ],
+          "correctAnswer": "Total revenue is maximized at unit elasticity, which is the specific equilibrium point referenced in the context of welfare effects and deadweight loss.",
+          "explanation": "The evidence explicitly states that 'Maximum revenue occurs at unit elasticity' and links this to the section on 'Welfare and Deadweight Loss' which discusses moving away from 'unit-elastic equilibrium'. The other options incorrectly associate revenue maximization with inelastic or elastic regions, which contradicts the Total Revenue Test provided in the session.",
+          "metadata": {
+            "dimension": "BOUNDARIES_EXCEPTIONS",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Hard",
+            "concept": "Price Elasticity of Demand and Market Welfare"
+          },
+          "blueprint_id": "pkg_06_economics_elasticity_HARD",
+          "cognitive_tier": "HARD",
+          "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "The lecture explicitly covers calculation, interpretation, revenue effects, and welfare boundaries, matching the expected depth."
+          }
+        }
+      ]
+    }
+  }
+}

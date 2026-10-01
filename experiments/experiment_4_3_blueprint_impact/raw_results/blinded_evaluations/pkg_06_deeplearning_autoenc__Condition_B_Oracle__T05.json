@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T05",
+  "target_concept": "Contrast deterministic point encoding of standard autoencoders with probabilistic distribution encoding of VAEs",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the contrast between deterministic point encoding and probabilistic mean‑variance encoding described in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding that a distribution enables stochastic sampling, not just recalling a definition."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, self‑contained, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options reflect common misconceptions about VAEs (deterministic encoder, uniform KL target, no decoder) and are plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is supported by the evidence; the other three are definitively contradicted."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "The question frames an authentic conceptual inquiry about latent‑space modeling rather than a rote definition."
+    }
+  },
+  "latency_ms": 7376,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the contrast between deterministic point encoding and probabilistic mean‑variance encoding described in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding that a distribution enables stochastic sampling, not just recalling a definition.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, self‑contained, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options reflect common misconceptions about VAEs (deterministic encoder, uniform KL target, no decoder) and are plausible.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A is supported by the evidence; the other three are definitively contradicted.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"The question frames an authentic conceptual inquiry about latent‑space modeling rather than a rote definition.\"}\n}"
+}

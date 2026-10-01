@@ -1,0 +1,559 @@
+{
+  "reconstruction_timestamp": "2026-10-01T09:45:30.921Z",
+  "lead_model": "openai/gpt-oss-120b",
+  "temperature": 0,
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "episode_count": 7,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 45,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "read the text itself carefully",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 45,
+          "end": 120,
+          "dominant_concept": "C02",
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "why did our framers choose this phrasing",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 120,
+          "end": 215,
+          "dominant_concept": "C04",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "A.K. Gopalan ... literal and formalistic view",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 215,
+          "end": 270,
+          "dominant_concept": "C05",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Silo Theory or doctrine of mutual exclusivity",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 270,
+          "end": 380,
+          "dominant_concept": "C06",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C04",
+          "evidence_quote": "Maneka Gandhi ... completely overturned Gopalan",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 380,
+          "end": 440,
+          "dominant_concept": "C06",
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C06",
+          "evidence_quote": "procedure cannot be arbitrary, must satisfy fairness",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E07",
+          "start": 440,
+          "end": 480,
+          "dominant_concept": "C01",
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "Article 21 does not grant absolute immunity",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3381,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "episode_count": 7,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 55,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "enter one of the great central chapters",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 55,
+          "end": 110,
+          "dominant_concept": "C02",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "fundamental relationship is the eigenvalue equation",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 110,
+          "end": 155,
+          "dominant_concept": "C02",
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C02",
+          "evidence_quote": "real non-zero vector rotate by 90 degrees",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 155,
+          "end": 230,
+          "dominant_concept": "C03",
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "matrix must be singular: det(A - lambda I)",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 230,
+          "end": 320,
+          "dominant_concept": "C04",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "det(A - lambda I) = lambda^2 - lambda - 2",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 320,
+          "end": 420,
+          "dominant_concept": "C05",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "lambda_1 = 2, (A - 2I)x = 0",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E07",
+          "start": 420,
+          "end": 460,
+          "dominant_concept": "C01",
+          "intellectual_activity": "GENERALIZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "So we have found the complete eigensystem",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 4110,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "episode_count": 6,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 50,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "fundamental traversal algorithms in computer science",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 50,
+          "end": 110,
+          "dominant_concept": "C02",
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Why not a stack? Stack gives DFS",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 110,
+          "end": 175,
+          "dominant_concept": "C03",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Queue maintains non-decreasing distance order",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 175,
+          "end": 320,
+          "dominant_concept": "C02",
+          "intellectual_activity": "TRACE",
+          "interaction_mode": "LIVE_DEMONSTRATION",
+          "revisitation": true,
+          "revisitation_target": "C02",
+          "evidence_quote": "pop A, push B and C",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 320,
+          "end": 395,
+          "dominant_concept": "Complexity",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Every vertex enqueued once: O(V)",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 395,
+          "end": 450,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "nodes F and G would not be reached",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 4226,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "episode_count": 6,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 50,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "fundamental traversal algorithms in computer science",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 50,
+          "end": 110,
+          "dominant_concept": "C02",
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Why not a stack? Stack gives DFS",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 110,
+          "end": 175,
+          "dominant_concept": "C03",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Queue maintains non‑decreasing distance order",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 175,
+          "end": 320,
+          "dominant_concept": "C01",
+          "intellectual_activity": "TRACE",
+          "interaction_mode": "LIVE_DEMONSTRATION",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "Let us walk through a concrete worked example",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 320,
+          "end": 395,
+          "dominant_concept": "C01",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "What is computational complexity? O(V+E)",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 395,
+          "end": 450,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "Remark on disconnected components: nodes F and G",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3132,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "episode_count": 8,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 45,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "autoencoders. Fully connected autoencoder architecture: encoder, latent space, decoder",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 45,
+          "end": 90,
+          "dominant_concept": "C02",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Flattening loses spatial information",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 90,
+          "end": 147,
+          "dominant_concept": "C03",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Convolutional autoencoders preserve spatial features",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 147,
+          "end": 200,
+          "dominant_concept": "C05",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Variational Autoencoders: focus on continuous latent space",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 200,
+          "end": 258,
+          "dominant_concept": "C04",
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Normal autoencoders map to a single deterministic point",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 258,
+          "end": 340,
+          "dominant_concept": "C04",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Predicting Gaussian parameters: mean mu and variance sigma^2",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E07",
+          "start": 340,
+          "end": 400,
+          "dominant_concept": "C05",
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "KL divergence regularizer forces latent space close to N(0, I)",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E08",
+          "start": 400,
+          "end": 430,
+          "dominant_concept": "C05",
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C05",
+          "evidence_quote": "preventing gaps and enabling generative sampling",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3983,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "package_id": "pkg_06_economics_elasticity",
+      "episode_count": 6,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 60,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "addressing a concept central to all economic decision-making",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 60,
+          "end": 120,
+          "dominant_concept": "C02",
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Definition: E_d = (% change in Q) / (% change in P)",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 120,
+          "end": 210,
+          "dominant_concept": "C04",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C02",
+          "evidence_quote": "Midpoint calculation yields E_d = -1.50",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 210,
+          "end": 290,
+          "dominant_concept": "C05",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C04",
+          "evidence_quote": "|E_d| > 1 is elastic",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 290,
+          "end": 380,
+          "dominant_concept": "C06",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "Total Revenue Test: TR = P * Q",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 380,
+          "end": 470,
+          "dominant_concept": "Welfare_DWL",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C06",
+          "evidence_quote": "consumer surplus area. Price ceiling restricts quantity",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3579,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 1
+      }
+    }
+  }
+}

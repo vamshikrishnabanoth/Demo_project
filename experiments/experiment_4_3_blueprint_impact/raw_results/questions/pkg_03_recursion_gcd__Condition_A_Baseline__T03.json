@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T03",
+  "target_concept": "Describe the step‑by‑step loop algorithm that increments a candidate I from 1 until it is divisible by both a and b",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "In the described algorithm for finding the LCM of 8 and 12, which condition correctly determines when the loop should terminate?",
+    "options": [
+      "Terminate when I % 8 == 0 and I % 12 == 0",
+      "Terminate when I % 8 != 0 or I % 12 != 0",
+      "Terminate after a predetermined number of iterations (e.g., 100)",
+      "Terminate when I equals 8"
+    ],
+    "correctAnswer": "Terminate when I % 8 == 0 and I % 12 == 0",
+    "explanation": "The loop starts with I = 1 and increments I until both I modulo 8 and I modulo 12 are zero. The first I that satisfies both conditions is the least common multiple (24). This matches the evidence where the algorithm returns I when both modulo checks are true.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Describe the step‑by‑step loop algorithm that increments a candidate I from 1 until it is divisible by both a and b"
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12601,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"In the described algorithm for finding the LCM of 8 and 12, which condition correctly determines when the loop should terminate?\",\n  \"options\": [\n    \"Terminate when I % 8 == 0 and I % 12 == 0\",\n    \"Terminate when I % 8 != 0 or I % 12 != 0\",\n    \"Terminate after a predetermined number of iterations (e.g., 100)\",\n    \"Terminate when I equals 8\"\n  ],\n  \"correctAnswer\": \"Terminate when I % 8 == 0 and I % 12 == 0\",\n  \"explanation\": \"The loop starts with I = 1 and increments I until both I modulo 8 and I modulo 12 are zero. The first I that satisfies both conditions is the least common multiple (24). This matches the evidence where the algorithm returns I when both modulo checks are true.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

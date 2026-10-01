@@ -1,0 +1,51 @@
+{
+  "unit_id": "GT-D03",
+  "benchmark": "BENCH_03",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "PRACTICE",
+    "STUDENT_INTERACT",
+    "DEBUG",
+    "ASK_WHY",
+    "CODE_TRACE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "First, we'll have to write our base condition."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "I'll just run the file. It is giving me 12."
+    },
+    {
+      "label": "PRACTICE",
+      "quote": "Write the second one. It will be your base condition in this case."
+    },
+    {
+      "label": "STUDENT_INTERACT",
+      "quote": "Which one do you want to implement first?"
+    },
+    {
+      "label": "DEBUG",
+      "quote": "Why is it coming zero? A plus equal to No."
+    },
+    {
+      "label": "ASK_WHY",
+      "quote": "Why is it coming zero?"
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "I will keep on checking one modulo four is equal equal to four or nothing, and I will keep on incrementing I, I plus one."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\",\"DEMONSTRATE\",\"PRACTICE\",\"STUDENT_INTERACT\",\"DEBUG\",\"ASK_WHY\",\"CODE_TRACE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"First, we'll have to write our base condition.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"I'll just run the file. It is giving me 12.\"\n    },\n    {\n      \"label\": \"PRACTICE\",\n      \"quote\": \"Write the second one. It will be your base condition in this case.\"\n    },\n    {\n      \"label\": \"STUDENT_INTERACT\",\n      \"quote\": \"Which one do you want to implement first?\"\n    },\n    {\n      \"label\": \"DEBUG\",\n      \"quote\": \"Why is it coming zero? A plus equal to No.\"\n    },\n    {\n      \"label\": \"ASK_WHY\",\n      \"quote\": \"Why is it coming zero?\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"I will keep on checking one modulo four is equal equal to four or nothing, and I will keep on incrementing I, I plus one.\"\n    }\n  ]\n}",
+  "latency_ms": 17408,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

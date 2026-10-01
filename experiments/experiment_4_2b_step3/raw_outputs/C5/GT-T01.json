@@ -1,0 +1,16 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "EDGE_CASE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "You're given a bunch of strings, and what you need to return is the prefix, which is common amongst all of them."
+    },
+    {
+      "label": "EDGE_CASE",
+      "quote": "Then obviously the output would be empty string because there is no prefix which is common amongst all the three strings."
+    }
+  ]
+}

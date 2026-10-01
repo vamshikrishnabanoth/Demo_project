@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Use git diff to compare the current working state with the previous commit and interpret the output.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The lecture explicitly explains that 'git diff' compares the current file with the previous version, matching the question’s focus."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the concept of what 'git diff' does, not just rote recall, but the reasoning is straightforward."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about the command and what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options represent common misconceptions (staged vs working, commit messages, untracked files), making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option B aligns with the lecture; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The scenario is authentic and applies knowledge in a realistic workflow rather than a simple definition recall."
+    }
+  },
+  "latency_ms": 3314,
+  "retry_count": 3,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The lecture explicitly explains that 'git diff' compares the current file with the previous version, matching the question’s focus.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying the concept of what 'git diff' does, not just rote recall, but the reasoning is straightforward.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about the command and what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options represent common misconceptions (staged vs working, commit messages, untracked files), making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option B aligns with the lecture; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The scenario is authentic and applies knowledge in a realistic workflow rather than a simple definition recall.\"}\n}"
+}

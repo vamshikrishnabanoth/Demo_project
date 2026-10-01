@@ -1,0 +1,235 @@
+{
+  "package_id": "pkg_03_recursion_gcd",
+  "benchmark_id": "BENCH_03",
+  "instructor": "Recursion Instructor",
+  "topic": "Euclidean GCD Derivation & Recursive Base Case Invariants",
+  "unit_ids": [
+    "GT-D01",
+    "GT-D02",
+    "GT-D03"
+  ],
+  "lecture_depth": {
+    "score": 80,
+    "rating": "Advanced"
+  },
+  "voice_emphasis": {
+    "syntaxEmphasis": "MEDIUM",
+    "conceptualEmphasis": "HIGH",
+    "explicitInstructions": []
+  },
+  "raw_content": "--- [SEGMENT 1: GT-D01 - Mathematical vs. Programmatic Divisibility & Modulo Logic] (Start: 0s, Duration: 149.5s) ---\nSo, basically, there are two type types of thing which are opposite. Greatest common divisor and least common multiple. HCF, JCD, one and the same thing. LCM, separate. Okay? JCD is always bigger or LCM is bigger. Eight or 12 LCM Okay. So we'll try to understand. GCD LCM LCM of what? Eight and twelve. I'm going to do the way I was taught. Many new ways would have come. I don't know, but I will do it in my manner. Now what is the least common multiple among both of them? Right? Important. So we will do the other way around. LCM would be two into two into three for 12, and for eight, it is what? Two into two into two. 2222224. The LCM number. Okay? Multiple 12 Understood? Okay. So is 24 modulo eight equal equal to zero? Yes. Is 24 modulo 12 equal equal to zero? Yes. So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?\n\n--- [SEGMENT 2: GT-D02 - Iterative LCM Search via Multiples Addition & Search Bounds] (Start: 150.5s, Duration: 332s) ---\nLCM, a I, b I. You have to find an I where I modulo a. 2424 modulo eight was equal equal to zero. 24 modulo 12 was equal equal to zero. So what I have to find in that? I. So I can go for from what to what? Since it is least, I will not start from 100. I will start from what? One. Okay? I less than probably 100. I plus plus. Now what is the condition here I'm saying? If I modulo a equal equal to zero and I modulo b is equal equal to zero, return what? Return I. So I will get what? I will get I as 24. Then you can use recursion. This is one way. What other way do you think it can be? Eight, twelve, or 24. So what will I do? Computers. Is there any shorter way? For loops, you will get it. Not a problem. Any other way? Eight and twelve. Sorry. Eight plus eight or eight? Eight into eight. Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero. Does not happen. Then I will do eight plus eight plus eight. What it becomes? 24. 24 module or 12. Is it equal equal to zero? Yes. So what is my answer? My answer is 24. Let's try this with something else also. Two ways of doing it. One is increment equal. This is a faster way of doing it. Okay? Because I am trying to check the common multiple between both of them. If there is a common multiple between both of them, that means this will whatever number this guy is capable of producing will be divisible by this guy. Whatever this guy is capable of producing, it would be divisible by by the other guy. So it's got table leaking eight, eight plus eight. For next step, eight plus eight plus eight. So this guy should give me a number which would be divisible by 12. So let's try and do again. Let's do it for four and six. Four should give me a number which is divisible by six. So directly six. Are you divisible by four? No. Then what will I do if I am not divisible? I will do four plus four. Is eight divisible by four? Yes? No? Yes. Then what is my sorry. Sorry. Six. It's six divisible by eight. Oh, what are we doing? Four and six LCM. One minute. One minute. One minute. I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No. Then eight modulo six, is it equal equal to zero? No. Go ahead. Four plus four plus four. What is this? 12 modulo six. Is it equal equal to zero? Yes. What is my LCM? 12. This is also one way of getting it. Okay? If you want to play with six, you can play with six also the other, same way. How will you do it with six? Checking six multiples are divisible by four or not? What is six first divisible multiplier? Six ones are six. Okay. So I will take six as it is and check over here. Is six modulo four equal equal to zero? No. Then I will settle six. You add to yourself. Let's go to your next number. That is six plus six. 12 modulo four. Is it equal equal to zero? Yes. Who is LCM? 12.\n\n--- [SEGMENT 3: GT-D03 - Iterative-to-Recursive State Transformation for LCM] (Start: 485.5s, Duration: 771s) ---\nright recursion. For I I have a lot of thing also and for this guy also. Hit it here. What do we want to do? LCM, I take a, I take b. I'm keeping a four, and I'm keeping a six here for you people to understand. For I equal to one, I less than 100, I plus plus. It can be less than 100 or it can be less than or equal to b. Greater number. Okay? Because it's a divisor. You keep it 100 right now. You will otherwise go crazy. If loop, I modulo a equal equal zero, I modulo b equal equal zero, and condition return I. Convert this into recursion. LCM a b. This is four and this is six. Why loop middle? Correct? This is my LCM in two ways. I while looking at a while loop, how to convert it into recursion, you can do recursion of any sorts. Do we want to pass a constant value, Uber? Yes. So what should we be working on? Base case. I'll help you. What is the base condition? Which one do you want to implement first? For loop. What is the base condition in this? Should it be 100 or should it be a multiply by b? Which one will learn work shorter? A multiply by b. Okay? So your condition should be let's create here in LCM is receiving in a, in b. First, we'll have to write our base condition. Okay? First, I'm writing one minute. I'll just write base condition and testing condition in this only. Okay? If I is I I need to take it. I can't have it. Is equals to zero and I modulo b is equal to zero. Return I. I plus plus for condition a comma b comma I plus. Correct? Initially, I will send I as one because for loop, my eyes getting initialized to what? One. So at the time of sending it, LCM sorry. KCM. LCM of four six, initializing the four group with one. I will keep on checking one modulo four is equal equal to four or nothing, and I will keep on incrementing I, I plus one. Passing the same a, passing the same b. And whenever it gets hit and whenever I find my I, I will return back. So let me check. This is the four loop getting created or converted into recursion. Let me see whether this works. Four six one. I'll just run the file. It is giving me 12. Okay. I got my answer. 12. If you want to check out with something else, fourteen and six, It's coming 42 LCM. Let's make the LCM for two and eight. Eight. Okay. Understood? For loop I showed you. Right? Do the LCM for this guy. Here, the concept was I was getting incremented. Here, the concept is a itself is getting incremented. So do that. Write the second one. It will be your base condition in this case. And then you will increment what? A always. Until a does not reach a bigger point where it is getting divided by b. This is your LCM. If you want, I'll show you recursion in that also. Int LCM m. Stopping condition is what? And now I will call LCMM to check whether it's working. I don't need an eye now. Correct? No? I am checking what for LCM. A should be divisible by b. So what did I check over here? If a is divisible by b, I should stop checking for my LCM. So I will return. What do I need to return a? Because a becomes the LCM. Otherwise, if it is not true, what am I doing? I'm changing a and saying you are now a plus a. So instead of sending a a, I am sending what? A plus a who will become the new a for the next LCA. Okay? So I will try to run this. Did I save it? Yes. You're getting eight for two and eight. Let's do for four and six. Did I save it? Why is it coming zero? A plus equal to No. Why is it coming? Eight into a. The minimum has to be done. Out of the two min either ways it works. No? It becomes four eight eight plus eight. So we have got to make sure that is remaining So I I will keep on incrementing. No? I plus plus. Okay. So we are needing I here also because we can't do a plus a. Fine?",
+  "chunks": [
+    {
+      "chunk_id": "chunk_01",
+      "unit_id": "GT-D01",
+      "title": "Mathematical vs. Programmatic Divisibility & Modulo Logic",
+      "start": 0,
+      "end": 149.5,
+      "text": "So, basically, there are two type types of thing which are opposite. Greatest common divisor and least common multiple. HCF, JCD, one and the same thing. LCM, separate. Okay? JCD is always bigger or LCM is bigger. Eight or 12 LCM Okay. So we'll try to understand. GCD LCM LCM of what? Eight and twelve. I'm going to do the way I was taught. Many new ways would have come. I don't know, but I will do it in my manner. Now what is the least common multiple among both of them? Right? Important. So we will do the other way around. LCM would be two into two into three for 12, and for eight, it is what? Two into two into two. 2222224. The LCM number. Okay? Multiple 12 Understood? Okay. So is 24 modulo eight equal equal to zero? Yes. Is 24 modulo 12 equal equal to zero? Yes. So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?"
+    },
+    {
+      "chunk_id": "chunk_02",
+      "unit_id": "GT-D02",
+      "title": "Iterative LCM Search via Multiples Addition & Search Bounds",
+      "start": 150.5,
+      "end": 482.5,
+      "text": "LCM, a I, b I. You have to find an I where I modulo a. 2424 modulo eight was equal equal to zero. 24 modulo 12 was equal equal to zero. So what I have to find in that? I. So I can go for from what to what? Since it is least, I will not start from 100. I will start from what? One. Okay? I less than probably 100. I plus plus. Now what is the condition here I'm saying? If I modulo a equal equal to zero and I modulo b is equal equal to zero, return what? Return I. So I will get what? I will get I as 24. Then you can use recursion. This is one way. What other way do you think it can be? Eight, twelve, or 24. So what will I do? Computers. Is there any shorter way? For loops, you will get it. Not a problem. Any other way? Eight and twelve. Sorry. Eight plus eight or eight? Eight into eight. Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero. Does not happen. Then I will do eight plus eight plus eight. What it becomes? 24. 24 module or 12. Is it equal equal to zero? Yes. So what is my answer? My answer is 24. Let's try this with something else also. Two ways of doing it. One is increment equal. This is a faster way of doing it. Okay? Because I am trying to check the common multiple between both of them. If there is a common multiple between both of them, that means this will whatever number this guy is capable of producing will be divisible by this guy. Whatever this guy is capable of producing, it would be divisible by by the other guy. So it's got table leaking eight, eight plus eight. For next step, eight plus eight plus eight. So this guy should give me a number which would be divisible by 12. So let's try and do again. Let's do it for four and six. Four should give me a number which is divisible by six. So directly six. Are you divisible by four? No. Then what will I do if I am not divisible? I will do four plus four. Is eight divisible by four? Yes? No? Yes. Then what is my sorry. Sorry. Six. It's six divisible by eight. Oh, what are we doing? Four and six LCM. One minute. One minute. One minute. I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No. Then eight modulo six, is it equal equal to zero? No. Go ahead. Four plus four plus four. What is this? 12 modulo six. Is it equal equal to zero? Yes. What is my LCM? 12. This is also one way of getting it. Okay? If you want to play with six, you can play with six also the other, same way. How will you do it with six? Checking six multiples are divisible by four or not? What is six first divisible multiplier? Six ones are six. Okay. So I will take six as it is and check over here. Is six modulo four equal equal to zero? No. Then I will settle six. You add to yourself. Let's go to your next number. That is six plus six. 12 modulo four. Is it equal equal to zero? Yes. Who is LCM? 12."
+    },
+    {
+      "chunk_id": "chunk_03",
+      "unit_id": "GT-D03",
+      "title": "Iterative-to-Recursive State Transformation for LCM",
+      "start": 485.5,
+      "end": 1256.5,
+      "text": "right recursion. For I I have a lot of thing also and for this guy also. Hit it here. What do we want to do? LCM, I take a, I take b. I'm keeping a four, and I'm keeping a six here for you people to understand. For I equal to one, I less than 100, I plus plus. It can be less than 100 or it can be less than or equal to b. Greater number. Okay? Because it's a divisor. You keep it 100 right now. You will otherwise go crazy. If loop, I modulo a equal equal zero, I modulo b equal equal zero, and condition return I. Convert this into recursion. LCM a b. This is four and this is six. Why loop middle? Correct? This is my LCM in two ways. I while looking at a while loop, how to convert it into recursion, you can do recursion of any sorts. Do we want to pass a constant value, Uber? Yes. So what should we be working on? Base case. I'll help you. What is the base condition? Which one do you want to implement first? For loop. What is the base condition in this? Should it be 100 or should it be a multiply by b? Which one will learn work shorter? A multiply by b. Okay? So your condition should be let's create here in LCM is receiving in a, in b. First, we'll have to write our base condition. Okay? First, I'm writing one minute. I'll just write base condition and testing condition in this only. Okay? If I is I I need to take it. I can't have it. Is equals to zero and I modulo b is equal to zero. Return I. I plus plus for condition a comma b comma I plus. Correct? Initially, I will send I as one because for loop, my eyes getting initialized to what? One. So at the time of sending it, LCM sorry. KCM. LCM of four six, initializing the four group with one. I will keep on checking one modulo four is equal equal to four or nothing, and I will keep on incrementing I, I plus one. Passing the same a, passing the same b. And whenever it gets hit and whenever I find my I, I will return back. So let me check. This is the four loop getting created or converted into recursion. Let me see whether this works. Four six one. I'll just run the file. It is giving me 12. Okay. I got my answer. 12. If you want to check out with something else, fourteen and six, It's coming 42 LCM. Let's make the LCM for two and eight. Eight. Okay. Understood? For loop I showed you. Right? Do the LCM for this guy. Here, the concept was I was getting incremented. Here, the concept is a itself is getting incremented. So do that. Write the second one. It will be your base condition in this case. And then you will increment what? A always. Until a does not reach a bigger point where it is getting divided by b. This is your LCM. If you want, I'll show you recursion in that also. Int LCM m. Stopping condition is what? And now I will call LCMM to check whether it's working. I don't need an eye now. Correct? No? I am checking what for LCM. A should be divisible by b. So what did I check over here? If a is divisible by b, I should stop checking for my LCM. So I will return. What do I need to return a? Because a becomes the LCM. Otherwise, if it is not true, what am I doing? I'm changing a and saying you are now a plus a. So instead of sending a a, I am sending what? A plus a who will become the new a for the next LCA. Okay? So I will try to run this. Did I save it? Yes. You're getting eight for two and eight. Let's do for four and six. Did I save it? Why is it coming zero? A plus equal to No. Why is it coming? Eight into a. The minimum has to be done. Out of the two min either ways it works. No? It becomes four eight eight plus eight. So we have got to make sure that is remaining So I I will keep on incrementing. No? I plus plus. Okay. So we are needing I here also because we can't do a plus a. Fine?"
+    }
+  ],
+  "behavior_payloads": {
+    "oracle": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "So, basically, there are two type types of thing which are opposite. Greatest common divisor and least common multiple. HCF, JCD, one and th",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "COMPARE",
+        "evidence_quote": "So, basically, there are two type types of thing which are opposite. Greatest common divisor and least common multiple. HCF, JCD, one and th",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "ASK_WHY",
+        "evidence_quote": "So, basically, there are two type types of thing which are opposite. Greatest common divisor and least common multiple. HCF, JCD, one and th",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "DEMONSTRATE",
+        "evidence_quote": "LCM, a I, b I. You have to find an I where I modulo a. 2424 modulo eight was equal equal to zero. 24 modulo 12 was equal equal to zero. So w",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "PRACTICE",
+        "evidence_quote": "LCM, a I, b I. You have to find an I where I modulo a. 2424 modulo eight was equal equal to zero. 24 modulo 12 was equal equal to zero. So w",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "STUDENT_INTERACT",
+        "evidence_quote": "LCM, a I, b I. You have to find an I where I modulo a. 2424 modulo eight was equal equal to zero. 24 modulo 12 was equal equal to zero. So w",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "PREDICT_CHANGE",
+        "evidence_quote": "right recursion. For I I have a lot of thing also and for this guy also. Hit it here. What do we want to do? LCM, I take a, I take b. I'm ke",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "CODE_TRACE",
+        "evidence_quote": "right recursion. For I I have a lot of thing also and for this guy also. Hit it here. What do we want to do? LCM, I take a, I take b. I'm ke",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "DEBUG",
+        "evidence_quote": "right recursion. For I I have a lot of thing also and for this guy also. Hit it here. What do we want to do? LCM, I take a, I take b. I'm ke",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "c4": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "there are two type types of thing which are opposite. Greatest common divisor and least common multiple",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "DEMONSTRATE",
+        "evidence_quote": "LCM would be two into two into three for 12, and for eight, it is what? Two into two into two",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "COMPARE",
+        "evidence_quote": "JCD is always bigger or LCM is bigger",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "STUDENT_INTERACT",
+        "evidence_quote": "Is 24 modulo eight equal equal to zero? Yes",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "PRACTICE",
+        "evidence_quote": "So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "REINFORCE",
+        "evidence_quote": "Multiple 12 Understood? Okay",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "DEBUG",
+        "evidence_quote": "I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No.",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "CODE_TRACE",
+        "evidence_quote": "Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero.",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "ASK_WHY",
+        "evidence_quote": "Why is it coming zero?",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "c5": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "Greatest common divisor and least common multiple. HCF, JCD, one and the same thing. LCM, separate.",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "COMPARE",
+        "evidence_quote": "JCD is always bigger or LCM is bigger.",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "DEBUG",
+        "evidence_quote": "I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No.",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "CODE_TRACE",
+        "evidence_quote": "I will do eight plus eight... check if 16 modulo 12 is equal zero. Does not happen. Then I will do eight plus eight plus eight. What it beco",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "DEMONSTRATE",
+        "evidence_quote": "I will just run the file. It is giving me 12.",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "PRACTICE",
+        "evidence_quote": "Write the second one. It will be your base condition in this case.",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "permuted": {
+      "source_package_id": "pkg_04_recursion_lcm",
+      "behaviors": [
+        {
+          "behavior": "EXPLAIN",
+          "evidence_quote": "Now let's try to understand greatest common divisor. How are you going to find this one? Your numbers are eight and twelve again for JCD. So",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "DEMONSTRATE",
+          "evidence_quote": "Now let's try to understand greatest common divisor. How are you going to find this one? Your numbers are eight and twelve again for JCD. So",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "COMPARE",
+          "evidence_quote": "Now let's try to understand greatest common divisor. How are you going to find this one? Your numbers are eight and twelve again for JCD. So",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "ASK_WHY",
+          "evidence_quote": "Now let's try to understand greatest common divisor. How are you going to find this one? Your numbers are eight and twelve again for JCD. So",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "REINFORCE",
+          "evidence_quote": "So there are two types of problems that we have. One problem talks about sharing stuff equally. So whenever you guys have got to divide, it",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "REAL_WORLD_APP",
+          "evidence_quote": "So there are two types of problems that we have. One problem talks about sharing stuff equally. So whenever you guys have got to divide, it",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "DEBUG",
+          "evidence_quote": "Reverse a string means what? Print I a b I m x a l I n a r. Now comes one more aspect of recursion. Make the problem extremely small, solve",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "CODE_TRACE",
+          "evidence_quote": "Reverse a string means what? Print I a b I m x a l I n a r. Now comes one more aspect of recursion. Make the problem extremely small, solve",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "PRACTICE",
+          "evidence_quote": "I have never been reversed. Palindrome. Equal. Palindrome or not? While going or while coming? While coming back. While returning, not while",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "EDGE_CASE",
+          "evidence_quote": "I have never been reversed. Palindrome. Equal. Palindrome or not? While going or while coming? While coming back. While returning, not while",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "STUDENT_INTERACT",
+          "evidence_quote": "I have never been reversed. Palindrome. Equal. Palindrome or not? While going or while coming? While coming back. While returning, not while",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_03_dsa_bfs_conceptual",
+  "domain": "Computer Science / Algorithms",
+  "subject": "Data Structures and Algorithms",
+  "topic": "Breadth-First Search (BFS) Graph Traversal",
+  "learner_level": "Undergraduate B.Tech CSE (Semester 3)",
+  "syllabus_context": "Unit III: Graph Algorithms and Traversal Paradigms. Representation of graphs, breadth-first exploration versus depth-first exploration, FIFO frontier management, visited tracking, shortest paths on unweighted graphs, algorithmic completeness.",
+  "declared_learning_objective": "Explain the conceptual mechanics of Breadth-First Search, prove why a First-In-First-Out (FIFO) queue guarantees level-order discovery and unweighted shortest-path traversal, and explain the invariant function of the visited set.",
+  "provenance": {
+    "mode": "AUTHENTIC_RECORDING",
+    "source_type": "CLASSROOM_RECORDING",
+    "source": "KMIT Department of Computer Science & Engineering Lecture Series",
+    "institution": "Keshav Memorial Institute of Technology, Hyderabad",
+    "access_date": "2026-08-20",
+    "license_or_usage_basis": "Institutional Academic Research Dataset Agreement"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Diagrammatic node connections described verbally with whiteboard pointer."
+  }
+}

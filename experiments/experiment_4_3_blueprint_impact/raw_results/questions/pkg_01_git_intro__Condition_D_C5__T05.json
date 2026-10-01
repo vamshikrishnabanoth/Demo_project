@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Run git --version to verify that Git is installed and identify the installed version number.",
+  "target_dimension": "Foundational Prerequisite",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "Which command should you type to verify that Git is installed and display its version number?",
+    "options": [
+      "git --version",
+      "git status",
+      "git init",
+      "git config --global"
+    ],
+    "correctAnswer": "git --version",
+    "explanation": "The command 'git --version' queries the Git installation and prints the installed version string, confirming that Git is available on the system.",
+    "metadata": {
+      "dimension": "Foundational Prerequisite",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Run git --version to verify that Git is installed and identify the installed version number."
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13314,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"Which command should you type to verify that Git is installed and display its version number?\",\n  \"options\": [\n    \"git --version\",\n    \"git status\",\n    \"git init\",\n    \"git config --global\"\n  ],\n  \"correctAnswer\": \"git --version\",\n  \"explanation\": \"The command 'git --version' queries the Git installation and prints the installed version string, confirming that Git is available on the system.\",\n  \"metadata\": {\n    \"dimension\": \"Foundational Prerequisite\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

@@ -1,0 +1,31 @@
+{
+  "unit_id": "GT-D07",
+  "benchmark": "BENCH_03",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "EDGE_CASE",
+    "CODE_TRACE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "The base condition would be if STR dot length equally equal to one. Return what? True."
+    },
+    {
+      "label": "EDGE_CASE",
+      "quote": "If STR of zero is equally equal to STR of STR dot length minus one."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "Now while returning back, is this one? Is this palindrome? Yes. So what do I pass? I pass true to it. Now the first and the last of the substring, are they equal? Yes."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"EDGE_CASE\", \"CODE_TRACE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"The base condition would be if STR dot length equally equal to one. Return what? True.\"\n    },\n    {\n      \"label\": \"EDGE_CASE\",\n      \"quote\": \"If STR of zero is equally equal to STR of STR dot length minus one.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"Now while returning back, is this one? Is this palindrome? Yes. So what do I pass? I pass true to it. Now the first and the last of the substring, are they equal? Yes.\"\n    }\n  ]\n}",
+  "latency_ms": 29150,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

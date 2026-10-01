@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "artifact_title": "Phase 4 Experiment 4.3 — Extended Human Reference (Stage 0 Adjudicated Oracle)",
+    "version": "1.0.0",
+    "created_at": "2026-09-30T21:43:00Z",
+    "status": "FROZEN_ORACLE_REFERENCE",
+    "taxonomy_classes_count": 12,
+    "total_extended_units": 4,
+    "inter_annotator_agreement": {
+      "binary_cohen_kappa": 0.8636,
+      "percentage_agreement": 95.83,
+      "mean_jaccard_similarity": 0.8334
+    },
+    "stopping_rule": "Dual independent annotation with formal boundary adjudication to establish consensus Oracle Reference."
+  },
+  "units": {
+    "GT-T02": {
+      "unit_id": "GT-T02",
+      "benchmark": "BENCH_05",
+      "instructor": "Tapadia Sir",
+      "duration_seconds": 269.8,
+      "word_count": 398,
+      "annotator1_labels": [
+        "EXPLAIN",
+        "CODE_TRACE",
+        "EDGE_CASE"
+      ],
+      "annotator2_labels": [
+        "EXPLAIN",
+        "CODE_TRACE"
+      ],
+      "discrepancy_resolved": "EDGE_CASE",
+      "adjudication_rationale": "The instructor explains smallest string length bound as the algorithmic invariant to prevent array index out of bounds. While bounds-checking avoids index violation, Boundary rules from Step 2 reserve EDGE_CASE for explicit degenerate corner inputs (e.g. empty string, 0, null). Smallest string length bound is an algorithmic design rule. Consensus accepts EXPLAIN and CODE_TRACE; EDGE_CASE is excluded from primary reference.",
+      "final_consensus_labels": [
+        "EXPLAIN",
+        "CODE_TRACE"
+      ],
+      "evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "the first thing you would need to find out is what is the length of the smallest string? Because the longest common prefix cannot be larger than the smallest string. So, there is no point processing all the characters of every string because what you might end up getting into is array index out of bounds if you're not very careful about it.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "CODE_TRACE",
+          "quote": "We have a hash set created. We add h to it. h gets added. I add one more h. What does set guarantee? No duplicates. So, the second h does not get added. The third h does not get added... But when I go for the fourth character, it would be L, P and L. So, what would the set contain? Two elements. One, L and one, P. Size is not one.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    },
+    "GT-T03": {
+      "unit_id": "GT-T03",
+      "benchmark": "BENCH_05",
+      "instructor": "Tapadia Sir",
+      "duration_seconds": 209.2,
+      "word_count": 342,
+      "annotator1_labels": [
+        "EXPLAIN",
+        "DEMONSTRATE",
+        "CODE_TRACE"
+      ],
+      "annotator2_labels": [
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "discrepancy_resolved": "CODE_TRACE",
+      "adjudication_rationale": "In GT-T03, the instructor is examining projected code on screen (\"line 23\", \"scroll down\"). The step-through of characters is embedded within the live code demonstration rather than a standalone tracing segment (which was conducted in GT-T02). Consensus agrees on EXPLAIN and DEMONSTRATE; CODE_TRACE is absorbed into live code demonstration.",
+      "final_consensus_labels": [
+        "EXPLAIN",
+        "DEMONSTRATE"
+      ],
+      "evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "The outer loop is number of characters you want to process. The inner loop is one character at a time of all the three strings. And I take that character and dump it into my hash set. Is that clear? And after that, what are we doing? If the size is one, it means it is repeating in all.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "DEMONSTRATE",
+          "quote": "Can you take us to that method? Great. Guys, go through this code. I'm saying the smallest is string zero... Okay, scroll down. Yeah. What do we do?... Where does the break take you out of? Out of each loop, line 23.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    },
+    "GT-A02": {
+      "unit_id": "GT-A02",
+      "benchmark": "BENCH_06",
+      "instructor": "Asha Mam",
+      "duration_seconds": 111,
+      "word_count": 280,
+      "annotator1_labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "annotator2_labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "discrepancy_resolved": "NONE (100% Unanimous Agreement)",
+      "adjudication_rationale": "Both annotators independently agreed that the instructor explains the latent space bottleneck role in VAEs and directly compares fully connected (blurry, 50-60%) vs convolutional vs variational autoencoders (80-90%).",
+      "final_consensus_labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "Now, the main idea here is the important factor here for understanding the reconstruction is latent space. So, this variational auto encoders focused on what do I do with this latent space rather than just changing the values. What extra thing I can do with the latent space because the encoders does just the conversion of the input latent space.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "COMPARE",
+          "quote": "First fully auto encoders, very blurry images, second convolutional auto encoders, a little bit improvement by changing the latent space... unlike fully connected where the accuracy is only around 60 or 50. 70 percent or 80 percent till 90 percent accuracy of reconstructed images is done using this auto encoders, which are called as variational auto encoders.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    },
+    "GT-A03": {
+      "unit_id": "GT-A03",
+      "benchmark": "BENCH_06",
+      "instructor": "Asha Mam",
+      "duration_seconds": 172,
+      "word_count": 388,
+      "annotator1_labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "annotator2_labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "discrepancy_resolved": "NONE (100% Unanimous Agreement)",
+      "adjudication_rationale": "Both annotators independently agreed that the instructor explains latent distribution mean/variance and KL divergence regularization, while explicitly comparing standard autoencoders (single fixed point) vs VAEs (probabilistic distribution).",
+      "final_consensus_labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "evidence": [
+        {
+          "label": "EXPLAIN",
+          "quote": "I want to understand the probability of distribution of data in the latent space. So, the improvement in the latent space is done not just by one point, but understanding mean and variance of that particular data... And the KL divergence makes sure that the mean and the variance of the data are close to what? Close to the normal distribution.",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "label": "COMPARE",
+          "quote": "So, the normal encoders focuses only on one data point. Whereas, the variational auto encoders focus on what? The mean of the data distribution of the pixels and as well as more the variance... Instead of generating the fixed latent space, what does variational auto encoder do? We try to find the probability distribution",
+          "modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    }
+  }
+}

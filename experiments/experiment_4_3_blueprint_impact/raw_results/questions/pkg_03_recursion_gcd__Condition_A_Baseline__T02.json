@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T02",
+  "target_concept": "Use the modulo operator to determine whether a candidate number is a common multiple of two given integers",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "Why do the results 24 % 8 = 0 and 24 % 12 = 0 indicate that 24 is a common multiple of 8 and 12?",
+    "options": [
+      "Because both 8 and 12 divide 24 without remainder, 24 is a common multiple of the two numbers.",
+      "Because 24 is larger than both 8 and 12, any larger number must be a common multiple.",
+      "Because the sum of 8 and 12 is 20, any number greater than 20 is automatically a common multiple.",
+      "Because 24 % 8 and 24 % 12 both equal zero, 24 is the greatest common divisor of 8 and 12."
+    ],
+    "correctAnswer": "Because both 8 and 12 divide 24 without remainder, 24 is a common multiple of the two numbers.",
+    "explanation": "The modulo operator returns the remainder after division. A remainder of zero means the divisor divides the number exactly. Since both 8 and 12 divide 24 with zero remainder, 24 is a multiple of each, making it a common multiple.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Use the modulo operator to determine whether a candidate number is a common multiple of two given integers"
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 9788,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"Why do the results 24 % 8 = 0 and 24 % 12 = 0 indicate that 24 is a common multiple of 8 and 12?\",\n  \"options\": [\n    \"Because both 8 and 12 divide 24 without remainder, 24 is a common multiple of the two numbers.\",\n    \"Because 24 is larger than both 8 and 12, any larger number must be a common multiple.\",\n    \"Because the sum of 8 and 12 is 20, any number greater than 20 is automatically a common multiple.\",\n    \"Because 24 % 8 and 24 % 12 both equal zero, 24 is the greatest common divisor of 8 and 12.\"\n  ],\n  \"correctAnswer\": \"Because both 8 and 12 divide 24 without remainder, 24 is a common multiple of the two numbers.\",\n  \"explanation\": \"The modulo operator returns the remainder after division. A remainder of zero means the divisor divides the number exactly. Since both 8 and 12 divide 24 with zero remainder, 24 is a multiple of each, making it a common multiple.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

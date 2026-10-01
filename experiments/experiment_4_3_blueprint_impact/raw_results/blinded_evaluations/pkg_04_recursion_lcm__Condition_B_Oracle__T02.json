@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T02",
+  "target_concept": "Apply the recursive Euclidean algorithm (max‑mod‑min reduction) to compute the GCD of two positive integers.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 4,
+      "rationale": "The question tests the Euclidean algorithm, which is covered in the lecture, though the specific numbers differ from the example used."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires procedural reasoning to trace recursive calls and compute the GCD, not just recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, well‑phrased, and unambiguous about the algorithm and the task."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect common mistakes (ordering, mod result), making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only one option correctly follows the algorithm; the others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question presents an authentic application of the Euclidean algorithm rather than a simple definition."
+    }
+  },
+  "latency_ms": 2571,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 4, \"rationale\": \"The question tests the Euclidean algorithm, which is covered in the lecture, though the specific numbers differ from the example used.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires procedural reasoning to trace recursive calls and compute the GCD, not just recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, well‑phrased, and unambiguous about the algorithm and the task.\"},\n  \"d4_distractor_plausibility\": {\"score\": 4, \"rationale\": \"Incorrect options reflect common mistakes (ordering, mod result), making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Only one option correctly follows the algorithm; the others are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The question presents an authentic application of the Euclidean algorithm rather than a simple definition.\"}\n}"
+}

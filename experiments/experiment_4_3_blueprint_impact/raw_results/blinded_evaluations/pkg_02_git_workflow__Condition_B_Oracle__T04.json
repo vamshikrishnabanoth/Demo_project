@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "Analyze how `git diff` shows differences between the previous commit and the current working state.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 2,
+      "rationale": "The lecture mentions git diff but does not explain the '+' and '-' line prefixes, so the question tests unstated detail."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Requires simple recall of a convention rather than deeper reasoning or problem solving."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, grammatically correct, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options include a common reversal (B) and other plausible‑looking but wrong symbols, making them reasonably distractive."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Exactly one option (A) is correct; the others are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question is a straightforward factual recall, lacking authentic or novel application."
+    }
+  },
+  "latency_ms": 1794,
+  "retry_count": 2,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 2, \"rationale\": \"The lecture mentions git diff but does not explain the '+' and '-' line prefixes, so the question tests unstated detail.\"},\n  \"d2_cognitive_demand\": {\"score\": 2, \"rationale\": \"Requires simple recall of a convention rather than deeper reasoning or problem solving.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, grammatically correct, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\": 4, \"rationale\": \"Incorrect options include a common reversal (B) and other plausible‑looking but wrong symbols, making them reasonably distractive.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Exactly one option (A) is correct; the others are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\": 2, \"rationale\": \"The question is a straightforward factual recall, lacking authentic or novel application.\"}\n}"
+}

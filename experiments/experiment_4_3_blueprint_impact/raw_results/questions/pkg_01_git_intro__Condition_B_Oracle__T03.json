@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "`git config --global user.name` and `git config --global user.email` set the author information for commits.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Which command sequence correctly sets the global user name and email for Git and then verifies the configuration?",
+    "options": [
+      "git config --global user.name \"Alice\" && git config --global user.email \"alice@example.com\" && git config --list",
+      "git config --system user.name \"Alice\" && git config --system user.email \"alice@example.com\" && git config --list",
+      "git config --global user.name \"Alice\" && git config --global user.email \"alice@example.com\" && git log",
+      "git config --global user.name \"Alice\" && git config --list"
+    ],
+    "correctAnswer": "git config --global user.name \"Alice\" && git config --global user.email \"alice@example.com\" && git config --list",
+    "explanation": "The required steps are to set both user.name and user.email with the --global flag and then display all configuration values using git config --list. Using --system sets system-wide values, git log does not verify config, and omitting the email leaves the configuration incomplete.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "`git config --global user.name` and `git config --global user.email` set the author information for commits."
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 1925,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Which command sequence correctly sets the global user name and email for Git and then verifies the configuration?\",\n  \"options\": [\n    \"git config --global user.name \\\"Alice\\\" && git config --global user.email \\\"alice@example.com\\\" && git config --list\",\n    \"git config --system user.name \\\"Alice\\\" && git config --system user.email \\\"alice@example.com\\\" && git config --list\",\n    \"git config --global user.name \\\"Alice\\\" && git config --global user.email \\\"alice@example.com\\\" && git log\",\n    \"git config --global user.name \\\"Alice\\\" && git config --list\"\n  ],\n  \"correctAnswer\": \"git config --global user.name \\\"Alice\\\" && git config --global user.email \\\"alice@example.com\\\" && git config --list\",\n  \"explanation\": \"The required steps are to set both user.name and user.email with the --global flag and then display all configuration values using git config --list. Using --system sets system-wide values, git log does not verify config, and omitting the email leaves the configuration incomplete.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_C_C4",
+  "target_id": "T04",
+  "target_concept": "Use `git diff` to compare the current working files against the previous commit",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "Assume that in the previous commit the file `calc.c` contained the line `int x = 5;`. After editing, the file now contains `int x = 10;`. If you run `git diff` with no arguments, which of the following best describes the output related to this change?",
+    "options": [
+      "It will show a line starting with '+' followed by the new content.",
+      "It will show a line starting with '-' followed by the old content.",
+      "It will show a line starting with '-' for the old content and a line starting with '+' for the new content.",
+      "It will display no output because the file is unchanged."
+    ],
+    "correctAnswer": "It will show a line starting with '-' for the old content and a line starting with '+' for the new content.",
+    "explanation": "`git diff` compares the working tree against the previous commit. For a changed line, it prints the original line prefixed with '-' and the new line prefixed with '+`. Therefore the output will contain both a '-' line for `int x = 5;` and a '+' line for `int x = 10;`.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Use `git diff` to compare the current working files against the previous commit"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11507,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"Assume that in the previous commit the file `calc.c` contained the line `int x = 5;`. After editing, the file now contains `int x = 10;`. If you run `git diff` with no arguments, which of the following best describes the output related to this change?\",\n  \"options\": [\n    \"It will show a line starting with '+' followed by the new content.\",\n    \"It will show a line starting with '-' followed by the old content.\",\n    \"It will show a line starting with '-' for the old content and a line starting with '+' for the new content.\",\n    \"It will display no output because the file is unchanged.\"\n  ],\n  \"correctAnswer\": \"It will show a line starting with '-' for the old content and a line starting with '+' for the new content.\",\n  \"explanation\": \"`git diff` compares the working tree against the previous commit. For a changed line, it prints the original line prefixed with '-' and the new line prefixed with '+`. Therefore the output will contain both a '-' line for `int x = 5;` and a '+' line for `int x = 10;`.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "CALIB-D1",
+  "boundary_family": "PRACTICE",
+  "boundary_type": "NEGATIVE_BOUNDARY",
+  "expected_labels": [
+    "EXPLAIN"
+  ],
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "prohibited_labels": [
+    "PRACTICE"
+  ],
+  "is_exact_match": true,
+  "has_boundary_violation": false,
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Binary search locates an element in a sorted list by repeatedly comparing the target against the middle element and halving the search space."
+    }
+  ],
+  "latency_ms": 8019
+}

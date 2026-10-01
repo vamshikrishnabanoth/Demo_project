@@ -1,0 +1,21 @@
+{
+  "unit_id": "GT-G03",
+  "benchmark": "BENCH_04",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "To create a repository in Git, you have to use a command called as git init"
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"To create a repository in Git, you have to use a command called as git init\"\n    }\n  ]\n}",
+  "latency_ms": 13545,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

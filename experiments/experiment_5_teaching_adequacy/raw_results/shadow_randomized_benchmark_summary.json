@@ -1,0 +1,372 @@
+{
+  "test_timestamp": "2026-10-01T14:36:20.369Z",
+  "benchmark_protocol": "Randomized Interleaved Two-Group Trial (N=40: 20 OFF, 20 ON)",
+  "sample_size": {
+    "total": 40,
+    "shadow_off": 20,
+    "shadow_on": 20
+  },
+  "shadow_off_stats": {
+    "count": 20,
+    "mean": 554.4,
+    "median": 553.37,
+    "stdDev": 12.66,
+    "p95": 568.7,
+    "min": 538.75,
+    "max": 598.21
+  },
+  "shadow_on_stats": {
+    "count": 20,
+    "mean": 671.53,
+    "median": 546.58,
+    "stdDev": 556.46,
+    "p95": 687.55,
+    "min": 531.04,
+    "max": 3035.42
+  },
+  "interleaved_group_comparison": {
+    "difference_in_medians_ms": -6.79,
+    "difference_in_means_ms": 117.13,
+    "standard_error_ms": 124.46,
+    "welch_satterthwaite_df": 19,
+    "welch_t_stat": 0.941,
+    "ci_95_percent_means": [
+      -143.36,
+      377.63
+    ],
+    "mann_whitney_u": 141,
+    "mann_whitney_z": -1.596,
+    "interpretation": "95% confidence interval for difference in means spans zero; no clear latency penalty detected in this small trial"
+  },
+  "resource_utilization": {
+    "cpu_user_ms": 953,
+    "cpu_system_ms": 1141,
+    "heap_delta_mb": 1.33
+  },
+  "fault_injection_verifications": {
+    "trace_write_failure_immunity": true,
+    "downstream_abort_propagation": true
+  },
+  "raw_requests": [
+    {
+      "sequenceOrder": 1,
+      "condition": "ON",
+      "requestId": "rand_bench_on_1_1790865354015",
+      "liveLatencyMs": 3035.42,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 2,
+      "condition": "ON",
+      "requestId": "rand_bench_on_2_1790865357050",
+      "liveLatencyMs": 535.35,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 3,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_3_1790865357586",
+      "liveLatencyMs": 541.1,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 4,
+      "condition": "ON",
+      "requestId": "rand_bench_on_4_1790865358127",
+      "liveLatencyMs": 535.54,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 5,
+      "condition": "ON",
+      "requestId": "rand_bench_on_5_1790865358663",
+      "liveLatencyMs": 531.04,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 6,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_6_1790865359194",
+      "liveLatencyMs": 598.21,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 7,
+      "condition": "ON",
+      "requestId": "rand_bench_on_7_1790865359792",
+      "liveLatencyMs": 536.42,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 8,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_8_1790865360328",
+      "liveLatencyMs": 542.96,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 9,
+      "condition": "ON",
+      "requestId": "rand_bench_on_9_1790865360871",
+      "liveLatencyMs": 544.34,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 10,
+      "condition": "ON",
+      "requestId": "rand_bench_on_10_1790865361417",
+      "liveLatencyMs": 559.04,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 11,
+      "condition": "ON",
+      "requestId": "rand_bench_on_11_1790865361976",
+      "liveLatencyMs": 546.01,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 12,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_12_1790865362522",
+      "liveLatencyMs": 547.97,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 13,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_13_1790865363070",
+      "liveLatencyMs": 544.06,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 14,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_14_1790865363615",
+      "liveLatencyMs": 562.14,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 15,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_15_1790865364177",
+      "liveLatencyMs": 538.75,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 16,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_16_1790865364716",
+      "liveLatencyMs": 548.71,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 17,
+      "condition": "ON",
+      "requestId": "rand_bench_on_17_1790865365264",
+      "liveLatencyMs": 545.42,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 18,
+      "condition": "ON",
+      "requestId": "rand_bench_on_18_1790865365810",
+      "liveLatencyMs": 544.9,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 19,
+      "condition": "ON",
+      "requestId": "rand_bench_on_19_1790865366355",
+      "liveLatencyMs": 552.18,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 20,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_20_1790865366908",
+      "liveLatencyMs": 560.39,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 21,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_21_1790865367468",
+      "liveLatencyMs": 554.67,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 22,
+      "condition": "ON",
+      "requestId": "rand_bench_on_22_1790865368023",
+      "liveLatencyMs": 550.57,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 23,
+      "condition": "ON",
+      "requestId": "rand_bench_on_23_1790865368574",
+      "liveLatencyMs": 563.98,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 24,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_24_1790865369139",
+      "liveLatencyMs": 567.15,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 25,
+      "condition": "ON",
+      "requestId": "rand_bench_on_25_1790865369706",
+      "liveLatencyMs": 550.45,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 26,
+      "condition": "ON",
+      "requestId": "rand_bench_on_26_1790865370257",
+      "liveLatencyMs": 553.73,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 27,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_27_1790865370811",
+      "liveLatencyMs": 554.66,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 28,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_28_1790865371366",
+      "liveLatencyMs": 551.22,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 29,
+      "condition": "ON",
+      "requestId": "rand_bench_on_29_1790865371917",
+      "liveLatencyMs": 556.79,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 30,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_30_1790865372474",
+      "liveLatencyMs": 556.22,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 31,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_31_1790865373031",
+      "liveLatencyMs": 550.13,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 32,
+      "condition": "ON",
+      "requestId": "rand_bench_on_32_1790865373581",
+      "liveLatencyMs": 552.5,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 33,
+      "condition": "ON",
+      "requestId": "rand_bench_on_33_1790865374134",
+      "liveLatencyMs": 547.14,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 34,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_34_1790865374681",
+      "liveLatencyMs": 558.79,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 35,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_35_1790865375240",
+      "liveLatencyMs": 546.21,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 36,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_36_1790865375787",
+      "liveLatencyMs": 557.89,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 37,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_37_1790865376344",
+      "liveLatencyMs": 554.3,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 38,
+      "condition": "OFF",
+      "requestId": "rand_bench_off_38_1790865376899",
+      "liveLatencyMs": 552.43,
+      "questionsDelivered": 0,
+      "shadowEnqueued": false
+    },
+    {
+      "sequenceOrder": 39,
+      "condition": "ON",
+      "requestId": "rand_bench_on_39_1790865377451",
+      "liveLatencyMs": 545.88,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    },
+    {
+      "sequenceOrder": 40,
+      "condition": "ON",
+      "requestId": "rand_bench_on_40_1790865377998",
+      "liveLatencyMs": 543.93,
+      "questionsDelivered": 0,
+      "shadowEnqueued": true
+    }
+  ]
+}

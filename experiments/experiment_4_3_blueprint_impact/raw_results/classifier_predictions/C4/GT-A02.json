@@ -1,0 +1,16 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "COMPARE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Now, what does this variational auto encoders do? Variational auto encoders does not just change the latent space dimension, but works are how is this latent space working? And what are the other parameters that have to focus on this latent space so that the image quality will be improved."
+    },
+    {
+      "label": "COMPARE",
+      "quote": "First fully auto encoders, very blurry images, second convolutional auto encoders, a little bit improvement by changing the latent space."
+    }
+  ]
+}

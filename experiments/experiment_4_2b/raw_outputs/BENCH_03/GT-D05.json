@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-D05",
+  "benchmark": "BENCH_03",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "REAL_WORLD_APP"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "So there are two types of problems that we have. One problem talks about sharing stuff equally... divide all these things among people equally."
+    },
+    {
+      "label": "REAL_WORLD_APP",
+      "quote": "Timing, interval, scheduling, round robin... Job shortest job first... Scheduling algorithms."
+    }
+  ],
+  "raw_response": "{\"labels\":[\"EXPLAIN\",\"REAL_WORLD_APP\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"So there are two types of problems that we have. One problem talks about sharing stuff equally... divide all these things among people equally.\"},{\"label\":\"REAL_WORLD_APP\",\"quote\":\"Timing, interval, scheduling, round robin... Job shortest job first... Scheduling algorithms.\"}]}",
+  "latency_ms": 6848,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

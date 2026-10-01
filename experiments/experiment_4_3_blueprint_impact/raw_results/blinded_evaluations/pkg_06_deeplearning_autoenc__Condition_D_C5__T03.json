@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_D_C5",
+  "target_id": "T03",
+  "target_concept": "Identify the role of Gaussian mean and variance in modeling the latent distribution of a VAE.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the Gaussian mean, which the lecture explicitly defines as the average sample of the latent distribution."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires recall of a concept but no deeper reasoning or application."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 2,
+      "rationale": "Incorrect options are unrelated and unlikely to be chosen by a knowledgeable student."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Exactly one option matches the evidence; the others are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question tests a basic definition rather than an authentic, higher‑order application."
+    }
+  },
+  "latency_ms": 65879,
+  "retry_count": 4,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the Gaussian mean, which the lecture explicitly defines as the average sample of the latent distribution.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires recall of a concept but no deeper reasoning or application.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\":2,\"rationale\":\"Incorrect options are unrelated and unlikely to be chosen by a knowledgeable student.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Exactly one option matches the evidence; the others are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The question tests a basic definition rather than an authentic, higher‑order application.\"}\n}"
+}

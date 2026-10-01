@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_02_linear_algebra_eigenvalues",
+  "domain": "Mathematics / Physical Sciences",
+  "subject": "Linear Algebra",
+  "topic": "Eigenvalues and Eigenvectors of Linear Operators",
+  "learner_level": "Undergraduate B.Tech / B.Sc. (Semester 2)",
+  "syllabus_context": "Unit IV: Spectral Theory and Matrix Diagonalization. Linear transformations, invariant subspaces, characteristic equation, computation of eigenvalues and eigenvectors, algebraic and geometric multiplicity, defective matrices, diagonalizability.",
+  "declared_learning_objective": "Compute the eigenvalues and eigenvectors of a 2x2 matrix, explain the geometric intuition of an eigenvector as an invariant direction under linear transformation, and solve the characteristic polynomial det(A - lambda I) = 0.",
+  "provenance": {
+    "mode": "AUTHENTIC_RECORDING",
+    "source_type": "OPEN_COURSEWARE",
+    "source": "MIT OpenCourseWare 18.06 (Linear Algebra, Prof. Gilbert Strang)",
+    "institution": "Massachusetts Institute of Technology",
+    "access_date": "2026-09-12",
+    "license_or_usage_basis": "CC BY-NC-SA 4.0 Educational Research Use"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Chalkboard matrix calculations occasionally transcribed from spoken exposition."
+  }
+}

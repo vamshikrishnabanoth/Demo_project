@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T02",
+  "target_concept": "The `git --version` command reports the installed Git version.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "When you run the command `git --version`, which of the following best describes the format of its output?",
+    "options": [
+      "git version X.Y.Z",
+      "Git version: X.Y.Z",
+      "Version X.Y.Z",
+      "Error: command not found"
+    ],
+    "correctAnswer": "git version X.Y.Z",
+    "explanation": "The `git --version` command prints the literal text \"git version\" followed by the installed Git version number (e.g., git version 2.41.0). The other options either change the capitalization, add punctuation, or describe an error that does not occur when Git is installed.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Medium",
+      "concept": "The `git --version` command reports the installed Git version."
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 1406,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"When you run the command `git --version`, which of the following best describes the format of its output?\",\n  \"options\": [\n    \"git version X.Y.Z\",\n    \"Git version: X.Y.Z\",\n    \"Version X.Y.Z\",\n    \"Error: command not found\"\n  ],\n  \"correctAnswer\": \"git version X.Y.Z\",\n  \"explanation\": \"The `git --version` command prints the literal text \\\"git version\\\" followed by the installed Git version number (e.g., git version 2.41.0). The other options either change the capitalization, add punctuation, or describe an error that does not occur when Git is installed.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

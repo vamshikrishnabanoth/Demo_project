@@ -1,0 +1,1423 @@
+{
+  "experiment_id": "experiment_4_3_blueprint_impact",
+  "stage": "Stage_4.3B_Comprehensive_Analysis",
+  "timestamp": "2026-10-01T06:04:34.263Z",
+  "total_questions": 146,
+  "total_evaluated": 146,
+  "grounding_gate": {
+    "summary": "Conditions A–D preserved deterministic grounding for all generated questions (116/116). Condition E produced 3 grounding failures among 30 questions, all associated with mismatched behavioral conditioning and foreign-topic drift. This provides evidence that incorrect behavioral conditioning can induce downstream grounding failures under the negative-control condition.",
+    "by_condition": {
+      "Condition_A_Baseline": {
+        "total": 30,
+        "passed": 30,
+        "failed": 0,
+        "pass_rate": 100
+      },
+      "Condition_B_Oracle": {
+        "total": 29,
+        "passed": 29,
+        "failed": 0,
+        "pass_rate": 100
+      },
+      "Condition_C_C4": {
+        "total": 27,
+        "passed": 27,
+        "failed": 0,
+        "pass_rate": 100
+      },
+      "Condition_D_C5": {
+        "total": 30,
+        "passed": 30,
+        "failed": 0,
+        "pass_rate": 100
+      },
+      "Condition_E_Permuted": {
+        "total": 30,
+        "passed": 27,
+        "failed": 3,
+        "pass_rate": 90
+      }
+    },
+    "by_package": {
+      "pkg_01_git_intro": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0,
+        "pass_rate": 100
+      },
+      "pkg_02_git_workflow": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0,
+        "pass_rate": 100
+      },
+      "pkg_03_recursion_gcd": {
+        "total": 21,
+        "passed": 19,
+        "failed": 2,
+        "pass_rate": 90.5
+      },
+      "pkg_04_recursion_lcm": {
+        "total": 25,
+        "passed": 24,
+        "failed": 1,
+        "pass_rate": 96
+      },
+      "pkg_05_algorithms_prefix": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0,
+        "pass_rate": 100
+      },
+      "pkg_06_deeplearning_autoenc": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0,
+        "pass_rate": 100
+      }
+    },
+    "failures_detail": [
+      {
+        "file": "pkg_03_recursion_gcd__Condition_E_Permuted__T04.json",
+        "package_id": "pkg_03_recursion_gcd",
+        "target_id": "T04",
+        "failureCode": "INSUFFICIENT_READABLE_EVIDENCE",
+        "reasons": [
+          "FOREIGN_TOPIC_CONTAMINATION: Multiple unsupported domain anchors (school, purchase, identical, desks) absent from lecture evidence"
+        ]
+      },
+      {
+        "file": "pkg_03_recursion_gcd__Condition_E_Permuted__T05.json",
+        "package_id": "pkg_03_recursion_gcd",
+        "target_id": "T05",
+        "failureCode": "INSUFFICIENT_READABLE_EVIDENCE",
+        "reasons": [
+          "FOREIGN_TOPIC_CONTAMINATION: Multiple unsupported domain anchors (function, reverses, string, reversing) absent from lecture evidence"
+        ]
+      },
+      {
+        "file": "pkg_04_recursion_lcm__Condition_E_Permuted__T02.json",
+        "package_id": "pkg_04_recursion_lcm",
+        "target_id": "T02",
+        "failureCode": "INSUFFICIENT_READABLE_EVIDENCE",
+        "reasons": [
+          "FOREIGN_TOPIC_CONTAMINATION: Multiple unsupported domain anchors (provided, property, hash, set) absent from lecture evidence"
+        ]
+      }
+    ]
+  },
+  "dimension_statistics": {
+    "d1": {
+      "label": "D1 Teaching Alignment",
+      "conditions": {
+        "Condition_A_Baseline": {
+          "n": 30,
+          "mean": 4.4,
+          "std": 1.192,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_B_Oracle": {
+          "n": 29,
+          "mean": 4.241,
+          "std": 1.057,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_C_C4": {
+          "n": 27,
+          "mean": 4.593,
+          "std": 1.01,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_D_C5": {
+          "n": 30,
+          "mean": 4.367,
+          "std": 1.129,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_E_Permuted": {
+          "n": 30,
+          "mean": 4.267,
+          "std": 1.311,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        }
+      }
+    },
+    "d2": {
+      "label": "D2 Cognitive Demand",
+      "conditions": {
+        "Condition_A_Baseline": {
+          "n": 30,
+          "mean": 3.533,
+          "std": 0.629,
+          "median": 4,
+          "min": 2,
+          "max": 4
+        },
+        "Condition_B_Oracle": {
+          "n": 29,
+          "mean": 3.379,
+          "std": 0.82,
+          "median": 4,
+          "min": 2,
+          "max": 4
+        },
+        "Condition_C_C4": {
+          "n": 27,
+          "mean": 3.296,
+          "std": 0.993,
+          "median": 4,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_D_C5": {
+          "n": 30,
+          "mean": 3.433,
+          "std": 0.817,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        },
+        "Condition_E_Permuted": {
+          "n": 30,
+          "mean": 3.733,
+          "std": 0.521,
+          "median": 4,
+          "min": 2,
+          "max": 4
+        }
+      }
+    },
+    "d3": {
+      "label": "D3 Stem Clarity",
+      "conditions": {
+        "Condition_A_Baseline": {
+          "n": 30,
+          "mean": 4.967,
+          "std": 0.183,
+          "median": 5,
+          "min": 4,
+          "max": 5
+        },
+        "Condition_B_Oracle": {
+          "n": 29,
+          "mean": 4.966,
+          "std": 0.186,
+          "median": 5,
+          "min": 4,
+          "max": 5
+        },
+        "Condition_C_C4": {
+          "n": 27,
+          "mean": 4.778,
+          "std": 0.801,
+          "median": 5,
+          "min": 2,
+          "max": 5
+        },
+        "Condition_D_C5": {
+          "n": 30,
+          "mean": 5,
+          "std": 0,
+          "median": 5,
+          "min": 5,
+          "max": 5
+        },
+        "Condition_E_Permuted": {
+          "n": 30,
+          "mean": 5,
+          "std": 0,
+          "median": 5,
+          "min": 5,
+          "max": 5
+        }
+      }
+    },
+    "d4": {
+      "label": "D4 Distractor Plausibility",
+      "conditions": {
+        "Condition_A_Baseline": {
+          "n": 30,
+          "mean": 4.167,
+          "std": 0.791,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        },
+        "Condition_B_Oracle": {
+          "n": 29,
+          "mean": 4.103,
+          "std": 0.9,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        },
+        "Condition_C_C4": {
+          "n": 27,
+          "mean": 4.037,
+          "std": 0.94,
+          "median": 4,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_D_C5": {
+          "n": 30,
+          "mean": 4.1,
+          "std": 0.845,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        },
+        "Condition_E_Permuted": {
+          "n": 30,
+          "mean": 4.067,
+          "std": 0.828,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        }
+      }
+    },
+    "d5": {
+      "label": "D5 Single-Key Determinism",
+      "conditions": {
+        "Condition_A_Baseline": {
+          "n": 30,
+          "mean": 4.6,
+          "std": 1.037,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_B_Oracle": {
+          "n": 29,
+          "mean": 4.793,
+          "std": 0.774,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_C_C4": {
+          "n": 27,
+          "mean": 4.741,
+          "std": 0.944,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_D_C5": {
+          "n": 30,
+          "mean": 4.633,
+          "std": 1.033,
+          "median": 5,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_E_Permuted": {
+          "n": 30,
+          "mean": 4.867,
+          "std": 0.571,
+          "median": 5,
+          "min": 2,
+          "max": 5
+        }
+      }
+    },
+    "d6": {
+      "label": "D6 Question Novelty",
+      "conditions": {
+        "Condition_A_Baseline": {
+          "n": 30,
+          "mean": 3.6,
+          "std": 0.968,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        },
+        "Condition_B_Oracle": {
+          "n": 29,
+          "mean": 3.69,
+          "std": 1.039,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        },
+        "Condition_C_C4": {
+          "n": 27,
+          "mean": 3.444,
+          "std": 1.311,
+          "median": 4,
+          "min": 1,
+          "max": 5
+        },
+        "Condition_D_C5": {
+          "n": 30,
+          "mean": 3.567,
+          "std": 1.073,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        },
+        "Condition_E_Permuted": {
+          "n": 30,
+          "mean": 3.9,
+          "std": 0.759,
+          "median": 4,
+          "min": 2,
+          "max": 5
+        }
+      }
+    }
+  },
+  "paired_differences_vs_baseline_a": {
+    "d1": {
+      "label": "D1 Teaching Alignment",
+      "comparisons": {
+        "Condition_B_Oracle": {
+          "n_pairs": 29,
+          "mean_delta": -0.172,
+          "std_delta": 1.794,
+          "cohens_dz": -0.096,
+          "improved_gt": 5,
+          "tied_eq": 12,
+          "degraded_lt": 12
+        },
+        "Condition_C_C4": {
+          "n_pairs": 27,
+          "mean_delta": 0.222,
+          "std_delta": 1.761,
+          "cohens_dz": 0.126,
+          "improved_gt": 6,
+          "tied_eq": 16,
+          "degraded_lt": 5
+        },
+        "Condition_D_C5": {
+          "n_pairs": 30,
+          "mean_delta": -0.033,
+          "std_delta": 1.351,
+          "cohens_dz": -0.025,
+          "improved_gt": 5,
+          "tied_eq": 20,
+          "degraded_lt": 5
+        },
+        "Condition_E_Permuted": {
+          "n_pairs": 30,
+          "mean_delta": -0.133,
+          "std_delta": 1.978,
+          "cohens_dz": -0.067,
+          "improved_gt": 6,
+          "tied_eq": 15,
+          "degraded_lt": 9
+        }
+      }
+    },
+    "d2": {
+      "label": "D2 Cognitive Demand",
+      "comparisons": {
+        "Condition_B_Oracle": {
+          "n_pairs": 29,
+          "mean_delta": -0.138,
+          "std_delta": 1.06,
+          "cohens_dz": -0.13,
+          "improved_gt": 7,
+          "tied_eq": 12,
+          "degraded_lt": 10
+        },
+        "Condition_C_C4": {
+          "n_pairs": 27,
+          "mean_delta": -0.185,
+          "std_delta": 1.21,
+          "cohens_dz": -0.153,
+          "improved_gt": 9,
+          "tied_eq": 8,
+          "degraded_lt": 10
+        },
+        "Condition_D_C5": {
+          "n_pairs": 30,
+          "mean_delta": -0.1,
+          "std_delta": 1.094,
+          "cohens_dz": -0.091,
+          "improved_gt": 8,
+          "tied_eq": 13,
+          "degraded_lt": 9
+        },
+        "Condition_E_Permuted": {
+          "n_pairs": 30,
+          "mean_delta": 0.2,
+          "std_delta": 0.925,
+          "cohens_dz": 0.216,
+          "improved_gt": 11,
+          "tied_eq": 13,
+          "degraded_lt": 6
+        }
+      }
+    },
+    "d3": {
+      "label": "D3 Stem Clarity",
+      "comparisons": {
+        "Condition_B_Oracle": {
+          "n_pairs": 29,
+          "mean_delta": 0,
+          "std_delta": 0.267,
+          "cohens_dz": 0,
+          "improved_gt": 1,
+          "tied_eq": 27,
+          "degraded_lt": 1
+        },
+        "Condition_C_C4": {
+          "n_pairs": 27,
+          "mean_delta": -0.185,
+          "std_delta": 0.834,
+          "cohens_dz": -0.222,
+          "improved_gt": 1,
+          "tied_eq": 24,
+          "degraded_lt": 2
+        },
+        "Condition_D_C5": {
+          "n_pairs": 30,
+          "mean_delta": 0.033,
+          "std_delta": 0.183,
+          "cohens_dz": 0.183,
+          "improved_gt": 1,
+          "tied_eq": 29,
+          "degraded_lt": 0
+        },
+        "Condition_E_Permuted": {
+          "n_pairs": 30,
+          "mean_delta": 0.033,
+          "std_delta": 0.183,
+          "cohens_dz": 0.183,
+          "improved_gt": 1,
+          "tied_eq": 29,
+          "degraded_lt": 0
+        }
+      }
+    },
+    "d4": {
+      "label": "D4 Distractor Plausibility",
+      "comparisons": {
+        "Condition_B_Oracle": {
+          "n_pairs": 29,
+          "mean_delta": -0.069,
+          "std_delta": 1.1,
+          "cohens_dz": -0.063,
+          "improved_gt": 9,
+          "tied_eq": 10,
+          "degraded_lt": 10
+        },
+        "Condition_C_C4": {
+          "n_pairs": 27,
+          "mean_delta": -0.148,
+          "std_delta": 1.064,
+          "cohens_dz": -0.139,
+          "improved_gt": 6,
+          "tied_eq": 16,
+          "degraded_lt": 5
+        },
+        "Condition_D_C5": {
+          "n_pairs": 30,
+          "mean_delta": -0.067,
+          "std_delta": 0.944,
+          "cohens_dz": -0.071,
+          "improved_gt": 9,
+          "tied_eq": 10,
+          "degraded_lt": 11
+        },
+        "Condition_E_Permuted": {
+          "n_pairs": 30,
+          "mean_delta": -0.1,
+          "std_delta": 0.995,
+          "cohens_dz": -0.101,
+          "improved_gt": 8,
+          "tied_eq": 10,
+          "degraded_lt": 12
+        }
+      }
+    },
+    "d5": {
+      "label": "D5 Single-Key Determinism",
+      "comparisons": {
+        "Condition_B_Oracle": {
+          "n_pairs": 29,
+          "mean_delta": 0.103,
+          "std_delta": 1.235,
+          "cohens_dz": 0.084,
+          "improved_gt": 3,
+          "tied_eq": 24,
+          "degraded_lt": 2
+        },
+        "Condition_C_C4": {
+          "n_pairs": 27,
+          "mean_delta": 0.074,
+          "std_delta": 1.412,
+          "cohens_dz": 0.052,
+          "improved_gt": 4,
+          "tied_eq": 21,
+          "degraded_lt": 2
+        },
+        "Condition_D_C5": {
+          "n_pairs": 30,
+          "mean_delta": 0.033,
+          "std_delta": 0.85,
+          "cohens_dz": 0.039,
+          "improved_gt": 3,
+          "tied_eq": 25,
+          "degraded_lt": 2
+        },
+        "Condition_E_Permuted": {
+          "n_pairs": 30,
+          "mean_delta": 0.267,
+          "std_delta": 1.23,
+          "cohens_dz": 0.217,
+          "improved_gt": 5,
+          "tied_eq": 23,
+          "degraded_lt": 2
+        }
+      }
+    },
+    "d6": {
+      "label": "D6 Question Novelty",
+      "comparisons": {
+        "Condition_B_Oracle": {
+          "n_pairs": 29,
+          "mean_delta": 0.103,
+          "std_delta": 1.398,
+          "cohens_dz": 0.074,
+          "improved_gt": 8,
+          "tied_eq": 11,
+          "degraded_lt": 10
+        },
+        "Condition_C_C4": {
+          "n_pairs": 27,
+          "mean_delta": -0.111,
+          "std_delta": 1.625,
+          "cohens_dz": -0.068,
+          "improved_gt": 10,
+          "tied_eq": 8,
+          "degraded_lt": 9
+        },
+        "Condition_D_C5": {
+          "n_pairs": 30,
+          "mean_delta": -0.033,
+          "std_delta": 1.426,
+          "cohens_dz": -0.023,
+          "improved_gt": 9,
+          "tied_eq": 11,
+          "degraded_lt": 10
+        },
+        "Condition_E_Permuted": {
+          "n_pairs": 30,
+          "mean_delta": 0.3,
+          "std_delta": 1.179,
+          "cohens_dz": 0.254,
+          "improved_gt": 14,
+          "tied_eq": 8,
+          "degraded_lt": 8
+        }
+      }
+    }
+  },
+  "package_level_breakdown": {
+    "pkg_01_git_intro": {
+      "Condition_A_Baseline": {
+        "d1": {
+          "n": 5,
+          "mean": 4.6
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.2
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.6
+        }
+      },
+      "Condition_B_Oracle": {
+        "d1": {
+          "n": 5,
+          "mean": 3.4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.4
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.6
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d6": {
+          "n": 5,
+          "mean": 4
+        }
+      },
+      "Condition_C_C4": {
+        "d1": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3
+        },
+        "d3": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d6": {
+          "n": 5,
+          "mean": 2.6
+        }
+      },
+      "Condition_D_C5": {
+        "d1": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d2": {
+          "n": 5,
+          "mean": 2.8
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3
+        }
+      },
+      "Condition_E_Permuted": {
+        "d1": {
+          "n": 5,
+          "mean": 5
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 5
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 4.4
+        }
+      }
+    },
+    "pkg_02_git_workflow": {
+      "Condition_A_Baseline": {
+        "d1": {
+          "n": 5,
+          "mean": 4.6
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.6
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.8
+        }
+      },
+      "Condition_B_Oracle": {
+        "d1": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.2
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.6
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.2
+        }
+      },
+      "Condition_C_C4": {
+        "d1": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.2
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 4.2
+        }
+      },
+      "Condition_D_C5": {
+        "d1": {
+          "n": 5,
+          "mean": 4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.4
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d6": {
+          "n": 5,
+          "mean": 4
+        }
+      },
+      "Condition_E_Permuted": {
+        "d1": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.6
+        }
+      }
+    },
+    "pkg_03_recursion_gcd": {
+      "Condition_A_Baseline": {
+        "d1": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d2": {
+          "n": 5,
+          "mean": 4
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.8
+        }
+      },
+      "Condition_B_Oracle": {
+        "d1": {
+          "n": 4,
+          "mean": 5
+        },
+        "d2": {
+          "n": 4,
+          "mean": 3.5
+        },
+        "d3": {
+          "n": 4,
+          "mean": 5
+        },
+        "d4": {
+          "n": 4,
+          "mean": 3.5
+        },
+        "d5": {
+          "n": 4,
+          "mean": 5
+        },
+        "d6": {
+          "n": 4,
+          "mean": 3.75
+        }
+      },
+      "Condition_C_C4": {
+        "d1": {
+          "n": 2,
+          "mean": 4
+        },
+        "d2": {
+          "n": 2,
+          "mean": 2.5
+        },
+        "d3": {
+          "n": 2,
+          "mean": 5
+        },
+        "d4": {
+          "n": 2,
+          "mean": 4
+        },
+        "d5": {
+          "n": 2,
+          "mean": 5
+        },
+        "d6": {
+          "n": 2,
+          "mean": 2
+        }
+      },
+      "Condition_D_C5": {
+        "d1": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.6
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.6
+        }
+      },
+      "Condition_E_Permuted": {
+        "d1": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 4
+        }
+      }
+    },
+    "pkg_04_recursion_lcm": {
+      "Condition_A_Baseline": {
+        "d1": {
+          "n": 5,
+          "mean": 5
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.8
+        }
+      },
+      "Condition_B_Oracle": {
+        "d1": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.2
+        },
+        "d3": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.6
+        }
+      },
+      "Condition_C_C4": {
+        "d1": {
+          "n": 5,
+          "mean": 5
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 4
+        }
+      },
+      "Condition_D_C5": {
+        "d1": {
+          "n": 5,
+          "mean": 5
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.6
+        }
+      },
+      "Condition_E_Permuted": {
+        "d1": {
+          "n": 5,
+          "mean": 3.2
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.4
+        }
+      }
+    },
+    "pkg_05_algorithms_prefix": {
+      "Condition_A_Baseline": {
+        "d1": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.4
+        },
+        "d3": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.6
+        }
+      },
+      "Condition_B_Oracle": {
+        "d1": {
+          "n": 5,
+          "mean": 4.6
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.4
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.8
+        }
+      },
+      "Condition_C_C4": {
+        "d1": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.4
+        },
+        "d3": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.8
+        }
+      },
+      "Condition_D_C5": {
+        "d1": {
+          "n": 5,
+          "mean": 4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.2
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.6
+        }
+      },
+      "Condition_E_Permuted": {
+        "d1": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d6": {
+          "n": 5,
+          "mean": 4
+        }
+      }
+    },
+    "pkg_06_deeplearning_autoenc": {
+      "Condition_A_Baseline": {
+        "d1": {
+          "n": 5,
+          "mean": 3.2
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.2
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.4
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3
+        }
+      },
+      "Condition_B_Oracle": {
+        "d1": {
+          "n": 5,
+          "mean": 4.6
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.8
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.8
+        }
+      },
+      "Condition_C_C4": {
+        "d1": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.4
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.2
+        }
+      },
+      "Condition_D_C5": {
+        "d1": {
+          "n": 5,
+          "mean": 4
+        },
+        "d2": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 3.6
+        },
+        "d5": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d6": {
+          "n": 5,
+          "mean": 3.6
+        }
+      },
+      "Condition_E_Permuted": {
+        "d1": {
+          "n": 5,
+          "mean": 4.8
+        },
+        "d2": {
+          "n": 5,
+          "mean": 4
+        },
+        "d3": {
+          "n": 5,
+          "mean": 5
+        },
+        "d4": {
+          "n": 5,
+          "mean": 4
+        },
+        "d5": {
+          "n": 5,
+          "mean": 5
+        },
+        "d6": {
+          "n": 5,
+          "mean": 4
+        }
+      }
+    }
+  }
+}

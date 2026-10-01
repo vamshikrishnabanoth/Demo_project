@@ -1,0 +1,1761 @@
+{
+  "metadata": {
+    "experiment_id": "EXP_4_2B_ZERO_SHOT_LLM",
+    "title": "Experiment 4.2b — Step 1: Frozen 17-Unit Zero-Shot LLM Behavior Classification",
+    "timestamp": "2026-09-29T18:15:36.400Z",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0,
+    "total_units_evaluated": 17,
+    "infrastructure_failures": 0,
+    "total_latency_ms": 162129,
+    "average_latency_ms": 9537
+  },
+  "benchmarks": {
+    "BENCH_04": {
+      "benchmark_id": "BENCH_04",
+      "unit_count": 10,
+      "evaluation": {
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 9,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.9,
+            "recall": 1,
+            "f1_score": 0.9474
+          },
+          "DEMONSTRATE": {
+            "tp": 4,
+            "fp": 1,
+            "fn": 4,
+            "precision": 0.8,
+            "recall": 0.5,
+            "f1_score": 0.6154
+          },
+          "COMPARE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REINFORCE": {
+            "tp": 1,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.25,
+            "recall": 1,
+            "f1_score": 0.4
+          }
+        },
+        "aggregate": {
+          "micro_precision": 0.56,
+          "micro_recall": 0.7,
+          "micro_f1": 0.6222,
+          "macro_precision": 0.2167,
+          "macro_recall": 0.2778,
+          "macro_f1": 0.2181,
+          "active_classes_count": 9
+        }
+      },
+      "human_profile": {
+        "total_instances": 20,
+        "counts": {
+          "EXPLAIN": 9,
+          "DEMONSTRATE": 8,
+          "COMPARE": 1,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 1,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 1
+        },
+        "percentages": {
+          "EXPLAIN": 45,
+          "DEMONSTRATE": 40,
+          "COMPARE": 5,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 5,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 5
+        },
+        "probabilityVector": [
+          0.45,
+          0.4,
+          0.05,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0.05,
+          0,
+          0.05
+        ]
+      },
+      "c4_profile": {
+        "total_instances": 25,
+        "counts": {
+          "EXPLAIN": 10,
+          "DEMONSTRATE": 5,
+          "COMPARE": 0,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 1,
+          "ASK_WHY": 1,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 3,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 1,
+          "REINFORCE": 4
+        },
+        "percentages": {
+          "EXPLAIN": 40,
+          "DEMONSTRATE": 20,
+          "COMPARE": 0,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 4,
+          "ASK_WHY": 4,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 12,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 4,
+          "REINFORCE": 16
+        },
+        "probabilityVector": [
+          0.4,
+          0.2,
+          0,
+          0,
+          0.04,
+          0.04,
+          0,
+          0.12,
+          0,
+          0,
+          0.04,
+          0.16
+        ]
+      },
+      "divergence": {
+        "total_variation_distance": 0.35,
+        "cosine_distance": 0.1095
+      },
+      "units": [
+        {
+          "unit_id": "GT-G00",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "REINFORCE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are doing in the project"
+            },
+            {
+              "label": "REINFORCE",
+              "quote": "In the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system"
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"REINFORCE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are doing in the project\"\n    },\n    {\n      \"label\": \"REINFORCE\",\n      \"quote\": \"In the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system\"\n    }\n  ]\n}",
+          "latency_ms": 1324,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G01",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "REAL_WORLD_APP"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "So the first command you have is Git version... we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed."
+            },
+            {
+              "label": "REAL_WORLD_APP",
+              "quote": "if you want to know if the Git is installed in your system"
+            }
+          ],
+          "raw_response": "{\"labels\":[\"EXPLAIN\",\"REAL_WORLD_APP\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"So the first command you have is Git version... we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed.\"},{\"label\":\"REAL_WORLD_APP\",\"quote\":\"if you want to know if the Git is installed in your system\"}]}",
+          "latency_ms": 1393,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G02",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "ASK_WHY",
+            "REAL_WORLD_APP"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "Git config is a command which is used to give details, give your details to the Git tool."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "you have to give git config space hyphen hyphen global ... user.name and in double quotes, you can give your name."
+            },
+            {
+              "label": "ASK_WHY",
+              "quote": "Okay, so why do I need to give my details?"
+            },
+            {
+              "label": "REAL_WORLD_APP",
+              "quote": "to keep track of those changes, to know who has done that particular change, your Git has to know your information."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\", \"ASK_WHY\", \"REAL_WORLD_APP\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Git config is a command which is used to give details, give your details to the Git tool.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"you have to give git config space hyphen hyphen global ... user.name and in double quotes, you can give your name.\"\n    },\n    {\n      \"label\": \"ASK_WHY\",\n      \"quote\": \"Okay, so why do I need to give my details?\"\n    },\n    {\n      \"label\": \"REAL_WORLD_APP\",\n      \"quote\": \"to keep track of those changes, to know who has done that particular change, your Git has to know your information.\"\n    }\n  ]\n}",
+          "latency_ms": 2085,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G03",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "REAL_WORLD_APP",
+            "REINFORCE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "To create a repository in Git, you have to use a command called as git init."
+            },
+            {
+              "label": "REAL_WORLD_APP",
+              "quote": "if you want to start a new project, to keep track of the changes that you are doing in that particular project"
+            },
+            {
+              "label": "REINFORCE",
+              "quote": "to keep changes, you have to create a Git repository"
+            }
+          ],
+          "raw_response": "{\"labels\":[\"EXPLAIN\",\"REAL_WORLD_APP\",\"REINFORCE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"To create a repository in Git, you have to use a command called as git init.\"},{\"label\":\"REAL_WORLD_APP\",\"quote\":\"if you want to start a new project, to keep track of the changes that you are doing in that particular project\"},{\"label\":\"REINFORCE\",\"quote\":\"to keep changes, you have to create a Git repository\"}]}",
+          "latency_ms": 2273,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G04",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "The next command you have is git status... It will tell you what are the changes that you have made and which changes have not yet been saved into the repository."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"The next command you have is git status... It will tell you what are the changes that you have made and which changes have not yet been saved into the repository.\"\n    }\n  ]\n}",
+          "latency_ms": 758,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G05",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "The next one you have is git add. So this is, if you remember in your git workflow, I told you we have three areas. Working directory, staging area and git repository."
+            },
+            {
+              "label": "EXPLAIN",
+              "quote": "So from working directory, if you want to move your project into staging area, where you are deciding which changes have to be saved, then you have to use a command called as git add."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "you can simply write git add space dot, that means all the changes that you have done in your project will be saved."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "you can write git space add space a dot txt. So only the changes of that particular file will be saved into the staging area."
+            }
+          ],
+          "raw_response": "{\"labels\":[\"EXPLAIN\",\"DEMONSTRATE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"The next one you have is git add. So this is, if you remember in your git workflow, I told you we have three areas. Working directory, staging area and git repository.\"},{\"label\":\"EXPLAIN\",\"quote\":\"So from working directory, if you want to move your project into staging area, where you are deciding which changes have to be saved, then you have to use a command called as git add.\"},{\"label\":\"DEMONSTRATE\",\"quote\":\"you can simply write git add space dot, that means all the changes that you have done in your project will be saved.\"},{\"label\":\"DEMONSTRATE\",\"quote\":\"you can write git space add space a dot txt. So only the changes of that particular file will be saved into the staging area.\"}]}",
+          "latency_ms": 1437,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G06",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "REINFORCE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "Git commit will save the changes of your particular file into the repository."
+            },
+            {
+              "label": "REINFORCE",
+              "quote": "So this is called as git commit. Right?"
+            }
+          ],
+          "raw_response": "{\"labels\":[\"EXPLAIN\",\"REINFORCE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"Git commit will save the changes of your particular file into the repository.\"},{\"label\":\"REINFORCE\",\"quote\":\"So this is called as git commit. Right?\"}]}",
+          "latency_ms": 1124,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G07",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "It will compare the changes of your current file with the previous version."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "you can simply write git diff."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"It will compare the changes of your current file with the previous version.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"you can simply write git diff.\"\n    }\n  ]\n}",
+          "latency_ms": 1352,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G08",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "Now say suppose you forgot how to use a particular command in git... it will give you the complete details of what is that command, how to use it, what is its syntax, it will give you some examples, what are the various options of that particular command."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "Now I will take a small example and demonstrate how exactly these different types of commands are used."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Now say suppose you forgot how to use a particular command in git... it will give you the complete details of what is that command, how to use it, what is its syntax, it will give you some examples, what are the various options of that particular command.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"Now I will take a small example and demonstrate how exactly these different types of commands are used.\"\n    }\n  ]\n}",
+          "latency_ms": 11589,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-G09",
+          "benchmark": "BENCH_04",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "STUDENT_INTERACT",
+            "REINFORCE",
+            "PREDICT_CHANGE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "Now let me make this normal folder into a git repository. To do that what we have to do? You have to type git init."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "I will simply type git --version. And when I type enter you can see this is the latest version of your git."
+            },
+            {
+              "label": "STUDENT_INTERACT",
+              "quote": "To do that what we have to do? You have to type git init."
+            },
+            {
+              "label": "REINFORCE",
+              "quote": "Now when I type git status you can see that a.ext now is in green color. That means it is telling you that the changes are ready to be committed."
+            },
+            {
+              "label": "PREDICT_CHANGE",
+              "quote": "When you type git reset. All the changes will be reverted back."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\",\"DEMONSTRATE\",\"STUDENT_INTERACT\",\"REINFORCE\",\"PREDICT_CHANGE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Now let me make this normal folder into a git repository. To do that what we have to do? You have to type git init.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"I will simply type git --version. And when I type enter you can see this is the latest version of your git.\"\n    },\n    {\n      \"label\": \"STUDENT_INTERACT\",\n      \"quote\": \"To do that what we have to do? You have to type git init.\"\n    },\n    {\n      \"label\": \"REINFORCE\",\n      \"quote\": \"Now when I type git status you can see that a.ext now is in green color. That means it is telling you that the changes are ready to be committed.\"\n    },\n    {\n      \"label\": \"PREDICT_CHANGE\",\n      \"quote\": \"When you type git reset. All the changes will be reverted back.\"\n    }\n  ]\n}",
+          "latency_ms": 16803,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        }
+      ]
+    },
+    "BENCH_03": {
+      "benchmark_id": "BENCH_03",
+      "unit_count": 7,
+      "evaluation": {
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 4,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.5714,
+            "recall": 1,
+            "f1_score": 0.7273
+          },
+          "DEMONSTRATE": {
+            "tp": 5,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.8333,
+            "recall": 1,
+            "f1_score": 0.9091
+          },
+          "COMPARE": {
+            "tp": 2,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1_score": 0.6667
+          },
+          "DEBUG": {
+            "tp": 1,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0.5,
+            "recall": 0.3333,
+            "f1_score": 0.4
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "PRACTICE": {
+            "tp": 2,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.4,
+            "recall": 1,
+            "f1_score": 0.5714
+          },
+          "REAL_WORLD_APP": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1,
+            "recall": 1,
+            "f1_score": 1
+          },
+          "EDGE_CASE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1,
+            "recall": 1,
+            "f1_score": 1
+          },
+          "CODE_TRACE": {
+            "tp": 2,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.4,
+            "recall": 1,
+            "f1_score": 0.5714
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 4,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 3,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          }
+        },
+        "aggregate": {
+          "micro_precision": 0.4737,
+          "micro_recall": 0.6667,
+          "micro_f1": 0.5538,
+          "macro_precision": 0.4476,
+          "macro_recall": 0.5833,
+          "macro_f1": 0.4872,
+          "active_classes_count": 12
+        }
+      },
+      "human_profile": {
+        "total_instances": 27,
+        "counts": {
+          "EXPLAIN": 4,
+          "DEMONSTRATE": 5,
+          "COMPARE": 3,
+          "DEBUG": 3,
+          "PREDICT_CHANGE": 1,
+          "ASK_WHY": 2,
+          "PRACTICE": 2,
+          "REAL_WORLD_APP": 1,
+          "EDGE_CASE": 1,
+          "CODE_TRACE": 2,
+          "STUDENT_INTERACT": 2,
+          "REINFORCE": 1
+        },
+        "percentages": {
+          "EXPLAIN": 14.81,
+          "DEMONSTRATE": 18.52,
+          "COMPARE": 11.11,
+          "DEBUG": 11.11,
+          "PREDICT_CHANGE": 3.7,
+          "ASK_WHY": 7.41,
+          "PRACTICE": 7.41,
+          "REAL_WORLD_APP": 3.7,
+          "EDGE_CASE": 3.7,
+          "CODE_TRACE": 7.41,
+          "STUDENT_INTERACT": 7.41,
+          "REINFORCE": 3.7
+        },
+        "probabilityVector": [
+          0.14814814814814814,
+          0.18518518518518517,
+          0.1111111111111111,
+          0.1111111111111111,
+          0.037037037037037035,
+          0.07407407407407407,
+          0.07407407407407407,
+          0.037037037037037035,
+          0.037037037037037035,
+          0.07407407407407407,
+          0.07407407407407407,
+          0.037037037037037035
+        ]
+      },
+      "c4_profile": {
+        "total_instances": 38,
+        "counts": {
+          "EXPLAIN": 7,
+          "DEMONSTRATE": 6,
+          "COMPARE": 3,
+          "DEBUG": 2,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 1,
+          "PRACTICE": 5,
+          "REAL_WORLD_APP": 1,
+          "EDGE_CASE": 1,
+          "CODE_TRACE": 5,
+          "STUDENT_INTERACT": 4,
+          "REINFORCE": 3
+        },
+        "percentages": {
+          "EXPLAIN": 18.42,
+          "DEMONSTRATE": 15.79,
+          "COMPARE": 7.89,
+          "DEBUG": 5.26,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 2.63,
+          "PRACTICE": 13.16,
+          "REAL_WORLD_APP": 2.63,
+          "EDGE_CASE": 2.63,
+          "CODE_TRACE": 13.16,
+          "STUDENT_INTERACT": 10.53,
+          "REINFORCE": 7.89
+        },
+        "probabilityVector": [
+          0.18421052631578946,
+          0.15789473684210525,
+          0.07894736842105263,
+          0.05263157894736842,
+          0,
+          0.02631578947368421,
+          0.13157894736842105,
+          0.02631578947368421,
+          0.02631578947368421,
+          0.13157894736842105,
+          0.10526315789473684,
+          0.07894736842105263
+        ]
+      },
+      "divergence": {
+        "total_variation_distance": 0.2242,
+        "cosine_distance": 0.0841
+      },
+      "units": [
+        {
+          "unit_id": "GT-D01",
+          "benchmark": "BENCH_03",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "COMPARE",
+            "STUDENT_INTERACT",
+            "PRACTICE",
+            "REINFORCE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "there are two type types of thing which are opposite. Greatest common divisor and least common multiple"
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "LCM would be two into two into three for 12, and for eight, it is what? Two into two into two"
+            },
+            {
+              "label": "COMPARE",
+              "quote": "JCD is always bigger or LCM is bigger"
+            },
+            {
+              "label": "STUDENT_INTERACT",
+              "quote": "Is 24 modulo eight equal equal to zero? Yes"
+            },
+            {
+              "label": "PRACTICE",
+              "quote": "So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?"
+            },
+            {
+              "label": "REINFORCE",
+              "quote": "Multiple 12 Understood? Okay"
+            }
+          ],
+          "raw_response": "{\"labels\":[\"EXPLAIN\",\"DEMONSTRATE\",\"COMPARE\",\"STUDENT_INTERACT\",\"PRACTICE\",\"REINFORCE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"there are two type types of thing which are opposite. Greatest common divisor and least common multiple\"},{\"label\":\"DEMONSTRATE\",\"quote\":\"LCM would be two into two into three for 12, and for eight, it is what? Two into two into two\"},{\"label\":\"COMPARE\",\"quote\":\"JCD is always bigger or LCM is bigger\"},{\"label\":\"STUDENT_INTERACT\",\"quote\":\"Is 24 modulo eight equal equal to zero? Yes\"},{\"label\":\"PRACTICE\",\"quote\":\"So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?\"},{\"label\":\"REINFORCE\",\"quote\":\"Multiple 12 Understood? Okay\"}]}",
+          "latency_ms": 16979,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-D02",
+          "benchmark": "BENCH_03",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "PRACTICE",
+            "COMPARE",
+            "DEBUG",
+            "CODE_TRACE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "If I modulo a equal equal to zero and I modulo b is equal equal to zero, return I."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero."
+            },
+            {
+              "label": "PRACTICE",
+              "quote": "Let's try this with something else also. Two ways of doing it."
+            },
+            {
+              "label": "COMPARE",
+              "quote": "Two ways of doing it. One is increment equal. This is a faster way of doing it."
+            },
+            {
+              "label": "DEBUG",
+              "quote": "I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No."
+            },
+            {
+              "label": "CODE_TRACE",
+              "quote": "Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero."
+            }
+          ],
+          "raw_response": "{\"labels\":[\"EXPLAIN\",\"DEMONSTRATE\",\"PRACTICE\",\"COMPARE\",\"DEBUG\",\"CODE_TRACE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"If I modulo a equal equal to zero and I modulo b is equal equal to zero, return I.\"},{\"label\":\"DEMONSTRATE\",\"quote\":\"Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero.\"},{\"label\":\"PRACTICE\",\"quote\":\"Let's try this with something else also. Two ways of doing it.\"},{\"label\":\"COMPARE\",\"quote\":\"Two ways of doing it. One is increment equal. This is a faster way of doing it.\"},{\"label\":\"DEBUG\",\"quote\":\"I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No.\"},{\"label\":\"CODE_TRACE\",\"quote\":\"Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero.\"}]}",
+          "latency_ms": 19606,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-D03",
+          "benchmark": "BENCH_03",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "PRACTICE",
+            "STUDENT_INTERACT",
+            "DEBUG",
+            "ASK_WHY",
+            "CODE_TRACE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "First, we'll have to write our base condition."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "I'll just run the file. It is giving me 12."
+            },
+            {
+              "label": "PRACTICE",
+              "quote": "Write the second one. It will be your base condition in this case."
+            },
+            {
+              "label": "STUDENT_INTERACT",
+              "quote": "Which one do you want to implement first?"
+            },
+            {
+              "label": "DEBUG",
+              "quote": "Why is it coming zero? A plus equal to No."
+            },
+            {
+              "label": "ASK_WHY",
+              "quote": "Why is it coming zero?"
+            },
+            {
+              "label": "CODE_TRACE",
+              "quote": "I will keep on checking one modulo four is equal equal to four or nothing, and I will keep on incrementing I, I plus one."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\",\"DEMONSTRATE\",\"PRACTICE\",\"STUDENT_INTERACT\",\"DEBUG\",\"ASK_WHY\",\"CODE_TRACE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"First, we'll have to write our base condition.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"I'll just run the file. It is giving me 12.\"\n    },\n    {\n      \"label\": \"PRACTICE\",\n      \"quote\": \"Write the second one. It will be your base condition in this case.\"\n    },\n    {\n      \"label\": \"STUDENT_INTERACT\",\n      \"quote\": \"Which one do you want to implement first?\"\n    },\n    {\n      \"label\": \"DEBUG\",\n      \"quote\": \"Why is it coming zero? A plus equal to No.\"\n    },\n    {\n      \"label\": \"ASK_WHY\",\n      \"quote\": \"Why is it coming zero?\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"I will keep on checking one modulo four is equal equal to four or nothing, and I will keep on incrementing I, I plus one.\"\n    }\n  ]\n}",
+          "latency_ms": 17408,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-D04",
+          "benchmark": "BENCH_03",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "COMPARE",
+            "PRACTICE",
+            "CODE_TRACE",
+            "STUDENT_INTERACT",
+            "REINFORCE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "Now let's try to understand greatest common divisor."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "Eight and twelve greatest common divisor. Four is the common guy."
+            },
+            {
+              "label": "COMPARE",
+              "quote": "It's not an efficient one. I'll show you an efficient one which follows a UK algorithm."
+            },
+            {
+              "label": "PRACTICE",
+              "quote": "Let's try to write a pseudo code and then you write recursion for it."
+            },
+            {
+              "label": "CODE_TRACE",
+              "quote": "I will check over here if 12 modulo eight is equal equal zero. If yes, then 12 becomes my No... then I will go for a further call to GCD, and now at this point, I will say eight comma. What will I pass? I will not pass 12. I will pass 12 modulo eight."
+            },
+            {
+              "label": "STUDENT_INTERACT",
+              "quote": "How are you going to find this one? What would you write in the for loop to get the JCD?"
+            },
+            {
+              "label": "REINFORCE",
+              "quote": "If maximum modulo minimum is equal equal to zero. If yes, return minimum."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\",\"DEMONSTRATE\",\"COMPARE\",\"PRACTICE\",\"CODE_TRACE\",\"STUDENT_INTERACT\",\"REINFORCE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Now let's try to understand greatest common divisor.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"Eight and twelve greatest common divisor. Four is the common guy.\"\n    },\n    {\n      \"label\": \"COMPARE\",\n      \"quote\": \"It's not an efficient one. I'll show you an efficient one which follows a UK algorithm.\"\n    },\n    {\n      \"label\": \"PRACTICE\",\n      \"quote\": \"Let's try to write a pseudo code and then you write recursion for it.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"I will check over here if 12 modulo eight is equal equal zero. If yes, then 12 becomes my No... then I will go for a further call to GCD, and now at this point, I will say eight comma. What will I pass? I will not pass 12. I will pass 12 modulo eight.\"\n    },\n    {\n      \"label\": \"STUDENT_INTERACT\",\n      \"quote\": \"How are you going to find this one? What would you write in the for loop to get the JCD?\"\n    },\n    {\n      \"label\": \"REINFORCE\",\n      \"quote\": \"If maximum modulo minimum is equal equal to zero. If yes, return minimum.\"\n    }\n  ]\n}",
+          "latency_ms": 25219,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-D05",
+          "benchmark": "BENCH_03",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "REAL_WORLD_APP"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "So there are two types of problems that we have. One problem talks about sharing stuff equally... divide all these things among people equally."
+            },
+            {
+              "label": "REAL_WORLD_APP",
+              "quote": "Timing, interval, scheduling, round robin... Job shortest job first... Scheduling algorithms."
+            }
+          ],
+          "raw_response": "{\"labels\":[\"EXPLAIN\",\"REAL_WORLD_APP\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"So there are two types of problems that we have. One problem talks about sharing stuff equally... divide all these things among people equally.\"},{\"label\":\"REAL_WORLD_APP\",\"quote\":\"Timing, interval, scheduling, round robin... Job shortest job first... Scheduling algorithms.\"}]}",
+          "latency_ms": 6848,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-D06",
+          "benchmark": "BENCH_03",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "CODE_TRACE",
+            "STUDENT_INTERACT",
+            "REINFORCE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "Make the problem extremely small, solve that problem, and repeat it for next."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "Now I will just remove all this. Now we will say void or do you wanna pass a string? String reverse is taking a string str."
+            },
+            {
+              "label": "CODE_TRACE",
+              "quote": "Then I print LO. Then I pass LLO. Then I print LLO. Then I pass LO. Then I pass LO. O. Then I print l o."
+            },
+            {
+              "label": "STUDENT_INTERACT",
+              "quote": "Is this understood?"
+            },
+            {
+              "label": "REINFORCE",
+              "quote": "Make the problem small."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\", \"CODE_TRACE\", \"STUDENT_INTERACT\", \"REINFORCE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Make the problem extremely small, solve that problem, and repeat it for next.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"Now I will just remove all this. Now we will say void or do you wanna pass a string? String reverse is taking a string str.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"Then I print LO. Then I pass LLO. Then I print LLO. Then I pass LO. Then I pass LO. O. Then I print l o.\"\n    },\n    {\n      \"label\": \"STUDENT_INTERACT\",\n      \"quote\": \"Is this understood?\"\n    },\n    {\n      \"label\": \"REINFORCE\",\n      \"quote\": \"Make the problem small.\"\n    }\n  ]\n}",
+          "latency_ms": 18114,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        },
+        {
+          "unit_id": "GT-D07",
+          "benchmark": "BENCH_03",
+          "classifier": "C4_LLM_ZERO_SHOT",
+          "model": "openai/gpt-oss-120b",
+          "provider": "groq",
+          "temperature": 0,
+          "predicted_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "PRACTICE",
+            "CODE_TRACE",
+            "EDGE_CASE"
+          ],
+          "evidence": [
+            {
+              "label": "EXPLAIN",
+              "quote": "The base condition would be if STR dot length equally equal to one. Return what? True."
+            },
+            {
+              "label": "DEMONSTRATE",
+              "quote": "The way substring is written over here in c plus pluses, it says, substring, you pass where you want to begin and pass me how many characters you have."
+            },
+            {
+              "label": "PRACTICE",
+              "quote": "Okay. Let's try to code this."
+            },
+            {
+              "label": "CODE_TRACE",
+              "quote": "Now while returning back, is this one? Is this palindrome? Yes. So what do I pass? I pass true to it."
+            },
+            {
+              "label": "EDGE_CASE",
+              "quote": "When you have only one always... extreme case... base condition would be if STR dot length equally equal to one."
+            }
+          ],
+          "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\", \"PRACTICE\", \"CODE_TRACE\", \"EDGE_CASE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"The base condition would be if STR dot length equally equal to one. Return what? True.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"The way substring is written over here in c plus pluses, it says, substring, you pass where you want to begin and pass me how many characters you have.\"\n    },\n    {\n      \"label\": \"PRACTICE\",\n      \"quote\": \"Okay. Let's try to code this.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"Now while returning back, is this one? Is this palindrome? Yes. So what do I pass? I pass true to it.\"\n    },\n    {\n      \"label\": \"EDGE_CASE\",\n      \"quote\": \"When you have only one always... extreme case... base condition would be if STR dot length equally equal to one.\"\n    }\n  ]\n}",
+          "latency_ms": 17817,
+          "retry_count": 0,
+          "status": "SUCCESS"
+        }
+      ]
+    },
+    "COMBINED_17_UNITS": {
+      "unit_count": 17,
+      "evaluation": {
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 13,
+            "fp": 4,
+            "fn": 0,
+            "precision": 0.7647,
+            "recall": 1,
+            "f1_score": 0.8667
+          },
+          "DEMONSTRATE": {
+            "tp": 9,
+            "fp": 2,
+            "fn": 4,
+            "precision": 0.8182,
+            "recall": 0.6923,
+            "f1_score": 0.75
+          },
+          "COMPARE": {
+            "tp": 2,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0.6667,
+            "recall": 0.5,
+            "f1_score": 0.5714
+          },
+          "DEBUG": {
+            "tp": 1,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0.5,
+            "recall": 0.3333,
+            "f1_score": 0.4
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "PRACTICE": {
+            "tp": 2,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.4,
+            "recall": 1,
+            "f1_score": 0.5714
+          },
+          "REAL_WORLD_APP": {
+            "tp": 1,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.25,
+            "recall": 1,
+            "f1_score": 0.4
+          },
+          "EDGE_CASE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1,
+            "recall": 1,
+            "f1_score": 1
+          },
+          "CODE_TRACE": {
+            "tp": 2,
+            "fp": 3,
+            "fn": 1,
+            "precision": 0.4,
+            "recall": 0.6667,
+            "f1_score": 0.5
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 5,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REINFORCE": {
+            "tp": 1,
+            "fp": 6,
+            "fn": 1,
+            "precision": 0.1429,
+            "recall": 0.5,
+            "f1_score": 0.2222
+          }
+        },
+        "aggregate": {
+          "micro_precision": 0.5079,
+          "micro_recall": 0.6809,
+          "micro_f1": 0.5818,
+          "macro_precision": 0.4119,
+          "macro_recall": 0.5577,
+          "macro_f1": 0.4401,
+          "active_classes_count": 12
+        }
+      },
+      "human_profile": {
+        "total_instances": 47,
+        "counts": {
+          "EXPLAIN": 13,
+          "DEMONSTRATE": 13,
+          "COMPARE": 4,
+          "DEBUG": 3,
+          "PREDICT_CHANGE": 1,
+          "ASK_WHY": 2,
+          "PRACTICE": 2,
+          "REAL_WORLD_APP": 1,
+          "EDGE_CASE": 1,
+          "CODE_TRACE": 3,
+          "STUDENT_INTERACT": 2,
+          "REINFORCE": 2
+        },
+        "percentages": {
+          "EXPLAIN": 27.66,
+          "DEMONSTRATE": 27.66,
+          "COMPARE": 8.51,
+          "DEBUG": 6.38,
+          "PREDICT_CHANGE": 2.13,
+          "ASK_WHY": 4.26,
+          "PRACTICE": 4.26,
+          "REAL_WORLD_APP": 2.13,
+          "EDGE_CASE": 2.13,
+          "CODE_TRACE": 6.38,
+          "STUDENT_INTERACT": 4.26,
+          "REINFORCE": 4.26
+        },
+        "probabilityVector": [
+          0.2765957446808511,
+          0.2765957446808511,
+          0.0851063829787234,
+          0.06382978723404255,
+          0.02127659574468085,
+          0.0425531914893617,
+          0.0425531914893617,
+          0.02127659574468085,
+          0.02127659574468085,
+          0.06382978723404255,
+          0.0425531914893617,
+          0.0425531914893617
+        ]
+      },
+      "c4_profile": {
+        "total_instances": 63,
+        "counts": {
+          "EXPLAIN": 17,
+          "DEMONSTRATE": 11,
+          "COMPARE": 3,
+          "DEBUG": 2,
+          "PREDICT_CHANGE": 1,
+          "ASK_WHY": 2,
+          "PRACTICE": 5,
+          "REAL_WORLD_APP": 4,
+          "EDGE_CASE": 1,
+          "CODE_TRACE": 5,
+          "STUDENT_INTERACT": 5,
+          "REINFORCE": 7
+        },
+        "percentages": {
+          "EXPLAIN": 26.98,
+          "DEMONSTRATE": 17.46,
+          "COMPARE": 4.76,
+          "DEBUG": 3.17,
+          "PREDICT_CHANGE": 1.59,
+          "ASK_WHY": 3.17,
+          "PRACTICE": 7.94,
+          "REAL_WORLD_APP": 6.35,
+          "EDGE_CASE": 1.59,
+          "CODE_TRACE": 7.94,
+          "STUDENT_INTERACT": 7.94,
+          "REINFORCE": 11.11
+        },
+        "probabilityVector": [
+          0.2698412698412698,
+          0.1746031746031746,
+          0.047619047619047616,
+          0.031746031746031744,
+          0.015873015873015872,
+          0.031746031746031744,
+          0.07936507936507936,
+          0.06349206349206349,
+          0.015873015873015872,
+          0.07936507936507936,
+          0.07936507936507936,
+          0.1111111111111111
+        ]
+      },
+      "divergence": {
+        "total_variation_distance": 0.1999,
+        "cosine_distance": 0.065
+      }
+    }
+  },
+  "direct_comparison": {
+    "BENCH_04": [
+      {
+        "classifier": "C1_LEXICAL",
+        "micro_precision": 0.8333,
+        "micro_recall": 0.75,
+        "micro_f1": 0.7895,
+        "macro_precision": 0.6204,
+        "macro_recall": 0.5926,
+        "macro_f1": 0.6013,
+        "tvd": 0.1667,
+        "cosine_distance": 0.0395
+      },
+      {
+        "classifier": "C2_CONTEXTUAL",
+        "micro_precision": 0.7895,
+        "micro_recall": 0.75,
+        "micro_f1": 0.7692,
+        "macro_precision": 0.5317,
+        "macro_recall": 0.5079,
+        "macro_f1": 0.5154,
+        "tvd": 0.1842,
+        "cosine_distance": 0.0435
+      },
+      {
+        "classifier": "C3_HYBRID",
+        "micro_precision": 0.5769,
+        "micro_recall": 0.75,
+        "micro_f1": 0.6522,
+        "macro_precision": 0.4067,
+        "macro_recall": 0.5079,
+        "macro_f1": 0.4043,
+        "tvd": 0.3346,
+        "cosine_distance": 0.1819
+      },
+      {
+        "classifier": "C4_LLM_ZERO_SHOT",
+        "micro_precision": 0.56,
+        "micro_recall": 0.7,
+        "micro_f1": 0.6222,
+        "macro_precision": 0.2167,
+        "macro_recall": 0.2778,
+        "macro_f1": 0.2181,
+        "tvd": 0.35,
+        "cosine_distance": 0.1095
+      }
+    ],
+    "BENCH_03": [
+      {
+        "classifier": "C1_LEXICAL",
+        "micro_precision": 0.56,
+        "micro_recall": 0.5185,
+        "micro_f1": 0.5385,
+        "macro_precision": 0.5,
+        "macro_recall": 0.5611,
+        "macro_f1": 0.4897,
+        "tvd": 0.2815,
+        "cosine_distance": 0.1738
+      },
+      {
+        "classifier": "C2_CONTEXTUAL",
+        "micro_precision": 0.5161,
+        "micro_recall": 0.5926,
+        "micro_f1": 0.5517,
+        "macro_precision": 0.5278,
+        "macro_recall": 0.6444,
+        "macro_f1": 0.5313,
+        "tvd": 0.27,
+        "cosine_distance": 0.1985
+      },
+      {
+        "classifier": "C3_HYBRID",
+        "micro_precision": 0.4474,
+        "micro_recall": 0.6296,
+        "micro_f1": 0.5231,
+        "macro_precision": 0.4861,
+        "macro_recall": 0.6722,
+        "macro_f1": 0.4927,
+        "tvd": 0.3294,
+        "cosine_distance": 0.2617
+      },
+      {
+        "classifier": "C4_LLM_ZERO_SHOT",
+        "micro_precision": 0.4737,
+        "micro_recall": 0.6667,
+        "micro_f1": 0.5538,
+        "macro_precision": 0.4476,
+        "macro_recall": 0.5833,
+        "macro_f1": 0.4872,
+        "tvd": 0.2242,
+        "cosine_distance": 0.0841
+      }
+    ]
+  },
+  "problematic_behaviors_inspection": [
+    {
+      "behavior": "STUDENT_INTERACT",
+      "bench03_human_support": 2,
+      "c1_f1": 0,
+      "c2_f1": 0.4,
+      "c3_f1": 0.4,
+      "c4_f1": 0,
+      "c4_precision": 0,
+      "c4_recall": 0
+    },
+    {
+      "behavior": "PRACTICE",
+      "bench03_human_support": 2,
+      "c1_f1": 0.4,
+      "c2_f1": 0.5,
+      "c3_f1": 0.5,
+      "c4_f1": 0.5714,
+      "c4_precision": 0.4,
+      "c4_recall": 1
+    },
+    {
+      "behavior": "DEBUG",
+      "bench03_human_support": 3,
+      "c1_f1": 0.5714,
+      "c2_f1": 0.5714,
+      "c3_f1": 0.75,
+      "c4_f1": 0.4,
+      "c4_precision": 0.5,
+      "c4_recall": 0.3333
+    },
+    {
+      "behavior": "CODE_TRACE",
+      "bench03_human_support": 2,
+      "c1_f1": 0.6667,
+      "c2_f1": 0.6667,
+      "c3_f1": 0.5714,
+      "c4_f1": 0.5714,
+      "c4_precision": 0.4,
+      "c4_recall": 1
+    },
+    {
+      "behavior": "EDGE_CASE",
+      "bench03_human_support": 1,
+      "c1_f1": 0.6667,
+      "c2_f1": 0.6667,
+      "c3_f1": 0.2857,
+      "c4_f1": 1,
+      "c4_precision": 1,
+      "c4_recall": 1
+    }
+  ],
+  "error_analysis": {
+    "total_misclassified_units": 15,
+    "total_correct_units": 2,
+    "category_breakdown": {
+      "BEHAVIOR_OVERPREDICTION": 2,
+      "MULTI_LABEL_OVERPREDICTION": 8,
+      "MULTI_LABEL_UNDERPREDICTION": 3,
+      "CONVERSATIONAL_ACT_MISSED": 2
+    },
+    "misclassified_units": [
+      {
+        "unit_id": "GT-G00",
+        "benchmark": "BENCH_04",
+        "title": "VCS Introduction & Conceptual Overview",
+        "human_labels": [
+          "EXPLAIN"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "REINFORCE"
+        ],
+        "missing_labels": [],
+        "extra_labels": [
+          "REINFORCE"
+        ],
+        "error_category": "BEHAVIOR_OVERPREDICTION",
+        "short_transcript_excerpt": "Hello students, welcome to the next session. In today's session, we will be learning about some of the basic Git commands. So in the last class, I hav..."
+      },
+      {
+        "unit_id": "GT-G01",
+        "benchmark": "BENCH_04",
+        "title": "git --version CLI Check",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "REAL_WORLD_APP"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [
+          "REAL_WORLD_APP"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION",
+        "short_transcript_excerpt": "So the first command you have is Git version. So if you want to know if the Git is installed in your system, then we will be using this particular com..."
+      },
+      {
+        "unit_id": "GT-G02",
+        "benchmark": "BENCH_04",
+        "title": "git config Global Configuration",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "ASK_WHY",
+          "REAL_WORLD_APP"
+        ],
+        "missing_labels": [],
+        "extra_labels": [
+          "ASK_WHY",
+          "REAL_WORLD_APP"
+        ],
+        "error_category": "BEHAVIOR_OVERPREDICTION",
+        "short_transcript_excerpt": "The second one you have is Git config. So Git config is a command which is used to give details, give your details to the Git tool. Okay, so why do I ..."
+      },
+      {
+        "unit_id": "GT-G03",
+        "benchmark": "BENCH_04",
+        "title": "git init Repository Initialization",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "REAL_WORLD_APP",
+          "REINFORCE"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [
+          "REAL_WORLD_APP",
+          "REINFORCE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION",
+        "short_transcript_excerpt": "The next one you are using is Git init. So if you want to start a new project, to keep track of the changes that you are doing in that particular proj..."
+      },
+      {
+        "unit_id": "GT-G04",
+        "benchmark": "BENCH_04",
+        "title": "git status Working Tree Inspection",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION",
+        "short_transcript_excerpt": "The next command you have is git status. So if you want to know, so say suppose you have created a project and you have done n number of changes. Okay..."
+      },
+      {
+        "unit_id": "GT-G06",
+        "benchmark": "BENCH_04",
+        "title": "git commit Repository Snapshot",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "REINFORCE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "REINFORCE"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION",
+        "short_transcript_excerpt": "Then you have to go for the next one, which is called as git commit. Git commit will save the changes of your particular file into the repository. Whi..."
+      },
+      {
+        "unit_id": "GT-G07",
+        "benchmark": "BENCH_04",
+        "title": "git diff Working vs Staged Comparison",
+        "human_labels": [
+          "EXPLAIN",
+          "COMPARE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "missing_labels": [
+          "COMPARE"
+        ],
+        "extra_labels": [
+          "DEMONSTRATE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION",
+        "short_transcript_excerpt": "The next one is git diff. So for example, if you want to know what is the previous commit changes that I have made and what is the new change that I h..."
+      },
+      {
+        "unit_id": "GT-G09",
+        "benchmark": "BENCH_04",
+        "title": "Live Terminal Hands-on Demonstration",
+        "human_labels": [
+          "DEMONSTRATE",
+          "CODE_TRACE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "STUDENT_INTERACT",
+          "REINFORCE",
+          "PREDICT_CHANGE"
+        ],
+        "missing_labels": [
+          "CODE_TRACE"
+        ],
+        "extra_labels": [
+          "EXPLAIN",
+          "STUDENT_INTERACT",
+          "REINFORCE",
+          "PREDICT_CHANGE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION",
+        "short_transcript_excerpt": "So before that let's start with knowing what is the git version. So I will simply type git space hyphen hyphen version. And when I type enter you can ..."
+      },
+      {
+        "unit_id": "GT-D01",
+        "benchmark": "BENCH_03",
+        "title": "Mathematical vs. Programmatic Divisibility & Modulo Logic",
+        "human_labels": [
+          "EXPLAIN",
+          "COMPARE",
+          "ASK_WHY"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "COMPARE",
+          "STUDENT_INTERACT",
+          "PRACTICE",
+          "REINFORCE"
+        ],
+        "missing_labels": [
+          "ASK_WHY"
+        ],
+        "extra_labels": [
+          "DEMONSTRATE",
+          "STUDENT_INTERACT",
+          "PRACTICE",
+          "REINFORCE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION",
+        "short_transcript_excerpt": "So, basically, there are two type types of thing which are opposite. Greatest common divisor and least common multiple. HCF, JCD, one and the same thi..."
+      },
+      {
+        "unit_id": "GT-D02",
+        "benchmark": "BENCH_03",
+        "title": "Iterative LCM Search via Multiples Addition & Search Bounds",
+        "human_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "STUDENT_INTERACT"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "PRACTICE",
+          "COMPARE",
+          "DEBUG",
+          "CODE_TRACE"
+        ],
+        "missing_labels": [
+          "STUDENT_INTERACT"
+        ],
+        "extra_labels": [
+          "EXPLAIN",
+          "COMPARE",
+          "DEBUG",
+          "CODE_TRACE"
+        ],
+        "error_category": "CONVERSATIONAL_ACT_MISSED",
+        "short_transcript_excerpt": "LCM, a I, b I. You have to find an I where I modulo a. 2424 modulo eight was equal equal to zero. 24 modulo 12 was equal equal to zero. So what I have..."
+      },
+      {
+        "unit_id": "GT-D03",
+        "benchmark": "BENCH_03",
+        "title": "Iterative-to-Recursive State Transformation for LCM",
+        "human_labels": [
+          "DEMONSTRATE",
+          "PREDICT_CHANGE",
+          "CODE_TRACE",
+          "DEBUG"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "PRACTICE",
+          "STUDENT_INTERACT",
+          "DEBUG",
+          "ASK_WHY",
+          "CODE_TRACE"
+        ],
+        "missing_labels": [
+          "PREDICT_CHANGE"
+        ],
+        "extra_labels": [
+          "EXPLAIN",
+          "PRACTICE",
+          "STUDENT_INTERACT",
+          "ASK_WHY"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION",
+        "short_transcript_excerpt": "right recursion. For I I have a lot of thing also and for this guy also. Hit it here. What do we want to do? LCM, I take a, I take b. I'm keeping a fo..."
+      },
+      {
+        "unit_id": "GT-D04",
+        "benchmark": "BENCH_03",
+        "title": "Euclidean Algorithm for Fast GCD (Logarithmic Modulo Reduction)",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "COMPARE",
+          "ASK_WHY"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "COMPARE",
+          "PRACTICE",
+          "CODE_TRACE",
+          "STUDENT_INTERACT",
+          "REINFORCE"
+        ],
+        "missing_labels": [
+          "ASK_WHY"
+        ],
+        "extra_labels": [
+          "PRACTICE",
+          "CODE_TRACE",
+          "STUDENT_INTERACT",
+          "REINFORCE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION",
+        "short_transcript_excerpt": "Now let's try to understand greatest common divisor. How are you going to find this one? Your numbers are eight and twelve again for JCD. So I have 12..."
+      },
+      {
+        "unit_id": "GT-D05",
+        "benchmark": "BENCH_03",
+        "title": "Real-World Application Heuristics (Equal Partitioning vs. Interval Scheduling)",
+        "human_labels": [
+          "EXPLAIN",
+          "COMPARE",
+          "REINFORCE",
+          "REAL_WORLD_APP"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "REAL_WORLD_APP"
+        ],
+        "missing_labels": [
+          "COMPARE",
+          "REINFORCE"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION",
+        "short_transcript_excerpt": "So there are two types of problems that we have. One problem talks about sharing stuff equally. So whenever you guys have got to divide, it can be tim..."
+      },
+      {
+        "unit_id": "GT-D06",
+        "benchmark": "BENCH_03",
+        "title": "Recursive String Deconstruction & Return-Time Stack Accumulation",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "DEBUG",
+          "CODE_TRACE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "CODE_TRACE",
+          "STUDENT_INTERACT",
+          "REINFORCE"
+        ],
+        "missing_labels": [
+          "DEBUG"
+        ],
+        "extra_labels": [
+          "STUDENT_INTERACT",
+          "REINFORCE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION",
+        "short_transcript_excerpt": "Reverse a string means what? Print I a b I m x a l I n a r. Now comes one more aspect of recursion. Make the problem extremely small, solve that probl..."
+      },
+      {
+        "unit_id": "GT-D07",
+        "benchmark": "BENCH_03",
+        "title": "Recursive Palindrome Verification & Symmetric Substring Trimming",
+        "human_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "DEBUG",
+          "EDGE_CASE",
+          "STUDENT_INTERACT"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "PRACTICE",
+          "CODE_TRACE",
+          "EDGE_CASE"
+        ],
+        "missing_labels": [
+          "DEBUG",
+          "STUDENT_INTERACT"
+        ],
+        "extra_labels": [
+          "EXPLAIN",
+          "CODE_TRACE"
+        ],
+        "error_category": "CONVERSATIONAL_ACT_MISSED",
+        "short_transcript_excerpt": "I have never been reversed. Palindrome. Equal. Palindrome or not? While going or while coming? While coming back. While returning, not while going. I'..."
+      }
+    ]
+  }
+}

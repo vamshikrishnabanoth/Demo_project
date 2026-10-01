@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_D_C5",
+  "target_id": "T02",
+  "target_concept": "Compare the relative sizes of GCD and LCM for a given pair of positive integers.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks to compare GCD and LCM sizes, which is the explicit learning goal and is discussed in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires simple computation of GCD and LCM and a basic comparison; modest reasoning but not deep analysis."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question stem is concise, grammatically correct, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "All three incorrect options represent common misconceptions or uncertainty, making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option B is correct given the evidence; the other choices are definitively false."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "While the task is straightforward, it authentically applies the concept rather than merely recalling a definition."
+    }
+  },
+  "latency_ms": 1899,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks to compare GCD and LCM sizes, which is the explicit learning goal and is discussed in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires simple computation of GCD and LCM and a basic comparison; modest reasoning but not deep analysis.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The question stem is concise, grammatically correct, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"All three incorrect options represent common misconceptions or uncertainty, making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option B is correct given the evidence; the other choices are definitively false.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"While the task is straightforward, it authentically applies the concept rather than merely recalling a definition.\"}\n}"
+}

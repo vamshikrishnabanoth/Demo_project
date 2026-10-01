@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "Convert the iterative LCM search into a recursive function, specifying base case and recursive step",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks for the base case described in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the concept of recursion base case, not just rote recall of a definition."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 2,
+      "rationale": "Incorrect options are implausible and do not reflect common misconceptions about LCM recursion."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A matches the evidence; all other choices are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "Authentic task of converting iterative logic to recursion, beyond simple definition recall."
+    }
+  },
+  "latency_ms": 2824196,
+  "retry_count": 5,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks for the base case described in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying the concept of recursion base case, not just rote recall of a definition.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\":2,\"rationale\":\"Incorrect options are implausible and do not reflect common misconceptions about LCM recursion.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A matches the evidence; all other choices are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"Authentic task of converting iterative logic to recursion, beyond simple definition recall.\"}\n}"
+}

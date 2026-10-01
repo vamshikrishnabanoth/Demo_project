@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Explain how matching characters are accumulated into a StringBuilder and returned as the final LCP.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "When the algorithm encounters a mismatching character while building the longest common prefix, what is returned?",
+    "options": [
+      "The characters accumulated in the StringBuilder up to that point, converted to a string",
+      "null",
+      "The original smallest string",
+      "A list of all characters examined so far"
+    ],
+    "correctAnswer": "The characters accumulated in the StringBuilder up to that point, converted to a string",
+    "explanation": "If the set size is not one, the loop breaks and the method returns Sb.toString(); thus whatever has been appended before the mismatch (which may be empty) is returned.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Easy",
+      "concept": "Explain how matching characters are accumulated into a StringBuilder and returned as the final LCP."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12791,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\":\"T05\",\n  \"questionText\":\"When the algorithm encounters a mismatching character while building the longest common prefix, what is returned?\",\n  \"options\":[\n    \"The characters accumulated in the StringBuilder up to that point, converted to a string\",\n    \"null\",\n    \"The original smallest string\",\n    \"A list of all characters examined so far\"\n  ],\n  \"correctAnswer\":\"The characters accumulated in the StringBuilder up to that point, converted to a string\",\n  \"explanation\":\"If the set size is not one, the loop breaks and the method returns Sb.toString(); thus whatever has been appended before the mismatch (which may be empty) is returned.\",\n  \"metadata\":{\n    \"dimension\":\"Application\",\n    \"cognitiveLevel\":\"Apply\",\n    \"targetDifficulty\":\"Easy\"\n  }\n}"
+}

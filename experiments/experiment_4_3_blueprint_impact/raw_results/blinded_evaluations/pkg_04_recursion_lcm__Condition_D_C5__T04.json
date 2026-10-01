@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_D_C5",
+  "target_id": "T04",
+  "target_concept": "Implement a recursive string reversal using a base case of length 1 and building the result on return",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly tests the recursive reversal with base case length 1 as specified in the evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 5,
+      "rationale": "Requires understanding of recursion, base case selection, and correct concatenation order, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, self‑contained, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Each incorrect option reflects a common misconception (wrong base case, empty return, wrong concatenation), making them plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A satisfies all conditions; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Authentic programming task that applies recursive reasoning rather than trivial definition recall."
+    }
+  },
+  "latency_ms": 2620,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly tests the recursive reversal with base case length 1 as specified in the evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":5,\"rationale\":\"Requires understanding of recursion, base case selection, and correct concatenation order, not mere recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, self‑contained, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Each incorrect option reflects a common misconception (wrong base case, empty return, wrong concatenation), making them plausible.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A satisfies all conditions; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"Authentic programming task that applies recursive reasoning rather than trivial definition recall.\"}\n}"
+}

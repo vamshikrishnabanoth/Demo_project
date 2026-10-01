@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_D_C5",
+  "target_id": "T03",
+  "target_concept": "Describe how a hash set is used to determine whether a character at a given index is common to all strings.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "When using a hash set to determine whether the character at a given index is common to all strings in an array, which statement correctly describes the condition that indicates the character is common to all strings?",
+    "options": [
+      "If after inserting the character from each string into the set the set size is one, the character is common to all strings.",
+      "If after inserting the character from each string into the set the set size equals the number of strings, the character is common to all strings.",
+      "If the set contains at least one duplicate entry, the character is common to all strings.",
+      "If the set is empty after processing the characters, the character is common to all strings."
+    ],
+    "correctAnswer": "If after inserting the character from each string into the set the set size is one, the character is common to all strings.",
+    "explanation": "A hash set does not allow duplicate elements. When the same character from each string at the same index is added, duplicates are ignored, leaving a single element in the set. Therefore, a set size of one after processing all strings indicates that the character appears in every string at that position.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Describe how a hash set is used to determine whether a character at a given index is common to all strings."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11892,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"When using a hash set to determine whether the character at a given index is common to all strings in an array, which statement correctly describes the condition that indicates the character is common to all strings?\",\n  \"options\": [\n    \"If after inserting the character from each string into the set the set size is one, the character is common to all strings.\",\n    \"If after inserting the character from each string into the set the set size equals the number of strings, the character is common to all strings.\",\n    \"If the set contains at least one duplicate entry, the character is common to all strings.\",\n    \"If the set is empty after processing the characters, the character is common to all strings.\"\n  ],\n  \"correctAnswer\": \"If after inserting the character from each string into the set the set size is one, the character is common to all strings.\",\n  \"explanation\": \"A hash set does not allow duplicate elements. When the same character from each string at the same index is added, duplicates are ignored, leaving a single element in the set. Therefore, a set size of one after processing all strings indicates that the character appears in every string at that position.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

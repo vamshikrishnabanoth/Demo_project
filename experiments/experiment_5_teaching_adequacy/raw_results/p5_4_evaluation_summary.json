@@ -1,0 +1,40 @@
+{
+  "evaluated_at": "2026-10-01T12:56:14.983Z",
+  "total_blueprints": 18,
+  "total_generated": 18,
+  "m1_grounding_pass_count": 7,
+  "m7_single_key_pass_count": 18,
+  "option_exclusivity_pass_count": 18,
+  "distractor_taxonomy_counts": {
+    "TYPE_A": 23,
+    "TYPE_B": 31,
+    "TYPE_C": 0
+  },
+  "cognitive_demand_alignment": {
+    "EASY": {
+      "count": 6,
+      "aligned": 6
+    },
+    "MEDIUM": {
+      "count": 6,
+      "aligned": 6
+    },
+    "HARD": {
+      "count": 6,
+      "aligned": 4
+    }
+  },
+  "key_distribution": {
+    "A": 6,
+    "B": 8,
+    "C": 3,
+    "D": 1
+  },
+  "package_evaluations": {},
+  "m1_grounding_rate_pct": 38.89,
+  "m7_single_key_rate_pct": 100,
+  "option_exclusivity_rate_pct": 100,
+  "distractor_type_a_pct": 42.59,
+  "distractor_type_b_pct": 57.41,
+  "distractor_type_c_pct": 0
+}

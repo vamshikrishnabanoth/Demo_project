@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T01",
+  "target_concept": "Identify the goal of the Longest Common Prefix problem and the expected output for given string sets.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the case explicitly described in the lecture (empty string when no common prefix)."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Requires simple recall of a definition rather than deeper reasoning or problem solving."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about the scenario."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options (shortest string, concatenation) are plausible misconceptions, though one is obviously implausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Evidence supports only one correct answer (empty string); all distractors are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question tests a basic factual recall rather than an authentic, novel application."
+    }
+  },
+  "latency_ms": 1756,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the case explicitly described in the lecture (empty string when no common prefix).\"},\n  \"d2_cognitive_demand\": {\"score\":2,\"rationale\":\"Requires simple recall of a definition rather than deeper reasoning or problem solving.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about the scenario.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options (shortest string, concatenation) are plausible misconceptions, though one is obviously implausible.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Evidence supports only one correct answer (empty string); all distractors are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The question tests a basic factual recall rather than an authentic, novel application.\"}\n}"
+}

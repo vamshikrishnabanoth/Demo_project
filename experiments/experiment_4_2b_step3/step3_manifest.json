@@ -1,0 +1,31 @@
+{
+  "manifest_version": "1.0.0",
+  "experiment_id": "EXP_4_2B_STEP_3",
+  "timestamp_utc": "2026-09-30T15:29:47.690Z",
+  "git_baseline": {
+    "commit": "b1b15535389df45151601a9a39bc3c5d8f46e1f0",
+    "tag": "v3.4-frozen"
+  },
+  "cryptographic_hashes": {
+    "protocol_sha256": "ffbf08f9b147e1c30b3347e8aafe4606aca068966e4381b9712d88568bf6e274",
+    "unit_inventory_sha256": "8ffbe82f24dd7ad0bed7b024a97edb94e0fd92a3b4ca0bb874b91c3ff583dbd9",
+    "taxonomy_sha256": "57dba85d3fc92d1e9568e105f342d7ecc686f8cf03b185426dee7145487039e6",
+    "c5_config_lock_sha256": "6d98c4af9bf46973f9521c1d1e085eb599d97bbc2a07df3d6294818a64ef7601",
+    "results_json_sha256": "0a6a06caf6fd12b6fb1f1756e37587f6daa19e8f1cc6f0e430ddd5d7b856d674",
+    "report_md_sha256": "c55f2b5e0493531d2b38afff881ed6db0da543370e34bd9d0cf582aabdf74aee"
+  },
+  "dataset_summary": {
+    "total_scored_units": 2,
+    "human_reference_status": "SINGLE_ANNOTATOR_PROVISIONAL",
+    "benchmarks": {
+      "BENCH_05": {
+        "teacher": "Tapadia Sir",
+        "units_scored": 1
+      },
+      "BENCH_06": {
+        "teacher": "Asha Mam",
+        "units_scored": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T03",
+  "target_concept": "Contrast deterministic point encoding of standard autoencoders with probabilistic encoding (mean + variance) of VAEs.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Which statement correctly describes an advantage of modeling a latent distribution (mean + variance) in a variational autoencoder compared to the deterministic point encoding used by a standard autoencoder?",
+    "options": [
+      "It reduces the number of parameters required in the encoder network",
+      "It guarantees that every reconstructed image will be identical to the original input",
+      "It enables the latent space to approximate the true data distribution, capturing uncertainty and allowing diverse sample generation",
+      "It eliminates the need for a decoder during training"
+    ],
+    "correctAnswer": "It enables the latent space to approximate the true data distribution, capturing uncertainty and allowing diverse sample generation",
+    "explanation": "The evidence explains that standard autoencoders encode a single point, while VAEs encode the mean and variance of the data distribution. Modeling a distribution lets the latent space reflect the underlying data variability, supporting uncertainty quantification and the generation of multiple plausible reconstructions, which is a clear advantage over deterministic point encoding.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Contrast deterministic point encoding of standard autoencoders with probabilistic encoding (mean + variance) of VAEs."
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11017,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Which statement correctly describes an advantage of modeling a latent distribution (mean + variance) in a variational autoencoder compared to the deterministic point encoding used by a standard autoencoder?\",\n  \"options\": [\n    \"It reduces the number of parameters required in the encoder network\",\n    \"It guarantees that every reconstructed image will be identical to the original input\",\n    \"It enables the latent space to approximate the true data distribution, capturing uncertainty and allowing diverse sample generation\",\n    \"It eliminates the need for a decoder during training\"\n  ],\n  \"correctAnswer\": \"It enables the latent space to approximate the true data distribution, capturing uncertainty and allowing diverse sample generation\",\n  \"explanation\": \"The evidence explains that standard autoencoders encode a single point, while VAEs encode the mean and variance of the data distribution. Modeling a distribution lets the latent space reflect the underlying data variability, supporting uncertainty quantification and the generation of multiple plausible reconstructions, which is a clear advantage over deterministic point encoding.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

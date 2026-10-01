@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Clarify how git restore can undo modifications to a file and return it to a previous state",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 2,
+      "rationale": "The transcript excerpt does not mention git restore, so the question relies on unstated material despite the target hint."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of git restore's effect on uncommitted changes, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "Some distractors (e.g., staging with git add) are plausible misconceptions, others are less realistic."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is correct given the concept; the others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question asks about applying a git command rather than recalling a definition, showing reasonable authenticity."
+    }
+  },
+  "latency_ms": 1861,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 2, \"rationale\": \"The transcript excerpt does not mention git restore, so the question relies on unstated material despite the target hint.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires understanding of git restore's effect on uncommitted changes, not mere recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, concise, and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\": 3, \"rationale\": \"Some distractors (e.g., staging with git add) are plausible misconceptions, others are less realistic.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Only option A is correct given the concept; the others are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The question asks about applying a git command rather than recalling a definition, showing reasonable authenticity.\"}\n}"
+}

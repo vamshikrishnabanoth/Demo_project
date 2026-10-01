@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Use a HashSet to determine if all characters at a given index are identical across strings.",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Given the strings \"hello\", \"helpful\", and \"hell\", a HashSet is used to collect the distinct characters at index 3 (the fourth character) of each string. What will be the size of the HashSet after processing this column?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "correctAnswer": "2",
+    "explanation": "At index 3 the characters are 'l' from \"hello\", 'p' from \"helpful\", and 'l' from \"hell\". A HashSet stores only unique elements, so it will contain {'l', 'p'}, resulting in a size of 2.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Use a HashSet to determine if all characters at a given index are identical across strings."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13453,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Given the strings \\\"hello\\\", \\\"helpful\\\", and \\\"hell\\\", a HashSet is used to collect the distinct characters at index 3 (the fourth character) of each string. What will be the size of the HashSet after processing this column?\",\n  \"options\": [\n    \"1\",\n    \"2\",\n    \"3\",\n    \"4\"\n  ],\n  \"correctAnswer\": \"2\",\n  \"explanation\": \"At index 3 the characters are 'l' from \\\"hello\\\", 'p' from \\\"helpful\\\", and 'l' from \\\"hell\\\". A HashSet stores only unique elements, so it will contain {'l', 'p'}, resulting in a size of 2.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

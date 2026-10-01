@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Describe the iterative algorithm (for‑loop) to find LCM by incrementing a candidate I",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks for the exact for‑loop search described in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of loop control and logical conjunction versus other variants, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, self‑contained, and unambiguous about the task."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Each incorrect option reflects a plausible but wrong interpretation of the algorithm."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A matches the evidence; all other options are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "Applies the taught algorithm in a realistic coding scenario rather than a trivial definition."
+    }
+  },
+  "latency_ms": 1480,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks for the exact for‑loop search described in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of loop control and logical conjunction versus other variants, not mere recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, self‑contained, and unambiguous about the task.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Each incorrect option reflects a plausible but wrong interpretation of the algorithm.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A matches the evidence; all other options are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"Applies the taught algorithm in a realistic coding scenario rather than a trivial definition.\"}\n}"
+}

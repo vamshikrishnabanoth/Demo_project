@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Use git diff to compare the current working state with the previous commit and interpret the output.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "After editing a file, you run the command 'git diff' with no additional arguments. Which statement accurately describes what the displayed output represents?",
+    "options": [
+      "It shows the differences between the working directory and the index (staged changes).",
+      "It shows the differences between the current working file and the previous commit.",
+      "It provides a summary of recent commit messages.",
+      "It lists files that are untracked by Git."
+    ],
+    "correctAnswer": "It shows the differences between the current working file and the previous commit.",
+    "explanation": "Running 'git diff' without arguments compares the content of the working tree to the last committed version, displaying line‑by‑line changes. It does not consider staged changes, commit messages, or untracked files.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Use git diff to compare the current working state with the previous commit and interpret the output."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13871,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"After editing a file, you run the command 'git diff' with no additional arguments. Which statement accurately describes what the displayed output represents?\",\n  \"options\": [\n    \"It shows the differences between the working directory and the index (staged changes).\",\n    \"It shows the differences between the current working file and the previous commit.\",\n    \"It provides a summary of recent commit messages.\",\n    \"It lists files that are untracked by Git.\"\n  ],\n  \"correctAnswer\": \"It shows the differences between the current working file and the previous commit.\",\n  \"explanation\": \"Running 'git diff' without arguments compares the content of the working tree to the last committed version, displaying line‑by‑line changes. It does not consider staged changes, commit messages, or untracked files.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

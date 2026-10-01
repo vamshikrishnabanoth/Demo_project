@@ -1,0 +1,10 @@
+{
+  "test_timestamp": "2026-10-01T13:31:35.065Z",
+  "primary_timeout_ms": 5000,
+  "fallback_start_latency_ms": 0,
+  "fallback_execution_latency_ms": 451,
+  "total_recovery_latency_ms": 5461,
+  "boundary_preservation_pass": true,
+  "trace_file_generated": true,
+  "trace_file_path": "c:\\Users\\samanvi\\OneDrive\\Desktop\\git_kahoot\\Demo_project\\server\\logs\\traces\\speech_test_1790861489601.jsonl"
+}

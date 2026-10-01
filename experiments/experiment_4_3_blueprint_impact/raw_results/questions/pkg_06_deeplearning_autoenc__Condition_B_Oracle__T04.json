@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "Explain the role of Gaussian mean and variance in the latent space of a VAE and how KL‑divergence regularizes them",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "In a variational autoencoder, how does the KL‑divergence term influence the Gaussian mean and variance of the latent space?",
+    "options": [
+      "It pushes the latent Gaussian mean toward zero and variance toward one, encouraging a standard normal distribution.",
+      "It encourages the mean to match each input sample while keeping variance fixed at a small constant.",
+      "It penalizes any deviation of the latent distribution from a uniform distribution over the latent dimensions.",
+      "It only influences the reconstruction loss and does not affect the latent Gaussian parameters."
+    ],
+    "correctAnswer": "It pushes the latent Gaussian mean toward zero and variance toward one, encouraging a standard normal distribution.",
+    "explanation": "The KL‑divergence term in the VAE loss measures the distance between the encoder's Gaussian posterior (characterized by its mean and variance) and a prior standard normal distribution. Minimizing this term forces the learned mean to be close to 0 and the variance to be close to 1, thereby regularizing the latent space toward a normal distribution.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Hard",
+      "concept": "Explain the role of Gaussian mean and variance in the latent space of a VAE and how KL‑divergence regularizes them"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13059,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"In a variational autoencoder, how does the KL‑divergence term influence the Gaussian mean and variance of the latent space?\",\n  \"options\": [\n    \"It pushes the latent Gaussian mean toward zero and variance toward one, encouraging a standard normal distribution.\",\n    \"It encourages the mean to match each input sample while keeping variance fixed at a small constant.\",\n    \"It penalizes any deviation of the latent distribution from a uniform distribution over the latent dimensions.\",\n    \"It only influences the reconstruction loss and does not affect the latent Gaussian parameters.\"\n  ],\n  \"correctAnswer\": \"It pushes the latent Gaussian mean toward zero and variance toward one, encouraging a standard normal distribution.\",\n  \"explanation\": \"The KL‑divergence term in the VAE loss measures the distance between the encoder's Gaussian posterior (characterized by its mean and variance) and a prior standard normal distribution. Minimizing this term forces the learned mean to be close to 0 and the variance to be close to 1, thereby regularizing the latent space toward a normal distribution.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

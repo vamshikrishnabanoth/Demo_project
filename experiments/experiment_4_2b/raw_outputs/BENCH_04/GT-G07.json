@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-G07",
+  "benchmark": "BENCH_04",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "It will compare the changes of your current file with the previous version."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "you can simply write git diff."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"It will compare the changes of your current file with the previous version.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"you can simply write git diff.\"\n    }\n  ]\n}",
+  "latency_ms": 1352,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

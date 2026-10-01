@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Describe the motivation for VAEs and how they achieve higher reconstruction accuracy than fully or convolutional autoencoders",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "According to the provided evidence, what is the primary advantage of variational autoencoders (VAEs) over fully connected autoencoders?",
+    "options": [
+      "VAEs achieve higher reconstruction accuracy (around 70-90%) compared to fully connected autoencoders.",
+      "VAEs reduce the dimensionality of data more than PCA.",
+      "VAEs eliminate the need for a latent space by directly mapping inputs to outputs.",
+      "VAEs always produce perfect reconstructions identical to the original images."
+    ],
+    "correctAnswer": "VAEs achieve higher reconstruction accuracy (around 70-90%) compared to fully connected autoencoders.",
+    "explanation": "The evidence states that VAEs can reconstruct the original image up to 70-90% accuracy, whereas fully connected autoencoders achieve only about 50-60% accuracy, indicating a clear reconstruction quality advantage.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Describe the motivation for VAEs and how they achieve higher reconstruction accuracy than fully or convolutional autoencoders"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 10920,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\":\"T03\",\n  \"questionText\":\"According to the provided evidence, what is the primary advantage of variational autoencoders (VAEs) over fully connected autoencoders?\",\n  \"options\":[\n    \"VAEs achieve higher reconstruction accuracy (around 70-90%) compared to fully connected autoencoders.\",\n    \"VAEs reduce the dimensionality of data more than PCA.\",\n    \"VAEs eliminate the need for a latent space by directly mapping inputs to outputs.\",\n    \"VAEs always produce perfect reconstructions identical to the original images.\"\n  ],\n  \"correctAnswer\":\"VAEs achieve higher reconstruction accuracy (around 70-90%) compared to fully connected autoencoders.\",\n  \"explanation\":\"The evidence states that VAEs can reconstruct the original image up to 70-90% accuracy, whereas fully connected autoencoders achieve only about 50-60% accuracy, indicating a clear reconstruction quality advantage.\",\n  \"metadata\":{\n    \"dimension\":\"Conceptual\",\n    \"cognitiveLevel\":\"Understand\",\n    \"targetDifficulty\":\"Medium\"\n  }\n}"
+}

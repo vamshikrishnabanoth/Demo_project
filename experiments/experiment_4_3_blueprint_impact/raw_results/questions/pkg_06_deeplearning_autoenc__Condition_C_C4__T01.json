@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T01",
+  "target_concept": "Identify the three main components of a fully connected autoencoder and their functions",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which of the following statements correctly describes the three main components of a fully connected autoencoder and their primary functions?",
+    "options": [
+      "Encoder flattens the input image and encodes it into a latent space; the latent space stores the compressed representation; decoder reconstructs the original image from the latent space.",
+      "Decoder flattens the input image and encodes it into a latent space; the latent space stores the original image; encoder reconstructs the image from the latent space.",
+      "Encoder compresses the image directly into the final output image; the latent space is not used; decoder performs classification on the compressed data.",
+      "Encoder extracts features without flattening; the latent space expands the data dimensionality; decoder reduces dimensionality to produce a lower‑resolution image."
+    ],
+    "correctAnswer": "Encoder flattens the input image and encodes it into a latent space; the latent space stores the compressed representation; decoder reconstructs the original image from the latent space.",
+    "explanation": "The evidence describes a fully connected autoencoder as having three parts: an encoder that flattens and encodes the image, a latent space that holds the compressed form, and a decoder that attempts to reconstruct the original image from that latent representation.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Identify the three main components of a fully connected autoencoder and their functions"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13253,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Which of the following statements correctly describes the three main components of a fully connected autoencoder and their primary functions?\",\n  \"options\": [\n    \"Encoder flattens the input image and encodes it into a latent space; the latent space stores the compressed representation; decoder reconstructs the original image from the latent space.\",\n    \"Decoder flattens the input image and encodes it into a latent space; the latent space stores the original image; encoder reconstructs the image from the latent space.\",\n    \"Encoder compresses the image directly into the final output image; the latent space is not used; decoder performs classification on the compressed data.\",\n    \"Encoder extracts features without flattening; the latent space expands the data dimensionality; decoder reduces dimensionality to produce a lower‑resolution image.\"\n  ],\n  \"correctAnswer\": \"Encoder flattens the input image and encodes it into a latent space; the latent space stores the compressed representation; decoder reconstructs the original image from the latent space.\",\n  \"explanation\": \"The evidence describes a fully connected autoencoder as having three parts: an encoder that flattens and encodes the image, a latent space that holds the compressed form, and a decoder that attempts to reconstruct the original image from that latent representation.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

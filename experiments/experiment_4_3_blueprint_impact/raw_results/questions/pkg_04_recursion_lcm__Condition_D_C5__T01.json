@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_D_C5",
+  "target_id": "T01",
+  "target_concept": "Define a greatest common divisor and identify a common divisor of two numbers",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which of the following correctly defines the greatest common divisor (GCD) and provides a valid common divisor of the numbers 8 and 12?",
+    "options": [
+      "The GCD is the largest integer that divides both numbers; a common divisor of 8 and 12 is 4.",
+      "The GCD is the smallest integer that divides both numbers; a common divisor of 8 and 12 is 2.",
+      "The GCD is the product of the two numbers; a common divisor of 8 and 12 is 96.",
+      "The GCD is any integer that divides at least one of the numbers; a common divisor of 8 and 12 is 5."
+    ],
+    "correctAnswer": "The GCD is the largest integer that divides both numbers; a common divisor of 8 and 12 is 4.",
+    "explanation": "The greatest common divisor is defined as the largest integer that divides both given numbers. For 8 and 12, the common divisors are 1, 2, and 4, with 4 being the greatest. The other options either misstate the definition or give incorrect examples.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Easy",
+      "concept": "Define a greatest common divisor and identify a common divisor of two numbers"
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14225,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Which of the following correctly defines the greatest common divisor (GCD) and provides a valid common divisor of the numbers 8 and 12?\",\n  \"options\": [\n    \"The GCD is the largest integer that divides both numbers; a common divisor of 8 and 12 is 4.\",\n    \"The GCD is the smallest integer that divides both numbers; a common divisor of 8 and 12 is 2.\",\n    \"The GCD is the product of the two numbers; a common divisor of 8 and 12 is 96.\",\n    \"The GCD is any integer that divides at least one of the numbers; a common divisor of 8 and 12 is 5.\"\n  ],\n  \"correctAnswer\": \"The GCD is the largest integer that divides both numbers; a common divisor of 8 and 12 is 4.\",\n  \"explanation\": \"The greatest common divisor is defined as the largest integer that divides both given numbers. For 8 and 12, the common divisors are 1, 2, and 4, with 4 being the greatest. The other options either misstate the definition or give incorrect examples.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

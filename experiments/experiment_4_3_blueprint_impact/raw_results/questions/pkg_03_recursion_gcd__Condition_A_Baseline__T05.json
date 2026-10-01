@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T05",
+  "target_concept": "Evaluate the trade‑off between using a fixed upper bound (e.g., 100) versus a·b as the loop limit when searching for LCM",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "When searching for the least common multiple (LCM) of two positive integers a and b using a loop, which choice of loop upper bound typically yields the fewest iterations?",
+    "options": [
+      "A fixed constant such as 100",
+      "The product a × b",
+      "The sum a + b",
+      "The larger of a and b"
+    ],
+    "correctAnswer": "The product a × b",
+    "explanation": "The evidence discusses the trade‑off between a constant bound (100) and using a × b as the loop limit, concluding that \"a multiply by b\" results in a shorter execution. Using a × b guarantees the loop runs only until the theoretical maximum LCM, avoiding unnecessary iterations that a larger constant like 100 might cause for many input pairs.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Hard",
+      "concept": "Evaluate the trade‑off between using a fixed upper bound (e.g., 100) versus a·b as the loop limit when searching for LCM"
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14641,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"When searching for the least common multiple (LCM) of two positive integers a and b using a loop, which choice of loop upper bound typically yields the fewest iterations?\",\n  \"options\": [\n    \"A fixed constant such as 100\",\n    \"The product a × b\",\n    \"The sum a + b\",\n    \"The larger of a and b\"\n  ],\n  \"correctAnswer\": \"The product a × b\",\n  \"explanation\": \"The evidence discusses the trade‑off between a constant bound (100) and using a × b as the loop limit, concluding that \\\"a multiply by b\\\" results in a shorter execution. Using a × b guarantees the loop runs only until the theoretical maximum LCM, avoiding unnecessary iterations that a larger constant like 100 might cause for many input pairs.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

@@ -1,0 +1,26 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "COMPARE",
+    "ASK_WHY",
+    "REAL_WORLD_APP"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "The encoder takes the image and converts the flattens of image, performs encoding and then gives it to one... latent space that is the compressed form"
+    },
+    {
+      "label": "COMPARE",
+      "quote": "The first main reason why fully auto encoder fail is because the 2d dimension of image is directly converted into one... Hence, with this particular drawback, we are going for convolutional order encoder"
+    },
+    {
+      "label": "ASK_WHY",
+      "quote": "why do we use auto encoders?"
+    },
+    {
+      "label": "REAL_WORLD_APP",
+      "quote": "Now, there are applications where I want to extract the images as original images"
+    }
+  ]
+}

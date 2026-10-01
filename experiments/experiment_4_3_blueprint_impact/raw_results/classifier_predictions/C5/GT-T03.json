@@ -1,0 +1,16 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "CODE_TRACE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "The outer loop is number of characters you want to process. The inner loop is one character at a time of all the three strings."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "I take each string and I get the corresponding character at that index. Index ranging from 0 to a.dot length. And then we add it to the hash set."
+    }
+  ]
+}

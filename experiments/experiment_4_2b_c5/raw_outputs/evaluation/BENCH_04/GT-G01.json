@@ -1,0 +1,21 @@
+{
+  "unit_id": "GT-G01",
+  "benchmark": "BENCH_04",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "So if you want to know if the Git is installed in your system, then we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"So if you want to know if the Git is installed in your system, then we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed.\"\n    }\n  ]\n}",
+  "latency_ms": 1534,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

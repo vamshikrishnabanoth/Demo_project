@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Explain what `git init` does and what message it returns",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "When you run `git init` in a new directory, which of the following messages is displayed?",
+    "options": [
+      "Initialized empty Git repository in <directory>/.git/",
+      "Created a new branch named 'master'",
+      "Added remote 'origin' pointing to the repository URL",
+      "No output is shown"
+    ],
+    "correctAnswer": "Initialized empty Git repository in <directory>/.git/",
+    "explanation": "The evidence states that running `git init` reports that an empty repository has been created. The standard output for this action is the message \"Initialized empty Git repository in <directory>/.git/\".",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Explain what `git init` does and what message it returns"
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 1487,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"When you run `git init` in a new directory, which of the following messages is displayed?\",\n  \"options\": [\n    \"Initialized empty Git repository in <directory>/.git/\",\n    \"Created a new branch named 'master'\",\n    \"Added remote 'origin' pointing to the repository URL\",\n    \"No output is shown\"\n  ],\n  \"correctAnswer\": \"Initialized empty Git repository in <directory>/.git/\",\n  \"explanation\": \"The evidence states that running `git init` reports that an empty repository has been created. The standard output for this action is the message \\\"Initialized empty Git repository in <directory>/.git/\\\".\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

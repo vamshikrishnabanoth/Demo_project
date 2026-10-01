@@ -1,0 +1,113 @@
+{
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "benchmark_id": "BENCH_06",
+  "instructor": "Asha Mam",
+  "topic": "Autoencoders vs VAEs: Latent Space Geometry & Probability Distributions",
+  "unit_ids": [
+    "GT-A01",
+    "GT-A02",
+    "GT-A03"
+  ],
+  "lecture_depth": {
+    "score": 85,
+    "rating": "Advanced"
+  },
+  "voice_emphasis": {
+    "syntaxEmphasis": "MEDIUM",
+    "conceptualEmphasis": "HIGH",
+    "explicitInstructions": [
+      "Focus on Gaussian mean and variance",
+      "Contrast deterministic point with probability distribution"
+    ]
+  },
+  "raw_content": "--- [SEGMENT 1: GT-A01 - Autoencoder Structural Comparison: Fully Connected vs. Convolutional Architectures] (Start: 0s, Duration: 147s) ---\nSo, let me talk about the hotline codeus, first hotline codeus that comes into picture is fully connected hotline codeus, which where the architecture is, encoder law, latent space, decoder law. What is encoder do? The encoder takes the image and converts the flattens of image, performs encoding and then gives it to one. And generates one latent space that is the compressed form and latent space output is given as input to decoder and decoder will try to reconstruct the image where the reconstruction was deliberately failed. The first main reason why fully auto encoder fail is because the 2d dimension of image is directly converted into one, the quantity dimension for dealing with the encoder plot. Hence, with this particular drawback, we are going for convolutional order encoder where the 2d image is not directly converted into one, but what we do? We perform what? Commolition operation, pulley cooperation, understanding the features and then converted that to one and then we have given it to encoder and then got latent space and then that. Still the convolutional order encoder is decoder. So, what we do? We try to change the latent space where we observe the improvements, but the reconstructed image was not that clarity or what we were able to understand what is there in the image, but not exactly the later original input image is. Now, when we talk about auto encoders, why do we use auto encoders? When we talk about image processing, we have lots of images to process. When we want to train a model, we have to give lot training data or huge training data where one size of the image may be huge, so the training time becomes complex. So, in order to reduce the computational complexity of training large number of images, what do we try to do? We try to compress the image. I think decode the original image so that when you compress the image, the size of the image would be reduced and we are able to understand the features also. Now, there are applications where I want to extract the images as original images, almost like what original images because my convolutional auto encoders were not able to do that\n\n--- [SEGMENT 2: GT-A02 - Variational Autoencoders: Motivation for Continuous Latent Representations] (Start: 147s, Duration: 111s) ---\nand my fully connected auto encoders were also not able to do that. So, the third type of auto encoders that came into picture, which reconnects the original image up till 70 or 60 percent as the original image, unlike fully connected where the accuracy is only around 60 or 50. 70 percent or 80 percent till 90 percent accuracy of reconstructed images is done using this auto encoders, which are called as variational auto encoders. So, gradually we are trying to reconstruct the image from the compressed data with improved quality. First fully auto encoders, very blurry images, second convolutional auto encoders, a little bit improvement by changing the latent space. Now, the main idea here is the important factor here for understanding the reconstruction is latent space. So, this variational auto encoders focused on what do I do with this latent space rather than just changing the values. What extra thing I can do with the latent space because the encoders does just the conversion of the input latent space. So, the entire compression is done in what the latent space. So, what do I do in this latent space such that the decoder works well and the reconstructed image would be as much as similar to the original image. So, when this idea came into picture, variational auto encoder comes into picture. Now, what does this variational auto encoders do? Variational auto encoders does not just change the latent space dimension, but works are how is this latent space working? And what are the other parameters that have to focus on this latent space so that the image quality will be improved. Now, what exactly happens?\n\n--- [SEGMENT 3: GT-A03 - Latent Space Modeling: Gaussian Mean, Variance, and KL Regularization] (Start: 258s, Duration: 172s) ---\nWhen you talk about the normal encoder, you understand where exactly the data point is. But when we talk about the KL divergence concept in the variational auto encoders, we understand about the mean of the data distribution and also the variance of the data distribution. What is mean and what is variance? V is the average sample and what is the variance? How spread the data is from the V? Because when we talk about the image, we talk about the pixels. So, when I compress the data, I do not want to look at the one point where the data is exactly available. I just want to look at the probability, understand the words and I am talking. I want to understand the probability of distribution of data in the latent space. So, the improvement in the latent space is done not just by one point, but understanding mean and variance of that particular data. Now, how do we check this? The mean and variance should be close to the normal distribution, normal and the original input. So, I am not checking one point, I am checking mean and variance of the data and that should be close to what the normal distribution of the input data. So, when you find that particular thing, your latent space has the original input content of the normal image in the reduced form. So, the normal encoders focuses only on one data point. Whereas, the variational auto encoders focus on what? The mean of the data distribution of the pixels and as well as more the variance. And the KL divergence makes sure that the mean and the variance of the data are close to what? Close to the normal distribution. So, when this kind of compression is done in the latent space, it will generate the images with as much as accuracy as the original image in the compressed form. Okay, now let us get into the concept first before we get into the code. So, how is the latent space generally generated in normal auto encoder? First we take the input image, we give it to the encoder and the encoder we give us what? Fixed a latent space or latent vector which is again given to what? The encoder and the image is reconstructed. But when we talk about variational auto encoder, what is it doing? It takes the image, gives it to the encoder and what is encoder doing? It finds the probability distribution by assuming what?",
+  "chunks": [
+    {
+      "chunk_id": "chunk_01",
+      "unit_id": "GT-A01",
+      "title": "Autoencoder Structural Comparison: Fully Connected vs. Convolutional Architectures",
+      "start": 0,
+      "end": 147,
+      "text": "So, let me talk about the hotline codeus, first hotline codeus that comes into picture is fully connected hotline codeus, which where the architecture is, encoder law, latent space, decoder law. What is encoder do? The encoder takes the image and converts the flattens of image, performs encoding and then gives it to one. And generates one latent space that is the compressed form and latent space output is given as input to decoder and decoder will try to reconstruct the image where the reconstruction was deliberately failed. The first main reason why fully auto encoder fail is because the 2d dimension of image is directly converted into one, the quantity dimension for dealing with the encoder plot. Hence, with this particular drawback, we are going for convolutional order encoder where the 2d image is not directly converted into one, but what we do? We perform what? Commolition operation, pulley cooperation, understanding the features and then converted that to one and then we have given it to encoder and then got latent space and then that. Still the convolutional order encoder is decoder. So, what we do? We try to change the latent space where we observe the improvements, but the reconstructed image was not that clarity or what we were able to understand what is there in the image, but not exactly the later original input image is. Now, when we talk about auto encoders, why do we use auto encoders? When we talk about image processing, we have lots of images to process. When we want to train a model, we have to give lot training data or huge training data where one size of the image may be huge, so the training time becomes complex. So, in order to reduce the computational complexity of training large number of images, what do we try to do? We try to compress the image. I think decode the original image so that when you compress the image, the size of the image would be reduced and we are able to understand the features also. Now, there are applications where I want to extract the images as original images, almost like what original images because my convolutional auto encoders were not able to do that"
+    },
+    {
+      "chunk_id": "chunk_02",
+      "unit_id": "GT-A02",
+      "title": "Variational Autoencoders: Motivation for Continuous Latent Representations",
+      "start": 147,
+      "end": 258,
+      "text": "and my fully connected auto encoders were also not able to do that. So, the third type of auto encoders that came into picture, which reconnects the original image up till 70 or 60 percent as the original image, unlike fully connected where the accuracy is only around 60 or 50. 70 percent or 80 percent till 90 percent accuracy of reconstructed images is done using this auto encoders, which are called as variational auto encoders. So, gradually we are trying to reconstruct the image from the compressed data with improved quality. First fully auto encoders, very blurry images, second convolutional auto encoders, a little bit improvement by changing the latent space. Now, the main idea here is the important factor here for understanding the reconstruction is latent space. So, this variational auto encoders focused on what do I do with this latent space rather than just changing the values. What extra thing I can do with the latent space because the encoders does just the conversion of the input latent space. So, the entire compression is done in what the latent space. So, what do I do in this latent space such that the decoder works well and the reconstructed image would be as much as similar to the original image. So, when this idea came into picture, variational auto encoder comes into picture. Now, what does this variational auto encoders do? Variational auto encoders does not just change the latent space dimension, but works are how is this latent space working? And what are the other parameters that have to focus on this latent space so that the image quality will be improved. Now, what exactly happens?"
+    },
+    {
+      "chunk_id": "chunk_03",
+      "unit_id": "GT-A03",
+      "title": "Latent Space Modeling: Gaussian Mean, Variance, and KL Regularization",
+      "start": 258,
+      "end": 430,
+      "text": "When you talk about the normal encoder, you understand where exactly the data point is. But when we talk about the KL divergence concept in the variational auto encoders, we understand about the mean of the data distribution and also the variance of the data distribution. What is mean and what is variance? V is the average sample and what is the variance? How spread the data is from the V? Because when we talk about the image, we talk about the pixels. So, when I compress the data, I do not want to look at the one point where the data is exactly available. I just want to look at the probability, understand the words and I am talking. I want to understand the probability of distribution of data in the latent space. So, the improvement in the latent space is done not just by one point, but understanding mean and variance of that particular data. Now, how do we check this? The mean and variance should be close to the normal distribution, normal and the original input. So, I am not checking one point, I am checking mean and variance of the data and that should be close to what the normal distribution of the input data. So, when you find that particular thing, your latent space has the original input content of the normal image in the reduced form. So, the normal encoders focuses only on one data point. Whereas, the variational auto encoders focus on what? The mean of the data distribution of the pixels and as well as more the variance. And the KL divergence makes sure that the mean and the variance of the data are close to what? Close to the normal distribution. So, when this kind of compression is done in the latent space, it will generate the images with as much as accuracy as the original image in the compressed form. Okay, now let us get into the concept first before we get into the code. So, how is the latent space generally generated in normal auto encoder? First we take the input image, we give it to the encoder and the encoder we give us what? Fixed a latent space or latent vector which is again given to what? The encoder and the image is reconstructed. But when we talk about variational auto encoder, what is it doing? It takes the image, gives it to the encoder and what is encoder doing? It finds the probability distribution by assuming what?"
+    }
+  ],
+  "behavior_payloads": {
+    "oracle": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "first hotline codeus that comes into picture is fully connected hotline codeus, which where the architecture is, encoder law, latent space,",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "COMPARE",
+        "evidence_quote": "The first main reason why fully auto encoder fail is because the 2d dimension of image is directly converted into one... Hence, with this pa",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "c4": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "The encoder takes the image and converts the flattens of image, performs encoding and then gives it to one... latent space that is the compr",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "COMPARE",
+        "evidence_quote": "The first main reason why fully auto encoder fail is because the 2d dimension of image is directly converted into one... Hence, with this pa",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "ASK_WHY",
+        "evidence_quote": "why do we use auto encoders?",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "REAL_WORLD_APP",
+        "evidence_quote": "Now, there are applications where I want to extract the images as original images",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "c5": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "The encoder takes the image and converts the flattens of image, performs encoding and then gives it to one. And generates one latent space t",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "COMPARE",
+        "evidence_quote": "first hotline codeus that comes into picture is fully connected ... The first main reason why fully auto encoder fail ... Hence, with this p",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "permuted": {
+      "source_package_id": "pkg_01_git_intro",
+      "behaviors": [
+        {
+          "behavior": "EXPLAIN",
+          "evidence_quote": "Hello students, welcome to the next session. In today's session, we will be learning about some of the basic Git commands. So in the last cl",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "DEMONSTRATE",
+          "evidence_quote": "So the first command you have is Git version. So if you want to know if the Git is installed in your system, then we will be using this part",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    }
+  }
+}

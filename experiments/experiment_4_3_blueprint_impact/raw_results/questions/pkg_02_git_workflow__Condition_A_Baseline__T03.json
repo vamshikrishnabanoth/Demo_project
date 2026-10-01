@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T03",
+  "target_concept": "Create a commit with an appropriate message and explain why the message is important.",
+  "target_dimension": "Conceptual|Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Which command correctly creates a git commit that includes a descriptive message?",
+    "options": [
+      "git commit -m \"Implemented login feature\"",
+      "git commit -am\"Implemented login feature\"",
+      "git commit --msg \"Implemented login feature\"",
+      "git commit"
+    ],
+    "correctAnswer": "git commit -m \"Implemented login feature\"",
+    "explanation": "The -m flag followed by a quoted string supplies a commit message, which is required to make the commit descriptive. Option 2 omits the required space after -am, making it syntactically invalid. Option 3 uses a non‑existent --msg flag. Option 4 lacks any message flag, so it does not provide a descriptive message.",
+    "metadata": {
+      "dimension": "Conceptual|Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Create a commit with an appropriate message and explain why the message is important."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 10956,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Which command correctly creates a git commit that includes a descriptive message?\",\n  \"options\": [\n    \"git commit -m \\\"Implemented login feature\\\"\",\n    \"git commit -am\\\"Implemented login feature\\\"\",\n    \"git commit --msg \\\"Implemented login feature\\\"\",\n    \"git commit\"\n  ],\n  \"correctAnswer\": \"git commit -m \\\"Implemented login feature\\\"\",\n  \"explanation\": \"The -m flag followed by a quoted string supplies a commit message, which is required to make the commit descriptive. Option 2 omits the required space after -am, making it syntactically invalid. Option 3 uses a non‑existent --msg flag. Option 4 lacks any message flag, so it does not provide a descriptive message.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual|Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_C_C4",
+  "target_id": "T04",
+  "target_concept": "Trace the recursive flow for reversing a string, identifying base case and the combine step.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks to trace the recursive reversal process that is the focus of the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of recursion unwind and string concatenation, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is well‑phrased, self‑contained, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options reflect common misconceptions about order of concatenation, making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only one answer (A) matches the algorithmic behavior described; the others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "The task of enumerating return values during recursion is an authentic, higher‑order application of the concept."
+    }
+  },
+  "latency_ms": 2665,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks to trace the recursive reversal process that is the focus of the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of recursion unwind and string concatenation, not mere recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is well‑phrased, self‑contained, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options reflect common misconceptions about order of concatenation, making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only one answer (A) matches the algorithmic behavior described; the others are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"The task of enumerating return values during recursion is an authentic, higher‑order application of the concept.\"}\n}"
+}

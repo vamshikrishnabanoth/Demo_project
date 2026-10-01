@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_C_C4",
+  "target_id": "T03",
+  "target_concept": "Explain how `git commit -m \"message\"` creates a repository snapshot and records a descriptive message",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly tests the commit‑snapshot and message concept explicitly covered in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of the commit workflow and purpose of the message, beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, self‑contained, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options reflect common misconceptions about git commit behavior, making them plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is supported by the evidence; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "Frames an authentic git‑usage scenario rather than a simple definition, though the concept is standard."
+    }
+  },
+  "latency_ms": 1315,
+  "retry_count": 1,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly tests the commit‑snapshot and message concept explicitly covered in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of the commit workflow and purpose of the message, beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, self‑contained, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options reflect common misconceptions about git commit behavior, making them plausible.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A is supported by the evidence; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"Frames an authentic git‑usage scenario rather than a simple definition, though the concept is standard.\"}\n}"
+}

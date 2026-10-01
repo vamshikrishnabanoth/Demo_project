@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_D_C5",
+  "target_id": "T02",
+  "target_concept": "Explain how variational autoencoders treat the latent space differently from standard autoencoders.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 3,
+      "rationale": "The lecture mentions VAEs focusing on the latent space, but does not explicitly state the probabilistic Gaussian treatment, so alignment is moderate."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of deterministic vs probabilistic latent representations, a conceptual distinction beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question stem is clear, concise, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "A deterministic latent point is a plausible misconception; other distractors are less realistic but still serve as foils."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option B correctly describes the VAE latent handling; the others are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question probes an authentic conceptual difference rather than a simple definition."
+    }
+  },
+  "latency_ms": 8543,
+  "retry_count": 4,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 3, \"rationale\": \"The lecture mentions VAEs focusing on the latent space, but does not explicitly state the probabilistic Gaussian treatment, so alignment is moderate.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires understanding of deterministic vs probabilistic latent representations, a conceptual distinction beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The question stem is clear, concise, and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\": 3, \"rationale\": \"A deterministic latent point is a plausible misconception; other distractors are less realistic but still serve as foils.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Only option B correctly describes the VAE latent handling; the others are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The question probes an authentic conceptual difference rather than a simple definition.\"}\n}"
+}

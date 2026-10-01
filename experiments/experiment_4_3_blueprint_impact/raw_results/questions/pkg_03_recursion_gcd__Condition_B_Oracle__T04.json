@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "Convert the iterative LCM search into a recursive function, specifying base case and recursive step",
+  "target_dimension": "Scenario Analysis",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "Based on the provided evidence, when converting the iterative LCM search into a recursive function LCM(a, b, i), which statement correctly defines the base case that should trigger the recursion to stop and return the LCM?",
+    "options": [
+      "If i % a == 0 and i % b == 0, return i.",
+      "If i > a * b, return -1.",
+      "If i == 0, return 0.",
+      "If a == b, return a."
+    ],
+    "correctAnswer": "If i % a == 0 and i % b == 0, return i.",
+    "explanation": "The evidence repeatedly states that the base condition for the LCM recursion is when the current candidate i is divisible by both a and b (i % a == 0 && i % b == 0), at which point i is returned as the LCM. The other options describe unrelated termination conditions that are not mentioned in the evidence.",
+    "metadata": {
+      "dimension": "Scenario Analysis",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Hard",
+      "concept": "Convert the iterative LCM search into a recursive function, specifying base case and recursive step"
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13748,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"Based on the provided evidence, when converting the iterative LCM search into a recursive function LCM(a, b, i), which statement correctly defines the base case that should trigger the recursion to stop and return the LCM?\",\n  \"options\": [\n    \"If i % a == 0 and i % b == 0, return i.\",\n    \"If i > a * b, return -1.\",\n    \"If i == 0, return 0.\",\n    \"If a == b, return a.\"\n  ],\n  \"correctAnswer\": \"If i % a == 0 and i % b == 0, return i.\",\n  \"explanation\": \"The evidence repeatedly states that the base condition for the LCM recursion is when the current candidate i is divisible by both a and b (i % a == 0 && i % b == 0), at which point i is returned as the LCM. The other options describe unrelated termination conditions that are not mentioned in the evidence.\",\n  \"metadata\": {\n    \"dimension\": \"Scenario Analysis\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

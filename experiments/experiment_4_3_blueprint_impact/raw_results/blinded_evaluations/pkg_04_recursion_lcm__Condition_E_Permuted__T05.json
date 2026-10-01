@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Design a recursive algorithm that checks if a string is a palindrome by comparing outer characters",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 4,
+      "rationale": "The question targets the recursive palindrome algorithm and its base case, which is mentioned in the evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of recursion logic rather than mere recall of a definition."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "Option A is a plausible alternative, but C and D are weak distractors, reducing overall plausibility."
+    },
+    "d5_single_key_determinism": {
+      "score": 4,
+      "rationale": "Given the evidence’s emphasis on length‑one as the extreme case, only one answer is defensibly correct."
+    },
+    "d6_question_novelty": {
+      "score": 3,
+      "rationale": "The question is a standard recursion‑base‑case query; it is authentic but not especially novel."
+    }
+  },
+  "latency_ms": 2733,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 4, \"rationale\": \"The question targets the recursive palindrome algorithm and its base case, which is mentioned in the evidence.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires understanding of recursion logic rather than mere recall of a definition.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\": 3, \"rationale\": \"Option A is a plausible alternative, but C and D are weak distractors, reducing overall plausibility.\"},\n  \"d5_single_key_determinism\": {\"score\": 4, \"rationale\": \"Given the evidence’s emphasis on length‑one as the extreme case, only one answer is defensibly correct.\"},\n  \"d6_question_novelty\": {\"score\": 3, \"rationale\": \"The question is a standard recursion‑base‑case query; it is authentic but not especially novel.\"}\n}"
+}

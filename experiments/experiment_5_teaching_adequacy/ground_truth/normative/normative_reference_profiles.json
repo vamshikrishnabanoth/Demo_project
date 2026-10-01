@@ -1,0 +1,330 @@
+{
+  "adjudication_timestamp": "2026-10-01T08:00:00Z",
+  "lead_adjudicator": "Consensus Panel (A & B)",
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "topic": "Article 21: Protection of Life and Personal Liberty",
+      "declared_objective": "Analyze how the Supreme Court's interpretation of 'procedure established by law' in Article 21 transformed from the literalist, formalistic reading in A.K. Gopalan (1950) into a substantive fairness requirement under the Golden Triangle doctrine in Maneka Gandhi (1978).",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Text of Art 21 and fundamental right status must be formally recognized.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Core definition of life and personal liberty, contrasting biological existence with dignified life.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Structural mechanism of 'procedure established by law' vs American 'due process'.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Golden Triangle doctrine: mutual interrelation between Articles 14, 19, and 21.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Constitutional necessity of preventing executive/legislative arbitrariness.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Case-law analysis of Gopalan and Maneka Gandhi applications.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Valid statutory limits and lawful state deprivation procedures.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 2,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Modern digital privacy (Puttaswamy) is future context, not mandatory for historical evolution.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "topic": "Eigenvalues and Eigenvectors of Linear Operators",
+      "declared_objective": "Compute the eigenvalues and eigenvectors of a 2x2 matrix, explain the geometric intuition of an eigenvector as an invariant direction under linear transformation, and solve the characteristic polynomial det(A - lambda I) = 0.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Eigenvalue equation Ax = lambda x definition and terms.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Geometric intuition of eigenvectors as invariant transformation directions.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Characteristic polynomial det(A - lambda I) = 0 and trace/determinant properties.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Singular matrix requirement for non-trivial nullspace vectors.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Why det = 0 yields eigenvalues and why non-zero eigenvectors exist.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Worked computation of eigenvalues and eigenvectors for 2x2 matrix.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Rotations with no real eigenvalues and defective matrix introduction.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 2,
+          "alignment": "OPTIONAL",
+          "rationale": "Diagonalization A = S Lambda S^-1 is subsequent topic.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "topic": "Breadth-First Search (BFS) Graph Traversal (Conceptual)",
+      "declared_objective": "Explain the conceptual mechanics of Breadth-First Search, prove why a First-In-First-Out (FIFO) queue guarantees level-order discovery and unweighted shortest-path traversal, and explain the invariant function of the visited set.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "BFS definition and FIFO queue identification.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Level-order expansion and concentric ripple traversal intuition.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "FIFO queue data structure, visited boolean array, and adjacency list.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Queue FIFO invariant guaranteeing non-decreasing distance ordering.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Why visited set is necessary (cycle prevention) and why queue guarantees shortest path.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Conceptual graph trace; complete syntactic code is not required for conceptual objective.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 2,
+          "alignment": "OPTIONAL",
+          "rationale": "Disconnected graph behavior mentioned briefly; not required for core traversal.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Bipartite graph coloring or advanced search out of scope.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "topic": "Breadth-First Search (BFS) Graph Traversal (Implementation)",
+      "declared_objective": "Implement Breadth-First Search using a concrete queue data structure in code, trace variable states during execution, and implement robust edge-case handling for cyclic graphs and disconnected components.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "BFS and Queue data structure naming.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Level-order exploration meaning.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Queue STL/class methods (push, pop, front, empty) and visited tracking arrays.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Loop condition while(!q.empty()), dequeuing, neighbor iteration, enqueueing unvisited.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Why enqueuing without marking visited causes exponential redundant work.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Concrete variable-level code/pseudocode trace with memory and time analysis.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Explicit handling of cyclic graphs and disconnected components via outer loop.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 3,
+          "alignment": "OPTIONAL",
+          "rationale": "Adapting code to 2D grid search.",
+          "confidence": "MEDIUM"
+        }
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "topic": "Autoencoders and Variational Autoencoders (VAEs)",
+      "declared_objective": "Explain why classical autoencoders fail at smooth generative interpolation, derive the variational autoencoder objective mapping inputs to Gaussian distributions (mu, sigma^2), and justify the role of Kullback-Leibler (KL) divergence in regularizing the latent space.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Autoencoders, latent space, and Variational Autoencoders identification.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Continuous probabilistic latent space vs discrete deterministic point bottleneck.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Probabilistic encoder predicting mean (mu) and variance (sigma^2), and decoder.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Dual-loss mechanism: reconstruction loss combined with KL divergence penalty.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Why standard autoencoders fail to generate novel samples and why KL prevents latent gaps.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Tracing latent distributions for Gaussian regularization.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Dimensionality flattening failure in FC autoencoders; blurry outputs.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 3,
+          "alignment": "OPTIONAL",
+          "rationale": "Reparameterization trick details for backprop through stochastic node.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "topic": "Price Elasticity of Demand and Market Welfare",
+      "declared_objective": "Calculate the price elasticity of demand using the midpoint method, interpret whether demand is price-elastic, inelastic, or unit-elastic, explain the relationship between elasticity and total revenue, and evaluate how price distortions create deadweight loss.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Definition of price elasticity of demand Ed and law of demand.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Elasticity as quantitative responsiveness of quantity demanded to price changes.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Percentage change formula and midpoint formula structure.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Total revenue test: interplay between price effect and quantity effect across elastic/inelastic regimes.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Why percentages resolve unit dependency; why midpoint resolves direction dependency.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Numerical calculation of Ed using midpoint method and classification (|Ed| > 1, < 1, = 1).",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Welfare deadweight loss resulting from price ceilings restricting mutually beneficial trades.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 2,
+          "alignment": "OPTIONAL",
+          "rationale": "Tax incidence and cross-price elasticity.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  }
+}

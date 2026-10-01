@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_D_C5",
+  "target_id": "T02",
+  "target_concept": "Explain how variational autoencoders treat the latent space differently from standard autoencoders.",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "How do variational autoencoders handle the latent vector differently from standard autoencoders?",
+    "options": [
+      "VAEs model the latent vector as a deterministic point obtained directly from the encoder.",
+      "VAEs treat the latent vector as parameters of a Gaussian distribution (mean and variance) and sample from it during training.",
+      "VAEs use a binary latent representation with one‑hot encoding to capture uncertainty.",
+      "VAEs ignore the latent space and reconstruct images solely from the decoder's learned weights."
+    ],
+    "correctAnswer": "VAEs treat the latent vector as parameters of a Gaussian distribution (mean and variance) and sample from it during training.",
+    "explanation": "Variational autoencoders do not store a single fixed latent code. Instead, the encoder outputs the parameters of a Gaussian distribution (mean and variance) for each input. During training a latent vector is sampled from this distribution (using the reparameterization trick) and the KL‑divergence term regularizes the distribution toward a standard normal. This probabilistic treatment distinguishes VAEs from standard deterministic autoencoders.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain how variational autoencoders treat the latent space differently from standard autoencoders."
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12161,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"How do variational autoencoders handle the latent vector differently from standard autoencoders?\",\n  \"options\": [\n    \"VAEs model the latent vector as a deterministic point obtained directly from the encoder.\",\n    \"VAEs treat the latent vector as parameters of a Gaussian distribution (mean and variance) and sample from it during training.\",\n    \"VAEs use a binary latent representation with one‑hot encoding to capture uncertainty.\",\n    \"VAEs ignore the latent space and reconstruct images solely from the decoder's learned weights.\"\n  ],\n  \"correctAnswer\": \"VAEs treat the latent vector as parameters of a Gaussian distribution (mean and variance) and sample from it during training.\",\n  \"explanation\": \"Variational autoencoders do not store a single fixed latent code. Instead, the encoder outputs the parameters of a Gaussian distribution (mean and variance) for each input. During training a latent vector is sampled from this distribution (using the reparameterization trick) and the KL‑divergence term regularizes the distribution toward a standard normal. This probabilistic treatment distinguishes VAEs from standard deterministic autoencoders.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

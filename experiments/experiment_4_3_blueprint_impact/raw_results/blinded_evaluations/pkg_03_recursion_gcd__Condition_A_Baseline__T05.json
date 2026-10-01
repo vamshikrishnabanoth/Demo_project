@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T05",
+  "target_concept": "Evaluate the trade‑off between using a fixed upper bound (e.g., 100) versus a·b as the loop limit when searching for LCM",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 4,
+      "rationale": "Core concept of loop bound for LCM (100 vs a×b) is in evidence, though other options are not mentioned"
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of algorithmic bounds, not mere recall"
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "Stem is clear, concise, and unambiguous"
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect choices (sum, larger of a and b) are plausible misconceptions"
+    },
+    "d5_single_key_determinism": {
+      "score": 2,
+      "rationale": "Evidence only compares 100 and a×b, leaving ambiguity about sum or max options"
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "Applies a realistic programming trade‑off rather than a simple definition"
+    }
+  },
+  "latency_ms": 30189,
+  "retry_count": 42,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":4,\"rationale\":\"Core concept of loop bound for LCM (100 vs a×b) is in evidence, though other options are not mentioned\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of algorithmic bounds, not mere recall\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"Stem is clear, concise, and unambiguous\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect choices (sum, larger of a and b) are plausible misconceptions\"},\n  \"d5_single_key_determinism\": {\"score\":2,\"rationale\":\"Evidence only compares 100 and a×b, leaving ambiguity about sum or max options\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"Applies a realistic programming trade‑off rather than a simple definition\"}\n}"
+}

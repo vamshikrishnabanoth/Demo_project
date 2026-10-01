@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T05",
+  "target_concept": "`git status` shows modified, staged, and untracked files in the working tree.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "You modify an existing tracked file in your repository but do not stage it. When you run `git status`, under which heading will the file be listed?",
+    "options": [
+      "Changes not staged for commit",
+      "Changes to be committed",
+      "Untracked files",
+      "No changes detected"
+    ],
+    "correctAnswer": "Changes not staged for commit",
+    "explanation": "Because the file is already tracked and has been modified, `git status` lists it under the \"Changes not staged for commit\" section until you add it to the index with `git add`.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "`git status` shows modified, staged, and untracked files in the working tree."
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 5656,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"You modify an existing tracked file in your repository but do not stage it. When you run `git status`, under which heading will the file be listed?\",\n  \"options\": [\n    \"Changes not staged for commit\",\n    \"Changes to be committed\",\n    \"Untracked files\",\n    \"No changes detected\"\n  ],\n  \"correctAnswer\": \"Changes not staged for commit\",\n  \"explanation\": \"Because the file is already tracked and has been modified, `git status` lists it under the \\\"Changes not staged for commit\\\" section until you add it to the index with `git add`.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

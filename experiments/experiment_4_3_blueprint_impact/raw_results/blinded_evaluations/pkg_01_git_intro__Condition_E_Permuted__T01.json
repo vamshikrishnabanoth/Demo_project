@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T01",
+  "target_concept": "Identify the command to verify Git is installed and interpret its output",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The lecture explicitly states that 'git --version' is used to check if Git is installed and to display its version."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "The task requires simple recall of a specific command rather than deep conceptual reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "All distractors are legitimate Git commands that a learner might mistakenly consider, making them plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Based on the evidence, only 'git --version' correctly fulfills the requirement; the other options are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "The question asks for a practical verification step, reflecting authentic usage rather than rote definition."
+    }
+  },
+  "latency_ms": 8641,
+  "retry_count": 0,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":5,\"rationale\":\"The lecture explicitly states that 'git --version' is used to check if Git is installed and to display its version.\"},\"d2_cognitive_demand\":{\"score\":3,\"rationale\":\"The task requires simple recall of a specific command rather than deep conceptual reasoning.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about what is being asked.\"},\"d4_distractor_plausibility\":{\"score\":5,\"rationale\":\"All distractors are legitimate Git commands that a learner might mistakenly consider, making them plausible.\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Based on the evidence, only 'git --version' correctly fulfills the requirement; the other options are definitively incorrect.\"},\"d6_question_novelty\":{\"score\":5,\"rationale\":\"The question asks for a practical verification step, reflecting authentic usage rather than rote definition.\"}}"
+}

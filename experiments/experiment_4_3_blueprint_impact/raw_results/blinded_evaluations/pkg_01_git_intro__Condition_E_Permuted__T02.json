@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T02",
+  "target_concept": "Explain why global user name and email are required and how to set them with git config",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The lecture explicitly explains using git config with the --global flag to set user.name and user.email, matching the question content."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the concept to combine two settings in a single command sequence, not just rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously asks for the correct command sequence."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Each incorrect option reflects common misunderstandings (setting only one field or omitting --global), making them plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option C satisfies both requirements; the other three are definitively incorrect per the evidence."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The task mirrors a realistic Git configuration scenario rather than a trivial definition, though it is a standard use‑case."
+    }
+  },
+  "latency_ms": 12186,
+  "retry_count": 0,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":5,\"rationale\":\"The lecture explicitly explains using git config with the --global flag to set user.name and user.email, matching the question content.\"},\"d2_cognitive_demand\":{\"score\":4,\"rationale\":\"Requires applying the concept to combine two settings in a single command sequence, not just rote recall.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously asks for the correct command sequence.\"},\"d4_distractor_plausibility\":{\"score\":5,\"rationale\":\"Each incorrect option reflects common misunderstandings (setting only one field or omitting --global), making them plausible.\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Only option C satisfies both requirements; the other three are definitively incorrect per the evidence.\"},\"d6_question_novelty\":{\"score\":4,\"rationale\":\"The task mirrors a realistic Git configuration scenario rather than a trivial definition, though it is a standard use‑case.\"}}"
+}

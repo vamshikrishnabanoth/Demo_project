@@ -1,0 +1,26 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "COMPARE",
+    "EDGE_CASE",
+    "ASK_WHY"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "the first thing you would need to find out is what is the length of the smallest string? Because the longest common prefix cannot be larger than the smallest string"
+    },
+    {
+      "label": "COMPARE",
+      "quote": "hash set, then talk about using hash map, and then look at how we can do this using binary search using the built-in strings API"
+    },
+    {
+      "label": "EDGE_CASE",
+      "quote": "there is no point processing all the characters of every string because what you might end up getting into is array index out of bounds if you're not very careful about it"
+    },
+    {
+      "label": "ASK_WHY",
+      "quote": "why process more than 4 characters?"
+    }
+  ]
+}

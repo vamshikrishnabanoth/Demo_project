@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_D_C5",
+  "target_id": "T04",
+  "target_concept": "Implement a recursive string reversal using a base case of length 1 and building the result on return",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "Which pseudocode fragment correctly implements a recursive string reversal using the base case \"if length == 1 return the string\" as described in the evidence?",
+    "options": [
+      "function reverse(s):\n    if length(s) == 1:\n        return s\n    else:\n        return reverse(s[1:]) + s[0]",
+      "function reverse(s):\n    if length(s) == 0:\n        return s\n    else:\n        return s[-1] + reverse(s[:-1])",
+      "function reverse(s):\n    if length(s) == 1:\n        return \"\"\n    else:\n        return reverse(s[1:]) + s[0]",
+      "function reverse(s):\n    if length(s) == 1:\n        return s\n    else:\n        return s[0] + reverse(s[1:])"
+    ],
+    "correctAnswer": "function reverse(s):\n    if length(s) == 1:\n        return s\n    else:\n        return reverse(s[1:]) + s[0]",
+    "explanation": "Option A follows the evidence: it checks for length == 1 and returns the string unchanged (base case). For longer strings it recursively reverses the substring s[1:] and appends the first character, correctly building the reversed result on the return path. The other options either use an incorrect base case, return an empty string, or concatenate in the wrong order.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Implement a recursive string reversal using a base case of length 1 and building the result on return"
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14411,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"Which pseudocode fragment correctly implements a recursive string reversal using the base case \\\"if length == 1 return the string\\\" as described in the evidence?\",\n  \"options\": [\n    \"function reverse(s):\\n    if length(s) == 1:\\n        return s\\n    else:\\n        return reverse(s[1:]) + s[0]\",\n    \"function reverse(s):\\n    if length(s) == 0:\\n        return s\\n    else:\\n        return s[-1] + reverse(s[:-1])\",\n    \"function reverse(s):\\n    if length(s) == 1:\\n        return \\\"\\\"\\n    else:\\n        return reverse(s[1:]) + s[0]\",\n    \"function reverse(s):\\n    if length(s) == 1:\\n        return s\\n    else:\\n        return s[0] + reverse(s[1:])\"\n  ],\n  \"correctAnswer\": \"function reverse(s):\\n    if length(s) == 1:\\n        return s\\n    else:\\n        return reverse(s[1:]) + s[0]\",\n  \"explanation\": \"Option A follows the evidence: it checks for length == 1 and returns the string unchanged (base case). For longer strings it recursively reverses the substring s[1:] and appends the first character, correctly building the reversed result on the return path. The other options either use an incorrect base case, return an empty string, or concatenate in the wrong order.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

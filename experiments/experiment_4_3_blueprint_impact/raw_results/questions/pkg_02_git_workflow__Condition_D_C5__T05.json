@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Use `git help <command>` to retrieve syntax, options, and examples for any Git command.",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "Which command should you run to view the manual page and options for the `git add` command?",
+    "options": [
+      "git help add",
+      "git add --help",
+      "git manual add",
+      "git info add"
+    ],
+    "correctAnswer": "git help add",
+    "explanation": "The evidence states that typing `git help` followed by the command name opens the manual page with syntax, options, and examples. Therefore, `git help add` is the correct way to retrieve help for the `git add` command.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Easy",
+      "concept": "Use `git help <command>` to retrieve syntax, options, and examples for any Git command."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 16054,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"Which command should you run to view the manual page and options for the `git add` command?\",\n  \"options\": [\n    \"git help add\",\n    \"git add --help\",\n    \"git manual add\",\n    \"git info add\"\n  ],\n  \"correctAnswer\": \"git help add\",\n  \"explanation\": \"The evidence states that typing `git help` followed by the command name opens the manual page with syntax, options, and examples. Therefore, `git help add` is the correct way to retrieve help for the `git add` command.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

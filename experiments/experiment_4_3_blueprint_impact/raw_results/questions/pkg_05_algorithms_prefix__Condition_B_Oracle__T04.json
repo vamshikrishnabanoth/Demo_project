@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "Trace the nested loops that iterate over character positions and strings, and explain the early break when a mismatch occurs.",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "According to the described algorithm, at which point does the execution break out of the loops?",
+    "options": [
+      "When the set size equals one, indicating all characters match",
+      "When the set size is not one, indicating a mismatch",
+      "After the outer loop has processed all character positions",
+      "When the inner loop finishes scanning a single string"
+    ],
+    "correctAnswer": "When the set size is not one, indicating a mismatch",
+    "explanation": "The evidence states that \"If the size is not one, we break out\" and later clarifies that a break occurs when characters differ. Therefore the break is triggered when the hash set size is not one, meaning the current characters across the strings do not all match.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Trace the nested loops that iterate over character positions and strings, and explain the early break when a mismatch occurs."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13845,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"According to the described algorithm, at which point does the execution break out of the loops?\",\n  \"options\": [\n    \"When the set size equals one, indicating all characters match\",\n    \"When the set size is not one, indicating a mismatch\",\n    \"After the outer loop has processed all character positions\",\n    \"When the inner loop finishes scanning a single string\"\n  ],\n  \"correctAnswer\": \"When the set size is not one, indicating a mismatch\",\n  \"explanation\": \"The evidence states that \\\"If the size is not one, we break out\\\" and later clarifies that a break occurs when characters differ. Therefore the break is triggered when the hash set size is not one, meaning the current characters across the strings do not all match.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

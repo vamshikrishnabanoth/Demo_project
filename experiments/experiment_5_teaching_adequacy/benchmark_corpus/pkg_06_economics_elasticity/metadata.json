@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_06_economics_elasticity",
+  "domain": "Economics / Social Sciences",
+  "subject": "Principles of Microeconomics",
+  "topic": "Price Elasticity of Demand and Market Welfare",
+  "learner_level": "Undergraduate Economics / B.A. / B.Com (Semester 1)",
+  "syllabus_context": "Unit III: Elasticity and Market Welfare. Price elasticity of demand (Ed), midpoint formula, elastic vs. inelastic demand curves, total revenue test, income and cross-price elasticity, consumer and producer surplus, deadweight loss resulting from price controls.",
+  "declared_learning_objective": "Calculate the price elasticity of demand using the midpoint method, interpret whether demand is price-elastic, inelastic, or unit-elastic, explain the relationship between elasticity and total revenue, and evaluate how price distortions create deadweight loss.",
+  "provenance": {
+    "mode": "AUTHENTIC_RECORDING",
+    "source_type": "OPEN_COURSEWARE",
+    "source": "MIT OpenCourseWare 14.01 (Principles of Microeconomics, Prof. Jonathan Gruber)",
+    "institution": "Massachusetts Institute of Technology",
+    "access_date": "2026-09-14",
+    "license_or_usage_basis": "CC BY-NC-SA 4.0 Educational Research Use"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Chalkboard graphs of supply and demand curves described verbally with axis points."
+  }
+}

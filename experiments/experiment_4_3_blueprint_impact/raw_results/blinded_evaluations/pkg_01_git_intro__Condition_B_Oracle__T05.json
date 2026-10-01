@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T05",
+  "target_concept": "`git status` shows modified, staged, and untracked files in the working tree.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 4,
+      "rationale": "The lecture mentions git status shows modified, staged, and untracked files, which aligns with the question about a modified but unstaged file."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires understanding of git status categories, a basic conceptual grasp rather than deep reasoning."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The scenario and ask are clearly stated with no ambiguity."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options represent common misconceptions about git status headings."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only one heading correctly matches the described situation; others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Poses a realistic, applied git usage question rather than a rote definition."
+    }
+  },
+  "latency_ms": 8090,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":4,\"rationale\":\"The lecture mentions git status shows modified, staged, and untracked files, which aligns with the question about a modified but unstaged file.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires understanding of git status categories, a basic conceptual grasp rather than deep reasoning.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The scenario and ask are clearly stated with no ambiguity.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options represent common misconceptions about git status headings.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only one heading correctly matches the described situation; others are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"Poses a realistic, applied git usage question rather than a rote definition.\"}\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Describe the purpose of `git commit`, the role of a commit message, and what happens to staged changes.",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "What does the command 'git commit -m \"<message>\"' do with the changes that have been staged?",
+    "options": [
+      "It creates a new commit in the local repository that records the staged changes and stores the provided message.",
+      "It moves the staged changes back to the working directory without creating a commit.",
+      "It pushes the staged changes directly to the remote repository without creating a local commit.",
+      "It discards the staged changes and leaves the repository unchanged."
+    ],
+    "correctAnswer": "It creates a new commit in the local repository that records the staged changes and stores the provided message.",
+    "explanation": "The evidence states that 'git commit' saves the staged changes into the repository and requires a message describing those changes. Therefore, the command records a new snapshot (commit) with the given message.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Describe the purpose of `git commit`, the role of a commit message, and what happens to staged changes."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12438,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"What does the command 'git commit -m \\\"<message>\\\"' do with the changes that have been staged?\",\n  \"options\": [\n    \"It creates a new commit in the local repository that records the staged changes and stores the provided message.\",\n    \"It moves the staged changes back to the working directory without creating a commit.\",\n    \"It pushes the staged changes directly to the remote repository without creating a local commit.\",\n    \"It discards the staged changes and leaves the repository unchanged.\"\n  ],\n  \"correctAnswer\": \"It creates a new commit in the local repository that records the staged changes and stores the provided message.\",\n  \"explanation\": \"The evidence states that 'git commit' saves the staged changes into the repository and requires a message describing those changes. Therefore, the command records a new snapshot (commit) with the given message.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

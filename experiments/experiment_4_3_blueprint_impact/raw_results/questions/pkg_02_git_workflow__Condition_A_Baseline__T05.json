@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T05",
+  "target_concept": "Explain how to undo staged changes using git reset and how to restore file content using git restore.",
+  "target_dimension": "Scenario Analysis",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "After adding a new line to a.txt and staging the change with 'git add .', which sequence of commands correctly (a) unstages the change and (b) permanently removes the added line from the working file?",
+    "options": [
+      "Run git reset followed by git restore .",
+      "Run git reset --hard followed by git restore .",
+      "Run git restore --staged . followed by git checkout .",
+      "Run git reset HEAD~1 followed by git restore --source=HEAD ."
+    ],
+    "correctAnswer": "Run git reset followed by git restore .",
+    "explanation": "The evidence describes using 'git reset' to revert staged changes back to the unstaged state, and then using 'git restore .' to discard the unwanted line from the working file. This exact sequence matches the first option, while the other options either use incorrect flags or commands that would not achieve both unstaging and file content restoration as described.",
+    "metadata": {
+      "dimension": "Scenario Analysis",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Hard",
+      "concept": "Explain how to undo staged changes using git reset and how to restore file content using git restore."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12656,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"After adding a new line to a.txt and staging the change with 'git add .', which sequence of commands correctly (a) unstages the change and (b) permanently removes the added line from the working file?\",\n  \"options\": [\n    \"Run git reset followed by git restore .\",\n    \"Run git reset --hard followed by git restore .\",\n    \"Run git restore --staged . followed by git checkout .\",\n    \"Run git reset HEAD~1 followed by git restore --source=HEAD .\"\n  ],\n  \"correctAnswer\": \"Run git reset followed by git restore .\",\n  \"explanation\": \"The evidence describes using 'git reset' to revert staged changes back to the unstaged state, and then using 'git restore .' to discard the unwanted line from the working file. This exact sequence matches the first option, while the other options either use incorrect flags or commands that would not achieve both unstaging and file content restoration as described.\",\n  \"metadata\": {\n    \"dimension\": \"Scenario Analysis\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

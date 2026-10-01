@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T03",
+  "target_concept": "Describe how a hash set is used to detect whether a character is common to all strings at a given position.",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "When using a hash set to determine whether the characters at a specific index are common to all strings, which of the following describes the correct procedure?",
+    "options": [
+      "Add the character from each string at that index to a hash set; if after processing all strings the set size is 1, the character is common to all strings at that position.",
+      "Add each character to a list and count how many times it appears; if the count equals the number of strings, the character is common.",
+      "Store the indices of strings containing the character in a hash set; if the set contains all string indices, the character is common.",
+      "If the hash set contains more than one element, it indicates that the character appears in all strings."
+    ],
+    "correctAnswer": "Add the character from each string at that index to a hash set; if after processing all strings the set size is 1, the character is common to all strings at that position.",
+    "explanation": "A hash set eliminates duplicates, so adding the character from each string at the same position will result in a set size of one only when every string has the identical character at that position. Any differing character will increase the set size beyond one.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Describe how a hash set is used to detect whether a character is common to all strings at a given position."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13509,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\":\"T03\",\n  \"questionText\":\"When using a hash set to determine whether the characters at a specific index are common to all strings, which of the following describes the correct procedure?\",\n  \"options\":[\n    \"Add the character from each string at that index to a hash set; if after processing all strings the set size is 1, the character is common to all strings at that position.\",\n    \"Add each character to a list and count how many times it appears; if the count equals the number of strings, the character is common.\",\n    \"Store the indices of strings containing the character in a hash set; if the set contains all string indices, the character is common.\",\n    \"If the hash set contains more than one element, it indicates that the character appears in all strings.\"\n  ],\n  \"correctAnswer\":\"Add the character from each string at that index to a hash set; if after processing all strings the set size is 1, the character is common to all strings at that position.\",\n  \"explanation\":\"A hash set eliminates duplicates, so adding the character from each string at the same position will result in a set size of one only when every string has the identical character at that position. Any differing character will increase the set size beyond one.\",\n  \"metadata\":{\n    \"dimension\":\"Flow / Trace\",\n    \"cognitiveLevel\":\"Apply\",\n    \"targetDifficulty\":\"Medium\"\n  }\n}"
+}

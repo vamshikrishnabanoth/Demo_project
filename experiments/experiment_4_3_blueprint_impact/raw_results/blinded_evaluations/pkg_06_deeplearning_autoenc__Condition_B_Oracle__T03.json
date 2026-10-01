@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Describe the motivation for VAEs and how they achieve higher reconstruction accuracy than fully or convolutional autoencoders",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks about the advantage of VAEs highlighted in the lecture evidence (higher reconstruction accuracy)."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Answering requires simple recall of a stated fact rather than deeper conceptual reasoning or problem solving."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 2,
+      "rationale": "Incorrect options are implausible or unrelated to the evidence, offering little genuine misconception to discriminate."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Evidence supports only option A as correct; all other choices are demonstrably false."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The question is a straightforward factual recall, lacking authentic or novel application."
+    }
+  },
+  "latency_ms": 1911,
+  "retry_count": 0,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":5,\"rationale\":\"The question directly asks about the advantage of VAEs highlighted in the lecture evidence (higher reconstruction accuracy).\"},\"d2_cognitive_demand\":{\"score\":2,\"rationale\":\"Answering requires simple recall of a stated fact rather than deeper conceptual reasoning or problem solving.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about what is being asked.\"},\"d4_distractor_plausibility\":{\"score\":2,\"rationale\":\"Incorrect options are implausible or unrelated to the evidence, offering little genuine misconception to discriminate.\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Evidence supports only option A as correct; all other choices are demonstrably false.\"},\"d6_question_novelty\":{\"score\":2,\"rationale\":\"The question is a straightforward factual recall, lacking authentic or novel application.\"}}"
+}

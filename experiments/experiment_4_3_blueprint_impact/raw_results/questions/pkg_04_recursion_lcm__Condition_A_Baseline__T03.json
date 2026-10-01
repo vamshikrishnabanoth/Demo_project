@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T03",
+  "target_concept": "Differentiate when to use GCD (equal partitioning) versus LCM (interval scheduling) in problem statements.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "A problem states: \"You have 48 identical candies that need to be divided equally among 6 friends. How many candies does each friend receive?\" Which concept should you apply to solve this problem?",
+    "options": [
+      "Use GCD to determine the equal share per person.",
+      "Use LCM to determine the equal share per person.",
+      "Use GCD to find the first time two periodic events coincide.",
+      "Use LCM to find the first time two periodic events coincide."
+    ],
+    "correctAnswer": "Use GCD to determine the equal share per person.",
+    "explanation": "The evidence indicates that equal partitioning problems (e.g., dividing items equally) should be approached with the Greatest Common Divisor (GCD). LCM is reserved for timing, scheduling, or interval intersection problems. Therefore, the correct approach is to use GCD to compute the equal share.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Differentiate when to use GCD (equal partitioning) versus LCM (interval scheduling) in problem statements."
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11735,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"A problem states: \\\"You have 48 identical candies that need to be divided equally among 6 friends. How many candies does each friend receive?\\\" Which concept should you apply to solve this problem?\",\n  \"options\": [\n    \"Use GCD to determine the equal share per person.\",\n    \"Use LCM to determine the equal share per person.\",\n    \"Use GCD to find the first time two periodic events coincide.\",\n    \"Use LCM to find the first time two periodic events coincide.\"\n  ],\n  \"correctAnswer\": \"Use GCD to determine the equal share per person.\",\n  \"explanation\": \"The evidence indicates that equal partitioning problems (e.g., dividing items equally) should be approached with the Greatest Common Divisor (GCD). LCM is reserved for timing, scheduling, or interval intersection problems. Therefore, the correct approach is to use GCD to compute the equal share.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

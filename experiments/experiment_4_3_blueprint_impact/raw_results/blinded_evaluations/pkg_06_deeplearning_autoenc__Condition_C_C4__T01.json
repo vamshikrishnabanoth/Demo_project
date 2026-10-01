@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T01",
+  "target_concept": "Identify the three main components of a fully connected autoencoder and their functions",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks about the encoder, latent space, and decoder functions, which are explicitly described in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires recall of factual information rather than deep reasoning or problem solving."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously asks for the correct description of the three components."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "The incorrect options present realistic misconceptions (e.g., swapping encoder/decoder roles, omitting latent space, altering dimensionality), making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A aligns with the evidence; the other three are definitively inconsistent with the described architecture."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The item tests straightforward factual recall of standard autoencoder components, offering little novelty or authentic application."
+    }
+  },
+  "latency_ms": 2049,
+  "retry_count": 1,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks about the encoder, latent space, and decoder functions, which are explicitly described in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Answering requires recall of factual information rather than deep reasoning or problem solving.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously asks for the correct description of the three components.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"The incorrect options present realistic misconceptions (e.g., swapping encoder/decoder roles, omitting latent space, altering dimensionality), making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A aligns with the evidence; the other three are definitively inconsistent with the described architecture.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The item tests straightforward factual recall of standard autoencoder components, offering little novelty or authentic application.\"}\n}"
+}

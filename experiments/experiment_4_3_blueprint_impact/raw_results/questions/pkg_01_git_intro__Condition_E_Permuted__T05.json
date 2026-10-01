@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Compare the current working tree with the previous commit using git diff and explain the output",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "After modifying a tracked file and running `git diff`, which statement accurately describes the output shown by the command?",
+    "options": [
+      "It shows the differences between the working tree and the most recent commit, highlighting added, removed, and changed lines.",
+      "It lists all untracked files in the repository that are not yet added to the index.",
+      "It displays a summary of commit messages from the last five commits.",
+      "It permanently applies the changes in the working tree to the repository history."
+    ],
+    "correctAnswer": "It shows the differences between the working tree and the most recent commit, highlighting added, removed, and changed lines.",
+    "explanation": "`git diff` compares the current working tree against the HEAD commit, presenting a line‑by‑line view of additions (prefixed with '+'), deletions (prefixed with '-'), and modifications. It does not list untracked files, show commit messages, or commit the changes.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Hard",
+      "concept": "Compare the current working tree with the previous commit using git diff and explain the output"
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12232,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"After modifying a tracked file and running `git diff`, which statement accurately describes the output shown by the command?\",\n  \"options\": [\n    \"It shows the differences between the working tree and the most recent commit, highlighting added, removed, and changed lines.\",\n    \"It lists all untracked files in the repository that are not yet added to the index.\",\n    \"It displays a summary of commit messages from the last five commits.\",\n    \"It permanently applies the changes in the working tree to the repository history.\"\n  ],\n  \"correctAnswer\": \"It shows the differences between the working tree and the most recent commit, highlighting added, removed, and changed lines.\",\n  \"explanation\": \"`git diff` compares the current working tree against the HEAD commit, presenting a line‑by‑line view of additions (prefixed with '+'), deletions (prefixed with '-'), and modifications. It does not list untracked files, show commit messages, or commit the changes.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T01",
+  "target_concept": "Define the Longest Common Prefix problem and its expected output for given string sets.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question asks for the definition of the Longest Common Prefix, which is explicitly described in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires recalling a definition; it does not demand deep reasoning or problem solving beyond comprehension."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "The incorrect options represent plausible misconceptions (suffix, palindrome, any common prefix) that a learner might mistakenly choose."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A matches the definition; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 3,
+      "rationale": "The question tests basic recall of a definition, which is useful but not particularly novel or complex."
+    }
+  },
+  "latency_ms": 1486,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question asks for the definition of the Longest Common Prefix, which is explicitly described in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Answering requires recalling a definition; it does not demand deep reasoning or problem solving beyond comprehension.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"The incorrect options represent plausible misconceptions (suffix, palindrome, any common prefix) that a learner might mistakenly choose.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A matches the definition; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":3,\"rationale\":\"The question tests basic recall of a definition, which is useful but not particularly novel or complex.\"}\n}"
+}

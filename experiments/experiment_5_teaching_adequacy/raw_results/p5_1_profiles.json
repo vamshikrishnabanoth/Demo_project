@@ -1,0 +1,367 @@
+{
+  "generation_timestamp": "2026-10-01T07:26:16.212Z",
+  "lead_model": "openai/gpt-oss-120b",
+  "temperature": 0,
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "topic": "Article 21: Protection of Life and Personal Liberty",
+      "declared_objective": "Analyze how the Supreme Court's interpretation of 'procedure established by law' in Article 21 transformed from the literalist, formalistic reading in A.K. Gopalan (1950) into a substantive fairness requirement under the Golden Triangle doctrine in Maneka Gandhi (1978).",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Students must name the key cases (A.K. Gopalan, Maneka Gandhi) and the Golden Triangle doctrine, and recognize the statutory provisions involved.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual definition of 'procedure established by law' in its literalist and substantive forms, and the significance of the shift, is essential for analysis.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Students need to enumerate the internal elements of the Golden Triangle (equality, liberty, and due process) and the components of procedural fairness articulated in Maneka Gandhi.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "A systematic explanation of how the jurisprudential relationship between Articles 14, 19, and 21 operates to transform the procedural test, showing causal dynamics from Gopalan to Maneka.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Students must articulate the constitutional philosophy and judicial reasoning that justified moving from a formalist to a substantive due‑process approach.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "A worked comparative analysis of the factual matrices and holdings in Gopalan and Maneka Gandhi, demonstrating the interpretive shift in practice.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 6,
+          "alignment": "RECOMMENDED",
+          "rationale": "Discussion of later limits (e.g., Sunil Batra, ADM Jabalpur) and contexts where the substantive test does not apply deepens understanding of the doctrine’s scope.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 5,
+          "alignment": "OPTIONAL",
+          "rationale": "Students may extend the analysis to other fundamental rights or comparative constitutional systems, illustrating cross‑domain synthesis.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3114,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "topic": "Eigenvalues and Eigenvectors of Linear Operators",
+      "declared_objective": "Compute the eigenvalues and eigenvectors of a 2x2 matrix, explain the geometric intuition of an eigenvector as an invariant direction under linear transformation, and solve the characteristic polynomial det(A - lambda I) = 0.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must correctly name eigenvalue, eigenvector, characteristic polynomial, determinant, and identity matrix.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Provide a conceptual definition and geometric intuition that an eigenvector points along an invariant direction of the transformation.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Identify the constituent parts of the eigen‑problem: matrix A, scalar λ, identity I, determinant operation, and vector v.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Explain the operational flow: form A‑λI, set its determinant to zero to obtain λ, then solve (A‑λI)v=0 for v, showing the causal link between eigenvalues and eigenvectors.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Present the theoretical justification that det(A‑λI)=0 is necessary and sufficient for non‑trivial solutions of (A‑λI)v=0, referencing linear‑algebraic proof.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Work through a complete 2×2 example, computing the characteristic polynomial, solving for eigenvalues, and finding the corresponding eigenvectors.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Discuss the edge case of repeated eigenvalues (algebraic multiplicity > geometric multiplicity) leading to defective matrices and loss of diagonalizability.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "alignment": "OPTIONAL",
+          "rationale": "Mention possible extensions to higher‑dimensional systems, differential equations, or quantum mechanics without detailed treatment.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3058,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "declared_objective": "Explain the conceptual mechanics of Breadth-First Search, prove why a First-In-First-Out (FIFO) queue guarantees level-order discovery and unweighted shortest-path traversal, and explain the invariant function of the visited set.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name BFS, recognize the FIFO queue and visited‑set symbols used in algorithm descriptions.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "A clear qualitative definition of BFS, its purpose, and its significance as a level‑order graph exploration method is essential.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Learners need to enumerate the algorithmic components: queue operations, visited set, adjacency iteration, and termination condition, showing their internal syntax.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Explain the dynamic interaction: how enqueue/dequeue order produces level‑order discovery, how the visited set prevents re‑expansion, and the flow of control across iterations.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Provide a formal proof that FIFO ordering yields level‑by‑level discovery and that the distance label assigned at dequeue is the shortest‑path length in unweighted graphs.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 5,
+          "alignment": "RECOMMENDED",
+          "rationale": "Walk through a non‑trivial example graph, showing queue contents and visited set at each step, and compute shortest‑path distances.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Discuss cases where BFS does not give shortest paths (weighted graphs), handling of disconnected components, and memory limits on very large graphs.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 3,
+          "alignment": "OPTIONAL",
+          "rationale": "Show how BFS ideas transfer to tree level‑order traversal, web crawling, and maze solving, encouraging synthesis with other domains.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3585,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "declared_objective": "Implement Breadth-First Search using a concrete queue data structure in code, trace variable states during execution, and implement robust edge-case handling for cyclic graphs and disconnected components.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must correctly name BFS, queue, graph, adjacency list/matrix and recognize their formal symbols.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Provide a clear conceptual definition of BFS as level‑order graph traversal and explain its significance for unweighted shortest‑path exploration.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Identify core algorithmic parts: graph representation, queue, visited set, optional parent/level arrays.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Describe the dynamic interaction: enqueue start node, dequeue, explore neighbors, mark visited, repeat until queue empty.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "RECOMMENDED",
+          "rationale": "Present a correctness argument (induction) and why BFS yields shortest‑path distances in unweighted graphs versus DFS.",
+          "confidence": "MEDIUM"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Write complete C++/Java code using STL queue, perform a step‑by‑step trace of variable states, and show handling of cycles and disconnected components.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Analyse edge cases: self‑loops, parallel edges, cyclic graphs, disconnected sub‑graphs, and memory‑usage limits.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "OPTIONAL",
+          "rationale": "Map BFS to related contexts such as level‑order tree traversal, network broadcast, and adaptation to weighted graphs via priority queues.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3140,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "topic": "Autoencoders and Variational Autoencoders (VAEs)",
+      "declared_objective": "Explain why classical autoencoders fail at smooth generative interpolation, derive the variational autoencoder objective mapping inputs to Gaussian distributions (mu, sigma^2), and justify the role of Kullback-Leibler (KL) divergence in regularizing the latent space.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Learners must be able to name and symbolically denote autoencoder, VAE, encoder/decoder, latent vector, Gaussian prior, KL divergence, and reparameterization trick.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Provide clear conceptual definitions of classical autoencoders, VAEs, smooth interpolation, and the significance of KL regularization.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "List and describe the internal parts: encoder network, decoder network, latent mean (μ) and variance (σ²) heads, sampling layer, reconstruction loss, KL term.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Explain how encoder outputs define a distribution, how the reparameterization trick enables back‑propagation, and how reconstruction and KL losses jointly shape training dynamics.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Derive the Evidence Lower Bound (ELBO) from variational inference, showing why maximizing it yields the VAE objective and why KL divergence is essential for latent space regularization.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Present a worked derivation of the VAE loss (reconstruction + KL), include a simple numerical example or code snippet, and demonstrate interpolation between two latent points.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED",
+          "rationale": "Analyse edge cases: posterior collapse, mismatch between Gaussian prior and data manifold, and failure modes of deterministic autoencoders for interpolation.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 5,
+          "alignment": "OPTIONAL",
+          "rationale": "Discuss how VAE principles transfer to related models (e.g., β‑VAE, conditional VAE, normalizing flows) and to other domains such as image synthesis or representation learning.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3532,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 1
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "topic": "Price Elasticity of Demand and Market Welfare",
+      "declared_objective": "Calculate the price elasticity of demand using the midpoint method, interpret whether demand is price‑elastic, inelastic, or unit‑elastic, explain the relationship between elasticity and total revenue, and evaluate how price distortions create deadweight loss.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name and symbolically recognise key terms (E_d, midpoint formula, total revenue, consumer surplus, producer surplus, deadweight loss).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual definition of price elasticity, its magnitude categories, and the economic significance of each category is essential for interpretation.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Students need to identify the constituent parts of the elasticity calculation (%ΔQ, %ΔP, midpoint averages) and the components of total revenue and surplus formulas.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Understanding how elasticity interacts with total revenue (inverse relationship) and how price controls shift consumer/producer surplus to generate deadweight loss requires a dynamic, systemic explanation.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Students must articulate the theoretical rationale why elastic demand leads to revenue decline when price rises (and vice‑versa) and why price distortions create inefficiency, using basic welfare‑analysis logic.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "A complete worked example: compute E_d with the midpoint formula, classify elasticity, apply the total‑revenue test, and quantify deadweight loss from a price ceiling/floor.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "OPTIONAL",
+          "rationale": "Discuss edge cases such as perfectly elastic/inelastic demand, zero price changes, and limitations of the midpoint method; useful for deeper insight but not mandatory for first‑semester mastery.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 5,
+          "alignment": "OPTIONAL",
+          "rationale": "Encourage students to transfer elasticity reasoning to cross‑price and income elasticity contexts or to policy evaluation beyond simple price controls.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3117,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    }
+  }
+}

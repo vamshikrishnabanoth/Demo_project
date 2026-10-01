@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T05",
+  "target_concept": "Explain how matching characters are accumulated into a StringBuilder and returned as the final LCP.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the StringBuilder accumulation and return behavior described in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of algorithm flow and the consequence of a mismatch, beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, unambiguous, and clearly specifies the situation."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options represent reasonable misconceptions (null, whole smallest string, list of examined chars)."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Evidence supports only option A as correct; all other choices are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question probes algorithmic behavior rather than a trivial definition, offering authentic assessment."
+    }
+  },
+  "latency_ms": 2075,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the StringBuilder accumulation and return behavior described in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of algorithm flow and the consequence of a mismatch, beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, unambiguous, and clearly specifies the situation.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options represent reasonable misconceptions (null, whole smallest string, list of examined chars).\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Evidence supports only option A as correct; all other choices are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question probes algorithmic behavior rather than a trivial definition, offering authentic assessment.\"}\n}"
+}

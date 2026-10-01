@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-G00",
+  "benchmark": "BENCH_04",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "REINFORCE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are doing in the project"
+    },
+    {
+      "label": "REINFORCE",
+      "quote": "In the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system"
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"REINFORCE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are doing in the project\"\n    },\n    {\n      \"label\": \"REINFORCE\",\n      \"quote\": \"In the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system\"\n    }\n  ]\n}",
+  "latency_ms": 1324,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

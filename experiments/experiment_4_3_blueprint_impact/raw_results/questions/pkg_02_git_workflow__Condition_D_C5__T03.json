@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_D_C5",
+  "target_id": "T03",
+  "target_concept": "Analyze the output of `git diff` to identify differences between the current working state and the previous commit.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Given the following git diff output, which statement correctly describes the changes shown?\n\n```\n@@ -1,4 +1,4 @@\n-printf(\"Hello World\\n\");\n+printf(\"Hello, World!\\n\");\n int main() {\n-    return 0;\n+    return 1;\n }\n```",
+    "options": [
+      "The diff indicates that a comma was added after \"Hello\" and the return value was changed from 0 to 1.",
+      "The diff shows that a new file was created and all its contents were added.",
+      "The diff demonstrates that the changes are staged in the index but not yet committed.",
+      "The diff suggests that the previous version had syntax errors that were automatically fixed by git."
+    ],
+    "correctAnswer": "The diff indicates that a comma was added after \"Hello\" and the return value was changed from 0 to 1.",
+    "explanation": "The diff marks lines removed with '-' and lines added with '+'. The first change adds a comma after \"Hello\" and a exclamation mark, and the second change modifies the return statement from 0 to 1. The other options describe unrelated concepts not reflected in the diff output.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Analyze the output of `git diff` to identify differences between the current working state and the previous commit."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 8250,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Given the following git diff output, which statement correctly describes the changes shown?\\n\\n```\\n@@ -1,4 +1,4 @@\\n-printf(\\\"Hello World\\\\n\\\");\\n+printf(\\\"Hello, World!\\\\n\\\");\\n int main() {\\n-    return 0;\\n+    return 1;\\n }\\n```\",\n  \"options\": [\n    \"The diff indicates that a comma was added after \\\"Hello\\\" and the return value was changed from 0 to 1.\",\n    \"The diff shows that a new file was created and all its contents were added.\",\n    \"The diff demonstrates that the changes are staged in the index but not yet committed.\",\n    \"The diff suggests that the previous version had syntax errors that were automatically fixed by git.\"\n  ],\n  \"correctAnswer\": \"The diff indicates that a comma was added after \\\"Hello\\\" and the return value was changed from 0 to 1.\",\n  \"explanation\": \"The diff marks lines removed with '-' and lines added with '+'. The first change adds a comma after \\\"Hello\\\" and a exclamation mark, and the second change modifies the return statement from 0 to 1. The other options describe unrelated concepts not reflected in the diff output.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

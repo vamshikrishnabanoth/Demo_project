@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T02",
+  "target_concept": "Explain why adding duplicate elements to a hash set does not change its size",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "According to the provided evidence, what property of a hash set ensures that adding the same element twice does not increase its size?",
+    "options": [
+      "A hash set stores only unique elements, preventing duplicates.",
+      "A hash set maintains the order of insertion for all elements.",
+      "A hash set allows multiple identical entries, each counted separately.",
+      "A hash set automatically sorts elements in ascending order."
+    ],
+    "correctAnswer": "A hash set stores only unique elements, preventing duplicates.",
+    "explanation": "The evidence states that a set guarantees no duplicates. Therefore, a hash set contains only unique elements, so adding an element that is already present does not change the set's size.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Easy",
+      "concept": "Explain why adding duplicate elements to a hash set does not change its size"
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "FAILED",
+    "failureCode": "INSUFFICIENT_READABLE_EVIDENCE",
+    "rejectedCount": 1,
+    "reasons": [
+      "FOREIGN_TOPIC_CONTAMINATION: Multiple unsupported domain anchors (provided, property, hash, set) absent from lecture evidence"
+    ]
+  },
+  "latency_ms": 14728,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"According to the provided evidence, what property of a hash set ensures that adding the same element twice does not increase its size?\",\n  \"options\": [\n    \"A hash set stores only unique elements, preventing duplicates.\",\n    \"A hash set maintains the order of insertion for all elements.\",\n    \"A hash set allows multiple identical entries, each counted separately.\",\n    \"A hash set automatically sorts elements in ascending order.\"\n  ],\n  \"correctAnswer\": \"A hash set stores only unique elements, preventing duplicates.\",\n  \"explanation\": \"The evidence states that a set guarantees no duplicates. Therefore, a hash set contains only unique elements, so adding an element that is already present does not change the set's size.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

@@ -1,0 +1,138 @@
+{
+  "evaluation_timestamp": "2026-10-01T09:20:13.953Z",
+  "total_packages": 6,
+  "overall_metrics": {
+    "total_gt_concepts": 49,
+    "total_reconstructed_concepts": 29,
+    "gt_retrieved_count": 40,
+    "pred_validated_count": 29,
+    "hierarchical_precision": 1,
+    "hierarchical_recall": 0.8163,
+    "hierarchical_f1": 0.8989,
+    "verbatim_evidence_grounding_pct": 100,
+    "quotes_evaluated": 32,
+    "quotes_grounded": 32
+  },
+  "observational_invariance_bfs": {
+    "pkg_03_concept_count": 4,
+    "pkg_04_concept_count": 3,
+    "shared_concept_count": 2,
+    "jaccard_overlap": 0.4
+  },
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "gt_concept_count": 9,
+      "pred_concept_count": 6,
+      "pred_matched_count": 6,
+      "gt_retrieved_count": 8,
+      "precision": 1,
+      "recall": 0.8889,
+      "f1_score": 0.9412,
+      "verbatim_grounding_rate_pct": 100,
+      "quotes_evaluated": 6,
+      "quotes_grounded": 6,
+      "dimension_distribution": {
+        "IDENTIFICATION": 1,
+        "MEANING": 2,
+        "STRUCTURE_COMPONENTS": 1,
+        "APPLICATION_INTERPRETATION": 2
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "gt_concept_count": 10,
+      "pred_concept_count": 5,
+      "pred_matched_count": 5,
+      "gt_retrieved_count": 9,
+      "precision": 1,
+      "recall": 0.9,
+      "f1_score": 0.9474,
+      "verbatim_grounding_rate_pct": 100,
+      "quotes_evaluated": 6,
+      "quotes_grounded": 6,
+      "dimension_distribution": {
+        "IDENTIFICATION": 1,
+        "MEANING": 1,
+        "STRUCTURE_COMPONENTS": 1,
+        "APPLICATION_INTERPRETATION": 1,
+        "RELATIONSHIPS_MECHANISM": 1
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "gt_concept_count": 10,
+      "pred_concept_count": 4,
+      "pred_matched_count": 4,
+      "gt_retrieved_count": 7,
+      "precision": 1,
+      "recall": 0.7,
+      "f1_score": 0.8235,
+      "verbatim_grounding_rate_pct": 100,
+      "quotes_evaluated": 6,
+      "quotes_grounded": 6,
+      "dimension_distribution": {
+        "IDENTIFICATION": 1,
+        "STRUCTURE_COMPONENTS": 2,
+        "RELATIONSHIPS_MECHANISM": 1
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "gt_concept_count": 6,
+      "pred_concept_count": 3,
+      "pred_matched_count": 3,
+      "gt_retrieved_count": 5,
+      "precision": 1,
+      "recall": 0.8333,
+      "f1_score": 0.9091,
+      "verbatim_grounding_rate_pct": 100,
+      "quotes_evaluated": 3,
+      "quotes_grounded": 3,
+      "dimension_distribution": {
+        "MEANING": 1,
+        "STRUCTURE_COMPONENTS": 1,
+        "RELATIONSHIPS_MECHANISM": 1
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "gt_concept_count": 7,
+      "pred_concept_count": 5,
+      "pred_matched_count": 5,
+      "gt_retrieved_count": 5,
+      "precision": 1,
+      "recall": 0.7143,
+      "f1_score": 0.8333,
+      "verbatim_grounding_rate_pct": 100,
+      "quotes_evaluated": 5,
+      "quotes_grounded": 5,
+      "dimension_distribution": {
+        "IDENTIFICATION": 2,
+        "STRUCTURE_COMPONENTS": 2,
+        "MEANING": 1
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "package_id": "pkg_06_economics_elasticity",
+      "gt_concept_count": 7,
+      "pred_concept_count": 6,
+      "pred_matched_count": 6,
+      "gt_retrieved_count": 6,
+      "precision": 1,
+      "recall": 0.8571,
+      "f1_score": 0.9231,
+      "verbatim_grounding_rate_pct": 100,
+      "quotes_evaluated": 6,
+      "quotes_grounded": 6,
+      "dimension_distribution": {
+        "IDENTIFICATION": 1,
+        "STRUCTURE_COMPONENTS": 1,
+        "JUSTIFICATION_WHY": 1,
+        "APPLICATION_INTERPRETATION": 1,
+        "MEANING": 1,
+        "RELATIONSHIPS_MECHANISM": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_D_C5",
+  "target_id": "T01",
+  "target_concept": "Identify the formal definitions of GCD (HCF/JCD) and LCM and state that they are distinct concepts.",
+  "target_dimension": "Foundational Prerequisite",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "According to the provided material, which of the following is the correct definition of the greatest common divisor (GCD) of two positive integers?",
+    "options": [
+      "The largest integer that divides both numbers without leaving a remainder.",
+      "The smallest integer that is a multiple of both numbers.",
+      "The product of the two numbers divided by their least common multiple.",
+      "The difference between the two numbers when one is a multiple of the other."
+    ],
+    "correctAnswer": "The largest integer that divides both numbers without leaving a remainder.",
+    "explanation": "The GCD (also called HCF or JCD) is defined as the greatest common divisor, i.e., the largest integer that divides both numbers exactly. The second option describes the LCM, the third is a derived formula, and the fourth is unrelated, showing why GCD and LCM are distinct concepts.",
+    "metadata": {
+      "dimension": "Foundational Prerequisite",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Identify the formal definitions of GCD (HCF/JCD) and LCM and state that they are distinct concepts."
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14288,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"According to the provided material, which of the following is the correct definition of the greatest common divisor (GCD) of two positive integers?\",\n  \"options\": [\n    \"The largest integer that divides both numbers without leaving a remainder.\",\n    \"The smallest integer that is a multiple of both numbers.\",\n    \"The product of the two numbers divided by their least common multiple.\",\n    \"The difference between the two numbers when one is a multiple of the other.\"\n  ],\n  \"correctAnswer\": \"The largest integer that divides both numbers without leaving a remainder.\",\n  \"explanation\": \"The GCD (also called HCF or JCD) is defined as the greatest common divisor, i.e., the largest integer that divides both numbers exactly. The second option describes the LCM, the third is a derived formula, and the fourth is unrelated, showing why GCD and LCM are distinct concepts.\",\n  \"metadata\": {\n    \"dimension\": \"Foundational Prerequisite\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

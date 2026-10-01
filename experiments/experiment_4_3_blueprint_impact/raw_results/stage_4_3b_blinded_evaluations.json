@@ -1,0 +1,2055 @@
+{
+  "experiment_id": "experiment_4_3_blueprint_impact",
+  "stage": "Stage_4.3B_Blinded_Evaluations",
+  "timestamp": "2026-10-01T06:00:26.425Z",
+  "total_evaluated": 146,
+  "model": "openai/gpt-oss-120b",
+  "temperature": 0,
+  "max_tokens": 1200,
+  "evaluations": [
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T01",
+      "scores": {
+        "d1": 3,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 4,
+        "d6": 4
+      },
+      "latency_ms": 2095
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 1834
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 1667
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1423
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1781
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T01",
+      "scores": {
+        "d1": 3,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1839
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T02",
+      "scores": {
+        "d1": 3,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 4,
+        "d6": 2
+      },
+      "latency_ms": 2352
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T03",
+      "scores": {
+        "d1": 3,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 8823
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T04",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 14993
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T05",
+      "scores": {
+        "d1": 4,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 8090
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_C_C4",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 13737
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_C_C4",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 11809
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_C_C4",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 2,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 12470
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_C_C4",
+      "target_id": "T04",
+      "scores": {
+        "d1": 4,
+        "d2": 2,
+        "d3": 2,
+        "d4": 4,
+        "d5": 2,
+        "d6": 2
+      },
+      "latency_ms": 13216
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_C_C4",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 9996
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_D_C5",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 13068
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_D_C5",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 11531
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_D_C5",
+      "target_id": "T03",
+      "scores": {
+        "d1": 4,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 12842
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_D_C5",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 8972
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_D_C5",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 13639
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 8641
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 12186
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 12304
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 12952
+    },
+    {
+      "package_id": "pkg_01_git_intro",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 15033
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 14854
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 7052
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T03",
+      "scores": {
+        "d1": 3,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 10885
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 3314
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 4,
+        "d6": 5
+      },
+      "latency_ms": 6660
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 9858
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 11332
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 55123
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T04",
+      "scores": {
+        "d1": 2,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1794
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T05",
+      "scores": {
+        "d1": 1,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 4,
+        "d6": 5
+      },
+      "latency_ms": 2004
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_C_C4",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 4023
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_C_C4",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 1955
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_C_C4",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1315
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_C_C4",
+      "target_id": "T04",
+      "scores": {
+        "d1": 2,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 47893
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_C_C4",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 69034
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_D_C5",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 1582
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_D_C5",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 28594
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_D_C5",
+      "target_id": "T03",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 1493
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_D_C5",
+      "target_id": "T04",
+      "scores": {
+        "d1": 1,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 2,
+        "d6": 4
+      },
+      "latency_ms": 16859
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_D_C5",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1686
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1626
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 41771
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2078
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T04",
+      "scores": {
+        "d1": 2,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 61329
+    },
+    {
+      "package_id": "pkg_02_git_workflow",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T05",
+      "scores": {
+        "d1": 2,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1861
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 1934
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1487
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1654
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1672
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T05",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 2,
+        "d6": 4
+      },
+      "latency_ms": 30189
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2049
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 1570
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1480
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 2,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2824196
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_C_C4",
+      "target_id": "T01",
+      "scores": {
+        "d1": 3,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 2115
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_C_C4",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1538
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_D_C5",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1830
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_D_C5",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1899
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_D_C5",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1773
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_D_C5",
+      "target_id": "T04",
+      "scores": {
+        "d1": 3,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2176
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_D_C5",
+      "target_id": "T05",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 2,
+        "d6": 4
+      },
+      "latency_ms": 3288
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T01",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 2022
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 1840
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1939
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1709
+    },
+    {
+      "package_id": "pkg_03_recursion_gcd",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T05",
+      "scores": {
+        "d1": 3,
+        "d2": 4,
+        "d3": 5,
+        "d4": 2,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1904
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2438
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2149
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 2132
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2507
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1836
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1916
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T02",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2571
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2050
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T04",
+      "scores": {
+        "d1": 3,
+        "d2": 3,
+        "d3": 4,
+        "d4": 3,
+        "d5": 1,
+        "d6": 3
+      },
+      "latency_ms": 2576
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1937
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_C_C4",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1989
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_C_C4",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 5,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 1762
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_C_C4",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2092
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_C_C4",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2665
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_C_C4",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2284
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_D_C5",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 2,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1573
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_D_C5",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1799
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_D_C5",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2040
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_D_C5",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 5,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2620
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_D_C5",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1878
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T01",
+      "scores": {
+        "d1": 1,
+        "d2": 4,
+        "d3": 5,
+        "d4": 2,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 2477
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T02",
+      "scores": {
+        "d1": 1,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 2214
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2141
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2177
+    },
+    {
+      "package_id": "pkg_04_recursion_lcm",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T05",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 4,
+        "d6": 3
+      },
+      "latency_ms": 2733
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1647
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 1635
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2691
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2182
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T05",
+      "scores": {
+        "d1": 1,
+        "d2": 2,
+        "d3": 4,
+        "d4": 2,
+        "d5": 1,
+        "d6": 2
+      },
+      "latency_ms": 1764
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1756
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 3048
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T03",
+      "scores": {
+        "d1": 4,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1608
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T04",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2338
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 6287
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_C_C4",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1325
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_C_C4",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2881
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_C_C4",
+      "target_id": "T03",
+      "scores": {
+        "d1": 1,
+        "d2": 1,
+        "d3": 2,
+        "d4": 1,
+        "d5": 1,
+        "d6": 1
+      },
+      "latency_ms": 5376
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_C_C4",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1967
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_C_C4",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2522
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_D_C5",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 2017
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_D_C5",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1898
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_D_C5",
+      "target_id": "T03",
+      "scores": {
+        "d1": 3,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 3197
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_D_C5",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 2445
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_D_C5",
+      "target_id": "T05",
+      "scores": {
+        "d1": 2,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 1,
+        "d6": 3
+      },
+      "latency_ms": 2097
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 1486
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 4634
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2465
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T04",
+      "scores": {
+        "d1": 2,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 2,
+        "d6": 5
+      },
+      "latency_ms": 2231
+    },
+    {
+      "package_id": "pkg_05_algorithms_prefix",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2075
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T01",
+      "scores": {
+        "d1": 2,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2070
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 4916
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T03",
+      "scores": {
+        "d1": 2,
+        "d2": 3,
+        "d3": 5,
+        "d4": 3,
+        "d5": 2,
+        "d6": 2
+      },
+      "latency_ms": 1949
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1896
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_A_Baseline",
+      "target_id": "T05",
+      "scores": {
+        "d1": 2,
+        "d2": 3,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 3
+      },
+      "latency_ms": 4184
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1806
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T02",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2357
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 2,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 1911
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T04",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2573
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_B_Oracle",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 5
+      },
+      "latency_ms": 7376
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_C_C4",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 2049
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_C_C4",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2976
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_C_C4",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 2,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 2490
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_C_C4",
+      "target_id": "T04",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 2134
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_C_C4",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1927
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_D_C5",
+      "target_id": "T01",
+      "scores": {
+        "d1": 2,
+        "d2": 3,
+        "d3": 5,
+        "d4": 5,
+        "d5": 4,
+        "d6": 4
+      },
+      "latency_ms": 31329
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_D_C5",
+      "target_id": "T02",
+      "scores": {
+        "d1": 3,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 8543
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_D_C5",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 3,
+        "d3": 5,
+        "d4": 2,
+        "d5": 5,
+        "d6": 2
+      },
+      "latency_ms": 65879
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_D_C5",
+      "target_id": "T04",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 60379
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_D_C5",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1989
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T01",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 1632
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T02",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 5,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 62217
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T03",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 7707
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T04",
+      "scores": {
+        "d1": 4,
+        "d2": 4,
+        "d3": 5,
+        "d4": 3,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 37589
+    },
+    {
+      "package_id": "pkg_06_deeplearning_autoenc",
+      "condition": "Condition_E_Permuted",
+      "target_id": "T05",
+      "scores": {
+        "d1": 5,
+        "d2": 4,
+        "d3": 5,
+        "d4": 4,
+        "d5": 5,
+        "d6": 4
+      },
+      "latency_ms": 54160
+    }
+  ]
+}

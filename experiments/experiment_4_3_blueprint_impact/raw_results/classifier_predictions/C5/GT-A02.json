@@ -1,0 +1,11 @@
+{
+  "labels": [
+    "EXPLAIN"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "So, the third type of auto encoders that came into picture... variational auto encoders... the main idea here is the important factor here for understanding the reconstruction is latent space... what do I do in this latent space such that the decoder works well and the reconstructed image would be as much as similar to the original image."
+    }
+  ]
+}

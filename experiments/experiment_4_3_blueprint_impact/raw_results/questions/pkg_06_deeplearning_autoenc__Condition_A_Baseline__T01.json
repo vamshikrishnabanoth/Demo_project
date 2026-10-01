@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T01",
+  "target_concept": "Compare fully‑connected and convolutional autoencoders in terms of how they handle image dimensionality",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "According to the session evidence, how does a convolutional autoencoder handle the dimensionality of an input image differently from a fully‑connected autoencoder?",
+    "options": [
+      "A convolutional autoencoder first flattens the 2‑D image into a 1‑D vector before applying convolutional layers.",
+      "A fully‑connected autoencoder preserves the spatial layout of the image throughout the network.",
+      "A convolutional autoencoder processes the image with convolutional filters, keeping the 2‑D spatial structure intact before encoding.",
+      "Both fully‑connected and convolutional autoencoders treat the input image identically, differing only in the size of the latent vector."
+    ],
+    "correctAnswer": "A convolutional autoencoder processes the image with convolutional filters, keeping the 2‑D spatial structure intact before encoding.",
+    "explanation": "The evidence states that fully‑connected autoencoders flatten the 2‑D image into a one‑dimensional vector, whereas convolutional autoencoders apply convolution operations without flattening, preserving the 2‑D spatial relationships. This structural difference helps convolutional autoencoders retain spatial features, often leading to higher reconstruction quality.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Compare fully‑connected and convolutional autoencoders in terms of how they handle image dimensionality"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12384,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"According to the session evidence, how does a convolutional autoencoder handle the dimensionality of an input image differently from a fully‑connected autoencoder?\",\n  \"options\": [\n    \"A convolutional autoencoder first flattens the 2‑D image into a 1‑D vector before applying convolutional layers.\",\n    \"A fully‑connected autoencoder preserves the spatial layout of the image throughout the network.\",\n    \"A convolutional autoencoder processes the image with convolutional filters, keeping the 2‑D spatial structure intact before encoding.\",\n    \"Both fully‑connected and convolutional autoencoders treat the input image identically, differing only in the size of the latent vector.\"\n  ],\n  \"correctAnswer\": \"A convolutional autoencoder processes the image with convolutional filters, keeping the 2‑D spatial structure intact before encoding.\",\n  \"explanation\": \"The evidence states that fully‑connected autoencoders flatten the 2‑D image into a one‑dimensional vector, whereas convolutional autoencoders apply convolution operations without flattening, preserving the 2‑D spatial relationships. This structural difference helps convolutional autoencoders retain spatial features, often leading to higher reconstruction quality.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

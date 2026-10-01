@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_D_C5",
+  "target_id": "T01",
+  "target_concept": "Compare fully connected and convolutional autoencoders and explain why fully connected autoencoders often fail.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "According to the provided evidence, what is the primary reason fully connected autoencoders often fail when processing images compared to convolutional autoencoders?",
+    "options": [
+      "They flatten the 2D image into a single vector, losing spatial relationships",
+      "They contain more trainable parameters, leading to overfitting on small datasets",
+      "They cannot model non‑linear transformations required for image reconstruction",
+      "They require significantly larger training datasets to achieve comparable performance"
+    ],
+    "correctAnswer": "They flatten the 2D image into a single vector, losing spatial relationships",
+    "explanation": "The evidence states that the main drawback of fully connected autoencoders is that the 2D image dimensions are directly converted into a one‑dimensional quantity, which discards the spatial structure needed for effective encoding and reconstruction. Convolutional autoencoders preserve spatial locality by operating on the 2D image directly.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Compare fully connected and convolutional autoencoders and explain why fully connected autoencoders often fail."
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 9915,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"According to the provided evidence, what is the primary reason fully connected autoencoders often fail when processing images compared to convolutional autoencoders?\",\n  \"options\": [\n    \"They flatten the 2D image into a single vector, losing spatial relationships\",\n    \"They contain more trainable parameters, leading to overfitting on small datasets\",\n    \"They cannot model non‑linear transformations required for image reconstruction\",\n    \"They require significantly larger training datasets to achieve comparable performance\"\n  ],\n  \"correctAnswer\": \"They flatten the 2D image into a single vector, losing spatial relationships\",\n  \"explanation\": \"The evidence states that the main drawback of fully connected autoencoders is that the 2D image dimensions are directly converted into a one‑dimensional quantity, which discards the spatial structure needed for effective encoding and reconstruction. Convolutional autoencoders preserve spatial locality by operating on the 2D image directly.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

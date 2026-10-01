@@ -1,0 +1,577 @@
+{
+  "taxonomy": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "COMPARE",
+    "DEBUG",
+    "PREDICT_CHANGE",
+    "ASK_WHY",
+    "PRACTICE",
+    "REAL_WORLD_APP",
+    "EDGE_CASE",
+    "CODE_TRACE",
+    "STUDENT_INTERACT",
+    "REINFORCE"
+  ],
+  "mapping_rules": {
+    "INTRODUCE": "EXPLAIN"
+  },
+  "benchmarks": {
+    "BENCH_04": [
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G00",
+        "title": "VCS Introduction & Conceptual Overview",
+        "start": 0,
+        "end": 39.48,
+        "duration": 39.48,
+        "transcript_text": "Hello students, welcome to the next session. In today's session, we will be learning about some of the basic Git commands. So in the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are doing in the project that they are developing. So today, let us talk about the different basic commands that are needed to use Git.",
+        "label_mapping": [
+          {
+            "source_label": "INTRODUCE",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          }
+        ],
+        "human_source_labels": [
+          "INTRODUCE",
+          "EXPLAIN"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G01",
+        "title": "git --version CLI Check",
+        "start": 39.48,
+        "end": 53.86,
+        "duration": 14.38,
+        "transcript_text": "So the first command you have is Git version. So if you want to know if the Git is installed in your system, then we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed.",
+        "label_mapping": [
+          {
+            "source_label": "INTRODUCE",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          }
+        ],
+        "human_source_labels": [
+          "INTRODUCE",
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G02",
+        "title": "git config Global Configuration",
+        "start": 53.86,
+        "end": 120.3,
+        "duration": 66.44,
+        "transcript_text": "The second one you have is Git config. So Git config is a command which is used to give details, give your details to the Git tool. Okay, so why do I need to give my details? It is because whenever you are doing any changes in the project and you are saving the changes, to keep track of those changes, to know who has done that particular change, your Git has to know your information. That is the reason you have to give your details like your username, your email ID and all to Git. This is called as Git config or it is also called as configuration. Right? So you can give two details about yourself, which is the username and the second one you have is your email ID. So to do that, you have to give git config space hyphen hyphen global. Okay? Space user dot name and in double quotes, you can give your name. The same thing for your email ID also. So you can say user dot email and in double quotes, you can give your email ID as shown in this example. Okay?",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G03",
+        "title": "git init Repository Initialization",
+        "start": 120.3,
+        "end": 157.12,
+        "duration": 36.82,
+        "transcript_text": "The next one you are using is Git init. So if you want to start a new project, to keep track of the changes that you are doing in that particular project, you have to create a local repository. That is called as Git repository. Okay? Where your final changes will be maintained in the form of versions. The third stage of your Git, if you remember the workflow. So to keep changes, you have to create a Git repository. To create a repository in Git, you have to use a command called as git init. So when you use git init, it will tell you that an empty repository has been created. Okay?",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G04",
+        "title": "git status Working Tree Inspection",
+        "start": 157.12,
+        "end": 186.88,
+        "duration": 29.76,
+        "transcript_text": "The next command you have is git status. So if you want to know, so say suppose you have created a project and you have done n number of changes. Okay? And you don't remember what are the changes that you have done. So if you want to know what are the changes you have done in your particular project, simply click a command called as git status. It will tell you what are the changes that you have made and which changes have not yet been saved into the repository. Right? So simply give git status.",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G05",
+        "title": "git add Staging Area",
+        "start": 186.88,
+        "end": 252.86,
+        "duration": 65.98,
+        "transcript_text": "The next one you have is git add. So this is, if you remember in your git workflow, I told you we have three areas. Working directory, staging area and git repository. So from working directory, if you want to move your project into staging area, where you are deciding which changes have to be saved, then you have to use a command called as git add. Okay? So if you can simply write git add space dot, that means all the changes that you have done in your project will be saved. Now say suppose you don't want to save all the files. In your project, say suppose you have 10 files, in that only one particular file called as a dot txt, you want to save. Then you can write git space add space a dot txt. So only the changes of that particular file will be saved into the staging area. No, if you want to add all the changes, then simply write git space add space dot. Okay? Now from the staging area, you want to save all the changes that you have made.",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G06",
+        "title": "git commit Repository Snapshot",
+        "start": 252.86,
+        "end": 295.66,
+        "duration": 42.8,
+        "transcript_text": "Then you have to go for the next one, which is called as git commit. Git commit will save the changes of your particular file into the repository. Which repository? Git repository. To do that, you have to use a command git commit. And you have to give a message. So this message will be telling what changes have you made. Okay? So that in each version, you will understand. So when you open a particular version, you will understand in that version what changes you have made in your particular project. So message is you need to be adding. It's optional. But if you add a message, then you will better understand of you can better keep track of the changes that you have made in your particular product. Okay? So this is called as git commit. Right?",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          },
+          {
+            "source_label": "REINFORCE",
+            "canonical_label": "REINFORCE"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "REINFORCE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "REINFORCE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G07",
+        "title": "git diff Working vs Staged Comparison",
+        "start": 295.66,
+        "end": 327.04,
+        "duration": 31.38,
+        "transcript_text": "The next one is git diff. So for example, if you want to know what is the previous commit changes that I have made and what is the new change that I have made. If you want to see the difference between your previous commit and the current commit. Okay? Previous version and the current version. Then you have to use a command which is called as git diff. It will compare the changes of your current file with the previous version. Okay? So for that, you can simply write git diff.",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "COMPARE",
+            "canonical_label": "COMPARE"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "COMPARE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "COMPARE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G08",
+        "title": "git help Reference Manual",
+        "start": 327.04,
+        "end": 397.86,
+        "duration": 70.82,
+        "transcript_text": "The next one you have is git help. Now say suppose you forgot how to use a particular command in git. Then simply write git space help space that command name. So it will give you, it will open the manual page of your git and it will give you the complete details of what is that command, how to use it, what is its syntax, it will give you some examples, what are the various options of that particular command. Every details will be given when you use the command called as git help. Okay? So these are the basic commands of git. Now I will take a small example and demonstrate how exactly these different types of commands are used. Now observe these two windows. The top window is your git bash, your local git tool and the second one is a folder. Okay? So I have created a folder with the name called as sample example which I will be using as my git repository. Okay? So observe the changes as I keep on. Now this is a normal folder. This folder should now be converted into a git repository.",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_04",
+        "unit_id": "GT-G09",
+        "title": "Live Terminal Hands-on Demonstration",
+        "start": 397.86,
+        "end": 767.81,
+        "duration": 369.95,
+        "transcript_text": "So before that let's start with knowing what is the git version. So I will simply type git space hyphen hyphen version. And when I type enter you can see this is the latest version of your git. Okay? Now if you want to clear the screen simply write clear. The window will be cleared. Now let me make this normal folder into a git repository. To do that what we have to do? You have to type git space init. So when I say git space init. This particular folder which is called as sample example is converted into a git repository. Now how do I know it? Now simply type ls. So when I type ls it will show you what are the files inside this particular folder. So as you can see you don't have any folder. But there is one hidden folder called as .git which will tell me that this particular folder is now not a normal folder. It is a git repository. To know that simply type ls space hyphen la. It will give me the list of hidden files. So you can see there is one hidden file which is called as .git here. Okay? So which is not shown in this particular folder. But it is hidden. So whenever you get this .git file that means this particular folder is now created. It is converted into a local git repository. Right? So now let me create a normal file here. A normal project file say suppose. So I will write nano space a.ext. You can use any id that you want. I am using nano. So a.ext file is created. Let me type something. Hello. This is new file. Okay? I am doing the necessary changes. Now you can see here a.ext file is created. You can see this particular file. Right? Now to know whatever changes you have made in this particular project. You have to type now git status. So it is telling there is one file called as a.ext in which you did not save anything. So what we have to do now? We have to do the changes. So I have decided that let me do all the changes in this a.ext. Let me save all the changes in this a.ext. So what I have to do now? I will type git space add space dot. Okay? So it is telling everything is now being saved. So when I say now git status. Previously observe this a.ext is in red color. Now when I type git status you can see that a.ext now is in green color. That means it is telling you that the changes are ready to be committed. Okay? You have decided to do all the changes in a.ext. Now it is ready. Now you save the final changes. To do that final changes what I have to do? I have to type git space commit space hyphen m. I am telling added new file. I am telling that I have added a new file. I am sending a message. Okay? Now everything is successfully committed. Okay? So how do I know it is committed? Simply type git space status. So my status is telling that everything is committed and you are clean. Right? Now say suppose you want to do any more changes now. So again I will type a. Nano space a.txt. Okay? Now say suppose I want to add a new line here. Add it. New line. I have added a new line. I am saving. Okay? Now I want to know what is the difference. What are the different changes that I have done? So what I will do? I will say git space diff. So my diff will tell you previously you had hello this is new file. Now you have added new line. So it is telling me what are the changes that I have made. So previous version is a.txt in a. Now next new version is a.txt in b. Right? So you have to decide whether you want to keep these changes or not. Let me say that I want to keep. So I will say git space add space dot. Okay? Now everything is saved. So I will say git space status. You can see that the changes are saved. But I have not yet committed now. Now say suppose you want to go back. Okay? After typing git add dot. And you have decided to save these changes. Now I want to go back. I don't want to commit now. So what I will do? I will simply write git space reset. Okay? When you type git space reset. All the changes will be reverted back. How do you know that? Simply type git status. Now you can see the red green file is again converted into red file. Okay? Now say suppose you want to undo the changes also. So in this particular a dot txt if you open this particular file you can see a new line is there. Okay? Now I want to undo that new line also. So what I will do? I will simply type git space. I will type git space restore space dot. When I do that and when I open a dot txt you can see that the new line is also deleted. So this is how you can come back. Right? Now let me show you how to use git help. So you can type. So I will type git help. And say suppose you want to know about the function called as add. So when I type enter. Then the git original manual page will open. And it will give you the details of all these particular functions. Okay? So these are the basic git commands that we will be using. In detail we will see in the next session. Thank you.",
+        "label_mapping": [
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          },
+          {
+            "source_label": "CODE_TRACE",
+            "canonical_label": "CODE_TRACE"
+          }
+        ],
+        "human_source_labels": [
+          "DEMONSTRATE",
+          "CODE_TRACE"
+        ],
+        "human_canonical_labels": [
+          "DEMONSTRATE",
+          "CODE_TRACE"
+        ]
+      }
+    ],
+    "BENCH_03": [
+      {
+        "benchmark": "BENCH_03",
+        "unit_id": "GT-D01",
+        "title": "Mathematical vs. Programmatic Divisibility & Modulo Logic",
+        "start": 0,
+        "end": 149.5,
+        "duration": 149.5,
+        "transcript_text": "So, basically, there are two type types of thing which are opposite. Greatest common divisor and least common multiple. HCF, JCD, one and the same thing. LCM, separate. Okay? JCD is always bigger or LCM is bigger. Eight or 12 LCM Okay. So we'll try to understand. GCD LCM LCM of what? Eight and twelve. I'm going to do the way I was taught. Many new ways would have come. I don't know, but I will do it in my manner. Now what is the least common multiple among both of them? Right? Important. So we will do the other way around. LCM would be two into two into three for 12, and for eight, it is what? Two into two into two. 2222224. The LCM number. Okay? Multiple 12 Understood? Okay. So is 24 modulo eight equal equal to zero? Yes. Is 24 modulo 12 equal equal to zero? Yes. So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?",
+        "label_mapping": [
+          {
+            "source_label": "INTRODUCE",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "COMPARE",
+            "canonical_label": "COMPARE"
+          },
+          {
+            "source_label": "ASK_WHY",
+            "canonical_label": "ASK_WHY"
+          }
+        ],
+        "human_source_labels": [
+          "INTRODUCE",
+          "EXPLAIN",
+          "COMPARE",
+          "ASK_WHY"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "COMPARE",
+          "ASK_WHY"
+        ]
+      },
+      {
+        "benchmark": "BENCH_03",
+        "unit_id": "GT-D02",
+        "title": "Iterative LCM Search via Multiples Addition & Search Bounds",
+        "start": 150.5,
+        "end": 482.5,
+        "duration": 332,
+        "transcript_text": "LCM, a I, b I. You have to find an I where I modulo a. 2424 modulo eight was equal equal to zero. 24 modulo 12 was equal equal to zero. So what I have to find in that? I. So I can go for from what to what? Since it is least, I will not start from 100. I will start from what? One. Okay? I less than probably 100. I plus plus. Now what is the condition here I'm saying? If I modulo a equal equal to zero and I modulo b is equal equal to zero, return what? Return I. So I will get what? I will get I as 24. Then you can use recursion. This is one way. What other way do you think it can be? Eight, twelve, or 24. So what will I do? Computers. Is there any shorter way? For loops, you will get it. Not a problem. Any other way? Eight and twelve. Sorry. Eight plus eight or eight? Eight into eight. Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero. Does not happen. Then I will do eight plus eight plus eight. What it becomes? 24. 24 module or 12. Is it equal equal to zero? Yes. So what is my answer? My answer is 24. Let's try this with something else also. Two ways of doing it. One is increment equal. This is a faster way of doing it. Okay? Because I am trying to check the common multiple between both of them. If there is a common multiple between both of them, that means this will whatever number this guy is capable of producing will be divisible by this guy. Whatever this guy is capable of producing, it would be divisible by by the other guy. So it's got table leaking eight, eight plus eight. For next step, eight plus eight plus eight. So this guy should give me a number which would be divisible by 12. So let's try and do again. Let's do it for four and six. Four should give me a number which is divisible by six. So directly six. Are you divisible by four? No. Then what will I do if I am not divisible? I will do four plus four. Is eight divisible by four? Yes? No? Yes. Then what is my sorry. Sorry. Six. It's six divisible by eight. Oh, what are we doing? Four and six LCM. One minute. One minute. One minute. I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No. Then eight modulo six, is it equal equal to zero? No. Go ahead. Four plus four plus four. What is this? 12 modulo six. Is it equal equal to zero? Yes. What is my LCM? 12. This is also one way of getting it. Okay? If you want to play with six, you can play with six also the other, same way. How will you do it with six? Checking six multiples are divisible by four or not? What is six first divisible multiplier? Six ones are six. Okay. So I will take six as it is and check over here. Is six modulo four equal equal to zero? No. Then I will settle six. You add to yourself. Let's go to your next number. That is six plus six. 12 modulo four. Is it equal equal to zero? Yes. Who is LCM? 12.",
+        "label_mapping": [
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          },
+          {
+            "source_label": "PRACTICE",
+            "canonical_label": "PRACTICE"
+          },
+          {
+            "source_label": "STUDENT_INTERACT",
+            "canonical_label": "STUDENT_INTERACT"
+          }
+        ],
+        "human_source_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "STUDENT_INTERACT"
+        ],
+        "human_canonical_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "STUDENT_INTERACT"
+        ]
+      },
+      {
+        "benchmark": "BENCH_03",
+        "unit_id": "GT-D03",
+        "title": "Iterative-to-Recursive State Transformation for LCM",
+        "start": 485.5,
+        "end": 1256.5,
+        "duration": 771,
+        "transcript_text": "right recursion. For I I have a lot of thing also and for this guy also. Hit it here. What do we want to do? LCM, I take a, I take b. I'm keeping a four, and I'm keeping a six here for you people to understand. For I equal to one, I less than 100, I plus plus. It can be less than 100 or it can be less than or equal to b. Greater number. Okay? Because it's a divisor. You keep it 100 right now. You will otherwise go crazy. If loop, I modulo a equal equal zero, I modulo b equal equal zero, and condition return I. Convert this into recursion. LCM a b. This is four and this is six. Why loop middle? Correct? This is my LCM in two ways. I while looking at a while loop, how to convert it into recursion, you can do recursion of any sorts. Do we want to pass a constant value, Uber? Yes. So what should we be working on? Base case. I'll help you. What is the base condition? Which one do you want to implement first? For loop. What is the base condition in this? Should it be 100 or should it be a multiply by b? Which one will learn work shorter? A multiply by b. Okay? So your condition should be let's create here in LCM is receiving in a, in b. First, we'll have to write our base condition. Okay? First, I'm writing one minute. I'll just write base condition and testing condition in this only. Okay? If I is I I need to take it. I can't have it. Is equals to zero and I modulo b is equal to zero. Return I. I plus plus for condition a comma b comma I plus. Correct? Initially, I will send I as one because for loop, my eyes getting initialized to what? One. So at the time of sending it, LCM sorry. KCM. LCM of four six, initializing the four group with one. I will keep on checking one modulo four is equal equal to four or nothing, and I will keep on incrementing I, I plus one. Passing the same a, passing the same b. And whenever it gets hit and whenever I find my I, I will return back. So let me check. This is the four loop getting created or converted into recursion. Let me see whether this works. Four six one. I'll just run the file. It is giving me 12. Okay. I got my answer. 12. If you want to check out with something else, fourteen and six, It's coming 42 LCM. Let's make the LCM for two and eight. Eight. Okay. Understood? For loop I showed you. Right? Do the LCM for this guy. Here, the concept was I was getting incremented. Here, the concept is a itself is getting incremented. So do that. Write the second one. It will be your base condition in this case. And then you will increment what? A always. Until a does not reach a bigger point where it is getting divided by b. This is your LCM. If you want, I'll show you recursion in that also. Int LCM m. Stopping condition is what? And now I will call LCMM to check whether it's working. I don't need an eye now. Correct? No? I am checking what for LCM. A should be divisible by b. So what did I check over here? If a is divisible by b, I should stop checking for my LCM. So I will return. What do I need to return a? Because a becomes the LCM. Otherwise, if it is not true, what am I doing? I'm changing a and saying you are now a plus a. So instead of sending a a, I am sending what? A plus a who will become the new a for the next LCA. Okay? So I will try to run this. Did I save it? Yes. You're getting eight for two and eight. Let's do for four and six. Did I save it? Why is it coming zero? A plus equal to No. Why is it coming? Eight into a. The minimum has to be done. Out of the two min either ways it works. No? It becomes four eight eight plus eight. So we have got to make sure that is remaining So I I will keep on incrementing. No? I plus plus. Okay. So we are needing I here also because we can't do a plus a. Fine?",
+        "label_mapping": [
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          },
+          {
+            "source_label": "PREDICT_CHANGE",
+            "canonical_label": "PREDICT_CHANGE"
+          },
+          {
+            "source_label": "CODE_TRACE",
+            "canonical_label": "CODE_TRACE"
+          },
+          {
+            "source_label": "DEBUG",
+            "canonical_label": "DEBUG"
+          }
+        ],
+        "human_source_labels": [
+          "DEMONSTRATE",
+          "PREDICT_CHANGE",
+          "CODE_TRACE",
+          "DEBUG"
+        ],
+        "human_canonical_labels": [
+          "DEMONSTRATE",
+          "PREDICT_CHANGE",
+          "CODE_TRACE",
+          "DEBUG"
+        ]
+      },
+      {
+        "benchmark": "BENCH_03",
+        "unit_id": "GT-D04",
+        "title": "Euclidean Algorithm for Fast GCD (Logarithmic Modulo Reduction)",
+        "start": 1268.5,
+        "end": 2142.5,
+        "duration": 874,
+        "transcript_text": "Now let's try to understand greatest common divisor. How are you going to find this one? Your numbers are eight and twelve again for JCD. So I have 12, four, and eight. These are the divisors of eight. Of 12, what is it? One, twelve, six, two, four, three or three, four, whatever. These are the devices of 12. What is the greatest one? Greatest common device. Right now, do we have anything common? Well, how it will become common? Eight and twelve greatest common device. Four is the common guy. Okay? Now this is algebra. How will you do in computers? Greatest common divisor. What is a common divisor, guys, which can divide both of them? Again, can I use a for loop? Starting a or b common divisor a is four, a is eight, and b is 12. What would I start with? Who's the common divisor for both of them? Can 12 be a common divisor for both of them? So where should we start from? Can I start from eight? Yes or no? So I can start from a. GCD of a and b has to be taken out. For right now, I'm considering a to be eight, b to be 12. What would you write in the for loop to get the JCD? Greatest common divisor Any value I, which can divide a also and b also. That means either if condition if a modulo I. Correct? No. Is equal equal to zero and b modulo I is also equal equal to zero. Then return what? I or b or a? You have to find a divisor which can divide a also and which can divide b also. So what will you return back? You will return back your I. So what would be your condition? If I equal to a, where do you have to stop? Less than or equal to zero? Eight eight seven try seven six try One is the gate greatest divisor of everybody. Minus minus. For loop. GCDR. Then you have to convert this into what? Recursion. Do this recursion. It's not an efficient one. I'll show you an efficient one which follows a UK algorithm. That is a different thing. Can equal to factorial and fibonacci? No. It is. LCM That's it. Guys, all you need to do is This only. Okay. Now the other part of GCD, what he's saying you is called as algorithm to find GCD. Yes. We have used a for loop to find it. For loop is checking for each and every value of I. This guy tells you GCD of eight and twelve if I have to find. Okay? I will check over here if 12 modulo eight is equal equal zero. If yes, then 12 becomes my No. Correct? This is not equal to zero. Then I will go for a further call to GCD, and now at this point, I will say eight comma. What will I pass? I will not pass 12. I will pass 12 modulo eight. What is 12 modulo eight? Four. So what will I pass? I will pass eight and four. Okay? Correct. Eight and four. Now should I make four modulo eight? It will never come. So here, what is the catch? You have got to make sure that whenever you are passing the number, there is one minimum and there is one maximum. So you are always doing max modulo min. So in this case, I will do eight modulo four. Is it equal equal to zero? Yes. It is equal equal to zero. Then in that case, my minimum is my GCD. Understood? Let's try it for some more. GCD for nine and twelve, suppose. So what I'll have to do, who is the minimum from this? Nine. So I will keep nine as it is, and I will say twelve nine. Is twelve nine equal equal to zero? No. It is not. What will this reduce to? Three. Correct? Then what I will do, I will say JCD, I have to pass nine and three to you. What will JCD do? It will check who is the minimum. Okay. Who is the minimum in this case? Three is the minimum. So what will I do over here? I will do nine modulo three. Is it equal equal to zero? Yes. So what becomes the JCD? The minimum becomes the JCD. So the greatest common divisor for both of them is what? Three. Okay? So now how are you going to check this particular thing? Let's try to write a pseudo code and then you write recursion for it. Okay? So what is the first step that we have got to check? I receive let me delete this. JCD, I received a a, I receive a b. First, what am I going to check? What is minimum? What is maximum? So in c plus plus, you can give minimum of a comma b. You can give maximum of a comma b. You will get the minimum number. You will get the maximum number. So once I get my a and b, I will determine what is minimum, what is maximum, and I will check if I can directly write this also. Maximum modulo minimum is equal equal to zero. And if this is zero, that means I have found by JCD, what will I return? I will return my minimum of a and b. If you want to take it in variables and don't use directly, you can do that. Else, what will you do? It did not happen. You've got to go for JCD one more time. Then what will you do? You've got to pass minimum and maximum to it. Okay. Now what would you do? JCD, pass this and pass this, whatever you got it later. Minimum of a plus b. Okay. Would you pass minimum of a plus b or would you pass the modulo value? We'll pass the modulo value. So you will repeat this again. You will pass one maximum, comma, this modulo value. Correct? No. Every time you're doing modulo and then passing that value. Every time you're doing modulo, you're passing the value. GCD, eight and twelve. First step. Find minimum. Find maximum. Second step. Check. What do you need to check? If maximum modulo minimum is equal equal to zero. If yes, return minimum. If no, then what will you do? You call your JCD again. Now at this time, will you pass eight and twelve to it? No. What will you pass? 12 reduce. Reduce module. So eight minimum, whatever the thing is. And twelve twelve module of I'll write here so that you understand. This will go. Again, I will receive this. Now what will I receive? Eight and four. I will find minimum. I will find maximum. Then eight modular four equal equal to zero. Yes. Return four. Okay. This is what you have got to do in JCD. Just write a recursion for this. This is an algorithm. You said algorithm is what they call it as to find a JCD. If you want, I can show you. We'll write a JCD also. Int a comma int b. So first, let me check. You can do it straight, but I am just doing it so that you understand when you are reading the code. Okay. This is my GCD code. See, check whether it's working.",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          },
+          {
+            "source_label": "COMPARE",
+            "canonical_label": "COMPARE"
+          },
+          {
+            "source_label": "ASK_WHY",
+            "canonical_label": "ASK_WHY"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "COMPARE",
+          "ASK_WHY"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "COMPARE",
+          "ASK_WHY"
+        ]
+      },
+      {
+        "benchmark": "BENCH_03",
+        "unit_id": "GT-D05",
+        "title": "Real-World Application Heuristics (Equal Partitioning vs. Interval Scheduling)",
+        "start": 2151.6,
+        "end": 2258.3,
+        "duration": 106.7,
+        "transcript_text": "So there are two types of problems that we have. One problem talks about sharing stuff equally. So whenever you guys have got to divide, it can be time. It can be commodities. It can be anything where the question says, divide all these things among people equally. That time you should keep it in mind that you have got to do what? JCD. Okay? When it comes to timing, scheduling, time intervals. Okay. 30 speed. 40 speed. Coincide. But we are trying to find a multiple among both of them. Okay? So whenever it is timing scheduler intervals and they talk about a meeting point or they talk about an intersection point, it means that you are asked to find the LCM. Division equally, JCD. Timing, interval, scheduling, round robin. Okay? Job shortest job first. All those things, what are you going to do with LCM? Scheduling algorithms. You have a string.",
+        "label_mapping": [
+          {
+            "source_label": "EXPLAIN",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "COMPARE",
+            "canonical_label": "COMPARE"
+          },
+          {
+            "source_label": "REINFORCE",
+            "canonical_label": "REINFORCE"
+          },
+          {
+            "source_label": "REAL_WORLD_APP",
+            "canonical_label": "REAL_WORLD_APP"
+          }
+        ],
+        "human_source_labels": [
+          "EXPLAIN",
+          "COMPARE",
+          "REINFORCE",
+          "REAL_WORLD_APP"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "COMPARE",
+          "REINFORCE",
+          "REAL_WORLD_APP"
+        ]
+      },
+      {
+        "benchmark": "BENCH_03",
+        "unit_id": "GT-D06",
+        "title": "Recursive String Deconstruction & Return-Time Stack Accumulation",
+        "start": 2265.8,
+        "end": 3315.9,
+        "duration": 1050.1,
+        "transcript_text": "Reverse a string means what? Print I a b I m x a l I n a r. Now comes one more aspect of recursion. Make the problem extremely small, solve that problem, and repeat it for next. What does it mean? Okay? Right now, we'll do that later. Let's talk about dog right now. It's easier to follow. Fine? Make a problem small. This string is made up of how many characters? Three. I will reduce this problem to a one character o or d. What is reverse of this? D. So if I have to if I have to print a reverse of this is this also a string? Yes. If I have to print a reverse of a string whose length is equal to one, what will I do? Give the same back? So the first base condition becomes if s t r dot length is equal equal to one. What do you need to return? Return STR. Is this understood? Make the problem small. Reduce it to its minimum size and see how will you solve. This is how you will solve. Now problem One step. This is my string. What is the output? O d. Okay? Now how will I print this OD? Is the question. Correct? This I need to solve. Fine? Recursion I can get it as tools available. One. Correct? I will return. Returning, what am I getting back? D. Correct? Now when I return here and get I get my d back, this is my input parameter, o d. How will I construct d o? Return parameter plus first letter of input parameter. Yes. So what will it become? Return parameter plus first letter of input parameter. D o. What is the return parameter? D o. What is the first parameter of input string? G. So what will I make it? Again, it became dog. It has to become dog. What we were trying to we got god and we converted into what? Dog. Important string When do you want to take a action? Reverse action, coming back. Okay. I am sending good. Then I can send to it what? OD. Then I can send to it OD. Then I will send d to it. I'll have to stop here. What comes back? D. Then what do I need to do? D, return parameter plus input parameter. Return back o d here. Oh, sorry. D o. Then return parameter plus first, d o o. Return parameter plus first parameter. What will it go as? So am I working when I am passing the substring or am I working when I am getting the answer from the substring? Getting on the return. So let's try to check this first. Okay? I will just remove all this. Now we will say void or do you wanna pass a string? String reverse is taking a string str. Reverse Let's see how do we pass. Okay. So if s t r dot length becomes empty is equal equal to zero, I will return return empty. Or eight minute job. Valid. Okay? So if the string becomes empty, I return from there. Otherwise, I'm going to print the string as it is. C out s t r n l. Okay? And then I am going to return ref s t r dot substring one. First, let's try to understand what would this do. Okay. I am passing here. Hello. Don't go inside. What will I print, guys? Hello. And then I will give a call with a substring one. One means from first index. That means I am passing what to it? Hello. Hello is a STR substring. It comes here. I don't go here. I print LO. Then I pass what? LLO. Then I print LLO. Then I pass LO. Then I pass LO. O. Then I print l o. Then I pass o. I print o. Then I pass empty string. And then I start returning from there. Now the work has been done when? While going, not while coming back. Correct? So let's try to check this. How does this look like? Rev. Hello? World. Please try to understand how string is going. String goes in a very beautiful manner. Just printing it. Doing nothing with it. It. Are we supposed before we go to reverse, let's do any primitive things. How do I calculate the length of a string? Every time while going or while coming back? Going also you can do. Yes. You can do. So I will make here int. Just don't skip string length. I'm just checking if string is empty, then I should give zero. This much I know. One case I know. Okay? For the other times, every time the method is getting called, I will add one to it. Every time substring When god, I will pass, it will go o d. Then it will go d and then it will go to empty string. Correct? At empty string, I am saying zero goes over here. What is the return type I'm getting? Zero. But this is one, so I will add return one. This will give one. I will add return one. This becomes two. I will add return one. And, ultimately, it gives me what? Three. So I know one case. I only need to design the another case. I know if it is empty, I have to pass zero. And whenever anybody is giving a call, I have to say plus one to whatever I have to add plus one to it. Whatever is the return value, I have to add plus one to it. Okay? So now I will just say c out. 11, it is giving me. It is even counting what? The space in it. If I increase the space, obviously, it will give me more. 19. Variation base condition. Return value. Code. Are you able to get the length, all of you? Now did you include space and you're getting the length? Now whatever be the string, I want only the number of characters. You will ignore the space. All these small things will understand how and where are you going to apply your code. Did you wonder oh question? Hello? Space world. What should it give you answer? 10. Hello world. What should it give you? 10. Hello world What should it give you? Still 10. Length of a care length of a string means you are including whatever is there between two commas. I am saying don't give me that. Give me only characters. What will you do? Yes. And then only return the value. Would be conditional return. I have hello world, so much of gap between, but still when I try to run it, it gives me 10. If I try to remove this, It still gives me 10. Any kind of combination in recursion, we have seen. Is the base condition understood by everybody? I am going like this. When the length condition is one, I go back and return what to it? D. Then I have to collect what? Return parameter with first letter of the input parameter. So I will say, return what do I need to return? Rev of first, let me build the substring. So this guy is gonna give me back what? This guy is gonna give me back d. Right? And I need to take from the input parameter the first letter. Okay? And then combine them together and return back to my colleague. So I got the return type. I will take STR of the input parameter. Okay. God called to o d, o d called to d, d is this condition. I come back, give this guy d. Now d is returning first parameter of the input stream, STR, combining with the return type. So what do I return? I return d o. Then I take return parameter plus first guy. D d o g. Reverse. Look at the diagram and then write the code. It makes your life easier.",
+        "label_mapping": [
+          {
+            "source_label": "INTRODUCE",
+            "canonical_label": "EXPLAIN"
+          },
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          },
+          {
+            "source_label": "DEBUG",
+            "canonical_label": "DEBUG"
+          },
+          {
+            "source_label": "CODE_TRACE",
+            "canonical_label": "CODE_TRACE"
+          }
+        ],
+        "human_source_labels": [
+          "INTRODUCE",
+          "DEMONSTRATE",
+          "DEBUG",
+          "CODE_TRACE"
+        ],
+        "human_canonical_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "DEBUG",
+          "CODE_TRACE"
+        ]
+      },
+      {
+        "benchmark": "BENCH_03",
+        "unit_id": "GT-D07",
+        "title": "Recursive Palindrome Verification & Symmetric Substring Trimming",
+        "start": 3327.2,
+        "end": 3776.5,
+        "duration": 449.3,
+        "transcript_text": "I have never been reversed. Palindrome. Equal. Palindrome or not? While going or while coming? While coming back. While returning, not while going. I'll tell you how. When you have only one always, Whenever you're talking about recursion, what is the extreme case? I having only one character. Is this palindrome? Yes. Yes or no? So the base condition would be if STR dot length equally equal to one. Return what? True. Correct? No? It becomes what? It's true. Correct? Now you have to go this character and this character. Means what? First character and last character of the substring needs to be compared. So this is the return condition. Main is what? If STR of zero is equally equal to STR of STR dot length minus one. Last character. First character is equal to last character, then return what? True. Else return what? False. The way I have to call them, first Second, call me what should I pass? Or IT? IT. Then next, what should I pass? When I go inside, what am I checking for this? Done. First and last, done. First and last, done. This is my first thing. What will I pass to it? Substring one? No. Substring one, first kato, last kato. So what will come? Q r s r q. Then what will come? R s r. Then what will come? S. This is how you should be invoking it first and foremost. Now while returning back, is this one? Is this palindrome? Yes. So what do I pass? I pass true to it. Now the first and the last of the substring, are they equal? Yes. So what should I pass to it? True. Again, what should I see? First, last, equal. Yes. Again, password to it. True. First, last, equal, pass what to it? True. Understood? Okay. Let's try to code this. I'm gonna receive a string. If it is one, I will pass true. If I think my SDR zero is equally equal to my SDR SDR dot length minus one, the last index. If both of them are also equal, I will pass return true. Else, what will I pass? Return. If they are not true, what will I pass? False. Correct? And then I'm giving a call to whom again? Rev. Now the way I am going to pass the substring, should I pass substring one? No. First cut, last cut. So the way substring is written over here in c plus pluses, it says, substring, you pass where you want to begin and pass me how many characters you have. How many characters you want? That means, suppose when a hello, sub string one to two. I will start from one, and how many characters I want? Only two. What would be the output? E l. If I say four characters, e l l o. Understood? Okay. So now I need to check how will I pass my substring or how will I invoke this method such that I get to pass or my output is substring one. Characters characters total length minus two. Yes or no? So how many characters will I need? STR dot length minus two. Minus two QA. Character To hello character chop string length five minus two will give you three. Substring of one, comma, check whether this is working, is palindrome or something else needs to be corrected.",
+        "label_mapping": [
+          {
+            "source_label": "DEMONSTRATE",
+            "canonical_label": "DEMONSTRATE"
+          },
+          {
+            "source_label": "PRACTICE",
+            "canonical_label": "PRACTICE"
+          },
+          {
+            "source_label": "DEBUG",
+            "canonical_label": "DEBUG"
+          },
+          {
+            "source_label": "EDGE_CASE",
+            "canonical_label": "EDGE_CASE"
+          },
+          {
+            "source_label": "STUDENT_INTERACT",
+            "canonical_label": "STUDENT_INTERACT"
+          }
+        ],
+        "human_source_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "DEBUG",
+          "EDGE_CASE",
+          "STUDENT_INTERACT"
+        ],
+        "human_canonical_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "DEBUG",
+          "EDGE_CASE",
+          "STUDENT_INTERACT"
+        ]
+      }
+    ]
+  }
+}

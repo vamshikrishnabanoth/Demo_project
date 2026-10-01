@@ -1,0 +1,23 @@
+{
+  "id": "CALIB-C1",
+  "boundary_family": "DEMONSTRATE",
+  "boundary_type": "NEGATIVE_BOUNDARY",
+  "expected_labels": [
+    "EXPLAIN"
+  ],
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "prohibited_labels": [
+    "DEMONSTRATE"
+  ],
+  "is_exact_match": true,
+  "has_boundary_violation": false,
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "In Python, the open function takes a file path string and a mode flag like r for reading, returning a file stream object."
+    }
+  ],
+  "latency_ms": 15199
+}

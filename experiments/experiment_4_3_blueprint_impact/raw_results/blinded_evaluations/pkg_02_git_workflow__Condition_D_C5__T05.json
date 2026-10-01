@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Use `git help <command>` to retrieve syntax, options, and examples for any Git command.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly tests the git help syntax explicitly described in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires recall of a specific command usage; minimal reasoning beyond remembering the syntax."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, concise, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options include a plausible alternative (git add --help) and two clearly implausible choices, providing reasonable discrimination."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Based on the provided evidence, only 'git help add' is justified as correct; all other options are unsupported."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question asks for authentic tool usage rather than a rote definition, reflecting practical application."
+    }
+  },
+  "latency_ms": 1686,
+  "retry_count": 1,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly tests the git help syntax explicitly described in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires recall of a specific command usage; minimal reasoning beyond remembering the syntax.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, concise, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"Incorrect options include a plausible alternative (git add --help) and two clearly implausible choices, providing reasonable discrimination.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Based on the provided evidence, only 'git help add' is justified as correct; all other options are unsupported.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question asks for authentic tool usage rather than a rote definition, reflecting practical application.\"}\n}"
+}

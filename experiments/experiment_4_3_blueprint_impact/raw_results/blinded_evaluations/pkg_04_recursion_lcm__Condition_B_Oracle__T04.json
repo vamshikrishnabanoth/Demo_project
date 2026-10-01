@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "Implement a recursive function that reverses a string, identifying the base case (length = 1 or empty) and the construction of the result on the return path.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 3,
+      "rationale": "Base‑case concept is covered, but evidence mentions both length 1 and empty while the question expects only one answer"
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires understanding of recursion base case; modest reasoning beyond verbatim recall"
+    },
+    "d3_stem_clarity": {
+      "score": 4,
+      "rationale": "Stem is clearly worded and unambiguous about what is asked"
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "A and B are both plausible given the evidence; C is obviously wrong and D is less plausible"
+    },
+    "d5_single_key_determinism": {
+      "score": 1,
+      "rationale": "Evidence supports two correct statements (length 1 and empty), so the question lacks a single deterministic answer"
+    },
+    "d6_question_novelty": {
+      "score": 3,
+      "rationale": "Typical recursion base‑case query; authentic but not particularly novel"
+    }
+  },
+  "latency_ms": 2576,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":3,\"rationale\":\"Base‑case concept is covered, but evidence mentions both length 1 and empty while the question expects only one answer\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires understanding of recursion base case; modest reasoning beyond verbatim recall\"},\n  \"d3_stem_clarity\": {\"score\":4,\"rationale\":\"Stem is clearly worded and unambiguous about what is asked\"},\n  \"d4_distractor_plausibility\": {\"score\":3,\"rationale\":\"A and B are both plausible given the evidence; C is obviously wrong and D is less plausible\"},\n  \"d5_single_key_determinism\": {\"score\":1,\"rationale\":\"Evidence supports two correct statements (length 1 and empty), so the question lacks a single deterministic answer\"},\n  \"d6_question_novelty\": {\"score\":3,\"rationale\":\"Typical recursion base‑case query; authentic but not particularly novel\"}\n}"
+}

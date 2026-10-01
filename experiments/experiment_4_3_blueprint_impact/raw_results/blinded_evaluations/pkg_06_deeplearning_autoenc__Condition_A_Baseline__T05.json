@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T05",
+  "target_concept": "Contrast deterministic point encoding of standard autoencoders with probabilistic encoding of VAEs",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 2,
+      "rationale": "The lecture excerpt discusses fully vs convolutional autoencoders and does not cover VAEs, so the VAE advantage is not directly taught in the provided evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires understanding the probabilistic nature of VAEs versus deterministic encoding, which is conceptual but not deeply analytical."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question stem is clear, concise, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "Some distractors (A, C) reflect plausible misconceptions, but others (D) are obviously incorrect, reducing overall plausibility."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option B is correct given the evidence; the other three are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 3,
+      "rationale": "The question asks a standard comparative concept rather than a novel or authentic application."
+    }
+  },
+  "latency_ms": 4184,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 2, \"rationale\": \"The lecture excerpt discusses fully vs convolutional autoencoders and does not cover VAEs, so the VAE advantage is not directly taught in the provided evidence.\"},\n  \"d2_cognitive_demand\": {\"score\": 3, \"rationale\": \"Answering requires understanding the probabilistic nature of VAEs versus deterministic encoding, which is conceptual but not deeply analytical.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The question stem is clear, concise, and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\": 3, \"rationale\": \"Some distractors (A, C) reflect plausible misconceptions, but others (D) are obviously incorrect, reducing overall plausibility.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Only option B is correct given the evidence; the other three are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\": 3, \"rationale\": \"The question asks a standard comparative concept rather than a novel or authentic application.\"}\n}"
+}

@@ -1,0 +1,34 @@
+{
+  "unit_id": "GT-G05",
+  "benchmark": "BENCH_04",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "The next one you have is git add. So this is, if you remember in your git workflow, I told you we have three areas. Working directory, staging area and git repository."
+    },
+    {
+      "label": "EXPLAIN",
+      "quote": "So from working directory, if you want to move your project into staging area, where you are deciding which changes have to be saved, then you have to use a command called as git add."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "you can simply write git add space dot, that means all the changes that you have done in your project will be saved."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "you can write git space add space a dot txt. So only the changes of that particular file will be saved into the staging area."
+    }
+  ],
+  "raw_response": "{\"labels\":[\"EXPLAIN\",\"DEMONSTRATE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"The next one you have is git add. So this is, if you remember in your git workflow, I told you we have three areas. Working directory, staging area and git repository.\"},{\"label\":\"EXPLAIN\",\"quote\":\"So from working directory, if you want to move your project into staging area, where you are deciding which changes have to be saved, then you have to use a command called as git add.\"},{\"label\":\"DEMONSTRATE\",\"quote\":\"you can simply write git add space dot, that means all the changes that you have done in your project will be saved.\"},{\"label\":\"DEMONSTRATE\",\"quote\":\"you can write git space add space a dot txt. So only the changes of that particular file will be saved into the staging area.\"}]}",
+  "latency_ms": 1437,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

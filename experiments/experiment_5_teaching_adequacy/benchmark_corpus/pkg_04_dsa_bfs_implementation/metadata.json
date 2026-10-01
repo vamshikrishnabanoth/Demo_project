@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_04_dsa_bfs_implementation",
+  "domain": "Computer Science / Algorithms",
+  "subject": "Data Structures and Algorithms",
+  "topic": "Breadth-First Search (BFS) Graph Traversal",
+  "learner_level": "Undergraduate B.Tech CSE (Semester 3)",
+  "syllabus_context": "Unit III: Practical Graph Traversal Implementation. Implementing graph algorithms in code, concrete standard template library queue usage, step-by-step code trace, edge-case handling for cyclic structures and disconnected components, memory footprint.",
+  "declared_learning_objective": "Implement Breadth-First Search using a concrete queue data structure in code, trace variable states during execution, and implement robust edge-case handling for cyclic graphs and disconnected components.",
+  "provenance": {
+    "mode": "AUTHENTIC_RECORDING",
+    "source_type": "CLASSROOM_RECORDING",
+    "source": "KMIT Department of Computer Science & Engineering Lecture Series",
+    "institution": "Keshav Memorial Institute of Technology, Hyderabad",
+    "access_date": "2026-08-20",
+    "license_or_usage_basis": "Institutional Academic Research Dataset Agreement (Causal Isolation Paired Unit)"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Diagrammatic node connections described verbally with whiteboard pointer."
+  }
+}

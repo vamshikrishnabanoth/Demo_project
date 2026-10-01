@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_C_C4",
+  "target_id": "T01",
+  "target_concept": "Identify the three areas of a Git workflow: working directory, staging area, and repository",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks for the three areas explicitly named in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 2,
+      "rationale": "Requires simple recall of a list; no deeper reasoning or problem solving."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clear, unambiguous, and self‑contained."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options contain related Git concepts that could plausibly be confused with the three‑area model."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A matches the lecture; all other choices are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 2,
+      "rationale": "The item is a straightforward factual recall rather than an authentic, novel application."
+    }
+  },
+  "latency_ms": 4023,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks for the three areas explicitly named in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":2,\"rationale\":\"Requires simple recall of a list; no deeper reasoning or problem solving.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is clear, unambiguous, and self‑contained.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options contain related Git concepts that could plausibly be confused with the three‑area model.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A matches the lecture; all other choices are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":2,\"rationale\":\"The item is a straightforward factual recall rather than an authentic, novel application.\"}\n}"
+}

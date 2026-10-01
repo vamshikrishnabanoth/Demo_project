@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_D_C5",
+  "target_id": "T02",
+  "target_concept": "Demonstrate how to create a repository snapshot using `git commit -m \"message\"` and describe the role of the commit message.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "After adding changes to the staging area, which statement correctly describes what `git commit -m \"<message>\"` does?",
+    "options": [
+      "It records a snapshot of the staged changes in the repository and stores the provided message to describe those changes.",
+      "It moves files from the working directory directly into the repository without creating a snapshot.",
+      "It stages untracked files for the next commit without recording any message.",
+      "It permanently deletes the previous commit history and replaces it with the new message."
+    ],
+    "correctAnswer": "It records a snapshot of the staged changes in the repository and stores the provided message to describe those changes.",
+    "explanation": "`git commit -m \"message\"` creates a new commit, which is a snapshot of the current staged content saved in the repository. The `-m` flag supplies a commit message that explains what changes are included in that snapshot, helping future reviewers understand the purpose of the commit.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Demonstrate how to create a repository snapshot using `git commit -m \"message\"` and describe the role of the commit message."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11552,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"After adding changes to the staging area, which statement correctly describes what `git commit -m \\\"<message>\\\"` does?\",\n  \"options\": [\n    \"It records a snapshot of the staged changes in the repository and stores the provided message to describe those changes.\",\n    \"It moves files from the working directory directly into the repository without creating a snapshot.\",\n    \"It stages untracked files for the next commit without recording any message.\",\n    \"It permanently deletes the previous commit history and replaces it with the new message.\"\n  ],\n  \"correctAnswer\": \"It records a snapshot of the staged changes in the repository and stores the provided message to describe those changes.\",\n  \"explanation\": \"`git commit -m \\\"message\\\"` creates a new commit, which is a snapshot of the current staged content saved in the repository. The `-m` flag supplies a commit message that explains what changes are included in that snapshot, helping future reviewers understand the purpose of the commit.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

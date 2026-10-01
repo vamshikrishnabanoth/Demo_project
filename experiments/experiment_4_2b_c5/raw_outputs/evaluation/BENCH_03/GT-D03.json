@@ -1,0 +1,36 @@
+{
+  "unit_id": "GT-D03",
+  "benchmark": "BENCH_03",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "PRACTICE",
+    "DEBUG"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "If a is divisible by b, I should stop checking for my LCM. So I will return."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "I will just run the file. It is giving me 12."
+    },
+    {
+      "label": "PRACTICE",
+      "quote": "Write the second one. It will be your base condition in this case."
+    },
+    {
+      "label": "DEBUG",
+      "quote": "Why is it coming zero? A plus equal to No."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\", \"PRACTICE\", \"DEBUG\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"If a is divisible by b, I should stop checking for my LCM. So I will return.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"I will just run the file. It is giving me 12.\"\n    },\n    {\n      \"label\": \"PRACTICE\",\n      \"quote\": \"Write the second one. It will be your base condition in this case.\"\n    },\n    {\n      \"label\": \"DEBUG\",\n      \"quote\": \"Why is it coming zero? A plus equal to No.\"\n    }\n  ]\n}",
+  "latency_ms": 36397,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

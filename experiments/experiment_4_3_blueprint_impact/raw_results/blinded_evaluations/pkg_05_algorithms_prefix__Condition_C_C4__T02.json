@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_C_C4",
+  "target_id": "T02",
+  "target_concept": "Explain why the length of the smallest string provides an upper bound for the longest common prefix",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly matches lecture point that longest common prefix cannot exceed smallest string length."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of prefix definition and logical bound, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "Clear, concise, and unambiguous phrasing of the why‑question."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Distractors include a plausible but incorrect practical concern (C) and clearly wrong statements, making them reasonably discriminating."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A is defensibly correct given the evidence; others are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Authentic reasoning question rather than simple definition recall."
+    }
+  },
+  "latency_ms": 2881,
+  "retry_count": 0,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":5,\"rationale\":\"Directly matches lecture point that longest common prefix cannot exceed smallest string length.\"},\"d2_cognitive_demand\":{\"score\":4,\"rationale\":\"Requires understanding of prefix definition and logical bound, not mere recall.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"Clear, concise, and unambiguous phrasing of the why‑question.\"},\"d4_distractor_plausibility\":{\"score\":4,\"rationale\":\"Distractors include a plausible but incorrect practical concern (C) and clearly wrong statements, making them reasonably discriminating.\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Only option A is defensibly correct given the evidence; others are definitively incorrect.\"},\"d6_question_novelty\":{\"score\":5,\"rationale\":\"Authentic reasoning question rather than simple definition recall.\"}}"
+}

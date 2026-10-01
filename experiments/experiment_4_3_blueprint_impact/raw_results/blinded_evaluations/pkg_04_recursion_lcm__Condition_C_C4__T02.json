@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_C_C4",
+  "target_id": "T02",
+  "target_concept": "Explain the efficient Euclidean algorithm for GCD, including the max‑mod‑min reduction step.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about the max % min step explicitly mentioned in the lecture as the efficient Euclidean algorithm."
+    },
+    "d2_cognitive_demand": {
+      "score": 5,
+      "rationale": "Requires understanding of invariant common divisors and termination reasoning, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The question is clearly worded, self‑contained, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "A, B, and C represent common misconceptions or partial truths, making them plausible but not overly obvious."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option D correctly captures the invariant‑decrease argument; the others are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Frames an authentic conceptual inquiry into why the Euclidean algorithm works, beyond rote definition."
+    }
+  },
+  "latency_ms": 1762,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about the max % min step explicitly mentioned in the lecture as the efficient Euclidean algorithm.\"},\n  \"d2_cognitive_demand\": {\"score\":5,\"rationale\":\"Requires understanding of invariant common divisors and termination reasoning, not mere recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The question is clearly worded, self‑contained, and unambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"A, B, and C represent common misconceptions or partial truths, making them plausible but not overly obvious.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option D correctly captures the invariant‑decrease argument; the others are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"Frames an authentic conceptual inquiry into why the Euclidean algorithm works, beyond rote definition.\"}\n}"
+}

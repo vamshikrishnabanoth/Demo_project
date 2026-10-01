@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Describe the purpose of `git commit`, the role of a commit message, and what happens to staged changes.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks about the purpose of git commit and the role of the commit message, which are explicitly described in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the concept that a commit records staged changes with a message, beyond mere recall, but does not demand deep synthesis."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously asks what the command does with staged changes."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options reflect common misconceptions (resetting, pushing without committing, discarding), making them plausible distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A aligns with the evidence; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question frames an authentic usage scenario of git commit rather than a rote definition, though the concept is standard."
+    }
+  },
+  "latency_ms": 55123,
+  "retry_count": 2,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks about the purpose of git commit and the role of the commit message, which are explicitly described in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires applying the concept that a commit records staged changes with a message, beyond mere recall, but does not demand deep synthesis.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously asks what the command does with staged changes.\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options reflect common misconceptions (resetting, pushing without committing, discarding), making them plausible distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A aligns with the evidence; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question frames an authentic usage scenario of git commit rather than a rote definition, though the concept is standard.\"}\n}"
+}

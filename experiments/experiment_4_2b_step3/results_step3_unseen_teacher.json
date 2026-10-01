@@ -1,0 +1,1783 @@
+{
+  "metadata": {
+    "experiment_id": "EXP_4_2B_STEP_3",
+    "evaluation_type": "Unseen-Teacher Generalization Evaluation",
+    "status": "COMPLETE",
+    "timestamp_utc": "2026-09-30T15:29:47.674Z",
+    "baseline_git": {
+      "commit": "b1b15535389df45151601a9a39bc3c5d8f46e1f0",
+      "tag": "v3.4-frozen"
+    },
+    "model_configuration": {
+      "model": "openai/gpt-oss-120b",
+      "provider": "groq",
+      "temperature": 0,
+      "response_format": "json_object"
+    },
+    "human_reference_status": "SINGLE_ANNOTATOR_PROVISIONAL",
+    "scored_units_count": 2,
+    "evaluated_teachers": [
+      "Tapadia Sir (BENCH_05)",
+      "Asha Mam (BENCH_06)"
+    ]
+  },
+  "taxonomy": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "COMPARE",
+    "DEBUG",
+    "PREDICT_CHANGE",
+    "ASK_WHY",
+    "PRACTICE",
+    "REAL_WORLD_APP",
+    "EDGE_CASE",
+    "CODE_TRACE",
+    "STUDENT_INTERACT",
+    "REINFORCE"
+  ],
+  "evaluated_units": [
+    {
+      "unit_id": "GT-T01",
+      "benchmark": "BENCH_05",
+      "teacher": "Tapadia Sir",
+      "topic_description": "Longest Common Prefix: Initial Problem Formulation and Example String Sets",
+      "start": 0,
+      "end": 145.7,
+      "duration": 145.7,
+      "word_count": 259,
+      "human_reference_labels": [
+        "EXPLAIN",
+        "STUDENT_INTERACT"
+      ],
+      "human_reference_status": "SINGLE_ANNOTATOR_PROVISIONAL",
+      "evidence": {
+        "EXPLAIN": {
+          "source_type": "TRANSCRIPT_EVIDENCE",
+          "quote": "You're given a bunch of strings, and what you need to return is the prefix, which is common amongst all of them. And if there are multiple such prefixes, you need to return the longest prefix.",
+          "transcript_support": true
+        },
+        "STUDENT_INTERACT": {
+          "source_type": "CLASSROOM_OBSERVATION",
+          "description": "Teacher asked who finished Cocoa Eating Bananas and Longest Common Prefix; students physically responded and raised hands in classroom. Evidence is an in-person physical observation not captured verbatim in transcript audio.",
+          "transcript_support": false
+        }
+      },
+      "c1_predictions": [
+        "EDGE_CASE"
+      ],
+      "c4_predictions": [
+        "EXPLAIN",
+        "DEMONSTRATE",
+        "STUDENT_INTERACT"
+      ],
+      "c5_predictions": [
+        "EXPLAIN",
+        "EDGE_CASE"
+      ],
+      "latency_ms": {
+        "C1": 0,
+        "C4": 3138,
+        "C5": 1592
+      },
+      "infrastructure_status": {
+        "C4": {
+          "success": true,
+          "retries": 0
+        },
+        "C5": {
+          "success": true,
+          "retries": 0
+        }
+      }
+    },
+    {
+      "unit_id": "GT-A01",
+      "benchmark": "BENCH_06",
+      "teacher": "Asha Mam",
+      "topic_description": "Autoencoder Structural Comparison: Fully Connected vs. Convolutional Architectures",
+      "start": 0,
+      "end": 147,
+      "duration": 147,
+      "word_count": 374,
+      "human_reference_labels": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "human_reference_status": "SINGLE_ANNOTATOR_PROVISIONAL",
+      "evidence": {
+        "EXPLAIN": {
+          "source_type": "TRANSCRIPT_EVIDENCE",
+          "quote": "first hotline codeus that comes into picture is fully connected hotline codeus, which where the architecture is, encoder law, latent space, decoder law. What is encoder do? The encoder takes the image and converts the flattens of image, performs encoding and then gives it to one.",
+          "transcript_support": true
+        },
+        "COMPARE": {
+          "source_type": "TRANSCRIPT_EVIDENCE",
+          "quote": "The first main reason why fully auto encoder fail is because the 2d dimension of image is directly converted into one... Hence, with this particular drawback, we are going for convolutional order encoder where the 2d image is not directly converted into one",
+          "transcript_support": true
+        }
+      },
+      "c1_predictions": [
+        "DEBUG",
+        "ASK_WHY"
+      ],
+      "c4_predictions": [
+        "EXPLAIN",
+        "COMPARE",
+        "ASK_WHY",
+        "REAL_WORLD_APP"
+      ],
+      "c5_predictions": [
+        "EXPLAIN",
+        "COMPARE"
+      ],
+      "latency_ms": {
+        "C1": 0,
+        "C4": 2768,
+        "C5": 1700
+      },
+      "infrastructure_status": {
+        "C4": {
+          "success": true,
+          "retries": 0
+        },
+        "C5": {
+          "success": true,
+          "retries": 0
+        }
+      }
+    }
+  ],
+  "metrics": {
+    "overall": {
+      "C1_LEXICAL": {
+        "total_units": 2,
+        "human_instances": 4,
+        "predicted_instances": 3,
+        "tp": 0,
+        "fp": 3,
+        "fn": 4,
+        "micro_precision": 0,
+        "micro_recall": 0,
+        "micro_f1": 0,
+        "macro_precision": 0,
+        "macro_recall": 0,
+        "macro_f1": 0,
+        "active_classes": 6,
+        "tvd": 0.9999999999999999,
+        "cosine_distance": 1,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.25,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0.25,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0,
+          "DEBUG": 0.3333333333333333,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0.3333333333333333,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0.3333333333333333,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 2,
+            "human": 2,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "human": 1,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "human": 1,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      },
+      "C4_LLM_ZERO_SHOT": {
+        "total_units": 2,
+        "human_instances": 4,
+        "predicted_instances": 7,
+        "tp": 4,
+        "fp": 3,
+        "fn": 0,
+        "micro_precision": 0.5714285714285714,
+        "micro_recall": 1,
+        "micro_f1": 0.7272727272727273,
+        "macro_precision": 0.5,
+        "macro_recall": 0.5,
+        "macro_f1": 0.5,
+        "active_classes": 6,
+        "tvd": 0.4285714285714286,
+        "cosine_distance": 0.18350341907227408,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.25,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0.25,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0.2857142857142857,
+          "DEMONSTRATE": 0.14285714285714285,
+          "COMPARE": 0.14285714285714285,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0.14285714285714285,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0.14285714285714285,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0.14285714285714285,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "human": 2,
+            "pred": 2,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      },
+      "C5_LLM_CALIBRATED": {
+        "total_units": 2,
+        "human_instances": 4,
+        "predicted_instances": 4,
+        "tp": 3,
+        "fp": 1,
+        "fn": 1,
+        "micro_precision": 0.75,
+        "micro_recall": 0.75,
+        "micro_f1": 0.75,
+        "macro_precision": 0.5,
+        "macro_recall": 0.5,
+        "macro_f1": 0.5,
+        "active_classes": 4,
+        "tvd": 0.25,
+        "cosine_distance": 0.16666666666666652,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.25,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0.25,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.25,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0.25,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 0,
+            "human": 2,
+            "pred": 2,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "human": 1,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      }
+    },
+    "BENCH_05_tapadia": {
+      "C1_LEXICAL": {
+        "total_units": 1,
+        "human_instances": 2,
+        "predicted_instances": 1,
+        "tp": 0,
+        "fp": 1,
+        "fn": 2,
+        "micro_precision": 0,
+        "micro_recall": 0,
+        "micro_f1": 0,
+        "macro_precision": 0,
+        "macro_recall": 0,
+        "macro_f1": 0,
+        "active_classes": 3,
+        "tvd": 1,
+        "cosine_distance": 1,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0.5,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 1,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "human": 1,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "human": 1,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      },
+      "C4_LLM_ZERO_SHOT": {
+        "total_units": 1,
+        "human_instances": 2,
+        "predicted_instances": 3,
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "micro_precision": 0.6666666666666666,
+        "micro_recall": 1,
+        "micro_f1": 0.8,
+        "macro_precision": 0.6666666666666666,
+        "macro_recall": 0.6666666666666666,
+        "macro_f1": 0.6666666666666666,
+        "active_classes": 3,
+        "tvd": 0.33333333333333337,
+        "cosine_distance": 0.18350341907227397,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0.5,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0.3333333333333333,
+          "DEMONSTRATE": 0.3333333333333333,
+          "COMPARE": 0,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0.3333333333333333,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      },
+      "C5_LLM_CALIBRATED": {
+        "total_units": 1,
+        "human_instances": 2,
+        "predicted_instances": 2,
+        "tp": 1,
+        "fp": 1,
+        "fn": 1,
+        "micro_precision": 0.5,
+        "micro_recall": 0.5,
+        "micro_f1": 0.5,
+        "macro_precision": 0.3333333333333333,
+        "macro_recall": 0.3333333333333333,
+        "macro_f1": 0.3333333333333333,
+        "active_classes": 3,
+        "tvd": 0.5,
+        "cosine_distance": 0.5000000000000001,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0.5,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0.5,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "human": 1,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      }
+    },
+    "BENCH_06_ashamam": {
+      "C1_LEXICAL": {
+        "total_units": 1,
+        "human_instances": 2,
+        "predicted_instances": 2,
+        "tp": 0,
+        "fp": 2,
+        "fn": 2,
+        "micro_precision": 0,
+        "micro_recall": 0,
+        "micro_f1": 0,
+        "macro_precision": 0,
+        "macro_recall": 0,
+        "macro_f1": 0,
+        "active_classes": 4,
+        "tvd": 1,
+        "cosine_distance": 1,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.5,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0,
+          "DEBUG": 0.5,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0.5,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "human": 1,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "human": 1,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      },
+      "C4_LLM_ZERO_SHOT": {
+        "total_units": 1,
+        "human_instances": 2,
+        "predicted_instances": 4,
+        "tp": 2,
+        "fp": 2,
+        "fn": 0,
+        "micro_precision": 0.5,
+        "micro_recall": 1,
+        "micro_f1": 0.6666666666666666,
+        "macro_precision": 0.5,
+        "macro_recall": 0.5,
+        "macro_f1": 0.5,
+        "active_classes": 4,
+        "tvd": 0.5,
+        "cosine_distance": 0.29289321881345254,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.5,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0.25,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.25,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0.25,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0.25,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "human": 0,
+            "pred": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      },
+      "C5_LLM_CALIBRATED": {
+        "total_units": 1,
+        "human_instances": 2,
+        "predicted_instances": 2,
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "micro_precision": 1,
+        "micro_recall": 1,
+        "micro_f1": 1,
+        "macro_precision": 1,
+        "macro_recall": 1,
+        "macro_f1": 1,
+        "active_classes": 2,
+        "tvd": 0,
+        "cosine_distance": 2.220446049250313e-16,
+        "human_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.5,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "predicted_distribution": {
+          "EXPLAIN": 0.5,
+          "DEMONSTRATE": 0,
+          "COMPARE": 0.5,
+          "DEBUG": 0,
+          "PREDICT_CHANGE": 0,
+          "ASK_WHY": 0,
+          "PRACTICE": 0,
+          "REAL_WORLD_APP": 0,
+          "EDGE_CASE": 0,
+          "CODE_TRACE": 0,
+          "STUDENT_INTERACT": 0,
+          "REINFORCE": 0
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEMONSTRATE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "COMPARE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "human": 1,
+            "pred": 1,
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "human": 0,
+            "pred": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0
+          }
+        }
+      }
+    }
+  },
+  "failure_analysis": [
+    {
+      "unit_id": "GT-T01",
+      "benchmark": "BENCH_05",
+      "teacher": "Tapadia Sir",
+      "classifier": "C1_LEXICAL",
+      "type": "FALSE_POSITIVE",
+      "behavior": "EDGE_CASE",
+      "failure_category": "unsupported behavior attribution",
+      "rationale": "C1_LEXICAL assigned EDGE_CASE without explicit support in reference."
+    },
+    {
+      "unit_id": "GT-T01",
+      "benchmark": "BENCH_05",
+      "teacher": "Tapadia Sir",
+      "classifier": "C1_LEXICAL",
+      "type": "FALSE_NEGATIVE",
+      "behavior": "EXPLAIN",
+      "failure_category": "conservative under-attribution",
+      "rationale": "C1_LEXICAL failed to assign reference label EXPLAIN."
+    },
+    {
+      "unit_id": "GT-T01",
+      "benchmark": "BENCH_05",
+      "teacher": "Tapadia Sir",
+      "classifier": "C1_LEXICAL",
+      "type": "FALSE_NEGATIVE",
+      "behavior": "STUDENT_INTERACT",
+      "failure_category": "missing acoustic/turn-taking information",
+      "rationale": "Human reference includes classroom physical hand-raising observation not detectable in transcript text alone."
+    },
+    {
+      "unit_id": "GT-T01",
+      "benchmark": "BENCH_05",
+      "teacher": "Tapadia Sir",
+      "classifier": "C4_LLM_ZERO_SHOT",
+      "type": "FALSE_POSITIVE",
+      "behavior": "DEMONSTRATE",
+      "failure_category": "verbal syntax description mistaken for DEMONSTRATE",
+      "rationale": "Model perceived verbal procedural discussion as live demonstration."
+    },
+    {
+      "unit_id": "GT-T01",
+      "benchmark": "BENCH_05",
+      "teacher": "Tapadia Sir",
+      "classifier": "C5_LLM_CALIBRATED",
+      "type": "FALSE_POSITIVE",
+      "behavior": "EDGE_CASE",
+      "failure_category": "unsupported behavior attribution",
+      "rationale": "C5_LLM_CALIBRATED assigned EDGE_CASE without explicit support in reference."
+    },
+    {
+      "unit_id": "GT-T01",
+      "benchmark": "BENCH_05",
+      "teacher": "Tapadia Sir",
+      "classifier": "C5_LLM_CALIBRATED",
+      "type": "FALSE_NEGATIVE",
+      "behavior": "STUDENT_INTERACT",
+      "failure_category": "missing acoustic/turn-taking information",
+      "rationale": "Human reference includes classroom physical hand-raising observation not detectable in transcript text alone."
+    },
+    {
+      "unit_id": "GT-A01",
+      "benchmark": "BENCH_06",
+      "teacher": "Asha Mam",
+      "classifier": "C1_LEXICAL",
+      "type": "FALSE_POSITIVE",
+      "behavior": "DEBUG",
+      "failure_category": "unsupported behavior attribution",
+      "rationale": "C1_LEXICAL assigned DEBUG without explicit support in reference."
+    },
+    {
+      "unit_id": "GT-A01",
+      "benchmark": "BENCH_06",
+      "teacher": "Asha Mam",
+      "classifier": "C1_LEXICAL",
+      "type": "FALSE_POSITIVE",
+      "behavior": "ASK_WHY",
+      "failure_category": "unsupported behavior attribution",
+      "rationale": "C1_LEXICAL assigned ASK_WHY without explicit support in reference."
+    },
+    {
+      "unit_id": "GT-A01",
+      "benchmark": "BENCH_06",
+      "teacher": "Asha Mam",
+      "classifier": "C1_LEXICAL",
+      "type": "FALSE_NEGATIVE",
+      "behavior": "EXPLAIN",
+      "failure_category": "conservative under-attribution",
+      "rationale": "C1_LEXICAL failed to assign reference label EXPLAIN."
+    },
+    {
+      "unit_id": "GT-A01",
+      "benchmark": "BENCH_06",
+      "teacher": "Asha Mam",
+      "classifier": "C1_LEXICAL",
+      "type": "FALSE_NEGATIVE",
+      "behavior": "COMPARE",
+      "failure_category": "comparison missed",
+      "rationale": "Model missed structural contrast between architectural variants."
+    },
+    {
+      "unit_id": "GT-A01",
+      "benchmark": "BENCH_06",
+      "teacher": "Asha Mam",
+      "classifier": "C4_LLM_ZERO_SHOT",
+      "type": "FALSE_POSITIVE",
+      "behavior": "ASK_WHY",
+      "failure_category": "unsupported behavior attribution",
+      "rationale": "C4_LLM_ZERO_SHOT assigned ASK_WHY without explicit support in reference."
+    },
+    {
+      "unit_id": "GT-A01",
+      "benchmark": "BENCH_06",
+      "teacher": "Asha Mam",
+      "classifier": "C4_LLM_ZERO_SHOT",
+      "type": "FALSE_POSITIVE",
+      "behavior": "REAL_WORLD_APP",
+      "failure_category": "real-world application overprediction",
+      "rationale": "Model attributed real-world application to general technological mention."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_D_C5",
+  "target_id": "T03",
+  "target_concept": "Execute a step‑by‑step loop that adds the smaller number until a common multiple is found, using modulo to test divisibility.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks for the loop described in the lecture (adding the smaller number until a common multiple is found using modulo)."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of loop initialization, condition logic, and the difference between AND/OR and negation, not just rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguous about the required behavior and constraints (a ≤ b)."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Each incorrect option reflects a common misconception (starting with the larger operand, using OR, looping on the wrong condition)."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A satisfies all criteria; the other three are definitively incorrect given the evidence."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The task is an authentic application of the taught concept to pseudocode, beyond simple definition recall."
+    }
+  },
+  "latency_ms": 1773,
+  "retry_count": 2,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly asks for the loop described in the lecture (adding the smaller number until a common multiple is found using modulo).\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of loop initialization, condition logic, and the difference between AND/OR and negation, not just rote recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguous about the required behavior and constraints (a ≤ b).\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Each incorrect option reflects a common misconception (starting with the larger operand, using OR, looping on the wrong condition).\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A satisfies all criteria; the other three are definitively incorrect given the evidence.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The task is an authentic application of the taught concept to pseudocode, beyond simple definition recall.\"}\n}"
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T03",
+  "target_concept": "Analyze problem scenarios to decide whether to use GCD (equal partitioning) or LCM (timing/interval scheduling) as the appropriate mathematical tool.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly asks students to distinguish between equal‑partitioning (GCD) and timing/interval problems (LCM), exactly the distinction emphasized in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the conceptual rule to real‑world scenarios rather than rote recall, but the reasoning is straightforward discrimination."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously asks which scenario calls for GCD."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Each distractor presents a realistic timing/interval situation that legitimately calls for LCM, making them plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A aligns with the GCD rule; the other three are definitively LCM cases, ensuring a single correct answer."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "The question frames an authentic applied problem rather than a simple definition, encouraging transfer of the heuristic."
+    }
+  },
+  "latency_ms": 2050,
+  "retry_count": 0,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":5,\"rationale\":\"The question directly asks students to distinguish between equal‑partitioning (GCD) and timing/interval problems (LCM), exactly the distinction emphasized in the lecture.\"},\"d2_cognitive_demand\":{\"score\":4,\"rationale\":\"Requires applying the conceptual rule to real‑world scenarios rather than rote recall, but the reasoning is straightforward discrimination.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously asks which scenario calls for GCD.\"},\"d4_distractor_plausibility\":{\"score\":5,\"rationale\":\"Each distractor presents a realistic timing/interval situation that legitimately calls for LCM, making them plausible.\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Only option A aligns with the GCD rule; the other three are definitively LCM cases, ensuring a single correct answer.\"},\"d6_question_novelty\":{\"score\":5,\"rationale\":\"The question frames an authentic applied problem rather than a simple definition, encouraging transfer of the heuristic.\"}}"
+}

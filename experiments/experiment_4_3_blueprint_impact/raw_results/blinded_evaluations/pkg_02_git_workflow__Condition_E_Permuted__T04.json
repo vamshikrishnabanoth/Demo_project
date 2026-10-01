@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Explain the effect of git reset on staged changes and how it reverts the working directory",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 2,
+      "rationale": "The lecture transcript discusses git add and commit but does not cover git reset, so the question tests material not presented in the evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Answering requires understanding of git reset’s effect on the index, a conceptual step beyond simple recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is clearly worded, self‑contained, and unambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "Incorrect options represent plausible misconceptions about git behavior, requiring discrimination."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Exactly one option is correct given the definition of a mixed reset; the others are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The scenario reflects a realistic git workflow rather than a trivial definition, though it is a common textbook case."
+    }
+  },
+  "latency_ms": 61329,
+  "retry_count": 24,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":2,\"rationale\":\"The lecture transcript discusses git add and commit but does not cover git reset, so the question tests material not presented in the evidence.\"},\"d2_cognitive_demand\":{\"score\":3,\"rationale\":\"Answering requires understanding of git reset’s effect on the index, a conceptual step beyond simple recall.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"The stem is clearly worded, self‑contained, and unambiguous.\"},\"d4_distractor_plausibility\":{\"score\":4,\"rationale\":\"Incorrect options represent plausible misconceptions about git behavior, requiring discrimination.\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Exactly one option is correct given the definition of a mixed reset; the others are definitively wrong.\"},\"d6_question_novelty\":{\"score\":4,\"rationale\":\"The scenario reflects a realistic git workflow rather than a trivial definition, though it is a common textbook case.\"}}"
+}

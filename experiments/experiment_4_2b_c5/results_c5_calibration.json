@@ -1,0 +1,903 @@
+{
+  "metadata": {
+    "experiment_id": "EXP_4_2B_C5_CALIBRATION",
+    "title": "Phase 4 Experiment 4.2b Step 2: C5 Calibrated LLM Behavior Classification",
+    "timestamp": "2026-09-29T18:59:27.743Z",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0,
+    "sampling_configuration": "nominally deterministic sampling configuration (temperature=0)",
+    "total_units_evaluated": 17,
+    "infrastructure_failures": 0,
+    "total_latency_ms": 294896,
+    "average_latency_ms": 17347,
+    "lock_manifest": {
+      "lock_version": "1.0.0",
+      "locked_at": "2026-09-29T18:41:11.417Z",
+      "status": "LOCKED",
+      "model": "openai/gpt-oss-120b",
+      "provider": "groq",
+      "temperature": 0,
+      "sampling_configuration": "nominally deterministic sampling configuration (temperature=0)",
+      "response_format": "json_object",
+      "hashes": {
+        "system_prompt_sha256": "0074bdf4ed78821cabb000c1500ba18a0aeccf14658c773c31df9ceed0f53623",
+        "calibration_dataset_sha256": "5cf545ed2bb7383ad981951de651f64c01e52583a08cfd9fc49f093c378487cb",
+        "canonical_taxonomy_sha256": "57dba85d3fc92d1e9568e105f342d7ecc686f8cf03b185426dee7145487039e6",
+        "runner_script_sha256": "224640c560a65dbaf46dac30be04684b25862ac6b6a3d445e7ac2d709d49fb9f"
+      },
+      "verification_rule": "Evaluation runner must verify all hashes before running on frozen 17 units."
+    }
+  },
+  "benchmarks": {
+    "BENCH_04": {
+      "benchmark_id": "BENCH_04",
+      "unit_count": 10,
+      "evaluation": {
+        "aggregate": {
+          "micro_precision": 0.75,
+          "micro_recall": 0.6,
+          "micro_f1": 0.6667,
+          "macro_precision": 0.2417,
+          "macro_recall": 0.1875,
+          "macro_f1": 0.1956,
+          "active_classes_count": 7
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 9,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.9,
+            "recall": 1,
+            "f1_score": 0.9474
+          },
+          "DEMONSTRATE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 6,
+            "precision": 1,
+            "recall": 0.25,
+            "f1_score": 0.4
+          },
+          "COMPARE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1,
+            "recall": 1,
+            "f1_score": 1
+          },
+          "DEBUG": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "EDGE_CASE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "CODE_TRACE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          }
+        }
+      },
+      "divergence": {
+        "total_variation_distance": 0.325,
+        "cosine_distance": 0.1458
+      },
+      "human_counts": {
+        "EXPLAIN": 9,
+        "DEMONSTRATE": 8,
+        "COMPARE": 1,
+        "DEBUG": 0,
+        "PREDICT_CHANGE": 0,
+        "ASK_WHY": 0,
+        "PRACTICE": 0,
+        "REAL_WORLD_APP": 0,
+        "EDGE_CASE": 0,
+        "CODE_TRACE": 1,
+        "STUDENT_INTERACT": 0,
+        "REINFORCE": 1
+      },
+      "c5_counts": {
+        "EXPLAIN": 10,
+        "DEMONSTRATE": 2,
+        "COMPARE": 1,
+        "DEBUG": 0,
+        "PREDICT_CHANGE": 0,
+        "ASK_WHY": 1,
+        "PRACTICE": 0,
+        "REAL_WORLD_APP": 1,
+        "EDGE_CASE": 0,
+        "CODE_TRACE": 0,
+        "STUDENT_INTERACT": 0,
+        "REINFORCE": 1
+      }
+    },
+    "BENCH_03": {
+      "benchmark_id": "BENCH_03",
+      "unit_count": 7,
+      "evaluation": {
+        "aggregate": {
+          "micro_precision": 0.4762,
+          "micro_recall": 0.3704,
+          "micro_f1": 0.4167,
+          "macro_precision": 0.3185,
+          "macro_recall": 0.3083,
+          "macro_f1": 0.2717,
+          "active_classes_count": 12
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 4,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.5714,
+            "recall": 1,
+            "f1_score": 0.7273
+          },
+          "DEMONSTRATE": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 4,
+            "precision": 1,
+            "recall": 0.2,
+            "f1_score": 0.3333
+          },
+          "COMPARE": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 1,
+            "precision": 1,
+            "recall": 0.6667,
+            "f1_score": 0.8
+          },
+          "DEBUG": {
+            "tp": 1,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0.5,
+            "recall": 0.3333,
+            "f1_score": 0.4
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "EDGE_CASE": {
+            "tp": 1,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.5,
+            "recall": 1,
+            "f1_score": 0.6667
+          },
+          "CODE_TRACE": {
+            "tp": 1,
+            "fp": 3,
+            "fn": 1,
+            "precision": 0.25,
+            "recall": 0.5,
+            "f1_score": 0.3333
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          }
+        }
+      },
+      "divergence": {
+        "total_variation_distance": 0.381,
+        "cosine_distance": 0.2467
+      },
+      "human_counts": {
+        "EXPLAIN": 4,
+        "DEMONSTRATE": 5,
+        "COMPARE": 3,
+        "DEBUG": 3,
+        "PREDICT_CHANGE": 1,
+        "ASK_WHY": 2,
+        "PRACTICE": 2,
+        "REAL_WORLD_APP": 1,
+        "EDGE_CASE": 1,
+        "CODE_TRACE": 2,
+        "STUDENT_INTERACT": 2,
+        "REINFORCE": 1
+      },
+      "c5_counts": {
+        "EXPLAIN": 7,
+        "DEMONSTRATE": 1,
+        "COMPARE": 2,
+        "DEBUG": 2,
+        "PREDICT_CHANGE": 0,
+        "ASK_WHY": 0,
+        "PRACTICE": 2,
+        "REAL_WORLD_APP": 0,
+        "EDGE_CASE": 2,
+        "CODE_TRACE": 4,
+        "STUDENT_INTERACT": 1,
+        "REINFORCE": 0
+      }
+    },
+    "COMBINED_17_UNITS": {
+      "unit_count": 17,
+      "evaluation": {
+        "aggregate": {
+          "micro_precision": 0.5946,
+          "micro_recall": 0.4681,
+          "micro_f1": 0.5238,
+          "macro_precision": 0.3346,
+          "macro_recall": 0.304,
+          "macro_f1": 0.2876,
+          "active_classes_count": 12
+        },
+        "per_behavior": {
+          "EXPLAIN": {
+            "tp": 13,
+            "fp": 4,
+            "fn": 0,
+            "precision": 0.7647,
+            "recall": 1,
+            "f1_score": 0.8667
+          },
+          "DEMONSTRATE": {
+            "tp": 3,
+            "fp": 0,
+            "fn": 10,
+            "precision": 1,
+            "recall": 0.2308,
+            "f1_score": 0.375
+          },
+          "COMPARE": {
+            "tp": 3,
+            "fp": 0,
+            "fn": 1,
+            "precision": 1,
+            "recall": 0.75,
+            "f1_score": 0.8571
+          },
+          "DEBUG": {
+            "tp": 1,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0.5,
+            "recall": 0.3333,
+            "f1_score": 0.4
+          },
+          "PREDICT_CHANGE": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "ASK_WHY": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "PRACTICE": {
+            "tp": 0,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REAL_WORLD_APP": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "EDGE_CASE": {
+            "tp": 1,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.5,
+            "recall": 1,
+            "f1_score": 0.6667
+          },
+          "CODE_TRACE": {
+            "tp": 1,
+            "fp": 3,
+            "fn": 2,
+            "precision": 0.25,
+            "recall": 0.3333,
+            "f1_score": 0.2857
+          },
+          "STUDENT_INTERACT": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          },
+          "REINFORCE": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0,
+            "recall": 0,
+            "f1_score": 0
+          }
+        }
+      },
+      "divergence": {
+        "total_variation_distance": 0.2772,
+        "cosine_distance": 0.1677
+      },
+      "human_counts": {
+        "EXPLAIN": 13,
+        "DEMONSTRATE": 13,
+        "COMPARE": 4,
+        "DEBUG": 3,
+        "PREDICT_CHANGE": 1,
+        "ASK_WHY": 2,
+        "PRACTICE": 2,
+        "REAL_WORLD_APP": 1,
+        "EDGE_CASE": 1,
+        "CODE_TRACE": 3,
+        "STUDENT_INTERACT": 2,
+        "REINFORCE": 2
+      },
+      "c5_counts": {
+        "EXPLAIN": 17,
+        "DEMONSTRATE": 3,
+        "COMPARE": 3,
+        "DEBUG": 2,
+        "PREDICT_CHANGE": 0,
+        "ASK_WHY": 1,
+        "PRACTICE": 2,
+        "REAL_WORLD_APP": 1,
+        "EDGE_CASE": 2,
+        "CODE_TRACE": 4,
+        "STUDENT_INTERACT": 1,
+        "REINFORCE": 1
+      }
+    }
+  },
+  "direct_comparison": {
+    "BENCH_04": [
+      {
+        "classifier": "C1_LEXICAL",
+        "micro_precision": 0.8333,
+        "micro_recall": 0.75,
+        "micro_f1": 0.7895,
+        "macro_precision": 0.6204,
+        "macro_recall": 0.5926,
+        "macro_f1": 0.6013,
+        "active_classes_count": 6,
+        "total_variation_distance": 0.1667,
+        "cosine_distance": 0.0395
+      },
+      {
+        "classifier": "C2_CONTEXTUAL",
+        "micro_precision": 0.7895,
+        "micro_recall": 0.75,
+        "micro_f1": 0.7692,
+        "macro_precision": 0.5317,
+        "macro_recall": 0.5079,
+        "macro_f1": 0.5154,
+        "active_classes_count": 7,
+        "total_variation_distance": 0.1842,
+        "cosine_distance": 0.0435
+      },
+      {
+        "classifier": "C3_HYBRID",
+        "micro_precision": 0.5769,
+        "micro_recall": 0.75,
+        "micro_f1": 0.6522,
+        "macro_precision": 0.4067,
+        "macro_recall": 0.5079,
+        "macro_f1": 0.4043,
+        "active_classes_count": 7,
+        "total_variation_distance": 0.3346,
+        "cosine_distance": 0.1819
+      },
+      {
+        "classifier": "C4_LLM_ZERO_SHOT",
+        "micro_precision": 0.56,
+        "micro_recall": 0.7,
+        "micro_f1": 0.6222,
+        "macro_precision": 0.2167,
+        "macro_recall": 0.2778,
+        "macro_f1": 0.2181,
+        "active_classes_count": 9,
+        "total_variation_distance": 0.35,
+        "cosine_distance": 0.1095
+      },
+      {
+        "classifier": "C5_LLM_CALIBRATED",
+        "micro_precision": 0.75,
+        "micro_recall": 0.6,
+        "micro_f1": 0.6667,
+        "macro_precision": 0.2417,
+        "macro_recall": 0.1875,
+        "macro_f1": 0.1956,
+        "active_classes_count": 7,
+        "total_variation_distance": 0.325,
+        "cosine_distance": 0.1458
+      }
+    ],
+    "BENCH_03": [
+      {
+        "classifier": "C1_LEXICAL",
+        "micro_precision": 0.56,
+        "micro_recall": 0.5185,
+        "micro_f1": 0.5385,
+        "macro_precision": 0.5,
+        "macro_recall": 0.5611,
+        "macro_f1": 0.4897,
+        "active_classes_count": 12,
+        "total_variation_distance": 0.2815,
+        "cosine_distance": 0.1738
+      },
+      {
+        "classifier": "C2_CONTEXTUAL",
+        "micro_precision": 0.5161,
+        "micro_recall": 0.5926,
+        "micro_f1": 0.5517,
+        "macro_precision": 0.5278,
+        "macro_recall": 0.6444,
+        "macro_f1": 0.5313,
+        "active_classes_count": 12,
+        "total_variation_distance": 0.27,
+        "cosine_distance": 0.1985
+      },
+      {
+        "classifier": "C3_HYBRID",
+        "micro_precision": 0.4474,
+        "micro_recall": 0.6296,
+        "micro_f1": 0.5231,
+        "macro_precision": 0.4861,
+        "macro_recall": 0.6722,
+        "macro_f1": 0.4927,
+        "active_classes_count": 12,
+        "total_variation_distance": 0.3294,
+        "cosine_distance": 0.2617
+      },
+      {
+        "classifier": "C4_LLM_ZERO_SHOT",
+        "micro_precision": 0.4737,
+        "micro_recall": 0.6667,
+        "micro_f1": 0.5538,
+        "macro_precision": 0.4476,
+        "macro_recall": 0.5833,
+        "macro_f1": 0.4872,
+        "active_classes_count": 12,
+        "total_variation_distance": 0.2242,
+        "cosine_distance": 0.0841
+      },
+      {
+        "classifier": "C5_LLM_CALIBRATED",
+        "micro_precision": 0.4762,
+        "micro_recall": 0.3704,
+        "micro_f1": 0.4167,
+        "macro_precision": 0.3185,
+        "macro_recall": 0.3083,
+        "macro_f1": 0.2717,
+        "active_classes_count": 12,
+        "total_variation_distance": 0.381,
+        "cosine_distance": 0.2467
+      }
+    ]
+  },
+  "error_analysis": {
+    "total_misclassified_units": 15,
+    "total_correct_units": 2,
+    "misclassified_units": [
+      {
+        "unit_id": "GT-G00",
+        "benchmark": "BENCH_04",
+        "human_labels": [
+          "EXPLAIN"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "REINFORCE"
+        ],
+        "missing_labels": [],
+        "extra_labels": [
+          "REINFORCE"
+        ],
+        "error_category": "BEHAVIOR_OVERPREDICTION"
+      },
+      {
+        "unit_id": "GT-G01",
+        "benchmark": "BENCH_04",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION"
+      },
+      {
+        "unit_id": "GT-G02",
+        "benchmark": "BENCH_04",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "REAL_WORLD_APP",
+          "ASK_WHY"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [
+          "REAL_WORLD_APP",
+          "ASK_WHY"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION"
+      },
+      {
+        "unit_id": "GT-G03",
+        "benchmark": "BENCH_04",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION"
+      },
+      {
+        "unit_id": "GT-G04",
+        "benchmark": "BENCH_04",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION"
+      },
+      {
+        "unit_id": "GT-G05",
+        "benchmark": "BENCH_04",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION"
+      },
+      {
+        "unit_id": "GT-G06",
+        "benchmark": "BENCH_04",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "REINFORCE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE",
+          "REINFORCE"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION"
+      },
+      {
+        "unit_id": "GT-G09",
+        "benchmark": "BENCH_04",
+        "human_labels": [
+          "DEMONSTRATE",
+          "CODE_TRACE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE"
+        ],
+        "missing_labels": [
+          "CODE_TRACE"
+        ],
+        "extra_labels": [
+          "EXPLAIN"
+        ],
+        "error_category": "OTHER"
+      },
+      {
+        "unit_id": "GT-D01",
+        "benchmark": "BENCH_03",
+        "human_labels": [
+          "EXPLAIN",
+          "COMPARE",
+          "ASK_WHY"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "COMPARE"
+        ],
+        "missing_labels": [
+          "ASK_WHY"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION"
+      },
+      {
+        "unit_id": "GT-D02",
+        "benchmark": "BENCH_03",
+        "human_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "STUDENT_INTERACT"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEBUG",
+          "CODE_TRACE"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "STUDENT_INTERACT"
+        ],
+        "extra_labels": [
+          "EXPLAIN",
+          "DEBUG",
+          "CODE_TRACE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION"
+      },
+      {
+        "unit_id": "GT-D03",
+        "benchmark": "BENCH_03",
+        "human_labels": [
+          "DEMONSTRATE",
+          "PREDICT_CHANGE",
+          "CODE_TRACE",
+          "DEBUG"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "PRACTICE",
+          "DEBUG"
+        ],
+        "missing_labels": [
+          "PREDICT_CHANGE",
+          "CODE_TRACE"
+        ],
+        "extra_labels": [
+          "EXPLAIN",
+          "PRACTICE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION"
+      },
+      {
+        "unit_id": "GT-D04",
+        "benchmark": "BENCH_03",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "COMPARE",
+          "ASK_WHY"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "STUDENT_INTERACT",
+          "PRACTICE",
+          "CODE_TRACE"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE",
+          "COMPARE",
+          "ASK_WHY"
+        ],
+        "extra_labels": [
+          "STUDENT_INTERACT",
+          "PRACTICE",
+          "CODE_TRACE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION"
+      },
+      {
+        "unit_id": "GT-D05",
+        "benchmark": "BENCH_03",
+        "human_labels": [
+          "EXPLAIN",
+          "COMPARE",
+          "REINFORCE",
+          "REAL_WORLD_APP"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "COMPARE"
+        ],
+        "missing_labels": [
+          "REINFORCE",
+          "REAL_WORLD_APP"
+        ],
+        "extra_labels": [],
+        "error_category": "MULTI_LABEL_UNDERPREDICTION"
+      },
+      {
+        "unit_id": "GT-D06",
+        "benchmark": "BENCH_03",
+        "human_labels": [
+          "EXPLAIN",
+          "DEMONSTRATE",
+          "DEBUG",
+          "CODE_TRACE"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "CODE_TRACE",
+          "EDGE_CASE"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE",
+          "DEBUG"
+        ],
+        "extra_labels": [
+          "EDGE_CASE"
+        ],
+        "error_category": "OTHER"
+      },
+      {
+        "unit_id": "GT-D07",
+        "benchmark": "BENCH_03",
+        "human_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "DEBUG",
+          "EDGE_CASE",
+          "STUDENT_INTERACT"
+        ],
+        "predicted_labels": [
+          "EXPLAIN",
+          "EDGE_CASE",
+          "CODE_TRACE"
+        ],
+        "missing_labels": [
+          "DEMONSTRATE",
+          "PRACTICE",
+          "DEBUG",
+          "STUDENT_INTERACT"
+        ],
+        "extra_labels": [
+          "EXPLAIN",
+          "CODE_TRACE"
+        ],
+        "error_category": "MULTI_LABEL_OVERPREDICTION"
+      }
+    ]
+  }
+}

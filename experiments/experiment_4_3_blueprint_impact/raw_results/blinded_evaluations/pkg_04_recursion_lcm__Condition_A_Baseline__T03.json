@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T03",
+  "target_concept": "Differentiate when to use GCD (equal partitioning) versus LCM (interval scheduling) in problem statements.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly tests the lecture’s rule that equal partitioning problems use GCD"
+    },
+    "d2_cognitive_demand": {
+      "score": 3,
+      "rationale": "Requires simple conceptual mapping rather than deep reasoning or calculation"
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "Clear, self‑contained wording and unambiguous ask"
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Incorrect options reflect common misconceptions about GCD vs LCM usage"
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A aligns with the evidence; all others are definitively wrong"
+    },
+    "d6_question_novelty": {
+      "score": 3,
+      "rationale": "Basic division scenario, but novel in focusing on concept selection rather than arithmetic"
+    }
+  },
+  "latency_ms": 2132,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly tests the lecture’s rule that equal partitioning problems use GCD\"},\n  \"d2_cognitive_demand\": {\"score\":3,\"rationale\":\"Requires simple conceptual mapping rather than deep reasoning or calculation\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"Clear, self‑contained wording and unambiguous ask\"},\n  \"d4_distractor_plausibility\": {\"score\":5,\"rationale\":\"Incorrect options reflect common misconceptions about GCD vs LCM usage\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option A aligns with the evidence; all others are definitively wrong\"},\n  \"d6_question_novelty\": {\"score\":3,\"rationale\":\"Basic division scenario, but novel in focusing on concept selection rather than arithmetic\"}\n}"
+}

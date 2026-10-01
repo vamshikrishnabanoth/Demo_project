@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Use git status to list staged, unstaged, and untracked changes in a repository",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly tests using git status to identify staged, unstaged, and untracked files, which is explicitly stated in the lecture evidence."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires interpreting the git status output and mapping the file to the correct category, involving conceptual understanding rather than rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem presents a clear output snippet and asks a single, unambiguous question about the file's category."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "All distractors represent realistic git status categories, making them plausible alternatives that test discrimination."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Exactly one option (Modified but not staged) is correct given the provided output; the others are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The scenario is authentic and applied, moving beyond simple definition, though similar questions are common in basic Git instruction."
+    }
+  },
+  "latency_ms": 12952,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 5, \"rationale\": \"The question directly tests using git status to identify staged, unstaged, and untracked files, which is explicitly stated in the lecture evidence.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires interpreting the git status output and mapping the file to the correct category, involving conceptual understanding rather than rote recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem presents a clear output snippet and asks a single, unambiguous question about the file's category.\"},\n  \"d4_distractor_plausibility\": {\"score\": 5, \"rationale\": \"All distractors represent realistic git status categories, making them plausible alternatives that test discrimination.\"},\n  \"d5_single_key_determinism\": {\"score\": 5, \"rationale\": \"Exactly one option (Modified but not staged) is correct given the provided output; the others are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The scenario is authentic and applied, moving beyond simple definition, though similar questions are common in basic Git instruction.\"}\n}"
+}

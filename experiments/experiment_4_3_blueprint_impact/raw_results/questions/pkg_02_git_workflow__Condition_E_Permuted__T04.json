@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Explain the effect of git reset on staged changes and how it reverts the working directory",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "After running `git reset` (with no additional flags) following a `git add .`, what happens to the files that were staged?",
+    "options": [
+      "The staged files are removed from the index, becoming unstaged but their modifications stay in the working directory.",
+      "The staged files are permanently deleted from both the index and the working directory.",
+      "The staged files are automatically committed to the repository.",
+      "The staged files are moved to a separate stash area for later retrieval."
+    ],
+    "correctAnswer": "The staged files are removed from the index, becoming unstaged but their modifications stay in the working directory.",
+    "explanation": "`git reset` without arguments performs a mixed reset: it resets the index to match HEAD, so any files that were staged become unstaged, while the working directory files remain unchanged. This matches the description in the evidence where after `git reset` the changes are reverted back to an unstaged state as shown by `git status`.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain the effect of git reset on staged changes and how it reverts the working directory"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13080,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"After running `git reset` (with no additional flags) following a `git add .`, what happens to the files that were staged?\",\n  \"options\": [\n    \"The staged files are removed from the index, becoming unstaged but their modifications stay in the working directory.\",\n    \"The staged files are permanently deleted from both the index and the working directory.\",\n    \"The staged files are automatically committed to the repository.\",\n    \"The staged files are moved to a separate stash area for later retrieval.\"\n  ],\n  \"correctAnswer\": \"The staged files are removed from the index, becoming unstaged but their modifications stay in the working directory.\",\n  \"explanation\": \"`git reset` without arguments performs a mixed reset: it resets the index to match HEAD, so any files that were staged become unstaged, while the working directory files remain unchanged. This matches the description in the evidence where after `git reset` the changes are reverted back to an unstaged state as shown by `git status`.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

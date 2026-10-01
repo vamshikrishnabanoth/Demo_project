@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Identify and model a real‑world scenario that requires equal sharing and map it to an LCM or GCD computation.",
+  "target_dimension": "Scenario Analysis",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "A school needs to purchase a number of identical desks that can be arranged in complete rows of either 8 desks per row or 12 desks per row. What is the smallest total number of desks that satisfies both arrangements?",
+    "options": [
+      "20",
+      "24",
+      "30",
+      "36"
+    ],
+    "correctAnswer": "24",
+    "explanation": "The problem asks for the smallest number that is a multiple of both 8 and 12. The least common multiple (LCM) of 8 and 12 is 24, because 24 ÷ 8 = 3 and 24 ÷ 12 = 2, and no smaller positive integer satisfies both conditions.",
+    "metadata": {
+      "dimension": "Scenario Analysis",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Identify and model a real‑world scenario that requires equal sharing and map it to an LCM or GCD computation."
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "FAILED",
+    "failureCode": "INSUFFICIENT_READABLE_EVIDENCE",
+    "rejectedCount": 1,
+    "reasons": [
+      "FOREIGN_TOPIC_CONTAMINATION: Multiple unsupported domain anchors (school, purchase, identical, desks) absent from lecture evidence"
+    ]
+  },
+  "latency_ms": 1618,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"A school needs to purchase a number of identical desks that can be arranged in complete rows of either 8 desks per row or 12 desks per row. What is the smallest total number of desks that satisfies both arrangements?\",\n  \"options\": [\n    \"20\",\n    \"24\",\n    \"30\",\n    \"36\"\n  ],\n  \"correctAnswer\": \"24\",\n  \"explanation\": \"The problem asks for the smallest number that is a multiple of both 8 and 12. The least common multiple (LCM) of 8 and 12 is 24, because 24 ÷ 8 = 3 and 24 ÷ 12 = 2, and no smaller positive integer satisfies both conditions.\",\n  \"metadata\": {\n    \"dimension\": \"Scenario Analysis\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T04",
+  "target_concept": "Define Gaussian mean and variance in the VAE latent space and state their significance for image reconstruction",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "In the context of a variational autoencoder, what does the Gaussian mean in the latent space represent?",
+    "options": [
+      "The average (central) latent representation of the input data",
+      "The spread (uncertainty) of latent variables around the mean",
+      "The reconstruction loss value computed during training",
+      "The activation function used in the decoder network"
+    ],
+    "correctAnswer": "The average (central) latent representation of the input data",
+    "explanation": "The mean of the Gaussian distribution parameterizes the central tendency of the latent variables, i.e., the average location of the encoded data point. This central representation guides the decoder to reconstruct an image that resembles the original input.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Define Gaussian mean and variance in the VAE latent space and state their significance for image reconstruction"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 10807,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"In the context of a variational autoencoder, what does the Gaussian mean in the latent space represent?\",\n  \"options\": [\n    \"The average (central) latent representation of the input data\",\n    \"The spread (uncertainty) of latent variables around the mean\",\n    \"The reconstruction loss value computed during training\",\n    \"The activation function used in the decoder network\"\n  ],\n  \"correctAnswer\": \"The average (central) latent representation of the input data\",\n  \"explanation\": \"The mean of the Gaussian distribution parameterizes the central tendency of the latent variables, i.e., the average location of the encoded data point. This central representation guides the decoder to reconstruct an image that resembles the original input.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

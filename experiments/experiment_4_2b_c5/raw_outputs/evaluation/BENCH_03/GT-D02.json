@@ -1,0 +1,31 @@
+{
+  "unit_id": "GT-D02",
+  "benchmark": "BENCH_03",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEBUG",
+    "CODE_TRACE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "LCM, a I, b I. You have to find an I where I modulo a ... so what I have to find is I"
+    },
+    {
+      "label": "DEBUG",
+      "quote": "I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "I will do eight plus eight... check if 16 modulo 12 is equal zero. Does not happen. Then I will do eight plus eight plus eight. What it becomes? 24."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEBUG\", \"CODE_TRACE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"LCM, a I, b I. You have to find an I where I modulo a ... so what I have to find is I\"\n    },\n    {\n      \"label\": \"DEBUG\",\n      \"quote\": \"I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"I will do eight plus eight... check if 16 modulo 12 is equal zero. Does not happen. Then I will do eight plus eight plus eight. What it becomes? 24.\"\n    }\n  ]\n}",
+  "latency_ms": 12931,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

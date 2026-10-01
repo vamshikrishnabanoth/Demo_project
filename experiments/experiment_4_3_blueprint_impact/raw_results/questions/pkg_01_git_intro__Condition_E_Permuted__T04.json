@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T04",
+  "target_concept": "Use git status to list staged, unstaged, and untracked changes in a repository",
+  "target_dimension": "Flow / Trace",
+  "target_cognitive_level": "Analyze",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "Given the following git status output, which category does the file 'utils.py' belong to?\n\nChanges to be committed:\n  new file:   main.py\n\nChanges not staged for commit:\n  modified:   utils.py\n\nUntracked files:\n  README.md",
+    "options": [
+      "Staged for commit",
+      "Modified but not staged",
+      "Untracked",
+      "Deleted"
+    ],
+    "correctAnswer": "Modified but not staged",
+    "explanation": "In the git status output, 'utils.py' appears under the 'Changes not staged for commit' section, which indicates the file has been modified in the working tree but has not been added to the index (staged). Therefore it is classified as 'Modified but not staged'.",
+    "metadata": {
+      "dimension": "Flow / Trace",
+      "cognitiveLevel": "Analyze",
+      "targetDifficulty": "Medium",
+      "concept": "Use git status to list staged, unstaged, and untracked changes in a repository"
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 15087,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"Given the following git status output, which category does the file 'utils.py' belong to?\\n\\nChanges to be committed:\\n  new file:   main.py\\n\\nChanges not staged for commit:\\n  modified:   utils.py\\n\\nUntracked files:\\n  README.md\",\n  \"options\": [\n    \"Staged for commit\",\n    \"Modified but not staged\",\n    \"Untracked\",\n    \"Deleted\"\n  ],\n  \"correctAnswer\": \"Modified but not staged\",\n  \"explanation\": \"In the git status output, 'utils.py' appears under the 'Changes not staged for commit' section, which indicates the file has been modified in the working tree but has not been added to the index (staged). Therefore it is classified as 'Modified but not staged'.\",\n  \"metadata\": {\n    \"dimension\": \"Flow / Trace\",\n    \"cognitiveLevel\": \"Analyze\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

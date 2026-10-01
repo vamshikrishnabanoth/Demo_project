@@ -1,0 +1,131 @@
+{
+  "evaluation_timestamp": "2026-10-01T10:01:07.292Z",
+  "total_packages": 6,
+  "overall_metrics": {
+    "mean_segment_iou": 0.9539,
+    "boundary_f1_pm5s": 0.9206,
+    "boundary_f1_pm10s": 0.9206,
+    "boundary_f1_pm15s": 0.9206,
+    "intellectual_activity_agreement_pct": 60,
+    "interaction_mode_agreement_pct": 94.29,
+    "revisitation_precision": 0.3333,
+    "revisitation_recall": 0.7143,
+    "revisitation_f1": 0.4545
+  },
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "gt_episode_count": 7,
+      "pred_episode_count": 7,
+      "mean_segment_iou": 1,
+      "boundary_f1_pm5s": 1,
+      "boundary_f1_pm10s": 1,
+      "boundary_f1_pm15s": 1,
+      "activity_agreement_pct": 71.43,
+      "mode_agreement_pct": 100,
+      "revisitations": {
+        "gt_count": 2,
+        "pred_count": 3,
+        "matched": 2,
+        "precision": 0.6667,
+        "recall": 1,
+        "f1": 0.8
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "gt_episode_count": 7,
+      "pred_episode_count": 7,
+      "mean_segment_iou": 1,
+      "boundary_f1_pm5s": 1,
+      "boundary_f1_pm10s": 1,
+      "boundary_f1_pm15s": 1,
+      "activity_agreement_pct": 85.71,
+      "mode_agreement_pct": 100,
+      "revisitations": {
+        "gt_count": 1,
+        "pred_count": 2,
+        "matched": 0,
+        "precision": 0,
+        "recall": 0,
+        "f1": 0
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "gt_episode_count": 6,
+      "pred_episode_count": 6,
+      "mean_segment_iou": 1,
+      "boundary_f1_pm5s": 1,
+      "boundary_f1_pm10s": 1,
+      "boundary_f1_pm15s": 1,
+      "activity_agreement_pct": 50,
+      "mode_agreement_pct": 83.33,
+      "revisitations": {
+        "gt_count": 1,
+        "pred_count": 2,
+        "matched": 1,
+        "precision": 0.5,
+        "recall": 1,
+        "f1": 0.6667
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "gt_episode_count": 6,
+      "pred_episode_count": 6,
+      "mean_segment_iou": 1,
+      "boundary_f1_pm5s": 1,
+      "boundary_f1_pm10s": 1,
+      "boundary_f1_pm15s": 1,
+      "activity_agreement_pct": 50,
+      "mode_agreement_pct": 83.33,
+      "revisitations": {
+        "gt_count": 1,
+        "pred_count": 3,
+        "matched": 1,
+        "precision": 0.3333,
+        "recall": 1,
+        "f1": 0.5
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "gt_episode_count": 3,
+      "pred_episode_count": 8,
+      "mean_segment_iou": 0.4623,
+      "boundary_f1_pm5s": 0.4444,
+      "boundary_f1_pm10s": 0.4444,
+      "boundary_f1_pm15s": 0.4444,
+      "activity_agreement_pct": 0,
+      "mode_agreement_pct": 100,
+      "revisitations": {
+        "gt_count": 1,
+        "pred_count": 1,
+        "matched": 0,
+        "precision": 0,
+        "recall": 0,
+        "f1": 0
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "package_id": "pkg_06_economics_elasticity",
+      "gt_episode_count": 6,
+      "pred_episode_count": 6,
+      "mean_segment_iou": 1,
+      "boundary_f1_pm5s": 1,
+      "boundary_f1_pm10s": 1,
+      "boundary_f1_pm15s": 1,
+      "activity_agreement_pct": 66.67,
+      "mode_agreement_pct": 100,
+      "revisitations": {
+        "gt_count": 1,
+        "pred_count": 4,
+        "matched": 1,
+        "precision": 0.25,
+        "recall": 1,
+        "f1": 0.4
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Evaluate the efficiency of starting the search at 1 versus using a tighter upper bound, and compare loop‑based and recursive implementations.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 4,
+      "rationale": "The question addresses the lecture's focus on comparing starting at 1 versus a tighter bound and mentions loop vs recursion, matching the stated learning goal."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires reasoning about iteration counts and the effect of the lower bound, not mere recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, unambiguous, and clearly asks for the strategy with fewest iterations."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "All four options are realistic alternatives that a student might consider, making the distractors plausible."
+    },
+    "d5_single_key_determinism": {
+      "score": 2,
+      "rationale": "Both B (loop) and D (recursion) start at max(a,b) and thus have equal iteration counts, so the question does not have a unique correct answer."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The problem applies algorithmic efficiency concepts to a concrete pair of numbers, showing authentic inquiry rather than rote definition."
+    }
+  },
+  "latency_ms": 3288,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\": 4, \"rationale\": \"The question addresses the lecture's focus on comparing starting at 1 versus a tighter bound and mentions loop vs recursion, matching the stated learning goal.\"},\n  \"d2_cognitive_demand\": {\"score\": 4, \"rationale\": \"Requires reasoning about iteration counts and the effect of the lower bound, not mere recall.\"},\n  \"d3_stem_clarity\": {\"score\": 5, \"rationale\": \"The stem is concise, unambiguous, and clearly asks for the strategy with fewest iterations.\"},\n  \"d4_distractor_plausibility\": {\"score\": 5, \"rationale\": \"All four options are realistic alternatives that a student might consider, making the distractors plausible.\"},\n  \"d5_single_key_determinism\": {\"score\": 2, \"rationale\": \"Both B (loop) and D (recursion) start at max(a,b) and thus have equal iteration counts, so the question does not have a unique correct answer.\"},\n  \"d6_question_novelty\": {\"score\": 4, \"rationale\": \"The problem applies algorithmic efficiency concepts to a concrete pair of numbers, showing authentic inquiry rather than rote definition.\"}\n}"
+}

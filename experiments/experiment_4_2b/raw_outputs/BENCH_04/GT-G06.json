@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-G06",
+  "benchmark": "BENCH_04",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "REINFORCE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Git commit will save the changes of your particular file into the repository."
+    },
+    {
+      "label": "REINFORCE",
+      "quote": "So this is called as git commit. Right?"
+    }
+  ],
+  "raw_response": "{\"labels\":[\"EXPLAIN\",\"REINFORCE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"Git commit will save the changes of your particular file into the repository.\"},{\"label\":\"REINFORCE\",\"quote\":\"So this is called as git commit. Right?\"}]}",
+  "latency_ms": 1124,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

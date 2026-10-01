@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_C_C4",
+  "target_id": "T03",
+  "target_concept": "Describe how a hash set is used to determine if characters at a given position are common across all strings",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 1,
+      "rationale": "The evidence never details adding characters to a hash set and checking its size; it only mentions hash set in passing."
+    },
+    "d2_cognitive_demand": {
+      "score": 1,
+      "rationale": "Answering relies on recalling a non‑presented fact; the task is not conceptually demanding."
+    },
+    "d3_stem_clarity": {
+      "score": 2,
+      "rationale": "Stem is understandable, but the answer choices are vague placeholders, making the request ambiguous."
+    },
+    "d4_distractor_plausibility": {
+      "score": 1,
+      "rationale": "Options are generic labels (e.g., \"Plausible alternative concept\") rather than realistic misconceptions."
+    },
+    "d5_single_key_determinism": {
+      "score": 1,
+      "rationale": "Given the evidence, none of the options are justified; the correct answer cannot be uniquely supported."
+    },
+    "d6_question_novelty": {
+      "score": 1,
+      "rationale": "The question is a trivial regurgitation with placeholder choices, lacking authentic pedagogical value."
+    }
+  },
+  "latency_ms": 5376,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":1,\"rationale\":\"The evidence never details adding characters to a hash set and checking its size; it only mentions hash set in passing.\"},\n  \"d2_cognitive_demand\": {\"score\":1,\"rationale\":\"Answering relies on recalling a non‑presented fact; the task is not conceptually demanding.\"},\n  \"d3_stem_clarity\": {\"score\":2,\"rationale\":\"Stem is understandable, but the answer choices are vague placeholders, making the request ambiguous.\"},\n  \"d4_distractor_plausibility\": {\"score\":1,\"rationale\":\"Options are generic labels (e.g., \\\"Plausible alternative concept\\\") rather than realistic misconceptions.\"},\n  \"d5_single_key_determinism\": {\"score\":1,\"rationale\":\"Given the evidence, none of the options are justified; the correct answer cannot be uniquely supported.\"},\n  \"d6_question_novelty\": {\"score\":1,\"rationale\":\"The question is a trivial regurgitation with placeholder choices, lacking authentic pedagogical value.\"}\n}"
+}

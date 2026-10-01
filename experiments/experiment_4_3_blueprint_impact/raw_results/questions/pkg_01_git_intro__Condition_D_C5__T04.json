@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_D_C5",
+  "target_id": "T04",
+  "target_concept": "Use git status to list staged, unstaged, and untracked changes in the working directory.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "You have a Git repository where you modified file A, added a new file B, and staged file C. After running `git status`, which of the following best describes the information shown?",
+    "options": [
+      "It lists files that are staged for commit, files that have been modified but not staged, and untracked files.",
+      "It only displays the name of the current branch.",
+      "It shows the complete commit history of the repository.",
+      "It automatically stages all modified files."
+    ],
+    "correctAnswer": "It lists files that are staged for commit, files that have been modified but not staged, and untracked files.",
+    "explanation": "The `git status` command reports the state of the working tree, indicating which files are staged for the next commit, which files have been changed but are not yet staged, and which files are untracked. This matches the scenario described.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Use git status to list staged, unstaged, and untracked changes in the working directory."
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13787,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"You have a Git repository where you modified file A, added a new file B, and staged file C. After running `git status`, which of the following best describes the information shown?\",\n  \"options\": [\n    \"It lists files that are staged for commit, files that have been modified but not staged, and untracked files.\",\n    \"It only displays the name of the current branch.\",\n    \"It shows the complete commit history of the repository.\",\n    \"It automatically stages all modified files.\"\n  ],\n  \"correctAnswer\": \"It lists files that are staged for commit, files that have been modified but not staged, and untracked files.\",\n  \"explanation\": \"The `git status` command reports the state of the working tree, indicating which files are staged for the next commit, which files have been changed but are not yet staged, and which files are untracked. This matches the scenario described.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

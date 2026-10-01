@@ -1,0 +1,821 @@
+{
+  "generated_at": "2026-10-01T12:11:44.583Z",
+  "component": "P5.4_assessment_demand_specifier",
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "topic": "Article 21: Protection of Life and Personal Liberty",
+      "objective": "Analyze how the Supreme Court's interpretation of 'procedure established by law' in Article 21 transformed from the literalist, formalistic reading in A.K. Gopalan (1950) into a substantive fairness requirement under the Golden Triangle doctrine in Maneka Gandhi (1978).",
+      "blueprints": [
+        {
+          "blueprint_id": "pkg_01_indian_constitution_art21_EASY",
+          "cognitive_tier": "EASY",
+          "concept_id": "C06",
+          "concept_name": "Maneka Gandhi v. Union of India – substantive fairness interpretation of Article 21",
+          "epistemic_dimension": "IDENTIFICATION",
+          "expected_depth": 3,
+          "observed_depth": 3,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Identify the case that introduced the substantive fairness requirement for 'procedure established by law' under Article 21.",
+            "reasoning_steps": 1,
+            "constraint_complexity": "LOW",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "ZERO"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "The watershed transformation finally occurred in 1978 in Maneka Gandhi v. Union of India. The seven‑judge bench completely overturned Gopalan...",
+            "episode_id": "E06"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "Lecture evidence directly cites Maneka Gandhi as the case effecting the substantive fairness shift."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Literalist origin misconception",
+              "description": "Students often believe that the substantive fairness requirement was first introduced in A.K. Gopalan (1950), confusing the literalist reading with the later doctrine."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Procedural case confusion",
+              "description": "Students may select Kesavananda Bharati (1973), mistakenly linking its basic structure doctrine with the evolution of Article 21's procedural requirement."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Article misidentification",
+              "description": "Students might incorrectly choose Article 14 (Right to Equality) instead of Article 21 when asked about the substantive fairness requirement."
+            }
+          ]
+        },
+        {
+          "blueprint_id": "pkg_01_indian_constitution_art21_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "concept_id": "C01",
+          "concept_name": "Interpretation of \"procedure established by law\" in Article 21",
+          "epistemic_dimension": "MEANING",
+          "expected_depth": 4,
+          "observed_depth": 3,
+          "diagnostic_status": "ACTIONABLE_COVERAGE_GAP",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Analyze and compare judicial interpretations across cases",
+            "reasoning_steps": 2,
+            "constraint_complexity": "MODERATE",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "NEAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Now, how was this interpreted initially by our Supreme Court? That brings us directly to the landmark case of A.K. Gopalan v. State of Madras in 1950. The majority judgment, delivered by Chief Justice Kania, took an extremely literal and formalistic view...",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": true,
+            "uncertainty_rationale": "The lecture material describes the literal view in Gopalan and the substantive shift in Maneka Gandhi but does not explicitly link the two or illustrate the systematic interaction required to reach depth level 4."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Literalist Misreading of Procedure",
+              "description": "Students may believe that \"procedure established by law\" simply requires any statute, regardless of fairness or reasonableness, to be followed."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Procedural‑Only Error",
+              "description": "Students might think the doctrine only concerns the steps prescribed by the law and ignores the substantive fairness requirement introduced by the Golden Triangle doctrine."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Article Confusion",
+              "description": "Students could confuse Article 21's liberty clause with Article 19's freedom of speech, attributing the substantive fairness analysis to the wrong article."
+            }
+          ],
+          "target_question_concept": "Shift from literal to substantive interpretation of \"procedure established by law\" between A.K. Gopalan and Maneka Gandhi",
+          "downstream_generator_prompt": "Create a single‑best‑answer multiple‑choice question that asks students to identify how the Supreme Court’s interpretation of \"procedure established by law\" changed from the literalist approach in A.K. Gopalan (1950) to the substantive fairness requirement articulated in Maneka Gandhi (1978). Include the correct answer and the three distractors defined above, ensuring the stem requires two reasoning steps, moderate complexity, and near transfer of knowledge."
+        },
+        {
+          "blueprint_id": "pkg_01_indian_constitution_art21_HARD",
+          "cognitive_tier": "HARD",
+          "concept_id": "C01",
+          "concept_name": "Evolution of 'procedure established by law' under Article 21",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "expected_depth": 6,
+          "observed_depth": 5,
+          "diagnostic_status": "ACTIONABLE_COVERAGE_GAP",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Analyze, compare, and synthesize Supreme Court jurisprudence to evaluate how the procedural test shifted from formalistic literalism to substantive fairness.",
+            "reasoning_steps": 3,
+            "constraint_complexity": "HIGH",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "FAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Now, how was this interpreted initially by our Supreme Court? That brings us directly to the landmark case of A.K. Gopalan v. State of Madras in 1950. The majority judgment, delivered by Chief Justice Kania, took an extremely literal and formalistic view...",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": true,
+            "uncertainty_rationale": "The lecture provides a comparative overview but stops short of a detailed, step‑by‑step case analysis of Gopalan and Maneka Gandhi required for depth 6, leaving a gap in demonstrated mastery."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Equivalence of 'procedure established by law' and 'due process of law'",
+              "description": "Students often assume the Indian phrase is a direct copy of the US due‑process clause, ignoring the distinct constitutional history and judicial evolution."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Confusing procedural test with 'reasonable restriction' under Article 19",
+              "description": "Learners may mistakenly apply the reasonableness standard of Article 19(2) to evaluate Article 21's procedural requirement, leading to a procedural‑substantive mix‑up."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Omitting the fairness component in the Golden Triangle doctrine",
+              "description": "A common error is to cite only the existence of a law and its promulgation, neglecting the substantive fairness (reasonableness, non‑arbitrariness) that Maneka Gandhi introduced."
+            }
+          ]
+        }
+      ]
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "topic": "Eigenvalues and Eigenvectors of Linear Operators",
+      "objective": "Compute the eigenvalues and eigenvectors of a 2x2 matrix, explain the geometric intuition of an eigenvector as an invariant direction under linear transformation, and solve the characteristic polynomial det(A - lambda I) = 0.",
+      "blueprints": [
+        {
+          "blueprint_id": "pkg_02_linear_algebra_eigenvalues_EASY",
+          "cognitive_tier": "EASY",
+          "concept_id": "C01",
+          "concept_name": "Eigenvalue Equation",
+          "epistemic_dimension": "IDENTIFICATION",
+          "expected_depth": 2,
+          "observed_depth": 2,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Identify the eigenvalue equation A x = λ x and compute eigenvalues for a given 2×2 matrix",
+            "reasoning_steps": 1,
+            "constraint_complexity": "LOW",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "ZERO"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "That fundamental relationship is the eigenvalue equation: A x = lambda x.",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Eigenvalues equal diagonal entries",
+              "description": "Students often think the eigenvalues of a matrix are simply its diagonal elements, ignoring off‑diagonal contributions."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Use trace instead of determinant",
+              "description": "A procedural error where learners set the trace of (A‑λI) to zero rather than computing its determinant to form the characteristic polynomial."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Confusing eigenvectors with nullspace vectors",
+              "description": "Students may incorrectly assume any vector in the nullspace of A is an eigenvector, overlooking the λ‑scaling condition."
+            }
+          ],
+          "target_question_concept": "Compute eigenvalues of a 2×2 matrix using the characteristic equation det(A‑λI)=0",
+          "downstream_generator_prompt": "Create a single‑best‑answer multiple‑choice question that asks the learner to compute the eigenvalues of the matrix [[4,-5],[2,-3]] by forming and solving det(A‑λI)=0. Include the correct answer and the three distractors defined above, preserving their order and types. Ensure the stem is concise, uses the language from the grounding quote, and does not introduce additional concepts."
+        },
+        {
+          "blueprint_id": "pkg_02_linear_algebra_eigenvalues_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "concept_id": "C01",
+          "concept_name": "Eigenvalue Equation",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "expected_depth": 3,
+          "observed_depth": 5,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Apply the characteristic equation to compute eigenvalues, then solve (A‑λI)x=0 for eigenvectors.",
+            "reasoning_steps": 2,
+            "constraint_complexity": "MODERATE",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "NEAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "That fundamental relationship is the eigenvalue equation: A x = lambda x.",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Eigenvector‑Eigenvalue Equality",
+              "description": "Students often think an eigenvector is equal to its eigenvalue (e.g., believing the vector [2,1] is the eigenvalue 2)."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Sign Error in Characteristic Polynomial",
+              "description": "A common procedural slip is writing det(A‑λI)=λ^2+λ‑2 instead of λ^2‑λ‑2, leading to incorrect eigenvalues."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Omitting Eigenvector Computation",
+              "description": "Students sometimes stop after finding eigenvalues and forget to solve (A‑λI)x=0, treating eigenvalues alone as the complete solution."
+            }
+          ],
+          "target_question_concept": "Compute eigenvalues and eigenvectors of a 2×2 matrix using the characteristic equation.",
+          "downstream_generator_prompt": "Create a single‑best‑answer multiple‑choice question that asks students to find the eigenvalues and a corresponding eigenvector for the matrix [[4,-5],[2,-3]]. Include one correct answer and the three distractors defined above, preserving their misconception types. Ensure the stem requires two reasoning steps (solve det(A‑λI)=0, then solve (A‑λI)x=0) and that the correct answer reflects the near‑transfer of the taught procedure."
+        },
+        {
+          "blueprint_id": "pkg_02_linear_algebra_eigenvalues_HARD",
+          "cognitive_tier": "HARD",
+          "concept_id": "C01",
+          "concept_name": "Eigenvalue Equation",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "expected_depth": 6,
+          "observed_depth": 6,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Compute characteristic polynomial, solve for eigenvalues, determine eigenvectors, and relate eigenvectors to invariant geometric directions.",
+            "reasoning_steps": 3,
+            "constraint_complexity": "HIGH",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "FAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Let us do a concrete numerical example. A = [4, -5; 2, -3]. det(A - lambda I) = lambda^2 - lambda - 2 = (lambda - 2)(lambda + 1) = 0. Eigenvalues are 2 and -1.",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "The lecture explicitly demonstrates the full procedure and interpretation, supporting testing at this depth."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Eigenvectors must be unit length",
+              "description": "Students incorrectly assume that eigenvectors are required to be normalized, leading them to divide by their magnitude before checking the eigenvalue equation."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Confusing eigenvalues with diagonal entries",
+              "description": "Learners mistakenly take the diagonal entries of the matrix as eigenvalues without forming the characteristic polynomial."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Omitting determinant step",
+              "description": "Students skip the step of setting det(A‑λI)=0, directly solving (A‑λI)x=0, which yields only the trivial solution."
+            }
+          ],
+          "target_question_concept": "Compute eigenvalues and eigenvectors of a 2×2 matrix and explain the geometric meaning of eigenvectors as invariant directions.",
+          "downstream_generator_prompt": "Create a multiple‑choice question that asks students to (1) compute the characteristic polynomial of a novel 2×2 matrix, (2) solve for its eigenvalues, (3) find a corresponding eigenvector for each eigenvalue, and (4) briefly describe the geometric interpretation of an eigenvector. Include exactly three distractors as specified: a TYPE_A misconception about normalization, a TYPE_B near‑miss confusing eigenvalues with diagonal entries, and a TYPE_B omission of the determinant‑zero step. Ensure the correct answer requires three reasoning steps, high complexity, and far transfer to a new matrix not shown in the lecture."
+        }
+      ]
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "objective": "Explain the conceptual mechanics of Breadth-First Search, prove why a First-In-First-Out (FIFO) queue guarantees level-order discovery and unweighted shortest-path traversal, and explain the invariant function of the visited set.",
+      "blueprints": [
+        {
+          "blueprint_id": "pkg_03_dsa_bfs_conceptual_EASY",
+          "cognitive_tier": "EASY",
+          "concept_id": "C01",
+          "concept_name": "Breadth‑First Search conceptual mechanics",
+          "epistemic_dimension": "IDENTIFICATION",
+          "expected_depth": 2,
+          "observed_depth": 2,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Recall the definition of BFS and identify the role of the FIFO queue in guaranteeing level‑order discovery.",
+            "reasoning_steps": 1,
+            "constraint_complexity": "LOW",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "ZERO"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Today we are studying one of the fundamental traversal algorithms in computer science: Breadth-First Search, or BFS.",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Stack misconception",
+              "description": "Students often think BFS uses a LIFO stack, confusing it with depth‑first search."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Recursive order error",
+              "description": "Learners may incorrectly assume that implementing BFS recursively yields the same FIFO ordering, leading to depth‑first processing."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Visited‑set omission",
+              "description": "A common mistake is to believe BFS does not require a visited set because the queue alone prevents revisiting nodes."
+            }
+          ],
+          "target_question_concept": "Understanding that BFS uses a FIFO queue to explore vertices in non‑decreasing distance from the source.",
+          "downstream_generator_prompt": "Create a single‑best‑answer multiple‑choice question that asks the learner to identify the correct statement about BFS mechanics. The correct answer must describe the FIFO queue guaranteeing level‑order discovery. Include three distractors exactly as specified: one TYPE_A stack misconception, one TYPE_B recursive order error, and one TYPE_B visited‑set omission. Keep language concise, avoid extraneous context, and ensure the question aligns with the EASY cognitive tier (one reasoning step, low complexity, zero transfer)."
+        },
+        {
+          "blueprint_id": "pkg_03_dsa_bfs_conceptual_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "concept_id": "C01",
+          "concept_name": "Breadth-First Search conceptual mechanics",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "expected_depth": 4,
+          "observed_depth": 4,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Analyze FIFO queue behavior and prove it yields level‑order discovery and unweighted shortest‑path traversal",
+            "reasoning_steps": 2,
+            "constraint_complexity": "MODERATE",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "NEAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Layer by layer requires FIFO Queue...",
+            "episode_id": "ep1"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "LIFO queue misconception",
+              "description": "Students believe BFS uses a stack (last‑in‑first‑out) instead of a queue, leading to depth‑first behavior."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Weighted‑graph shortest‑path error",
+              "description": "Assuming the FIFO property guarantees shortest paths even when edge weights are non‑uniform."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Visited‑set vs distance‑array confusion",
+              "description": "Mixing up the purpose of the visited set with a distance array, thinking the visited set stores path lengths."
+            }
+          ],
+          "target_question_concept": "FIFO queue guarantees level‑order discovery in BFS",
+          "downstream_generator_prompt": "Create a single‑best‑answer multiple‑choice question that asks students to explain why a FIFO queue ensures BFS discovers vertices in level order and yields the unweighted shortest‑path property. Include one correct answer and the three distractors defined above (TYPE_A LIFO misconception, TYPE_B weighted‑graph error, TYPE_B visited‑set vs distance‑array confusion). Ensure the stem references the quoted evidence and the answer choices are concise, domain‑appropriate, and free of grammatical giveaways."
+        },
+        {
+          "blueprint_id": "pkg_03_dsa_bfs_conceptual_HARD",
+          "cognitive_tier": "HARD",
+          "concept_id": "C01",
+          "concept_name": "Fundamental Mechanics of Breadth‑First Search",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "expected_depth": 5,
+          "observed_depth": 5,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Analyze the FIFO queue invariant, prove level‑order discovery, and apply the visited‑set invariant to guarantee correct traversal.",
+            "reasoning_steps": 3,
+            "constraint_complexity": "HIGH",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "FAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Today we are studying one of the fundamental traversal algorithms in computer science: Breadth-First Search, or BFS.",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Queue order irrelevant",
+              "description": "Students often think that any order of processing nodes yields the same level‑order result, overlooking the FIFO property."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Stack instead of queue",
+              "description": "A common procedural error is to replace the FIFO queue with a LIFO stack, which produces a depth‑first traversal."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Visited set vs. distance array confusion",
+              "description": "Learners may conflate the purpose of the visited set with storing distances, leading to omission of the explicit distance invariant."
+            }
+          ],
+          "target_question_concept": "Why a FIFO queue guarantees level‑order discovery and unweighted shortest‑path traversal in BFS.",
+          "downstream_generator_prompt": "Create a single‑best‑answer MCQ that requires the student to (1) reason through three steps: (a) state the FIFO invariant, (b) prove that this invariant forces nodes to be explored in non‑decreasing distance order, and (c) explain how the visited set maintains correctness. Include exactly three distractors as specified: one evidence‑backed misconception (TYPE_A) and two domain‑plausible errors (both TYPE_B). Ensure the correct answer reflects the FIFO guarantee and visited‑set invariant, and keep language concise and free of trivia."
+        }
+      ]
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "objective": "Implement Breadth-First Search using a concrete queue data structure in code, trace variable states during execution, and implement robust edge-case handling for cyclic graphs and disconnected components.",
+      "blueprints": [
+        {
+          "blueprint_id": "pkg_04_dsa_bfs_implementation_EASY",
+          "cognitive_tier": "EASY",
+          "concept_id": "C01",
+          "concept_name": "Breadth-First Search (BFS) Traversal",
+          "epistemic_dimension": "MEANING",
+          "expected_depth": 3,
+          "observed_depth": 4,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Recall BFS definition and apply it by writing code that uses a FIFO queue to traverse a graph.",
+            "reasoning_steps": 1,
+            "constraint_complexity": "LOW",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "ZERO"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Today we are studying one of the fundamental traversal algorithms in computer sc",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Queue vs Stack Misconception",
+              "description": "Students often think BFS uses a LIFO stack, confusing it with DFS, leading them to push and pop nodes incorrectly."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Depth-First Order Error",
+              "description": "A plausible but wrong procedural choice where the algorithm processes nodes in decreasing depth rather than increasing distance."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Visited Set Omission",
+              "description": "Omitting the visited/marked set, which causes the BFS to revisit nodes and potentially enter an infinite loop on cyclic graphs."
+            }
+          ]
+        },
+        {
+          "blueprint_id": "pkg_04_dsa_bfs_implementation_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "concept_id": "C01",
+          "concept_name": "Breadth-First Search (BFS) traversal algorithm",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "expected_depth": 4,
+          "observed_depth": 4,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Implement BFS using a concrete FIFO queue, trace queue contents and distance values step‑by‑step, and evaluate handling of cycles and disconnected components.",
+            "reasoning_steps": 2,
+            "constraint_complexity": "MODERATE",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "NEAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "C03 explained the invariant that the queue maintains non‑decreasing distance order, establishing the mechanism that guarantees breadth‑first ordering.",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Queue stores discovery order only",
+              "description": "Students mistakenly believe the BFS queue simply records the order nodes are first discovered, ignoring the invariant that it must preserve non‑decreasing distance order."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Level Interleaving Error",
+              "description": "Assuming vertices at distance d+1 can be dequeued before all vertices at distance d are processed."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Queue Bound Misconception",
+              "description": "Assuming the queue size is strictly bounded by the degree of the source vertex rather than the maximum frontier size."
+            }
+          ]
+        },
+        {
+          "blueprint_id": "pkg_04_dsa_bfs_implementation_HARD",
+          "cognitive_tier": "HARD",
+          "concept_id": "C01",
+          "concept_name": "Breadth-First Search (BFS) Traversal and Implementation",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "expected_depth": 6,
+          "observed_depth": 0,
+          "diagnostic_status": "ACTIONABLE_COVERAGE_GAP",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Apply BFS implementation to novel graph scenarios, interpret queue state changes, and evaluate edge‑case handling for cycles and disconnected components",
+            "reasoning_steps": 3,
+            "constraint_complexity": "HIGH",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "FAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Today we are studying one of the fundamental traversal algorithms in computer sc",
+            "episode_id": "ep_001"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": true,
+            "uncertainty_rationale": "The instructional record contains only introductory remarks about BFS and queue ordering; it provides no observable evidence of students being asked to implement BFS, trace queue states, or handle cyclic/disconnected graphs, so testing at this application‑interpretation depth would not reflect taught content."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Distance‑vs‑ID ordering",
+              "description": "Students believe BFS visits nodes in increasing numeric ID order rather than by shortest‑path distance, leading them to select an answer that orders nodes by ID."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Stack‑instead‑of‑Queue error",
+              "description": "Students mistakenly apply a LIFO stack operation (push/pop) when enqueuing/dequeuing, producing a depth‑first traversal pattern."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Cyclic Graph Re-enqueue",
+              "description": "Omitting the visited check upon neighbor enqueue, resulting in infinite loops or duplicate processing in cyclic graphs."
+            }
+          ]
+        }
+      ]
+    },
+    "pkg_05_deep_learning_vaes": {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "topic": "Autoencoders and Variational Autoencoders (VAEs)",
+      "objective": "Explain why classical autoencoders fail at smooth generative interpolation, derive the variational autoencoder objective mapping inputs to Gaussian distributions (mu, sigma^2), and justify the role of Kullback-Leibler (KL) divergence in regularizing the latent space.",
+      "blueprints": [
+        {
+          "blueprint_id": "pkg_05_deep_learning_vaes_EASY",
+          "cognitive_tier": "EASY",
+          "concept_id": "C01",
+          "concept_name": "Identification of classical autoencoders vs. variational autoencoders",
+          "epistemic_dimension": "IDENTIFICATION",
+          "expected_depth": 2,
+          "observed_depth": 3,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Identify the key difference between deterministic autoencoders and VAEs in how they represent latent variables",
+            "reasoning_steps": 1,
+            "constraint_complexity": "LOW",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "ZERO"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "So, let me talk about the autoencoders. Fully connected autoencoder architecture",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "Lecture material explicitly defines both models, supporting testing at this tier."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Deterministic VAEs",
+              "description": "Students often think VAEs also map inputs to a single deterministic point, ignoring the probabilistic latent representation."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Missing KL term",
+              "description": "Students may recall that VAEs only minimize reconstruction loss and forget the KL‑divergence regularizer."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "VAE as a GAN",
+              "description": "Students sometimes confuse VAEs with GANs, believing the latent space is shaped by an adversarial discriminator."
+            }
+          ],
+          "target_question_concept": "Why classical autoencoders fail to provide smooth generative interpolation compared to VAEs",
+          "downstream_generator_prompt": "Create a single‑best‑answer multiple‑choice question that asks the learner to identify the fundamental reason classical autoencoders cannot smoothly interpolate between data points, contrasting deterministic latent mapping with the probabilistic latent distribution of VAEs. Include the correct answer and the three distractors defined above, preserving the EASY cognitive tier constraints (1 reasoning step, LOW complexity, ZERO transfer)."
+        },
+        {
+          "blueprint_id": "pkg_05_deep_learning_vaes_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "concept_id": "C01",
+          "concept_name": "Fundamentals of Autoencoders",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "expected_depth": 4,
+          "observed_depth": 4,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Apply, Analyze",
+            "reasoning_steps": 2,
+            "constraint_complexity": "MODERATE",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "NEAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Normal autoencoders map to a single deterministic point. VAE maps to a probabilistic distribution over latent variables.",
+            "episode_id": "ep_12"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": ""
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Deterministic Reconstruction Misconception",
+              "description": "Students often believe that autoencoders always reconstruct inputs perfectly, ignoring reconstruction error and capacity limits."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "KL‑Loss vs. Reconstruction‑Loss Confusion",
+              "description": "Learners may mistakenly treat the KL divergence term as a reconstruction loss, swapping its role with the pixel‑wise error term."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Omission of Reparameterization Trick",
+              "description": "When deriving the VAE objective, students sometimes skip the reparameterization step, leading to an incorrect gradient flow."
+            }
+          ]
+        },
+        {
+          "blueprint_id": "pkg_05_deep_learning_vaes_HARD",
+          "cognitive_tier": "HARD",
+          "concept_id": "C01",
+          "concept_name": "Autoencoders Overview",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "expected_depth": 6,
+          "observed_depth": 1,
+          "diagnostic_status": "ACTIONABLE_COVERAGE_GAP",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Apply, analyze, and synthesize the VAE objective to a novel generative interpolation scenario",
+            "reasoning_steps": 3,
+            "constraint_complexity": "HIGH",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "FAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "So, let me talk about the autoencoders. Fully connected autoencoder architecture",
+            "episode_id": "ep_001"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": true,
+            "uncertainty_rationale": "The lecture only contains a brief definitional mention of autoencoders and VAEs; it lacks worked examples, code traces, or case analyses needed to assess students' ability to apply and interpret the VAE objective and KL regularization as taught."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "KL Divergence Maximization Misconception",
+              "description": "Students mistakenly believe that the KL divergence term should be maximized to push latent distributions apart, rather than minimized to keep them close to the prior."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Incorrect Loss Ordering",
+              "description": "Applying the reconstruction loss before the KL term and using an improper weighting scheme, leading to a model that ignores the regularization effect."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Direct Stochastic Sampling",
+              "description": "Directly sampling z from N(mu, sigma^2) during the forward pass, which prevents backpropagation gradients from flowing to the encoder."
+            }
+          ]
+        }
+      ]
+    },
+    "pkg_06_economics_elasticity": {
+      "package_id": "pkg_06_economics_elasticity",
+      "topic": "Price Elasticity of Demand and Market Welfare",
+      "objective": "Calculate the price elasticity of demand using the midpoint method, interpret whether demand is price‑elastic, inelastic, or unit‑elastic, explain the relationship between elasticity and total revenue, and evaluate how price distortions create deadweight loss.",
+      "blueprints": [
+        {
+          "blueprint_id": "pkg_06_economics_elasticity_EASY",
+          "cognitive_tier": "EASY",
+          "concept_id": "C01",
+          "concept_name": "Price Elasticity of Demand",
+          "epistemic_dimension": "IDENTIFICATION",
+          "expected_depth": 2,
+          "observed_depth": 2,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Calculate elasticity using the midpoint formula and interpret whether demand is elastic, inelastic, or unit‑elastic.",
+            "reasoning_steps": 1,
+            "constraint_complexity": "LOW",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "ZERO"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Price elasticity of demand measures the magnitude of the quantity response to a change in price.",
+            "episode_id": "ep_01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "The lecture explicitly defines the concept and provides the formula, supporting assessment of this content."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Elasticity equals slope",
+              "description": "Students mistakenly believe that price elasticity of demand is the same as the slope of the demand curve, ignoring the percentage change calculation."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Initial‑value method error",
+              "description": "Using the initial‑value (base‑year) method instead of the midpoint formula, which yields a different elasticity value."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Absolute Slope Confusion",
+              "description": "Defining elasticity as the absolute change in quantity divided by the absolute change in price (the inverse slope) rather than percentage changes."
+            }
+          ]
+        },
+        {
+          "blueprint_id": "pkg_06_economics_elasticity_MEDIUM",
+          "cognitive_tier": "MEDIUM",
+          "concept_id": "C01",
+          "concept_name": "Price Elasticity of Demand",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "expected_depth": 4,
+          "observed_depth": 5,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Apply midpoint formula, interpret elasticity magnitude, relate to total‑revenue outcomes",
+            "reasoning_steps": 2,
+            "constraint_complexity": "MODERATE",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "NEAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "C06 linked elasticity to total‑revenue outcomes, showing how inelastic demand raises TR when price rises and vice‑versa.",
+            "episode_id": "E01"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "Lecture material explicitly covers the relationship between elasticity and total revenue, supporting assessment of this content."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Revenue always rises with price",
+              "description": "Students often believe that raising price always increases total revenue, ignoring the elasticity condition."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Initial‑point formula misuse",
+              "description": "Learners may incorrectly use the initial‑point percentage change formula instead of the midpoint method, yielding a wrong elasticity value."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Supply elasticity confusion",
+              "description": "Students may mistakenly apply the elasticity concept to supply rather than demand, conflating the two relationships."
+            }
+          ]
+        },
+        {
+          "blueprint_id": "pkg_06_economics_elasticity_HARD",
+          "cognitive_tier": "HARD",
+          "concept_id": "C01",
+          "concept_name": "Price Elasticity of Demand and Market Welfare",
+          "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+          "expected_depth": 7,
+          "observed_depth": 7,
+          "diagnostic_status": "COVERED",
+          "cognitive_demand_spec": {
+            "cognitive_operations": "Apply midpoint elasticity formula, interpret elasticity classification, analyze total‑revenue implications, and evaluate deadweight‑loss consequences of price distortions.",
+            "reasoning_steps": 3,
+            "constraint_complexity": "HIGH",
+            "ambiguity_level": "LOW",
+            "transfer_distance": "FAR"
+          },
+          "grounding_evidence": {
+            "verbatim_quote": "Episode E06 explained welfare effects and dead‑weight loss arising when price changes move the market away from unit‑elastic equilibrium.",
+            "episode_id": "E06"
+          },
+          "evidence_uncertainty": {
+            "has_uncertainty": false,
+            "uncertainty_rationale": "The lecture explicitly covers calculation, interpretation, revenue effects, and welfare boundaries, matching the expected depth."
+          },
+          "distractors": [
+            {
+              "type": "TYPE_A",
+              "misconception_name": "Constant Elasticity on Linear Curve",
+              "description": "Believing price elasticity of demand remains constant at every point along a linear downward-sloping demand curve."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Consumer-Only Deadweight Loss",
+              "description": "Calculating market deadweight loss using only the change in consumer surplus while ignoring changes in producer surplus."
+            },
+            {
+              "type": "TYPE_B",
+              "misconception_name": "Linear Tax Distortion Assumption",
+              "description": "Assuming deadweight loss expands linearly with the tax rate rather than with the square of the tax distortion."
+            }
+          ],
+          "downstream_generator_prompt": "Construct a hard multiple-choice question testing the boundary conditions of price elasticity on market welfare and deadweight loss. Ensure exactly one correct answer based on Episode E06, with distractors modeling misconceptions on surplus and linear curve elasticity."
+        }
+      ]
+    }
+  }
+}

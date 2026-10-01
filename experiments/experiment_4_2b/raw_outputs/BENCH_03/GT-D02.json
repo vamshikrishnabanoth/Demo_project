@@ -1,0 +1,46 @@
+{
+  "unit_id": "GT-D02",
+  "benchmark": "BENCH_03",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "PRACTICE",
+    "COMPARE",
+    "DEBUG",
+    "CODE_TRACE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "If I modulo a equal equal to zero and I modulo b is equal equal to zero, return I."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero."
+    },
+    {
+      "label": "PRACTICE",
+      "quote": "Let's try this with something else also. Two ways of doing it."
+    },
+    {
+      "label": "COMPARE",
+      "quote": "Two ways of doing it. One is increment equal. This is a faster way of doing it."
+    },
+    {
+      "label": "DEBUG",
+      "quote": "I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero."
+    }
+  ],
+  "raw_response": "{\"labels\":[\"EXPLAIN\",\"DEMONSTRATE\",\"PRACTICE\",\"COMPARE\",\"DEBUG\",\"CODE_TRACE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"If I modulo a equal equal to zero and I modulo b is equal equal to zero, return I.\"},{\"label\":\"DEMONSTRATE\",\"quote\":\"Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero.\"},{\"label\":\"PRACTICE\",\"quote\":\"Let's try this with something else also. Two ways of doing it.\"},{\"label\":\"COMPARE\",\"quote\":\"Two ways of doing it. One is increment equal. This is a faster way of doing it.\"},{\"label\":\"DEBUG\",\"quote\":\"I got it wrong. First time, I have to say four modulo six. Is it equal equal to zero? No.\"},{\"label\":\"CODE_TRACE\",\"quote\":\"Eight plus eight becomes what? 16. I will check if 16 modulo 12 is equal equal to zero.\"}]}",
+  "latency_ms": 19606,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

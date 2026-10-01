@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_D_C5",
+  "target_id": "T03",
+  "target_concept": "Describe how a hash set is used to determine whether a character at a given index is common to all strings.",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 3,
+      "rationale": "Question relates to hash‑set use for common‑character detection, which is mentioned in the lecture, though the specific set‑size rule is not explicitly stated."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires understanding of hash‑set semantics (duplicate elimination) and reasoning about set size, beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "Stem is clear, grammatically correct, and unambiguous about what is being asked."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "One distractor (size equals number of strings) is plausible; others are weak or obviously incorrect, reducing overall quality."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Exactly one option (set size = 1) is correct given the evidence; the rest are definitively wrong."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "Applies a standard data‑structure concept to a concrete algorithmic problem, offering authentic reasoning rather than mere definition."
+    }
+  },
+  "latency_ms": 3197,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":3,\"rationale\":\"Question relates to hash‑set use for common‑character detection, which is mentioned in the lecture, though the specific set‑size rule is not explicitly stated.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires understanding of hash‑set semantics (duplicate elimination) and reasoning about set size, beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"Stem is clear, grammatically correct, and unambiguous about what is being asked.\"},\n  \"d4_distractor_plausibility\": {\"score\":3,\"rationale\":\"One distractor (size equals number of strings) is plausible; others are weak or obviously incorrect, reducing overall quality.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Exactly one option (set size = 1) is correct given the evidence; the rest are definitively wrong.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"Applies a standard data‑structure concept to a concrete algorithmic problem, offering authentic reasoning rather than mere definition.\"}\n}"
+}

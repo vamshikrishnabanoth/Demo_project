@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T04",
+  "target_concept": "Implement a recursive function that reverses a string, identifying the base case (length = 1 or empty) and the construction of the result on the return path.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "When implementing the recursive function reverseString in C++, which statement correctly describes the base case according to the provided evidence?",
+    "options": [
+      "If the string length is 1, return the string itself.",
+      "If the string length is 0, return the string itself.",
+      "If the string length is greater than 1, return the string itself.",
+      "If the string length is 1, return an empty string."
+    ],
+    "correctAnswer": "If the string length is 1, return the string itself.",
+    "explanation": "The evidence states that the base condition is \"if str.length == 1\" and the function should \"return STR\". Therefore, when the string has length one, the correct action is to return that single‑character string unchanged.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Implement a recursive function that reverses a string, identifying the base case (length = 1 or empty) and the construction of the result on the return path."
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 15371,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"When implementing the recursive function reverseString in C++, which statement correctly describes the base case according to the provided evidence?\",\n  \"options\": [\n    \"If the string length is 1, return the string itself.\",\n    \"If the string length is 0, return the string itself.\",\n    \"If the string length is greater than 1, return the string itself.\",\n    \"If the string length is 1, return an empty string.\"\n  ],\n  \"correctAnswer\": \"If the string length is 1, return the string itself.\",\n  \"explanation\": \"The evidence states that the base condition is \\\"if str.length == 1\\\" and the function should \\\"return STR\\\". Therefore, when the string has length one, the correct action is to return that single‑character string unchanged.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

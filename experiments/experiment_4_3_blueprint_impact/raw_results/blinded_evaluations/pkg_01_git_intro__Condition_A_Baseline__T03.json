@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T03",
+  "target_concept": "Identify the two pieces of user information required by `git config --global` and how to set them",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks for the two pieces of information (user name and email) and the --global flag syntax explicitly covered in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires applying the taught syntax, recognizing correct placement of quotes and flags, not just rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, unambiguous, and clearly asks for the correct command sequence."
+    },
+    "d4_distractor_plausibility": {
+      "score": 5,
+      "rationale": "Each distractor reflects a common mistake (missing quotes, missing flag, order swap), making them realistic misconceptions."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option A satisfies all requirements from the evidence; the other three violate at least one rule."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "The question frames an authentic, practical task of configuring Git globally rather than a trivial definition."
+    }
+  },
+  "latency_ms": 1667,
+  "retry_count": 1,
+  "raw_response": "{\"d1_teaching_alignment\":{\"score\":5,\"rationale\":\"Directly asks for the two pieces of information (user name and email) and the --global flag syntax explicitly covered in the lecture.\"},\"d2_cognitive_demand\":{\"score\":4,\"rationale\":\"Requires applying the taught syntax, recognizing correct placement of quotes and flags, not just rote recall.\"},\"d3_stem_clarity\":{\"score\":5,\"rationale\":\"The stem is concise, unambiguous, and clearly asks for the correct command sequence.\"},\"d4_distractor_plausibility\":{\"score\":5,\"rationale\":\"Each distractor reflects a common mistake (missing quotes, missing flag, order swap), making them realistic misconceptions.\"},\"d5_single_key_determinism\":{\"score\":5,\"rationale\":\"Only option A satisfies all requirements from the evidence; the other three violate at least one rule.\"},\"d6_question_novelty\":{\"score\":5,\"rationale\":\"The question frames an authentic, practical task of configuring Git globally rather than a trivial definition.\"}}"
+}

@@ -1,0 +1,31 @@
+{
+  "unit_id": "GT-G03",
+  "benchmark": "BENCH_04",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "REAL_WORLD_APP",
+    "REINFORCE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "To create a repository in Git, you have to use a command called as git init."
+    },
+    {
+      "label": "REAL_WORLD_APP",
+      "quote": "if you want to start a new project, to keep track of the changes that you are doing in that particular project"
+    },
+    {
+      "label": "REINFORCE",
+      "quote": "to keep changes, you have to create a Git repository"
+    }
+  ],
+  "raw_response": "{\"labels\":[\"EXPLAIN\",\"REAL_WORLD_APP\",\"REINFORCE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"To create a repository in Git, you have to use a command called as git init.\"},{\"label\":\"REAL_WORLD_APP\",\"quote\":\"if you want to start a new project, to keep track of the changes that you are doing in that particular project\"},{\"label\":\"REINFORCE\",\"quote\":\"to keep changes, you have to create a Git repository\"}]}",
+  "latency_ms": 2273,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

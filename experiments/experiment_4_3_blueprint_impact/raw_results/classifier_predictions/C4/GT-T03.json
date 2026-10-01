@@ -1,0 +1,31 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "CODE_TRACE",
+    "STUDENT_INTERACT",
+    "REINFORCE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "The outer loop is number of characters you want to process. The inner loop is one character at a time of all the three strings."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "Go through this code. I'm saying the smallest is string zero. I get the length of it and then I compare that length with every other string."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "I take each string and I get the corresponding character at that index. Index ranging from 0 to a dot length."
+    },
+    {
+      "label": "STUDENT_INTERACT",
+      "quote": "Guys, tell me. I get the second string and I add the first character of the second string."
+    },
+    {
+      "label": "REINFORCE",
+      "quote": "Are you clear?"
+    }
+  ]
+}

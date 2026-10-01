@@ -1,0 +1,16 @@
+{
+  "labels": [
+    "EXPLAIN",
+    "COMPARE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "The encoder takes the image and converts the flattens of image, performs encoding and then gives it to one. And generates one latent space that is the compressed form"
+    },
+    {
+      "label": "COMPARE",
+      "quote": "first hotline codeus that comes into picture is fully connected ... The first main reason why fully auto encoder fail ... Hence, with this particular drawback, we are going for convolutional order encoder"
+    }
+  ]
+}

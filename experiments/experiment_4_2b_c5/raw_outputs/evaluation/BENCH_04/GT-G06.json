@@ -1,0 +1,21 @@
+{
+  "unit_id": "GT-G06",
+  "benchmark": "BENCH_04",
+  "classifier": "C5_LLM_CALIBRATED",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Git commit will save the changes of your particular file into the repository"
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Git commit will save the changes of your particular file into the repository\"\n    }\n  ]\n}",
+  "latency_ms": 19995,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

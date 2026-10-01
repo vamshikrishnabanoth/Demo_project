@@ -1,0 +1,41 @@
+{
+  "unit_id": "GT-D07",
+  "benchmark": "BENCH_03",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "PRACTICE",
+    "CODE_TRACE",
+    "EDGE_CASE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "The base condition would be if STR dot length equally equal to one. Return what? True."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "The way substring is written over here in c plus pluses, it says, substring, you pass where you want to begin and pass me how many characters you have."
+    },
+    {
+      "label": "PRACTICE",
+      "quote": "Okay. Let's try to code this."
+    },
+    {
+      "label": "CODE_TRACE",
+      "quote": "Now while returning back, is this one? Is this palindrome? Yes. So what do I pass? I pass true to it."
+    },
+    {
+      "label": "EDGE_CASE",
+      "quote": "When you have only one always... extreme case... base condition would be if STR dot length equally equal to one."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\", \"DEMONSTRATE\", \"PRACTICE\", \"CODE_TRACE\", \"EDGE_CASE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"The base condition would be if STR dot length equally equal to one. Return what? True.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"The way substring is written over here in c plus pluses, it says, substring, you pass where you want to begin and pass me how many characters you have.\"\n    },\n    {\n      \"label\": \"PRACTICE\",\n      \"quote\": \"Okay. Let's try to code this.\"\n    },\n    {\n      \"label\": \"CODE_TRACE\",\n      \"quote\": \"Now while returning back, is this one? Is this palindrome? Yes. So what do I pass? I pass true to it.\"\n    },\n    {\n      \"label\": \"EDGE_CASE\",\n      \"quote\": \"When you have only one always... extreme case... base condition would be if STR dot length equally equal to one.\"\n    }\n  ]\n}",
+  "latency_ms": 17817,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_C_C4",
+  "target_id": "T03",
+  "target_concept": "Explain why variational autoencoders were introduced and how they improve reconstruction accuracy over earlier autoencoders",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "Based on the provided evidence, what is the main advantage of variational autoencoders (VAEs) over fully connected autoencoders in image reconstruction?",
+    "options": [
+      "VAEs reconstruct images with higher accuracy, reaching about 70‑80% similarity to the original",
+      "VAEs significantly reduce the computational complexity of training large image datasets",
+      "VAEs eliminate the need for a latent space by directly mapping inputs to outputs",
+      "VAEs guarantee lossless compression of the original images"
+    ],
+    "correctAnswer": "VAEs reconstruct images with higher accuracy, reaching about 70‑80% similarity to the original",
+    "explanation": "The evidence states that variational autoencoders reconnect the original image up to 70‑80% accuracy, whereas fully connected autoencoders achieve only around 50‑60% accuracy. This higher reconstruction fidelity is presented as the key benefit of VAEs.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain why variational autoencoders were introduced and how they improve reconstruction accuracy over earlier autoencoders"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11926,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"Based on the provided evidence, what is the main advantage of variational autoencoders (VAEs) over fully connected autoencoders in image reconstruction?\",\n  \"options\": [\n    \"VAEs reconstruct images with higher accuracy, reaching about 70‑80% similarity to the original\",\n    \"VAEs significantly reduce the computational complexity of training large image datasets\",\n    \"VAEs eliminate the need for a latent space by directly mapping inputs to outputs\",\n    \"VAEs guarantee lossless compression of the original images\"\n  ],\n  \"correctAnswer\": \"VAEs reconstruct images with higher accuracy, reaching about 70‑80% similarity to the original\",\n  \"explanation\": \"The evidence states that variational autoencoders reconnect the original image up to 70‑80% accuracy, whereas fully connected autoencoders achieve only around 50‑60% accuracy. This higher reconstruction fidelity is presented as the key benefit of VAEs.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

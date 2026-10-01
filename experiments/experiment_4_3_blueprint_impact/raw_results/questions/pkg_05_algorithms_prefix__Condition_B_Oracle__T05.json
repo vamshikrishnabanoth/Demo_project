@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T05",
+  "target_concept": "Compare the hash‑set approach with alternative strategies (e.g., binary search, vertical scanning) in terms of time, readability, and maintainability.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "Given two algorithm outlines for finding the longest common prefix among a list of strings—(1) using a hash‑set to compare characters at each position, and (2) using vertical scanning that iterates column‑wise— which approach should be chosen when the primary constraints are code readability and ease of maintenance, while still providing acceptable time performance?",
+    "options": [
+      "Hash‑set approach is preferable",
+      "Binary search approach is preferable",
+      "Vertical scanning approach is preferable",
+      "Both approaches are equally preferable"
+    ],
+    "correctAnswer": "Vertical scanning approach is preferable",
+    "explanation": "Vertical scanning uses a straightforward nested loop without auxiliary data structures, making the code easy to read and maintain. Its time complexity O(N·M) (N strings, M average length) is acceptable for typical inputs, whereas the hash‑set solution introduces extra collection handling and can be harder to follow, and binary search adds algorithmic complexity without significant readability benefits.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Hard",
+      "concept": "Compare the hash‑set approach with alternative strategies (e.g., binary search, vertical scanning) in terms of time, readability, and maintainability."
+    },
+    "package_id": "pkg_05_algorithms_prefix",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 13163,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"Given two algorithm outlines for finding the longest common prefix among a list of strings—(1) using a hash‑set to compare characters at each position, and (2) using vertical scanning that iterates column‑wise— which approach should be chosen when the primary constraints are code readability and ease of maintenance, while still providing acceptable time performance?\",\n  \"options\": [\n    \"Hash‑set approach is preferable\",\n    \"Binary search approach is preferable\",\n    \"Vertical scanning approach is preferable\",\n    \"Both approaches are equally preferable\"\n  ],\n  \"correctAnswer\": \"Vertical scanning approach is preferable\",\n  \"explanation\": \"Vertical scanning uses a straightforward nested loop without auxiliary data structures, making the code easy to read and maintain. Its time complexity O(N·M) (N strings, M average length) is acceptable for typical inputs, whereas the hash‑set solution introduces extra collection handling and can be harder to follow, and binary search adds algorithmic complexity without significant readability benefits.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Hard\"\n  }\n}"
+}

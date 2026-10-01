@@ -1,0 +1,1826 @@
+{
+  "metadata": {
+    "experiment_id": "EXP_4_2_BEHAVIOR_CLASSIFICATION",
+    "title": "Teaching-Behavior Classification & Instructional Intent Analysis",
+    "timestamp": "2026-09-29T18:00:02.881Z",
+    "taxonomy": [
+      "EXPLAIN",
+      "DEMONSTRATE",
+      "COMPARE",
+      "DEBUG",
+      "PREDICT_CHANGE",
+      "ASK_WHY",
+      "PRACTICE",
+      "REAL_WORLD_APP",
+      "EDGE_CASE",
+      "CODE_TRACE",
+      "STUDENT_INTERACT",
+      "REINFORCE"
+    ],
+    "recipe_affinities": {
+      "PREDICT_CHANGE": [
+        "COUNTERFACTUAL_MODIFICATION",
+        "EDGE_CASE_PROBING",
+        "CODE_EXECUTION_TRACE"
+      ],
+      "DEBUG": [
+        "MISCONCEPTION_DIAGNOSIS",
+        "COUNTERFACTUAL_MODIFICATION",
+        "EDGE_CASE_PROBING"
+      ],
+      "COMPARE": [
+        "TRADEOFF_EVALUATION"
+      ],
+      "CODE_TRACE": [
+        "CODE_EXECUTION_TRACE"
+      ],
+      "REAL_WORLD_APP": [
+        "NOVEL_SCENARIO"
+      ],
+      "EXPLAIN": [
+        "MECHANISTIC_DISCRIMINATION"
+      ],
+      "PRACTICE": [
+        "ANALOGOUS_CALCULATION",
+        "CODE_EXECUTION_TRACE"
+      ],
+      "EDGE_CASE": [
+        "EDGE_CASE_PROBING"
+      ],
+      "REINFORCE": [
+        "DIRECT",
+        "MECHANISTIC_DISCRIMINATION"
+      ],
+      "ASK_WHY": [
+        "MECHANISTIC_DISCRIMINATION"
+      ],
+      "DEMONSTRATE": [
+        "CODE_EXECUTION_TRACE"
+      ],
+      "STUDENT_INTERACT": [
+        "MISCONCEPTION_DIAGNOSIS"
+      ]
+    },
+    "divergence_metrics": {
+      "primary": "Total Variation Distance (TVD) = 0.5 * sum(|P_i - Q_i|), bounded in [0, 1]",
+      "secondary": "Cosine Distance = 1 - (P . Q) / (||P|| * ||Q||)"
+    }
+  },
+  "benchmarks": {
+    "BENCH_04": {
+      "benchmark_id": "BENCH_04",
+      "unit_count": 10,
+      "units": [
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G00",
+          "title": "VCS Introduction & Conceptual Overview",
+          "start": 0,
+          "end": 39.48,
+          "duration": 39.48,
+          "human_source_labels": [
+            "INTRODUCE",
+            "EXPLAIN"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": []
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": []
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": []
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G01",
+          "title": "git --version CLI Check",
+          "start": 39.48,
+          "end": 53.86,
+          "duration": 14.38,
+          "human_source_labels": [
+            "INTRODUCE",
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "DEMONSTRATE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G02",
+          "title": "git config Global Configuration",
+          "start": 53.86,
+          "end": 120.3,
+          "duration": 66.44,
+          "human_source_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "ASK_WHY"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "ASK_WHY"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "ASK_WHY",
+                "CODE_TRACE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G03",
+          "title": "git init Repository Initialization",
+          "start": 120.3,
+          "end": 157.12,
+          "duration": 36.82,
+          "human_source_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "CODE_TRACE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G04",
+          "title": "git status Working Tree Inspection",
+          "start": 157.12,
+          "end": 186.88,
+          "duration": 29.76,
+          "human_source_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "DEMONSTRATE",
+                "CODE_TRACE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G05",
+          "title": "git add Staging Area",
+          "start": 186.88,
+          "end": 252.86,
+          "duration": 65.98,
+          "human_source_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "DEMONSTRATE",
+                "CODE_TRACE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G06",
+          "title": "git commit Repository Snapshot",
+          "start": 252.86,
+          "end": 295.66,
+          "duration": 42.8,
+          "human_source_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "REINFORCE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "REINFORCE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "CODE_TRACE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G07",
+          "title": "git diff Working vs Staged Comparison",
+          "start": 295.66,
+          "end": 327.04,
+          "duration": 31.38,
+          "human_source_labels": [
+            "EXPLAIN",
+            "COMPARE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "COMPARE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "COMPARE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "COMPARE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "COMPARE",
+                "CODE_TRACE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G08",
+          "title": "git help Reference Manual",
+          "start": 327.04,
+          "end": 397.86,
+          "duration": 70.82,
+          "human_source_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "CODE_TRACE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_04",
+          "unit_id": "GT-G09",
+          "title": "Live Terminal Hands-on Demonstration",
+          "start": 397.86,
+          "end": 767.81,
+          "duration": 369.95,
+          "human_source_labels": [
+            "DEMONSTRATE",
+            "CODE_TRACE"
+          ],
+          "human_canonical_labels": [
+            "DEMONSTRATE",
+            "CODE_TRACE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "CODE_TRACE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "CODE_TRACE",
+                "PRACTICE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEMONSTRATE",
+                "CODE_TRACE",
+                "PRACTICE"
+              ]
+            }
+          }
+        }
+      ],
+      "evaluations": {
+        "C1_LEXICAL": {
+          "per_behavior": {
+            "EXPLAIN": {
+              "tp": 5,
+              "fp": 1,
+              "fn": 4,
+              "precision": 0.8333,
+              "recall": 0.5556,
+              "f1_score": 0.6667
+            },
+            "DEMONSTRATE": {
+              "tp": 8,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.8889,
+              "recall": 1,
+              "f1_score": 0.9412
+            },
+            "COMPARE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1_score": 1
+            },
+            "DEBUG": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PREDICT_CHANGE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "ASK_WHY": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PRACTICE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "REAL_WORLD_APP": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "EDGE_CASE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "CODE_TRACE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1_score": 1
+            },
+            "STUDENT_INTERACT": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "REINFORCE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            }
+          },
+          "aggregate": {
+            "micro_precision": 0.8333,
+            "micro_recall": 0.75,
+            "micro_f1": 0.7895,
+            "macro_precision": 0.6204,
+            "macro_recall": 0.5926,
+            "macro_f1": 0.6013,
+            "active_classes_count": 6
+          }
+        },
+        "C2_CONTEXTUAL": {
+          "per_behavior": {
+            "EXPLAIN": {
+              "tp": 5,
+              "fp": 1,
+              "fn": 4,
+              "precision": 0.8333,
+              "recall": 0.5556,
+              "f1_score": 0.6667
+            },
+            "DEMONSTRATE": {
+              "tp": 8,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.8889,
+              "recall": 1,
+              "f1_score": 0.9412
+            },
+            "COMPARE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1_score": 1
+            },
+            "DEBUG": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PREDICT_CHANGE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "ASK_WHY": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PRACTICE": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "REAL_WORLD_APP": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "EDGE_CASE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "CODE_TRACE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1_score": 1
+            },
+            "STUDENT_INTERACT": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "REINFORCE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            }
+          },
+          "aggregate": {
+            "micro_precision": 0.7895,
+            "micro_recall": 0.75,
+            "micro_f1": 0.7692,
+            "macro_precision": 0.5317,
+            "macro_recall": 0.5079,
+            "macro_f1": 0.5154,
+            "active_classes_count": 7
+          }
+        },
+        "C3_HYBRID": {
+          "per_behavior": {
+            "EXPLAIN": {
+              "tp": 5,
+              "fp": 1,
+              "fn": 4,
+              "precision": 0.8333,
+              "recall": 0.5556,
+              "f1_score": 0.6667
+            },
+            "DEMONSTRATE": {
+              "tp": 8,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.8889,
+              "recall": 1,
+              "f1_score": 0.9412
+            },
+            "COMPARE": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1_score": 1
+            },
+            "DEBUG": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PREDICT_CHANGE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "ASK_WHY": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PRACTICE": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "REAL_WORLD_APP": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "EDGE_CASE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "CODE_TRACE": {
+              "tp": 1,
+              "fp": 7,
+              "fn": 0,
+              "precision": 0.125,
+              "recall": 1,
+              "f1_score": 0.2222
+            },
+            "STUDENT_INTERACT": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "REINFORCE": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            }
+          },
+          "aggregate": {
+            "micro_precision": 0.5769,
+            "micro_recall": 0.75,
+            "micro_f1": 0.6522,
+            "macro_precision": 0.4067,
+            "macro_recall": 0.5079,
+            "macro_f1": 0.4043,
+            "active_classes_count": 7
+          }
+        }
+      },
+      "profiles": {
+        "HUMAN": {
+          "total_instances": 20,
+          "counts": {
+            "EXPLAIN": 9,
+            "DEMONSTRATE": 8,
+            "COMPARE": 1,
+            "DEBUG": 0,
+            "PREDICT_CHANGE": 0,
+            "ASK_WHY": 0,
+            "PRACTICE": 0,
+            "REAL_WORLD_APP": 0,
+            "EDGE_CASE": 0,
+            "CODE_TRACE": 1,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 1
+          },
+          "percentages": {
+            "EXPLAIN": 45,
+            "DEMONSTRATE": 40,
+            "COMPARE": 5,
+            "DEBUG": 0,
+            "PREDICT_CHANGE": 0,
+            "ASK_WHY": 0,
+            "PRACTICE": 0,
+            "REAL_WORLD_APP": 0,
+            "EDGE_CASE": 0,
+            "CODE_TRACE": 5,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 5
+          },
+          "probabilityVector": [
+            0.45,
+            0.4,
+            0.05,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.05,
+            0,
+            0.05
+          ]
+        },
+        "C1_LEXICAL": {
+          "total_instances": 18,
+          "counts": {
+            "EXPLAIN": 6,
+            "DEMONSTRATE": 9,
+            "COMPARE": 1,
+            "DEBUG": 0,
+            "PREDICT_CHANGE": 0,
+            "ASK_WHY": 1,
+            "PRACTICE": 0,
+            "REAL_WORLD_APP": 0,
+            "EDGE_CASE": 0,
+            "CODE_TRACE": 1,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 0
+          },
+          "percentages": {
+            "EXPLAIN": 33.33,
+            "DEMONSTRATE": 50,
+            "COMPARE": 5.56,
+            "DEBUG": 0,
+            "PREDICT_CHANGE": 0,
+            "ASK_WHY": 5.56,
+            "PRACTICE": 0,
+            "REAL_WORLD_APP": 0,
+            "EDGE_CASE": 0,
+            "CODE_TRACE": 5.56,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 0
+          },
+          "probabilityVector": [
+            0.3333333333333333,
+            0.5,
+            0.05555555555555555,
+            0,
+            0,
+            0.05555555555555555,
+            0,
+            0,
+            0,
+            0.05555555555555555,
+            0,
+            0
+          ]
+        },
+        "C2_CONTEXTUAL": {
+          "total_instances": 19,
+          "counts": {
+            "EXPLAIN": 6,
+            "DEMONSTRATE": 9,
+            "COMPARE": 1,
+            "DEBUG": 0,
+            "PREDICT_CHANGE": 0,
+            "ASK_WHY": 1,
+            "PRACTICE": 1,
+            "REAL_WORLD_APP": 0,
+            "EDGE_CASE": 0,
+            "CODE_TRACE": 1,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 0
+          },
+          "percentages": {
+            "EXPLAIN": 31.58,
+            "DEMONSTRATE": 47.37,
+            "COMPARE": 5.26,
+            "DEBUG": 0,
+            "PREDICT_CHANGE": 0,
+            "ASK_WHY": 5.26,
+            "PRACTICE": 5.26,
+            "REAL_WORLD_APP": 0,
+            "EDGE_CASE": 0,
+            "CODE_TRACE": 5.26,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 0
+          },
+          "probabilityVector": [
+            0.3157894736842105,
+            0.47368421052631576,
+            0.05263157894736842,
+            0,
+            0,
+            0.05263157894736842,
+            0.05263157894736842,
+            0,
+            0,
+            0.05263157894736842,
+            0,
+            0
+          ]
+        },
+        "C3_HYBRID": {
+          "total_instances": 26,
+          "counts": {
+            "EXPLAIN": 6,
+            "DEMONSTRATE": 9,
+            "COMPARE": 1,
+            "DEBUG": 0,
+            "PREDICT_CHANGE": 0,
+            "ASK_WHY": 1,
+            "PRACTICE": 1,
+            "REAL_WORLD_APP": 0,
+            "EDGE_CASE": 0,
+            "CODE_TRACE": 8,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 0
+          },
+          "percentages": {
+            "EXPLAIN": 23.08,
+            "DEMONSTRATE": 34.62,
+            "COMPARE": 3.85,
+            "DEBUG": 0,
+            "PREDICT_CHANGE": 0,
+            "ASK_WHY": 3.85,
+            "PRACTICE": 3.85,
+            "REAL_WORLD_APP": 0,
+            "EDGE_CASE": 0,
+            "CODE_TRACE": 30.77,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 0
+          },
+          "probabilityVector": [
+            0.23076923076923078,
+            0.34615384615384615,
+            0.038461538461538464,
+            0,
+            0,
+            0.038461538461538464,
+            0.038461538461538464,
+            0,
+            0,
+            0.3076923076923077,
+            0,
+            0
+          ]
+        }
+      },
+      "divergences": {
+        "C1_LEXICAL": {
+          "total_variation_distance": 0.1667,
+          "cosine_distance": 0.0395
+        },
+        "C2_CONTEXTUAL": {
+          "total_variation_distance": 0.1842,
+          "cosine_distance": 0.0435
+        },
+        "C3_HYBRID": {
+          "total_variation_distance": 0.3346,
+          "cosine_distance": 0.1819
+        }
+      }
+    },
+    "BENCH_03": {
+      "benchmark_id": "BENCH_03",
+      "unit_count": 7,
+      "units": [
+        {
+          "benchmark": "BENCH_03",
+          "unit_id": "GT-D01",
+          "title": "Mathematical vs. Programmatic Divisibility & Modulo Logic",
+          "start": 0,
+          "end": 149.5,
+          "duration": 149.5,
+          "human_source_labels": [
+            "INTRODUCE",
+            "EXPLAIN",
+            "COMPARE",
+            "ASK_WHY"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "COMPARE",
+            "ASK_WHY"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "COMPARE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "COMPARE",
+                "PRACTICE",
+                "STUDENT_INTERACT"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "COMPARE",
+                "PRACTICE",
+                "STUDENT_INTERACT",
+                "EDGE_CASE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_03",
+          "unit_id": "GT-D02",
+          "title": "Iterative LCM Search via Multiples Addition & Search Bounds",
+          "start": 150.5,
+          "end": 482.5,
+          "duration": 332,
+          "human_source_labels": [
+            "DEMONSTRATE",
+            "PRACTICE",
+            "STUDENT_INTERACT"
+          ],
+          "human_canonical_labels": [
+            "DEMONSTRATE",
+            "PRACTICE",
+            "STUDENT_INTERACT"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "DEBUG",
+                "PRACTICE",
+                "CODE_TRACE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "DEBUG",
+                "PRACTICE",
+                "CODE_TRACE",
+                "STUDENT_INTERACT"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "DEBUG",
+                "PRACTICE",
+                "CODE_TRACE",
+                "STUDENT_INTERACT",
+                "EDGE_CASE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_03",
+          "unit_id": "GT-D03",
+          "title": "Iterative-to-Recursive State Transformation for LCM",
+          "start": 485.5,
+          "end": 1256.5,
+          "duration": 771,
+          "human_source_labels": [
+            "DEMONSTRATE",
+            "PREDICT_CHANGE",
+            "CODE_TRACE",
+            "DEBUG"
+          ],
+          "human_canonical_labels": [
+            "DEMONSTRATE",
+            "PREDICT_CHANGE",
+            "CODE_TRACE",
+            "DEBUG"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE",
+                "COMPARE",
+                "DEBUG",
+                "PREDICT_CHANGE",
+                "ASK_WHY",
+                "PRACTICE",
+                "CODE_TRACE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE",
+                "COMPARE",
+                "DEBUG",
+                "PREDICT_CHANGE",
+                "ASK_WHY",
+                "PRACTICE",
+                "CODE_TRACE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "DEMONSTRATE",
+                "COMPARE",
+                "DEBUG",
+                "PREDICT_CHANGE",
+                "ASK_WHY",
+                "PRACTICE",
+                "CODE_TRACE",
+                "EDGE_CASE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_03",
+          "unit_id": "GT-D04",
+          "title": "Euclidean Algorithm for Fast GCD (Logarithmic Modulo Reduction)",
+          "start": 1268.5,
+          "end": 2142.5,
+          "duration": 874,
+          "human_source_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "COMPARE",
+            "ASK_WHY"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "COMPARE",
+            "ASK_WHY"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEBUG",
+                "PREDICT_CHANGE",
+                "CODE_TRACE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEBUG",
+                "PREDICT_CHANGE",
+                "CODE_TRACE",
+                "PRACTICE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "DEBUG",
+                "PREDICT_CHANGE",
+                "CODE_TRACE",
+                "PRACTICE",
+                "EDGE_CASE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_03",
+          "unit_id": "GT-D05",
+          "title": "Real-World Application Heuristics (Equal Partitioning vs. Interval Scheduling)",
+          "start": 2151.6,
+          "end": 2258.3,
+          "duration": 106.7,
+          "human_source_labels": [
+            "EXPLAIN",
+            "COMPARE",
+            "REINFORCE",
+            "REAL_WORLD_APP"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "COMPARE",
+            "REINFORCE",
+            "REAL_WORLD_APP"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "COMPARE",
+                "REAL_WORLD_APP"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "COMPARE",
+                "REAL_WORLD_APP",
+                "STUDENT_INTERACT"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "EXPLAIN",
+                "COMPARE",
+                "REAL_WORLD_APP",
+                "STUDENT_INTERACT"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_03",
+          "unit_id": "GT-D06",
+          "title": "Recursive String Deconstruction & Return-Time Stack Accumulation",
+          "start": 2265.8,
+          "end": 3315.9,
+          "duration": 1050.1,
+          "human_source_labels": [
+            "INTRODUCE",
+            "DEMONSTRATE",
+            "DEBUG",
+            "CODE_TRACE"
+          ],
+          "human_canonical_labels": [
+            "EXPLAIN",
+            "DEMONSTRATE",
+            "DEBUG",
+            "CODE_TRACE"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE",
+                "PRACTICE",
+                "EDGE_CASE",
+                "CODE_TRACE",
+                "REINFORCE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "DEMONSTRATE",
+                "PRACTICE",
+                "EDGE_CASE",
+                "CODE_TRACE",
+                "REINFORCE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "DEMONSTRATE",
+                "PRACTICE",
+                "EDGE_CASE",
+                "CODE_TRACE",
+                "REINFORCE",
+                "DEBUG",
+                "PREDICT_CHANGE"
+              ]
+            }
+          }
+        },
+        {
+          "benchmark": "BENCH_03",
+          "unit_id": "GT-D07",
+          "title": "Recursive Palindrome Verification & Symmetric Substring Trimming",
+          "start": 3327.2,
+          "end": 3776.5,
+          "duration": 449.3,
+          "human_source_labels": [
+            "DEMONSTRATE",
+            "PRACTICE",
+            "DEBUG",
+            "EDGE_CASE",
+            "STUDENT_INTERACT"
+          ],
+          "human_canonical_labels": [
+            "DEMONSTRATE",
+            "PRACTICE",
+            "DEBUG",
+            "EDGE_CASE",
+            "STUDENT_INTERACT"
+          ],
+          "classifiers": {
+            "C1_LEXICAL": {
+              "predicted_behaviors": [
+                "DEBUG",
+                "EDGE_CASE"
+              ]
+            },
+            "C2_CONTEXTUAL": {
+              "predicted_behaviors": [
+                "DEBUG",
+                "EDGE_CASE",
+                "PRACTICE"
+              ]
+            },
+            "C3_HYBRID": {
+              "predicted_behaviors": [
+                "DEBUG",
+                "EDGE_CASE",
+                "PRACTICE",
+                "CODE_TRACE"
+              ]
+            }
+          }
+        }
+      ],
+      "evaluations": {
+        "C1_LEXICAL": {
+          "per_behavior": {
+            "EXPLAIN": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 2,
+              "precision": 1,
+              "recall": 0.5,
+              "f1_score": 0.6667
+            },
+            "DEMONSTRATE": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 3,
+              "precision": 1,
+              "recall": 0.4,
+              "f1_score": 0.5714
+            },
+            "COMPARE": {
+              "tp": 2,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.6667,
+              "recall": 0.6667,
+              "f1_score": 0.6667
+            },
+            "DEBUG": {
+              "tp": 2,
+              "fp": 2,
+              "fn": 1,
+              "precision": 0.5,
+              "recall": 0.6667,
+              "f1_score": 0.5714
+            },
+            "PREDICT_CHANGE": {
+              "tp": 1,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.5,
+              "recall": 1,
+              "f1_score": 0.6667
+            },
+            "ASK_WHY": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PRACTICE": {
+              "tp": 1,
+              "fp": 2,
+              "fn": 1,
+              "precision": 0.3333,
+              "recall": 0.5,
+              "f1_score": 0.4
+            },
+            "REAL_WORLD_APP": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1_score": 1
+            },
+            "EDGE_CASE": {
+              "tp": 1,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.5,
+              "recall": 1,
+              "f1_score": 0.6667
+            },
+            "CODE_TRACE": {
+              "tp": 2,
+              "fp": 2,
+              "fn": 0,
+              "precision": 0.5,
+              "recall": 1,
+              "f1_score": 0.6667
+            },
+            "STUDENT_INTERACT": {
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "REINFORCE": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            }
+          },
+          "aggregate": {
+            "micro_precision": 0.56,
+            "micro_recall": 0.5185,
+            "micro_f1": 0.5385,
+            "macro_precision": 0.5,
+            "macro_recall": 0.5611,
+            "macro_f1": 0.4897,
+            "active_classes_count": 12
+          }
+        },
+        "C2_CONTEXTUAL": {
+          "per_behavior": {
+            "EXPLAIN": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 2,
+              "precision": 1,
+              "recall": 0.5,
+              "f1_score": 0.6667
+            },
+            "DEMONSTRATE": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 3,
+              "precision": 1,
+              "recall": 0.4,
+              "f1_score": 0.5714
+            },
+            "COMPARE": {
+              "tp": 2,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.6667,
+              "recall": 0.6667,
+              "f1_score": 0.6667
+            },
+            "DEBUG": {
+              "tp": 2,
+              "fp": 2,
+              "fn": 1,
+              "precision": 0.5,
+              "recall": 0.6667,
+              "f1_score": 0.5714
+            },
+            "PREDICT_CHANGE": {
+              "tp": 1,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.5,
+              "recall": 1,
+              "f1_score": 0.6667
+            },
+            "ASK_WHY": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PRACTICE": {
+              "tp": 2,
+              "fp": 4,
+              "fn": 0,
+              "precision": 0.3333,
+              "recall": 1,
+              "f1_score": 0.5
+            },
+            "REAL_WORLD_APP": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1_score": 1
+            },
+            "EDGE_CASE": {
+              "tp": 1,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.5,
+              "recall": 1,
+              "f1_score": 0.6667
+            },
+            "CODE_TRACE": {
+              "tp": 2,
+              "fp": 2,
+              "fn": 0,
+              "precision": 0.5,
+              "recall": 1,
+              "f1_score": 0.6667
+            },
+            "STUDENT_INTERACT": {
+              "tp": 1,
+              "fp": 2,
+              "fn": 1,
+              "precision": 0.3333,
+              "recall": 0.5,
+              "f1_score": 0.4
+            },
+            "REINFORCE": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            }
+          },
+          "aggregate": {
+            "micro_precision": 0.5161,
+            "micro_recall": 0.5926,
+            "micro_f1": 0.5517,
+            "macro_precision": 0.5278,
+            "macro_recall": 0.6444,
+            "macro_f1": 0.5313,
+            "active_classes_count": 12
+          }
+        },
+        "C3_HYBRID": {
+          "per_behavior": {
+            "EXPLAIN": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 2,
+              "precision": 1,
+              "recall": 0.5,
+              "f1_score": 0.6667
+            },
+            "DEMONSTRATE": {
+              "tp": 2,
+              "fp": 0,
+              "fn": 3,
+              "precision": 1,
+              "recall": 0.4,
+              "f1_score": 0.5714
+            },
+            "COMPARE": {
+              "tp": 2,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.6667,
+              "recall": 0.6667,
+              "f1_score": 0.6667
+            },
+            "DEBUG": {
+              "tp": 3,
+              "fp": 2,
+              "fn": 0,
+              "precision": 0.6,
+              "recall": 1,
+              "f1_score": 0.75
+            },
+            "PREDICT_CHANGE": {
+              "tp": 1,
+              "fp": 2,
+              "fn": 0,
+              "precision": 0.3333,
+              "recall": 1,
+              "f1_score": 0.5
+            },
+            "ASK_WHY": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 2,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            },
+            "PRACTICE": {
+              "tp": 2,
+              "fp": 4,
+              "fn": 0,
+              "precision": 0.3333,
+              "recall": 1,
+              "f1_score": 0.5
+            },
+            "REAL_WORLD_APP": {
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1,
+              "recall": 1,
+              "f1_score": 1
+            },
+            "EDGE_CASE": {
+              "tp": 1,
+              "fp": 5,
+              "fn": 0,
+              "precision": 0.1667,
+              "recall": 1,
+              "f1_score": 0.2857
+            },
+            "CODE_TRACE": {
+              "tp": 2,
+              "fp": 3,
+              "fn": 0,
+              "precision": 0.4,
+              "recall": 1,
+              "f1_score": 0.5714
+            },
+            "STUDENT_INTERACT": {
+              "tp": 1,
+              "fp": 2,
+              "fn": 1,
+              "precision": 0.3333,
+              "recall": 0.5,
+              "f1_score": 0.4
+            },
+            "REINFORCE": {
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0,
+              "recall": 0,
+              "f1_score": 0
+            }
+          },
+          "aggregate": {
+            "micro_precision": 0.4474,
+            "micro_recall": 0.6296,
+            "micro_f1": 0.5231,
+            "macro_precision": 0.4861,
+            "macro_recall": 0.6722,
+            "macro_f1": 0.4927,
+            "active_classes_count": 12
+          }
+        }
+      },
+      "profiles": {
+        "HUMAN": {
+          "total_instances": 27,
+          "counts": {
+            "EXPLAIN": 4,
+            "DEMONSTRATE": 5,
+            "COMPARE": 3,
+            "DEBUG": 3,
+            "PREDICT_CHANGE": 1,
+            "ASK_WHY": 2,
+            "PRACTICE": 2,
+            "REAL_WORLD_APP": 1,
+            "EDGE_CASE": 1,
+            "CODE_TRACE": 2,
+            "STUDENT_INTERACT": 2,
+            "REINFORCE": 1
+          },
+          "percentages": {
+            "EXPLAIN": 14.81,
+            "DEMONSTRATE": 18.52,
+            "COMPARE": 11.11,
+            "DEBUG": 11.11,
+            "PREDICT_CHANGE": 3.7,
+            "ASK_WHY": 7.41,
+            "PRACTICE": 7.41,
+            "REAL_WORLD_APP": 3.7,
+            "EDGE_CASE": 3.7,
+            "CODE_TRACE": 7.41,
+            "STUDENT_INTERACT": 7.41,
+            "REINFORCE": 3.7
+          },
+          "probabilityVector": [
+            0.14814814814814814,
+            0.18518518518518517,
+            0.1111111111111111,
+            0.1111111111111111,
+            0.037037037037037035,
+            0.07407407407407407,
+            0.07407407407407407,
+            0.037037037037037035,
+            0.037037037037037035,
+            0.07407407407407407,
+            0.07407407407407407,
+            0.037037037037037035
+          ]
+        },
+        "C1_LEXICAL": {
+          "total_instances": 25,
+          "counts": {
+            "EXPLAIN": 2,
+            "DEMONSTRATE": 2,
+            "COMPARE": 3,
+            "DEBUG": 4,
+            "PREDICT_CHANGE": 2,
+            "ASK_WHY": 1,
+            "PRACTICE": 3,
+            "REAL_WORLD_APP": 1,
+            "EDGE_CASE": 2,
+            "CODE_TRACE": 4,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 1
+          },
+          "percentages": {
+            "EXPLAIN": 8,
+            "DEMONSTRATE": 8,
+            "COMPARE": 12,
+            "DEBUG": 16,
+            "PREDICT_CHANGE": 8,
+            "ASK_WHY": 4,
+            "PRACTICE": 12,
+            "REAL_WORLD_APP": 4,
+            "EDGE_CASE": 8,
+            "CODE_TRACE": 16,
+            "STUDENT_INTERACT": 0,
+            "REINFORCE": 4
+          },
+          "probabilityVector": [
+            0.08,
+            0.08,
+            0.12,
+            0.16,
+            0.08,
+            0.04,
+            0.12,
+            0.04,
+            0.08,
+            0.16,
+            0,
+            0.04
+          ]
+        },
+        "C2_CONTEXTUAL": {
+          "total_instances": 31,
+          "counts": {
+            "EXPLAIN": 2,
+            "DEMONSTRATE": 2,
+            "COMPARE": 3,
+            "DEBUG": 4,
+            "PREDICT_CHANGE": 2,
+            "ASK_WHY": 1,
+            "PRACTICE": 6,
+            "REAL_WORLD_APP": 1,
+            "EDGE_CASE": 2,
+            "CODE_TRACE": 4,
+            "STUDENT_INTERACT": 3,
+            "REINFORCE": 1
+          },
+          "percentages": {
+            "EXPLAIN": 6.45,
+            "DEMONSTRATE": 6.45,
+            "COMPARE": 9.68,
+            "DEBUG": 12.9,
+            "PREDICT_CHANGE": 6.45,
+            "ASK_WHY": 3.23,
+            "PRACTICE": 19.35,
+            "REAL_WORLD_APP": 3.23,
+            "EDGE_CASE": 6.45,
+            "CODE_TRACE": 12.9,
+            "STUDENT_INTERACT": 9.68,
+            "REINFORCE": 3.23
+          },
+          "probabilityVector": [
+            0.06451612903225806,
+            0.06451612903225806,
+            0.0967741935483871,
+            0.12903225806451613,
+            0.06451612903225806,
+            0.03225806451612903,
+            0.1935483870967742,
+            0.03225806451612903,
+            0.06451612903225806,
+            0.12903225806451613,
+            0.0967741935483871,
+            0.03225806451612903
+          ]
+        },
+        "C3_HYBRID": {
+          "total_instances": 38,
+          "counts": {
+            "EXPLAIN": 2,
+            "DEMONSTRATE": 2,
+            "COMPARE": 3,
+            "DEBUG": 5,
+            "PREDICT_CHANGE": 3,
+            "ASK_WHY": 1,
+            "PRACTICE": 6,
+            "REAL_WORLD_APP": 1,
+            "EDGE_CASE": 6,
+            "CODE_TRACE": 5,
+            "STUDENT_INTERACT": 3,
+            "REINFORCE": 1
+          },
+          "percentages": {
+            "EXPLAIN": 5.26,
+            "DEMONSTRATE": 5.26,
+            "COMPARE": 7.89,
+            "DEBUG": 13.16,
+            "PREDICT_CHANGE": 7.89,
+            "ASK_WHY": 2.63,
+            "PRACTICE": 15.79,
+            "REAL_WORLD_APP": 2.63,
+            "EDGE_CASE": 15.79,
+            "CODE_TRACE": 13.16,
+            "STUDENT_INTERACT": 7.89,
+            "REINFORCE": 2.63
+          },
+          "probabilityVector": [
+            0.05263157894736842,
+            0.05263157894736842,
+            0.07894736842105263,
+            0.13157894736842105,
+            0.07894736842105263,
+            0.02631578947368421,
+            0.15789473684210525,
+            0.02631578947368421,
+            0.15789473684210525,
+            0.13157894736842105,
+            0.07894736842105263,
+            0.02631578947368421
+          ]
+        }
+      },
+      "divergences": {
+        "C1_LEXICAL": {
+          "total_variation_distance": 0.2815,
+          "cosine_distance": 0.1738
+        },
+        "C2_CONTEXTUAL": {
+          "total_variation_distance": 0.27,
+          "cosine_distance": 0.1985
+        },
+        "C3_HYBRID": {
+          "total_variation_distance": 0.3294,
+          "cosine_distance": 0.2617
+        }
+      }
+    }
+  }
+}

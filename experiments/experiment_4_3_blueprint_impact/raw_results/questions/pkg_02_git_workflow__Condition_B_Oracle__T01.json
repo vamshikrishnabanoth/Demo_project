@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T01",
+  "target_concept": "Identify the three areas of a Git workflow: Working Directory, Staging Area, and Repository.",
+  "target_dimension": "Foundational Prerequisite",
+  "target_cognitive_level": "Remember",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which of the following lists the three areas of a Git workflow in the correct order from where changes originate to where they are stored permanently?",
+    "options": [
+      "Working Directory, Staging Area, Repository",
+      "Repository, Staging Area, Working Directory",
+      "Staging Area, Working Directory, Repository",
+      "Working Directory, Repository, Staging Area"
+    ],
+    "correctAnswer": "Working Directory, Staging Area, Repository",
+    "explanation": "The evidence describes the Git workflow as starting in the Working Directory, then moving changes to the Staging Area with git add, and finally committing them to the Repository with git commit.",
+    "metadata": {
+      "dimension": "Foundational Prerequisite",
+      "cognitiveLevel": "Remember",
+      "targetDifficulty": "Easy",
+      "concept": "Identify the three areas of a Git workflow: Working Directory, Staging Area, and Repository."
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12937,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Which of the following lists the three areas of a Git workflow in the correct order from where changes originate to where they are stored permanently?\",\n  \"options\": [\n    \"Working Directory, Staging Area, Repository\",\n    \"Repository, Staging Area, Working Directory\",\n    \"Staging Area, Working Directory, Repository\",\n    \"Working Directory, Repository, Staging Area\"\n  ],\n  \"correctAnswer\": \"Working Directory, Staging Area, Repository\",\n  \"explanation\": \"The evidence describes the Git workflow as starting in the Working Directory, then moving changes to the Staging Area with git add, and finally committing them to the Repository with git commit.\",\n  \"metadata\": {\n    \"dimension\": \"Foundational Prerequisite\",\n    \"cognitiveLevel\": \"Remember\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

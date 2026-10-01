@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_03_recursion_gcd",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T01",
+  "target_concept": "Explain the relationship between GCD (JCD/HCF) and LCM and identify which is larger for a given pair of numbers.",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Based on the discussion of the numbers 8 and 12, which statement correctly describes their greatest common divisor (GCD) and least common multiple (LCM)?",
+    "options": [
+      "The GCD is 8 and the LCM is 12, and the GCD is larger than the LCM.",
+      "The GCD is 24 and the LCM is 4, and the GCD is larger than the LCM.",
+      "The GCD is 4 and the LCM is 24, and the LCM is larger than the GCD.",
+      "Both the GCD and LCM are 12, so they are equal in size."
+    ],
+    "correctAnswer": "The GCD is 4 and the LCM is 24, and the LCM is larger than the GCD.",
+    "explanation": "For the pair (8,12), the greatest common divisor is 4 and the least common multiple is 24. The LCM is therefore larger than the GCD, and the product of GCD and LCM equals the product of the two numbers (4 × 24 = 8 × 12 = 96).",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain the relationship between GCD (JCD/HCF) and LCM and identify which is larger for a given pair of numbers."
+    },
+    "package_id": "pkg_03_recursion_gcd",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 14039,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Based on the discussion of the numbers 8 and 12, which statement correctly describes their greatest common divisor (GCD) and least common multiple (LCM)?\",\n  \"options\": [\n    \"The GCD is 8 and the LCM is 12, and the GCD is larger than the LCM.\",\n    \"The GCD is 24 and the LCM is 4, and the GCD is larger than the LCM.\",\n    \"The GCD is 4 and the LCM is 24, and the LCM is larger than the GCD.\",\n    \"Both the GCD and LCM are 12, so they are equal in size.\"\n  ],\n  \"correctAnswer\": \"The GCD is 4 and the LCM is 24, and the LCM is larger than the GCD.\",\n  \"explanation\": \"For the pair (8,12), the greatest common divisor is 4 and the least common multiple is 24. The LCM is therefore larger than the GCD, and the product of GCD and LCM equals the product of the two numbers (4 × 24 = 8 × 12 = 96).\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

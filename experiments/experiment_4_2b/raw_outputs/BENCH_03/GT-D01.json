@@ -1,0 +1,46 @@
+{
+  "unit_id": "GT-D01",
+  "benchmark": "BENCH_03",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "COMPARE",
+    "STUDENT_INTERACT",
+    "PRACTICE",
+    "REINFORCE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "there are two type types of thing which are opposite. Greatest common divisor and least common multiple"
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "LCM would be two into two into three for 12, and for eight, it is what? Two into two into two"
+    },
+    {
+      "label": "COMPARE",
+      "quote": "JCD is always bigger or LCM is bigger"
+    },
+    {
+      "label": "STUDENT_INTERACT",
+      "quote": "Is 24 modulo eight equal equal to zero? Yes"
+    },
+    {
+      "label": "PRACTICE",
+      "quote": "So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?"
+    },
+    {
+      "label": "REINFORCE",
+      "quote": "Multiple 12 Understood? Okay"
+    }
+  ],
+  "raw_response": "{\"labels\":[\"EXPLAIN\",\"DEMONSTRATE\",\"COMPARE\",\"STUDENT_INTERACT\",\"PRACTICE\",\"REINFORCE\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"there are two type types of thing which are opposite. Greatest common divisor and least common multiple\"},{\"label\":\"DEMONSTRATE\",\"quote\":\"LCM would be two into two into three for 12, and for eight, it is what? Two into two into two\"},{\"label\":\"COMPARE\",\"quote\":\"JCD is always bigger or LCM is bigger\"},{\"label\":\"STUDENT_INTERACT\",\"quote\":\"Is 24 modulo eight equal equal to zero? Yes\"},{\"label\":\"PRACTICE\",\"quote\":\"So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?\"},{\"label\":\"REINFORCE\",\"quote\":\"Multiple 12 Understood? Okay\"}]}",
+  "latency_ms": 16979,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

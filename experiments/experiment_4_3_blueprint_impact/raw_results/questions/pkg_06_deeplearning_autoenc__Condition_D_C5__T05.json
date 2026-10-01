@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_D_C5",
+  "target_id": "T05",
+  "target_concept": "Contrast deterministic point encoding with probabilistic distribution encoding in terms of reconstruction fidelity.",
+  "target_dimension": "Comparison / Tradeoff",
+  "target_cognitive_level": "Evaluate",
+  "mcq": {
+    "targetId": "T05",
+    "questionText": "Why does a variational autoencoder (distributional encoding) typically achieve higher reconstruction fidelity than a standard autoencoder that uses deterministic point encoding?",
+    "options": [
+      "Because it models both the mean and variance of the latent distribution, capturing data variability.",
+      "Because it employs a deeper neural network architecture than a standard autoencoder.",
+      "Because it minimizes reconstruction loss without any regularization term.",
+      "Because it discards the latent space and directly reconstructs pixels from the input."
+    ],
+    "correctAnswer": "Because it models both the mean and variance of the latent distribution, capturing data variability.",
+    "explanation": "The evidence states that normal encoders focus on a single data point, while variational autoencoders encode the mean and variance of the pixel distribution. By learning a probability distribution (mean and variance) and using KL divergence to keep it close to a normal distribution, VAEs preserve more information about the data spread, leading to higher reconstruction accuracy.",
+    "metadata": {
+      "dimension": "Comparison / Tradeoff",
+      "cognitiveLevel": "Evaluate",
+      "targetDifficulty": "Medium",
+      "concept": "Contrast deterministic point encoding with probabilistic distribution encoding in terms of reconstruction fidelity."
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_D_C5"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12887,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T05\",\n  \"questionText\": \"Why does a variational autoencoder (distributional encoding) typically achieve higher reconstruction fidelity than a standard autoencoder that uses deterministic point encoding?\",\n  \"options\": [\n    \"Because it models both the mean and variance of the latent distribution, capturing data variability.\",\n    \"Because it employs a deeper neural network architecture than a standard autoencoder.\",\n    \"Because it minimizes reconstruction loss without any regularization term.\",\n    \"Because it discards the latent space and directly reconstructs pixels from the input.\"\n  ],\n  \"correctAnswer\": \"Because it models both the mean and variance of the latent distribution, capturing data variability.\",\n  \"explanation\": \"The evidence states that normal encoders focus on a single data point, while variational autoencoders encode the mean and variance of the pixel distribution. By learning a probability distribution (mean and variance) and using KL divergence to keep it close to a normal distribution, VAEs preserve more information about the data spread, leading to higher reconstruction accuracy.\",\n  \"metadata\": {\n    \"dimension\": \"Comparison / Tradeoff\",\n    \"cognitiveLevel\": \"Evaluate\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,41 @@
+{
+  "unit_id": "GT-G09",
+  "benchmark": "BENCH_04",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "DEMONSTRATE",
+    "STUDENT_INTERACT",
+    "REINFORCE",
+    "PREDICT_CHANGE"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "Now let me make this normal folder into a git repository. To do that what we have to do? You have to type git init."
+    },
+    {
+      "label": "DEMONSTRATE",
+      "quote": "I will simply type git --version. And when I type enter you can see this is the latest version of your git."
+    },
+    {
+      "label": "STUDENT_INTERACT",
+      "quote": "To do that what we have to do? You have to type git init."
+    },
+    {
+      "label": "REINFORCE",
+      "quote": "Now when I type git status you can see that a.ext now is in green color. That means it is telling you that the changes are ready to be committed."
+    },
+    {
+      "label": "PREDICT_CHANGE",
+      "quote": "When you type git reset. All the changes will be reverted back."
+    }
+  ],
+  "raw_response": "{\n  \"labels\": [\"EXPLAIN\",\"DEMONSTRATE\",\"STUDENT_INTERACT\",\"REINFORCE\",\"PREDICT_CHANGE\"],\n  \"evidence\": [\n    {\n      \"label\": \"EXPLAIN\",\n      \"quote\": \"Now let me make this normal folder into a git repository. To do that what we have to do? You have to type git init.\"\n    },\n    {\n      \"label\": \"DEMONSTRATE\",\n      \"quote\": \"I will simply type git --version. And when I type enter you can see this is the latest version of your git.\"\n    },\n    {\n      \"label\": \"STUDENT_INTERACT\",\n      \"quote\": \"To do that what we have to do? You have to type git init.\"\n    },\n    {\n      \"label\": \"REINFORCE\",\n      \"quote\": \"Now when I type git status you can see that a.ext now is in green color. That means it is telling you that the changes are ready to be committed.\"\n    },\n    {\n      \"label\": \"PREDICT_CHANGE\",\n      \"quote\": \"When you type git reset. All the changes will be reverted back.\"\n    }\n  ]\n}",
+  "latency_ms": 16803,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

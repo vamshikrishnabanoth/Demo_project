@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Trace the outer‑loop/inner‑loop flow that processes characters up to the smallest length and breaks on mismatch",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "The question directly probes the break‑statement behavior described in the lecture segment about the outer/inner loop character comparison."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Answering requires interpreting loop control flow and the condition for breaking, not mere recall of a definition."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "The stem is concise, grammatically correct, and unambiguously asks when the break exits the loops."
+    },
+    "d4_distractor_plausibility": {
+      "score": 4,
+      "rationale": "The incorrect options reflect plausible misunderstandings of loop termination and hash‑set size, making them reasonable distractors."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Given the evidence, only option A is defensibly correct; the other three are definitively incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 4,
+      "rationale": "The question frames an authentic inquiry into algorithmic control flow rather than a trivial factual recall."
+    }
+  },
+  "latency_ms": 2182,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"The question directly probes the break‑statement behavior described in the lecture segment about the outer/inner loop character comparison.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Answering requires interpreting loop control flow and the condition for breaking, not mere recall of a definition.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"The stem is concise, grammatically correct, and unambiguously asks when the break exits the loops.\"},\n  \"d4_distractor_plausibility\": {\"score\":4,\"rationale\":\"The incorrect options reflect plausible misunderstandings of loop termination and hash‑set size, making them reasonable distractors.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Given the evidence, only option A is defensibly correct; the other three are definitively incorrect.\"},\n  \"d6_question_novelty\": {\"score\":4,\"rationale\":\"The question frames an authentic inquiry into algorithmic control flow rather than a trivial factual recall.\"}\n}"
+}

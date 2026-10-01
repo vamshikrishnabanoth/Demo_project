@@ -1,0 +1,26 @@
+{
+  "unit_id": "GT-G01",
+  "benchmark": "BENCH_04",
+  "classifier": "C4_LLM_ZERO_SHOT",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "temperature": 0,
+  "predicted_labels": [
+    "EXPLAIN",
+    "REAL_WORLD_APP"
+  ],
+  "evidence": [
+    {
+      "label": "EXPLAIN",
+      "quote": "So the first command you have is Git version... we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed."
+    },
+    {
+      "label": "REAL_WORLD_APP",
+      "quote": "if you want to know if the Git is installed in your system"
+    }
+  ],
+  "raw_response": "{\"labels\":[\"EXPLAIN\",\"REAL_WORLD_APP\"],\"evidence\":[{\"label\":\"EXPLAIN\",\"quote\":\"So the first command you have is Git version... we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed.\"},{\"label\":\"REAL_WORLD_APP\",\"quote\":\"if you want to know if the Git is installed in your system\"}]}",
+  "latency_ms": 1393,
+  "retry_count": 0,
+  "status": "SUCCESS"
+}

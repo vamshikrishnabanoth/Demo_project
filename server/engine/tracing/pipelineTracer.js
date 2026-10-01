@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const { performance } = require('perf_hooks');
+const traceService = require('../../services/traceService');
 
 const TRACE_DIR = path.resolve(__dirname, '../../logs/traces');
 
@@ -20,9 +21,14 @@ class PipelineTracer {
     this.enabled = process.env.ENABLE_PIPELINE_TRACING !== 'false';
     this.startTime = performance.now();
     this.timestamp = new Date().toISOString();
+    this.traceId = options.traceId || traceService.startTrace(this.requestId, options.sessionId || 'quiz_session', {
+      componentVersion: 'v3.5-shadow',
+      parameters: options.parameters || {}
+    }) || `trace_${this.requestId}`;
 
     this.traceData = {
       version: '2.0.0',
+      traceId: this.traceId,
       requestId: this.requestId,
       timestamp: this.timestamp,
       environment: process.env.NODE_ENV || 'development',
@@ -67,6 +73,14 @@ class PipelineTracer {
       warnings: [],
       decisions: []
     };
+
+    traceService.emitEvent({
+      traceId: this.traceId,
+      requestId: this.requestId,
+      stage: 'PIPELINE_EXECUTION',
+      substage: `STAGE_${stageNumber}_${stageName.toUpperCase().replace(/\s+/g, '_')}`,
+      status: 'STARTED'
+    });
   }
 
   recordStageComplete(stageNumber, stageName, inputs = {}, outputs = {}, warnings = [], decisions = []) {
@@ -97,6 +111,18 @@ class PipelineTracer {
       durationMs,
       timestamp: new Date().toISOString()
     });
+
+    traceService.emitEvent({
+      traceId: this.traceId,
+      requestId: this.requestId,
+      stage: 'PIPELINE_EXECUTION',
+      substage: `STAGE_${stageNumber}_${stageName.toUpperCase().replace(/\s+/g, '_')}`,
+      status: 'COMPLETED',
+      durationMs,
+      inputs,
+      outputs,
+      decisions: { warnings, decisions }
+    });
   }
 
   recordDecision(category, description, details = {}) {
@@ -106,6 +132,19 @@ class PipelineTracer {
       category,
       description,
       details
+    });
+
+    traceService.emitEvent({
+      traceId: this.traceId,
+      requestId: this.requestId,
+      stage: 'DECISION_LOG',
+      substage: category,
+      status: 'COMPLETED',
+      decisions: {
+        category,
+        description,
+        adjudicationDetails: details
+      }
     });
   }
 
@@ -118,6 +157,27 @@ class PipelineTracer {
       userPrompt,
       metadata
     });
+
+    traceService.emitEvent({
+      traceId: this.traceId,
+      requestId: this.requestId,
+      stage: 'MODEL_INVOCATION',
+      substage: slotId,
+      status: 'COMPLETED',
+      modelCall: {
+        provider: metadata.provider || 'groq',
+        modelIdentifier: metadata.model || 'openai/gpt-oss-20b',
+        promptTemplateVersion: 'v3.4-frozen',
+        temperature: metadata.temperature || 0.0,
+        maxTokens: metadata.maxTokens || 1200,
+        retries: metadata.retries || 0
+      },
+      inputs: {
+        promptSent: userPrompt,
+        systemPrompt,
+        conceptLabel
+      }
+    });
   }
 
   recordValidatorResult(slotId, result) {
@@ -129,6 +189,24 @@ class PipelineTracer {
       failureStage: result.failureStage,
       findings: result.findings,
       telemetry: result.telemetry
+    });
+
+    traceService.emitEvent({
+      traceId: this.traceId,
+      requestId: this.requestId,
+      stage: 'VALIDATION_GATE',
+      substage: slotId,
+      status: result.isValid ? 'COMPLETED' : 'FAILED',
+      decisions: {
+        gateName: result.failureStage || 'VALIDATOR_ORCHESTRATOR',
+        passed: result.isValid,
+        qualityScore: result.qualityScore,
+        actionTaken: result.isValid ? 'ACCEPTED' : 'REJECTED',
+        adjudicationDetails: {
+          findings: result.findings,
+          telemetry: result.telemetry
+        }
+      }
     });
   }
 
@@ -150,6 +228,12 @@ class PipelineTracer {
     } catch (err) {
       console.error('[PIPELINE_TRACER] Error writing trace file:', err.message);
     }
+
+    traceService.completeTrace(this.requestId, 'COMPLETED', {
+      questionCount: finalQuizPayload?.questions?.length || 0,
+      totalDurationMs: this.traceData.metadata.totalDurationMs,
+      stagesCompleted: Object.keys(this.traceData.stages).length
+    });
 
     return this.traceData;
   }

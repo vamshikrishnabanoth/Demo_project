@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_E_Permuted",
+  "target_id": "T02",
+  "target_concept": "Describe how git commit creates a repository snapshot and the role of the commit message",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T02",
+    "questionText": "In the Git workflow described, what is the primary effect of the `git commit` command and why is providing a commit message recommended?",
+    "options": [
+      "It moves files directly from the working directory to the remote repository without creating a local snapshot.",
+      "It permanently deletes the previous commit history and replaces it with the current working directory state.",
+      "It creates a new snapshot of the staged changes in the repository and the message documents what was changed, helping future reviewers understand the commit.",
+      "The commit message is optional and has no impact on tracking changes, so it can be omitted without consequence."
+    ],
+    "correctAnswer": "It creates a new snapshot of the staged changes in the repository and the message documents what was changed, helping future reviewers understand the commit.",
+    "explanation": "According to the evidence, `git commit` saves the staged changes as a new snapshot in the Git repository. Providing a commit message records what changes were made, making it easier to understand each version later. The other options describe actions not performed by `git commit` or misunderstand the role of the commit message.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Describe how git commit creates a repository snapshot and the role of the commit message"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_E_Permuted"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 10719,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T02\",\n  \"questionText\": \"In the Git workflow described, what is the primary effect of the `git commit` command and why is providing a commit message recommended?\",\n  \"options\": [\n    \"It moves files directly from the working directory to the remote repository without creating a local snapshot.\",\n    \"It permanently deletes the previous commit history and replaces it with the current working directory state.\",\n    \"It creates a new snapshot of the staged changes in the repository and the message documents what was changed, helping future reviewers understand the commit.\",\n    \"The commit message is optional and has no impact on tracking changes, so it can be omitted without consequence.\"\n  ],\n  \"correctAnswer\": \"It creates a new snapshot of the staged changes in the repository and the message documents what was changed, helping future reviewers understand the commit.\",\n  \"explanation\": \"According to the evidence, `git commit` saves the staged changes as a new snapshot in the Git repository. Providing a commit message records what changes were made, making it easier to understand each version later. The other options describe actions not performed by `git commit` or misunderstand the role of the commit message.\",\n  \"metadata\": {\n    \"dimension\": \"Conceptual\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_01_git_intro",
+  "condition": "Condition_C_C4",
+  "target_id": "T01",
+  "target_concept": "Define Git as a distributed version control system and explain its purpose",
+  "target_dimension": "Conceptual",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Which of the following best defines Git and its primary purpose?",
+    "options": [
+      "Git is a distributed version control system that helps developers track changes in their projects.",
+      "Git is a centralized version control system that stores all code in a single server.",
+      "Git is a build automation tool used to compile and package source code.",
+      "Git automatically merges all code changes without any user input."
+    ],
+    "correctAnswer": "Git is a distributed version control system that helps developers track changes in their projects.",
+    "explanation": "The evidence describes Git as a distributed version control system that assists developers in keeping track of changes. The other options either describe different tools or common misconceptions about Git.",
+    "metadata": {
+      "dimension": "Conceptual",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Easy",
+      "concept": "Define Git as a distributed version control system and explain its purpose"
+    },
+    "package_id": "pkg_01_git_intro",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 12724,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\":\"T01\",\n  \"questionText\":\"Which of the following best defines Git and its primary purpose?\",\n  \"options\":[\n    \"Git is a distributed version control system that helps developers track changes in their projects.\",\n    \"Git is a centralized version control system that stores all code in a single server.\",\n    \"Git is a build automation tool used to compile and package source code.\",\n    \"Git automatically merges all code changes without any user input.\"\n  ],\n  \"correctAnswer\":\"Git is a distributed version control system that helps developers track changes in their projects.\",\n  \"explanation\":\"The evidence describes Git as a distributed version control system that assists developers in keeping track of changes. The other options either describe different tools or common misconceptions about Git.\",\n  \"metadata\":{\n    \"dimension\":\"Conceptual\",\n    \"cognitiveLevel\":\"Understand\",\n    \"targetDifficulty\":\"Easy\"\n  }\n}"
+}

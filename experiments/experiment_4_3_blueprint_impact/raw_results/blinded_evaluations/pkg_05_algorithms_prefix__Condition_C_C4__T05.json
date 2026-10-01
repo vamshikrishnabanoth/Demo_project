@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "package_id": "pkg_05_algorithms_prefix",
+  "condition": "Condition_C_C4",
+  "target_id": "T05",
+  "target_concept": "Compare considerations of time efficiency, readability, and maintainability when choosing an implementation for LCP",
+  "evaluation": {
+    "d1_teaching_alignment": {
+      "score": 5,
+      "rationale": "Directly asks about time, readability, and maintainability trade‑offs for LCP as emphasized in the lecture."
+    },
+    "d2_cognitive_demand": {
+      "score": 4,
+      "rationale": "Requires weighing multiple criteria and selecting the most balanced statement, beyond rote recall."
+    },
+    "d3_stem_clarity": {
+      "score": 5,
+      "rationale": "Stem is clear, specific, and unambiguous about the two implementations being compared."
+    },
+    "d4_distractor_plausibility": {
+      "score": 3,
+      "rationale": "Some distractors (A, B, D) are clearly inferior or exaggerated, though A could be a plausible misconception."
+    },
+    "d5_single_key_determinism": {
+      "score": 5,
+      "rationale": "Only option C aligns with the lecture’s balanced view; other options are demonstrably incorrect."
+    },
+    "d6_question_novelty": {
+      "score": 5,
+      "rationale": "Prompts authentic analysis of implementation trade‑offs rather than simple factual recall."
+    }
+  },
+  "latency_ms": 2522,
+  "retry_count": 0,
+  "raw_response": "{\n  \"d1_teaching_alignment\": {\"score\":5,\"rationale\":\"Directly asks about time, readability, and maintainability trade‑offs for LCP as emphasized in the lecture.\"},\n  \"d2_cognitive_demand\": {\"score\":4,\"rationale\":\"Requires weighing multiple criteria and selecting the most balanced statement, beyond rote recall.\"},\n  \"d3_stem_clarity\": {\"score\":5,\"rationale\":\"Stem is clear, specific, and unambiguous about the two implementations being compared.\"},\n  \"d4_distractor_plausibility\": {\"score\":3,\"rationale\":\"Some distractors (A, B, D) are clearly inferior or exaggerated, though A could be a plausible misconception.\"},\n  \"d5_single_key_determinism\": {\"score\":5,\"rationale\":\"Only option C aligns with the lecture’s balanced view; other options are demonstrably incorrect.\"},\n  \"d6_question_novelty\": {\"score\":5,\"rationale\":\"Prompts authentic analysis of implementation trade‑offs rather than simple factual recall.\"}\n}"
+}

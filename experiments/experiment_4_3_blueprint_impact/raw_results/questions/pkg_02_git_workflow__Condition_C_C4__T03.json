@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_02_git_workflow",
+  "condition": "Condition_C_C4",
+  "target_id": "T03",
+  "target_concept": "Explain how `git commit -m \"message\"` creates a repository snapshot and records a descriptive message",
+  "target_dimension": "Cause / Effect",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T03",
+    "questionText": "When a learner runs `git commit -m \"message\"`, which of the following best describes what happens and why the message is important?",
+    "options": [
+      "It creates a new snapshot of the staged changes in the repository and records the provided message.",
+      "It moves files directly from the working directory into the repository without requiring them to be staged.",
+      "It updates the remote repository immediately, bypassing the local commit history.",
+      "It automatically stages all modified files, so no prior `git add` is needed."
+    ],
+    "correctAnswer": "It creates a new snapshot of the staged changes in the repository and records the provided message.",
+    "explanation": "According to the evidence, `git commit` saves the changes that have been staged into the repository, creating a snapshot of the project at that point. The `-m \"message\"` option records a descriptive message that explains what changes were made, helping users understand the purpose of that snapshot later.",
+    "metadata": {
+      "dimension": "Cause / Effect",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Medium",
+      "concept": "Explain how `git commit -m \"message\"` creates a repository snapshot and records a descriptive message"
+    },
+    "package_id": "pkg_02_git_workflow",
+    "condition": "Condition_C_C4"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 16209,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T03\",\n  \"questionText\": \"When a learner runs `git commit -m \\\"message\\\"`, which of the following best describes what happens and why the message is important?\",\n  \"options\": [\n    \"It creates a new snapshot of the staged changes in the repository and records the provided message.\",\n    \"It moves files directly from the working directory into the repository without requiring them to be staged.\",\n    \"It updates the remote repository immediately, bypassing the local commit history.\",\n    \"It automatically stages all modified files, so no prior `git add` is needed.\"\n  ],\n  \"correctAnswer\": \"It creates a new snapshot of the staged changes in the repository and records the provided message.\",\n  \"explanation\": \"According to the evidence, `git commit` saves the changes that have been staged into the repository, creating a snapshot of the project at that point. The `-m \\\"message\\\"` option records a descriptive message that explains what changes were made, helping users understand the purpose of that snapshot later.\",\n  \"metadata\": {\n    \"dimension\": \"Cause / Effect\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

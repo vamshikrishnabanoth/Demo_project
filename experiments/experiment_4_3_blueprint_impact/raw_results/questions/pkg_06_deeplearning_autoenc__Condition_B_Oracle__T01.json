@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_06_deeplearning_autoenc",
+  "condition": "Condition_B_Oracle",
+  "target_id": "T01",
+  "target_concept": "Explain why flattening a 2‑D image into a 1‑D vector causes reconstruction failure in fully connected autoencoders",
+  "target_dimension": "Foundational Prerequisite",
+  "target_cognitive_level": "Understand",
+  "mcq": {
+    "targetId": "T01",
+    "questionText": "Why does flattening a 2‑D image into a 1‑D vector often cause reconstruction failure in fully connected autoencoders?",
+    "options": [
+      "Because flattening discards the spatial relationships between pixels",
+      "Because fully connected layers require convolutional filters to capture features",
+      "Because dropout is applied during the encoding phase",
+      "Because the model overfits due to an excessive number of parameters"
+    ],
+    "correctAnswer": "Because flattening discards the spatial relationships between pixels",
+    "explanation": "Fully connected autoencoders flatten the 2‑D image into a 1‑D vector, which destroys the inherent spatial structure of the image. Without preserving locality, the decoder cannot accurately reconstruct the original image, leading to poor reconstruction quality.",
+    "metadata": {
+      "dimension": "Foundational Prerequisite",
+      "cognitiveLevel": "Understand",
+      "targetDifficulty": "Easy",
+      "concept": "Explain why flattening a 2‑D image into a 1‑D vector causes reconstruction failure in fully connected autoencoders"
+    },
+    "package_id": "pkg_06_deeplearning_autoenc",
+    "condition": "Condition_B_Oracle"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 11579,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T01\",\n  \"questionText\": \"Why does flattening a 2‑D image into a 1‑D vector often cause reconstruction failure in fully connected autoencoders?\",\n  \"options\": [\n    \"Because flattening discards the spatial relationships between pixels\",\n    \"Because fully connected layers require convolutional filters to capture features\",\n    \"Because dropout is applied during the encoding phase\",\n    \"Because the model overfits due to an excessive number of parameters\"\n  ],\n  \"correctAnswer\": \"Because flattening discards the spatial relationships between pixels\",\n  \"explanation\": \"Fully connected autoencoders flatten the 2‑D image into a 1‑D vector, which destroys the inherent spatial structure of the image. Without preserving locality, the decoder cannot accurately reconstruct the original image, leading to poor reconstruction quality.\",\n  \"metadata\": {\n    \"dimension\": \"Foundational Prerequisite\",\n    \"cognitiveLevel\": \"Understand\",\n    \"targetDifficulty\": \"Easy\"\n  }\n}"
+}

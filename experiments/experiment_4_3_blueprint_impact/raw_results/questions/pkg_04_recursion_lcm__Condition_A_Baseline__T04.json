@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "package_id": "pkg_04_recursion_lcm",
+  "condition": "Condition_A_Baseline",
+  "target_id": "T04",
+  "target_concept": "Implement a recursive string‑reversal function using the base case length = 1 and building the result on return.",
+  "target_dimension": "Application",
+  "target_cognitive_level": "Apply",
+  "mcq": {
+    "targetId": "T04",
+    "questionText": "When writing a recursive C++ function to reverse a string, what should the function return in the base case where the input string length equals 1?",
+    "options": [
+      "Return the original string",
+      "Return an empty string",
+      "Return the first character of the string",
+      "Return the string concatenated with itself"
+    ],
+    "correctAnswer": "Return the original string",
+    "explanation": "The evidence states that the base condition is \"if str.length == 1\" and the required return is \"Return STR\". Therefore, for a single‑character string the function should simply return that original string.",
+    "metadata": {
+      "dimension": "Application",
+      "cognitiveLevel": "Apply",
+      "targetDifficulty": "Medium",
+      "concept": "Implement a recursive string‑reversal function using the base case length = 1 and building the result on return."
+    },
+    "package_id": "pkg_04_recursion_lcm",
+    "condition": "Condition_A_Baseline"
+  },
+  "grounding_gate": {
+    "status": "PASSED",
+    "failureCode": null,
+    "rejectedCount": 0,
+    "reasons": []
+  },
+  "latency_ms": 15438,
+  "retry_count": 0,
+  "raw_response": "{\n  \"targetId\": \"T04\",\n  \"questionText\": \"When writing a recursive C++ function to reverse a string, what should the function return in the base case where the input string length equals 1?\",\n  \"options\": [\n    \"Return the original string\",\n    \"Return an empty string\",\n    \"Return the first character of the string\",\n    \"Return the string concatenated with itself\"\n  ],\n  \"correctAnswer\": \"Return the original string\",\n  \"explanation\": \"The evidence states that the base condition is \\\"if str.length == 1\\\" and the required return is \\\"Return STR\\\". Therefore, for a single‑character string the function should simply return that original string.\",\n  \"metadata\": {\n    \"dimension\": \"Application\",\n    \"cognitiveLevel\": \"Apply\",\n    \"targetDifficulty\": \"Medium\"\n  }\n}"
+}

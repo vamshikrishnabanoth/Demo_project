@@ -1,0 +1,158 @@
+{
+  "package_id": "pkg_01_git_intro",
+  "benchmark_id": "BENCH_04",
+  "instructor": "Git Instructor",
+  "topic": "Git Fundamentals, Repository Init & Working Directory",
+  "unit_ids": [
+    "GT-G00",
+    "GT-G01",
+    "GT-G02",
+    "GT-G03",
+    "GT-G04"
+  ],
+  "lecture_depth": {
+    "score": 72,
+    "rating": "Proficient"
+  },
+  "voice_emphasis": {
+    "syntaxEmphasis": "HIGH",
+    "conceptualEmphasis": "HIGH",
+    "explicitInstructions": []
+  },
+  "raw_content": "--- [SEGMENT 1: GT-G00 - VCS Introduction & Conceptual Overview] (Start: 0s, Duration: 39.48s) ---\nHello students, welcome to the next session. In today's session, we will be learning about some of the basic Git commands. So in the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are doing in the project that they are developing. So today, let us talk about the different basic commands that are needed to use Git.\n\n--- [SEGMENT 2: GT-G01 - git --version CLI Check] (Start: 39.48s, Duration: 14.38s) ---\nSo the first command you have is Git version. So if you want to know if the Git is installed in your system, then we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed.\n\n--- [SEGMENT 3: GT-G02 - git config Global Configuration] (Start: 53.86s, Duration: 66.44s) ---\nThe second one you have is Git config. So Git config is a command which is used to give details, give your details to the Git tool. Okay, so why do I need to give my details? It is because whenever you are doing any changes in the project and you are saving the changes, to keep track of those changes, to know who has done that particular change, your Git has to know your information. That is the reason you have to give your details like your username, your email ID and all to Git. This is called as Git config or it is also called as configuration. Right? So you can give two details about yourself, which is the username and the second one you have is your email ID. So to do that, you have to give git config space hyphen hyphen global. Okay? Space user dot name and in double quotes, you can give your name. The same thing for your email ID also. So you can say user dot email and in double quotes, you can give your email ID as shown in this example. Okay?\n\n--- [SEGMENT 4: GT-G03 - git init Repository Initialization] (Start: 120.3s, Duration: 36.82s) ---\nThe next one you are using is Git init. So if you want to start a new project, to keep track of the changes that you are doing in that particular project, you have to create a local repository. That is called as Git repository. Okay? Where your final changes will be maintained in the form of versions. The third stage of your Git, if you remember the workflow. So to keep changes, you have to create a Git repository. To create a repository in Git, you have to use a command called as git init. So when you use git init, it will tell you that an empty repository has been created. Okay?\n\n--- [SEGMENT 5: GT-G04 - git status Working Tree Inspection] (Start: 157.12s, Duration: 29.76s) ---\nThe next command you have is git status. So if you want to know, so say suppose you have created a project and you have done n number of changes. Okay? And you don't remember what are the changes that you have done. So if you want to know what are the changes you have done in your particular project, simply click a command called as git status. It will tell you what are the changes that you have made and which changes have not yet been saved into the repository. Right? So simply give git status.",
+  "chunks": [
+    {
+      "chunk_id": "chunk_01",
+      "unit_id": "GT-G00",
+      "title": "VCS Introduction & Conceptual Overview",
+      "start": 0,
+      "end": 39.48,
+      "text": "Hello students, welcome to the next session. In today's session, we will be learning about some of the basic Git commands. So in the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are doing in the project that they are developing. So today, let us talk about the different basic commands that are needed to use Git."
+    },
+    {
+      "chunk_id": "chunk_02",
+      "unit_id": "GT-G01",
+      "title": "git --version CLI Check",
+      "start": 39.48,
+      "end": 53.86,
+      "text": "So the first command you have is Git version. So if you want to know if the Git is installed in your system, then we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed."
+    },
+    {
+      "chunk_id": "chunk_03",
+      "unit_id": "GT-G02",
+      "title": "git config Global Configuration",
+      "start": 53.86,
+      "end": 120.3,
+      "text": "The second one you have is Git config. So Git config is a command which is used to give details, give your details to the Git tool. Okay, so why do I need to give my details? It is because whenever you are doing any changes in the project and you are saving the changes, to keep track of those changes, to know who has done that particular change, your Git has to know your information. That is the reason you have to give your details like your username, your email ID and all to Git. This is called as Git config or it is also called as configuration. Right? So you can give two details about yourself, which is the username and the second one you have is your email ID. So to do that, you have to give git config space hyphen hyphen global. Okay? Space user dot name and in double quotes, you can give your name. The same thing for your email ID also. So you can say user dot email and in double quotes, you can give your email ID as shown in this example. Okay?"
+    },
+    {
+      "chunk_id": "chunk_04",
+      "unit_id": "GT-G03",
+      "title": "git init Repository Initialization",
+      "start": 120.3,
+      "end": 157.12,
+      "text": "The next one you are using is Git init. So if you want to start a new project, to keep track of the changes that you are doing in that particular project, you have to create a local repository. That is called as Git repository. Okay? Where your final changes will be maintained in the form of versions. The third stage of your Git, if you remember the workflow. So to keep changes, you have to create a Git repository. To create a repository in Git, you have to use a command called as git init. So when you use git init, it will tell you that an empty repository has been created. Okay?"
+    },
+    {
+      "chunk_id": "chunk_05",
+      "unit_id": "GT-G04",
+      "title": "git status Working Tree Inspection",
+      "start": 157.12,
+      "end": 186.88,
+      "text": "The next command you have is git status. So if you want to know, so say suppose you have created a project and you have done n number of changes. Okay? And you don't remember what are the changes that you have done. So if you want to know what are the changes you have done in your particular project, simply click a command called as git status. It will tell you what are the changes that you have made and which changes have not yet been saved into the repository. Right? So simply give git status."
+    }
+  ],
+  "behavior_payloads": {
+    "oracle": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "Hello students, welcome to the next session. In today's session, we will be learning about some of the basic Git commands. So in the last cl",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "DEMONSTRATE",
+        "evidence_quote": "So the first command you have is Git version. So if you want to know if the Git is installed in your system, then we will be using this part",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "c4": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are do",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "REINFORCE",
+        "evidence_quote": "In the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "REAL_WORLD_APP",
+        "evidence_quote": "if you want to know if the Git is installed in your system",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "DEMONSTRATE",
+        "evidence_quote": "you have to give git config space hyphen hyphen global ... user.name and in double quotes, you can give your name.",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "ASK_WHY",
+        "evidence_quote": "Okay, so why do I need to give my details?",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "c5": [
+      {
+        "behavior": "EXPLAIN",
+        "evidence_quote": "Git is basically a distributed version control system, which will be helping the developers to keep track about whatever changes they are do",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "REINFORCE",
+        "evidence_quote": "in the last class, I have given you an introduction to Git, where I told you Git is basically a distributed version control system",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "REAL_WORLD_APP",
+        "evidence_quote": "whenever you are doing any changes in the project and you are saving the changes, to keep track of those changes, to know who has done that",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      },
+      {
+        "behavior": "ASK_WHY",
+        "evidence_quote": "Okay, so why do I need to give my details?",
+        "evidence_modality": "TRANSCRIPT_EVIDENCE"
+      }
+    ],
+    "permuted": {
+      "source_package_id": "pkg_02_git_workflow",
+      "behaviors": [
+        {
+          "behavior": "EXPLAIN",
+          "evidence_quote": "The next one you have is git add. So this is, if you remember in your git workflow, I told you we have three areas. Working directory, stagi",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "DEMONSTRATE",
+          "evidence_quote": "The next one you have is git add. So this is, if you remember in your git workflow, I told you we have three areas. Working directory, stagi",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "REINFORCE",
+          "evidence_quote": "Then you have to go for the next one, which is called as git commit. Git commit will save the changes of your particular file into the repos",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "COMPARE",
+          "evidence_quote": "The next one is git diff. So for example, if you want to know what is the previous commit changes that I have made and what is the new chang",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        },
+        {
+          "behavior": "CODE_TRACE",
+          "evidence_quote": "So before that let's start with knowing what is the git version. So I will simply type git space hyphen hyphen version. And when I type ente",
+          "evidence_modality": "TRANSCRIPT_EVIDENCE"
+        }
+      ]
+    }
+  }
+}
