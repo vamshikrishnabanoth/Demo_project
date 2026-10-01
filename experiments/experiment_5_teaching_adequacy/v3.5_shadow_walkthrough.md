@@ -1,7 +1,7 @@
 # Walkthrough: Live Pipeline Observability Workbench & Shadow-Mode Benchmark
 
 **Release Target:** v3.5-shadow  
-**Release Commit:** `ddb15de9f83460f58bf7e9e7f9c4c6a4efbe10f5` (`tag: v3.5-shadow`)  
+**Release Commit:** `e22d56a7d24e5841698052d1424632763ab8bbad` (`tag: v3.5-shadow`)  
 **Baseline Anchor:** `b1b15535389df45151601a9a39bc3c5d8f46e1f0` (`v3.4-frozen`)  
 **Status:** Frozen as a v3.5-shadow engineering milestone.
 
@@ -29,11 +29,11 @@ To preserve scientific rigor, all findings in this milestone report are classifi
 Verification performed via `git log -n 1 --decorate` and `git status`:
 
 ```
-commit ddb15de9f83460f58bf7e9e7f9c4c6a4efbe10f5 (HEAD -> main, tag: v3.5-shadow)
+commit e22d56a7d24e5841698052d1424632763ab8bbad (HEAD -> main, tag: v3.5-shadow)
 Author: Samanvi Chidambaram <samanvi.chidambaram@gmail.com>
-Date:   Thu Oct 1 20:14:49 2026 +0530
+Date:   Thu Oct 1 20:15:57 2026 +0530
 
-    docs(v3.5-shadow): freeze reproducible milestone package with walkthrough and benchmark suite
+    docs(v3.5-shadow): finalize release commit hash in repository documentation
 
 Release Package Additions:
   - server/engine/tracing/pipelineTracer.js (Streams structured JSONL events to traceService)
@@ -164,7 +164,7 @@ In the randomized interleaved trial, median live latency was **$553.37\text{ ms}
 ## 7. Frozen Regression Suite & Reproducibility Package
 
 ### Release Commit Anchor:
-- **Git Commit:** `ddb15de9f83460f58bf7e9e7f9c4c6a4efbe10f5`
+- **Git Commit:** `e22d56a7d24e5841698052d1424632763ab8bbad`
 - **Git Tag:** `v3.5-shadow`
 - **Working Tree:** Clean (all files committed)
 
