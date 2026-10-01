@@ -1,7 +1,7 @@
 # Walkthrough: Live Pipeline Observability Workbench & Shadow-Mode Benchmark
 
 **Release Target:** v3.5-shadow  
-**Release Commit:** `e22d56a7d24e5841698052d1424632763ab8bbad` (`tag: v3.5-shadow`)  
+**Release Commit:** `d9034c5b9ec9e2adb7bb3b0c5eb273e93e72c351` (`tag: v3.5-shadow`)  
 **Baseline Anchor:** `b1b15535389df45151601a9a39bc3c5d8f46e1f0` (`v3.4-frozen`)  
 **Status:** Frozen as a v3.5-shadow engineering milestone.
 
@@ -29,9 +29,9 @@ To preserve scientific rigor, all findings in this milestone report are classifi
 Verification performed via `git log -n 1 --decorate` and `git status`:
 
 ```
-commit e22d56a7d24e5841698052d1424632763ab8bbad (HEAD -> main, tag: v3.5-shadow)
+commit d9034c5b9ec9e2adb7bb3b0c5eb273e93e72c351 (HEAD -> main, tag: v3.5-shadow)
 Author: Samanvi Chidambaram <samanvi.chidambaram@gmail.com>
-Date:   Thu Oct 1 20:15:57 2026 +0530
+Date:   Thu Oct 1 20:16:52 2026 +0530
 
     docs(v3.5-shadow): finalize release commit hash in repository documentation
 
@@ -164,7 +164,7 @@ In the randomized interleaved trial, median live latency was **$553.37\text{ ms}
 ## 7. Frozen Regression Suite & Reproducibility Package
 
 ### Release Commit Anchor:
-- **Git Commit:** `e22d56a7d24e5841698052d1424632763ab8bbad`
+- **Git Commit:** `d9034c5b9ec9e2adb7bb3b0c5eb273e93e72c351`
 - **Git Tag:** `v3.5-shadow`
 - **Working Tree:** Clean (all files committed)
 
@@ -184,3 +184,11 @@ In the randomized interleaved trial, median live latency was **$553.37\text{ ms}
   - [`shadow_randomized_benchmark_summary.json`](file:///c:/Users/samanvi/OneDrive/Desktop/git_kahoot/Demo_project/experiments/experiment_5_teaching_adequacy/raw_results/shadow_randomized_benchmark_summary.json)
   - [`p5_3_ten_cases_audit_development_set.json`](file:///c:/Users/samanvi/OneDrive/Desktop/git_kahoot/Demo_project/experiments/experiment_5_teaching_adequacy/raw_results/p5_3_ten_cases_audit_development_set.json)
   - [`speech_failover_test_summary.json`](file:///c:/Users/samanvi/OneDrive/Desktop/git_kahoot/Demo_project/experiments/experiment_5_teaching_adequacy/raw_results/speech_failover_test_summary.json)
+
+---
+
+## 8. Frozen Milestone Conclusion
+
+> **Official Milestone Freezing Statement:**  
+> v3.5-shadow is frozen as an engineering and observability milestone. The documented tests demonstrate the shadow runtime’s tested behavior, fault handling, trace visualization, and preservation of the specified regression suites. In a small randomized interleaved benchmark of 40 requests, no clear live-latency penalty was detected. The wide confidence interval means a practically meaningful slowdown remains possible. Generalizable P5.3 diagnostic improvement and readiness for broad classroom rollout remain unestablished.
+
