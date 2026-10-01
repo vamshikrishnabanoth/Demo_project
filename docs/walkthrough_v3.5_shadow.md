@@ -1,7 +1,7 @@
 # Walkthrough: Live Pipeline Observability Workbench & Shadow-Mode Benchmark
 
 **Release Target:** v3.5-shadow  
-**Release Commit:** `d9d2aba652970a325fc8d0f0c565157dac3ac120` (`tag: v3.5-shadow`)  
+**Release Commit:** `ddb15de9f83460f58bf7e9e7f9c4c6a4efbe10f5` (`tag: v3.5-shadow`)  
 **Baseline Anchor:** `b1b15535389df45151601a9a39bc3c5d8f46e1f0` (`v3.4-frozen`)  
 **Status:** Frozen as a v3.5-shadow engineering milestone.
 
@@ -29,11 +29,11 @@ To preserve scientific rigor, all findings in this milestone report are classifi
 Verification performed via `git log -n 1 --decorate` and `git status`:
 
 ```
-commit d9d2aba652970a325fc8d0f0c565157dac3ac120 (HEAD -> main, tag: v3.5-shadow)
+commit ddb15de9f83460f58bf7e9e7f9c4c6a4efbe10f5 (HEAD -> main, tag: v3.5-shadow)
 Author: Samanvi Chidambaram <samanvi.chidambaram@gmail.com>
-Date:   Thu Oct 1 20:07:02 2026 +0530
+Date:   Thu Oct 1 20:14:49 2026 +0530
 
-    feat(v3.5-shadow): live pipeline observability workbench, shadow runner, and trace telemetry
+    docs(v3.5-shadow): freeze reproducible milestone package with walkthrough and benchmark suite
 
 Release Package Additions:
   - server/engine/tracing/pipelineTracer.js (Streams structured JSONL events to traceService)
@@ -42,7 +42,8 @@ Release Package Additions:
   - server/services/traceService.js         (Asynchronous JSONL trace stream writer & manifest index)
   - server/utils/tracePurge.js              (Automated rolling 7-day trace purge utility)
   - workbench/app.py                        (FastAPI backend with embedded single-page HTML/JS viewer)
-  - experiments/                            (Phase 5 empirical research artifacts and raw results)
+  - experiments/                            (Phase 5 empirical research artifacts, raw results & runner suite)
+  - docs/walkthrough_v3.5_shadow.md         (Committed repository walkthrough report)
 
 Working Tree Status: Clean (nothing to commit, working tree clean)
 ```
@@ -163,7 +164,7 @@ In the randomized interleaved trial, median live latency was **$553.37\text{ ms}
 ## 7. Frozen Regression Suite & Reproducibility Package
 
 ### Release Commit Anchor:
-- **Git Commit:** `d9d2aba652970a325fc8d0f0c565157dac3ac120`
+- **Git Commit:** `ddb15de9f83460f58bf7e9e7f9c4c6a4efbe10f5`
 - **Git Tag:** `v3.5-shadow`
 - **Working Tree:** Clean (all files committed)
 
