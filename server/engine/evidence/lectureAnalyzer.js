@@ -11,6 +11,7 @@
 'use strict';
 
 const depthAnalyzer = require('./depthAnalyzer');
+const lectureIntelligence = require('../intelligence/lectureIntelligence');
 
 class LectureAnalyzer {
   /**
@@ -97,7 +98,7 @@ class LectureAnalyzer {
    * @param {Object} params - { rawText, segments, audioMetadata }
    * @returns {Object} analysisResult
    */
-  async analyzeLecture({ rawText, segments = [], audioMetadata = null }) {
+  async analyzeLecture({ rawText, segments = [], audioMetadata = null, fileName = null, requestedCount = null, requestedDifficulty = null }) {
     const text = (rawText || '').trim();
     if (!text || text.length < 15) {
       return {
@@ -114,6 +115,7 @@ class LectureAnalyzer {
           lectureDepth: { rating: 'Non-Academic', score: 0, characteristics: {} },
           summary: 'Insufficient content provided for pedagogical analysis.'
         },
+        lecture_intelligence: null,
         audioMetadata
       };
     }
@@ -179,6 +181,31 @@ class LectureAnalyzer {
       };
     });
 
+    // 5. Task 3: Invoke Lecture Intelligence Engine (Module 1)
+    const hasAudioTimestamps = Array.isArray(classifiedSegments) && classifiedSegments.some(s => s.start !== null && s.start !== undefined);
+    let lectureIntel = null;
+    try {
+      lectureIntel = await lectureIntelligence.analyze({
+        evidenceText: cleanedTranscript || text,
+        segments: classifiedSegments,
+        modality: hasAudioTimestamps ? 'VOICE_ONLY' : 'DOCUMENT_ONLY',
+        hasTimingData: hasAudioTimestamps,
+        fileName: fileName || audioMetadata?.originalName || null,
+        requestedCount,
+        requestedDifficulty
+      });
+    } catch (intelErr) {
+      console.warn('[LectureAnalyzer] Lecture intelligence analysis failed, using fallback:', intelErr.message);
+      lectureIntel = lectureIntelligence.buildPartialFallback({
+        evidenceText: cleanedTranscript || text,
+        modality: hasAudioTimestamps ? 'VOICE_ONLY' : 'DOCUMENT_ONLY',
+        hasTimingData: hasAudioTimestamps,
+        errorReason: intelErr.message
+      });
+    }
+
+    const intelligentTitle = lectureIntel?.title || mainTopic;
+
     return {
       isAcademic: depthResult.isAcademic,
       isCurricular: depthResult.isCurricular,
@@ -190,11 +217,12 @@ class LectureAnalyzer {
       concepts,
       segments: classifiedSegments,
       pedagogical_reconstruction: {
-        main_topic: mainTopic,
+        main_topic: intelligentTitle,
         subtopics: depthResult.detectedFocus,
         lectureDepth: depthResult.lectureDepth,
-        summary: `Lecture focused on ${mainTopic} with ${depthResult.lectureDepth.rating} depth (${depthResult.lectureDepth.score}/100).`
+        summary: lectureIntel?.summary || `Lecture focused on ${intelligentTitle} with ${depthResult.lectureDepth.rating} depth (${depthResult.lectureDepth.score}/100).`
       },
+      lecture_intelligence: lectureIntel,
       audioMetadata
     };
   }

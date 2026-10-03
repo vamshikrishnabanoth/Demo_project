@@ -116,6 +116,7 @@ export default function CreateQuizTopic() {
     const [depthLoading, setDepthLoading] = useState(false);
     const [depthError, setDepthError] = useState(false);
     const [depthRetryCount, setDepthRetryCount] = useState(0);
+    const [lectureIntel, setLectureIntel] = useState(null);
 
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
@@ -265,7 +266,13 @@ export default function CreateQuizTopic() {
             const timer = setTimeout(async () => {
                 try {
                     const primaryVoiceName = inputs.find(inp => inp.type === 'voice' || inp.type === 'audio')?.source_name || '';
-                    const res = await api.post('/quiz/analyze-depth', { text: voiceTexts, title: primaryVoiceName });
+                    const voiceSegs = inputs.find(inp => (inp.type === 'voice' || inp.type === 'audio') && Array.isArray(inp.segments))?.segments || [];
+                    const res = await api.post('/quiz/analyze-depth', {
+                        text: voiceTexts,
+                        title: primaryVoiceName,
+                        segments: voiceSegs,
+                        hasTimingData: voiceSegs.length > 0 && voiceSegs.some(s => s.start !== null && s.start !== undefined)
+                    });
                     if (res.data && res.data.isAcademic) {
                         setLectureDepth(res.data.lectureDepth);
                         setDetectedFocus(res.data.detectedFocus || []);
@@ -273,6 +280,7 @@ export default function CreateQuizTopic() {
                         setKeyTopics(res.data.keyTopics || []);
                         setLectureWordCount(res.data.wordCount || voiceTexts.trim().split(/\s+/).length);
                         setRecommendedQuestions(res.data.recommendedQuestions || '');
+                        setLectureIntel(res.data.lecture_intelligence || null);
                         setDepthError(false);
                     } else if (res.data && !res.data.isAcademic) {
                         setLectureDepth({ rating: 'Non-Academic', score: 10, characteristics: {} });
@@ -281,15 +289,18 @@ export default function CreateQuizTopic() {
                         setKeyTopics([]);
                         setLectureWordCount(0);
                         setRecommendedQuestions('');
+                        setLectureIntel(null);
                         setDepthError(false);
                     } else {
                         // Empty or unexpected response: never manufacture a score
                         setLectureDepth(null);
+                        setLectureIntel(null);
                         setDepthError(true);
                     }
                 } catch (err) {
                     console.warn('[DepthAnalysis] Failed to analyze lecture depth:', err);
                     setLectureDepth(null);
+                    setLectureIntel(null);
                     setDepthError(true);
                 } finally {
                     setDepthLoading(false);
@@ -298,6 +309,7 @@ export default function CreateQuizTopic() {
             return () => clearTimeout(timer);
         } else {
             setLectureDepth(null);
+            setLectureIntel(null);
             setDetectedFocus([]);
             setWhatWasTaught('');
             setKeyTopics([]);
@@ -1046,6 +1058,9 @@ export default function CreateQuizTopic() {
                     if (hasVoice && result.lectureDepth) {
                         setLectureDepth(result.lectureDepth);
                     }
+                    if (result.lecture_intelligence) {
+                        setLectureIntel(result.lecture_intelligence);
+                    }
 
                     if (result.alignmentWarning) {
                         toast(result.alignmentWarning, {
@@ -1083,6 +1098,7 @@ export default function CreateQuizTopic() {
                             isVoice: hasVoice,
                             agentReport: result.agentReport || null,
                             lectureDepth: hasVoice ? (result.lectureDepth || lectureDepth) : null,
+                            lectureIntelligence: result.lecture_intelligence || lectureIntel || null,
                             whatWasTaught: whatWasTaught || result.whatWasTaught || null,
                             keyTopics: (keyTopics && keyTopics.length > 0) ? keyTopics : (result.keyTopics || []),
                             recommendedQuestions: recommendedQuestions || result.recommendedQuestions || null,
@@ -1604,21 +1620,66 @@ export default function CreateQuizTopic() {
                                             </span>
                                         </div>
 
+                                        {/* 0. Intelligent Evidence-Grounded Lecture Title */}
+                                        {lectureIntel?.title && (
+                                            <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                    <span>🏷️</span> Academic Lecture Topic
+                                                </p>
+                                                <p className="text-xs font-bold text-slate-900 leading-snug">
+                                                    {lectureIntel.title}
+                                                </p>
+                                            </div>
+                                        )}
+
                                         {/* 1. What Was Taught (1-Line Pedagogical Overview) */}
                                         <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                             <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
                                                 <span>📖</span> What Was Taught
                                             </p>
                                             <p className="text-xs font-semibold text-slate-800 leading-relaxed">
-                                                {whatWasTaught || `A comprehensive lecture exploring ${inputs.map(i => i.source_name).filter(Boolean)[0] || 'core concepts'} with detailed conceptual foundations, operational mechanisms, and step-by-step traces.`}
+                                                {lectureIntel?.summary || whatWasTaught || `A comprehensive lecture exploring ${inputs.map(i => i.source_name).filter(Boolean)[0] || 'core concepts'} with detailed conceptual foundations, operational mechanisms, and step-by-step traces.`}
                                             </p>
                                         </div>
 
-                                        {/* 2. Key Topics to be Assessed / Subtopics */}
+                                        {/* 2. Sequential Chapters Timeline */}
+                                        {lectureIntel?.chapters && lectureIntel.chapters.length > 0 && (
+                                            <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                    <span>📑</span> Sequential Chapters & Topics
+                                                </p>
+                                                <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                                                    {lectureIntel.chapters.map((ch, idx) => (
+                                                        <div key={ch.id || idx} className="p-2 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1">
+                                                            <div className="flex items-center justify-between">
+                                                                <span className="font-bold text-slate-800">{idx + 1}. {ch.title}</span>
+                                                                {ch.timestamp_start && (
+                                                                    <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-200/70 px-2 py-0.5 rounded-full shrink-0">
+                                                                        {ch.timestamp_start}{ch.timestamp_end ? ` - ${ch.timestamp_end}` : ''}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            {ch.summary && <p className="text-[11px] text-slate-600 leading-relaxed">{ch.summary}</p>}
+                                                            {ch.key_concepts && ch.key_concepts.length > 0 && (
+                                                                <div className="flex flex-wrap gap-1 pt-0.5">
+                                                                    {ch.key_concepts.map((kc, kci) => (
+                                                                        <span key={kci} className="text-[9px] font-semibold bg-orange-100/70 text-orange-800 px-1.5 py-0.5 rounded border border-orange-200">
+                                                                            {kc}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* 3. Key Topics to be Assessed / Subtopics */}
                                         {((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <span>🎯</span> Key Topics to be Assessed
+                                                    <span>🎯</span> Key Concepts to be Assessed
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus).map((topic, i) => (
@@ -1631,7 +1692,43 @@ export default function CreateQuizTopic() {
                                             </div>
                                         )}
 
-                                        {/* 3. Assessment Scope & Content Volume */}
+                                        {/* 4. Observable Pedagogical Profile (Safeguard 2: Multi-Label Rubric) */}
+                                        {lectureIntel?.pedagogicalCritique && (
+                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
+                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                     <span>🎓</span> Observable Teaching Traits
+                                                 </p>
+                                                 <div className="flex flex-wrap gap-1.5">
+                                                     {(lectureIntel.pedagogicalCritique.explanatoryDepth || []).map((tag, i) => (
+                                                         <span key={i} className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full">
+                                                             {tag.replace(/_/g, ' ')}
+                                                         </span>
+                                                     ))}
+                                                     {(lectureIntel.pedagogicalCritique.reasoningDepth || []).map((tag, i) => (
+                                                         <span key={i} className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
+                                                             {tag.replace(/_/g, ' ')}
+                                                         </span>
+                                                     ))}
+                                                     {(lectureIntel.pedagogicalCritique.practicalDemonstrations || []).map((tag, i) => (
+                                                         <span key={i} className="text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full">
+                                                             {tag.replace(/_/g, ' ')}
+                                                         </span>
+                                                     ))}
+                                                     {(lectureIntel.pedagogicalCritique.discourseStyle || []).map((tag, i) => (
+                                                         <span key={i} className="text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
+                                                             {tag.replace(/_/g, ' ')}
+                                                         </span>
+                                                     ))}
+                                                 </div>
+                                                 {lectureIntel.pedagogicalCritique.limitationsOfExcerpt && (
+                                                     <p className="text-[10px] text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                                         ℹ️ {lectureIntel.pedagogicalCritique.limitationsOfExcerpt}
+                                                     </p>
+                                                 )}
+                                             </div>
+                                        )}
+
+                                        {/* 5. Assessment Scope & Content Volume */}
                                         <div className="bg-white/90 px-3.5 py-2.5 rounded-2xl border border-orange-200/70 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600 shadow-2xs">
                                             <span className="flex items-center gap-1.5 text-slate-700">
                                                 <span>📊</span> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</span>
@@ -1641,7 +1738,7 @@ export default function CreateQuizTopic() {
                                             </span>
                                         </div>
 
-                                        {/* 4. Pedagogical Depth Characteristics */}
+                                        {/* 6. Pedagogical Depth Characteristics */}
                                         {lectureDepth.characteristics && (
                                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] font-bold text-slate-600">
                                                 <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">

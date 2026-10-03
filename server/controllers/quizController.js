@@ -4192,13 +4192,30 @@ function sanitizeLectureTitle(rawTitle) {
 
 exports.analyzeDepth = async (req, res) => {
     try {
-        const { text, title } = req.body;
+        const { text, title, segments, modality, hasTimingData } = req.body;
         const analysis = depthAnalyzer.analyzeLecture(text || '');
         
         let whatWasTaught = '';
         let keyTopics = [];
         const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
-        const recommendedQuestions = wordCount > 3000 ? '5 to 25 Questions' : (wordCount > 1000 ? '5 to 15 Questions' : '3 to 10 Questions');
+        let recommendedQuestions = wordCount > 3000 ? '5 to 25 Questions' : (wordCount > 1000 ? '5 to 15 Questions' : '3 to 10 Questions');
+
+        let lectureIntel = null;
+        if (analysis.isAcademic && (text || '').trim().length >= 15) {
+            try {
+                const lectureIntelligence = require('../engine/intelligence/lectureIntelligence');
+                const hasTiming = hasTimingData !== undefined ? !!hasTimingData : (Array.isArray(segments) && segments.some(s => s.start !== null && s.start !== undefined));
+                lectureIntel = await lectureIntelligence.analyze({
+                    evidenceText: text,
+                    segments: segments || [],
+                    modality: modality || (hasTiming ? 'VOICE_ONLY' : 'DOCUMENT_ONLY'),
+                    hasTimingData: hasTiming,
+                    fileName: title || null
+                });
+            } catch (intelErr) {
+                console.warn('[analyzeDepth] lectureIntelligence error, falling back:', intelErr.message);
+            }
+        }
 
         if (analysis.isAcademic) {
             // 1. Extract valid distinct key topics strictly from transcript concepts
@@ -4234,18 +4251,29 @@ exports.analyzeDepth = async (req, res) => {
                 }
             }
 
+            // If lecture intelligence extracted concept map, prioritize it for key topics
+            if (lectureIntel?.conceptMap && lectureIntel.conceptMap.length > 0) {
+                keyTopics = lectureIntel.conceptMap.map(c => c.name);
+            }
+
             // 3. Construct authoritative, professional 1-line overview from actual concepts
             const characteristics = analysis.lectureDepth?.characteristics || {};
             const procedureDesc = characteristics.procedures === 'Strong' ? 'step-by-step procedures' : 'conceptual foundations';
             const exampleDesc = characteristics.examples === 'Present' ? 'practical examples' : 'operational mechanisms';
 
-            if (meaningfulFocus.length > 0) {
+            if (lectureIntel?.summary) {
+                whatWasTaught = lectureIntel.summary;
+            } else if (meaningfulFocus.length > 0) {
                 const topicSummary = meaningfulFocus.slice(0, 3).join(', ');
                 whatWasTaught = `A structured lecture exploring ${topicSummary} with ${procedureDesc} and ${exampleDesc}.`;
             } else if (cleanTitle) {
                 whatWasTaught = `A structured lecture exploring ${cleanTitle} with ${procedureDesc} and ${exampleDesc}.`;
             } else {
                 whatWasTaught = `A comprehensive lecture exploring core domain concepts with ${procedureDesc} and ${exampleDesc}.`;
+            }
+
+            if (lectureIntel?.evidenceCapacity?.recommendedQuestionCount) {
+                recommendedQuestions = `${lectureIntel.evidenceCapacity.recommendedQuestionCount} Questions (${lectureIntel.evidenceCapacity.advisoryRationale || 'Advisory Base'})`;
             }
         }
 
@@ -4258,7 +4286,8 @@ exports.analyzeDepth = async (req, res) => {
             whatWasTaught,
             keyTopics,
             wordCount,
-            recommendedQuestions
+            recommendedQuestions,
+            lecture_intelligence: lectureIntel
         });
     } catch (err) {
         console.error('Error in analyzeDepth controller:', err.message);
@@ -4559,8 +4588,10 @@ exports.analyzeLectureRecording = async (req, res) => {
                 audioMetadata: {
                     duration: transcriptionData.duration,
                     duration_formatted: transcriptionData.duration_formatted,
-                    language: transcriptionData.language
-                }
+                    language: transcriptionData.language,
+                    originalName: req.file ? req.file.originalname : null
+                },
+                fileName: req.file ? req.file.originalname : null
             });
 
             console.log(`🎙️ [STAGE 2: Task ${taskId}] Reconstructing Pedagogical Sequence & Explanations...`);
@@ -4573,7 +4604,8 @@ exports.analyzeLectureRecording = async (req, res) => {
                 status: 'COMPLETED',
                 analysis: analysisResult,
                 transcription: transcriptionData,
-                title: analysisResult?.pedagogical_reconstruction?.main_topic || `Lecture Recording (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`
+                title: analysisResult?.lecture_intelligence?.title || analysisResult?.pedagogical_reconstruction?.main_topic || `Lecture Recording (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`,
+                lecture_intelligence: analysisResult?.lecture_intelligence || null
             });
             console.log(`✅ [Task ${taskId}] Lecture Analysis Completed Successfully.`);
         } catch (err) {
