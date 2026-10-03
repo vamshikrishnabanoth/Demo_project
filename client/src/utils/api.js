@@ -1,5 +1,5 @@
 // High-performance Native Fetch API wrapper (replaces Axios dependency completely)
-const PRODUCTION_API_URL = 'https://quiz-backend-qgro.onrender.com/api';
+const PRODUCTION_API_URL = 'https://demo-project-3izc.onrender.com/api';
 
 const isProductionDomain = typeof window !== 'undefined' && (
     window.location.hostname.includes('vercel.app') ||

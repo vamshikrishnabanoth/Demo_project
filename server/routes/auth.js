@@ -244,7 +244,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
 
         jwt.sign(
             payload,
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || 'secret123',
             { expiresIn: '12h' },
             (err, token) => {
                 if (err) throw err;
