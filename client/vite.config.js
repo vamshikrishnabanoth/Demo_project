@@ -40,8 +40,6 @@ export default defineConfig({
       'framer-motion',
       'lucide-react',
       'socket.io-client',
-      'axios',
-      'sweetalert2',
     ],
   },
 

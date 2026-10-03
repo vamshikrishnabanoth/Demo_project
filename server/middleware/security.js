@@ -108,12 +108,12 @@ function sanitizeInput(req, res, next) {
  */
 const SQL_INJECTION_PATTERNS = [
     /(\b(UNION\s+(ALL\s+)?SELECT)\b)/i,
-    /(\b(INSERT\s+INTO|UPDATE\s+.*\s+SET|DELETE\s+FROM|DROP\s+TABLE|ALTER\s+TABLE|CREATE\s+TABLE)\b)/i,
-    /(\b(EXEC(\s+|\()|EXECUTE\s+))/i,
+    /(\b(INSERT\s+INTO\s+['"`]?\w+|UPDATE\s+['"`]?\w+['"`]?\s+SET\s+|DELETE\s+FROM\s+['"`]?\w+|DROP\s+TABLE|ALTER\s+TABLE|CREATE\s+TABLE)\b)/i,
+    /(\b(EXEC\s*\(|EXEC\s+(sp_|xp_|sys\.)|EXECUTE\s*\(|EXECUTE\s+IMMEDIATE\b))/i,
     /(;\s*(DROP|DELETE|UPDATE|INSERT|ALTER|CREATE|EXEC)\b)/i,
     /(';\s*--)/,
     /(\b(OR|AND)\s+\d+\s*=\s*\d+)/i,
-    /(\/\*[\s\S]*?\*\/)/,  // SQL block comments
+    /(\/\*![\s\S]*?\*\/)/,  // SQL-specific conditional comments like /*!50000 SELECT */
     /(\bWAITFOR\s+DELAY\b)/i,
     /(\bBENCHMARK\s*\()/i,
     /(\bSLEEP\s*\()/i,
