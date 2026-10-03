@@ -1,0 +1,9 @@
+{
+  "segment_key": "4D",
+  "package_id": "dev_3a_04_signal_processing_structures",
+  "title": "Single-Path Delay Feedback (SDF) Hardware Blueprint",
+  "split": "VALIDATION",
+  "target_dimension": "STRUCTURE_COMPONENTS",
+  "text": "The hardware architecture of a Radix-2 Single-path Delay Feedback (R2SDF) pipelined FFT is composed of dedicated structural processing elements and commutator memory primitives. In stage 1, the hardware datapath includes a shift-register delay line of N/2 words, connected to a 2-by-2 commutator multiplexer. When the first N/2 samples arrive, the commutator directs them into the delay feedback line. When the second half arrives, a hardware butterfly processing element (PE) executes simultaneous addition and subtraction: the adder output passes directly to the next stage, while the subtractor output is routed through a complex twiddle multiplier consisting of three real multipliers and three adders using Gauss's algorithm. Subsequent stages scale the feedback delay registers down by powers of two: N/4, N/8, down to a single register in the final stage. The pipeline terminates at a hardware bit-reversal address generator driving dual-port SRAM banks. This complete blueprint provides the interconnected physical constituent primitives.",
+  "duration_seconds": 40
+}

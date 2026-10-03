@@ -1,0 +1,9 @@
+{
+  "segment_key": "4B",
+  "package_id": "dev_3b_04_fft_pipelined_radix2",
+  "title": "Radix-2 Decimation-in-Time Butterfly Datapath Primitives",
+  "split": "CHALLENGE",
+  "target_dimension": "STRUCTURE_COMPONENTS",
+  "text": "To realize a high-throughput pipelined FFT architecture, we implement the internal datapath using dedicated radix-2 decimation-in-time butterfly hardware primitives. Each pipelined stage incorporates three primary structural components: a dual complex adder-subtractor unit, a complex twiddle multiplier, and a ping-pong commutator FIFO buffer. The complex adder-subtractor primitive contains four 16-bit ripple-carry adders and four 16-bit subtractors arranged in parallel to compute intermediate upper and lower butterfly legs (X_m plus Y_m, and X_m minus Y_m) within a single clock cycle. The complex twiddle multiplier primitive is implemented using three DSP48 hardware multiply-accumulate slices configured under Gauss's three-multiplication algorithm, reducing multiplier area by 25 percent. The commutator memory subsystem utilizes dual-port synchronous block RAM configured in a ping-pong structure with a 512-word delay line and crossbar multiplexer routing to reorder bit-reversed frequency bins. These concrete digital logic blocks establish the physical structural datapath of the pipelined radix-2 butterfly processor.",
+  "duration_seconds": 38
+}

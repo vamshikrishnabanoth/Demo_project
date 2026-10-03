@@ -1,0 +1,89 @@
+{
+  "annotator_id": "Annotator_B_Blind",
+  "timestamp": "2026-10-02T15:10:00Z",
+  "review_mode": "BLIND_TO_MODEL_AND_PRIOR_LABELS",
+  "rubric_reference_version": "1.0.0-frozen",
+  "rubric_reference_hash": "79e4e238a8587e809dd2f8b27430cdc63d3a14b7f4cd42da366c32c085f032a1",
+  "annotations": [
+    {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1A_syntactic_duality",
+      "evaluated_dimension": "MEANING",
+      "observed_depth": 2,
+      "depth_label": "LEVEL_2_TERMINOLOGY_DEFINITIONS",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4",
+      "evidence_quote": "You can memorize this mechanically: whenever a negation sign passes through a quantifier... syntactic substitution rule",
+      "rationale": "Mechanical recitation of syntactic rewriting rules. No domain of discourse or semantic truth evaluation is presented. Capped at Level 2 under Rubric 1."
+    },
+    {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1B_domain_semantics",
+      "evaluated_dimension": "MEANING",
+      "observed_depth": 4,
+      "depth_label": "LEVEL_4_CONCEPTUAL_EXPOSITION",
+      "boundary_verdict": "SATISFIES_LEVEL_4",
+      "evidence_quote": "The statement 'for-all x in D, P(x)' means P(1) AND P(2) AND... boolean duality between conjunction and disjunction over an arbitrary domain.",
+      "rationale": "Demonstrates why duality holds via model theory and truth conditions over domain D. Shows universal as conjunction, existential as witness disjunction. Unambiguous Level 4."
+    },
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2A_algebraic_elimination",
+      "evaluated_dimension": "CORE_CONCEPTS",
+      "observed_depth": 3,
+      "depth_label": "LEVEL_3_FORMAL_MATHEMATICAL_RELATION",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "evidence_quote": "Dividing both sides by C_p, we obtain the fundamental mathematical identity: CL equals k_e multiplied by V_d.",
+      "rationale": "Algebraic formula derivation from first-order kinetics definitions. Scored at Level 3 as an algebraic definition/relation. Clearly lacks physiological organ or cellular mechanisms."
+    },
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2B_organ_extraction_mechanism",
+      "evaluated_dimension": "CORE_CONCEPTS",
+      "observed_depth": 5,
+      "depth_label": "LEVEL_5_CAUSAL_EMPIRICAL_MECHANISM",
+      "boundary_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+      "evidence_quote": "clearance is governed by organ blood perfusion and cellular extraction... extraction ratio E... CL equals Q times E... enzyme activity CL_int",
+      "rationale": "Provides physical/physiological mechanism: organ blood flow Q, extraction ratio E across capillary beds, and metabolic enzyme intrinsic clearance. Clearly Level 5 empirical mechanism."
+    },
+    {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3A_conversational_gentamicin_walkthrough",
+      "evaluated_dimension": "WORKED_APPLICATION",
+      "observed_depth": 3,
+      "depth_label": "LEVEL_3_INFORMAL_VERBAL_WALKTHROUGH",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "evidence_quote": "It's a quick conversational bedside assessment that experienced clinical pharmacists do on morning rounds.",
+      "rationale": "Informal bedside mental arithmetic without explicit calculation states or written steps. Under Rubric 3, zero intermediate computational states caps this at Level 3."
+    },
+    {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3B_stepwise_gentamicin_execution_trace",
+      "evaluated_dimension": "WORKED_APPLICATION",
+      "observed_depth": 6,
+      "depth_label": "LEVEL_6_RIGOROUS_STEPWISE_EXECUTION_TRACE",
+      "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+      "evidence_quote": "Step 1: Patient Parameters... Step 2: Ideal Body Weight... Step 3: Creatinine Clearance... Step 4: Target Dose... Step 5: Dosing Interval Selection... Final Regimen",
+      "rationale": "Complete 5-step computational pipeline with explicit numerical states, units, boundary checks, and final dosing order. Fully satisfies Level 6 positive criteria."
+    },
+    {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4A_dft_parameter_roster",
+      "evaluated_dimension": "STRUCTURE_COMPONENTS",
+      "observed_depth": 2,
+      "depth_label": "LEVEL_2_PARAMETER_SPECIFICATION_ROSTER",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_STRUCTURE",
+      "evidence_quote": "These six variables constitute the standard descriptive parameter set for any discrete spectral analysis.",
+      "rationale": "Itemized list of scalar variables and parameters. No structural primitives or signal flow topology. Under Rubric 4, itemized scalar rosters are classified at Level 2."
+    },
+    {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4B_dft_structural_primitives",
+      "evaluated_dimension": "STRUCTURE_COMPONENTS",
+      "observed_depth": 5,
+      "depth_label": "LEVEL_5_ARCHITECTURAL_CONSTITUENT_PRIMITIVES",
+      "boundary_verdict": "SATISFIES_LEVEL_5_STRUCTURE",
+      "evidence_quote": "The DFT is not just a collection of parameter definitions; it is an orthogonal linear transformation... Basis Function Matrix W... Inner Product Projection Operator... Inverse Synthesis Operator",
+      "rationale": "Articulates structural constituent operators: orthogonal basis matrix, projection operator, and synthesis superposition. Level 5 architectural constituent primitives."
+    }
+  ]
+}

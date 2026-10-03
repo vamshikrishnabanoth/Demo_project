@@ -1,0 +1,406 @@
+{
+  "1A": {
+    "package_id": "dev_3b_01_discrete_probability",
+    "segment_key": "1A",
+    "folder": "dev_3b_01_discrete_probability_1A",
+    "title": "Kolmogorov Axioms and Formal Probability Inequalities",
+    "split": "CHALLENGE",
+    "target_dimension": "MEANING",
+    "target_threshold": 4,
+    "ref_depth": 2,
+    "ref_boundary": "FALLS_SHORT",
+    "text": "In formal axiomatic probability theory, an abstract probability space is defined by the triple consisting of a sample space Omega, a sigma-algebra of measurable events F, and a probability measure P satisfying the Kolmogorov foundation. The first axiom establishes non-negativity: for every event A in F, P(A) is greater than or equal to zero. The second axiom enforces the unit measure condition: P(Omega) equals exactly one. The third axiom dictates countable additivity: for any countable sequence of pairwise disjoint events, the probability of their infinite union is the sum of their individual probabilities. By manipulating these foundational algebraic relations, we derive standard syntactic lemmas including the empty-set null probability and complementation identity P(not A) equals one minus P(A). From these, we deduce Boole's union inequality and monotonicity bounds: if subset containment holds between event A and event B, then P(A) cannot exceed P(B). These classical bounds provide syntactic constraints on compound failure probabilities in safety-critical verification without constructing concrete element valuations.",
+    "duration_seconds": 38,
+    "gold_concepts": [
+      {
+        "concept_id": "G01",
+        "name": "Probability space triple (Omega, F, P)",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Defines probability space triple with sample space, event space, and measure."
+      },
+      {
+        "concept_id": "G02",
+        "name": "Kolmogorov Axioms",
+        "epistemic_dimension": "MEANING",
+        "description": "Axiomatic definitions of non-negativity, unit measure, and countable additivity (Level 2 static definition)."
+      },
+      {
+        "concept_id": "G03",
+        "name": "Syntactic complement and null-set identities",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "description": "Algebraic rules derived directly from Kolmogorov axioms."
+      },
+      {
+        "concept_id": "G04",
+        "name": "Boole's inequality and monotonicity bounds",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "description": "Syntactic inequality relationships between subset and union events."
+      }
+    ],
+    "operational_steps": [],
+    "explanatory_subtype": {
+      "subtype": "B2",
+      "level": 1,
+      "description": "Syntactic Kolmogorov axiom recitation and algebraic bounds without domain element expansion."
+    }
+  },
+  "1B": {
+    "package_id": "dev_3b_01_discrete_probability",
+    "segment_key": "1B",
+    "folder": "dev_3b_01_discrete_probability_1B",
+    "title": "Sample Space Truth Valuations and State-Space Model Semantics",
+    "split": "CHALLENGE",
+    "target_dimension": "MEANING",
+    "target_threshold": 4,
+    "ref_depth": 4,
+    "ref_boundary": "SATISFIES",
+    "text": "To analyze what probability statements mean semantically, we construct a concrete discrete sample space Omega consisting of five mutually exclusive states: omega-1, omega-2, omega-3, omega-4, and omega-5. We define an explicit probability mass assignment across this universe: P(omega-1) = 0.30, P(omega-2) = 0.25, P(omega-3) = 0.20, P(omega-4) = 0.15, and P(omega-5) = 0.10, which sum to 1.00. Now let event A represent nominal packet delivery, defined as the subset {omega-1, omega-2}, yielding truth valuation P(A) = 0.55. Let event B represent high-priority traffic, defined by partition block {omega-2, omega-3, omega-4}, with truth valuation P(B) = 0.60. The conjunction event A and B is the singleton state {omega-2}, with semantic valuation P(A and B) = 0.25. Under conditioning on high-priority traffic, the conditional probability P(A | B) equals 0.25 divided by 0.60, or approximately 0.417. By evaluating compound propositions directly over concrete domain elements, we illustrate the semantic interaction between state partitions and probability mass distributions rather than relying on abstract syntactic symbols.",
+    "duration_seconds": 38,
+    "gold_concepts": [
+      {
+        "concept_id": "G01",
+        "name": "Discrete state space universe (Omega = {omega-1..omega-5})",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Names concrete 5-element discrete universe."
+      },
+      {
+        "concept_id": "G02",
+        "name": "Elementary probability mass assignment",
+        "epistemic_dimension": "MEANING",
+        "description": "Defines explicit probability mass distribution summing to 1.00."
+      },
+      {
+        "concept_id": "G03",
+        "name": "Event subset partition structure",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "description": "Constructs events A and B as specific outcome subsets."
+      },
+      {
+        "concept_id": "G04",
+        "name": "Compound proposition truth valuation over domain elements",
+        "epistemic_dimension": "MEANING",
+        "description": "Evaluates P(A), P(B), and P(A and B) directly over concrete state valuations (Level 4)."
+      },
+      {
+        "concept_id": "G05",
+        "name": "Conditional state probability evaluation",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "description": "Calculates P(A|B) = 0.25 / 0.60 = 0.417 over sample partition."
+      }
+    ],
+    "operational_steps": [],
+    "explanatory_subtype": {
+      "subtype": "B2",
+      "level": 2,
+      "description": "Model-theoretic domain valuation over concrete universe elements (Level 4 semantic meaning)."
+    }
+  },
+  "2A": {
+    "package_id": "dev_3b_02_renal_pharmacokinetics",
+    "segment_key": "2A",
+    "folder": "dev_3b_02_renal_pharmacokinetics_2A",
+    "title": "Steady-State Renal Mass Conservation and Clearance Derivation",
+    "split": "CHALLENGE",
+    "target_dimension": "JUSTIFICATION_WHY",
+    "target_threshold": 5,
+    "ref_depth": 4,
+    "ref_boundary": "FALLS_SHORT",
+    "text": "Renal clearance represents the virtual volume of arterial plasma completely cleared of drug per unit of time by the kidney. To establish the mathematical justification for clearance formulas, we apply the physical principle of mass conservation across the renal vasculature under steady-state conditions. In a closed biological system, the rate of drug entering the kidney via the renal artery must equal the rate of drug leaving via the renal vein plus the rate of drug excreted into the urinary collecting duct. The mass excretion rate in urine equals urinary drug concentration C-u multiplied by urinary volumetric flow rate V. At steady-state plasma equilibrium, the rate of drug presentation cleared from plasma is defined as renal clearance CL-R multiplied by arterial plasma concentration C-p. Equating the plasma clearance rate to the urinary excretion rate yields the fundamental mass-balance equality: CL-R times C-p equals C-u times V. Dividing both sides algebraically by plasma concentration C-p produces the canonical clearance equation: CL-R equals C-u times V divided by C-p under linear kinetics.",
+    "duration_seconds": 40,
+    "gold_concepts": [
+      {
+        "concept_id": "G01",
+        "name": "Renal clearance definition (CL_R)",
+        "epistemic_dimension": "MEANING",
+        "description": "Virtual volume of arterial plasma cleared per unit time."
+      },
+      {
+        "concept_id": "G02",
+        "name": "Urinary drug excretion rate (Cu * V)",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Product of urine concentration and volumetric flow rate."
+      },
+      {
+        "concept_id": "G03",
+        "name": "Steady-state mass conservation equality (CL_R * Cp = Cu * V)",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "description": "Equating plasma clearance rate to urinary excretion rate."
+      },
+      {
+        "concept_id": "G04",
+        "name": "Algebraic derivation of CL_R = (Cu * V) / Cp",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "description": "Formal algebraic derivation from steady-state conservation of mass (Level 4 formal derivation, zero biological mechanism)."
+      }
+    ],
+    "operational_steps": [],
+    "explanatory_subtype": {
+      "subtype": "B2",
+      "level": 2,
+      "description": "Formal algebraic mass-balance derivation (Level 4), but zero biological cellular transport mechanism."
+    }
+  },
+  "2B": {
+    "package_id": "dev_3b_02_renal_pharmacokinetics",
+    "segment_key": "2B",
+    "folder": "dev_3b_02_renal_pharmacokinetics_2B",
+    "title": "Glomerular Filtration Barrier and Transmembrane Active Secretion Biology",
+    "split": "CHALLENGE",
+    "target_dimension": "JUSTIFICATION_WHY",
+    "target_threshold": 5,
+    "ref_depth": 5,
+    "ref_boundary": "SATISFIES",
+    "text": "To understand why renal clearance values often substantially exceed the glomerular filtration rate, we must examine the cellular transport biology of the nephron. While passive glomerular filtration through podocyte slit diaphragms is physically constrained by 30-nanometer fenestrations and negative basement membrane charges, active tubular secretion in the proximal convoluted tubule utilizes specialized carrier proteins. On the basolateral membrane facing the peritubular capillary plexus, organic anion transporters OAT1 and OAT3 actively capture anionic drug molecules from circulation against steep concentration gradients. This transport is coupled to tertiary counter-transport with dicarboxylate alpha-ketoglutarate, sustained by basolateral sodium-potassium ATPase pumps. Following intracellular transcellular transit through the tubule cytoplasm, the drug is extruded into the tubular lumen across the apical brush-border membrane by ATP-dependent cassette pumps, specifically MRP2, MRP4, and breast cancer resistance protein BCRP. This active carrier-mediated machinery strips protein-bound drug fractions from blood, providing the physiological causal mechanism for renal drug elimination exceeding GFR.",
+    "duration_seconds": 40,
+    "gold_concepts": [
+      {
+        "concept_id": "G01",
+        "name": "Proximal tubule active carrier secretion",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Renal epithelial carrier-mediated transport."
+      },
+      {
+        "concept_id": "G02",
+        "name": "Basolateral OAT1/OAT3 active uptake machinery",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "description": "Active transport against electrochemical gradient coupled to alpha-ketoglutarate and Na+/K+ ATPase (Level 5 biological mechanism)."
+      },
+      {
+        "concept_id": "G03",
+        "name": "Apical efflux transporter bank (MRP2, MRP4, BCRP)",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "description": "ATP-dependent extrusion across brush-border membrane into tubular lumen (Level 5 biological mechanism)."
+      },
+      {
+        "concept_id": "G04",
+        "name": "Protein-unbinding clearance acceleration",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "description": "Active extraction stripping protein-bound drug from circulation."
+      }
+    ],
+    "operational_steps": [],
+    "explanatory_subtype": {
+      "subtype": "B1",
+      "level": 2,
+      "description": "Active cellular transport biology across basolateral and apical membranes of proximal tubule cells (Level 5 causal biological mechanism)."
+    }
+  },
+  "3A": {
+    "package_id": "dev_3b_03_critical_care_infusions",
+    "segment_key": "3A",
+    "folder": "dev_3b_03_critical_care_infusions_3A",
+    "title": "Bedside Heuristic Vasopressor Titration Rule",
+    "split": "CHALLENGE",
+    "target_dimension": "APPLICATION_INTERPRETATION",
+    "target_threshold": 6,
+    "ref_depth": 3,
+    "ref_boundary": "FALLS_SHORT",
+    "text": "When managing acute hypotensive septic shock at the bedside, intensive care clinicians frequently rely on standardized rule-of-thumb heuristics rather than formal multi-step paper calculations. For an adult patient weighing approximately 70 kilograms whose mean arterial pressure drops below 65 mmHg, our standard ICU institutional protocol initiates norepinephrine at a baseline dose of 0.1 micrograms per kilogram per minute. Using a pre-mixed standard concentration infusion bag containing 4 milligrams of norepinephrine diluted in 250 millilitres of 5% dextrose, nurses apply the clinical shortcut rule: for a 70 kg patient, a 0.1 mcg/kg/min rate corresponds roughly to an initial smart-pump setting of 15 to 25 millilitres per hour. We select 15 millilitres per hour directly on the pump touch-screen as our initial operating flow rate. Bedside clinical monitoring occurs at five-minute intervals; if the arterial line indicates persistent hypotension, the pump is titrated upward in empirical steps of 5 millilitres per hour until hemodynamic stability is achieved.",
+    "duration_seconds": 40,
+    "gold_concepts": [
+      {
+        "concept_id": "G01",
+        "name": "Septic shock norepinephrine indication",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Hypotensive septic shock target MAP 65 mmHg."
+      },
+      {
+        "concept_id": "G02",
+        "name": "Bedside starting dose heuristic (0.1 mcg/kg/min)",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "description": "Informal bedside starting rate estimation (Level 3 single calculation)."
+      },
+      {
+        "concept_id": "G03",
+        "name": "Standard formulation (4 mg / 250 mL)",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Standard pre-mixed bag concentration."
+      },
+      {
+        "concept_id": "G04",
+        "name": "Empirical pump titration rule (5 mL/hr bumps)",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "description": "Empirical pump adjustments without multi-step calculation."
+      }
+    ],
+    "operational_steps": [
+      {
+        "step_num": 1,
+        "description": "Single bedside heuristic conversion: 0.1 mcg/kg/min for 70 kg ~ 15 mL/hr pump rate"
+      }
+    ],
+    "explanatory_subtype": {
+      "subtype": "B2",
+      "level": 1,
+      "description": "Single-step bedside heuristic calculation without intermediate calculation steps."
+    }
+  },
+  "3B": {
+    "package_id": "dev_3b_03_critical_care_infusions",
+    "segment_key": "3B",
+    "folder": "dev_3b_03_critical_care_infusions_3B",
+    "title": "Stepwise 5-Step Continuous Infusion Calculation and Titration Trace",
+    "split": "CHALLENGE",
+    "target_dimension": "APPLICATION_INTERPRETATION",
+    "target_threshold": 6,
+    "ref_depth": 6,
+    "ref_boundary": "SATISFIES",
+    "text": "We now execute a rigorous five-step computational trace to program an electronic smart pump for a 70 kg patient requiring 0.10 micrograms per kilogram per minute of norepinephrine from a 4.0 milligram in 250.0 millilitre bag. Step 1: calculate the target minute mass delivery rate by multiplying weight-based dose by body mass: 0.10 micrograms per kilogram per minute times 70.0 kilograms equals exactly 7.00 micrograms per minute. Step 2: convert minute delivery into an hourly mass requirement: 7.00 micrograms per minute times 60 minutes per hour equals 420.0 micrograms per hour, or 0.420 milligrams per hour. Step 3: compute the solution concentration: 4.0 milligrams divided by 250.0 millilitres yields 0.0160 milligrams per millilitre, which equals 16.0 micrograms per millilitre. Step 4: calculate the smart pump volumetric delivery rate: 0.420 milligrams per hour divided by 0.0160 milligrams per millilitre equals exactly 26.25 millilitres per hour. Step 5: program the infusion pump to 26.3 millilitres per hour and evaluate hemodynamic titration: if mean arterial pressure remains below 65 mmHg after 15 minutes, titrate upward by 0.02 micrograms per kilogram per minute, requiring an incremental adjustment of exactly 5.25 millilitres per hour.",
+    "duration_seconds": 42,
+    "gold_concepts": [
+      {
+        "concept_id": "G01",
+        "name": "Infusion parameters and patient weight",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Patient weight 70 kg, starting dose 0.10 mcg/kg/min."
+      },
+      {
+        "concept_id": "G02",
+        "name": "Step 1: Minute mass rate calculation (7.00 mcg/min)",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "description": "Multiplies 0.10 mcg/kg/min by 70 kg."
+      },
+      {
+        "concept_id": "G03",
+        "name": "Step 2: Hourly mass conversion (0.420 mg/hr)",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "description": "Multiplies 7.00 mcg/min by 60 min to get 420 mcg/hr = 0.420 mg/hr."
+      },
+      {
+        "concept_id": "G04",
+        "name": "Step 3: Bag concentration determination (0.0160 mg/mL)",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "description": "Divides 4.0 mg by 250.0 mL to obtain 0.0160 mg/mL = 16 mcg/mL."
+      },
+      {
+        "concept_id": "G05",
+        "name": "Step 4: Smart pump volumetric rate calculation (26.25 mL/hr)",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "description": "Divides 0.420 mg/hr by 0.0160 mg/mL to yield 26.25 mL/hr."
+      },
+      {
+        "concept_id": "G06",
+        "name": "Step 5: Dynamic MAP titration protocol (+5.25 mL/hr)",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "description": "Calculates 5.25 mL/hr upward titration delta for 0.02 mcg/kg/min dose increment."
+      }
+    ],
+    "operational_steps": [
+      {
+        "step_num": 1,
+        "description": "Mass delivery rate: 0.10 mcg/kg/min * 70 kg = 7.00 mcg/min"
+      },
+      {
+        "step_num": 2,
+        "description": "Hourly mass conversion: 7.00 mcg/min * 60 min/hr = 420 mcg/hr = 0.420 mg/hr"
+      },
+      {
+        "step_num": 3,
+        "description": "Solution concentration: 4.0 mg / 250 mL = 0.0160 mg/mL = 16.0 mcg/mL"
+      },
+      {
+        "step_num": 4,
+        "description": "Pump flow rate: 0.420 mg/hr / 0.0160 mg/mL = 26.25 mL/hr"
+      },
+      {
+        "step_num": 5,
+        "description": "Titration adjustment: 0.02 mcg/kg/min increment = 5.25 mL/hr change"
+      }
+    ],
+    "explanatory_subtype": {
+      "subtype": "B2",
+      "level": 2,
+      "description": "Complete chained 5-step computational calculation trace with explicit intermediate state values (Level 6)."
+    }
+  },
+  "4A": {
+    "package_id": "dev_3b_04_fft_pipelined_radix2",
+    "segment_key": "4A",
+    "folder": "dev_3b_04_fft_pipelined_radix2_4A",
+    "title": "Pipelined Radix-2 FFT Hardware Specification Parameters",
+    "split": "CHALLENGE",
+    "target_dimension": "STRUCTURE_COMPONENTS",
+    "target_threshold": 5,
+    "ref_depth": 2,
+    "ref_boundary": "FALLS_SHORT",
+    "text": "When designing a pipelined fast Fourier transform processor for wireless digital signal processing, the engineering specification establishes the macro-level operational parameters. First, the block transform length N is specified as 1024 complex points, requiring exactly log-2 of N, or 10 sequential processing stages. Second, the system master clock is constrained to 125 megahertz, targeting a sustained processing throughput of 125 megasamples per second with an overall transform latency budget below 10 microseconds. Third, internal arithmetic precision requires a fixed-point wordlength of 16 bits for real components and 16 bits for imaginary components to preserve dynamic range. Fourth, the twiddle factor coefficients are quantized to 16 bits, guaranteeing a peak spurious-free dynamic range exceeding 85 decibels. Fifth, the input-output interface adheres to standard AXI-4 Stream handshaking with valid-ready signaling. These formal numerical constraints define the external specification bounds of the FFT core without specifying internal datapath architectures, butterfly registers, or commutator memories.",
+    "duration_seconds": 38,
+    "gold_concepts": [
+      {
+        "concept_id": "G01",
+        "name": "Pipelined FFT processor specification",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Block size N=1024, clock 125 MHz, latency budget."
+      },
+      {
+        "concept_id": "G02",
+        "name": "Scalar arithmetic precision parameters (16-bit real/imag)",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "description": "Itemizes wordlengths and stage count log2(N)=10 (Level 2 parameter roster)."
+      },
+      {
+        "concept_id": "G03",
+        "name": "Twiddle coefficient quantization bounds",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "description": "SFDR > 85 dB dynamic range boundary condition."
+      },
+      {
+        "concept_id": "G04",
+        "name": "AXI-4 Stream interface signaling",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "description": "Valid-ready handshake protocol."
+      }
+    ],
+    "operational_steps": [],
+    "explanatory_subtype": {
+      "subtype": "B2",
+      "level": 1,
+      "description": "Scalar engineering parameter roster without hardware circuit layout or datapath primitives (Level 2)."
+    }
+  },
+  "4B": {
+    "package_id": "dev_3b_04_fft_pipelined_radix2",
+    "segment_key": "4B",
+    "folder": "dev_3b_04_fft_pipelined_radix2_4B",
+    "title": "Radix-2 Decimation-in-Time Butterfly Datapath Primitives",
+    "split": "CHALLENGE",
+    "target_dimension": "STRUCTURE_COMPONENTS",
+    "target_threshold": 5,
+    "ref_depth": 5,
+    "ref_boundary": "SATISFIES",
+    "text": "To realize a high-throughput pipelined FFT architecture, we implement the internal datapath using dedicated radix-2 decimation-in-time butterfly hardware primitives. Each pipelined stage incorporates three primary structural components: a dual complex adder-subtractor unit, a complex twiddle multiplier, and a ping-pong commutator FIFO buffer. The complex adder-subtractor primitive contains four 16-bit ripple-carry adders and four 16-bit subtractors arranged in parallel to compute intermediate upper and lower butterfly legs (X_m plus Y_m, and X_m minus Y_m) within a single clock cycle. The complex twiddle multiplier primitive is implemented using three DSP48 hardware multiply-accumulate slices configured under Gauss's three-multiplication algorithm, reducing multiplier area by 25 percent. The commutator memory subsystem utilizes dual-port synchronous block RAM configured in a ping-pong structure with a 512-word delay line and crossbar multiplexer routing to reorder bit-reversed frequency bins. These concrete digital logic blocks establish the physical structural datapath of the pipelined radix-2 butterfly processor.",
+    "duration_seconds": 38,
+    "gold_concepts": [
+      {
+        "concept_id": "G01",
+        "name": "Radix-2 butterfly datapath pipeline",
+        "epistemic_dimension": "IDENTIFICATION",
+        "description": "Decimation-in-time butterfly processor architecture."
+      },
+      {
+        "concept_id": "G02",
+        "name": "Dual complex adder-subtractor primitive",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "description": "Parallel 16-bit ripple-carry adders and subtractors computing upper/lower legs (Level 5 hardware primitive)."
+      },
+      {
+        "concept_id": "G03",
+        "name": "Gauss 3-slice twiddle multiplier bank",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "description": "DSP48 multiply-accumulate slices implementing Gauss complex multiplier (Level 5 hardware primitive)."
+      },
+      {
+        "concept_id": "G04",
+        "name": "Ping-pong block RAM commutator buffer",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "description": "Dual-port RAM 512-word delay line and crossbar commutator reordering bit-reversed bins (Level 5 hardware primitive)."
+      }
+    ],
+    "operational_steps": [],
+    "explanatory_subtype": {
+      "subtype": "B2",
+      "level": 2,
+      "description": "Concrete physical structural datapath primitives and digital circuit building blocks (Level 5)."
+    }
+  }
+}

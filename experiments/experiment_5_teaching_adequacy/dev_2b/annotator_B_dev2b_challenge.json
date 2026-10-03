@@ -1,0 +1,80 @@
+{
+  "annotator_id": "Annotator_B",
+  "rubric_version": "1.1.0-frozen",
+  "blind_to_model": true,
+  "blind_to_consensus": true,
+  "annotations": {
+    "1A": {
+      "package_id": "dev_2b_01_set_theory_relations",
+      "segment_id": "segment_1A_syntactic_property_recitation",
+      "epistemic_dimension": "MEANING",
+      "assigned_depth": 3,
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+      "evidence_quote": "These three properties constitute the axiomatic algebraic criteria for any equivalence relation. To verify an equivalence relation algebraically, students mechanically check these three property formulas against the relation's formal propositional definition.",
+      "rationale": "States the algebraic axioms of an equivalence relation and introduces a mechanical procedural rule of verification against propositional definitions. While it references verification procedures (Level 3 procedural step), it contains no universe of discourse, partition models, or element truth valuations. Meets boundary verdict FALLS_SHORT_OF_LEVEL_4_SEMANTICS."
+    },
+    "1B": {
+      "package_id": "dev_2b_01_set_theory_relations",
+      "segment_id": "segment_1B_concrete_domain_partition_model",
+      "epistemic_dimension": "MEANING",
+      "assigned_depth": 4,
+      "boundary_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+      "evidence_quote": "Consider a concrete universe of discourse: the four-element set S = {a, b, c, d}... defines an exact, exhaustive partition of the domain into disjoint non-empty equivalence classes... the class [a] equals {a, c}... The class [b] equals {b, d}... [a] union [b] equals the entire domain S, and [a] intersect [b] is strictly the empty set.",
+      "rationale": "Constructs a formal universe of discourse S={a,b,c,d} and explicitly evaluates equivalence classes [a] and [b] as disjoint subsets whose union spans the domain. Fully satisfies Level 4 Semantic Models under Rubric v1.1.0."
+    },
+    "2A": {
+      "package_id": "dev_2b_02_hepatic_metabolism",
+      "segment_id": "segment_2A_algebraic_kinetic_derivation",
+      "epistemic_dimension": "JUSTIFICATION_WHY",
+      "assigned_depth": 4,
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "evidence_quote": "Multiplying the total apparent volume of distribution V_d by the elimination rate constant k_el yields systemic clearance: CL equals k_el multiplied by V_d. If hepatic metabolism accounts for a fixed fraction f_e of total elimination, hepatic clearance CL_H is simply the product of systemic clearance and f_e... compute hepatic clearance in liters per hour using standard algebraic substitution.",
+      "rationale": "Presents an algebraic pharmacokinetic derivation linking CL, k_el, V_d, and t_1/2. Contains no organ histology, blood perfusion, or cellular enzymology. Under Rubric v1.1.0, algebraic equation derivations are capped at Level 4 FORMAL_MATHEMATICAL_IDENTITY; falls short of Level 5 Causal Biological Mechanism."
+    },
+    "2B": {
+      "package_id": "dev_2b_02_hepatic_metabolism",
+      "segment_id": "segment_2B_microsomal_enzyme_kinetics",
+      "epistemic_dimension": "JUSTIFICATION_WHY",
+      "assigned_depth": 5,
+      "boundary_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+      "evidence_quote": "Hepatic drug metabolism is a physiological transport and biotransformation process occurring within the liver lobules. Arterial and portal venous blood enters the hepatic sinusoids at flow rate Q_H. Free, unbound drug molecules in plasma cross the fenestrated sinusoidal endothelium into the Space of Disse and enter hepatocytes via basolateral influx carriers like OATP1B1. Inside the hepatocyte endoplasmic reticulum, membrane-bound microsomal enzymes\u2014predominantly Cytochrome P450 oxidases like CYP3A4... CL_H equals Q_H times (f_u * CL_int) divided by (Q_H plus f_u * CL_int).",
+      "rationale": "Articulates physiological tissue perfusion (Q_H), sinusoidal fenestration, basolateral active transporter carrier uptake (OATP1B1), and microsomal enzyme biotransformation (CYP3A4 Michaelis-Menten kinetics), yielding organ clearance. Fully satisfies Level 5 CAUSAL_BIOLOGICAL_MECHANISM."
+    },
+    "3A": {
+      "package_id": "dev_2b_03_aminoglycoside_dosing",
+      "segment_id": "segment_3A_bedside_conversational_estimation",
+      "epistemic_dimension": "APPLICATION_INTERPRETATION",
+      "assigned_depth": 3,
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "evidence_quote": "If the patient looks to be average size, say around 70 kilograms, you do quick mental math: 7 times 70 is about 490 milligrams, so you verbally tell the intern to order a 500 milligram IV infusion... If they are an older patient with creatinine hovering around 1.6 or 1.8, you conversationally suggest stretching the interval to every 36 or 48 hours to be safe.",
+      "rationale": "Conversational clinical rounding estimation with quick mental multiplication (7 x 70 = 490 ~ 500 mg) and heuristic interval adjustment. No chained pharmacokinetic state variables or structured execution trace. Rated Level 3 INFORMAL_CLINICAL_ESTIMATION under Rubric v1.1.0."
+    },
+    "3B": {
+      "package_id": "dev_2b_03_aminoglycoside_dosing",
+      "segment_id": "segment_3B_stepwise_hartford_nomogram_trace",
+      "epistemic_dimension": "APPLICATION_INTERPRETATION",
+      "assigned_depth": 6,
+      "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+      "evidence_quote": "Step 1: Baseline Demographics... Step 2: Ideal and Dosing Weight... Step 3: Creatinine Clearance. CrCl via Cockcroft-Gault equals ((140 - 62) * 64.6 * 0.85) / (72 * 1.3)... Step 4: Dose Determination. Target extended-interval dose is 7 mg/kg... Step 5: Dosing Interval via Hartford Nomogram... Step 6: Monitoring Plan.",
+      "rationale": "Exemplary 6-step clinical pharmacokinetic calculation trace. Output of each step directly feeds into subsequent steps, explicit numerical states and units are given throughout, dose is rounded to commercial vial sizes, and interval is verified against the Hartford nomogram. Fully satisfies Level 6 RIGOROUS_STEPWISE_EXECUTION_TRACE."
+    },
+    "4A": {
+      "package_id": "dev_2b_04_iir_filter_realization",
+      "segment_id": "segment_4A_iir_specification_parameter_roster",
+      "epistemic_dimension": "STRUCTURE_COMPONENTS",
+      "assigned_depth": 2,
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+      "evidence_quote": "Metric 1: Sampling frequency f_s, defining the Nyquist boundary at f_s / 2 in hertz. Metric 2: Passband cutoff frequency f_pass... Metric 3: Stopband cutoff frequency f_stop... Metric 4: Maximum passband ripple A_pass... Metric 5: Minimum stopband attenuation A_stop... Metric 6: Filter order N...",
+      "rationale": "Enumerates an itemized roster of 6 scalar specification parameters and design metrics. Contains zero hardware blocks, delay lines, multipliers, or signal flow graph primitives. Under Rubric v1.1.0, this is Level 2 PARAMETER_SPECIFICATION_ROSTER."
+    },
+    "4B": {
+      "package_id": "dev_2b_04_iir_filter_realization",
+      "segment_id": "segment_4B_direct_form_ii_hardware_flow",
+      "epistemic_dimension": "STRUCTURE_COMPONENTS",
+      "assigned_depth": 5,
+      "boundary_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+      "evidence_quote": "Architecturally, Direct Form II decomposes this into an intermediate state variable w[n] to minimize memory hardware: Primitive 1: A shared tapped delay line consisting of N unit-delay memory registers z^-1 in series... Primitive 2: A bank of feedback multiplier nodes scaling delayed states by coefficient -a_k... Primitive 3: A bank of feedforward multiplier nodes scaling delayed states by coefficient b_k, which sum through an adder tree...",
+      "rationale": "Specifies foundational hardware constituent primitives: shared unit-delay memory registers z^-1, feedback coefficient multipliers -a_k, feedforward multipliers b_k, and summation adder tree. Under Rubric v1.1.0's scale-dimension resolution rule, architectural constituent primitives satisfy Level 5 without requiring dynamic execution traces. Fully satisfies Level 5 ARCHITECTURAL_CONSTITUENT_PRIMITIVES."
+    }
+  }
+}

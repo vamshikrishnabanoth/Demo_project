@@ -1,0 +1,9 @@
+{
+  "segment_key": "1B",
+  "package_id": "dev_3a_01_discrete_probability",
+  "title": "Sample Space Partition Valuation",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "MEANING",
+  "text": "To understand what probability assertions mean semantically, let us construct a concrete discrete sample space Omega consisting of four elementary outcomes: omega-1, omega-2, omega-3, and omega-4. We assign explicit probability mass valuations to each elementary point: P(omega-1) = 0.4, P(omega-2) = 0.3, P(omega-3) = 0.2, and P(omega-4) = 0.1. Notice that these valuations sum to 1.0, satisfying our normalisation constraint. Now, let event A be the set containing omega-1 and omega-2, representing a successful transmission, with truth valuation P(A) = 0.4 + 0.3 = 0.7. Let event B be the partition block containing omega-2 and omega-3, representing a low-latency packet, with valuation P(B) = 0.5. Their intersection is the singleton event omega-2, with probability mass 0.3. This explicit universe model allows us to evaluate compound propositions not merely as abstract algebraic symbols, but as concrete truth valuations over domain elements, showing systemic interaction between state probabilities and event partitions.",
+  "duration_seconds": 40
+}

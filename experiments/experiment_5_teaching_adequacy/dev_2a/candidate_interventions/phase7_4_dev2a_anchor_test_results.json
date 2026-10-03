@@ -1,0 +1,792 @@
+{
+  "metadata": {
+    "milestone": "Milestone v3.6 Phase 7.4: Track 2 Anchor Investigation",
+    "timestamp": "2026-10-02T16:04:57.239Z",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0,
+    "baseline_prompt_sha256": "10a632cb5df3d1252b33c87437b18a49b21fcbd615bd859a9bdd327101e7d35b",
+    "candidate_prompt_sha256": "2d5a9500c1726ee917f3e5ef93d00c5aec6f3b7952993cff2df4e554b6b54388",
+    "frozen_p52a_concepts_sha256": "18f812c1f3e2a62ffff4faf4f6b713224147917d23773cebaebaf1ee0f767196",
+    "evaluator_mode": "P5.3-ONLY (Frozen Baseline P5.2A Concepts)",
+    "dev2b_firewall_status": "CONFIRMED_ZERO_TOUCH"
+  },
+  "diagnostic_cases": {
+    "1A": {
+      "case_key": "1A",
+      "package_id": "dev_2a_01_logic_predicates",
+      "dimension": "MEANING",
+      "target_threshold": 4,
+      "human_reference": {
+        "depth": 2,
+        "boundary": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS"
+      },
+      "baseline": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+        "evidence_synthesis": "C03‑C05 explained negation of quantified formulas and presented both De Morgan equivalences, showing systemic interaction between quantifier and negation (Level 4).",
+        "exact_match": false,
+        "boundary_match": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:05:01.120Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+        "evidence_synthesis": "C03‑C05 explained negation of quantified statements and presented both De Morgan equivalences, showing interaction between quantifier and negation.",
+        "exact_match": false,
+        "boundary_match": false,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:05:09.098Z"
+        }
+      }
+    },
+    "1B": {
+      "case_key": "1B",
+      "package_id": "dev_2a_01_logic_predicates",
+      "dimension": "MEANING",
+      "target_threshold": 4,
+      "human_reference": {
+        "depth": 4,
+        "boundary": "SATISFIES_LEVEL_4_SEMANTICS"
+      },
+      "baseline": {
+        "observed_depth": 3,
+        "status": "COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "evidence_synthesis": "C02 and C04 explain universal as conjunction and existential as disjunction, each giving a single operational interpretation (Level 3).",
+        "exact_match": false,
+        "boundary_match": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_3",
+          "keyPrefix": "gsk_82zS...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:05:14.138Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 3,
+        "status": "COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "evidence_synthesis": "C02 maps ∀ to conjunction and C04 maps ∃ to disjunction, giving clear semantic interpretations.",
+        "exact_match": false,
+        "boundary_match": false,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_4",
+          "keyPrefix": "gsk_RXF0...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:05:28.443Z"
+        }
+      }
+    },
+    "2A": {
+      "case_key": "2A",
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "dimension": "JUSTIFICATION_WHY",
+      "target_threshold": 5,
+      "human_reference": {
+        "depth": 4,
+        "boundary": "FALLS_SHORT_OF_LEVEL_5_MECHANISM"
+      },
+      "baseline": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+        "evidence_synthesis": "C06 derives CL = k_e·Vd by equating elimination‑rate expressions, providing a step‑by‑step rationale.",
+        "exact_match": false,
+        "boundary_match": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:05:36.497Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 4,
+        "status": "PARTIALLY_COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "evidence_synthesis": "C06 algebraically derives CL = ke·Vd without invoking a physiological mechanism, qualifying as a formal identity (Level 4).",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": true,
+        "depth_improvement": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_1",
+          "keyPrefix": "gsk_Zd0E...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:05:41.480Z"
+        }
+      }
+    },
+    "2B": {
+      "case_key": "2B",
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "dimension": "JUSTIFICATION_WHY",
+      "target_threshold": 5,
+      "human_reference": {
+        "depth": 5,
+        "boundary": "SATISFIES_LEVEL_5_MECHANISM"
+      },
+      "baseline": {
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "evidence_synthesis": "The lecture states reasons (high‑extraction limited by flow, low‑extraction limited by enzymes) but lacks step‑by‑step derivation or formal rationale.",
+        "exact_match": false,
+        "boundary_match": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:05:45.751Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "evidence_synthesis": "Lecture identified the physiological equation but provided no step‑by‑step derivation or causal mechanism linking flow and extraction.",
+        "exact_match": false,
+        "boundary_match": false,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_3",
+          "keyPrefix": "gsk_82zS...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:05:51.400Z"
+        }
+      }
+    },
+    "3A": {
+      "case_key": "3A",
+      "package_id": "dev_2a_03_clinical_dosing",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "target_threshold": 6,
+      "human_reference": {
+        "depth": 3,
+        "boundary": "FALLS_SHORT_OF_LEVEL_6_TRACE"
+      },
+      "baseline": {
+        "observed_depth": 1,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "evidence_synthesis": "C06 only mentions the clinical pharmacist’s role without a worked case or concrete execution trace of dosing decisions.",
+        "exact_match": false,
+        "boundary_match": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_4",
+          "keyPrefix": "gsk_RXF0...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:06:24.421Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "evidence_synthesis": "C06 mentions that pharmacists perform rapid bedside dosing, but no worked numerical example or step‑by‑step trace is provided.",
+        "exact_match": false,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:06:31.896Z"
+        }
+      }
+    },
+    "3B": {
+      "case_key": "3B",
+      "package_id": "dev_2a_03_clinical_dosing",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "target_threshold": 6,
+      "human_reference": {
+        "depth": 6,
+        "boundary": "SATISFIES_LEVEL_6_TRACE"
+      },
+      "baseline": {
+        "observed_depth": 6,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "evidence_synthesis": "C05, C07, and C08 performed dose calculation, interval selection via the Hartford nomogram, and presented the final prescription.",
+        "exact_match": true,
+        "boundary_match": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:06:40.211Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 6,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "evidence_synthesis": "A complete dosing calculation was executed, yielding a 500 mg gentamicin dose every 36 hours (C05‑C08).",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_3",
+          "keyPrefix": "gsk_82zS...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:07:02.314Z"
+        }
+      }
+    },
+    "4A": {
+      "case_key": "4A",
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "target_threshold": 5,
+      "human_reference": {
+        "depth": 2,
+        "boundary": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES"
+      },
+      "baseline": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "evidence_synthesis": "No concepts or episodes described the structural primitives of the DFT (e.g., complex exponentials, basis vectors).",
+        "exact_match": false,
+        "boundary_match": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:07:15.934Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "evidence_synthesis": "The lecture did not mention any structural primitives such as DFT algorithm components, twiddle factors, or data structures.",
+        "exact_match": false,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:07:23.283Z"
+        }
+      }
+    },
+    "4B": {
+      "case_key": "4B",
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "target_threshold": 5,
+      "human_reference": {
+        "depth": 5,
+        "boundary": "SATISFIES_LEVEL_5_PRIMITIVES"
+      },
+      "baseline": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "evidence_synthesis": "C02 and C04 present the forward DFT formula and the Vandermonde basis matrix, each at a static‑definition level; no multi‑step construction or algorithmic detail is given.",
+        "exact_match": false,
+        "boundary_match": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:07:40.425Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "evidence_synthesis": "C02 gives the forward DFT summation formula and C04 specifies the N×N Vandermonde basis matrix.",
+        "exact_match": false,
+        "boundary_match": false,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:07:46.832Z"
+        }
+      }
+    }
+  },
+  "validation_cases": {
+    "1C": {
+      "case_key": "1C",
+      "package_id": "dev_2a_01_logic_predicates",
+      "dimension": "MEANING",
+      "target_threshold": 4,
+      "human_reference": {
+        "depth": 2,
+        "boundary": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS"
+      },
+      "baseline": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "evidence_synthesis": "No explicit discussion of the semantic meaning of quantifier duality was found in the transcript.",
+        "exact_match": false,
+        "boundary_match": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:08:06.306Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "evidence_synthesis": "No concept or episode provided a semantic or model‑theoretic interpretation of quantifier duality or negation equivalence.",
+        "exact_match": false,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:08:16.689Z"
+        }
+      }
+    },
+    "1D": {
+      "case_key": "1D",
+      "package_id": "dev_2a_01_logic_predicates",
+      "dimension": "MEANING",
+      "target_threshold": 4,
+      "human_reference": {
+        "depth": 4,
+        "boundary": "SATISFIES_LEVEL_4_SEMANTICS"
+      },
+      "baseline": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "evidence_synthesis": "No segment of the recording discusses the semantic meaning or interpretation of quantifier duality beyond mere identification.",
+        "exact_match": false,
+        "boundary_match": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:08:33.911Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "evidence_synthesis": "No discussion of the semantic meaning of quantifier duality or negation equivalence was found in the transcript.",
+        "exact_match": false,
+        "boundary_match": false,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:08:53.204Z"
+        }
+      }
+    },
+    "2C": {
+      "case_key": "2C",
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "dimension": "JUSTIFICATION_WHY",
+      "target_threshold": 5,
+      "human_reference": {
+        "depth": 4,
+        "boundary": "FALLS_SHORT_OF_LEVEL_5_MECHANISM"
+      },
+      "baseline": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "evidence_synthesis": "The lecture does not present a deeper rationale or proof beyond stating the equation; only basic definitions are given.",
+        "exact_match": false,
+        "boundary_match": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:09:11.131Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 4,
+        "status": "PARTIALLY_COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "evidence_synthesis": "The derivation of CL_R = (U·V)/P is presented as algebraic manipulation without a physiological causal mechanism, capping depth at Level 4.",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:09:34.556Z"
+        }
+      }
+    },
+    "2D": {
+      "case_key": "2D",
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "dimension": "JUSTIFICATION_WHY",
+      "target_threshold": 5,
+      "human_reference": {
+        "depth": 5,
+        "boundary": "SATISFIES_LEVEL_5_MECHANISM"
+      },
+      "baseline": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "evidence_synthesis": "Only the clearance formula was presented without a step‑by‑step derivation or theoretical rationale.",
+        "exact_match": false,
+        "boundary_match": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:09:52.169Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+        "evidence_synthesis": "The physiological renal clearance formula CL_R = (f_u × GFR) + CL_secretion – CL_reabsorption was derived from the described mechanisms, providing a substantive causal explanation.",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": true,
+        "depth_improvement": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:10:00.784Z"
+        }
+      }
+    },
+    "3C": {
+      "case_key": "3C",
+      "package_id": "dev_2a_03_clinical_dosing",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "target_threshold": 6,
+      "human_reference": {
+        "depth": 3,
+        "boundary": "FALLS_SHORT_OF_LEVEL_6_TRACE"
+      },
+      "baseline": {
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "evidence_synthesis": "Only a simple rounding of the calculated dose to 1000 mg was shown; no worked numerical or code‑level execution trace was provided.",
+        "exact_match": true,
+        "boundary_match": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:10:18.313Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 6,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "evidence_synthesis": "The lecture performed a step‑by‑step numeric trace: calculate dose (15 mg/kg × 70 kg → 1050 mg), round to 1000 mg, then compute infusion time (1000 mg/50 mg/min ≈ 20 min), satisfying Level 6.",
+        "exact_match": false,
+        "boundary_match": false,
+        "boundary_regression": true,
+        "depth_regression": true,
+        "overall_regression": true,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:10:35.185Z"
+        }
+      }
+    },
+    "3D": {
+      "case_key": "3D",
+      "package_id": "dev_2a_03_clinical_dosing",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "target_threshold": 6,
+      "human_reference": {
+        "depth": 6,
+        "boundary": "SATISFIES_LEVEL_6_TRACE"
+      },
+      "baseline": {
+        "observed_depth": 6,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "evidence_synthesis": "C05‑C07 walk through dose calculation, interval selection, rounding, and predicted AUC24 with concrete numbers, constituting a full worked execution trace.",
+        "exact_match": true,
+        "boundary_match": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:10:53.582Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 6,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "evidence_synthesis": "Step‑by‑step dose computation, interval selection, rounding, and expected AUC verification are performed (C05‑C07).",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:11:23.738Z"
+        }
+      }
+    },
+    "4C": {
+      "case_key": "4C",
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "target_threshold": 5,
+      "human_reference": {
+        "depth": 2,
+        "boundary": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES"
+      },
+      "baseline": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "evidence_synthesis": "C02 and C05 give static definitions of filter length M and transition bandwidth, lacking multi‑variable interaction or design rationale.",
+        "exact_match": true,
+        "boundary_match": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_3",
+          "keyPrefix": "gsk_82zS...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:11:29.784Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "evidence_synthesis": "C02 defined filter length M and C05 defined transition bandwidth Δω as parameters, but no deeper structural blueprint was given.",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:11:42.715Z"
+        }
+      }
+    },
+    "4D": {
+      "case_key": "4D",
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "target_threshold": 5,
+      "human_reference": {
+        "depth": 5,
+        "boundary": "SATISFIES_LEVEL_5_PRIMITIVES"
+      },
+      "baseline": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "evidence_synthesis": "Detailed enumeration of primitives: tapped delay line, sequential register, multiplier bank, M+1 multiplier nodes, and M‑input adder tree.",
+        "exact_match": false,
+        "boundary_match": false,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:12:01.590Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+        "evidence_synthesis": "Detailed primitives were enumerated: a tapped delay line of M unit‑delays, a multiplier bank of M+1 nodes, and an M‑input adder tree, constituting a complete architectural blueprint.",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "overall_regression": false,
+        "boundary_improvement": true,
+        "depth_improvement": true,
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:12:24.371Z"
+        }
+      }
+    }
+  },
+  "gate_evaluation": {
+    "overall_zero_regression_gate": {
+      "gate_threshold": "0 boundary regressions AND 0 depth regressions on diagnostic cases (1A-4B)",
+      "observed_boundary_regressions": 0,
+      "observed_depth_regressions": 0,
+      "total_overall_regressions": 0,
+      "verdict": "PASSED"
+    },
+    "improvements_isolated": {
+      "diagnostic_boundary_improvements": 1,
+      "diagnostic_depth_improvements": 1,
+      "validation_boundary_improvements": 2,
+      "validation_depth_improvements": 3
+    },
+    "diagnostic_concordance": {
+      "exact_depth": "2 / 8 (25.0%)",
+      "boundary_agreement": "4 / 8 (50.0%)"
+    },
+    "validation_concordance": {
+      "exact_depth": "5 / 8 (62.5%)",
+      "boundary_agreement": "6 / 8 (75.0%)"
+    }
+  }
+}

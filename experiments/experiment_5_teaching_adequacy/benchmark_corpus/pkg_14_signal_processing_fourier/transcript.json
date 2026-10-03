@@ -1,0 +1,32 @@
+{
+  "lecture_id": "lecture_dft_nyquist_sampling",
+  "total_duration_seconds": 485,
+  "raw_transcript": "Good morning, class. Today we bridge continuous analog signals and digital computing through the Discrete Fourier Transform and the Nyquist-Shannon Sampling Theorem.\n\nIn the real physical world, signals like speech, audio, and sensor voltages are continuous functions of time x(t). But a digital computer cannot store uncountably infinite continuous values; it can only store discrete numbers. We convert continuous signals to discrete sequences x[n] by sampling at uniform time intervals T_s, where sampling frequency f_s equals 1 over T_s, such that x[n] = x(n T_s).\n\nTo analyze the frequency content of a finite discrete sequence of length N, we use the Discrete Fourier Transform, or DFT.\nThe DFT Analysis Equation transforms N time-domain samples x[0] through x[N-1] into N frequency-domain coefficients X[0] through X[N-1]:\nX[k] equals the summation from n equals 0 to N minus 1 of x[n] times e to the power of minus j times 2 pi times k times n divided by N, for k = 0, 1 up to N-1.\nHere, j is the imaginary unit sqrt(-1). The term e^(-j 2 pi k n / N) is often denoted as the twiddle factor W_N^(k n).\nEach output coefficient X[k] represents the complex amplitude and phase of the k-th harmonic frequency component.\nWhat frequency does index k actually correspond to in Hertz?\nThe frequency of bin k is given by f_k equals k times f_s divided by N.\nThe spacing between adjacent frequency bins is Delta f equals f_s divided by N, which is called the Spectral Resolution of the DFT. To get finer frequency resolution, you must increase the observation window length N.\n\nLet us trace a worked numerical calculation for an N = 4 point DFT.\nSuppose our discrete input sequence is x = [1, 2, 0, -1].\nLet us calculate the first two DFT bins:\nFor k = 0 (the DC component):\nX[0] equals sum from n=0 to 3 of x[n] * e^0 equals x[0] + x[1] + x[2] + x[3] equals 1 + 2 + 0 + (-1) equals 2.\nFor k = 1:\nX[1] equals sum of x[n] * e^(-j 2 pi * 1 * n / 4) equals sum of x[n] * e^(-j pi n / 2).\nEvaluating each term using Euler's formula e^(-j theta) = cos(theta) - j sin(theta):\nFor n=0: 1 * e^0 = 1.\nFor n=1: 2 * e^(-j pi / 2) = 2 * (0 - j) = -2j.\nFor n=2: 0 * e^(-j pi) = 0.\nFor n=3: (-1) * e^(-j 3 pi / 2) = (-1) * (0 + j) = -j.\nAdding them up: X[1] equals 1 - 2j + 0 - j equals 1 - 3j!\nThe magnitude is |X[1]| = sqrt(1^2 + (-3)^2) = sqrt(10) approx 3.16.\n\nNow, let us examine the fundamental limit of sampling: the Nyquist-Shannon Sampling Theorem.\nWhen you sample a signal, its continuous spectrum X(f) is replicated periodically at integer multiples of the sampling frequency f_s.\nIf the continuous signal contains frequencies higher than half the sampling rate, these spectral replicas overlap. This catastrophic distortion is called Aliasing. Frequencies higher than f_s / 2 fold back into the lower frequency spectrum and become indistinguishable from genuine low-frequency signals.\nTo avoid aliasing, the sampling rate must strictly satisfy the Nyquist Criterion:\nf_s must be strictly greater than twice the highest frequency present in the signal: f_s > 2 * f_max.\nThe threshold frequency f_Nyquist = f_s / 2 is called the Nyquist Frequency or folding frequency.\nFor example, human hearing ranges up to 20 kiloHertz. Therefore, standard CD audio samples at 44.1 kiloHertz, comfortably above 2 * 20 kHz = 40 kHz.\n\nNow, looking at the syllabus, there is a requirement to provide the formal mathematical proof of the Nyquist-Shannon theorem via the convolution of X(f) with an infinite Dirac comb, and an evaluation of analog anti-aliasing filter roll-off slopes and finite-window spectral leakage.\nUnfortunately, we have run out of time today. In this lecture, we have stated the condition f_s > 2 f_max and visualized the folding effect qualitatively, but we will not be proving the Fourier transform of the ideal impulse train or deriving sinc reconstruction mathematically today.\nFurthermore, we will not be calculating filter transition bands or windowing functions (like Hamming or Hanning windows) to prevent spectral leakage; that will be covered in laboratory session 4. Make sure you can calculate N-point DFT bins and apply the f_s > 2 f_max rule for the exam.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 70,
+      "text": "Analog to digital conversion. Sampling interval T_s and sampling frequency f_s."
+    },
+    {
+      "start": 70,
+      "end": 170,
+      "text": "Discrete Fourier Transform (DFT) analysis equation. Twiddle factors, frequency bin formula f_k = k*f_s/N, spectral resolution Delta f = f_s/N."
+    },
+    {
+      "start": 170,
+      "end": 280,
+      "text": "Worked numerical example: N=4 DFT for x=[1, 2, 0, -1]. Calculating X[0]=2 and X[1]=1-3j with magnitude sqrt(10)."
+    },
+    {
+      "start": 280,
+      "end": 380,
+      "text": "The Nyquist-Shannon Sampling Theorem: spectral replication, aliasing distortion, Nyquist frequency f_s/2, criterion f_s > 2*f_max."
+    },
+    {
+      "start": 380,
+      "end": 485,
+      "text": "Limitations: Omitting formal Dirac comb frequency convolution proof of sampling theorem, and analog anti-aliasing filter roll-off / window leakage."
+    }
+  ]
+}

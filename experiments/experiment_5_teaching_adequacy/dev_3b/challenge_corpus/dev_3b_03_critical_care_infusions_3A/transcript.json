@@ -1,0 +1,9 @@
+{
+  "segment_key": "3A",
+  "package_id": "dev_3b_03_critical_care_infusions",
+  "title": "Bedside Heuristic Vasopressor Titration Rule",
+  "split": "CHALLENGE",
+  "target_dimension": "APPLICATION_INTERPRETATION",
+  "text": "When managing acute hypotensive septic shock at the bedside, intensive care clinicians frequently rely on standardized rule-of-thumb heuristics rather than formal multi-step paper calculations. For an adult patient weighing approximately 70 kilograms whose mean arterial pressure drops below 65 mmHg, our standard ICU institutional protocol initiates norepinephrine at a baseline dose of 0.1 micrograms per kilogram per minute. Using a pre-mixed standard concentration infusion bag containing 4 milligrams of norepinephrine diluted in 250 millilitres of 5% dextrose, nurses apply the clinical shortcut rule: for a 70 kg patient, a 0.1 mcg/kg/min rate corresponds roughly to an initial smart-pump setting of 15 to 25 millilitres per hour. We select 15 millilitres per hour directly on the pump touch-screen as our initial operating flow rate. Bedside clinical monitoring occurs at five-minute intervals; if the arterial line indicates persistent hypotension, the pump is titrated upward in empirical steps of 5 millilitres per hour until hemodynamic stability is achieved.",
+  "duration_seconds": 40
+}

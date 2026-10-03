@@ -1,0 +1,25 @@
+{
+  "corpus": "dev_3b_targeted_challenge_set",
+  "total_segments": 8,
+  "packages": 4,
+  "files": {
+    "p5_1_profiles_dev3b.json": "2ac2b6a7cdd64c3611d00fd65a29bd5de8c69ebce54bd5a8ac4af220f09212ae",
+    "challenge_corpus/dev_3b_01_discrete_probability_1A/metadata.json": "bdbc184edf8bb24b7404cdd5ae388b3b43c99a8c6fb62d5df957f34726cb0ee2",
+    "challenge_corpus/dev_3b_01_discrete_probability_1A/transcript.json": "18067c4e2710b97c94f30ef4fb35cf215cf51f65d58818b625c71e962a15c14c",
+    "challenge_corpus/dev_3b_01_discrete_probability_1B/metadata.json": "9fb4db0766f230e6a77c8bf05c67c89cb9901ccea61c8bc58271db09bd5952fa",
+    "challenge_corpus/dev_3b_01_discrete_probability_1B/transcript.json": "4f295683037ed2f9d10189d2537c44e27633289202e4126efea5b25a372f3a66",
+    "challenge_corpus/dev_3b_02_renal_pharmacokinetics_2A/metadata.json": "51be1d29b7b87bf602a12b5d2475106f7b38e7924e640afadc228d3e26e6ebfe",
+    "challenge_corpus/dev_3b_02_renal_pharmacokinetics_2A/transcript.json": "08159ac7cf4348cc3402753484cf155ca5d1ea33b41bdca74ae6c4b5ddd38a77",
+    "challenge_corpus/dev_3b_02_renal_pharmacokinetics_2B/metadata.json": "02bbf45b9186ea09aac9bc33503b85b84afcc36d0edfef67a0a10d1c365b1fcd",
+    "challenge_corpus/dev_3b_02_renal_pharmacokinetics_2B/transcript.json": "777c0de7ff1e47da611b8d57c3854482ba7b8ab7247428d6b3add62c0380b85a",
+    "challenge_corpus/dev_3b_03_critical_care_infusions_3A/metadata.json": "e2c036962af6e8edcba8d48043523b4a1a600863a5bbc77bd421b11adc5e9c86",
+    "challenge_corpus/dev_3b_03_critical_care_infusions_3A/transcript.json": "62027dc7f93ba138031ecbbcdfb3f71ad42958fd0a1e2f2b350458194b3ea611",
+    "challenge_corpus/dev_3b_03_critical_care_infusions_3B/metadata.json": "1530b7f7161033249299f755a23fd5a512c88c8fed687b69524a477f2c7c7c08",
+    "challenge_corpus/dev_3b_03_critical_care_infusions_3B/transcript.json": "31347bf6d53de1cc8255d5cc7c27fc1644088e98384f2cee912352015dd8453a",
+    "challenge_corpus/dev_3b_04_fft_pipelined_radix2_4A/metadata.json": "4defdde13a3f6451bdc85b698d1c78e0891b3f48d73cb133a163b5630ea9d04b",
+    "challenge_corpus/dev_3b_04_fft_pipelined_radix2_4A/transcript.json": "bdfecc3f3752362be712fd470f42e1705c9481742c63ea8e2c258d66fbf7ad75",
+    "challenge_corpus/dev_3b_04_fft_pipelined_radix2_4B/metadata.json": "dae9020660c3e5cdaec8fcfa9560d9147f971d787bdc27dfa1c7d251dd9d2a25",
+    "challenge_corpus/dev_3b_04_fft_pipelined_radix2_4B/transcript.json": "5adea75670483ccb1bffccdc0fbb21572ae46ff0eff2fcba777f406a2d33cc17",
+    "gold_annotations/dev_3b_gold_extraction_manifest.json": "3e0366eabbd0192f7a53a0b37ad77d1d131eba9335cd1d454febe382d10311b0"
+  }
+}

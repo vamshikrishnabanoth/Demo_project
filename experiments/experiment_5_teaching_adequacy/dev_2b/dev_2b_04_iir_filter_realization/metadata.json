@@ -1,0 +1,27 @@
+{
+  "package_id": "dev_2b_04_iir_filter_realization",
+  "domain": "Engineering & Computer Science",
+  "subject": "Digital Signal Processing & Hardware Architecture",
+  "topic": "Infinite Impulse Response (IIR) Digital Filters: Parameter Specifications vs. Direct Form II Realization",
+  "learner_level": "Senior Undergraduate / Master's",
+  "syllabus_context": "DSP System Architecture: Digital Filter Realization, State Space, and Pipelining",
+  "declared_learning_objective": "Differentiate scalar filter parameter rosters from architectural hardware primitives; formulate signal flow graph topologies for discrete-time systems.",
+  "prerequisites": [
+    "Z-transforms",
+    "LTI system difference equations"
+  ],
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "none"
+  },
+  "contrast_design": {
+    "targeted_pattern": "Pattern 4: Structural Primitives vs Parameter Listing",
+    "negative_segment_id": "segment_4A_iir_specification_parameter_roster",
+    "negative_target_depth": 2,
+    "negative_distinction": "Scalar specification parameter bounds without topological block composition",
+    "positive_segment_id": "segment_4B_direct_form_ii_hardware_flow",
+    "positive_target_depth": 5,
+    "positive_distinction": "Canonical Direct Form II hardware signal flow graph primitives: shared state delay registers z^-1, multipliers, adder tree"
+  }
+}

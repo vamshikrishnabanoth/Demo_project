@@ -1,0 +1,9 @@
+{
+  "segment_key": "1A",
+  "package_id": "dev_3b_01_discrete_probability",
+  "title": "Kolmogorov Axioms and Formal Probability Inequalities",
+  "split": "CHALLENGE",
+  "target_dimension": "MEANING",
+  "text": "In formal axiomatic probability theory, an abstract probability space is defined by the triple consisting of a sample space Omega, a sigma-algebra of measurable events F, and a probability measure P satisfying the Kolmogorov foundation. The first axiom establishes non-negativity: for every event A in F, P(A) is greater than or equal to zero. The second axiom enforces the unit measure condition: P(Omega) equals exactly one. The third axiom dictates countable additivity: for any countable sequence of pairwise disjoint events, the probability of their infinite union is the sum of their individual probabilities. By manipulating these foundational algebraic relations, we derive standard syntactic lemmas including the empty-set null probability and complementation identity P(not A) equals one minus P(A). From these, we deduce Boole's union inequality and monotonicity bounds: if subset containment holds between event A and event B, then P(A) cannot exceed P(B). These classical bounds provide syntactic constraints on compound failure probabilities in safety-critical verification without constructing concrete element valuations.",
+  "duration_seconds": 38
+}

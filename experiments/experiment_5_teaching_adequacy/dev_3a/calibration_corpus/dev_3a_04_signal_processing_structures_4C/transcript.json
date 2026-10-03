@@ -1,0 +1,9 @@
+{
+  "segment_key": "4C",
+  "package_id": "dev_3a_04_signal_processing_structures",
+  "title": "Scalar Decimation-in-Frequency Parameters",
+  "split": "VALIDATION",
+  "target_dimension": "STRUCTURE_COMPONENTS",
+  "text": "The engineering parameters for a decimation-in-frequency (DIF) FFT architecture require specifying the sequence of butterfly stages. In decimation-in-frequency, the input time-domain sequence is accepted in natural order, while the output frequency bins appear in bit-reversed order. The architectural parameters itemize the twiddle factor exponent table: at stage m, the exponents take values k times N divided by 2 to the m. The hardware memory depth is specified as N words of 18-bit block RAM, with a maximum roundoff noise bound under 0.5 LSB. We declare the target throughput at one output complex word per clock cycle, with an operating voltage of 1.2 volts. These items constitute a parameter roster detailing the external functional requirements and arithmetic precision specifications of the DIF core. The roster documents these numerical target bounds without detailing the internal hardware logic gates, multiplier banks, or commutator routing circuits.",
+  "duration_seconds": 40
+}

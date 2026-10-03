@@ -1,0 +1,9 @@
+{
+  "segment_key": "2D",
+  "package_id": "dev_3a_02_renal_pharmacokinetics",
+  "domain": "02",
+  "topic": "Tubular Ion Trapping & Transporter Saturation Biology",
+  "split": "VALIDATION",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "target_threshold": 5
+}

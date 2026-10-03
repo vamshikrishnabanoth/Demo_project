@@ -1,0 +1,963 @@
+{
+  "1A": {
+    "segment_key": "1A",
+    "package_id": "dev_2b_01_set_theory_relations",
+    "header": "[Segment 1A - Negative Boundary: Syntactic Property Recitation]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Binary relation on a set",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced a binary relation R defined on a set A.",
+        "evidence_quotes": [
+          {
+            "quote": "a binary relation R on a set A",
+            "approx_start_sec": 0,
+            "approx_end_sec": 3
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Equivalence relation (definition)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "An equivalence relation is defined as a binary relation that satisfies three specific axioms.",
+        "evidence_quotes": [
+          {
+            "quote": "By formal definition, a binary relation R on a set A is an equivalence relation if and only if it satisfies three structural algebraic axioms",
+            "approx_start_sec": 3,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Reflexivity property",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "For every element x in A, the ordered pair (x,x) must belong to R, ensuring each element relates to itself.",
+        "evidence_quotes": [
+          {
+            "quote": "First, Reflexivity: for all elements x in A, the ordered pair (x, x) belongs to R, meaning every element is related to itself",
+            "approx_start_sec": 9,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Symmetry property",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "If (x,y) is in R then (y,x) must also be in R, making the relation bidirectionally commutative.",
+        "evidence_quotes": [
+          {
+            "quote": "Second, Symmetry: for all elements x and y in A, if (x, y) is in R, then (y, x) must also be in R, asserting that the relation is bidirectionally commutative",
+            "approx_start_sec": 15,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Transitivity property",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Whenever (x,y) and (y,z) are in R, then (x,z) must also be in R, linking chains of related elements.",
+        "evidence_quotes": [
+          {
+            "quote": "Third, Transitivity: for all elements x, y, and z in A, whenever (x, y) is in R and (y, z) is in R, it necessarily follows that (x, z) is in R",
+            "approx_start_sec": 22,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Verification procedure for equivalence relations",
+        "parent_id": "C02",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "Students are instructed to mechanically check each of the three property formulas against the formal definition of the relation to confirm it is an equivalence relation.",
+        "evidence_quotes": [
+          {
+            "quote": "To verify an equivalence relation algebraically, students mechanically check these three property formulas against the relation's formal propositional definition",
+            "approx_start_sec": 30,
+            "approx_end_sec": 38
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "1B": {
+    "segment_key": "1B",
+    "package_id": "dev_2b_01_set_theory_relations",
+    "header": "[Segment 1B - Positive Boundary: Concrete Domain Partition Model]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Three axioms of an equivalence relation (reflexivity, symmetry, transitivity)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture mentions that an equivalence relation is characterized by three axioms and asks why they matter semantically.",
+        "evidence_quotes": [
+          {
+            "quote": "Now, why do these three axioms matter semantically?",
+            "approx_start_sec": 0,
+            "approx_end_sec": 3
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Concrete universe of discourse (set S = {a,b,c,d})",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "A specific four‑element set is introduced as the domain over which the equivalence relation will be evaluated.",
+        "evidence_quotes": [
+          {
+            "quote": "Consider a concrete universe of discourse: the four‑element set S = {a, b, c, d}.",
+            "approx_start_sec": 4,
+            "approx_end_sec": 7
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Explicit definition of relation R as a set of ordered pairs",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Relation R is given by listing all ordered pairs that belong to it, including reflexive and cross pairs.",
+        "evidence_quotes": [
+          {
+            "quote": "Suppose we define relation R explicitly as the set of ordered pairs containing (a, a), (b, b), (c, c), (d, d), along with (a, c), (c, a), and (b, d), (d, b).",
+            "approx_start_sec": 8,
+            "approx_end_sec": 14
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Computation of equivalence classes from R",
+        "parent_id": "C03",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The lecture derives the two equivalence classes [a] = {a,c} and [b] = {b,d} based on the defined relation.",
+        "evidence_quotes": [
+          {
+            "quote": "the class [a] equals {a, c}, because a and c are mutually related. The class [b] equals {b, d}.",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Covering and disjointness properties of equivalence classes",
+        "parent_id": "C04",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "It is shown that the union of the two classes yields the whole domain and their intersection is empty.",
+        "evidence_quotes": [
+          {
+            "quote": "[a] union [b] equals the entire domain S, and [a] intersect [b] is strictly the empty set.",
+            "approx_start_sec": 21,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Equivalence relation ↔ partition of a universe",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecturer states that an equivalence relation is semantically identical to partitioning a universe into non‑overlapping equivalence clusters.",
+        "evidence_quotes": [
+          {
+            "quote": "This concrete domain model proves that an equivalence relation is semantically identical to partitioning a universe into non-overlapping equivalence clusters.",
+            "approx_start_sec": 26,
+            "approx_end_sec": 31
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Justification that the three axioms guarantee a partition",
+        "parent_id": "C01",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "By exhibiting a concrete model, the lecture demonstrates why the three axioms ensure the relation yields a proper partition.",
+        "evidence_quotes": [
+          {
+            "quote": "Now, why do these three axioms matter semantically? ... This concrete domain model proves that an equivalence relation is semantically identical to partitioning a universe...",
+            "approx_start_sec": 0,
+            "approx_end_sec": 31
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ]
+  },
+  "2A": {
+    "segment_key": "2A",
+    "package_id": "dev_2b_02_hepatic_metabolism",
+    "header": "[Segment 2A - Negative Boundary: Algebraic Kinetic Parameter Derivation]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "First‑order elimination kinetics and the elimination rate constant (k_el)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture defines first‑order elimination kinetics and states that the systemic elimination rate constant k_el represents the fraction of drug removed per unit time.",
+        "evidence_quotes": [
+          {
+            "quote": "In first-order elimination kinetics, the systemic elimination rate constant k_el is defined as the fraction of drug removed per unit time.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Systemic clearance (CL) as the product of k_el and apparent volume of distribution (V_d)",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Systemic clearance is calculated by multiplying the elimination rate constant k_el by the total apparent volume of distribution V_d.",
+        "evidence_quotes": [
+          {
+            "quote": "Multiplying the total apparent volume of distribution V_d by the elimination rate constant k_el yields systemic clearance: CL equals k_el multiplied by V_d.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Fraction of total elimination attributable to hepatic metabolism (f_e)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture identifies f_e as the fixed fraction of total elimination that is due to hepatic metabolism.",
+        "evidence_quotes": [
+          {
+            "quote": "If hepatic metabolism accounts for a fixed fraction f_e of total elimination...",
+            "approx_start_sec": 10,
+            "approx_end_sec": 13
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Hepatic clearance (CL_H) expressed as f_e × k_el × V_d",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Hepatic clearance is computed by multiplying systemic clearance by the hepatic fraction f_e, yielding CL_H = f_e · k_el · V_d.",
+        "evidence_quotes": [
+          {
+            "quote": "hepatic clearance CL_H is simply the product of systemic clearance and f_e: CL_H equals f_e times k_el times V_d.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Elimination half‑life (t_half) relationship to k_el",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The half‑life of elimination is related to the elimination rate constant by t_half = 0.693 / k_el.",
+        "evidence_quotes": [
+          {
+            "quote": "the half-life of elimination is related through the natural logarithm of 2: t_half equals 0.693 divided by k_el.",
+            "approx_start_sec": 18,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Algebraic solution for k_el and hepatic clearance from patient data",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "Given a patient’s measured half‑life and volume of distribution, the lecture shows how to solve algebraically for k_el and then compute hepatic clearance in liters per hour.",
+        "evidence_quotes": [
+          {
+            "quote": "We can solve this system algebraically: given patient half-life and distribution volume, we calculate the elimination rate constant and compute hepatic clearance in liters per hour using standard algebraic substitution.",
+            "approx_start_sec": 22,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Apparent volume of distribution (V_d) as a parameter in clearance calculations",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "V_d is introduced as the total apparent volume of distribution that participates in the formulas for systemic and hepatic clearance.",
+        "evidence_quotes": [
+          {
+            "quote": "Multiplying the total apparent volume of distribution V_d by the elimination rate constant k_el yields systemic clearance...",
+            "approx_start_sec": 5,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ]
+  },
+  "2B": {
+    "segment_key": "2B",
+    "package_id": "dev_2b_02_hepatic_metabolism",
+    "header": "[Segment 2B - Positive Boundary: Microsomal Enzyme Transport and Kinetics]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Phenomenological clearance equation CL_H = k_el * V_d",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture presented the algebraic equation CL_H = k_el * V_d as a phenomenological parameter fit that does not reveal the underlying biological mechanism.",
+        "evidence_quotes": [
+          {
+            "quote": "Yet the algebraic equation CL_H = k_el * V_d is a phenomenological parameter fit that reveals nothing about the actual biological mechanism inside hepatocytes.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Hepatic drug metabolism as a physiological transport and biotransformation process",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Metabolism is described as a combined transport and enzymatic conversion occurring within liver lobules.",
+        "evidence_quotes": [
+          {
+            "quote": "Hepatic drug metabolism is a physiological transport and biotransformation process occurring within the liver lobules.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Hepatic sinusoidal blood flow rate (Q_H)",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Arterial and portal venous blood enters the hepatic sinusoids at a defined flow rate denoted Q_H.",
+        "evidence_quotes": [
+          {
+            "quote": "Arterial and portal venous blood enters the hepatic sinusoids at flow rate Q_H.",
+            "approx_start_sec": 19,
+            "approx_end_sec": 23
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Transendothelial passage of free, unbound drug into the Space of Disse",
+        "parent_id": "C02",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Unbound drug molecules cross the fenestrated sinusoidal endothelium into the Space of Disse before entering hepatocytes.",
+        "evidence_quotes": [
+          {
+            "quote": "Free, unbound drug molecules in plasma cross the fenestrated sinusoidal endothelium into the Space of Disse and enter hepatocytes via basolateral influx carriers like OATP1B1.",
+            "approx_start_sec": 24,
+            "approx_end_sec": 31
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Basolateral influx carrier OATP1B1",
+        "parent_id": "C04",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The specific carrier OATP1B1 is identified as a basolateral influx transporter facilitating drug entry into hepatocytes.",
+        "evidence_quotes": [
+          {
+            "quote": "...enter hepatocytes via basolateral influx carriers like OATP1B1.",
+            "approx_start_sec": 30,
+            "approx_end_sec": 32
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Microsomal Cytochrome P450 enzymes (CYP3A4, CYP2D6)",
+        "parent_id": "C02",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Membrane‑bound microsomal enzymes, primarily CYP3A4 and CYP2D6, are highlighted as the catalytic machinery for hepatic metabolism.",
+        "evidence_quotes": [
+          {
+            "quote": "Inside the hepatocyte endoplasmic reticulum, membrane-bound microsomal enzymes—predominantly Cytochrome P450 oxidases like CYP3A4 and CYP2D6—catalyze NADPH-dependent monooxygenation.",
+            "approx_start_sec": 33,
+            "approx_end_sec": 40
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "NADPH‑dependent monooxygenation catalyzed by P450 enzymes",
+        "parent_id": "C06",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The enzymatic reaction uses NADPH to drive monooxygenation of the substrate.",
+        "evidence_quotes": [
+          {
+            "quote": "...catalyze NADPH-dependent monooxygenation.",
+            "approx_start_sec": 39,
+            "approx_end_sec": 41
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Michaelis‑Menten saturation kinetics for microsomal metabolism",
+        "parent_id": "C06",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The transformation follows Michaelis‑Menten kinetics, linking reaction velocity to substrate concentration via V_max and K_m.",
+        "evidence_quotes": [
+          {
+            "quote": "This enzymatic transformation follows Michaelis-Menten saturation kinetics: the intrinsic metabolic clearance CL_int equals the maximal reaction velocity V_max divided by the Michaelis constant K_m plus drug concentration.",
+            "approx_start_sec": 42,
+            "approx_end_sec": 50
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C09",
+        "name": "Intrinsic metabolic clearance formula CL_int = V_max / (K_m + [C])",
+        "parent_id": "C08",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Intrinsic clearance is defined as V_max divided by (K_m plus drug concentration).",
+        "evidence_quotes": [
+          {
+            "quote": "the intrinsic metabolic clearance CL_int equals the maximal reaction velocity V_max divided by the Michaelis constant K_m plus drug concentration.",
+            "approx_start_sec": 46,
+            "approx_end_sec": 51
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C10",
+        "name": "Organ clearance under linear (low‑concentration) conditions",
+        "parent_id": "C09",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "When drug concentration is far below K_m, organ clearance is expressed as CL_H = Q_H * (f_u * CL_int) / (Q_H + f_u * CL_int).",
+        "evidence_quotes": [
+          {
+            "quote": "Under linear conditions where concentration is well below K_m, organ clearance is CL_H equals Q_H times (f_u * CL_int) divided by (Q_H plus f_u * CL_int).",
+            "approx_start_sec": 52,
+            "approx_end_sec": 58
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "3A": {
+    "segment_key": "3A",
+    "package_id": "dev_2b_03_aminoglycoside_dosing",
+    "header": "[Segment 3A - Negative Boundary: Bedside Conversational Estimation]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "High‑dose tobramycin guideline (≈7 mg · kg⁻¹)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture states that clinicians start tobramycin at roughly 7 mg per kilogram of patient body weight.",
+        "evidence_quotes": [
+          {
+            "quote": "Let's start high-dose tobramycin at about 7 milligrams per kilogram.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 4
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Mental calculation of total dose from weight",
+        "parent_id": "C01",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "Clinicians multiply the 7 mg/kg factor by the patient’s weight (≈70 kg) to obtain an approximate total dose.",
+        "evidence_quotes": [
+          {
+            "quote": "If the patient looks to be average size, say around 70 kilograms, you do quick mental math: 7 times 70 is about 490 milligrams.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Rounding to a convenient vial size (≈500 mg)",
+        "parent_id": "C02",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The calculated dose is rounded to the nearest readily available IV formulation, here a 500 mg infusion.",
+        "evidence_quotes": [
+          {
+            "quote": "so you verbally tell the intern to order a 500 milligram IV infusion.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 16
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Serum creatinine as a renal function indicator for dosing interval",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Clinicians look at the basic metabolic panel; a serum creatinine of ~0.9‑1.0 mg/dL guides a 24‑hour interval, whereas higher values prompt longer intervals.",
+        "evidence_quotes": [
+          {
+            "quote": "You glance at their basic metabolic panel: if serum creatinine is around 0.9 or 1.0, you administer it every 24 hours.",
+            "approx_start_sec": 17,
+            "approx_end_sec": 23
+          },
+          {
+            "quote": "If they are an older patient with creatinine hovering around 1.6 or 1.8, you conversationally suggest stretching the interval to every 36 or 48 hours to be safe.",
+            "approx_start_sec": 24,
+            "approx_end_sec": 31
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Dosing‑interval adjustment based on renal function",
+        "parent_id": "C04",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Higher serum creatinine values lead clinicians to extend the dosing interval from 24 h to 36‑48 h to reduce toxicity risk.",
+        "evidence_quotes": [
+          {
+            "quote": "If they are an older patient with creatinine hovering around 1.6 or 1.8, you conversationally suggest stretching the interval to every 36 or 48 hours to be safe.",
+            "approx_start_sec": 24,
+            "approx_end_sec": 31
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Informal bedside approximation as a clinical decision tool",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The speaker characterizes the described calculations as an informal, conversational method that establishes a general therapeutic dosing scale without formal order sets.",
+        "evidence_quotes": [
+          {
+            "quote": "It is an informal bedside approximation that establishes the general therapeutic dosing scale.",
+            "approx_start_sec": 32,
+            "approx_end_sec": 36
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ]
+  },
+  "3B": {
+    "segment_key": "3B",
+    "package_id": "dev_2b_03_aminoglycoside_dosing",
+    "header": "[Segment 3B - Positive Boundary: Stepwise Hartford Nomogram Execution Trace]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Baseline Demographics Identification",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The patient’s age, sex, height, actual weight, and serum creatinine were stated as the starting data for the calculation.",
+        "evidence_quotes": [
+          {
+            "quote": "Patient is a 62-year-old female, height 5 feet 5 inches (165 cm), actual weight 76 kg, serum creatinine S_cr = 1.3 mg/dL.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Ideal Body Weight (IBW) Formula",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "IBW is calculated as 45.5 kg plus 2.3 kg for each inch over 5 feet; the example yields 57.0 kg.",
+        "evidence_quotes": [
+          {
+            "quote": "Ideal Body Weight equals 45.5 kg plus 2.3 kg per inch over 5 feet: 45.5 + (2.3 * 5) = 45.5 + 11.5 = 57.0 kg.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Adjusted Dosing Weight (ADW) Determination",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "When actual weight exceeds 120 % of IBW, ADW is computed as IBW + 0.4 × (actual − IBW), resulting in 64.6 kg for this patient.",
+        "evidence_quotes": [
+          {
+            "quote": "Actual weight is 76 / 57 = 133% of IBW, which exceeds 120%, so we calculate Adjusted Dosing Weight: Dosing Weight = IBW + 0.4 * (Actual - IBW) = 57.0 + 0.4 * (19.0) = 57.0 + 7.6 = 64.6 kg.",
+            "approx_start_sec": 12,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Cockcroft‑Gault Creatinine Clearance Formula",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The Cockcroft‑Gault equation ((140‑age) × weight × sex‑factor) / (72 × serum Cr) was presented as the method to estimate CrCl.",
+        "evidence_quotes": [
+          {
+            "quote": "CrCl via Cockcroft‑Gault equals ((140 - 62) * 64.6 * 0.85) / (72 * 1.3) = (78 * 64.6 * 0.85) / 93.6 = 4283.0 / 93.6 = 45.8 mL/min.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Dose Determination Based on Weight",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "A target dose of 7 mg/kg multiplied by the dosing weight (64.6 kg) gives 452.2 mg, which is rounded to the nearest vial size (450 mg).",
+        "evidence_quotes": [
+          {
+            "quote": "Target extended‑interval dose is 7 mg/kg based on dosing weight: Dose = 7 mg/kg * 64.6 kg = 452.2 mg. Rounding to standard 40 mg/mL vial increments yields Tobramycin 450 mg IV.",
+            "approx_start_sec": 30,
+            "approx_end_sec": 38
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Hartford Nomogram Dosing Interval Selection",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "For a calculated CrCl of 45.8 mL/min (within 40‑59 mL/min), the Hartford protocol recommends a 36‑hour dosing interval.",
+        "evidence_quotes": [
+          {
+            "quote": "For CrCl between 40 and 59 mL/min, the Hartford protocol specifies an extended interval of tau = 36 hours.",
+            "approx_start_sec": 38,
+            "approx_end_sec": 45
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Therapeutic Monitoring Plan Using the Nomogram",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "A random serum concentration drawn 10 hours after infusion is plotted on the Hartford nomogram to confirm adequate peak activity and avoid nephrotoxicity.",
+        "evidence_quotes": [
+          {
+            "quote": "A random serum concentration drawn at 10 hours post‑infusion is plotted on the Hartford nomogram to verify whether the 36‑hour interval maintains peak bactericidal activity while preventing nephrotoxicity.",
+            "approx_start_sec": 45,
+            "approx_end_sec": 55
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "IBW >120 % Threshold as a Boundary Condition",
+        "parent_id": "root",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "The lecture notes that when actual weight exceeds 120 % of IBW, the standard IBW is not used for dosing; instead, the adjusted dosing weight formula is applied.",
+        "evidence_quotes": [
+          {
+            "quote": "Actual weight is 76 / 57 = 133% of IBW, which exceeds 120%, so we calculate Adjusted Dosing Weight...",
+            "approx_start_sec": 12,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "4A": {
+    "segment_key": "4A",
+    "package_id": "dev_2b_04_iir_filter_realization",
+    "header": "[Segment 4A - Negative Boundary: IIR Filter Specification Parameter Roster]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Sampling frequency (f_s) and Nyquist boundary",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture defines the sampling frequency f_s as the rate at which the digital system samples the analog signal and states that it establishes the Nyquist boundary at f_s/2 Hz.",
+        "evidence_quotes": [
+          {
+            "quote": "Metric 1: Sampling frequency f_s, defining the Nyquist boundary at f_s / 2 in hertz.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 4
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Passband cutoff frequency (f_pass)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The passband cutoff frequency f_pass is identified as the frequency up to which the magnitude response must stay within allowable limits.",
+        "evidence_quotes": [
+          {
+            "quote": "Metric 2: Passband cutoff frequency f_pass, where the magnitude response must remain within allowable limits.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Stopband cutoff frequency (f_stop)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The stopband cutoff frequency f_stop marks the point where the required minimum attenuation begins.",
+        "evidence_quotes": [
+          {
+            "quote": "Metric 3: Stopband cutoff frequency f_stop, where minimum required attenuation begins.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 14
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Maximum passband ripple (A_pass)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "A_pass is expressed in decibels and represents the peak allowable variation within the passband.",
+        "evidence_quotes": [
+          {
+            "quote": "Metric 4: Maximum passband ripple A_pass, expressed in decibels as peak allowable passband variation.",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Minimum stopband attenuation (A_stop)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "A_stop, also in decibels, specifies the required level of signal suppression in the stopband.",
+        "evidence_quotes": [
+          {
+            "quote": "Metric 5: Minimum stopband attenuation A_stop, representing the required suppression level in decibels.",
+            "approx_start_sec": 21,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Filter order (N) and pole count",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Filter order N is defined as the integer number of poles, which determines the steepness of the transition band.",
+        "evidence_quotes": [
+          {
+            "quote": "Metric 6: Filter order N, the integer number of poles determining the steepness of the transition band.",
+            "approx_start_sec": 26,
+            "approx_end_sec": 31
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "IIR low‑pass Butterworth or Chebyshev filter families",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture mentions that the specification applies to IIR low‑pass filters of the Butterworth or Chebyshev type.",
+        "evidence_quotes": [
+          {
+            "quote": "when specifying an Infinite Impulse Response (IIR) lowpass Butterworth or Chebyshev filter,",
+            "approx_start_sec": 0,
+            "approx_end_sec": 3
+          }
+        ],
+        "confidence": "MEDIUM"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Parameter roster as a pre‑synthesis specification tool",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The set of scalar metrics is presented as the performance requirements that must be established before hardware synthesis of the filter.",
+        "evidence_quotes": [
+          {
+            "quote": "These scalar numerical metrics establish the filter's performance requirements before architectural hardware synthesis.",
+            "approx_start_sec": 32,
+            "approx_end_sec": 38
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "4B": {
+    "segment_key": "4B",
+    "package_id": "dev_2b_04_iir_filter_realization",
+    "header": "[Segment 4B - Positive Boundary: Direct Form II Canonical Hardware Signal Flow Graph]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "N‑th order IIR difference equation",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the generic N‑th order difference equation that defines an IIR filter: y[n] = Σ_{k=0}^{N} b_k x[n‑k] – Σ_{k=1}^{N} a_k y[n‑k].",
+        "evidence_quotes": [
+          {
+            "quote": "The general N-th order difference equation is y[n] equals the sum from k=0 to N of b_k x[n-k] minus the sum from k=1 to N of a_k y[n-k].",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Intermediate state variable w[n] in Direct Form II",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Direct Form II introduces a single intermediate state variable w[n] that captures the filter’s internal state, allowing the two‑stage decomposition of the difference equation.",
+        "evidence_quotes": [
+          {
+            "quote": "Architecturally, Direct Form II decomposes this into an intermediate state variable w[n] to minimize memory hardware.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Shared tapped delay line primitive",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "A single tapped delay line composed of N unit‑delay registers (z⁻¹) stores the vector of past state values [w[n‑1], …, w[n‑N]].",
+        "evidence_quotes": [
+          {
+            "quote": "Primitive 1: A shared tapped delay line consisting of N unit-delay memory registers z^-1 in series, storing the sequential internal state vector [w[n-1], w[n-2], ..., w[n-N]].",
+            "approx_start_sec": 9,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Feedback multiplier bank",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "A set of multiplier nodes scales each delayed state by the feedback coefficients –a_k; the scaled values sum with the current input to produce the new state w[n].",
+        "evidence_quotes": [
+          {
+            "quote": "Primitive 2: A bank of feedback multiplier nodes scaling delayed states by coefficient -a_k, which sum with input x[n] to produce current state w[n].",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Feedforward multiplier bank",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "A second set of multiplier nodes scales the delayed states by the feedforward coefficients b_k; the products are combined in an adder tree to generate the output y[n].",
+        "evidence_quotes": [
+          {
+            "quote": "Primitive 3: A bank of feedforward multiplier nodes scaling delayed states by coefficient b_k, which sum through an adder tree to produce output sample y[n].",
+            "approx_start_sec": 20,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Memory minimization advantage of Direct Form II",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "Because the same tapped delay line is shared between the feedback and feedforward paths, Direct Form II requires roughly half the number of registers compared with Direct Form I.",
+        "evidence_quotes": [
+          {
+            "quote": "This canonical realization halves the required register count compared to Direct Form I.",
+            "approx_start_sec": 25,
+            "approx_end_sec": 28
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Comparison of Direct Form I and Direct Form II architectures",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The lecture contrasted Direct Form II’s shared delay line with Direct Form I’s separate delay lines for feedforward and feedback sections, highlighting the register‑count reduction.",
+        "evidence_quotes": [
+          {
+            "quote": "This canonical realization halves the required register count compared to Direct Form I.",
+            "approx_start_sec": 25,
+            "approx_end_sec": 28
+          }
+        ],
+        "confidence": "MEDIUM"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Signal flow graph primitives for hardware implementation",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The three primitives (shared tapped delay line, feedback multiplier bank, feedforward multiplier bank) constitute the hardware‑level signal flow graph used to implement an IIR filter in Direct Form II.",
+        "evidence_quotes": [
+          {
+            "quote": "The physical hardware realization of the IIR filter is governed by its Direct Form II canonical signal flow graph primitives.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 4
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  }
+}

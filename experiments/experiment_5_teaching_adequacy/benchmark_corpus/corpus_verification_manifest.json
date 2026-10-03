@@ -58,5 +58,85 @@
     "duration_seconds": 470,
     "metadata_sha256": "b7fe31b858402484423e70c8dabc5fff126d8d30e0896602540f1b1a1911df87",
     "transcript_sha256": "115a456e30209884a9184cd3d49221050df475ae4ae1b98dd0684c6bfd6c5025"
+  },
+  {
+    "package_id": "pkg_07_os_deadlocks",
+    "domain": "Computer Science / Operating Systems",
+    "topic": "Deadlock Characterization, Prevention, and Banker's Algorithm",
+    "objective": "Explain the four Coffman conditions necessary for deadlock, analyze safe versus unsafe system states, trace Dijkstra's Banker's Algorithm with multiple resource instances to evaluate safety, and evaluate the trade-offs between deadlock prevention, avoidance, and detection and recovery mechanisms.",
+    "provenance_mode": "CURATED_CONTROLLED_BENCHMARK",
+    "duration_seconds": 470,
+    "metadata_sha256": "2e7de4055832727e0c32e51ec45814e21de38c5a570e5475491f9b551fa7ad8c",
+    "transcript_sha256": "02e192a2f383bd85244e367bb7c4a00cb691c38f30d72803a8ef0900adec4bd2"
+  },
+  {
+    "package_id": "pkg_08_biochem_kinetics",
+    "domain": "Biochemistry / Life Sciences",
+    "topic": "Michaelis-Menten Enzyme Kinetics and Lineweaver-Burk Analysis",
+    "objective": "Derive the Michaelis-Menten rate equation under steady-state assumptions, interpret the kinetic constants Vmax and Km, construct and analyze double-reciprocal Lineweaver-Burk plots to distinguish competitive from non-competitive enzyme inhibition, and evaluate catalytic efficiency (kcat/Km).",
+    "provenance_mode": "CURATED_CONTROLLED_BENCHMARK",
+    "duration_seconds": 460,
+    "metadata_sha256": "3b04260826f4390b362ccc5ba05be559fbfef028a7118be9bf159502758b2b05",
+    "transcript_sha256": "fe56f0d1009374c8bf5dceeb0bd4344ac3e458e960a19f3f0678fb2257b3fdda"
+  },
+  {
+    "package_id": "pkg_09_discrete_math_trees",
+    "domain": "Computer Science / Discrete Mathematics",
+    "topic": "Spanning Trees, Cut Property, and Kruskal's Algorithm with DSU",
+    "objective": "Define spanning trees in connected undirected graphs, prove the Cut Property theorem, trace Kruskal's greedy algorithm using Disjoint Set Union data structures, compare asymptotic complexity with Prim's algorithm, and evaluate edge weight conditions and spanning forest limits.",
+    "provenance_mode": "CURATED_CONTROLLED_BENCHMARK",
+    "duration_seconds": 495,
+    "metadata_sha256": "40f7821535d27249bdbe8c30fa81561968d2802a4a67ac0272365827f378fea5",
+    "transcript_sha256": "65b1d682d5475326ba52e532d656b0a2725ad66b80bd4dba353d0ed9414c549b"
+  },
+  {
+    "package_id": "pkg_10_microecon_game_theory",
+    "domain": "Social Sciences / Microeconomics",
+    "topic": "Strategic Form Games, Dominance Solvability, and Pure Nash Equilibrium",
+    "objective": "Formulate strategic form games with payoff matrices, solve games via Iterated Elimination of Strictly Dominated Strategies (IESDS), identify pure-strategy Nash equilibria using best-response analysis, explain why dominant-strategy equilibria may be Pareto inefficient (Prisoner's Dilemma), and evaluate conditions where pure equilibria fail to exist or multiple equilibria arise.",
+    "provenance_mode": "CURATED_CONTROLLED_BENCHMARK",
+    "duration_seconds": 485,
+    "metadata_sha256": "a415fa2f74c612cd0169a7df08eb14eb48a366417092ba3f1efd2916ca4fd078",
+    "transcript_sha256": "635d979887597f038af9753e06c2c3979f171c5a7c071fcc65e97fcc5f90ad66"
+  },
+  {
+    "package_id": "pkg_11_physics_thermodynamics",
+    "domain": "Classical Physics / Physical Chemistry",
+    "topic": "The Carnot Cycle, Maximum Theoretical Efficiency, and Entropy",
+    "objective": "Explain the four reversible thermodynamic processes of the Carnot cycle, derive the theoretical thermal efficiency eta = 1 - T_C/T_H from the First and Second Laws, calculate work output and heat rejected in numerical engine cycles, and evaluate the Clausius inequality and entropy generation in irreversible cycles and near absolute zero.",
+    "provenance_mode": "CURATED_CONTROLLED_BENCHMARK",
+    "duration_seconds": 480,
+    "metadata_sha256": "47118ba9a596e09d84c788acb66230f5ec9b9c3e4db7fc673954814f55734488",
+    "transcript_sha256": "ebf46a7baac4262ee4064a7360d78df653956ccb30508c4b795eb84c58124298"
+  },
+  {
+    "package_id": "pkg_12_pharmacology_clearance",
+    "domain": "Clinical Medicine / Pharmacology",
+    "topic": "One-Compartment Intravenous Pharmacokinetics: Clearance and Half-Life",
+    "objective": "Formulate the one-compartment intravenous bolus pharmacokinetic model, derive the plasma concentration decay equation C(t) = C_0 * e^(-k_e * t), calculate volume of distribution and total clearance, solve multi-step dosage half-life calculations, and evaluate non-linear Michaelis-Menten elimination saturation in clinical overdoses.",
+    "provenance_mode": "CURATED_CONTROLLED_BENCHMARK",
+    "duration_seconds": 465,
+    "metadata_sha256": "151d6a3da2c9c20e471cfb360077b3846e246d7d2df19eb2962dbca214472185",
+    "transcript_sha256": "e28366eca1e925f1fc4bcd12ca8b389155d0bbd8f9dc8a3b132b1206664ee8b4"
+  },
+  {
+    "package_id": "pkg_13_logic_predicates",
+    "domain": "Humanities / Symbolic Logic & Philosophy",
+    "topic": "First-Order Predicate Logic: Quantifiers, Variable Binding, and Semantics",
+    "objective": "Translate complex English statements into first-order predicate logic with nested quantifiers, specify model structures M = <D, I> to evaluate the truth of quantified formulas, prove validity of quantifier inference rules, and evaluate pathological edge cases involving empty domains and vacuous quantification.",
+    "provenance_mode": "CURATED_CONTROLLED_BENCHMARK",
+    "duration_seconds": 475,
+    "metadata_sha256": "158c8851609120a143b5681f4a26fbff380b0b545ff83a5ce5353cf1d9341e5c",
+    "transcript_sha256": "63a7fae2dca4a390bab30f9e87d8da3f9c5d044c519d5a6e3e222669a27197b0"
+  },
+  {
+    "package_id": "pkg_14_signal_processing_fourier",
+    "domain": "Electrical Engineering / Telecommunications",
+    "topic": "Discrete Fourier Transform (DFT) and Nyquist-Shannon Sampling Theorem",
+    "objective": "Formulate the Discrete Fourier Transform (DFT) analysis equation, calculate frequency bin indices and spectral resolution for discrete sampling windows, prove the Nyquist-Shannon sampling criterion to prevent spectral aliasing, and evaluate anti-aliasing filter roll-off and finite-record spectral leakage.",
+    "provenance_mode": "CURATED_CONTROLLED_BENCHMARK",
+    "duration_seconds": 485,
+    "metadata_sha256": "b27c7c29ecc0d761243a20a1e02408bdac2c2c7ff78833ed88812bb4f9e2d4f1",
+    "transcript_sha256": "b60efd270cbe3647c14521373b3b3d80fc521b21f6ba1e554b7d7f2284b78c4b"
   }
 ]

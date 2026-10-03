@@ -1,0 +1,214 @@
+{
+  "annotator_id": "Annotator_A_Curriculum_Specialist",
+  "annotation_timestamp": "2026-10-01T14:30:00Z",
+  "packages": {
+    "pkg_07_os_deadlocks": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Definition of deadlock and permanent blocking must be recognized.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Coffman four conditions are fundamental to operating systems.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Banker algorithm requires Available, Max, Allocation, Need matrices.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Safe state invariant and safe sequence condition.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Evaluating prevention vs avoidance trade-offs and invalidation principles.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Step-by-step safety test trace on numerical instance.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Detection via wait-for graphs and rollback recovery mechanisms.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Distributed deadlock algorithms are advanced subsequent topics.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_08_biochem_kinetics": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Enzyme, substrate, intermediate complex definitions.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Vmax and Km kinetic meanings.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Briggs-Haldane steady state equations and rate constants.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Hyperbolic velocity curves and substrate saturation.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Justification of steady-state invariant and initial rate measurement.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Lineweaver-Burk double reciprocal plot diagnostic for inhibition.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Allosteric cooperativity and Hill kinetics.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "In vivo multi-substrate flux control.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_09_discrete_math_trees": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Spanning tree formal definition in undirected graph.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "MST optimization concept.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Cuts, crossing edges, and Disjoint Set Union (DSU) structures.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Greedy cycle rejection via DSU find equality.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Proof by contradiction of the Cut Property theorem.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Kruskal trace on 5-vertex graph.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Disconnected graphs (spanning forests) and negative weights.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "TSP approximation and Steiner trees.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "pkg_10_microecon_game_theory": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Normal form primitives: players, actions, payoffs.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Strict dominance and Nash equilibrium definitions.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Payoff bi-matrix and IESDS elimination steps.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Best-response underline method.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Pareto suboptimality proof in Prisoner's Dilemma.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Solving 2x2 games with IESDS and best responses.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Mixed strategy equilibria and coordination games.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Cournot/Bertrand industrial organization models.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_11_physics_thermodynamics",
+  "domain": "Classical Physics / Physical Chemistry",
+  "subject": "Engineering Thermodynamics & Statistical Physics",
+  "topic": "The Carnot Cycle, Maximum Theoretical Efficiency, and Entropy",
+  "learner_level": "Undergraduate B.Tech Mechanical Engineering / Physics (Semester 3)",
+  "syllabus_context": "Unit III: The Second Law of Thermodynamics and Heat Engines. Reversible vs irreversible processes, Carnot heat engine, four-stage Carnot cycle on P-V and T-S planes, Carnot's theorem, thermal efficiency derivation eta = 1 - T_C/T_H, absolute thermodynamic temperature scale, Clausius inequality, and the thermodynamic definition of entropy dS = dQ_rev / T.",
+  "declared_learning_objective": "Explain the four reversible thermodynamic processes of the Carnot cycle, derive the theoretical thermal efficiency eta = 1 - T_C/T_H from the First and Second Laws, calculate work output and heat rejected in numerical engine cycles, and evaluate the Clausius inequality and entropy generation in irreversible cycles and near absolute zero.",
+  "provenance": {
+    "mode": "CURATED_CONTROLLED_BENCHMARK",
+    "source_type": "CURATED_PEDAGOGICAL_TRANSCRIPT",
+    "source": "Standard Academic Engineering Thermodynamics Lecture Series",
+    "institution": "Controlled Educational Benchmark Corpus",
+    "access_date": "2026-10-01",
+    "license_or_usage_basis": "Educational Research Dataset"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "P-V indicator diagrams and isothermal/adiabatic expansion curves drawn on chalkboard and narrated verbally."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "segment_key": "4A",
+  "package_id": "dev_3a_04_signal_processing_structures",
+  "title": "Scalar Pipelined FFT Specification Roster",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "STRUCTURE_COMPONENTS",
+  "text": "When designing a fast Fourier transform hardware accelerator for wireless communications, the engineering specification establishes the operating parameters for the pipeline. First, the block transform size N is specified as 1024 points, which requires log-2 of N, or 10 computational stages. Second, the system clock frequency is defined as 125 megahertz, targeting an overall latency budget under 15 microseconds. Third, the dynamic range parameters require an internal fixed-point word length of 16 bits for the real component and 16 bits for the imaginary component. Fourth, the input data rate is fixed at 100 megasamples per second over an AXI-Stream interface. Fifth, the twiddle factor coefficients are bounded by a maximum phase quantization error under minus 80 decibels. These five parameters specify the scalar numerical constraints and design bounds of the FFT core. The design specification lists these operational constraints without specifying the hardware circuit layout or register schematic.",
+  "duration_seconds": 40
+}

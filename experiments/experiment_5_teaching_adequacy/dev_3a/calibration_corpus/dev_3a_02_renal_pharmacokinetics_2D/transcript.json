@@ -1,0 +1,9 @@
+{
+  "segment_key": "2D",
+  "package_id": "dev_3a_02_renal_pharmacokinetics",
+  "title": "Tubular Ion Trapping & Transporter Saturation Biology",
+  "split": "VALIDATION",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "text": "The physiological justification for urinary pH manipulation relies on the biophysical mechanism of non-ionic diffusion and ion trapping across the tubular epithelium. Lipid-soluble unionized molecules readily diffuse across the apical lipid bilayer of renal tubular cells back into the bloodstream. In the proximal tubule, apical sodium-hydrogen antiporters (NHE3) secrete protons into the lumen, acidifying the filtrate to pH 5.5. For a weak acid such as salicylate with pKa 3.0, administering sodium bicarbonate alkalinizes the tubular fluid to pH 8.0. Under this Henderson-Hasselbalch shift, over 99.9% of the drug becomes ionized into charged conjugate base anions that cannot penetrate the hydrophobic apical membrane. Furthermore, organic cation transporters such as OCT2 on the basolateral membrane and MATE1/MATE2-K on the apical membrane exhibit capacity-limited Michaelis-Menten kinetics; when plasma concentrations exceed their transporter binding affinity Km, active secretion saturates, limiting clearance. This cellular membrane transport biology governs renal excretion.",
+  "duration_seconds": 40
+}

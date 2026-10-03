@@ -1,0 +1,56 @@
+{
+  "manifest_version": "1.0.0",
+  "timestamp": "2026-10-02T00:45:00Z",
+  "milestone": "Milestone v3.6 Step 2A: Diagnostic Investigation Option B Corpus",
+  "description": "Cryptographically sealed manifest for the four dedicated Step 2A diagnostic packages dev_2a_01 through dev_2a_04.",
+  "predeclared_split_design": {
+    "total_packages": 4,
+    "total_segments": 16,
+    "diagnostic_exploration_segments": 8,
+    "held_back_validation_segments": 8,
+    "diagnostic_ratio": "50%",
+    "held_back_validation_ratio": "50%"
+  },
+  "artifacts": [
+    {
+      "relative_path": "experiments/experiment_5_teaching_adequacy/dev_2a/dev_2a_01_logic_predicates/metadata.json",
+      "sha256": "3781bbe7b0492ad6250110fee4183e19450c07929e0acf6af48ec3af197c9edf",
+      "size_bytes": 1760
+    },
+    {
+      "relative_path": "experiments/experiment_5_teaching_adequacy/dev_2a/dev_2a_01_logic_predicates/transcript.json",
+      "sha256": "c1ec61074aff48676bc842de33c3b3b8e851ac3fbf64b8392737a235f64640cd",
+      "size_bytes": 5606
+    },
+    {
+      "relative_path": "experiments/experiment_5_teaching_adequacy/dev_2a/dev_2a_02_pharmacology_clearance/metadata.json",
+      "sha256": "9da414ea287c9229e753f021a4d3a469a6158d34853d28f6ed4296f707096b3f",
+      "size_bytes": 1861
+    },
+    {
+      "relative_path": "experiments/experiment_5_teaching_adequacy/dev_2a/dev_2a_02_pharmacology_clearance/transcript.json",
+      "sha256": "239ab35c0beb9a84af30ed1e85644903785b3e443cdb292eb0b7a0d18dcfd31d",
+      "size_bytes": 6013
+    },
+    {
+      "relative_path": "experiments/experiment_5_teaching_adequacy/dev_2a/dev_2a_03_clinical_dosing/metadata.json",
+      "sha256": "cf3cbba9c4345614b9d36b0fdb75edd2a0a3219f005d7b60e3a5931057315fb5",
+      "size_bytes": 1860
+    },
+    {
+      "relative_path": "experiments/experiment_5_teaching_adequacy/dev_2a/dev_2a_03_clinical_dosing/transcript.json",
+      "sha256": "d0193d12f60c54bbdc36b10bfe19b838264f924f4e36f0eb8925ba29403f0eb2",
+      "size_bytes": 5758
+    },
+    {
+      "relative_path": "experiments/experiment_5_teaching_adequacy/dev_2a/dev_2a_04_signal_processing_fourier/metadata.json",
+      "sha256": "1cdb7ad7df0da33389d8d1006cd2801918652d58db3f034b0d3b5f96838bcb88",
+      "size_bytes": 1758
+    },
+    {
+      "relative_path": "experiments/experiment_5_teaching_adequacy/dev_2a/dev_2a_04_signal_processing_fourier/transcript.json",
+      "sha256": "44c457eb9b4f0c2dca94ddfd02a598c793552b9c6f4d4b56aafd7606abb586c2",
+      "size_bytes": 5665
+    }
+  ]
+}

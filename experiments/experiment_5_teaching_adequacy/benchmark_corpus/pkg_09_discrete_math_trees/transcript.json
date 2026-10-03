@@ -1,0 +1,37 @@
+{
+  "lecture_id": "lecture_discrete_math_mst_kruskal",
+  "total_duration_seconds": 495,
+  "raw_transcript": "Good afternoon, class. Today we explore Minimum Spanning Trees, or MSTs, a foundational optimization structure in network design and combinatorial optimization.\n\nLet G = (V, E) be a connected, undirected graph with positive real edge weights w: E -> R+. A spanning tree T = (V, E_T) of G is a subgraph that contains all vertices V of G, is connected, and contains no cycles. For a graph with |V| = n vertices, every spanning tree possesses exactly n - 1 edges. The Minimum Spanning Tree is a spanning tree whose total edge weight W(T) = sum of w(e) for all e in E_T is minimized.\n\nThe theoretical backbone for all greedy MST algorithms is the Cut Property theorem.\nLet us define a cut (S, V \\ S) as a partition of the vertex set V into two disjoint, non-empty subsets S and V \\ S. An edge e = (u, v) crosses the cut if one endpoint u lies in S and the other endpoint v lies in V \\ S.\nThe Cut Property states: For any cut (S, V \\ S) in G, if edge e* is a strictly minimum-weight edge crossing the cut, then e* must belong to every minimum spanning tree of G.\nLet us prove this by contradiction via the cut-and-paste exchange argument. Suppose T is an MST that does not contain e*. Because T is a spanning tree, adding e* to T creates a unique cycle C. Since e* has one endpoint in S and one in V \\ S, the cycle C must cross the cut at least once more using some other edge e'. Now remove e' and replace it with e*, forming a new spanning tree T' = (T \\ {e'}) union {e*}. The weight of T' is W(T') = W(T) - w(e') + w(e*). Because e* is strictly cheaper than any other crossing edge, w(e*) < w(e'), which implies W(T') < W(T). But this contradicts our assumption that T was minimal! Hence, e* must be in the MST.\n\nNow let us study Kruskal's Algorithm, which builds the MST edge by edge using this cut principle.\nThe strategy is simple and greedy:\n1. Sort all edges E in non-decreasing order of weight: w(e_1) <= w(e_2) <= ... <= w(e_m).\n2. Initialize an empty forest F = (V, empty_set).\n3. Iterate through the sorted edges: for each edge e = (u, v), if adding e to F does not create a cycle, add e to F; otherwise, discard e.\n4. Stop when F contains exactly n - 1 edges.\n\nTo check for cycles efficiently in step 3, we use a Disjoint Set Union (DSU) data structure, also known as Union-Find.\nEach connected component in F is represented as a disjoint set of vertices.\nThe DSU provides two operations:\n- Find(u): returns the representative canonical root of the set containing u.\n- Union(u, v): merges the sets containing u and v.\nWhen inspecting edge (u, v), if Find(u) equals Find(v), both vertices are already in the same component, so adding (u, v) would form a cycle. We discard it. If Find(u) != Find(v), we accept the edge and execute Union(u, v).\nWith union-by-rank and path compression, the amortized time per DSU operation is O(alpha(n)), where alpha is the inverse Ackermann function, which is practically bounded by 4. Thus, sorting the m edges in O(m log m) dominates the running time, giving an overall time complexity of O(m log m) or O(m log n).\n\nLet us trace Kruskal's algorithm on a 5-vertex graph: V = {A, B, C, D, E}, with n = 5 vertices.\nEdges sorted by weight:\n1. (B, C) with weight 1\n2. (A, B) with weight 2\n3. (C, D) with weight 2\n4. (B, D) with weight 3\n5. (A, C) with weight 4\n6. (D, E) with weight 5\n7. (C, E) with weight 6\n\nInitialization: 5 sets {A}, {B}, {C}, {D}, {E}. MST edge count = 0. Target = 5 - 1 = 4 edges.\nStep 1: Edge (B, C), weight 1. Find(B) != Find(C). Accept (B, C). Union(B, C). MST edges: {(B, C)}, count = 1.\nStep 2: Edge (A, B), weight 2. Find(A) != Find(B). Accept (A, B). Union(A, B). MST edges: {(B, C), (A, B)}, count = 2. Components now {A, B, C}, {D}, {E}.\nStep 3: Edge (C, D), weight 2. Find(C) in {A, B, C}, Find(D) in {D}. Different roots! Accept (C, D). Union. MST edges: {(B, C), (A, B), (C, D)}, count = 3. Components now {A, B, C, D}, {E}.\nStep 4: Edge (B, D), weight 3. Find(B) is root {A, B, C, D}; Find(D) is root {A, B, C, D}. They share the same representative! Discard (B, D) to prevent a cycle!\nStep 5: Edge (A, C), weight 4. Find(A) == Find(C). Discard (A, C).\nStep 6: Edge (D, E), weight 5. Find(D) in {A, B, C, D}, Find(E) in {E}. Different roots! Accept (D, E). Union. MST edges: {(B, C), (A, B), (C, D), (D, E)}, count = 4 = n - 1.\nWe terminate! Total MST weight is 1 + 2 + 2 + 5 = 10.\n\nIn comparison, Prim's algorithm grows a single tree outward from an arbitrary start vertex using a min-priority queue, running in O(m + n log n) with a Fibonacci heap. Prim's algorithm is preferred for dense graphs where m is close to n^2, while Kruskal's is better for sparse graphs.\n\nNow, a brief note regarding scope: our syllabus mentions extending MST algorithms to disconnected graphs\u2014yielding a Minimum Spanning Forest\u2014as well as analyzing how Kruskal behaves under negative edge weights or directed graphs. Due to lecture time constraints, we are completely skipping disconnected forests, negative edge weights, and directed branchings today. Do not expect questions on minimum spanning forests or Arborescences on this week's quiz; focus purely on the connected undirected Cut Property and Kruskal's DSU trace.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 70,
+      "text": "Good afternoon. Definition of Minimum Spanning Trees (MST) in connected undirected graphs G=(V,E). |V|-1 edges."
+    },
+    {
+      "start": 70,
+      "end": 165,
+      "text": "The Cut Property theorem. Definition of cut (S, V\\S). Exchange argument proof showing minimum crossing edge must be in MST."
+    },
+    {
+      "start": 165,
+      "end": 260,
+      "text": "Kruskal's greedy algorithm structure. Disjoint Set Union (DSU) with Find and Union operations, path compression, and O(m log m) complexity."
+    },
+    {
+      "start": 260,
+      "end": 390,
+      "text": "Worked trace on 5 vertices A, B, C, D, E. Step-by-step edge selection, cycle rejection on (B,D) and (A,C), and termination at 4 edges."
+    },
+    {
+      "start": 390,
+      "end": 440,
+      "text": "Comparison between Kruskal's and Prim's algorithms. Density considerations: dense vs sparse graphs."
+    },
+    {
+      "start": 440,
+      "end": 495,
+      "text": "Scope statement: Disconnected graphs (spanning forests), negative weights, and directed arborescences omitted due to time. Focus on Kruskal."
+    }
+  ]
+}

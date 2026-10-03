@@ -1,0 +1,80 @@
+{
+  "annotator_id": "Annotator_A",
+  "rubric_version": "1.1.0-frozen",
+  "blind_to_model": true,
+  "blind_to_consensus": true,
+  "annotations": {
+    "1C": {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1C_nested_rule_manipulation",
+      "epistemic_dimension": "MEANING",
+      "assigned_depth": 3,
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+      "evidence_quote": "existential instantiation must respect variable dependency: when you instantiate y after x, y is treated as a Skolem function f(x) depending on x... You cannot simply reorder the quantifier symbols.",
+      "rationale": "Explains a procedural inference rule and variable dependency (Skolem function). While it explains why reordering fails algebraically, it presents no universe of discourse, domain elements, or truth valuations under a model. Under v1.1.0, this is an intermediate procedural explanation capped at Level 3."
+    },
+    "1D": {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1D_nested_model_counterexample",
+      "epistemic_dimension": "MEANING",
+      "assigned_depth": 4,
+      "boundary_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+      "evidence_quote": "look at the concrete mathematical domain of real numbers where Q(x, y) is the relation 'x + y = 0'... For every real number x you give me, I can find an additive inverse y = -x... no such single element y exists in the domain. Statement B is completely false.",
+      "rationale": "Constructs an explicit model over domain R and evaluates truth conditions under two alternating quantifier prefixes. Shows why one statement is true and the other is false by evaluating concrete witnesses and demonstrating contradiction. Fully satisfies Level 4 Semantic Models."
+    },
+    "2C": {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2C_formal_urinary_excretion",
+      "epistemic_dimension": "JUSTIFICATION_WHY",
+      "assigned_depth": 4,
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "evidence_quote": "Setting excretion rate equal to CL_R times P gives the classical clinical clearance equation: CL_R equals (U times V) divided by P. This is a closed-form algebraic relationship...",
+      "rationale": "Presents a formal mass-balance derivation equating urinary excretion rate to renal clearance times plasma concentration. Under v1.1.0, mathematical equation derivations and closed-form formulas are capped at Level 4 FORMAL_MATHEMATICAL_IDENTITY because it provides zero cellular transport biology."
+    },
+    "2D": {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2D_nephron_cellular_transport",
+      "epistemic_dimension": "JUSTIFICATION_WHY",
+      "assigned_depth": 5,
+      "boundary_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+      "evidence_quote": "Renal drug elimination is the net vector sum of three distinct cellular processes: First, Glomerular Filtration... Second, Active Tubular Secretion: basolateral and apical membrane transporters\u2014specifically Organic Anion Transporters like OAT1 and OAT3... Third, Passive Tubular Reabsorption... modulated by urinary pH...",
+      "rationale": "Articulates the cellular and physiological mechanisms governing renal clearance: fenestrated glomerular filtration barrier, active carrier proteins OAT1/3 and OCT2 pumping against concentration gradients with ATP, and pH-dependent passive reabsorption. Fully satisfies Level 5 CAUSAL_BIOLOGICAL_MECHANISM."
+    },
+    "3C": {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3C_conversational_phenytoin_walkthrough",
+      "epistemic_dimension": "APPLICATION_INTERPRETATION",
+      "assigned_depth": 3,
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "evidence_quote": "Let's load the patient with 15 to 20 milligrams per kilogram... 15 mg/kg times 70 kg is about 1050 milligrams, so you verbally order a 1000 mg IV piggyback... infuse it no faster than 50 mg per minute...",
+      "rationale": "Conversational bedside mental math with verbal rounding and informal rate rule of thumb. Lacks sequential chained intermediate states, formal pharmacokinetic calculations, or multi-step execution traces. Under v1.1.0, this is scored as Level 3 INFORMAL_CLINICAL_ESTIMATION."
+    },
+    "3D": {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3D_stepwise_vancomycin_execution_trace",
+      "epistemic_dimension": "APPLICATION_INTERPRETATION",
+      "assigned_depth": 6,
+      "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+      "evidence_quote": "Step 1: Clinical Goal. Target 24-hour AUC24/MIC... Step 2: Estimate Patient Elimination Constant... k_e = 0.0542 h^-1. Step 3: V_d = 49.0 L. Step 4: CL = 2.656 L/h. Step 5: Daily Dose = 1328 mg/day. Step 6: Rounding to Vancomycin 750 mg IV q12h. Step 7: Expected AUC24 = 564.7 mg*h/L...",
+      "rationale": "Exemplary 7-step quantitative calculation trace. Output of each step directly feeds into the next, explicit numerical states and physical units are given throughout, dose is rounded to commercial vial size, and expected outcome is validated against the therapeutic window. Fully satisfies Level 6 RIGOROUS_STEPWISE_EXECUTION_TRACE."
+    },
+    "4C": {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4C_fir_parameter_roster",
+      "epistemic_dimension": "STRUCTURE_COMPONENTS",
+      "assigned_depth": 2,
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+      "evidence_quote": "Parameter 1: Filter length or order M... Parameter 2: Normalized passband edge frequency omega_p... Parameter 3: Normalized stopband edge frequency omega_s... Parameter 4: Transition bandwidth... Parameter 5: Maximum passband ripple... Parameter 6: Minimum stopband attenuation...",
+      "rationale": "Itemized roster of 6 scalar specification parameters and design bounds. Contains zero structural blocks, signal flow topology, or hardware primitives. Under v1.1.0, this is Level 2 PARAMETER_SPECIFICATION_ROSTER."
+    },
+    "4D": {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4D_fir_structural_signal_flow",
+      "epistemic_dimension": "STRUCTURE_COMPONENTS",
+      "assigned_depth": 5,
+      "boundary_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+      "evidence_quote": "Architecturally, this consists of three physical primitive blocks connected in a Direct Form I structure: Primitive 1: A tapped delay line consisting of M unit-delay memory elements denoted by z^-1... Primitive 2: A bank of M+1 feedforward coefficient multiplier nodes... Primitive 3: An M-input summation adder tree...",
+      "rationale": "Specifies the foundational hardware constituent primitives: unit-delay memory registers z^-1, coefficient multipliers b_k, and summation adder tree. Under v1.1.0's scale-dimension resolution rule, these architectural primitives satisfy Level 5 without requiring dynamic execution traces. Fully satisfies Level 5 ARCHITECTURAL_CONSTITUENT_PRIMITIVES."
+    }
+  }
+}

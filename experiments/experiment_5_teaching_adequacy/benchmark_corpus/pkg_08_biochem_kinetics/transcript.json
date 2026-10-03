@@ -1,0 +1,37 @@
+{
+  "lecture_id": "lecture_biochem_enzyme_kinetics",
+  "total_duration_seconds": 460,
+  "raw_transcript": "Welcome everyone. Today we are exploring the quantitative foundations of biological catalysis: Michaelis-Menten enzyme kinetics.\n\nEnzymes are specialized biological catalysts that accelerate chemical reactions by dramatically lowering the activation energy without being consumed in the process. The reacting molecule is the Substrate (S), which binds reversibly to the enzyme's Active Site (E) to form an Enzyme-Substrate complex (ES), which subsequently breaks down to yield product (P) and regenerate free enzyme (E).\nWe write the general reaction scheme as:\nE + S <=(k1, k-1)=> ES --(k2)--> E + P\n\nIf we measure the initial reaction velocity v0 as a function of substrate concentration [S], we observe a characteristic hyperbolic curve. At low [S], the velocity increases linearly: it is first-order with respect to substrate. At high [S], all enzyme active sites become saturated with substrate, and the velocity approaches an asymptotic maximum, Vmax: here the reaction becomes zero-order.\n\nHow do we express this relationship mathematically?\nIn 1925, Briggs and Haldane introduced the Quasi-Steady-State Assumption. They realized that after a brief transient phase, the concentration of the intermediate ES complex remains essentially constant over time: d[ES]/dt = 0.\nThe rate of ES formation from free enzyme and substrate is k1 * [E] * [S].\nThe rate of ES breakdown has two routes: reverting to E + S via k-1, or forming product via k2. So breakdown rate is (k-1 + k2) * [ES].\nSetting formation equal to breakdown:\nk1 * [E] * [S] = (k-1 + k2) * [ES].\n\nLet us define the Michaelis constant, Km:\nKm = (k-1 + k2) / k1.\nSo, [E] * [S] / [ES] = Km.\nNow, the total enzyme concentration [E_total] is the sum of free enzyme and bound enzyme:\n[E_total] = [E] + [ES] => [E] = [E_total] - [ES].\nSubstitute this into our equation:\n([E_total] - [ES]) * [S] = Km * [ES].\nExpand and rearrange terms:\n[E_total] * [S] - [ES] * [S] = Km * [ES]\n[E_total] * [S] = [ES] * (Km + [S])\nTherefore, the concentration of the active complex is:\n[ES] = [E_total] * [S] / (Km + [S]).\n\nSince the rate of product formation is v0 = k2 * [ES], and the maximum possible velocity occurs when all enzyme is bound (Vmax = k2 * [E_total]), we multiply by k2 to obtain the Michaelis-Menten equation:\nv0 = (Vmax * [S]) / (Km + [S]).\n\nWhat is the physical meaning of Km?\nIf we set [S] equal to Km in the equation:\nv0 = (Vmax * Km) / (Km + Km) = (Vmax * Km) / (2 * Km) = Vmax / 2.\nKm is precisely the substrate concentration at which the reaction velocity is half of its maximum value! An enzyme with a low Km requires very little substrate to achieve half-maximal velocity, indicating high affinity for its substrate.\n\nNow let us examine enzyme inhibition using the Lineweaver-Burk double-reciprocal plot.\nTaking the reciprocal of both sides of the Michaelis-Menten equation:\n1 / v0 = (Km + [S]) / (Vmax * [S]) = (Km / Vmax) * (1 / [S]) + (1 / Vmax).\nThis is in the linear form y = mx + c, where:\ny = 1 / v0\nx = 1 / [S]\nSlope m = Km / Vmax\nY-intercept c = 1 / Vmax\nX-intercept = -1 / Km.\n\nLet us contrast Competitive versus Non-Competitive Inhibition:\nIn Competitive Inhibition, the inhibitor structurally resembles the substrate and competes directly for the active site. Because high substrate concentration can outcompete the inhibitor, Vmax is unchanged! However, you need more substrate to reach half-Vmax, so the apparent Km increases. On a Lineweaver-Burk plot, the lines for uninhibited and inhibited enzyme share the same y-intercept (1/Vmax), but the slope increases and the x-intercept moves closer to zero.\n\nIn Non-Competitive Inhibition, the inhibitor binds to an allosteric site distinct from the active site, inactivating the enzyme whether substrate is bound or not. Increasing [S] cannot overcome this inhibition. Consequently, Vmax decreases! But the substrate affinity of the remaining active enzyme is unaltered, so Km remains unchanged. On the Lineweaver-Burk plot, the x-intercept (-1/Km) is identical, while the y-intercept shifts upward.\n\nNow, a brief note regarding the syllabus topic on allosteric feedback regulation and sigmoidal cooperativity (such as the Hill equation): while allosteric enzymes do not follow hyperbolic Michaelis-Menten kinetics due to subunit interactions, our scheduled lecture time has elapsed. We will not be covering allosteric models or the Hill coefficient in today's session. For your assessment, make sure you can derive the steady-state equation and analyze double-reciprocal plots.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 60,
+      "text": "Welcome. Overview of biological catalysis, active sites, substrate binding, and the reaction scheme E + S <=> ES -> E + P."
+    },
+    {
+      "start": 60,
+      "end": 120,
+      "text": "Substrate concentration vs velocity: hyperbolic saturation curve, first-order at low [S], zero-order at Vmax plateau."
+    },
+    {
+      "start": 120,
+      "end": 240,
+      "text": "Briggs-Haldane steady-state derivation d[ES]/dt = 0. Definition of Km = (k-1 + k2)/k1. Derivation of v0 = Vmax[S]/(Km + [S])."
+    },
+    {
+      "start": 240,
+      "end": 310,
+      "text": "Physical interpretation of Km as substrate concentration at half Vmax. Substrate affinity relationship."
+    },
+    {
+      "start": 310,
+      "end": 410,
+      "text": "Lineweaver-Burk transformation 1/v0 = (Km/Vmax)(1/[S]) + 1/Vmax. Comparison of competitive (increased Km, unchanged Vmax) vs non-competitive (unchanged Km, reduced Vmax)."
+    },
+    {
+      "start": 410,
+      "end": 460,
+      "text": "Closing note: Omission of allosteric regulation and Hill equation cooperativity due to time constraint. Focus on Michaelis-Menten derivation and Lineweaver-Burk plots."
+    }
+  ]
+}

@@ -1,0 +1,319 @@
+{
+  "reconstruction_timestamp": "2026-10-01T18:54:17.566Z",
+  "benchmark_scope": "Step 1B Prospective Generalization (pkg_11 to pkg_14)",
+  "component": "P5.2B Observational Episodes",
+  "packages": {
+    "pkg_11_physics_thermodynamics": {
+      "package_id": "pkg_11_physics_thermodynamics",
+      "episode_count": 6,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 70,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Introduction to heat engines, First Law energy conservation, thermal efficiency definition W/Q_H.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 70,
+          "end": 170,
+          "dominant_concept": "C02",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Carnot principle. Four reversible processes: isothermal expansion, adiabatic expansion, isothermal compression, adiabatic compression.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 170,
+          "end": 280,
+          "dominant_concept": "C04",
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "Derivation of Carnot efficiency: evaluating isothermal heat transfer, adiabatic volume relations cancellation, yielding eta = 1 - T_C/T_H.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 280,
+          "end": 380,
+          "dominant_concept": "C04",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C04",
+          "evidence_quote": "Numerical worked problem: T_H=800K, T_C=300K, Q_H=2000J. Calculating eta=62.5%, W=1250J, Q_C=750J.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 380,
+          "end": 440,
+          "dominant_concept": "C05",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Thermodynamic definition of entropy S: cyclic integral of dQ_rev/T = 0, proving entropy is a state variable.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 440,
+          "end": 480,
+          "dominant_concept": "C05",
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C05",
+          "evidence_quote": "Brief limitation note: omitting Clausius inequality for irreversible cycles and absolute zero analysis due to lecture time limits.",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3014,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_12_pharmacology_clearance": {
+      "package_id": "pkg_12_pharmacology_clearance",
+      "episode_count": 5,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 60,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "We start by describing the one‑compartment open model for an IV bolus.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 60,
+          "end": 150,
+          "dominant_concept": "C02",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Dose D, initial concentration C₀, and V_d = Dose/C₀ are defined here.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 150,
+          "end": 250,
+          "dominant_concept": "C06",
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01-C05",
+          "evidence_quote": "Deriving dC/dt = -k_e·C gives C(t)=C₀e^{-k_e t} and the half‑life formula.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 250,
+          "end": 380,
+          "dominant_concept": "C04",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C02-C06",
+          "evidence_quote": "Using the numbers 500 mg, C₀=25 mg/L we compute V_d, CL, t₁/₂ and C(12).",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 380,
+          "end": 465,
+          "dominant_concept": "C01",
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "We note that the model omits Michaelis‑Menten saturation and multi‑compartment distribution.",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 2808,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_13_logic_predicates": {
+      "package_id": "pkg_13_logic_predicates",
+      "episode_count": 6,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 70,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Limits of propositional logic lead us to first‑order predicate logic.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 70,
+          "end": 130,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "We introduce individual constants, variables, and predicate symbols.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 130,
+          "end": 160,
+          "dominant_concept": "C02",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Universal (∀) and existential (∃) quantifiers, together with scope and binding, are defined.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 160,
+          "end": 250,
+          "dominant_concept": "C04",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Quantifier negation duality: ¬∀x φ ↔ ∃x ¬φ and ¬∃x φ ↔ ∀x ¬φ.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 250,
+          "end": 380,
+          "dominant_concept": "C07",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C05",
+          "evidence_quote": "Translating 'Every philosopher admires some logician' and evaluating it in a three‑element model.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 380,
+          "end": 475,
+          "dominant_concept": "C08",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C02",
+          "evidence_quote": "Inference rules: Universal Instantiation and Existential Generalization, with notes on empty‑domain edge cases.",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3342,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 2
+      }
+    },
+    "pkg_14_signal_processing_fourier": {
+      "package_id": "pkg_14_signal_processing_fourier",
+      "episode_count": 5,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 70,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Analog to digital conversion. Sampling interval T_s and sampling frequency f_s.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 70,
+          "end": 170,
+          "dominant_concept": "C03",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Discrete Fourier Transform (DFT) analysis equation. Twiddle factors, frequency bin formula f_k = k*f_s/N, spectral resolution Delta f = f_s/N.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 170,
+          "end": 280,
+          "dominant_concept": "C06",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Worked numerical example: N=4 DFT for x=[1, 2, 0, -1]. Calculating X[0]=2 and X[1]=1-3j with magnitude sqrt(10).",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 280,
+          "end": 380,
+          "dominant_concept": "C07",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "E01",
+          "evidence_quote": "The Nyquist-Shannon Sampling Theorem: spectral replication, aliasing distortion, Nyquist frequency f_s/2, criterion f_s > 2*f_max.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 380,
+          "end": 485,
+          "dominant_concept": "C08",
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "E02",
+          "evidence_quote": "Limitations: Omitting formal Dirac comb frequency convolution proof of sampling theorem, and analog anti-aliasing filter roll-off / window leakage.",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3431,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 5
+      }
+    }
+  }
+}

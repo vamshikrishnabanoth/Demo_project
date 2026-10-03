@@ -1,0 +1,9 @@
+{
+  "segment_key": "2C",
+  "package_id": "dev_3a_02_renal_pharmacokinetics",
+  "title": "Clearance Ratio Algebraic Formulation",
+  "split": "VALIDATION",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "text": "We determine the net mechanism of renal excretion algebraically by establishing the renal clearance ratio, denoted CR. The clearance ratio is defined as the renal clearance of the drug divided by the product of its unbound plasma fraction f-u and the glomerular filtration rate GFR, measured via inulin: CR equals CL-R divided by the quantity f-u times GFR. We derive this relation by comparing the total excretion rate to the filtration rate: filtration clearance equals f-u times GFR. If the net clearance exceeds filtration, the ratio CR is greater than 1.0; if reabsorption predominates, CR is less than 1.0. This algebraic ratio provides a formal mathematical criterion: subtracting the filtration component from total renal clearance isolates the net secretory or reabsorptive flux. We calculate this parameter algebraically from clinical laboratory values to classify renal handling without investigating the microscopic cellular anatomy.",
+  "duration_seconds": 40
+}

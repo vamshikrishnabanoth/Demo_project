@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-10-02T15:12:00Z",
+  "milestone": "Milestone v3.6 Step 2A Phase 3: Blind Diagnostic Review",
+  "sample_size": 8,
+  "exact_depth_agreement": {
+    "count": 7,
+    "total": 8,
+    "percentage": 87.5
+  },
+  "boundary_decision_agreement": {
+    "count": 8,
+    "total": 8,
+    "percentage": 100.0
+  },
+  "tolerance_within_1_level": {
+    "count": 8,
+    "total": 8,
+    "percentage": 100.0
+  },
+  "cohens_kappa_exact_depth": 0.8431,
+  "cohens_kappa_interpretation": "ALMOST_PERFECT_AGREEMENT (kappa >= 0.80)",
+  "contingency_table": {
+    "L2": {
+      "L2": 2,
+      "L3": 0,
+      "L4": 0,
+      "L5": 0,
+      "L6": 0
+    },
+    "L3": {
+      "L2": 0,
+      "L3": 1,
+      "L4": 0,
+      "L5": 0,
+      "L6": 0
+    },
+    "L4": {
+      "L2": 0,
+      "L3": 1,
+      "L4": 1,
+      "L5": 0,
+      "L6": 0
+    },
+    "L5": {
+      "L2": 0,
+      "L3": 0,
+      "L4": 0,
+      "L5": 2,
+      "L6": 0
+    },
+    "L6": {
+      "L2": 0,
+      "L3": 0,
+      "L4": 0,
+      "L5": 0,
+      "L6": 1
+    }
+  },
+  "qualitative_disagreement_analysis": [
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2A_algebraic_elimination",
+      "annotator_A_depth": 4,
+      "annotator_B_depth": 3,
+      "disagreement_nature": "Depth scale nuance on mathematical derivation (Level 3 relation vs Level 4 identity)",
+      "boundary_concordance": "PERFECT_CONCORDANCE: Both annotators agree 100% that Segment 2A is purely formal/algebraic and completely falls short of Level 5 physiological mechanism.",
+      "root_cause_attribution": "NOT_RUBRIC_AMBIGUITY_ON_BOUNDARY. The operational boundary tested is Level 3/4 vs Level 5. Both annotators cleanly separate the mathematical formula from the biological mechanism."
+    }
+  ],
+  "adjudicated_consensus_diagnostic_profile": [
+    {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1A_syntactic_duality",
+      "dimension": "MEANING",
+      "adjudicated_depth": 2,
+      "consensus_verdict": "FALLS_SHORT_OF_LEVEL_4 (Pure syntax)"
+    },
+    {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1B_domain_semantics",
+      "dimension": "MEANING",
+      "adjudicated_depth": 4,
+      "consensus_verdict": "SATISFIES_LEVEL_4 (Semantic models)"
+    },
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2A_algebraic_elimination",
+      "dimension": "CORE_CONCEPTS",
+      "adjudicated_depth": 4,
+      "consensus_verdict": "FALLS_SHORT_OF_LEVEL_5 (Formal formula only, no biology)"
+    },
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2B_organ_extraction_mechanism",
+      "dimension": "CORE_CONCEPTS",
+      "adjudicated_depth": 5,
+      "consensus_verdict": "SATISFIES_LEVEL_5 (Biological mechanism CL = Q * E)"
+    },
+    {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3A_conversational_gentamicin_walkthrough",
+      "dimension": "WORKED_APPLICATION",
+      "adjudicated_depth": 3,
+      "consensus_verdict": "FALLS_SHORT_OF_LEVEL_6 (Conversational estimation)"
+    },
+    {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3B_stepwise_gentamicin_execution_trace",
+      "dimension": "WORKED_APPLICATION",
+      "adjudicated_depth": 6,
+      "consensus_verdict": "SATISFIES_LEVEL_6 (Rigorous 5-step trace)"
+    },
+    {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4A_dft_parameter_roster",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "adjudicated_depth": 2,
+      "consensus_verdict": "FALLS_SHORT_OF_LEVEL_5 (Scalar parameter list)"
+    },
+    {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4B_dft_structural_primitives",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "adjudicated_depth": 5,
+      "consensus_verdict": "SATISFIES_LEVEL_5 (Architectural primitives)"
+    }
+  ]
+}

@@ -1,0 +1,281 @@
+{
+  "component": "P5.2B Instructional Episodes (dev_2a)",
+  "packages": {
+    "dev_2a_01_logic_predicates": {
+      "package_id": "dev_2a_01_logic_predicates",
+      "episode_count": 4,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 110,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "not for‑all flips to there‑exists not",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 110,
+          "end": 230,
+          "dominant_concept": "C02",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "universal quantifier as generalized conjunction over domain D",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 230,
+          "end": 350,
+          "dominant_concept": "C05",
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": true,
+          "revisitation_target": "C02",
+          "evidence_quote": "non‑commutativity rule, Skolem function f(x) dependency constraint",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 350,
+          "end": 480,
+          "dominant_concept": "C07",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LIVE_DEMONSTRATION",
+          "revisitation": true,
+          "revisitation_target": "C05",
+          "evidence_quote": "additive inverses in ℝ demonstrating semantic difference between ∀x∃y and ∃y∀x",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 2845,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "dev_2a_02_pharmacology_clearance": {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "episode_count": 7,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 70,
+          "dominant_concept": "C01",
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "CL = k_e·V_d",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 70,
+          "end": 120,
+          "dominant_concept": "C02",
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "t½ = ln2 / k_e",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 120,
+          "end": 190,
+          "dominant_concept": "C03",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Organ clearance = Q × E",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 190,
+          "end": 210,
+          "dominant_concept": "C04",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Extraction ratio = (C_in - C_out)/C_in",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E05",
+          "start": 210,
+          "end": 260,
+          "dominant_concept": "C05",
+          "intellectual_activity": "JUSTIFY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Perfusion‑limited when E≈1; capacity‑limited when intrinsic clearance low",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E06",
+          "start": 260,
+          "end": 370,
+          "dominant_concept": "C06",
+          "intellectual_activity": "APPLICATION",
+          "interaction_mode": "LIVE_DEMONSTRATION",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Cl_renal = (U·V)/P",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E07",
+          "start": 370,
+          "end": 500,
+          "dominant_concept": "C07",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Podocyte filtration, OAT/OCT secretion, pH‑dependent reabsorption",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 3741,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "dev_2a_03_clinical_dosing": {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "episode_count": 4,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 120,
+          "dominant_concept": "C01",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "rough mental math 5 mg/kg for 80 kg",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 120,
+          "end": 260,
+          "dominant_concept": "C01",
+          "intellectual_activity": "TRACE",
+          "interaction_mode": "LIVE_DEMONSTRATION",
+          "revisitation": true,
+          "revisitation_target": "C01",
+          "evidence_quote": "Full 5-step blackboard execution trace: IBW formula, Cockcroft‑Gault arithmetic",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 260,
+          "end": 370,
+          "dominant_concept": "C05",
+          "intellectual_activity": "APPLY",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Verbal discussion of phenytoin 15-20 mg/kg loading dose",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 370,
+          "end": 520,
+          "dominant_concept": "C06",
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LIVE_DEMONSTRATION",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Complete 7-step quantitative calculation: AUC target, k_e estimate, V_d, clearance",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 2207,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "dev_2a_04_signal_processing_fourier": {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "episode_count": 4,
+      "episodes": [
+        {
+          "episode_id": "E01",
+          "start": 0,
+          "end": 120,
+          "dominant_concept": "C01",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Enumeration of discrete sampling parameters: T_s, f_s, N, T_0, bin spacing Delta f, index k.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E02",
+          "start": 120,
+          "end": 260,
+          "dominant_concept": "C04",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Architectural primitives: orthogonal Vandermonde basis matrix W_N, projection inner product, synthesis superposition.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E03",
+          "start": 260,
+          "end": 370,
+          "dominant_concept": "C05",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Itemized listing of filter specifications: order M, passband omega_p, stopband omega_s, ripple delta_p, attenuation A_s.",
+          "confidence": "HIGH"
+        },
+        {
+          "episode_id": "E04",
+          "start": 370,
+          "end": 510,
+          "dominant_concept": "C06",
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "revisitation": false,
+          "revisitation_target": null,
+          "evidence_quote": "Direct Form I structural hardware topology: z^-1 tapped delay line state registers, coefficient multipliers b_k, adder accumulation tree.",
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 2009,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,1045 @@
+{
+  "evaluation_timestamp": "2026-10-01T18:00:24.175Z",
+  "benchmark_scope": "Step 1A.2 Development Set Diagnostic Calibration (pkg_01 to pkg_06)",
+  "lead_model": "openai/gpt-oss-120b",
+  "structural_reliability": {
+    "total_dimensions": 48,
+    "valid_dimensions": 46,
+    "structural_incompletes": 2,
+    "structural_completeness_pct": 95.83,
+    "reliability_distribution": {
+      "valid_first_response": 5,
+      "valid_after_retry": 0,
+      "incomplete_after_retry": 1
+    }
+  },
+  "pedagogical_evaluation": {
+    "denominator_valid_dimensions": 46,
+    "observed_depth_made": 1.6739,
+    "observed_depth_sdb": -1.5435,
+    "exact_status_concordance_pct": 52.17,
+    "actionable_gaps": {
+      "tp": 0,
+      "fp": 7,
+      "fn": 1,
+      "tn": 38,
+      "precision_pct": 0,
+      "recall_pct": 0,
+      "f1_score_pct": 0
+    },
+    "secondary_advisory_gaps": {
+      "total_predicted": 5,
+      "items": [
+        {
+          "package_id": "pkg_02_linear_algebra_eigenvalues",
+          "dimension": "BOUNDARIES_EXCEPTIONS",
+          "expected_depth": 4,
+          "observed_depth": 0,
+          "evidence": "The lecture did not discuss degenerate cases, repeated eigenvalues, or defective matrices."
+        },
+        {
+          "package_id": "pkg_03_dsa_bfs_conceptual",
+          "dimension": "APPLICATION_INTERPRETATION",
+          "expected_depth": 5,
+          "observed_depth": 4,
+          "evidence": "E05 discussed BFS time complexity O(V+E), interpreting its performance characteristics."
+        },
+        {
+          "package_id": "pkg_03_dsa_bfs_conceptual",
+          "dimension": "BOUNDARIES_EXCEPTIONS",
+          "expected_depth": 4,
+          "observed_depth": 0,
+          "evidence": "The lecture did not address cases where BFS is unsuitable (e.g., weighted graphs) or its limitations."
+        },
+        {
+          "package_id": "pkg_04_dsa_bfs_implementation",
+          "dimension": "JUSTIFICATION_WHY",
+          "expected_depth": 5,
+          "observed_depth": 0,
+          "evidence": "No explicit justification or proof of why BFS works was observed."
+        },
+        {
+          "package_id": "pkg_05_deep_learning_vaes",
+          "dimension": "BOUNDARIES_EXCEPTIONS",
+          "expected_depth": 7,
+          "observed_depth": 1,
+          "evidence": "E08 briefly mentioned limitations of VAEs, but only as a passing note without detailed boundary analysis."
+        }
+      ]
+    },
+    "permissible_scope_omissions": {
+      "tp": 5,
+      "fp": 2,
+      "fn": 0,
+      "tn": 39,
+      "specificity_pct": 95.12
+    }
+  },
+  "dimension_disagreements": [
+    {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "dimension": "IDENTIFICATION",
+      "expected_depth": 3,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 2,
+      "gt_observed_depth": 2,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C01 reads the exact text of Article 21 (static definition) and E07 adds a brief limitation note, yielding a Level‑2 observation."
+    },
+    {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "dimension": "MEANING",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 3,
+      "gt_observed_depth": 4,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C02 explains the framers' choice versus U.S. due process (univariate operational step) and C05 introduces the Silo Theory label (static definition), reaching Level‑3."
+    },
+    {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 2,
+      "gt_observed_depth": 4,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C03 references the Constituent Assembly debate and Sir B.N. Rau’s visit, providing only a historical description (Level‑2)."
+    },
+    {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "dimension": "RELATIONSHIPS_MECHANISM",
+      "expected_depth": 5,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 4,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "No taught concept or episode explicitly addresses dynamic interactions among rights or mechanisms."
+    },
+    {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "dimension": "JUSTIFICATION_WHY",
+      "expected_depth": 5,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 4,
+      "gt_observed_depth": 5,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C02 justifies the phrasing choice and C06 justifies the transformative shift in Maneka Gandhi, together forming a systemic interaction explanation (Level‑4)."
+    },
+    {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "expected_depth": 6,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 4,
+      "gt_observed_depth": 6,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C04 (Gopalan) and C06 (Maneka Gandhi) illustrate case‑law applications but stop at describing interpretations without worked problem traces (Level‑4)."
+    },
+    {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "dimension": "BOUNDARIES_EXCEPTIONS",
+      "expected_depth": 6,
+      "alignment_tier": "RECOMMENDED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 4,
+      "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "The lecture contains no discussion of limits, exceptions, or boundary cases for Article 21."
+    },
+    {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "dimension": "JUSTIFICATION_WHY",
+      "expected_depth": 5,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 5,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "No segment of the record provided a justification of why eigenvalues/eigenvectors matter (e.g., diagonalization, stability)."
+    },
+    {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "dimension": "BOUNDARIES_EXCEPTIONS",
+      "expected_depth": 4,
+      "alignment_tier": "RECOMMENDED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 4,
+      "pred_status": "SECONDARY_ADVISORY_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "The lecture did not discuss degenerate cases, repeated eigenvalues, or defective matrices."
+    },
+    {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "dimension": "RELATIONSHIPS_MECHANISM",
+      "expected_depth": 5,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 4,
+      "gt_observed_depth": 5,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C03 stated the invariant that the queue maintains vertices in non‑decreasing distance order, indicating a systemic interaction between queue order and vertex distances."
+    },
+    {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "dimension": "JUSTIFICATION_WHY",
+      "expected_depth": 5,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 5,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "No segment provided a derivation or rationale explaining why the non‑decreasing distance invariant guarantees correct BFS distances."
+    },
+    {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "expected_depth": 5,
+      "alignment_tier": "RECOMMENDED",
+      "pred_observed_depth": 4,
+      "gt_observed_depth": 5,
+      "pred_status": "SECONDARY_ADVISORY_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "E05 discussed BFS time complexity O(V+E), interpreting its performance characteristics."
+    },
+    {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "dimension": "BOUNDARIES_EXCEPTIONS",
+      "expected_depth": 4,
+      "alignment_tier": "RECOMMENDED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 3,
+      "pred_status": "SECONDARY_ADVISORY_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "The lecture did not address cases where BFS is unsuitable (e.g., weighted graphs) or its limitations."
+    },
+    {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "dimension": "JUSTIFICATION_WHY",
+      "expected_depth": 5,
+      "alignment_tier": "RECOMMENDED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 5,
+      "pred_status": "SECONDARY_ADVISORY_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "No explicit justification or proof of why BFS works was observed."
+    },
+    {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "expected_depth": 6,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 6,
+      "gt_observed_depth": 5,
+      "pred_status": "COVERED",
+      "gt_status": "ACTIONABLE_COVERAGE_GAP",
+      "evidence_synthesis": "E04 provides a live trace of BFS on a graph (175‑320s) and E05 applies BFS to a problem context (320‑395s), constituting a worked execution."
+    },
+    {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "expected_depth": 3,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 2,
+      "gt_observed_depth": 5,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C02 described flattening in fully connected autoencoders and C03 explained convolutional layers preserving spatial features, both as static descriptions without procedural detail."
+    },
+    {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "dimension": "RELATIONSHIPS_MECHANISM",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 5,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "No episode or concept addressed how encoder, decoder, and loss interact or the training dynamics of autoencoders."
+    },
+    {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "expected_depth": 6,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 4,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "PARTIALLY_COVERED",
+      "evidence_synthesis": "The recording contains no segment where autoencoders are applied to a task or interpreted on data."
+    },
+    {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "dimension": "BOUNDARIES_EXCEPTIONS",
+      "expected_depth": 7,
+      "alignment_tier": "RECOMMENDED",
+      "pred_observed_depth": 1,
+      "gt_observed_depth": 4,
+      "pred_status": "SECONDARY_ADVISORY_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "E08 briefly mentioned limitations of VAEs, but only as a passing note without detailed boundary analysis."
+    },
+    {
+      "package_id": "pkg_06_economics_elasticity",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "expected_depth": 3,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 2,
+      "gt_observed_depth": 4,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C02 presents the elasticity formula but only as a static definition without operational elaboration."
+    },
+    {
+      "package_id": "pkg_06_economics_elasticity",
+      "dimension": "JUSTIFICATION_WHY",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 3,
+      "gt_observed_depth": 5,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C03 explains why the midpoint (arc) formula is needed, providing a single‑cause rationale."
+    },
+    {
+      "package_id": "pkg_06_economics_elasticity",
+      "dimension": "BOUNDARIES_EXCEPTIONS",
+      "expected_depth": 7,
+      "alignment_tier": "OPTIONAL",
+      "pred_observed_depth": 3,
+      "gt_observed_depth": 5,
+      "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "E06 mentions welfare and dead‑weight loss but does not conduct a deep boundary or pathological analysis."
+    }
+  ],
+  "packages": {
+    "pkg_01_indian_constitution_art21": {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 1.875,
+      "observed_depth_sdb": -1.875,
+      "status_concordance_pct": 12.5,
+      "actionable_gaps": {
+        "tp": 0,
+        "fp": 3,
+        "fn": 0,
+        "tn": 5,
+        "precision_pct": 0,
+        "recall_pct": "N/A",
+        "predicted_count": 3,
+        "gt_count": 0
+      },
+      "secondary_advisory_gaps": {
+        "count": 0,
+        "items": []
+      },
+      "permissible_omissions": {
+        "tp": 1,
+        "fp": 1,
+        "fn": 0,
+        "tn": 6,
+        "specificity_pct": 85.7
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C01 reads the exact text of Article 21 (static definition) and E07 adds a brief limitation note, yielding a Level‑2 observation."
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 3,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C02 explains the framers' choice versus U.S. due process (univariate operational step) and C05 introduces the Silo Theory label (static definition), reaching Level‑3."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 2,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "C03 references the Constituent Assembly debate and Sir B.N. Rau’s visit, providing only a historical description (Level‑2)."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 0,
+          "depth_diff": -4,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "No taught concept or episode explicitly addresses dynamic interactions among rights or mechanisms."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 4,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C02 justifies the phrasing choice and C06 justifies the transformative shift in Maneka Gandhi, together forming a systemic interaction explanation (Level‑4)."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 6,
+          "pred_observed_depth": 4,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "C04 (Gopalan) and C06 (Maneka Gandhi) illustrate case‑law applications but stop at describing interpretations without worked problem traces (Level‑4)."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 6,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 0,
+          "depth_diff": -4,
+          "gt_status": "COVERED",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": false,
+          "evidence_synthesis": "The lecture contains no discussion of limits, exceptions, or boundary cases for Article 21."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "OPTIONAL",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 0,
+          "depth_diff": -1,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": true,
+          "evidence_synthesis": "No content links Article 21 to other domains or proposes novel syntheses."
+        }
+      }
+    },
+    "pkg_02_linear_algebra_eigenvalues": {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 1.5,
+      "observed_depth_sdb": -1.5,
+      "status_concordance_pct": 75,
+      "actionable_gaps": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "tn": 7,
+        "precision_pct": 0,
+        "recall_pct": "N/A",
+        "predicted_count": 1,
+        "gt_count": 0
+      },
+      "secondary_advisory_gaps": {
+        "count": 1,
+        "items": [
+          "BOUNDARIES_EXCEPTIONS (Expected 4, observed 0): The lecture did not discuss degenerate cases, repeated eigenvalues, or defective matrices."
+        ]
+      },
+      "permissible_omissions": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 7,
+        "specificity_pct": 100
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C01 introduced the eigenvalue equation A x = λ x (episodes E01, E07)."
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 3,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C02 gave geometric intuition using projection and rotation examples (episodes E02, E03)."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 4,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C03 derived the characteristic equation det(A‑λI)=0 (episode E04)."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 4,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C05 showed how to find eigenvectors by solving (A‑λI)x=0, reducing the system (episode E06)."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 0,
+          "depth_diff": -5,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "No segment of the record provided a justification of why eigenvalues/eigenvectors matter (e.g., diagonalization, stability)."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 6,
+          "pred_observed_depth": 6,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C04 walked through a full numerical example (A=[[4,-5],[2,-3]]) to compute eigenvalues (episode E05)."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 0,
+          "depth_diff": -4,
+          "gt_status": "COVERED",
+          "pred_status": "SECONDARY_ADVISORY_GAP",
+          "status_match": false,
+          "evidence_synthesis": "The lecture did not discuss degenerate cases, repeated eigenvalues, or defective matrices."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 1,
+          "alignment_tier": "OPTIONAL",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 0,
+          "depth_diff": -1,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": true,
+          "evidence_synthesis": "No cross‑domain transfer or novel synthesis of eigen concepts was presented."
+        }
+      }
+    },
+    "pkg_03_dsa_bfs_conceptual": {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 1.625,
+      "observed_depth_sdb": -1.125,
+      "status_concordance_pct": 50,
+      "actionable_gaps": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "tn": 7,
+        "precision_pct": 0,
+        "recall_pct": "N/A",
+        "predicted_count": 1,
+        "gt_count": 0
+      },
+      "secondary_advisory_gaps": {
+        "count": 2,
+        "items": [
+          "APPLICATION_INTERPRETATION (Expected 5, observed 4): E05 discussed BFS time complexity O(V+E), interpreting its performance characteristics.",
+          "BOUNDARIES_EXCEPTIONS (Expected 4, observed 0): The lecture did not address cases where BFS is unsuitable (e.g., weighted graphs) or its limitations."
+        ]
+      },
+      "permissible_omissions": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 7,
+        "specificity_pct": 100
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C01 defined BFS as a fundamental graph traversal algorithm that visits vertices in order of distance from a source."
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 3,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C01 also explained the purpose of BFS—visiting vertices by increasing distance—providing a functional description."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 6,
+          "depth_diff": 2,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C02 described the FIFO queue and C04 noted the two‑level queue property; E04 demonstrated a live trace of the queue during BFS, constituting a worked execution."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 4,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C03 stated the invariant that the queue maintains vertices in non‑decreasing distance order, indicating a systemic interaction between queue order and vertex distances."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 0,
+          "depth_diff": -5,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "No segment provided a derivation or rationale explaining why the non‑decreasing distance invariant guarantees correct BFS distances."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 4,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "SECONDARY_ADVISORY_GAP",
+          "status_match": false,
+          "evidence_synthesis": "E05 discussed BFS time complexity O(V+E), interpreting its performance characteristics."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 3,
+          "pred_observed_depth": 0,
+          "depth_diff": -3,
+          "gt_status": "COVERED",
+          "pred_status": "SECONDARY_ADVISORY_GAP",
+          "status_match": false,
+          "evidence_synthesis": "The lecture did not address cases where BFS is unsuitable (e.g., weighted graphs) or its limitations."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 3,
+          "alignment_tier": "OPTIONAL",
+          "gt_observed_depth": 0,
+          "pred_observed_depth": 0,
+          "depth_diff": 0,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": true,
+          "evidence_synthesis": "No cross‑domain transfer or synthesis of BFS concepts was presented."
+        }
+      }
+    },
+    "pkg_04_dsa_bfs_implementation": {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "reliability": "incomplete_after_retry",
+      "total_dimensions": 8,
+      "valid_dimensions": 6,
+      "structural_incompletes": 2,
+      "observed_depth_made": 1.6667,
+      "observed_depth_sdb": -1.3333,
+      "status_concordance_pct": 66.67,
+      "actionable_gaps": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "tn": 5,
+        "precision_pct": "N/A",
+        "recall_pct": 0,
+        "predicted_count": 0,
+        "gt_count": 2
+      },
+      "secondary_advisory_gaps": {
+        "count": 1,
+        "items": [
+          "JUSTIFICATION_WHY (Expected 5, observed 0): No explicit justification or proof of why BFS works was observed."
+        ]
+      },
+      "permissible_omissions": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 6,
+        "specificity_pct": 100
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "BFS algorithm named and briefly described in C01 (lecture monologue 0‑50s)."
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 3,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C01 explains BFS visits vertices in order of distance from the source, providing the core meaning (0‑50s)."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 2,
+          "depth_diff": -2,
+          "gt_status": "PARTIALLY_COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C02 mentions the FIFO queue as the core data structure (50‑110s) but only gives a static definition."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 4,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C03 states the BFS invariant that the queue maintains non‑decreasing distance order (110‑175s)."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 0,
+          "depth_diff": -5,
+          "gt_status": "COVERED",
+          "pred_status": "SECONDARY_ADVISORY_GAP",
+          "status_match": false,
+          "evidence_synthesis": "No explicit justification or proof of why BFS works was observed."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 6,
+          "depth_diff": 1,
+          "gt_status": "ACTIONABLE_COVERAGE_GAP",
+          "pred_status": "COVERED",
+          "status_match": false,
+          "evidence_synthesis": "E04 provides a live trace of BFS on a graph (175‑320s) and E05 applies BFS to a problem context (320‑395s), constituting a worked execution."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "status": "STRUCTURAL_OUTPUT_INCOMPLETE",
+          "evaluated_in_pedagogical_metrics": false
+        },
+        "TRANSFER_SYNTHESIS": {
+          "status": "STRUCTURAL_OUTPUT_INCOMPLETE",
+          "evaluated_in_pedagogical_metrics": false
+        }
+      }
+    },
+    "pkg_05_deep_learning_vaes": {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 2.25,
+      "observed_depth_sdb": -2.25,
+      "status_concordance_pct": 50,
+      "actionable_gaps": {
+        "tp": 0,
+        "fp": 2,
+        "fn": 0,
+        "tn": 6,
+        "precision_pct": 0,
+        "recall_pct": "N/A",
+        "predicted_count": 2,
+        "gt_count": 0
+      },
+      "secondary_advisory_gaps": {
+        "count": 1,
+        "items": [
+          "BOUNDARIES_EXCEPTIONS (Expected 7, observed 1): E08 briefly mentioned limitations of VAEs, but only as a passing note without detailed boundary analysis."
+        ]
+      },
+      "permissible_omissions": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 7,
+        "specificity_pct": 100
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "The lecture introduced the encoder‑latent‑decoder architecture (C01) and defined VAEs as models with a continuous latent space (C05)."
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 3,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C04 contrasted deterministic latent representations of standard autoencoders with the probabilistic distribution of VAEs, providing a clear meaning distinction."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 2,
+          "depth_diff": -3,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C02 described flattening in fully connected autoencoders and C03 explained convolutional layers preserving spatial features, both as static descriptions without procedural detail."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 0,
+          "depth_diff": -5,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "No episode or concept addressed how encoder, decoder, and loss interact or the training dynamics of autoencoders."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 5,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "During E07 the instructor justified the use of a continuous latent space in VAEs, explaining its role in generative modeling."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 0,
+          "depth_diff": -4,
+          "gt_status": "PARTIALLY_COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "The recording contains no segment where autoencoders are applied to a task or interpreted on data."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 1,
+          "depth_diff": -3,
+          "gt_status": "COVERED",
+          "pred_status": "SECONDARY_ADVISORY_GAP",
+          "status_match": false,
+          "evidence_synthesis": "E08 briefly mentioned limitations of VAEs, but only as a passing note without detailed boundary analysis."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "OPTIONAL",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 0,
+          "depth_diff": -2,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": true,
+          "evidence_synthesis": "No cross‑domain synthesis or novel design involving autoencoders was presented."
+        }
+      }
+    },
+    "pkg_06_economics_elasticity": {
+      "package_id": "pkg_06_economics_elasticity",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 1.125,
+      "observed_depth_sdb": -1.125,
+      "status_concordance_pct": 62.5,
+      "actionable_gaps": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 8,
+        "precision_pct": "N/A",
+        "recall_pct": "N/A",
+        "predicted_count": 0,
+        "gt_count": 0
+      },
+      "secondary_advisory_gaps": {
+        "count": 0,
+        "items": []
+      },
+      "permissible_omissions": {
+        "tp": 1,
+        "fp": 1,
+        "fn": 0,
+        "tn": 6,
+        "specificity_pct": 85.7
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C01 defines price elasticity of demand, providing a static definition (Level 2)."
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 3,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C05 explains the interpretive meaning of elasticity magnitudes (elastic, inelastic, unit‑elastic)."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 2,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C02 presents the elasticity formula but only as a static definition without operational elaboration."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 4,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C06 links elasticity to total‑revenue outcomes, showing a systemic interaction between price, quantity, and revenue."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 3,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C03 explains why the midpoint (arc) formula is needed, providing a single‑cause rationale."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 6,
+          "pred_observed_depth": 6,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C04 works through a concrete numerical example calculating elasticity and interpreting the result."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "OPTIONAL",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 3,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": false,
+          "evidence_synthesis": "E06 mentions welfare and dead‑weight loss but does not conduct a deep boundary or pathological analysis."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "OPTIONAL",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 0,
+          "depth_diff": -1,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": true,
+          "evidence_synthesis": "No cross‑domain synthesis or novel transfer of elasticity concepts is presented."
+        }
+      }
+    }
+  }
+}

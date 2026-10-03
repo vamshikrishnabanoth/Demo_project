@@ -1,0 +1,1927 @@
+{
+  "1A": {
+    "segment_key": "1A",
+    "package_id": "dev_3a_01_discrete_probability",
+    "topic": "Axiomatic Probability Bounds",
+    "root_concept": "Axiomatic Probability Bounds",
+    "concept_count": 8,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Probability space (Ω, F, P)",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The lecture defined a probability space as the triple consisting of a sample space Ω, an event σ‑algebra F, and a probability measure P.",
+        "evidence_quotes": [
+          {
+            "quote": "we establish a probability space as a triple containing a sample space Omega, an event space F, and a probability measure P.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Kolmogorov axiom of non‑negativity",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "For any event A, the probability P(A) is required to be greater than or equal to zero.",
+        "evidence_quotes": [
+          {
+            "quote": "the probability P(A) is non-negative, meaning P(A) is greater than or equal to zero.",
+            "approx_start_sec": 6,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Kolmogorov axiom of unit measure",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The probability of the entire sample space equals one: P(Ω)=1.",
+        "evidence_quotes": [
+          {
+            "quote": "the probability of the entire sample space P(Omega) equals exactly one.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 13
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Kolmogorov axiom of countable additivity",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "For any sequence of mutually disjoint events, the probability of their union equals the sum of their individual probabilities.",
+        "evidence_quotes": [
+          {
+            "quote": "for any sequence of mutually disjoint events, the probability of their union equals the sum of their individual probabilities.",
+            "approx_start_sec": 14,
+            "approx_end_sec": 19
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Empty‑set probability zero",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "From the axioms it follows directly that P(∅)=0.",
+        "evidence_quotes": [
+          {
+            "quote": "we directly deduce that the empty set has probability zero",
+            "approx_start_sec": 20,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Complement rule",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The probability of the complement of an event equals one minus the probability of the event: P(not A)=1−P(A).",
+        "evidence_quotes": [
+          {
+            "quote": "the complement rule holds: P(not A) equals one minus P(A).",
+            "approx_start_sec": 23,
+            "approx_end_sec": 26
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Boole’s inequality (union bound)",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "By algebraic combination of the axioms one obtains Boole’s inequality as a standard probability bound.",
+        "evidence_quotes": [
+          {
+            "quote": "we obtain standard inequality bounds such as Boole's inequality",
+            "approx_start_sec": 27,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Monotonicity bound (subset property)",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "If event A is a subset of event B, then P(A) ≤ P(B).",
+        "evidence_quotes": [
+          {
+            "quote": "the monotonicity bound: if event A is a subset of event B, then P(A) is less than or equal to P(B).",
+            "approx_start_sec": 31,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4085,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "1B": {
+    "segment_key": "1B",
+    "package_id": "dev_3a_01_discrete_probability",
+    "topic": "Sample Space Partition Valuation",
+    "root_concept": "Sample Space Partition Valuation",
+    "concept_count": 8,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Discrete sample space \\(\\Omega\\) with elementary outcomes",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced a concrete discrete sample space named \\(\\Omega\\) consisting of four elementary outcomes \\(\\omega\\!-1, \\omega\\!-2, \\omega\\!-3, \\omega\\!-4\\).",
+        "evidence_quotes": [
+          {
+            "quote": "let us construct a concrete discrete sample space Omega consisting of four elementary outcomes: omega-1, omega-2, omega-3, and omega-4.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Probability mass valuation for elementary outcomes",
+        "parent_id": "C01",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Each elementary outcome is assigned a probability mass: P(omega‑1)=0.4, P(omega‑2)=0.3, P(omega‑3)=0.2, P(omega‑4)=0.1.",
+        "evidence_quotes": [
+          {
+            "quote": "We assign explicit probability mass valuations to each elementary point: P(omega-1) = 0.4, P(omega-2) = 0.3, P(omega-3) = 0.2, and P(omega-4) = 0.1.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Normalization constraint (probabilities sum to 1)",
+        "parent_id": "C02",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "The assigned valuations sum to 1.0, satisfying the required normalization condition for a probability distribution.",
+        "evidence_quotes": [
+          {
+            "quote": "Notice that these valuations sum to 1.0, satisfying our normalisation constraint.",
+            "approx_start_sec": 12,
+            "approx_end_sec": 16
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Event as a set of outcomes (event A and event B)",
+        "parent_id": "C01",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Event A is defined as the set {omega‑1, omega‑2}; event B is defined as the set {omega‑2, omega‑3}, each representing a specific scenario.",
+        "evidence_quotes": [
+          {
+            "quote": "Now, let event A be the set containing omega-1 and omega-2, representing a successful transmission... Let event B be the partition block containing omega-2 and omega-3, representing a low-latency packet.",
+            "approx_start_sec": 16,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Event probability as sum of constituent point probabilities",
+        "parent_id": "C04",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The probability of an event is computed by adding the probabilities of its member outcomes: P(A)=0.4+0.3=0.7, P(B)=0.5.",
+        "evidence_quotes": [
+          {
+            "quote": "with truth valuation P(A) = 0.4 + 0.3 = 0.7. ... with valuation P(B) = 0.5.",
+            "approx_start_sec": 24,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Intersection of events and its probability",
+        "parent_id": "C04",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The intersection of A and B is the singleton {omega‑2}, whose probability mass is 0.3.",
+        "evidence_quotes": [
+          {
+            "quote": "Their intersection is the singleton event omega-2, with probability mass 0.3.",
+            "approx_start_sec": 30,
+            "approx_end_sec": 34
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Semantic interpretation of probability assertions",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Probability statements are presented as concrete truth valuations over domain elements rather than abstract symbols, highlighting their semantic content.",
+        "evidence_quotes": [
+          {
+            "quote": "This explicit universe model allows us to evaluate compound propositions not merely as abstract algebraic symbols, but as concrete truth valuations over domain elements, showing systemic interaction between state probabilities and event partitions.",
+            "approx_start_sec": 34,
+            "approx_end_sec": 44
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Partition block concept (event B as a partition block)",
+        "parent_id": "C04",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Event B is described as a partition block, emphasizing its role as a subset that forms part of a partition of the sample space.",
+        "evidence_quotes": [
+          {
+            "quote": "Let event B be the partition block containing omega-2 and omega-3, representing a low-latency packet",
+            "approx_start_sec": 20,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4113,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "1C": {
+    "segment_key": "1C",
+    "package_id": "dev_3a_01_discrete_probability",
+    "topic": "Syntactic Union Bound Equations",
+    "root_concept": "Syntactic Union Bound Equations",
+    "concept_count": 7,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Union bound (Boole's inequality)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the union bound, also called Boole's inequality, as the standard tool for bounding probabilities of overlapping failure modes.",
+        "evidence_quotes": [
+          {
+            "quote": "When computing probabilities of multiple overlapping failure modes, we frequently employ the union bound, also known as Boole's inequality.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Formal statement of the union bound for a countable collection of events",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The lecturer gave the generic formula: for events \\(E_1, E_2, \\dots, E_n\\), \\(P\\bigl(\\bigcup_i E_i\\bigr) \\le \\sum_i P(E_i)\\).",
+        "evidence_quotes": [
+          {
+            "quote": "for any countable collection of events E-1, E-2, through E-n, the probability of the union of E-i is bounded above by the sum of their individual probabilities: P of the union is less than or equal to the sum of P(E-i).",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Equality condition when events are mutually exclusive",
+        "parent_id": "root",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "If the events do not overlap (mutually exclusive), the union‑bound inequality becomes an exact equality.",
+        "evidence_quotes": [
+          {
+            "quote": "If the events are mutually exclusive, this inequality becomes an exact equality.",
+            "approx_start_sec": 12,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Inclusion‑exclusion formula for two events",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The lecturer presented the two‑event inclusion‑exclusion identity: \\(P(A\\cup B)=P(A)+P(B)-P(A\\cap B)\\).",
+        "evidence_quotes": [
+          {
+            "quote": "We also write the inclusion-exclusion formula: P(A union B) equals P(A) plus P(B) minus P(A intersect B).",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Inclusion‑exclusion extension to three events",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "For three events the formula adds all pairwise intersections and subtracts the three‑way intersection.",
+        "evidence_quotes": [
+          {
+            "quote": "For three events, we add the pairwise intersections and subtract the three-way intersection.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Interpretation of these formulas as syntactic rewrite identities",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The instructor emphasized that the presented equations are purely syntactic rewrites linking set operations with arithmetic addition/subtraction.",
+        "evidence_quotes": [
+          {
+            "quote": "These equations represent purely syntactic rewrite identities between set operators and numerical additions.",
+            "approx_start_sec": 24,
+            "approx_end_sec": 28
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Application: computing upper limits on failure probabilities in safety analyses",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The formulas are used to bound failure probabilities in safety assessments without needing the full underlying probability distribution.",
+        "evidence_quotes": [
+          {
+            "quote": "We use these algebraic formulas to compute upper limits on failure probabilities in safety analyses without constructing the underlying probability distribution or universe elements.",
+            "approx_start_sec": 28,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4129,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "1D": {
+    "segment_key": "1D",
+    "package_id": "dev_3a_01_discrete_probability",
+    "topic": "Joint Probability Matrix Model Valuation",
+    "root_concept": "Joint Probability Matrix Model Valuation",
+    "concept_count": 7,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Joint binary random variables X and Y",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced two binary random variables, X (server availability) and Y (network congestion), each taking values in {0,1}.",
+        "evidence_quotes": [
+          {
+            "quote": "Variable X represents server availability taking values in {0, 1}, and Y represents network congestion taking values in {0, 1}.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "2‑by‑2 joint probability distribution matrix",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "A 2×2 matrix was constructed to assign probabilities to each joint state of X and Y.",
+        "evidence_quotes": [
+          {
+            "quote": "We construct a 2-by-2 joint probability distribution model assigning concrete truth values to each state:",
+            "approx_start_sec": 5,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Specific joint probability values",
+        "parent_id": "C02",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The lecture listed the exact probabilities for each combination of X and Y.",
+        "evidence_quotes": [
+          {
+            "quote": "P(X=0, Y=0) = 0.05, P(X=0, Y=1) = 0.15, P(X=1, Y=0) = 0.60, and P(X=1, Y=1) = 0.20.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Marginal distribution of X (and Y) by summing matrix rows/columns",
+        "parent_id": "C02",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Marginals are obtained by summing across columns for X and across rows for Y.",
+        "evidence_quotes": [
+          {
+            "quote": "By summing across columns, we compute the marginal distribution of X: P(X=1) = 0.80... By summing across rows, we compute P(Y=1) = 0.35.",
+            "approx_start_sec": 15,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Interpretation of marginal probability P(X=1) as server uptime",
+        "parent_id": "C04",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The marginal P(X=1)=0.80 was interpreted as an 80% overall server uptime.",
+        "evidence_quotes": [
+          {
+            "quote": "P(X=1) = 0.80, representing an 80% overall server uptime.",
+            "approx_start_sec": 22,
+            "approx_end_sec": 26
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Conditional probability P(Y=1 | X=1) calculation",
+        "parent_id": "C02",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Conditional probability is computed as the joint probability divided by the marginal of the conditioning event.",
+        "evidence_quotes": [
+          {
+            "quote": "We evaluate the conditional probability P(Y=1 | X=1) as 0.20 divided by 0.80, which equals 0.25.",
+            "approx_start_sec": 26,
+            "approx_end_sec": 31
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Interaction between marginal probabilities and conditional dependencies",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The lecture highlighted how marginal and conditional probabilities together describe the dependence structure of the joint model.",
+        "evidence_quotes": [
+          {
+            "quote": "This concrete state‑space model provides an explicit valuation across all possible systemic configurations, illustrating the interaction between marginal probabilities and conditional dependencies.",
+            "approx_start_sec": 31,
+            "approx_end_sec": 38
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 3530,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "2A": {
+    "segment_key": "2A",
+    "package_id": "dev_3a_02_renal_pharmacokinetics",
+    "topic": "Algebraic Mass-Balance Clearance Derivation",
+    "root_concept": "Renal Clearance Algebraic Derivation",
+    "concept_count": 8,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Mass Conservation Principle across the Kidney",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture states that renal clearance is derived from the fundamental principle that, under steady‑state, the amount of drug entering the renal artery equals the amount leaving via the renal vein plus the amount excreted in urine.",
+        "evidence_quotes": [
+          {
+            "quote": "Renal clearance is derived from the fundamental principle of mass conservation across the kidney. Under steady-state conditions, the rate of drug entering the renal artery equals the rate of drug exiting through the renal vein plus the rate of drug excreted in the urine.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Steady‑State Condition Assumption",
+        "parent_id": "C01",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "The derivation assumes a steady‑state where inflow and outflow rates are constant over time.",
+        "evidence_quotes": [
+          {
+            "quote": "Under steady-state conditions, the rate of drug entering the renal artery equals the rate of drug exiting through the renal vein plus the rate of drug excreted in the urine.",
+            "approx_start_sec": 2,
+            "approx_end_sec": 8
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Urinary Excretion Rate Definition",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Urinary excretion rate is defined as the product of urine concentration (C_u) and urine flow rate (V).",
+        "evidence_quotes": [
+          {
+            "quote": "The urinary excretion rate is defined as the product of urine concentration C‑u and urine flow rate V.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Renal Clearance (CL_R) Definition",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Renal clearance is described as the virtual volume of plasma cleared of drug per unit time.",
+        "evidence_quotes": [
+          {
+            "quote": "By definition, renal clearance CL‑R represents the virtual volume of plasma cleared of drug per unit time.",
+            "approx_start_sec": 19,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Clearance Rate Equals Urinary Excretion Rate",
+        "parent_id": "C04",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The rate of drug cleared from plasma (CL_R × C_p) must equal the urinary excretion rate (C_u × V).",
+        "evidence_quotes": [
+          {
+            "quote": "Therefore, the rate of drug clearance from plasma, which is CL‑R multiplied by plasma concentration C‑p, must equal the urinary excretion rate: CL‑R times C‑p equals C‑u times V.",
+            "approx_start_sec": 25,
+            "approx_end_sec": 34
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Algebraic Derivation of the Clearance Formula",
+        "parent_id": "C05",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "Dividing both sides of the equality by plasma concentration yields the standard formula CL_R = (C_u × V) / C_p.",
+        "evidence_quotes": [
+          {
+            "quote": "Dividing both sides algebraically by plasma concentration C‑p yields the standard clearance formula: CL‑R equals C‑u times V divided by C‑p.",
+            "approx_start_sec": 35,
+            "approx_end_sec": 42
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Proportionality Relationships of Renal Clearance",
+        "parent_id": "C06",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The derived formula shows that renal clearance is directly proportional to urinary excretion (C_u × V) and inversely proportional to plasma concentration (C_p) under linear kinetics.",
+        "evidence_quotes": [
+          {
+            "quote": "This algebraic derivation proves that renal clearance is directly proportional to urinary excretion and inversely proportional to plasma concentration under linear kinetics.",
+            "approx_start_sec": 43,
+            "approx_end_sec": 50
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Linear Kinetics Assumption",
+        "parent_id": "C07",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "The proportionality statements are qualified by the condition that the drug follows linear (first‑order) kinetics.",
+        "evidence_quotes": [
+          {
+            "quote": "...under linear kinetics.",
+            "approx_start_sec": 49,
+            "approx_end_sec": 50
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4046,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "2B": {
+    "segment_key": "2B",
+    "package_id": "dev_3a_02_renal_pharmacokinetics",
+    "topic": "Active Tubular Secretion Cellular Mechanism",
+    "root_concept": "Active Tubular Secretion Cellular Mechanism",
+    "concept_count": 6,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Renal clearance can exceed glomerular filtration rate",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture states that renal clearance may be greater than the glomerular filtration rate and introduces the need to examine tubular secretion to explain this.",
+        "evidence_quotes": [
+          {
+            "quote": "To explain why renal clearance can exceed the glomerular filtration rate, we must examine the cellular transport biology of the proximal tubule.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Cellular transport biology of the proximal tubule",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The proximal tubule is described as the site where both passive filtration and active secretion occur via distinct membrane proteins.",
+        "evidence_quotes": [
+          {
+            "quote": "we must examine the cellular transport biology of the proximal tubule.",
+            "approx_start_sec": 4,
+            "approx_end_sec": 7
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Passive filtration through podocyte slit diaphragms",
+        "parent_id": "C02",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Passive filtration is limited by molecular size and albumin binding at the podocyte slit diaphragms.",
+        "evidence_quotes": [
+          {
+            "quote": "While passive filtration through podocyte slit diaphragms is restricted by molecular size and albumin binding,",
+            "approx_start_sec": 8,
+            "approx_end_sec": 13
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Active tubular secretion via carrier‑mediated transport proteins",
+        "parent_id": "C02",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Active secretion uses specialized carrier proteins on renal epithelial cells to move drugs from blood into the tubular lumen.",
+        "evidence_quotes": [
+          {
+            "quote": "active tubular secretion involves specialized carrier‑mediated transport proteins located on renal epithelial cells.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Basolateral uptake by OAT1/OAT3 coupled to α‑ketoglutarate counterflow driven by Na⁺/K⁺‑ATPase",
+        "parent_id": "C04",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "OAT1 and OAT3 on the basolateral membrane import anionic drugs against their gradient, using a dicarboxylate (α‑ketoglutarate) exchange that is powered by Na⁺/K⁺‑ATPase activity.",
+        "evidence_quotes": [
+          {
+            "quote": "On the basolateral membrane facing the peritubular capillaries, organic anion transporters OAT1 and OAT3 actively take up anionic drugs from blood against their electrochemical gradient, coupled to the dicarboxylate alpha‑ketoglutarate counterflow driven by sodium‑potassium ATPase pumps.",
+            "approx_start_sec": 18,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Apical brush‑border efflux by ABC transporters MRP2, MRP4, and BCRP",
+        "parent_id": "C04",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "After cytoplasmic translocation, drugs are exported into the lumen by ATP‑binding cassette efflux pumps (MRP2, MRP4, BCRP) located on the apical membrane.",
+        "evidence_quotes": [
+          {
+            "quote": "the drug translocates across the cytoplasm and is actively extruded across the apical brush‑border membrane into the tubular lumen by ATP‑binding cassette efflux pumps, specifically MRP2, MRP4, and BCRP.",
+            "approx_start_sec": 30,
+            "approx_end_sec": 38
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4682,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "2C": {
+    "segment_key": "2C",
+    "package_id": "dev_3a_02_renal_pharmacokinetics",
+    "topic": "Clearance Ratio Algebraic Formulation",
+    "root_concept": "Renal Clearance Ratio Algebraic Formulation",
+    "concept_count": 6,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Renal Clearance Ratio (CR) Definition",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "CR is defined as the renal clearance of the drug divided by the product of its unbound plasma fraction (f‑u) and the glomerular filtration rate (GFR).",
+        "evidence_quotes": [
+          {
+            "quote": "The clearance ratio is defined as the renal clearance of the drug divided by the product of its unbound plasma fraction f‑u and the glomerular filtration rate GFR, measured via inulin: CR equals CL‑R divided by the quantity f‑u times GFR.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Components of the Clearance Ratio",
+        "parent_id": "C01",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The ratio consists of three measurable quantities: renal clearance (CL‑R), unbound plasma fraction (f‑u), and glomerular filtration rate (GFR) obtained with an inulin clearance test.",
+        "evidence_quotes": [
+          {
+            "quote": "…the product of its unbound plasma fraction f‑u and the glomerular filtration rate GFR, measured via inulin…",
+            "approx_start_sec": 8,
+            "approx_end_sec": 12
+          },
+          {
+            "quote": "CR equals CL‑R divided by the quantity f‑u times GFR.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 16
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Filtration Clearance Relationship",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Filtration clearance is expressed algebraically as the product of the unbound fraction and GFR (f‑u × GFR).",
+        "evidence_quotes": [
+          {
+            "quote": "filtration clearance equals f‑u times GFR.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Interpretation of CR Magnitude",
+        "parent_id": "C01",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "If CR > 1.0 the net renal clearance exceeds filtration, indicating net secretion; if CR < 1.0 reabsorption predominates.",
+        "evidence_quotes": [
+          {
+            "quote": "If the net clearance exceeds filtration, the ratio CR is greater than 1.0; if reabsorption predominates, CR is less than 1.0.",
+            "approx_start_sec": 25,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Algebraic Isolation of Net Secretory/Reabsorptive Flux",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Subtracting the filtration component (f‑u × GFR) from total renal clearance isolates the net secretory or reabsorptive flux.",
+        "evidence_quotes": [
+          {
+            "quote": "subtracting the filtration component from total renal clearance isolates the net secretory or reabsorptive flux.",
+            "approx_start_sec": 32,
+            "approx_end_sec": 36
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Clinical Calculation of CR from Laboratory Values",
+        "parent_id": "C01",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The parameter can be calculated algebraically using routine clinical lab measurements, allowing classification of renal handling without microscopic investigation.",
+        "evidence_quotes": [
+          {
+            "quote": "We calculate this parameter algebraically from clinical laboratory values to classify renal handling without investigating the microscopic cellular anatomy.",
+            "approx_start_sec": 38,
+            "approx_end_sec": 44
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 3592,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "2D": {
+    "segment_key": "2D",
+    "package_id": "dev_3a_02_renal_pharmacokinetics",
+    "topic": "Tubular Ion Trapping & Transporter Saturation Biology",
+    "root_concept": "Tubular Ion Trapping & Transporter Saturation in Renal Pharmacokinetics",
+    "concept_count": 4,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Physiological justification for urinary pH manipulation",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture explained that altering urinary pH is justified because it changes the biophysical environment that governs diffusion and ion trapping of drugs in the renal tubule.",
+        "evidence_quotes": [
+          {
+            "quote": "The physiological justification for urinary pH manipulation relies on the biophysical mechanism of non-ionic diffusion and ion trapping across the tubular epithelium.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Non‑ionic diffusion across the apical lipid bilayer",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Unionized, lipid‑soluble molecules can freely cross the apical membrane of renal tubular cells by passive diffusion.",
+        "evidence_quotes": [
+          {
+            "quote": "Lipid-soluble unionized molecules readily diffuse across the apical lipid bilayer of renal tubular cells back into the bloodstream.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Ion trapping mechanism that blocks diffusion of ionized drug",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "When a drug becomes ionized in the tubular fluid, its charge prevents it from crossing the hydrophobic apical membrane, trapping it in the lumen.",
+        "evidence_quotes": [
+          {
+            "quote": "over 99.9% of the drug becomes ionized into charged conjugate base anions that cannot penetrate the hydrophobic apical membrane.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Apical sodium‑hydrogen antiporter NHE3 function in proximal tubule",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "NHE3 secretes protons into the tubular lumen, lowering filtrate pH to about 5.5 in the proximal tubule.",
+        "evidence_quotes": [
+          {
+            "quote": "In the proximal tubule, apical sodium-hydrogen antiporters (NHE3) secrete protons into the lumen, acidifying the filtrate to pH 5.5.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4701,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "3A": {
+    "segment_key": "3A",
+    "package_id": "dev_3a_03_critical_care_infusions",
+    "topic": "Bedside Vasopressor Rule-of-Thumb Estimation",
+    "root_concept": "Bedside Vasopressor Rule-of-Thumb Estimation",
+    "concept_count": 7,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Identification of septic shock patient with MAP < 65 mmHg",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture specifies that the rule applies when an adult septic shock patient’s mean arterial pressure falls below 65 mmHg.",
+        "evidence_quotes": [
+          {
+            "quote": "when an adult septic shock patient has a mean arterial pressure dropping below 65 mmHg",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Standard norepinephrine dosing of 0.1 µg·kg⁻¹·min⁻¹",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The protocol calls for a starting dose of 0.1 micrograms per kilogram per minute of norepinephrine.",
+        "evidence_quotes": [
+          {
+            "quote": "our standard starting protocol calls for a dose of 0.1 micrograms per kilogram per minute",
+            "approx_start_sec": 5,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Standard concentration bag: 4 mg norepinephrine in 250 mL dextrose",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The infusion uses a pre‑mixed bag containing 4 mg of norepinephrine diluted in 250 mL of dextrose.",
+        "evidence_quotes": [
+          {
+            "quote": "with a standard concentration bag of 4 milligrams in 250 millilitres of dextrose",
+            "approx_start_sec": 10,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Rule‑of‑thumb conversion to ~15–25 mL·hr⁻¹ for a 70 kg patient",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Using the 0.1 µg·kg⁻¹·min⁻¹ dose with the 4 mg/250 mL bag yields an approximate infusion rate of 15 to 25 mL per hour for a 70‑kg adult.",
+        "evidence_quotes": [
+          {
+            "quote": "0.1 micrograms per kilogram per minute translates approximately to about 15 to 25 millilitres per hour",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Entering a starting pump rate of 15 mL·hr⁻¹ on the smart pump",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The nurse programs the infusion pump at 15 mL per hour as the initial rate.",
+        "evidence_quotes": [
+          {
+            "quote": "We punch 15 millilitres per hour directly into the smart pump interface as our starting rate",
+            "approx_start_sec": 20,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Monitoring MAP every 5 min and titrating by 5 mL·hr⁻¹ increments",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Clinicians check the MAP at five‑minute intervals and increase the infusion by 5 mL per hour if pressure remains low, repeating until stability is achieved.",
+        "evidence_quotes": [
+          {
+            "quote": "We glance at the bedside monitor every five minutes, and if the mean arterial pressure remains sluggish, we bump the pump up by 5 millilitres per hour increments until the blood pressure stabilizes",
+            "approx_start_sec": 25,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Justification: rapid delivery without multi‑step calculations",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "The rule‑of‑thumb is presented as a way to provide fast medication delivery while avoiding detailed mathematical conversions.",
+        "evidence_quotes": [
+          {
+            "quote": "This informal bedside rule provides rapid medication delivery without tracing multi-step mathematical derivations",
+            "approx_start_sec": 35,
+            "approx_end_sec": 45
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4660,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "3B": {
+    "segment_key": "3B",
+    "package_id": "dev_3a_03_critical_care_infusions",
+    "topic": "Stepwise 5-Step Continuous Infusion Calculation Trace",
+    "root_concept": "Five‑Step Continuous Infusion Calculation Trace for Norepinephrine",
+    "concept_count": 7,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Weight‑based dose to total mass delivery rate per minute",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The lecture multiplies the prescribed dose (0.10 µg·kg⁻¹·min⁻¹) by patient weight (70 kg) to obtain a total mass delivery rate of 7.0 µg per minute.",
+        "evidence_quotes": [
+          {
+            "quote": "Step 1: calculate the total mass delivery rate per minute by multiplying the weight‑based dose by patient weight: 0.10 micrograms per kilogram per minute times 70 kilograms equals exactly 7.0 micrograms per minute.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Conversion of mass delivery rate from per minute to per hour",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The per‑minute mass rate (7.0 µg/min) is multiplied by 60 min/h to yield 420 µg/h, which is expressed as 0.420 mg/h.",
+        "evidence_quotes": [
+          {
+            "quote": "Step 2: convert the minute delivery rate to an hourly mass rate: 7.0 micrograms per minute times 60 minutes per hour equals 420.0 micrograms per hour, which equals 0.420 milligrams per hour.",
+            "approx_start_sec": 16,
+            "approx_end_sec": 26
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Unit conversion between micrograms and milligrams",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The lecture explicitly notes that 420 µg equals 0.420 mg, demonstrating the 1 mg = 1000 µg conversion factor.",
+        "evidence_quotes": [
+          {
+            "quote": "420.0 micrograms per hour, which equals 0.420 milligrams per hour.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Solution drug concentration calculation (mass per volume)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The concentration of the norepinephrine bag is derived by dividing total drug mass (4.0 mg) by total volume (250 mL), giving 0.0160 mg/mL (or 16 µg/mL).",
+        "evidence_quotes": [
+          {
+            "quote": "Step 3: calculate the solution drug concentration: the bag contains 4.0 milligrams in 250.0 millilitres, yielding 4.0 divided by 250.0, which equals 0.0160 milligrams per millilitre (or 16.0 micrograms per millilitre).",
+            "approx_start_sec": 27,
+            "approx_end_sec": 38
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Volumetric infusion rate calculation using mass rate and concentration",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The required hourly mass rate (0.420 mg/h) is divided by the solution concentration (0.0160 mg/mL) to obtain a pump rate of 26.25 mL/h.",
+        "evidence_quotes": [
+          {
+            "quote": "Step 4: calculate the volumetric smart pump delivery rate in millilitres per hour: divide the required hourly mass rate of 0.420 milligrams per hour by the solution concentration of 0.0160 milligrams per millilitre, yielding exactly 26.25 millilitres per hour.",
+            "approx_start_sec": 39,
+            "approx_end_sec": 50
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Programming the smart infusion pump with the calculated rate",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The instructor directs the learner to set the pump to 26.3 mL/h (rounded) as the baseline infusion rate.",
+        "evidence_quotes": [
+          {
+            "quote": "Step 5: program the infusion pump to 26.3 millilitres per hour and set a dynamic titration protocol...",
+            "approx_start_sec": 51,
+            "approx_end_sec": 55
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Dynamic titration protocol based on mean arterial pressure",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "A conditional rule is described: if MAP stays below 65 mmHg after 10 min, increase the dose by 0.02 µg·kg⁻¹·min⁻¹, which corresponds to an additional 5.25 mL/h.",
+        "evidence_quotes": [
+          {
+            "quote": "if mean arterial pressure remains below 65 mmHg after 10 minutes, titrate upward by 0.02 micrograms per kilogram per minute (corresponding to an incremental 5.25 millilitres per hour).",
+            "approx_start_sec": 56,
+            "approx_end_sec": 66
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4374,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 0
+    }
+  },
+  "3C": {
+    "segment_key": "3C",
+    "package_id": "dev_3a_03_critical_care_infusions",
+    "topic": "Single-Step IV Solution Dilution Calculation",
+    "root_concept": "Single-Step IV Solution Dilution Calculation",
+    "concept_count": 7,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Standard dilution math for IV solutions",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture introduced the basic principle that preparing continuous IV infusions starts with standard dilution calculations.",
+        "evidence_quotes": [
+          {
+            "quote": "In the hospital pharmacy cleanroom, preparing continuous intravenous infusions begins with standard dilution math.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Reconstitution protocol: specific drug mass and diluent volume",
+        "parent_id": "C01",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The protocol specifies adding 400 mg of dopamine hydrochloride to a 500 mL normal‑saline bag.",
+        "evidence_quotes": [
+          {
+            "quote": "When reconstituting a dopamine infusion, the protocol directs adding 400 milligrams of dopamine hydrochloride to a 500 millilitre infusion bag of normal saline.",
+            "approx_start_sec": 6,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Final concentration calculation (mass ÷ volume)",
+        "parent_id": "C02",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Final concentration is obtained by dividing total solute mass by total solution volume, yielding 0.8 mg/mL.",
+        "evidence_quotes": [
+          {
+            "quote": "We compute the resulting final concentration by dividing total solute mass by total solution volume: 400 milligrams divided by 500 millilitres yields 0.8 milligrams per millilitre.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Unit conversion from mg/mL to µg/mL",
+        "parent_id": "C03",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The concentration is converted to bedside units by multiplying by 1,000 µg per mg, resulting in 800 µg/mL.",
+        "evidence_quotes": [
+          {
+            "quote": "To convert this into clinical bedside units, we multiply 0.8 milligrams per millilitre by 1000 micrograms per milligram, resulting in 800 micrograms per millilitre.",
+            "approx_start_sec": 21,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Labeling the infusion bag with calculated concentration",
+        "parent_id": "C04",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The technician records the computed concentration on the bag label.",
+        "evidence_quotes": [
+          {
+            "quote": "The technician labels the bag with this concentration value.",
+            "approx_start_sec": 28,
+            "approx_end_sec": 31
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Scope limitation: static pharmacy‑side calculation only",
+        "parent_id": "root",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "The calculation determines the static solution concentration in the pharmacy and does not involve patient‑specific weight adjustments, pump programming, or titration.",
+        "evidence_quotes": [
+          {
+            "quote": "This single-step calculation determines the static solution concentration in the pharmacy before dispensing; it involves no patient weight adjustments, no infusion pump programming, and no titration steps.",
+            "approx_start_sec": 32,
+            "approx_end_sec": 40
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Continuous intravenous infusion preparation workflow overview",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture framed the dilution step as the initial part of preparing continuous IV infusions in a cleanroom environment.",
+        "evidence_quotes": [
+          {
+            "quote": "In the hospital pharmacy cleanroom, preparing continuous intravenous infusions begins with standard dilution math.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 3245,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 2
+    }
+  },
+  "3D": {
+    "segment_key": "3D",
+    "package_id": "dev_3a_03_critical_care_infusions",
+    "topic": "Stepwise Dopamine Renal-to-Inotropic Titration Trace",
+    "root_concept": "Stepwise Dopamine Renal-to-Inotropic Titration Trace",
+    "concept_count": 5,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Renal and inotropic dopamine dosing levels",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture identified two dosing targets for dopamine infusion: a renal dose of 3.0 µg/kg/min and an inotropic dose of 7.5 µg/kg/min.",
+        "evidence_quotes": [
+          {
+            "quote": "We will now trace the complete five-step mathematical calculation required to escalate a continuous dopamine infusion from a renal dose of 3.0 micrograms per kilogram per minute to an inotropic dose of 7.5 micrograms per kilogram per minute ...",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Patient weight as a dosing parameter",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The patient’s body weight (60 kg) was presented as the multiplier for converting dose per kilogram into absolute mass rates.",
+        "evidence_quotes": [
+          {
+            "quote": "... for a 60 kilogram patient, using an 800 microgram per millilitre bag.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Calculation of initial renal mass rate",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Dose (3.0 µg/kg/min) multiplied by weight (60 kg) yields a renal mass rate of 180 µg/min.",
+        "evidence_quotes": [
+          {
+            "quote": "Step 1: calculate the initial renal mass rate: 3.0 micrograms per kilogram per minute times 60 kilograms equals 180 micrograms per minute.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Conversion of renal mass rate to hourly infusion volume",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The renal mass rate (180 µg/min) is multiplied by 60 min to obtain µg/hr, then divided by the bag concentration (800 µg/mL) to give an infusion rate of 13.5 mL/hr.",
+        "evidence_quotes": [
+          {
+            "quote": "Step 2: convert to hourly volume rate: 180 micrograms per minute times 60 minutes equals 10,800 micrograms per hour; dividing by the bag concentration of 800 micrograms per millilitre gives an initial rate of 13.5 millilitres per hour.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Calculation of escalated inotropic mass rate",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Dose (7.5 µg/kg/min) multiplied by weight (60 kg) yields an inotropic mass rate of 450 µg/min.",
+        "evidence_quotes": [
+          {
+            "quote": "Step 3: calculate the escalated inotropic mass rate: 7.5 micrograms per kilogram per minute times 60 kilograms equals 450 micrograms per minute.",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4809,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 1
+    }
+  },
+  "4A": {
+    "segment_key": "4A",
+    "package_id": "dev_3a_04_signal_processing_structures",
+    "topic": "Scalar Pipelined FFT Specification Roster",
+    "root_concept": "Scalar Pipelined FFT Specification",
+    "concept_count": 8,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Block Transform Size and Computational Stages",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The FFT core is defined to operate on a 1024‑point block, which implies 10 computational stages because log2(1024)=10.",
+        "evidence_quotes": [
+          {
+            "quote": "First, the block transform size N is specified as 1024 points, which requires log-2 of N, or 10 computational stages.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "System Clock Frequency and Latency Budget",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The accelerator runs at 125 MHz and must complete the FFT in under 15 µs, establishing the timing envelope for the pipeline.",
+        "evidence_quotes": [
+          {
+            "quote": "Second, the system clock frequency is defined as 125 megahertz, targeting an overall latency budget under 15 microseconds.",
+            "approx_start_sec": 6,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Dynamic Range Parameters",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The design fixes a 16‑bit fixed‑point word length for both the real and imaginary parts of each sample, setting the internal numeric precision.",
+        "evidence_quotes": [
+          {
+            "quote": "Third, the dynamic range parameters require an internal fixed-point word length of 16 bits for the real component and 16 bits for the imaginary component.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Real Component Word Length",
+        "parent_id": "C03",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Real part of each sample is represented with a 16‑bit fixed‑point word.",
+        "evidence_quotes": [
+          {
+            "quote": "…16 bits for the real component…",
+            "approx_start_sec": 15,
+            "approx_end_sec": 16
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Imaginary Component Word Length",
+        "parent_id": "C03",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Imaginary part of each sample is represented with a 16‑bit fixed‑point word.",
+        "evidence_quotes": [
+          {
+            "quote": "…16 bits for the imaginary component.",
+            "approx_start_sec": 17,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Input Data Rate and AXI‑Stream Interface",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The accelerator must accept data at 100 MS/s via an AXI‑Stream bus, defining the throughput requirement.",
+        "evidence_quotes": [
+          {
+            "quote": "Fourth, the input data rate is fixed at 100 megasamples per second over an AXI-Stream interface.",
+            "approx_start_sec": 21,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Twiddle Factor Coefficient Quantization Error Bound",
+        "parent_id": "root",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "Twiddle factor coefficients must be quantized so that the maximum phase error stays below –80 dB.",
+        "evidence_quotes": [
+          {
+            "quote": "Fifth, the twiddle factor coefficients are bounded by a maximum phase quantization error under minus 80 decibels.",
+            "approx_start_sec": 28,
+            "approx_end_sec": 34
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Specification Scope (Constraints vs. Hardware Layout)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture emphasizes that the listed parameters are scalar numerical constraints and do not describe the actual hardware circuit or register schematic.",
+        "evidence_quotes": [
+          {
+            "quote": "These five parameters specify the scalar numerical constraints and design bounds of the FFT core. The design specification lists these operational constraints without specifying the hardware circuit layout or register schematic.",
+            "approx_start_sec": 35,
+            "approx_end_sec": 45
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 3678,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 3
+    }
+  },
+  "4B": {
+    "segment_key": "4B",
+    "package_id": "dev_3a_04_signal_processing_structures",
+    "topic": "Radix-2 Butterfly Datapath Hardware Primitives",
+    "root_concept": "Radix-2 Decimation-in-Time FFT Processor Hardware Datapath",
+    "concept_count": 8,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Overall pipelined hardware architecture for Radix-2 DIT FFT",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture described the spatial hardware realization of a Radix‑2 decimation‑in‑time FFT processor as a pipelined signal‑flow graph built from explicit physical primitives.",
+        "evidence_quotes": [
+          {
+            "quote": "The spatial hardware realization of a Radix-2 decimation-in-time FFT processor is built from explicit physical constituent primitives arranged in a pipelined signal flow graph.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Dual‑operand complex butterfly arithmetic unit",
+        "parent_id": "C01",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Each stage’s core processing element is a dual‑operand complex butterfly unit that performs the fundamental FFT combine operation.",
+        "evidence_quotes": [
+          {
+            "quote": "At each stage, the core processing element consists of a dual-operand complex butterfly arithmetic unit.",
+            "approx_start_sec": 6,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Upper datapath primitive – 16‑bit complex dual‑adder (A + W·B)",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The upper half of the butterfly contains a 16‑bit complex dual‑adder that adds input sample A to the twiddle‑scaled input B.",
+        "evidence_quotes": [
+          {
+            "quote": "The upper datapath primitive incorporates a 16-bit complex dual-adder that sums input sample A with the scaled twiddle-multiplied input B.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 14
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Lower datapath primitive – 16‑bit complex subtractor (A – W·B)",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The lower half of the butterfly contains a matched 16‑bit complex subtractor that computes A minus the twiddle‑scaled B.",
+        "evidence_quotes": [
+          {
+            "quote": "The lower datapath primitive incorporates a matched 16-bit complex subtractor generating A minus W times B.",
+            "approx_start_sec": 15,
+            "approx_end_sec": 19
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Complex multiplier array implemented with four DSP slices",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Four dedicated DSP hardware slices form the multiplier array: two compute the real cross‑products (X‑r·W‑r and X‑i·W‑i) feeding one adder, and two compute the imaginary cross‑products feeding a second adder.",
+        "evidence_quotes": [
+          {
+            "quote": "The complex multiplier array is instantiated using four dedicated DSP hardware slices: two multipliers compute the real cross-products X-r times W-r and X-i times W-i feeding an adder, while two multipliers compute the imaginary cross-products feeding a second adder.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 28
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Synchronous dual‑ported ping‑pong RAM buffers",
+        "parent_id": "C01",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Between stages, data are stored in synchronous dual‑ported ping‑pong RAM buffers to enable simultaneous read/write of the two interleaved sample streams.",
+        "evidence_quotes": [
+          {
+            "quote": "Connecting the stages are synchronous dual-ported ping-pong RAM buffers...",
+            "approx_start_sec": 29,
+            "approx_end_sec": 32
+          }
+        ],
+        "confidence": "MEDIUM"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Shift‑register delay FIFOs of length N/2 for phase alignment",
+        "parent_id": "C01",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Shift‑register delay FIFOs, each of length N/2, are used to align the phase of paired samples before they enter the butterfly.",
+        "evidence_quotes": [
+          {
+            "quote": "...and shift-register delay FIFOs of length N divided by two to align the phase of paired samples.",
+            "approx_start_sec": 33,
+            "approx_end_sec": 37
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Interconnection blueprint of registers, adders, and multiplier blocks",
+        "parent_id": "C01",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The lecture concluded with a structural blueprint that details how the hardware registers, adders, and multiplier blocks are interconnected to form the complete FFT datapath.",
+        "evidence_quotes": [
+          {
+            "quote": "This complete structural blueprint details the interconnected hardware registers, adders, and multiplier blocks.",
+            "approx_start_sec": 38,
+            "approx_end_sec": 42
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4036,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 1
+    }
+  },
+  "4C": {
+    "segment_key": "4C",
+    "package_id": "dev_3a_04_signal_processing_structures",
+    "topic": "Scalar Decimation-in-Frequency Parameters",
+    "root_concept": "Scalar Decimation-in-Frequency Parameters",
+    "concept_count": 8,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Decimation-in-Frequency (DIF) FFT architecture sequence of butterfly stages",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the DIF FFT architecture and stated that its design requires specifying the ordered sequence of butterfly stages.",
+        "evidence_quotes": [
+          {
+            "quote": "The engineering parameters for a decimation-in-frequency (DIF) FFT architecture require specifying the sequence of butterfly stages.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Input natural order vs. output bit‑reversed order",
+        "parent_id": "C01",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "In a DIF FFT the input time‑domain sequence is taken in natural order while the resulting frequency bins are produced in bit‑reversed order.",
+        "evidence_quotes": [
+          {
+            "quote": "In decimation-in-frequency, the input time-domain sequence is accepted in natural order, while the output frequency bins appear in bit-reversed order.",
+            "approx_start_sec": 6,
+            "approx_end_sec": 11
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Twiddle‑factor exponent table definition per stage",
+        "parent_id": "C01",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The exponent values for twiddle factors at stage m are given by k × N / 2^m, forming a table used by the architecture.",
+        "evidence_quotes": [
+          {
+            "quote": "The architectural parameters itemize the twiddle factor exponent table: at stage m, the exponents take values k times N divided by 2 to the m.",
+            "approx_start_sec": 12,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Hardware memory depth specification (N words of 18‑bit block RAM)",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The design calls for a memory depth of N words, each word being an 18‑bit block RAM location.",
+        "evidence_quotes": [
+          {
+            "quote": "The hardware memory depth is specified as N words of 18-bit block RAM,",
+            "approx_start_sec": 19,
+            "approx_end_sec": 23
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Round‑off noise bound (< 0.5 LSB)",
+        "parent_id": "C04",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "A maximum round‑off noise limit is set to stay below half a least‑significant bit.",
+        "evidence_quotes": [
+          {
+            "quote": "with a maximum roundoff noise bound under 0.5 LSB.",
+            "approx_start_sec": 24,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Target throughput: one output complex word per clock cycle",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The performance goal is to produce one complex output word each clock cycle.",
+        "evidence_quotes": [
+          {
+            "quote": "We declare the target throughput at one output complex word per clock cycle,",
+            "approx_start_sec": 28,
+            "approx_end_sec": 32
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Operating voltage specification (1.2 V)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The core is intended to run at a supply voltage of 1.2 volts.",
+        "evidence_quotes": [
+          {
+            "quote": "with an operating voltage of 1.2 volts.",
+            "approx_start_sec": 33,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Parameter roster purpose – external functional and precision requirements",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture explained that the listed parameters constitute a roster describing external functional requirements and arithmetic precision, without detailing internal gate‑level implementation.",
+        "evidence_quotes": [
+          {
+            "quote": "These items constitute a parameter roster detailing the external functional requirements and arithmetic precision specifications of the DIF core. The roster documents these numerical target bounds without detailing the internal hardware logic gates, multiplier banks, or commutator routing circuits.",
+            "approx_start_sec": 36,
+            "approx_end_sec": 45
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 4623,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 3
+    }
+  },
+  "4D": {
+    "segment_key": "4D",
+    "package_id": "dev_3a_04_signal_processing_structures",
+    "topic": "Single-Path Delay Feedback (SDF) Hardware Blueprint",
+    "root_concept": "Radix-2 Single‑path Delay Feedback (R2SDF) Pipelined FFT Hardware Blueprint",
+    "concept_count": 8,
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "R2SDF pipelined FFT hardware architecture",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the overall hardware architecture of a Radix‑2 Single‑path Delay Feedback pipelined FFT, describing it as a collection of dedicated processing elements and memory primitives.",
+        "evidence_quotes": [
+          {
+            "quote": "The hardware architecture of a Radix-2 Single‑path Delay Feedback (R2SDF) pipelined FFT is composed of dedicated structural processing elements and commutator memory primitives.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Shift‑register delay line (N/2 words) in stage 1",
+        "parent_id": "C01",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Stage 1 contains a shift‑register delay line sized to N/2 words that stores the first half of the input samples.",
+        "evidence_quotes": [
+          {
+            "quote": "In stage 1, the hardware datapath includes a shift‑register delay line of N/2 words, connected to a 2‑by‑2 commutator multiplexer.",
+            "approx_start_sec": 6,
+            "approx_end_sec": 11
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "2‑by‑2 commutator multiplexer",
+        "parent_id": "C01",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "A 2‑by‑2 commutator multiplexes incoming samples between the delay line and the butterfly element.",
+        "evidence_quotes": [
+          {
+            "quote": "When the first N/2 samples arrive, the commutator directs them into the delay feedback line. When the second half arrives, a hardware butterfly processing element (PE) executes simultaneous addition and subtraction.",
+            "approx_start_sec": 12,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Hardware butterfly processing element (PE) – add/subtract operation",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The butterfly PE performs a parallel addition and subtraction; the adder output proceeds to the next stage while the subtractor output is sent to a twiddle multiplier.",
+        "evidence_quotes": [
+          {
+            "quote": "the hardware butterfly processing element (PE) executes simultaneous addition and subtraction: the adder output passes directly to the next stage, while the subtractor output is routed through a complex twiddle multiplier.",
+            "approx_start_sec": 19,
+            "approx_end_sec": 26
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Complex twiddle multiplier implemented with Gauss's algorithm",
+        "parent_id": "C04",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The twiddle multiplier uses Gauss's algorithm, requiring three real multipliers and three adders to compute the complex multiplication.",
+        "evidence_quotes": [
+          {
+            "quote": "the subtractor output is routed through a complex twiddle multiplier consisting of three real multipliers and three adders using Gauss's algorithm.",
+            "approx_start_sec": 27,
+            "approx_end_sec": 33
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Scaling of feedback delay registers across stages (N/4, N/8 … 1)",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Each subsequent FFT stage reduces the size of its delay register by a factor of two, ending with a single register in the final stage.",
+        "evidence_quotes": [
+          {
+            "quote": "Subsequent stages scale the feedback delay registers down by powers of two: N/4, N/8, down to a single register in the final stage.",
+            "approx_start_sec": 34,
+            "approx_end_sec": 39
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Hardware bit‑reversal address generator",
+        "parent_id": "C01",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The pipeline terminates with a bit‑reversal address generator that drives memory accesses.",
+        "evidence_quotes": [
+          {
+            "quote": "The pipeline terminates at a hardware bit‑reversal address generator driving dual‑port SRAM banks.",
+            "approx_start_sec": 40,
+            "approx_end_sec": 44
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Dual‑port SRAM banks as output storage",
+        "parent_id": "C07",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The bit‑reversal generator writes the final FFT results into dual‑port SRAM banks.",
+        "evidence_quotes": [
+          {
+            "quote": "driving dual‑port SRAM banks.",
+            "approx_start_sec": 43,
+            "approx_end_sec": 44
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ],
+    "execution_stats": {
+      "latency_ms": 6150,
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0,
+      "retries": 1
+    }
+  }
+}

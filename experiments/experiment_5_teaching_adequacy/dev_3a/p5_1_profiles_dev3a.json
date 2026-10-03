@@ -1,0 +1,189 @@
+{
+  "component": "P5.1 Normative Expected Depth (dev_3a Calibration Corpus)",
+  "packages": {
+    "dev_3a_01_discrete_probability": {
+      "topic": "Discrete Probability Spaces, Axiomatic Bounds, and Model Valuations",
+      "declared_objective": "State and apply Kolmogorov probability axioms, distinguish syntactic inequality bounds from explicit sample space model valuations, evaluate partition event probabilities over discrete universes, and analyze conditional independence.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Identify sample space Omega, event sets, probability measure P, and Kolmogorov axioms."
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Construct explicit probability mass models over discrete universes with truth valuations over elementary events."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Identify sample points, event subsets, sigma-algebra closure properties, and partition blocks."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Analyze dynamic probability updates under conditioning P(A|B) and law of total probability."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Formal deductive proof of probability bounds (e.g., Bonferroni inequality) from basic axioms."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Stepwise execution of probability calculations on concrete discrete scenarios."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED",
+          "rationale": "Examine measure-theoretic edge cases, uncountably infinite spaces, and zero-probability events."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED",
+          "rationale": "Connect discrete probability models to information theory (entropy) and randomized algorithms."
+        }
+      }
+    },
+    "dev_3a_02_renal_pharmacokinetics": {
+      "topic": "Renal Clearance Kinetics, Mass-Balance Filtration, and Tubular Transport Mechanisms",
+      "declared_objective": "Calculate renal drug clearance using urinary excretion data, derive the glomerular filtration rate mass-balance equation, distinguish formal filtration formulas from active cellular transport mechanisms in the nephron, and evaluate capacity-limited tubular secretion.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Identify clearance parameters (CL_R, GFR, Cu, V, Cp), urinary excretion rate, and nephron anatomical zones."
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Explain physical meaning of renal clearance as the volume of plasma cleared of drug by kidneys per unit time."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Itemize nephron structural barriers: podocyte filtration slits, proximal tubular basolateral membranes, and apical transporters."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Analyze net renal clearance as the dynamic composite of filtration, active secretion, and passive reabsorption."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Explain cellular and molecular transport mechanisms (OAT1/OAT3, OCT2, P-gp) and steady-state mass-balance derivations."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Stepwise clinical calculation of renal clearance and dosage adjustments in renal impairment."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED",
+          "rationale": "Examine saturation of active secretion at supratherapeutic plasma levels and urine pH-dependent ion trapping."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED",
+          "rationale": "Synthesize renal clearance concepts with hemodialysis extraction and chronic kidney disease staging."
+        }
+      }
+    },
+    "dev_3a_03_critical_care_infusions": {
+      "topic": "Critical Care Pharmacotherapy: Continuous IV Infusions and Stepwise Titration Traces",
+      "declared_objective": "Calculate continuous intravenous infusion rates for vasoactive agents, execute multi-step unit conversions and pump rate calculations, distinguish bedside mental rules-of-thumb from rigorous stepwise execution traces, and adjust infusion titration to blood pressure targets.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Identify vasoactive drug names, concentration units (mcg/mL, mg/250mL), patient weight, and target MAP."
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Explain the clinical purpose of continuous titratable infusions in maintaining vascular tone and end-organ perfusion."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Itemize infusion system components: drug bag, IV smart pump library, carrier line, and pressure transducer."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Model the relationship between dose titration rate (mcg/kg/min), plasma concentration, and mean arterial pressure response."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Provide pharmacological rationale for choosing norepinephrine vs. vasopressin based on receptor kinetics (alpha-1 vs. V1)."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Execute rigorous 5-step infusion calculation trace: dose to mass rate -> flow rate (mL/hr) -> target MAP response -> titration adjustment."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED",
+          "rationale": "Identify safety thresholds, extravasation necrosis protocols, peripheral line limitations, and refractory shock criteria."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED",
+          "rationale": "Apply infusion titration mathematics to pediatric weight-based dosing and post-cardiac arrest resuscitation protocols."
+        }
+      }
+    },
+    "dev_3a_04_signal_processing_structures": {
+      "topic": "Digital Signal Processing: Pipelined FFT Architectures and Hardware Signal Flow Graphs",
+      "declared_objective": "Analyze the computational complexity of the Discrete Fourier Transform, design Radix-2 decimation-in-time pipelined FFT hardware signal flow graphs, distinguish scalar parameter specifications from spatial hardware primitives, and analyze bit-reversal addressing.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Name DFT, FFT, Cooley-Tukey Radix-2 algorithm, twiddle factors W_N^k, and butterfly operational stages."
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Explain frequency-domain decomposition and how divide-and-conquer reduces complexity from O(N^2) to O(N log N)."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Enumerate hardware constituent primitives: complex dual-adders, twiddle complex multipliers, delay FIFOs, and ping-pong RAM."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Describe pipeline data propagation across log2(N) sequential stages and bit-reversal address reordering."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Mathematical proof of the periodicity and symmetry properties of twiddle factors that permit hardware reuse."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Trace an explicit numerical 4-point or 8-point FFT computation across all intermediate butterfly nodes."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED",
+          "rationale": "Analyze dynamic range growth, fixed-point arithmetic overflow, and twiddle coefficient quantization noise."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED",
+          "rationale": "Synthesize FFT pipeline architectures with FPGA DSP slices and OFDM wireless transceiver modem design."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "timestamp": "2026-10-02T09:51:14.920Z",
+  "milestone": "Milestone v3.6 Step 2A Phase 4: Diagnostic Evidence Summary",
+  "analyzer_configuration": {
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0,
+    "max_tokens": 4500,
+    "system_prompt_source": "p5_3_coverage_gap_analyzer.js (frozen)",
+    "structural_incomplete_handling": "Isolate observed_depth: null from pedagogical gaps"
+  },
+  "evidence_table": [
+    {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1A_syntactic_duality",
+      "pattern": "Pattern 1: Meaning vs. Static Notation",
+      "epistemic_dimension": "MEANING",
+      "human_reference": {
+        "adjudicated_depth": 2,
+        "verdict": "FALLS_SHORT_OF_LEVEL_4 (Pure syntax)"
+      },
+      "analyzer_result": {
+        "evaluated_dimension": "MEANING",
+        "expected_depth": 3,
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C02 explained ∀x P(x) as a conjunction over the domain (Episode E02); existential meaning was not explicitly covered.",
+        "confidence": "HIGH"
+      },
+      "upstream_extraction": {
+        "total_concepts_extracted": 7,
+        "total_episodes_extracted": 4,
+        "related_concepts": [
+          "[C01] De Morgan’s Laws for Quantifiers (syntactic duality) (IDENTIFICATION)",
+          "[C04] Semantic justification of quantifier duality via Boolean duality (JUSTIFICATION_WHY)"
+        ]
+      }
+    },
+    {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1B_domain_semantics",
+      "pattern": "Pattern 1: Meaning vs. Static Notation",
+      "epistemic_dimension": "MEANING",
+      "human_reference": {
+        "adjudicated_depth": 4,
+        "verdict": "SATISFIES_LEVEL_4 (Semantic models)"
+      },
+      "analyzer_result": {
+        "evaluated_dimension": "MEANING",
+        "expected_depth": 3,
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C02 explained ∀x P(x) as a conjunction over the domain (Episode E02); existential meaning was not explicitly covered.",
+        "confidence": "HIGH"
+      },
+      "upstream_extraction": {
+        "total_concepts_extracted": 7,
+        "total_episodes_extracted": 4,
+        "related_concepts": [
+          "[C02] Universal quantifier as generalized conjunction over a domain (MEANING)",
+          "[C03] Existential quantifier as generalized disjunction over a domain (MEANING)",
+          "[C04] Semantic justification of quantifier duality via Boolean duality (JUSTIFICATION_WHY)"
+        ]
+      }
+    },
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2A_algebraic_elimination",
+      "pattern": "Pattern 2: Math Identity vs. Empirical Mechanism",
+      "epistemic_dimension": "CORE_CONCEPTS",
+      "human_reference": {
+        "adjudicated_depth": 4,
+        "verdict": "FALLS_SHORT_OF_LEVEL_5 (Formal formula only, no biology)"
+      },
+      "analyzer_result": {
+        "evaluated_dimension": "CORE_CONCEPTS"
+      },
+      "upstream_extraction": {
+        "total_concepts_extracted": 7,
+        "total_episodes_extracted": 7,
+        "related_concepts": [
+          "[C01] Algebraic identity of systemic clearance (IDENTIFICATION)"
+        ]
+      }
+    },
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2B_organ_extraction_mechanism",
+      "pattern": "Pattern 2: Math Identity vs. Empirical Mechanism",
+      "epistemic_dimension": "CORE_CONCEPTS",
+      "human_reference": {
+        "adjudicated_depth": 5,
+        "verdict": "SATISFIES_LEVEL_5 (Biological mechanism CL = Q * E)"
+      },
+      "analyzer_result": {
+        "evaluated_dimension": "CORE_CONCEPTS"
+      },
+      "upstream_extraction": {
+        "total_concepts_extracted": 7,
+        "total_episodes_extracted": 7,
+        "related_concepts": [
+          "[C03] Organ clearance as blood flow times extraction ratio (RELATIONSHIPS_MECHANISM)"
+        ]
+      }
+    },
+    {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3A_conversational_gentamicin_walkthrough",
+      "pattern": "Pattern 3: Worked Application vs. Verbal Walkthrough",
+      "epistemic_dimension": "APPLICATION_INTERPRETATION",
+      "human_reference": {
+        "adjudicated_depth": 3,
+        "verdict": "FALLS_SHORT_OF_LEVEL_6 (Conversational estimation)"
+      },
+      "analyzer_result": {
+        "evaluated_dimension": "APPLICATION_INTERPRETATION",
+        "expected_depth": 6,
+        "observed_depth": 6,
+        "status": "COVERED",
+        "evidence_synthesis": "Live trace of extended‑interval gentamicin dosing and phenytoin loading‑dose example provided concrete numerical execution.",
+        "confidence": "HIGH"
+      },
+      "upstream_extraction": {
+        "total_concepts_extracted": 6,
+        "total_episodes_extracted": 4,
+        "related_concepts": [
+          "[C01] Extended‑interval gentamicin dosing based on weight and renal function (conversational approach) (APPLICATION_INTERPRETATION)"
+        ]
+      }
+    },
+    {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3B_stepwise_gentamicin_execution_trace",
+      "pattern": "Pattern 3: Worked Application vs. Verbal Walkthrough",
+      "epistemic_dimension": "APPLICATION_INTERPRETATION",
+      "human_reference": {
+        "adjudicated_depth": 6,
+        "verdict": "SATISFIES_LEVEL_6 (Rigorous 5-step trace)"
+      },
+      "analyzer_result": {
+        "evaluated_dimension": "APPLICATION_INTERPRETATION",
+        "expected_depth": 6,
+        "observed_depth": 6,
+        "status": "COVERED",
+        "evidence_synthesis": "Live trace of extended‑interval gentamicin dosing and phenytoin loading‑dose example provided concrete numerical execution.",
+        "confidence": "HIGH"
+      },
+      "upstream_extraction": {
+        "total_concepts_extracted": 6,
+        "total_episodes_extracted": 4,
+        "related_concepts": []
+      }
+    },
+    {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4A_dft_parameter_roster",
+      "pattern": "Pattern 4: Structural Primitives vs. Parameter Listing",
+      "epistemic_dimension": "STRUCTURE_COMPONENTS",
+      "human_reference": {
+        "adjudicated_depth": 2,
+        "verdict": "FALLS_SHORT_OF_LEVEL_5 (Scalar parameter list)"
+      },
+      "analyzer_result": {
+        "evaluated_dimension": "STRUCTURE_COMPONENTS",
+        "expected_depth": 4,
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C03 outlined DFT components and C06 detailed Direct Form I FIR structure, without showing interactions or dynamic behavior.",
+        "confidence": "HIGH"
+      },
+      "upstream_extraction": {
+        "total_concepts_extracted": 9,
+        "total_episodes_extracted": 4,
+        "related_concepts": [
+          "[C01] DFT Parameter Set (IDENTIFICATION)",
+          "[C03] DFT Structural Primitives (STRUCTURE_COMPONENTS)",
+          "[C04] Basis Function Matrix (Vandermonde) (MEANING)"
+        ]
+      }
+    },
+    {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4B_dft_structural_primitives",
+      "pattern": "Pattern 4: Structural Primitives vs. Parameter Listing",
+      "epistemic_dimension": "STRUCTURE_COMPONENTS",
+      "human_reference": {
+        "adjudicated_depth": 5,
+        "verdict": "SATISFIES_LEVEL_5 (Architectural primitives)"
+      },
+      "analyzer_result": {
+        "evaluated_dimension": "STRUCTURE_COMPONENTS",
+        "expected_depth": 4,
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C03 outlined DFT components and C06 detailed Direct Form I FIR structure, without showing interactions or dynamic behavior.",
+        "confidence": "HIGH"
+      },
+      "upstream_extraction": {
+        "total_concepts_extracted": 9,
+        "total_episodes_extracted": 4,
+        "related_concepts": [
+          "[C01] DFT Parameter Set (IDENTIFICATION)",
+          "[C03] DFT Structural Primitives (STRUCTURE_COMPONENTS)",
+          "[C04] Basis Function Matrix (Vandermonde) (MEANING)"
+        ]
+      }
+    }
+  ]
+}

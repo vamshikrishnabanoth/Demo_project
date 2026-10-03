@@ -1,0 +1,28 @@
+{
+  "package_id": "dev_2b_03_aminoglycoside_dosing",
+  "domain": "Health Sciences & Clinical Medicine",
+  "subject": "Clinical Pharmacotherapy",
+  "topic": "Aminoglycoside Clinical Dosing: Bedside Heuristics vs. Chained Hartford Nomogram Trace",
+  "learner_level": "Clinical Resident / PharmD",
+  "syllabus_context": "Advanced Hospital Therapeutics: Once-Daily Aminoglycoside Dosing & Therapeutic Monitoring",
+  "declared_learning_objective": "Calculate individual renal function, evaluate conversational clinical approximations versus rigorous multi-step calculation traces, and adjust aminoglycoside extended-interval regimens.",
+  "prerequisites": [
+    "Renal physiology",
+    "Cockcroft-Gault equation",
+    "Nomogram interpretation"
+  ],
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "none"
+  },
+  "contrast_design": {
+    "targeted_pattern": "Pattern 3: Worked Application vs Conversational Estimation",
+    "negative_segment_id": "segment_3A_bedside_conversational_estimation",
+    "negative_target_depth": 3,
+    "negative_distinction": "Conversational bedside approximation and mental rounding without intermediate states",
+    "positive_segment_id": "segment_3B_stepwise_hartford_nomogram_trace",
+    "positive_target_depth": 6,
+    "positive_distinction": "Chained 6-step clinical calculation trace with explicit units, IBW validation, and nomogram lookup"
+  }
+}

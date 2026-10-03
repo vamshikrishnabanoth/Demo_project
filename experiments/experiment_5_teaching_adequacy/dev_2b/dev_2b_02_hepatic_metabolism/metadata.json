@@ -1,0 +1,27 @@
+{
+  "package_id": "dev_2b_02_hepatic_metabolism",
+  "domain": "Life Sciences & Medicine",
+  "subject": "Pharmacokinetics & Molecular Pharmacology",
+  "topic": "Hepatic Clearance: Mathematical Elimination Models vs. Cytochrome P450 Enzyme Kinetics",
+  "learner_level": "Graduate / Professional PharmD",
+  "syllabus_context": "Module 3: Organ Clearance, Hepatic First-Pass Metabolism, and Microsomal Kinetics",
+  "declared_learning_objective": "Differentiate algebraic hepatic clearance formulas from cellular microsomal enzyme transport mechanisms; define extraction ratio and portal vein blood flow; and evaluate intrinsic clearance governed by Michaelis-Menten kinetics.",
+  "prerequisites": [
+    "Basic enzyme kinetics",
+    "Principles of systemic clearance"
+  ],
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "none"
+  },
+  "contrast_design": {
+    "targeted_pattern": "Pattern 2: Empirical Mechanism vs Mathematical Identity",
+    "negative_segment_id": "segment_2A_algebraic_kinetic_derivation",
+    "negative_target_depth": 4,
+    "negative_distinction": "Algebraic kinetic parameter equations without physiological liver tissue",
+    "positive_segment_id": "segment_2B_microsomal_enzyme_kinetics",
+    "positive_target_depth": 5,
+    "positive_distinction": "Cellular transport via sinusoidal Space of Disse, CYP3A4 Michaelis-Menten kinetics, and intrinsic clearance"
+  }
+}

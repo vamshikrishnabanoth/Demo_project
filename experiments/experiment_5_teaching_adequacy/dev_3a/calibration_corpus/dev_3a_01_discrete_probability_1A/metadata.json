@@ -1,0 +1,9 @@
+{
+  "segment_key": "1A",
+  "package_id": "dev_3a_01_discrete_probability",
+  "domain": "01",
+  "topic": "Axiomatic Probability Bounds",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "MEANING",
+  "target_threshold": 4
+}

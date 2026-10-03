@@ -1,0 +1,39 @@
+{
+  "lecture_id": "lecture_dev2a_clinical_dosing",
+  "total_duration_seconds": 520,
+  "raw_transcript": "Hello class. Today we address clinical dosing calculations for hospital antibiotics with narrow therapeutic indices.\n\n[Segment 3A - Diagnostic: Conversational Gentamicin Walkthrough]\nLet's talk through how you'd dose gentamicin for a typical septic patient on the ward. Usually, if you have a patient who is around 70 or 80 kilograms, say 80 kg, with decent renal function, you typically aim for an extended-interval dose of 5 to 7 milligrams per kilogram once daily. So in your head you multiply 5 mg/kg by 80 kg, which gives you about 400 milligrams. Now, you always glance at the serum creatinine\u2014if the creatinine is around 1.0 mg/dL, you go ahead and give that 400 mg every 24 hours. If their kidneys are a bit sluggish, maybe creatinine is 1.8, you'd probably stretch that out to every 36 or 48 hours, or drop the dose down to 3 mg/kg. It's a quick conversational bedside assessment that experienced clinical pharmacists do on morning rounds.\n\n[Segment 3B - Diagnostic: Explicit Stepwise Gentamicin Execution Trace]\nNow let us execute the rigorous, step-by-step mathematical trace on the blackboard as required for formal certification: Step 1: Patient Parameters. Patient is a 65-year-old male, height 5 feet 10 inches (178 cm), actual weight 85 kg, serum creatinine S_cr = 1.4 mg/dL. Step 2: Ideal Body Weight (IBW) Calculation. IBW equals 50 kg plus 2.3 kg for each inch over 5 feet: 50 + 2.3 * 10 = 50 + 23 = 73.0 kg. Because actual weight (85 kg) is greater than IBW, we check percentage: 85 / 73 = 116%, less than 120%, so we use IBW = 73 kg. Step 3: Creatinine Clearance via Cockcroft-Gault. CrCl equals ((140 minus age) times weight in kg) divided by (72 times S_cr). CrCl = ((140 - 65) * 73) / (72 * 1.4) = (75 * 73) / 100.8 = 5475 / 100.8 = 54.3 mL/min. Step 4: Target Dose Determination. Target once-daily dose is 7 mg/kg based on dosing weight: Dose = 7 mg/kg * 73 kg = 511 mg, rounded to 500 mg. Step 5: Dosing Interval Selection. For CrCl of 40 to 60 mL/min, the Hartford nomogram specifies an extended interval of tau = 36 hours. Final Regimen: Gentamicin 500 mg IV infusion every 36 hours.\n\n[Segment 3C - Validation: Conversational Phenytoin Walkthrough]\nConsider another drug: IV phenytoin loading in status epilepticus. At the bedside, the team says: 'Let's load the patient with 15 to 20 milligrams per kilogram.' If the patient looks to be about 70 kilograms, 15 mg/kg times 70 kg is about 1050 milligrams, so you verbally order a 1000 mg IV piggyback in normal saline. You tell the nurse to infuse it no faster than 50 mg per minute to avoid hypotension and arrhythmias, so it will run over approximately 20 to 25 minutes. It's an informal verbal walkthrough where the clinical team confirms the target order of magnitude and rate constraint conversationally.\n\n[Segment 3D - Validation: Explicit Stepwise Vancomycin Execution Trace]\nContrast that with the formal pharmacokinetic protocol for vancomycin AUC-guided dosing: Step 1: Clinical Goal. Target 24-hour Area Under the Curve (AUC24) to MIC ratio between 400 and 600 mg*h/L for MRSA bacteremia. Step 2: Estimate Patient Elimination Constant. For a patient with CrCl = 60 mL/min, k_e equals 0.00083 * CrCl + 0.0044 = (0.00083 * 60) + 0.0044 = 0.0498 + 0.0044 = 0.0542 h^-1. Step 3: Estimate Volume of Distribution. V_d equals 0.7 L/kg * 70 kg = 49.0 L. Step 4: Calculate Systemic Clearance. CL equals k_e * V_d = 0.0542 h^-1 * 49.0 L = 2.656 L/h. Step 5: Calculate Required 24-Hour Dose. Target AUC24 = 500 mg*h/L. Daily Dose = AUC24 * CL = 500 mg*h/L * 2.656 L/h = 1328 mg/day. Step 6: Select Interval and Practical Dose. Divide daily dose into 12-hour intervals: 1328 / 2 = 664 mg q12h. Rounding to standard vial sizes yields Vancomycin 750 mg IV every 12 hours. Step 7: Predict Expected AUC. Expected AUC24 = (750 * 2) / 2.656 = 1500 / 2.656 = 564.7 mg*h/L, which falls strictly within the 400-600 therapeutic window.",
+  "segments": [
+    {
+      "segment_id": "segment_3A_conversational_gentamicin_walkthrough",
+      "split": "DIAGNOSTIC",
+      "start": 0,
+      "end": 120,
+      "target_distinction": "Pattern 3: Conversational verbal dosing approximation (Level 3 coverage / missing explicit trace)",
+      "summary": "Verbal bedside dosing of gentamicin: rough mental math 5 mg/kg for 80 kg, heuristic renal adjustments without state trace."
+    },
+    {
+      "segment_id": "segment_3B_stepwise_gentamicin_execution_trace",
+      "split": "DIAGNOSTIC",
+      "start": 120,
+      "end": 260,
+      "target_distinction": "Pattern 3: Explicit step-by-step numerical execution trace (Level 6 worked application)",
+      "summary": "Full 5-step blackboard execution trace: IBW formula, Cockcroft-Gault arithmetic, target dose, nomogram interval selection, final regimen."
+    },
+    {
+      "segment_id": "segment_3C_conversational_phenytoin_walkthrough",
+      "split": "VALIDATION",
+      "start": 260,
+      "end": 370,
+      "target_distinction": "Pattern 3 Validation: Conversational bedside loading dose discussion",
+      "summary": "Verbal discussion of phenytoin 15-20 mg/kg loading dose, informal mental math, verbal infusion rate safety constraint."
+    },
+    {
+      "segment_id": "segment_3D_stepwise_vancomycin_execution_trace",
+      "split": "VALIDATION",
+      "start": 370,
+      "end": 520,
+      "target_distinction": "Pattern 3 Validation: Explicit 7-step AUC-guided vancomycin calculation trace (Level 6 worked application)",
+      "summary": "Complete 7-step quantitative calculation: AUC target, k_e estimate, V_d, clearance, daily dose, practical rounding, predicted AUC."
+    }
+  ]
+}

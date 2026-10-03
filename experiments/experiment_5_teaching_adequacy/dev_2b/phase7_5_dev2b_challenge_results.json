@@ -1,0 +1,569 @@
+{
+  "metadata": {
+    "milestone": "Milestone v3.6 Phase 7.5: Track 2 Challenge Evaluation (dev_2b)",
+    "timestamp": "2026-10-02T16:36:52.280Z",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0,
+    "max_completion_tokens": 4096,
+    "baseline_prompt_sha256": "10a632cb5df3d1252b33c87437b18a49b21fcbd615bd859a9bdd327101e7d35b",
+    "candidate_prompt_sha256": "2d5a9500c1726ee917f3e5ef93d00c5aec6f3b7952993cff2df4e554b6b54388",
+    "p5_1_profiles_sha256": "ac354a6fb8d1f799f5fed76627b029b7bb110fbed235ea24b1c74a960eca814c",
+    "frozen_p52a_concepts_sha256": "2089e6a739dca628a52048c947e84e713f214c2acf7ce96a76093b7f6a550ca5",
+    "adjudication_summary_sha256": "344d8b2efe1672a45419cae8eed524d0f339015cbed8ff1402f3ff1f936d8e14",
+    "raw_outputs_sha256": "55537f2e29abb0c1d53e77dc56ad6619ff844e92382ed2319182f42ae745541a",
+    "evaluator_mode": "P5.3-ONLY (Frozen Baseline P5.2A Concepts)",
+    "blind_execution_protocol": "STRICTLY_BLINDED"
+  },
+  "predeclared_acceptance_rule": {
+    "rule_description": "Stricter Dual Acceptance Rule: >= 7/8 Exact Depth Concordance AND >= 7/8 Boundary Decision Agreement",
+    "exact_depth_threshold": ">= 7 / 8 (87.5%)",
+    "boundary_decision_threshold": ">= 7 / 8 (87.5%)",
+    "zero_diagnostic_regressions_prerequisite": "PASSED (0 regressions on dev_2a in Phase 7.4)"
+  },
+  "challenge_cases": {
+    "1A": {
+      "case_key": "1A",
+      "package_id": "dev_2b_01_set_theory_relations",
+      "dimension": "MEANING",
+      "target_threshold": 4,
+      "human_reference": {
+        "adjudicated_depth": 2,
+        "operational_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "adjudication_rationale": "Axiomatic recitation of reflexivity, symmetry, and transitivity without universe elements or valuations. Constrained to Level 2."
+      },
+      "baseline": {
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "exact_match": true,
+        "boundary_match": true,
+        "evidence_synthesis": "C02 defined equivalence relation via three axioms but did not illustrate operational use.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:32:55.557Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "evidence_synthesis": "C02 gives a formal definition of an equivalence relation and lists its three axioms, but no operational or causal explanation (Level 2).",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:33:02.334Z"
+        }
+      }
+    },
+    "1B": {
+      "case_key": "1B",
+      "package_id": "dev_2b_01_set_theory_relations",
+      "dimension": "MEANING",
+      "target_threshold": 4,
+      "human_reference": {
+        "adjudicated_depth": 4,
+        "operational_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+        "adjudication_rationale": "Full concordance: Concrete partition model over S={a,b,c,d} with truth valuations for equivalence classes satisfies Level 4 Semantic Models."
+      },
+      "baseline": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+        "exact_match": true,
+        "boundary_match": true,
+        "evidence_synthesis": "C05 and C06 discuss covering, disjointness, and the equivalence‑partition correspondence, showing set‑level properties.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:33:20.468Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "evidence_synthesis": "C05 explains covering and disjointness of classes, and C06 links equivalence relations to partitions, showing systemic interaction between relational semantics and set partitions.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:33:28.864Z"
+        }
+      }
+    },
+    "2A": {
+      "case_key": "2A",
+      "package_id": "dev_2b_02_hepatic_metabolism",
+      "dimension": "JUSTIFICATION_WHY",
+      "target_threshold": 5,
+      "human_reference": {
+        "adjudicated_depth": 4,
+        "operational_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "adjudication_rationale": "Full concordance: Algebraic clearance derivation CL_H = f_e * k_el * V_d is capped at Level 4 FORMAL_MATHEMATICAL_IDENTITY; provides zero tissue/cellular transport mechanism."
+      },
+      "baseline": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "exact_match": false,
+        "boundary_match": true,
+        "evidence_synthesis": "No taught concept or episode provides a rationale or theoretical justification for the clearance formulas or enzyme kinetics.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:33:45.672Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "exact_match": false,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "evidence_synthesis": "No concept or episode offers a causal or mechanistic justification for the clearance formulas; only statements of relationships are given.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:34:03.401Z"
+        }
+      }
+    },
+    "2B": {
+      "case_key": "2B",
+      "package_id": "dev_2b_02_hepatic_metabolism",
+      "dimension": "JUSTIFICATION_WHY",
+      "target_threshold": 5,
+      "human_reference": {
+        "adjudicated_depth": 5,
+        "operational_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+        "adjudication_rationale": "Full concordance: Sinusoidal blood perfusion, OATP1B1 transporter influx, and CYP3A4 microsomal kinetics satisfy Level 5 Causal Biological Mechanism."
+      },
+      "baseline": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "Michaelis‑Menten kinetics were stated without derivation or rationale for its applicability to microsomal metabolism.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:34:22.195Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "exact_match": false,
+        "boundary_match": false,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "evidence_synthesis": "No step‑by‑step derivation or causal mechanistic explanation of clearance equations was provided.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:34:32.125Z"
+        }
+      }
+    },
+    "3A": {
+      "case_key": "3A",
+      "package_id": "dev_2b_03_aminoglycoside_dosing",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "target_threshold": 6,
+      "human_reference": {
+        "adjudicated_depth": 3,
+        "operational_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "adjudication_rationale": "Full concordance: Conversational bedside mental math and heuristic interval stretching capped at Level 3 INFORMAL_CLINICAL_ESTIMATION."
+      },
+      "baseline": {
+        "observed_depth": 6,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "Performs mental multiplication (7 mg/kg × 70 kg ≈ 490 mg) and rounds to a 500 mg vial, demonstrating a concrete numeric calculation.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:34:50.228Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "boundary_improvement": true,
+        "depth_improvement": true,
+        "evidence_synthesis": "C02 and C03 walk through mental multiplication and rounding to a vial size, each a single‑step calculation (Level 3).",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:34:57.974Z"
+        }
+      }
+    },
+    "3B": {
+      "case_key": "3B",
+      "package_id": "dev_2b_03_aminoglycoside_dosing",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "target_threshold": 6,
+      "human_reference": {
+        "adjudicated_depth": 6,
+        "operational_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "adjudication_rationale": "Full concordance: Chained 6-step calculation trace (weight adjustment, Cockcroft-Gault, vial rounding, Hartford nomogram) satisfies Level 6 Rigorous Stepwise Execution Trace."
+      },
+      "baseline": {
+        "observed_depth": 5,
+        "status": "PARTIALLY_COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "C06 and C07 walk through a single concrete example (CrCl = 45.8 mL/min → 36‑h interval; serum level plotted) but lack a full step‑by‑step worked problem trace.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:35:15.938Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 4,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "exact_match": false,
+        "boundary_match": false,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": false,
+        "evidence_synthesis": "Hartford nomogram interval selection and monitoring plan were described, but without a worked numerical trace or concrete code‑level execution.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:35:50.862Z"
+        }
+      }
+    },
+    "4A": {
+      "case_key": "4A",
+      "package_id": "dev_2b_04_iir_filter_realization",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "target_threshold": 5,
+      "human_reference": {
+        "adjudicated_depth": 2,
+        "operational_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "adjudication_rationale": "Full concordance: Itemized roster of 6 scalar specification parameters and design bounds capped at Level 2 PARAMETER_SPECIFICATION_ROSTER."
+      },
+      "baseline": {
+        "observed_depth": 3,
+        "status": "PARTIALLY_COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "exact_match": false,
+        "boundary_match": true,
+        "evidence_synthesis": "C06 defines filter order and pole count and notes that order affects transition steepness, a single cause‑effect link.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_3",
+          "keyPrefix": "gsk_82zS...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:36:11.612Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "boundary_improvement": false,
+        "depth_improvement": true,
+        "evidence_synthesis": "C06 mentions filter order N as the integer pole count but gives no deeper structural detail.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:36:23.515Z"
+        }
+      }
+    },
+    "4B": {
+      "case_key": "4B",
+      "package_id": "dev_2b_04_iir_filter_realization",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "target_threshold": 5,
+      "human_reference": {
+        "adjudicated_depth": 5,
+        "operational_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+        "adjudication_rationale": "Full concordance: Direct Form II canonical hardware signal flow graph primitives (z^-1 registers, multipliers, adder tree) satisfy Level 5 Architectural Constituent Primitives."
+      },
+      "baseline": {
+        "observed_depth": 4,
+        "status": "COVERED",
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "C03‑C05 described the shared tapped delay line, feedback multiplier bank, and feedforward multiplier bank, detailing the primitive hardware blocks.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_2",
+          "keyPrefix": "gsk_Lc67...",
+          "promptHash": "10a632cb5df3d125",
+          "timestamp": "2026-10-02T16:36:32.293Z"
+        }
+      },
+      "candidate_v1_2_0": {
+        "observed_depth": 5,
+        "status": "COVERED",
+        "boundary_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+        "exact_match": true,
+        "boundary_match": true,
+        "boundary_regression": false,
+        "depth_regression": false,
+        "boundary_improvement": true,
+        "depth_improvement": true,
+        "evidence_synthesis": "C03‑C05 detailed the shared tapped delay line, feedback and feedforward multiplier banks, and adder tree, delivering a complete architectural blueprint of the Direct Form II primitives.",
+        "meta": {
+          "model": "openai/gpt-oss-120b",
+          "provider": "Groq",
+          "keySlot": "key_slot_0",
+          "keyPrefix": "gsk_AieJ...",
+          "promptHash": "2d5a9500c1726ee9",
+          "timestamp": "2026-10-02T16:36:51.766Z"
+        }
+      }
+    }
+  },
+  "gate_evaluation": {
+    "candidate_exact_depth_concordance": "5 / 8 (62.5%)",
+    "candidate_boundary_agreement": "6 / 8 (75.0%)",
+    "candidate_depth_kappa": {
+      "Po": 0.625,
+      "Pe": 0.2031,
+      "kappa": 0.5294
+    },
+    "candidate_boundary_kappa": {
+      "Po": 0.75,
+      "Pe": 0.5,
+      "kappa": 0.5
+    },
+    "baseline_exact_depth_concordance": "2 / 8 (25.0%)",
+    "baseline_boundary_agreement": "4 / 8 (50.0%)",
+    "baseline_depth_kappa": {
+      "Po": 0.25,
+      "Pe": 0.1875,
+      "kappa": 0.0769
+    },
+    "baseline_boundary_kappa": {
+      "Po": 0.5,
+      "Pe": 0.5,
+      "kappa": 0
+    },
+    "exact_depth_gate_verdict": "FAILED",
+    "boundary_agreement_gate_verdict": "FAILED",
+    "overall_challenge_gate_verdict": "FAILED"
+  },
+  "isolated_transitions": {
+    "boundary_regressions": 0,
+    "depth_regressions": 0,
+    "boundary_improvements": 2,
+    "depth_improvements": 3
+  },
+  "statistical_distributions": {
+    "marginal_distributions": {
+      "reference_depth": {
+        "2": 2,
+        "3": 1,
+        "4": 2,
+        "5": 2,
+        "6": 1
+      },
+      "candidate_depth": {
+        "0": null,
+        "2": 3,
+        "3": 1,
+        "4": 2,
+        "5": 1,
+        "6": 0
+      },
+      "baseline_depth": {
+        "0": null,
+        "2": 2,
+        "3": 1,
+        "4": 2,
+        "5": 1,
+        "6": 1
+      },
+      "reference_boundary": {
+        "SATISFIES": 4,
+        "FALLS_SHORT": 4
+      },
+      "candidate_boundary": {
+        "SATISFIES": 2,
+        "FALLS_SHORT": 6
+      },
+      "baseline_boundary": {
+        "SATISFIES": 2,
+        "FALLS_SHORT": 6
+      }
+    },
+    "candidate_confusion_matrix_5x5": {
+      "2": {
+        "2": 2,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "3": {
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "4": {
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 0,
+        "6": 0
+      },
+      "5": {
+        "2": 1,
+        "3": 0,
+        "4": 0,
+        "5": 1,
+        "6": 0
+      },
+      "6": {
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 0,
+        "6": 0
+      }
+    },
+    "baseline_confusion_matrix_5x5": {
+      "2": {
+        "2": 1,
+        "3": 1,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "3": {
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 1
+      },
+      "4": {
+        "2": 0,
+        "3": 0,
+        "4": 1,
+        "5": 0,
+        "6": 0
+      },
+      "5": {
+        "2": 1,
+        "3": 0,
+        "4": 1,
+        "5": 0,
+        "6": 0
+      },
+      "6": {
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 1,
+        "6": 0
+      }
+    },
+    "candidate_boundary_contingency_2x2": {
+      "SATISFIES": {
+        "SATISFIES": 2,
+        "FALLS_SHORT": 2
+      },
+      "FALLS_SHORT": {
+        "SATISFIES": 0,
+        "FALLS_SHORT": 4
+      }
+    },
+    "baseline_boundary_contingency_2x2": {
+      "SATISFIES": {
+        "SATISFIES": 1,
+        "FALLS_SHORT": 3
+      },
+      "FALLS_SHORT": {
+        "SATISFIES": 1,
+        "FALLS_SHORT": 3
+      }
+    }
+  }
+}

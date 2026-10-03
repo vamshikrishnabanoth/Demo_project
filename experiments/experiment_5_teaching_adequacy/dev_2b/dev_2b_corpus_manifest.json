@@ -1,0 +1,42 @@
+{
+  "document": "dev_2b_corpus_manifest.json",
+  "milestone": "Milestone v3.6 Phase 7.2: Targeted Challenge Set Manifest",
+  "version": "1.0.0-frozen",
+  "timestamp": "2026-10-02T20:25:00Z",
+  "packages_count": 4,
+  "files_count": 8,
+  "artifacts": {
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_01_set_theory_relations\\metadata.json": {
+      "size_bytes": 1373,
+      "sha256": "52d54a539cb0f50362027554ed3549e2022ea67b92c3f5d8d863d5915730852d"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_01_set_theory_relations\\transcript.json": {
+      "size_bytes": 2910,
+      "sha256": "f31f81048da92e8df3ddd28b405292079474997ee33d0bf1a6c5455649de3b4a"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_02_hepatic_metabolism\\metadata.json": {
+      "size_bytes": 1497,
+      "sha256": "5d9f24bfe80d7e25cb706b4e27a2ced6dd2ffaa235dfe6829a713aff82e7fc80"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_02_hepatic_metabolism\\transcript.json": {
+      "size_bytes": 3140,
+      "sha256": "390cd2a5d3ce2600e35224412fcfd1beef3a3e3cd769ab8f0e1b08b2a84d904b"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_03_aminoglycoside_dosing\\metadata.json": {
+      "size_bytes": 1491,
+      "sha256": "135ec5ca555ab4c11c5b9a1dc5491bc2071f8e1ab7593a8f420b5e8624be4883"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_03_aminoglycoside_dosing\\transcript.json": {
+      "size_bytes": 3360,
+      "sha256": "8e8ef893fc408d8187909e7aac544234a0baf42a8e213dc40647c25c12221239"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_04_iir_filter_realization\\metadata.json": {
+      "size_bytes": 1470,
+      "sha256": "d8e41e78bc842cc8bd87ca9b3bac46cb2855d3ef30171bbe3075fe8da3f60488"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_04_iir_filter_realization\\transcript.json": {
+      "size_bytes": 3034,
+      "sha256": "776734cc48fb06786a39b542729ae5e75f4c8fea5aa8cdaf7fac6faf2f78b265"
+    }
+  }
+}

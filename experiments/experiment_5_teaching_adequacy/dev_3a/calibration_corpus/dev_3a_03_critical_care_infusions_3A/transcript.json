@@ -1,0 +1,9 @@
+{
+  "segment_key": "3A",
+  "package_id": "dev_3a_03_critical_care_infusions",
+  "title": "Bedside Vasopressor Rule-of-Thumb Estimation",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "APPLICATION_INTERPRETATION",
+  "text": "In the intensive care unit, when an adult septic shock patient has a mean arterial pressure dropping below 65 mmHg, we perform a rapid bedside estimation for norepinephrine infusion. For an average patient weighing approximately 70 kilograms, our standard starting protocol calls for a dose of 0.1 micrograms per kilogram per minute. Rather than calculating full unit conversions on paper, nurses use the classic rule of thumb: with a standard concentration bag of 4 milligrams in 250 millilitres of dextrose, 0.1 micrograms per kilogram per minute translates approximately to about 15 to 25 millilitres per hour on the infusion pump. We punch 15 millilitres per hour directly into the smart pump interface as our starting rate. We glance at the bedside monitor every five minutes, and if the mean arterial pressure remains sluggish, we bump the pump up by 5 millilitres per hour increments until the blood pressure stabilizes. This informal bedside rule provides rapid medication delivery without tracing multi-step mathematical derivations.",
+  "duration_seconds": 40
+}

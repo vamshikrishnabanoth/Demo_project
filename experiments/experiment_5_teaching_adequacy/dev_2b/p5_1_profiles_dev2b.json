@@ -1,0 +1,330 @@
+{
+  "component": "P5.1 Normative Expected Depth (dev_2b)",
+  "packages": {
+    "dev_2b_01_set_theory_relations": {
+      "topic": "Equivalence Relations, Partitions, and Model-Theoretic Quotient Sets",
+      "declared_objective": "Define equivalence relations, distinguish syntactic relation reflexivity/symmetry/transitivity definitions from concrete partition domain models, and evaluate equivalence classes over discrete universe elements.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must name and symbolically denote equivalence relations, partitions, and quotient sets before deeper work.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual definition of reflexivity, symmetry, transitivity and their significance for grouping elements is essential.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "List the constituent parts: the three properties of an equivalence relation, the blocks of a partition, and the set of equivalence classes forming a quotient set.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Explain the bidirectional construction: how an equivalence relation induces a partition and how any partition defines an equivalence relation.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Provide a formal proof that the two notions are equivalent, highlighting why the correspondence holds and ruling out alternatives.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Work a complete example on a finite universe (e.g., {1,2,3,4,5}) to compute equivalence classes and the resulting quotient set.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Discuss edge cases such as empty relations, non‑reflexive but symmetric relations, and partitions with empty blocks to clarify limits of the theory.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 5,
+          "alignment": "RECOMMENDED",
+          "rationale": "Show how the same construction appears in model‑theoretic quotients and algebraic quotient structures, illustrating cross‑domain transfer.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "metadata": {
+        "package_id": "dev_2b_01_set_theory_relations",
+        "domain": "Mathematics & Computer Science",
+        "subject": "Discrete Mathematics & Formal Proofs",
+        "topic": "Equivalence Relations, Partitions, and Model-Theoretic Quotient Sets",
+        "learner_level": "Undergraduate / Upper Division",
+        "syllabus_context": "Week 4: Binary Relations, Equivalence Classes, and Quotient Algebras",
+        "declared_learning_objective": "Define equivalence relations, distinguish syntactic relation reflexivity/symmetry/transitivity definitions from concrete partition domain models, and evaluate equivalence classes over discrete universe elements.",
+        "prerequisites": [
+          "Propositional logic",
+          "Basic set notation"
+        ],
+        "recording_quality": {
+          "audio_clarity": "HIGH",
+          "transcript_completeness": "COMPLETE",
+          "known_observability_limitations": "none"
+        },
+        "contrast_design": {
+          "targeted_pattern": "Pattern 1: Formal Logic Semantics",
+          "negative_segment_id": "segment_1A_syntactic_property_recitation",
+          "negative_target_depth": 2,
+          "negative_distinction": "Algebraic property rewrite rules without domain elements",
+          "positive_segment_id": "segment_1B_concrete_domain_partition_model",
+          "positive_target_depth": 4,
+          "positive_distinction": "Explicit partition model over concrete set S={a,b,c,d} with truth valuations"
+        }
+      }
+    },
+    "dev_2b_02_hepatic_metabolism": {
+      "topic": "Hepatic Clearance: Mathematical Elimination Models vs. Cytochrome P450 Enzyme Kinetics",
+      "declared_objective": "Differentiate algebraic hepatic clearance formulas from cellular microsomal enzyme transport mechanisms; define extraction ratio and portal vein blood flow; and evaluate intrinsic clearance governed by Michaelis-Menten kinetics.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Graduate students must be able to name hepatic clearance, extraction ratio, portal vein blood flow, intrinsic clearance, Vmax, Km, and the well‑stirred and parallel‑tube models.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Provide qualitative definitions and significance of each term, linking clearance concepts to pharmacokinetic outcomes.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Detail the algebraic components of hepatic clearance equations (Q_h, CL_int, E) and the parameters of Michaelis‑Menten kinetics (Vmax, Km, [S]).",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Explain how blood flow, enzyme capacity, and extraction ratio interact dynamically; derive the well‑stirred model and show the transition to Michaelis‑Menten behavior under saturation.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Present the theoretical basis for the well‑stirred vs. parallel‑tube assumptions and justify the use of Michaelis‑Menten kinetics for CYP450 microsomal reactions.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Solve worked problems: calculate hepatic clearance from Q_h and CL_int, compute extraction ratio, and determine intrinsic clearance (Vmax/Km) for given substrate concentrations.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Analyze limits of linear clearance models, saturation of enzymes, disease‑altered blood flow, enzyme induction/inhibition, and portal shunting that break model assumptions.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED",
+          "rationale": "Encourage transfer of hepatic clearance reasoning to renal clearance, PBPK modeling, and drug‑drug interaction prediction scenarios.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "metadata": {
+        "package_id": "dev_2b_02_hepatic_metabolism",
+        "domain": "Life Sciences & Medicine",
+        "subject": "Pharmacokinetics & Molecular Pharmacology",
+        "topic": "Hepatic Clearance: Mathematical Elimination Models vs. Cytochrome P450 Enzyme Kinetics",
+        "learner_level": "Graduate / Professional PharmD",
+        "syllabus_context": "Module 3: Organ Clearance, Hepatic First-Pass Metabolism, and Microsomal Kinetics",
+        "declared_learning_objective": "Differentiate algebraic hepatic clearance formulas from cellular microsomal enzyme transport mechanisms; define extraction ratio and portal vein blood flow; and evaluate intrinsic clearance governed by Michaelis-Menten kinetics.",
+        "prerequisites": [
+          "Basic enzyme kinetics",
+          "Principles of systemic clearance"
+        ],
+        "recording_quality": {
+          "audio_clarity": "HIGH",
+          "transcript_completeness": "COMPLETE",
+          "known_observability_limitations": "none"
+        },
+        "contrast_design": {
+          "targeted_pattern": "Pattern 2: Empirical Mechanism vs Mathematical Identity",
+          "negative_segment_id": "segment_2A_algebraic_kinetic_derivation",
+          "negative_target_depth": 4,
+          "negative_distinction": "Algebraic kinetic parameter equations without physiological liver tissue",
+          "positive_segment_id": "segment_2B_microsomal_enzyme_kinetics",
+          "positive_target_depth": 5,
+          "positive_distinction": "Cellular transport via sinusoidal Space of Disse, CYP3A4 Michaelis-Menten kinetics, and intrinsic clearance"
+        }
+      }
+    },
+    "dev_2b_03_aminoglycoside_dosing": {
+      "topic": "Aminoglycoside Clinical Dosing: Bedside Heuristics vs. Chained Hartford Nomogram Trace",
+      "declared_objective": "Calculate individual renal function, evaluate conversational clinical approximations versus rigorous multi-step calculation traces, and adjust aminoglycoside extended-interval regimens.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Residents must name and recognize key terms (CrCl, Cockcroft‑Gault, MDRD, Hartford nomogram, extended‑interval dosing, peak/trough, therapeutic drug monitoring).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Understanding the clinical significance of renal function estimates and why extended‑interval aminoglycosides rely on concentration‑dependent killing and post‑antibiotic effect.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Identify all variables in the dosing algorithm: weight, age, sex, serum creatinine, target peak/trough, volume of distribution, clearance, dosing interval, and nomogram parameters.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Explain the dynamic flow: renal function → clearance → dose & interval selection → predicted peak/trough → therapeutic monitoring, including step‑by‑step trace of the Hartford nomogram.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Provide theoretical justification for extended‑interval dosing (post‑antibiotic effect, reduced nephrotoxicity) and for the superiority of a multi‑step nomogram over heuristic shortcuts.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Complete a worked clinical case: calculate CrCl (Cockcroft‑Gault), plot on the Hartford nomogram, derive dose/interval, then compare with a bedside heuristic and adjust regimen accordingly.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Analyze edge cases: obesity, extreme ages, fluctuating renal function, renal replacement therapy, pediatric patients, and situations where the nomogram assumptions break down.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 8,
+          "alignment": "RECOMMENDED",
+          "rationale": "Encourage transfer of the nomogram reasoning to other aminoglycosides (tobramycin, amikacin), to drugs with similar PK/PD (vancomycin), and to integration with electronic decision‑support tools.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "metadata": {
+        "package_id": "dev_2b_03_aminoglycoside_dosing",
+        "domain": "Health Sciences & Clinical Medicine",
+        "subject": "Clinical Pharmacotherapy",
+        "topic": "Aminoglycoside Clinical Dosing: Bedside Heuristics vs. Chained Hartford Nomogram Trace",
+        "learner_level": "Clinical Resident / PharmD",
+        "syllabus_context": "Advanced Hospital Therapeutics: Once-Daily Aminoglycoside Dosing & Therapeutic Monitoring",
+        "declared_learning_objective": "Calculate individual renal function, evaluate conversational clinical approximations versus rigorous multi-step calculation traces, and adjust aminoglycoside extended-interval regimens.",
+        "prerequisites": [
+          "Renal physiology",
+          "Cockcroft-Gault equation",
+          "Nomogram interpretation"
+        ],
+        "recording_quality": {
+          "audio_clarity": "HIGH",
+          "transcript_completeness": "COMPLETE",
+          "known_observability_limitations": "none"
+        },
+        "contrast_design": {
+          "targeted_pattern": "Pattern 3: Worked Application vs Conversational Estimation",
+          "negative_segment_id": "segment_3A_bedside_conversational_estimation",
+          "negative_target_depth": 3,
+          "negative_distinction": "Conversational bedside approximation and mental rounding without intermediate states",
+          "positive_segment_id": "segment_3B_stepwise_hartford_nomogram_trace",
+          "positive_target_depth": 6,
+          "positive_distinction": "Chained 6-step clinical calculation trace with explicit units, IBW validation, and nomogram lookup"
+        }
+      }
+    },
+    "dev_2b_04_iir_filter_realization": {
+      "topic": "Infinite Impulse Response (IIR) Digital Filters: Parameter Specifications vs. Direct Form II Realization",
+      "declared_objective": "Differentiate scalar filter parameter rosters from architectural hardware primitives; formulate signal flow graph topologies for discrete-time systems.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Learners must be able to name and recognize key terms (IIR, Direct Form II, coefficient vector, hardware primitive, signal flow graph).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Provide clear conceptual definitions and significance of scalar parameter rosters versus structural primitives within DSP filter design.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Detail the internal elements of Direct Form II (delay line, multipliers, adders) and the makeup of the coefficient vectors (a_k, b_k) and show how they compose the realization.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Derive the mapping from scalar coefficients to hardware primitives, explain the data‑flow and state‑space relationships that generate the signal flow graph topology.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Explain theoretically why Direct Form II is chosen (minimum storage, computational efficiency) and contrast with alternative forms, citing stability and implementation trade‑offs.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Work through a complete design example: specify a low‑order IIR filter, list its coefficient roster, instantiate Direct Form II hardware, and draw the resulting signal flow graph.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED",
+          "rationale": "Analyse edge cases such as coefficient quantization, overflow, non‑minimum‑phase poles, and the impact of pipelining on numerical stability.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 8,
+          "alignment": "OPTIONAL",
+          "rationale": "Connect the Direct Form II realization to other architectures (Direct Form I, transposed, lattice) and to broader state‑space and control‑system representations, illustrating cross‑domain synthesis.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "metadata": {
+        "package_id": "dev_2b_04_iir_filter_realization",
+        "domain": "Engineering & Computer Science",
+        "subject": "Digital Signal Processing & Hardware Architecture",
+        "topic": "Infinite Impulse Response (IIR) Digital Filters: Parameter Specifications vs. Direct Form II Realization",
+        "learner_level": "Senior Undergraduate / Master's",
+        "syllabus_context": "DSP System Architecture: Digital Filter Realization, State Space, and Pipelining",
+        "declared_learning_objective": "Differentiate scalar filter parameter rosters from architectural hardware primitives; formulate signal flow graph topologies for discrete-time systems.",
+        "prerequisites": [
+          "Z-transforms",
+          "LTI system difference equations"
+        ],
+        "recording_quality": {
+          "audio_clarity": "HIGH",
+          "transcript_completeness": "COMPLETE",
+          "known_observability_limitations": "none"
+        },
+        "contrast_design": {
+          "targeted_pattern": "Pattern 4: Structural Primitives vs Parameter Listing",
+          "negative_segment_id": "segment_4A_iir_specification_parameter_roster",
+          "negative_target_depth": 2,
+          "negative_distinction": "Scalar specification parameter bounds without topological block composition",
+          "positive_segment_id": "segment_4B_direct_form_ii_hardware_flow",
+          "positive_target_depth": 5,
+          "positive_distinction": "Canonical Direct Form II hardware signal flow graph primitives: shared state delay registers z^-1, multipliers, adder tree"
+        }
+      }
+    }
+  }
+}

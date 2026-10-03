@@ -1,0 +1,9 @@
+{
+  "segment_key": "2A",
+  "package_id": "dev_3a_02_renal_pharmacokinetics",
+  "domain": "02",
+  "topic": "Algebraic Mass-Balance Clearance Derivation",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "target_threshold": 5
+}

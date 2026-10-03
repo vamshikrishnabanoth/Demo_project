@@ -1,0 +1,32 @@
+{
+  "lecture_id": "lecture_microecon_game_theory_nash",
+  "total_duration_seconds": 485,
+  "raw_transcript": "Good morning, everyone. Today we examine non-cooperative game theory, specifically static games of complete information represented in normal or strategic form.\n\nA strategic form game consists of three essential primitives:\n1. A finite set of players N = {1, 2, ..., n}.\n2. For each player i, a set of available pure strategies or actions S_i. The Cartesian product S = S_1 x S_2 x ... x S_n constitutes the strategy space.\n3. For each player i, a payoff function u_i: S -> R, which assigns a real-valued utility to every strategy profile s = (s_1, s_2, ..., s_n).\nIn a standard two-player game, we represent this using a bi-matrix where player 1 chooses the row and player 2 chooses the column. Each cell contains an ordered pair (u_1, u_2).\n\nLet us define Strict Dominance.\nA strategy s_i' is strictly dominated for player i if there exists another strategy s_i'' in S_i such that:\nu_i(s_i'', s_{-i}) > u_i(s_i', s_{-i}) for all possible strategy profiles s_{-i} of the opposing players.\nNotice the strict inequality for all opponent actions! A rational player will NEVER play a strictly dominated strategy, regardless of what they believe other players will do.\nThis leads to our first solution concept: Iterated Elimination of Strictly Dominated Strategies, or IESDS.\nIn IESDS, we identify strictly dominated rows for Player 1 and eliminate them. Then, in the reduced game, we look for strictly dominated columns for Player 2 and eliminate them. We repeat this process iteratively. If this process shrinks the game down to a unique strategy profile, the game is called dominance solvable. Importantly, the order of elimination does not affect the final surviving set in finite games with strict dominance.\n\nNow let us formalize the cornerstone concept of modern economics: the Nash Equilibrium.\nA strategy profile s* = (s_1*, s_2*, ..., s_n*) is a Nash Equilibrium in pure strategies if, for every player i:\nu_i(s_i*, s_{-i}*) >= u_i(s_i, s_{-i}*) for all s_i in S_i.\nIn plain English: a Nash equilibrium is a state of mutual best responses. No individual player has a profitable unilateral deviation given the choices of the other players.\nTo find pure Nash equilibria in a payoff matrix, we use the Best Response Method:\nFor each column chosen by Player 2, underline Player 1's highest row payoff.\nFor each row chosen by Player 1, underline Player 2's highest column payoff.\nAny cell where BOTH payoffs are underlined constitutes a pure Nash Equilibrium!\n\nLet us analyze the classic Prisoner's Dilemma to understand the profound tension between individual rationality and social optimality.\nTwo suspects, 1 and 2, are interrogated in separate rooms. Each can choose to Cooperate (Remain Silent) or Defect (Confess).\nPayoff matrix (u_1, u_2 in utility):\n- If both Cooperate (C, C): Payoffs are (3, 3) \u2014 each gets a light sentence.\n- If Player 1 Cooperates and Player 2 Defects (C, D): Payoffs are (0, 5) \u2014 Player 1 gets 10 years, Player 2 goes free.\n- If Player 1 Defects and Player 2 Cooperates (D, C): Payoffs are (5, 0).\n- If both Defect (D, D): Payoffs are (1, 1) \u2014 both get medium sentences.\n\nLet us find the strictly dominant strategy for Player 1:\nIf Player 2 plays C, Player 1 gets 3 by playing C, but 5 by playing D. 5 > 3, so D is strictly better.\nIf Player 2 plays D, Player 1 gets 0 by playing C, but 1 by playing D. 1 > 0, so D is strictly better.\nTherefore, Defect strictly dominates Cooperate for Player 1!\nBy symmetry, Defect strictly dominates Cooperate for Player 2 as well.\nThe unique IESDS outcome and unique Nash equilibrium is (Defect, Defect), yielding payoffs of (1, 1).\nNow observe: (1, 1) is strictly Pareto inferior to (3, 3)! If both had chosen Cooperate, both would have received 3 instead of 1. Yet individual rational self-interest compels both rational actors into the socially suboptimal outcome (1, 1). This is why non-cooperative game theory is so essential for studying environmental pollution, price wars, and arms races.\n\nFinally, an important boundary qualification on today's coverage:\nThe syllabus includes coordination games with multiple equilibria\u2014such as the Stag Hunt and Battle of the Sexes\u2014as well as mixed strategy Nash equilibria (where players randomize over actions when no pure equilibrium exists, such as in Matching Pennies). Because of time constraints today, we will NOT be discussing mixed strategies, expected utility calculations with probabilities, or focal point equilibrium selection in coordination games. Those will be covered next week. For this week's assessment, you will only be tested on pure strategy dominance, IESDS elimination, and identifying pure Nash equilibria in Prisoner's Dilemma and 2x2 dominance-solvable games.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 65,
+      "text": "Good morning. Primitives of strategic form games: players N, actions S_i, payoff functions u_i, and bi-matrix representation."
+    },
+    {
+      "start": 65,
+      "end": 155,
+      "text": "Definition of strict dominance. Iterated Elimination of Strictly Dominated Strategies (IESDS) and dominance solvability."
+    },
+    {
+      "start": 155,
+      "end": 240,
+      "text": "Nash Equilibrium definition: mutual best responses and no profitable unilateral deviation. Underline method in 2x2 matrices."
+    },
+    {
+      "start": 240,
+      "end": 415,
+      "text": "The Prisoner's Dilemma: Payoff structure (C,D). Dominant strategy calculation showing (D,D) is unique Nash equilibrium. Pareto suboptimality vs (C,C)."
+    },
+    {
+      "start": 415,
+      "end": 485,
+      "text": "Boundary and scope note: Coordination games (multiple equilibria), mixed strategy randomization, and Matching Pennies postponed to next week."
+    }
+  ]
+}

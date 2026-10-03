@@ -1,0 +1,245 @@
+{
+  "component": "P5.1 Normative Expected Depth (dev_2a)",
+  "packages": {
+    "dev_2a_01_logic_predicates": {
+      "topic": "Quantifier Duality, Negation Equivalence, and Domain Semantics",
+      "declared_objective": "State and apply De Morgan's laws for quantifiers, explain why negation swaps universal and existential quantifiers using domain model semantics, construct countermodels to disprove invalid equivalences, and evaluate nested quantifier statements over discrete domains.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Learners must be able to name ∀, ∃, the two De Morgan equivalences (¬∀x P ↔ ∃x ¬P, ¬∃x P ↔ ∀x ¬P) and recognize the standard symbols used in first‑order syntax.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual definition of what universal and existential quantification assert over a domain, and an intuitive explanation of why negation inverts the quantifier’s scope.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Students need to identify the syntactic constituents of quantified formulas (quantifier, variable, matrix, scope delimiters) and understand how nesting and alternation are built.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Explain the step‑by‑step transformation of a formula under negation, showing how the quantifier swaps and the matrix is negated, and illustrate the dynamic flow with truth‑value tables or semantic evaluation.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Provide a formal semantic proof using domain‑of‑discourse interpretations that demonstrates the equivalence of ¬∀x P and ∃x ¬P (and the dual), grounding the rule in the definition of satisfaction.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Students must construct explicit countermodels (e.g., finite sets with specific predicate extensions) to show why an invalid equivalence fails, and evaluate nested quantified statements such as ∀x∃y R(x,y) over concrete discrete domains.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED",
+          "rationale": "Discuss edge cases—empty domains, infinite domains, variable capture, and situations where quantifier negation does not preserve equivalence without proper scope handling—so learners can recognise limits of the rules.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED",
+          "rationale": "Show how quantifier duality underlies SQL NOT EXISTS/EXISTS, programming language constructs (e.g., forall/exists in functional languages), and modal logic, encouraging transfer of reasoning skills to other formal systems.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3878,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "dev_2a_02_pharmacology_clearance": {
+      "topic": "Clearance Kinetics: Mathematical Identity vs. Physiological Extraction",
+      "declared_objective": "Derive the mathematical relationship between clearance, volume of distribution, and elimination rate constant; differentiate mathematical elimination models from physiological organ extraction mechanisms; explain organ clearance in terms of blood flow and extraction ratio; and evaluate the biological processes of renal filtration, active secretion, and reabsorption.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name and recognize core symbols (CL, Vd, ke, Q, E) and physiological terms (glomerular filtration, tubular secretion, reabsorption). This is the minimal prerequisite for any further discussion.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual definition of each term and its pharmacokinetic significance (e.g., clearance as volume of plasma cleared per unit time) is essential for understanding why the relationships matter.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Students must enumerate the constituent elements of the governing equations (CL = ke·Vd, CL = Q·E) and identify parameters, units, and assumptions embedded in each formula.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "The lecture should trace the dynamic interaction among clearance, Vd, ke, blood flow (Q) and extraction ratio (E), showing how changes in one propagate through the system (e.g., how a higher E raises organ CL).",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "A formal derivation from mass‑balance principles, including the assumption of first‑order kinetics, demonstrates why CL = ke·Vd and why organ CL = Q·E hold, providing theoretical grounding against alternative (e.g., saturable) models.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Worked numerical examples (e.g., calculate renal clearance from measured ke and Vd; compute extraction ratio from known organ blood flow) cement the abstract relationships in a concrete problem‑solving context.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Students must evaluate limits of the models: non‑first‑order (saturable) elimination, reduced extraction in disease, impact of protein binding, and scenarios where CL ≠ Q·E (e.g., flow‑limited vs. capacity‑limited organs).",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 8,
+          "alignment": "RECOMMENDED",
+          "rationale": "Advanced synthesis encourages transfer of clearance concepts to hepatic metabolism, drug‑drug interaction prediction, and dosing regimen design, demonstrating the broader utility of the kinetic framework.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3254,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "dev_2a_03_clinical_dosing": {
+      "topic": "Worked Clinical Dosing: Conversational Walkthrough vs. Explicit State Execution Trace",
+      "declared_objective": "Calculate individual creatinine clearance using the Cockcroft-Gault equation, determine loading and maintenance doses for narrow therapeutic index antibiotics, evaluate conversational clinical approximations versus rigorous multi-step calculation traces, and adjust dosing regimens for renal impairment.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Students must correctly name and recognize key terms (Cockcroft‑Gault, creatinine clearance, loading dose, maintenance dose, aminoglycoside, glycopeptide, renal impairment) to engage in any calculation or discussion.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual definition of creatinine clearance, therapeutic index, and the clinical purpose of loading vs. maintenance dosing is essential for understanding why calculations matter.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Learners need to enumerate all variables and constants in the Cockcroft‑Gault formula and the constituent elements of dose calculations (target concentration, volume of distribution, clearance, dosing interval).",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "The dynamic interaction—how CrCl feeds into maintenance dose, how loading dose establishes initial plasma levels, and how interval adjustment follows clearance changes—must be articulated step‑by‑step.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Students must understand the physiological and pharmacokinetic theory underpinning Cockcroft‑Gault, the need for loading doses, and the proportionality of maintenance dose to renal clearance, providing a formal justification beyond rote memorisation.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "A complete worked example—including CrCl calculation, loading dose, maintenance dose, interval adjustment, and a side‑by‑side comparison of a conversational estimate versus an explicit trace—demonstrates mastery.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Critical for safe practice: discuss limitations of Cockcroft‑Gault (obesity, extreme ages, unstable renal function), when conversational shortcuts are unsafe, and dose‑adjustment exceptions (e.g., dialysis, augmented renal clearance).",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 8,
+          "alignment": "RECOMMENDED",
+          "rationale": "Encourages learners to extrapolate the multi‑step trace methodology to other renally cleared drugs, alternative eGFR equations, and broader pharmacokinetic modelling contexts.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3278,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "dev_2a_04_signal_processing_fourier": {
+      "topic": "Discrete Fourier Analysis: Parameter Lists vs. Structural Primitives",
+      "declared_objective": "State the discrete sampling parameters and frequency resolution equations, formulate the structural matrix definition of the N-point DFT, differentiate scalar parameter rosters from structural basis decompositions, and diagram signal flow graph architectures for discrete-time systems.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Learners must be able to name the sampling period (Ts), sampling frequency (Fs), number of points (N), frequency bin width (Δf), DFT matrix symbol (W_N), and basis function notation. This is the minimal lexical foundation for the objective.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Beyond naming, students need a clear conceptual description of what each parameter represents, why Δf = Fs/N, and the significance of the DFT matrix as a linear transformation mapping time‑domain vectors to frequency‑domain coefficients.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "The session must enumerate the internal constituents of the DFT matrix (rows = basis vectors, columns = time samples), the scalar roster (N, Fs, Ts, Δf) and the structural primitives (complex exponentials, twiddle factors, signal‑flow graph nodes). Understanding the architecture enables later diagramming.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Students must trace how the scalar parameters drive the matrix construction, how matrix multiplication implements analysis/synthesis, and how the flow‑graph edges correspond to twiddle‑factor multiplications, illustrating the dynamic operational flow.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "RECOMMENDED",
+          "rationale": "A formal derivation showing that the DFT matrix is unitary (up to scaling) and that Δf = Fs/N follows from sampling theory provides theoretical grounding, reinforcing why the structural definition is correct.",
+          "confidence": "MEDIUM"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "A worked example (e.g., N=8) calculating Ts, Fs, Δf, constructing the 8×8 DFT matrix, and drawing the corresponding signal‑flow graph solidifies the abstract concepts through concrete computation and visualization.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED",
+          "rationale": "Discussion of edge cases—non‑uniform sampling, aliasing when Fs < 2·f_max, non‑power‑of‑two N affecting FFT efficiency, and loss of orthogonality under quantization—helps learners recognize limits of the presented formulas.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 8,
+          "alignment": "OPTIONAL",
+          "rationale": "Linking the DFT structural matrix to the FFT algorithm, Z‑transform representation, and applications in image processing or OFDM illustrates cross‑domain transfer and encourages synthesis with broader signal‑processing frameworks.",
+          "confidence": "LOW"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 2875,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    }
+  }
+}

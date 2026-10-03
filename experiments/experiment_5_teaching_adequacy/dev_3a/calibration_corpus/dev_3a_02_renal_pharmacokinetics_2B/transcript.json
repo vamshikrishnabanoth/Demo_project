@@ -1,0 +1,9 @@
+{
+  "segment_key": "2B",
+  "package_id": "dev_3a_02_renal_pharmacokinetics",
+  "title": "Active Tubular Secretion Cellular Mechanism",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "text": "To explain why renal clearance can exceed the glomerular filtration rate, we must examine the cellular transport biology of the proximal tubule. While passive filtration through podocyte slit diaphragms is restricted by molecular size and albumin binding, active tubular secretion involves specialized carrier-mediated transport proteins located on renal epithelial cells. On the basolateral membrane facing the peritubular capillaries, organic anion transporters OAT1 and OAT3 actively take up anionic drugs from blood against their electrochemical gradient, coupled to the dicarboxylate alpha-ketoglutarate counterflow driven by sodium-potassium ATPase pumps. Once inside the renal proximal tubule cell, the drug translocates across the cytoplasm and is actively extruded across the apical brush-border membrane into the tubular lumen by ATP-binding cassette efflux pumps, specifically MRP2, MRP4, and BCRP. Because this cellular pathway operates via dedicated transmembrane transport machinery, it actively strips protein-bound drug from circulation, providing the physiological causal mechanism for high renal extraction.",
+  "duration_seconds": 40
+}

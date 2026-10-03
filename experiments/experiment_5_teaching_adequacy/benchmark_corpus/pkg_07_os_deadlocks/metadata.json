@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_07_os_deadlocks",
+  "domain": "Computer Science / Operating Systems",
+  "subject": "Operating Systems Principles",
+  "topic": "Deadlock Characterization, Prevention, and Banker's Algorithm",
+  "learner_level": "Undergraduate B.Tech CSE (Semester 4)",
+  "syllabus_context": "Unit IV: Deadlocks and Concurrency Control. System model, deadlock characterization (Coffman conditions), resource allocation graphs, deadlock prevention vs avoidance, Dijkstra's Banker's Algorithm for multiple resource types, safe state invariant, detection and recovery mechanisms.",
+  "declared_learning_objective": "Explain the four Coffman conditions necessary for deadlock, analyze safe versus unsafe system states, trace Dijkstra's Banker's Algorithm with multiple resource instances to evaluate safety, and evaluate the trade-offs between deadlock prevention, avoidance, and detection and recovery mechanisms.",
+  "provenance": {
+    "mode": "CURATED_CONTROLLED_BENCHMARK",
+    "source_type": "CURATED_PEDAGOGICAL_TRANSCRIPT",
+    "source": "Standard Academic Operating Systems Curriculum Lecture Series",
+    "institution": "Controlled Educational Benchmark Corpus",
+    "access_date": "2026-10-01",
+    "license_or_usage_basis": "Educational Research Dataset"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Resource allocation matrices and vector subtractions written on board and narrated verbally."
+  }
+}

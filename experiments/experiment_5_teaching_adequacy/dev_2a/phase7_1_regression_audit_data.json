@@ -1,0 +1,416 @@
+{
+  "1B": {
+    "key": "1B",
+    "pkg": "dev_2a_01_logic_predicates",
+    "dim": "MEANING",
+    "refDepth": 4,
+    "refVerdict": "SATISFIES_LEVEL_4_SEMANTICS",
+    "transcript": "[Segment 1B - Diagnostic: Semantic Model-Theoretic Interpretation]\nNow, why does this identity hold semantically? Let us understand the model theory behind it. Consider a universe of discourse or domain D, say the set of positive integers {1, 2, 3, 4, 5}. The statement 'for-all x in D, P(x)' means P(1) AND P(2) AND P(3) AND P(4) AND P(5). It is a generalized conjunction over the entire domain. When we negate that conjunction—not (P(1) AND P(2) AND ... AND P(5))—by classical propositional De Morgan's laws, that conjunction becomes a disjunction: not P(1) OR not P(2) OR not P(3) OR not P(4) OR not P(5). And what is a disjunction across domain elements? It is precisely the definition of the existential quantifier: there exists at least one element x in D for which P(x) is false! For example, if P(x) is 'x is prime', asserting 'not all integers are prime' is true because there exists a witness x=4 such that 4 is not prime. The existential statement is satisfied by that concrete domain witness. Thus quantifier duality is not arbitrary syntax; it is the natural consequence of boolean duality between conjunction and disjunction over an arbitrary domain.",
+    "p52aConcepts": [
+      {
+        "concept_id": "C01",
+        "name": "Universe of discourse (domain D)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduces a universe of discourse, denoted D, exemplified by the set of positive integers {1,2,3,4,5}.",
+        "evidence_quotes": [
+          {
+            "quote": "Consider a universe of discourse or domain D, say the set of positive integers {1, 2, 3, 4, 5}.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Universal quantifier as generalized conjunction over the domain",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The universal statement ∀x∈D P(x) is explained as the conjunction P(1) ∧ P(2) ∧ … ∧ P(5), i.e., a generalized conjunction across all domain elements.",
+        "evidence_quotes": [
+          {
+            "quote": "The statement 'for-all x in D, P(x)' means P(1) AND P(2) AND P(3) AND P(4) AND P(5). It is a generalized conjunction over the entire domain.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Classical propositional De Morgan's laws",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture references De Morgan's laws from propositional logic to transform a negated conjunction into a disjunction.",
+        "evidence_quotes": [
+          {
+            "quote": "by classical propositional De Morgan's laws, that conjunction becomes a disjunction: not P(1) OR not P(2) OR not P(3) OR not P(4) OR not P(5).",
+            "approx_start_sec": 12,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Negation of a universal quantifier yields an existential quantifier",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Negating the universal conjunction is shown to produce a disjunction, which matches the definition of an existential claim (∃x ¬P(x)).",
+        "evidence_quotes": [
+          {
+            "quote": "not (P(1) AND P(2) AND ... AND P(5)) ... becomes a disjunction ... It is precisely the definition of the existential quantifier: there exists at least one element x in D for which P(x) is false!",
+            "approx_start_sec": 20,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Existential quantifier as disjunction over the domain",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The existential quantifier ∃x∈D ¬P(x) is described as the disjunction ¬P(1) ∨ ¬P(2) ∨ … ∨ ¬P(5).",
+        "evidence_quotes": [
+          {
+            "quote": "It is precisely the definition of the existential quantifier: there exists at least one element x in D for which P(x) is false!",
+            "approx_start_sec": 30,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Quantifier duality principle",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "The lecture concludes that the duality between ∀ and ∃ is a direct consequence of Boolean duality (conjunction ↔ disjunction) over any domain, not an arbitrary syntactic rule.",
+        "evidence_quotes": [
+          {
+            "quote": "Thus quantifier duality is not arbitrary syntax; it is the natural consequence of boolean duality between conjunction and disjunction over an arbitrary domain.",
+            "approx_start_sec": 35,
+            "approx_end_sec": 45
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Concrete example using the predicate ‘x is prime’",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "An example predicate P(x) = ‘x is prime’ is used to illustrate that ¬∀x P(x) is true because the witness x = 4 is non‑prime.",
+        "evidence_quotes": [
+          {
+            "quote": "For example, if P(x) is 'x is prime', asserting 'not all integers are prime' is true because there exists a witness x=4 such that 4 is not prime.",
+            "approx_start_sec": 45,
+            "approx_end_sec": 55
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Witness (concrete domain element) for existential claims",
+        "parent_id": "C07",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The notion of a specific domain element (e.g., x = 4) serving as a witness that satisfies an existential statement is highlighted.",
+        "evidence_quotes": [
+          {
+            "quote": "there exists a witness x=4 such that 4 is not prime.",
+            "approx_start_sec": 55,
+            "approx_end_sec": 60
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ],
+    "p53Output": {
+      "expected_depth": 3,
+      "alignment_tier": "REQUIRED",
+      "observed_depth": 3,
+      "status": "COVERED",
+      "evidence_synthesis": "Universal and existential quantifiers are explained as conjunctions and disjunctions over domain elements, showing an operational mapping.",
+      "confidence": "HIGH"
+    }
+  },
+  "2B": {
+    "key": "2B",
+    "pkg": "dev_2a_02_pharmacology_clearance",
+    "dim": "JUSTIFICATION_WHY",
+    "refDepth": 5,
+    "refVerdict": "SATISFIES_LEVEL_5_MECHANISM",
+    "transcript": "[Segment 2B - Diagnostic: Physiological Organ Extraction Mechanism]\nHowever, an equation like CL = k_e * V_d is purely descriptive mathematics—it does not explain the biological mechanism of how organs remove drug! In physiological pharmacokinetics, clearance is governed by organ blood perfusion and cellular extraction. Consider an eliminating organ, such as the liver or kidney. Blood enters the organ at arterial flow rate Q with entering concentration C_in, and exits at venous concentration C_out. The extraction ratio E represents the fraction of drug removed during a single pass through the capillary bed: E equals (C_in minus C_out) divided by C_in. The physiological clearance of that organ is therefore CL_organ equals organ blood flow Q multiplied by extraction ratio E: CL equals Q times E. For high-extraction drugs where E approaches 1, clearance is perfusion-limited: changes in blood flow Q directly alter clearance, regardless of enzyme activity. For low-extraction drugs where E is less than 0.3, clearance is capacity-limited, restricted by the intrinsic metabolic enzyme activity CL_int and unbound fraction f_u.",
+    "p52aConcepts": [
+      {
+        "concept_id": "C01",
+        "name": "Descriptive clearance equation CL = k_e * V_d",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture mentions the classic equation CL = k_e·V_d as a purely descriptive mathematical relationship that does not convey the underlying biological mechanism.",
+        "evidence_quotes": [
+          {
+            "quote": "However, an equation like CL = k_e * V_d is purely descriptive mathematics—it does not explain the biological mechanism of how organs remove drug!",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Clearance governed by organ blood perfusion and cellular extraction",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Clearance in physiological pharmacokinetics is determined by the rate of blood flow to an organ and the organ’s ability to extract drug from the blood.",
+        "evidence_quotes": [
+          {
+            "quote": "In physiological pharmacokinetics, clearance is governed by organ blood perfusion and cellular extraction.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Organ blood flow (Q), arterial inlet concentration (C_in), venous outlet concentration (C_out)",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The lecture defines the key variables for an eliminating organ: blood flow Q, entering concentration C_in, and exiting concentration C_out.",
+        "evidence_quotes": [
+          {
+            "quote": "Blood enters the organ at arterial flow rate Q with entering concentration C_in, and exits at venous concentration C_out.",
+            "approx_start_sec": 9,
+            "approx_end_sec": 14
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Extraction ratio (E) definition",
+        "parent_id": "C02",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Extraction ratio E is defined as the fraction of drug removed in a single pass: E = (C_in – C_out) / C_in.",
+        "evidence_quotes": [
+          {
+            "quote": "The extraction ratio E represents the fraction of drug removed during a single pass through the capillary bed: E equals (C_in minus C_out) divided by C_in.",
+            "approx_start_sec": 14,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Physiological clearance formula CL_organ = Q × E",
+        "parent_id": "C02",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Organ clearance is calculated by multiplying blood flow by the extraction ratio.",
+        "evidence_quotes": [
+          {
+            "quote": "The physiological clearance of that organ is therefore CL_organ equals organ blood flow Q multiplied by extraction ratio E: CL equals Q times E.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 26
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "High‑extraction drugs: perfusion‑limited clearance",
+        "parent_id": "C05",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "When E approaches 1, clearance is limited by blood flow; changes in Q directly affect CL regardless of enzyme activity.",
+        "evidence_quotes": [
+          {
+            "quote": "For high-extraction drugs where E approaches 1, clearance is perfusion-limited: changes in blood flow Q directly alter clearance, regardless of enzyme activity.",
+            "approx_start_sec": 26,
+            "approx_end_sec": 33
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Low‑extraction drugs: capacity‑limited clearance",
+        "parent_id": "C05",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "When E < 0.3, clearance depends on intrinsic metabolic capacity (CL_int) and the unbound fraction (f_u) rather than flow.",
+        "evidence_quotes": [
+          {
+            "quote": "For low-extraction drugs where E is less than 0.3, clearance is capacity-limited, restricted by the intrinsic metabolic enzyme activity CL_int and unbound fraction f_u.",
+            "approx_start_sec": 33,
+            "approx_end_sec": 40
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Intrinsic metabolic enzyme activity (CL_int)",
+        "parent_id": "C07",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "CL_int represents the maximal enzymatic capacity of an organ to metabolize drug, governing clearance for low‑extraction compounds.",
+        "evidence_quotes": [
+          {
+            "quote": "restricted by the intrinsic metabolic enzyme activity CL_int",
+            "approx_start_sec": 38,
+            "approx_end_sec": 40
+          }
+        ],
+        "confidence": "MEDIUM"
+      },
+      {
+        "concept_id": "C09",
+        "name": "Unbound fraction (f_u)",
+        "parent_id": "C07",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "f_u denotes the proportion of drug not bound to plasma proteins; only unbound drug is available for extraction and metabolism.",
+        "evidence_quotes": [
+          {
+            "quote": "and unbound fraction f_u",
+            "approx_start_sec": 39,
+            "approx_end_sec": 40
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ],
+    "p53Output": {
+      "expected_depth": 5,
+      "alignment_tier": "REQUIRED",
+      "observed_depth": 2,
+      "status": "ACTIONABLE_COVERAGE_GAP",
+      "evidence_synthesis": "The lecture states the formulae but does not provide a step‑by‑step derivation or causal rationale.",
+      "confidence": "HIGH"
+    }
+  },
+  "4B": {
+    "key": "4B",
+    "pkg": "dev_2a_04_signal_processing_fourier",
+    "dim": "STRUCTURE_COMPONENTS",
+    "refDepth": 5,
+    "refVerdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+    "transcript": "[Segment 4B - Diagnostic: DFT Structural Primitives]\nNow let us define the structural primitives that constitute the Discrete Fourier Transform operator itself. The DFT is not just a collection of parameter definitions; it is an orthogonal linear transformation on the vector space C^N. Its forward structural analysis equation is X[k] equals the summation from n equals 0 to N minus 1 of x[n] times W_N to the power of (k times n), where W_N is the twiddle factor primitive defined as e to the power of minus j times 2 pi over N. Structurally, the transformation consists of three foundational components: Component 1: The Basis Function Matrix W: an N by N Vandermonde matrix whose columns are orthogonal discrete harmonic sinusoids. Component 2: The Inner Product Projection Operator: projecting the discrete input sequence vector x onto the orthogonal basis vectors. Component 3: The Inverse Synthesis Operator: x[n] equals 1 over N times the summation from k equals 0 to N minus 1 of X[k] times W_N to the power of minus (k times n), reconstructing the discrete time-domain signal as a linear superposition of orthogonal basis components.",
+    "p52aConcepts": [
+      {
+        "concept_id": "C01",
+        "name": "Discrete Fourier Transform (DFT) as an orthogonal linear transformation on \\(\\mathbb{C}^N\\)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture states that the DFT is not merely a set of parameters but an orthogonal linear transformation defined over the complex vector space of dimension N.",
+        "evidence_quotes": [
+          {
+            "quote": "The DFT is not just a collection of parameter definitions; it is an orthogonal linear transformation on the vector space C^N.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Forward DFT equation",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Defines the forward transform: \\(X[k]=\\sum_{n=0}^{N-1} x[n]\\;W_N^{k n}\\).",
+        "evidence_quotes": [
+          {
+            "quote": "Its forward structural analysis equation is X[k] equals the summation from n equals 0 to N minus 1 of x[n] times W_N to the power of (k times n)",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Twiddle factor primitive \\(W_N = e^{-j 2\\pi / N}\\)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Introduces the basic complex exponential factor used in both forward and inverse DFT formulas.",
+        "evidence_quotes": [
+          {
+            "quote": "where W_N is the twiddle factor primitive defined as e to the power of minus j times 2 pi over N",
+            "approx_start_sec": 12,
+            "approx_end_sec": 16
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Basis Function Matrix \\(W\\): N\\times N Vandermonde matrix of orthogonal discrete harmonic sinusoids",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Describes the first foundational component of the DFT: a square matrix whose columns are orthogonal sinusoidal basis vectors.",
+        "evidence_quotes": [
+          {
+            "quote": "Component 1: The Basis Function Matrix W: an N by N Vandermonde matrix whose columns are orthogonal discrete harmonic sinusoids.",
+            "approx_start_sec": 16,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Inner Product Projection Operator",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Second foundational component that projects the input sequence vector onto the orthogonal basis vectors of the matrix \\(W\\).",
+        "evidence_quotes": [
+          {
+            "quote": "Component 2: The Inner Product Projection Operator: projecting the discrete input sequence vector x onto the orthogonal basis vectors.",
+            "approx_start_sec": 22,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Inverse Synthesis Operator",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "Third foundational component that reconstructs the time‑domain signal from its frequency coefficients using a scaled inverse transform.",
+        "evidence_quotes": [
+          {
+            "quote": "Component 3: The Inverse Synthesis Operator: x[n] equals 1 over N times the summation from k equals 0 to N minus 1 of X[k] times W_N to the power of minus (k times n), reconstructing the discrete time-domain signal as a linear superposition of orthogonal basis components.",
+            "approx_start_sec": 27,
+            "approx_end_sec": 36
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Orthogonal basis components in DFT",
+        "parent_id": "C04",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Emphasizes that the columns of the Vandermonde matrix form an orthogonal set, enabling projection and synthesis without interference.",
+        "evidence_quotes": [
+          {
+            "quote": "whose columns are orthogonal discrete harmonic sinusoids",
+            "approx_start_sec": 18,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ],
+    "p53Output": {
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "observed_depth": 4,
+      "status": "COVERED",
+      "evidence_synthesis": "C02 presents the forward DFT formula and C04 describes the Vandermonde matrix, both meeting the structural‑primitive specification level.",
+      "confidence": "HIGH"
+    }
+  }
+}

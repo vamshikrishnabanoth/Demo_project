@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_08_biochem_kinetics",
+  "domain": "Biology / Biochemistry",
+  "subject": "Molecular Enzymology & Cellular Metabolism",
+  "topic": "Michaelis-Menten Enzyme Kinetics & Catalytic Regulation",
+  "learner_level": "Undergraduate B.Sc. / B.Tech Biotechnology (Semester 3)",
+  "syllabus_context": "Unit II: Enzyme Kinetics and Catalytic Mechanisms. Substrate concentration vs initial velocity, steady-state approximation, derivation of the Michaelis-Menten equation, physical meaning of Km and kcat, Lineweaver-Burk double reciprocal plots, competitive, non-competitive, and uncompetitive inhibition, allosteric regulation.",
+  "declared_learning_objective": "Derive the Michaelis-Menten rate equation under the Briggs-Haldane steady-state assumption, explain the biochemical meaning of Km and catalytic efficiency (kcat/Km), contrast competitive versus non-competitive inhibition using Lineweaver-Burk transformations, and analyze allosteric feedback inhibition.",
+  "provenance": {
+    "mode": "CURATED_CONTROLLED_BENCHMARK",
+    "source_type": "CURATED_PEDAGOGICAL_TRANSCRIPT",
+    "source": "Standard Academic Biochemistry Lecture Series",
+    "institution": "Controlled Educational Benchmark Corpus",
+    "access_date": "2026-10-01",
+    "license_or_usage_basis": "Educational Research Dataset"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Kinetic derivations and Lineweaver-Burk double-reciprocal graphs drawn on whiteboard and explained verbally."
+  }
+}

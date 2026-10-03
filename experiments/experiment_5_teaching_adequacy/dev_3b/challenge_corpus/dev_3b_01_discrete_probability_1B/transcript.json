@@ -1,0 +1,9 @@
+{
+  "segment_key": "1B",
+  "package_id": "dev_3b_01_discrete_probability",
+  "title": "Sample Space Truth Valuations and State-Space Model Semantics",
+  "split": "CHALLENGE",
+  "target_dimension": "MEANING",
+  "text": "To analyze what probability statements mean semantically, we construct a concrete discrete sample space Omega consisting of five mutually exclusive states: omega-1, omega-2, omega-3, omega-4, and omega-5. We define an explicit probability mass assignment across this universe: P(omega-1) = 0.30, P(omega-2) = 0.25, P(omega-3) = 0.20, P(omega-4) = 0.15, and P(omega-5) = 0.10, which sum to 1.00. Now let event A represent nominal packet delivery, defined as the subset {omega-1, omega-2}, yielding truth valuation P(A) = 0.55. Let event B represent high-priority traffic, defined by partition block {omega-2, omega-3, omega-4}, with truth valuation P(B) = 0.60. The conjunction event A and B is the singleton state {omega-2}, with semantic valuation P(A and B) = 0.25. Under conditioning on high-priority traffic, the conditional probability P(A | B) equals 0.25 divided by 0.60, or approximately 0.417. By evaluating compound propositions directly over concrete domain elements, we illustrate the semantic interaction between state partitions and probability mass distributions rather than relying on abstract syntactic symbols.",
+  "duration_seconds": 38
+}

@@ -1,0 +1,32 @@
+{
+  "package_id": "dev_2a_02_pharmacology_clearance",
+  "domain": "Medical Pharmacology & Pharmacokinetics",
+  "subject": "Principles of Drug Elimination and Organ Clearance",
+  "topic": "Clearance Kinetics: Mathematical Identity vs. Physiological Extraction",
+  "learner_level": "Undergraduate MBBS / PharmD (Year 2)",
+  "syllabus_context": "Pharmacokinetics Unit 3: Clearance and Elimination. Rate of elimination, elimination rate constant k_e, apparent volume of distribution V_d, organ clearance model CL = Q * E, renal glomerular filtration and transporter mechanisms.",
+  "declared_learning_objective": "Derive the mathematical relationship between clearance, volume of distribution, and elimination rate constant; differentiate mathematical elimination models from physiological organ extraction mechanisms; explain organ clearance in terms of blood flow and extraction ratio; and evaluate the biological processes of renal filtration, active secretion, and reabsorption.",
+  "provenance": {
+    "mode": "DEVELOPMENT_DIAGNOSTIC_CORPUS_OPTION_B",
+    "source_type": "SYNTHETIC_PEDAGOGICAL_MICROLECTURE",
+    "institution": "Milestone v3.6 Diagnostic Investigation",
+    "access_date": "2026-10-02",
+    "license_or_usage_basis": "Internal Educational Research"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Pharmacokinetic formulas and organ vascular schematics discussed verbally and sketched on board."
+  },
+  "predeclared_split": {
+    "diagnostic_segments": [
+      "segment_2A_algebraic_elimination",
+      "segment_2B_organ_extraction_mechanism"
+    ],
+    "validation_segments": [
+      "segment_2C_formal_urinary_excretion",
+      "segment_2D_nephron_cellular_transport"
+    ]
+  }
+}

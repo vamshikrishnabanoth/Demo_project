@@ -1,0 +1,9 @@
+{
+  "segment_key": "4B",
+  "package_id": "dev_3a_04_signal_processing_structures",
+  "domain": "04",
+  "topic": "Radix-2 Butterfly Datapath Hardware Primitives",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "STRUCTURE_COMPONENTS",
+  "target_threshold": 5
+}

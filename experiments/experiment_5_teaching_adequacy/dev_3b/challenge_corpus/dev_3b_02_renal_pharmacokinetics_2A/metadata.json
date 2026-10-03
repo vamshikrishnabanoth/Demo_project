@@ -1,0 +1,9 @@
+{
+  "segment_key": "2A",
+  "package_id": "dev_3b_02_renal_pharmacokinetics",
+  "domain": "02",
+  "topic": "Steady-State Renal Mass Conservation and Clearance Derivation",
+  "split": "CHALLENGE",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "target_threshold": 5
+}

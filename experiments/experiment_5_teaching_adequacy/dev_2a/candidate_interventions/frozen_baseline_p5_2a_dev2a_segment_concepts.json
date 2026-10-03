@@ -1,0 +1,1889 @@
+{
+  "1A": {
+    "segment_key": "1A",
+    "package_id": "dev_2a_01_logic_predicates",
+    "header": "[Segment 1A - Diagnostic: Syntactic De Morgan Recitation]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Universal quantifier notation (∀x P(x))",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the universal quantifier as the symbol “for‑all x P(x)”.",
+        "evidence_quotes": [
+          {
+            "quote": "In formal logic, we write universal statements as for‑all x P(x)",
+            "approx_start_sec": 0,
+            "approx_end_sec": 3
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Existential quantifier notation (∃x P(x))",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the existential quantifier as the symbol “there‑exists x P(x)”.",
+        "evidence_quotes": [
+          {
+            "quote": "and existential statements as there‑exists x P(x)",
+            "approx_start_sec": 0,
+            "approx_end_sec": 3
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Negation of a quantified formula",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The instructor explained what it means to place a negation sign in front of a quantified statement.",
+        "evidence_quotes": [
+          {
+            "quote": "Now, what happens when we negate a quantified formula?",
+            "approx_start_sec": 4,
+            "approx_end_sec": 6
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "De Morgan’s Laws for Quantifiers (first identity)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The first De Morgan law: ¬∀x P(x) ⇔ ∃x ¬P(x).",
+        "evidence_quotes": [
+          {
+            "quote": "First, not for‑all x P(x) is logically equivalent to there‑exists x such that not P(x).",
+            "approx_start_sec": 7,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "De Morgan’s Laws for Quantifiers (second identity)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The second De Morgan law: ¬∃x P(x) ⇔ ∀x ¬P(x).",
+        "evidence_quotes": [
+          {
+            "quote": "Second, not there‑exists x P(x) is logically equivalent to for‑all x such that not P(x).",
+            "approx_start_sec": 11,
+            "approx_end_sec": 14
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Quantifier‑flipping rule when negation passes through",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The lecture gave a procedural rule: when a negation moves past a quantifier, the quantifier type flips and the negation attaches to the predicate.",
+        "evidence_quotes": [
+          {
+            "quote": "whenever a negation sign passes through a quantifier, the universal quantifier flips into an existential quantifier, and the existential quantifier flips into a universal quantifier, with the negation attaching directly to the predicate P(x).",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Syntactic substitution rule in formal deduction systems",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The instructor identified this quantifier‑negation transformation as a standard syntactic substitution rule used in formal proof systems.",
+        "evidence_quotes": [
+          {
+            "quote": "This is a standard syntactic substitution rule in formal deduction systems.",
+            "approx_start_sec": 21,
+            "approx_end_sec": 23
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "1B": {
+    "segment_key": "1B",
+    "package_id": "dev_2a_01_logic_predicates",
+    "header": "[Segment 1B - Diagnostic: Semantic Model-Theoretic Interpretation]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Universe of discourse (domain D)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture defines a universe of discourse, denoted D, as a set of objects over which quantifiers range (e.g., the positive integers {1,2,3,4,5}).",
+        "evidence_quotes": [
+          {
+            "quote": "Consider a universe of discourse or domain D, say the set of positive integers {1, 2, 3, 4, 5}.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Universal quantifier as generalized conjunction",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The universal statement ‘for‑all x in D, P(x)’ is interpreted as the logical AND of P evaluated at every element of D.",
+        "evidence_quotes": [
+          {
+            "quote": "The statement 'for-all x in D, P(x)' means P(1) AND P(2) AND P(3) AND P(4) AND P(5). It is a generalized conjunction over the entire domain.",
+            "approx_start_sec": 6,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Negation of a universal quantifier via De Morgan’s laws",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Negating the universal conjunction yields a disjunction by applying classical propositional De Morgan’s transformation.",
+        "evidence_quotes": [
+          {
+            "quote": "When we negate that conjunction—not (P(1) AND P(2) AND ... AND P(5))—by classical propositional De Morgan's laws, that conjunction becomes a disjunction: not P(1) OR not P(2) OR ... OR not P(5).",
+            "approx_start_sec": 13,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Existential quantifier as disjunction over the domain",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "A disjunction across all domain elements corresponds to the existential claim that there exists at least one element for which the predicate holds (or is false, depending on the negation).",
+        "evidence_quotes": [
+          {
+            "quote": "And what is a disjunction across domain elements? It is precisely the definition of the existential quantifier: there exists at least one element x in D for which P(x) is false!",
+            "approx_start_sec": 21,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Quantifier duality (universal ↔ existential)",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "The lecture explains that the duality between ∀ and ∃ is not arbitrary syntax but follows directly from Boolean duality between conjunction and disjunction over any domain.",
+        "evidence_quotes": [
+          {
+            "quote": "Thus quantifier duality is not arbitrary syntax; it is the natural consequence of boolean duality between conjunction and disjunction over an arbitrary domain.",
+            "approx_start_sec": 28,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Concrete example: prime predicate and witness",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The lecturer illustrates the concepts with P(x) = ‘x is prime’, showing that ¬∀x P(x) is true because the witness x = 4 is non‑prime.",
+        "evidence_quotes": [
+          {
+            "quote": "For example, if P(x) is 'x is prime', asserting 'not all integers are prime' is true because there exists a witness x=4 such that 4 is not prime.",
+            "approx_start_sec": 36,
+            "approx_end_sec": 44
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Boolean duality between conjunction and disjunction",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "The lecture ties the quantifier duality to the underlying Boolean principle that conjunction and disjunction are dual under negation.",
+        "evidence_quotes": [
+          {
+            "quote": "quantifier duality ... is the natural consequence of boolean duality between conjunction and disjunction over an arbitrary domain.",
+            "approx_start_sec": 28,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "MEDIUM"
+      }
+    ]
+  },
+  "1C": {
+    "segment_key": "1C",
+    "package_id": "dev_2a_01_logic_predicates",
+    "header": "[Segment 1C - Validation: Nested Quantifier Syntactic Manipulation]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Nested quantifiers with alternating scopes (∀x∃y Q(x,y))",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the pattern of a universal quantifier followed by an existential quantifier, exemplified as ∀x ∃y Q(x,y).",
+        "evidence_quotes": [
+          {
+            "quote": "Next, let us examine nested quantifiers with alternating scopes, such as for-all x there-exists y Q(x, y).",
+            "approx_start_sec": 0,
+            "approx_end_sec": 4
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Non‑commutativity of universal and existential quantifiers",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "It was stated that ∀x∃y Q(x,y) does not imply ∃y∀x Q(x,y); the two quantifiers cannot be swapped.",
+        "evidence_quotes": [
+          {
+            "quote": "As an algebraic rule of inference, universal and existential quantifiers do not commute. That is, for-all x there-exists y Q(x, y) does not imply there-exists y for-all x Q(x, y).",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Existential instantiation must respect variable dependency",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "When instantiating an existential variable after a universal one, the existential witness becomes a function of the universal variable.",
+        "evidence_quotes": [
+          {
+            "quote": "In formal proof systems, existential instantiation must respect variable dependency: when you instantiate y after x, y is treated as a Skolem function f(x) depending on x,",
+            "approx_start_sec": 13,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Skolem function as a dependent witness (f(x))",
+        "parent_id": "C03",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The dependent witness is introduced as a Skolem function f(x) that captures the dependence of y on x.",
+        "evidence_quotes": [
+          {
+            "quote": "y is treated as a Skolem function f(x) depending on x,",
+            "approx_start_sec": 16,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Prefixing an existential quantifier requires a global constant",
+        "parent_id": "C03",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "If the existential quantifier is placed before the universal one, the witness must be a single constant independent of x.",
+        "evidence_quotes": [
+          {
+            "quote": "whereas prefixing there-exists y requires a single global constant y.",
+            "approx_start_sec": 19,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Quantifier symbols cannot be arbitrarily reordered",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The lecture concluded that one cannot simply reorder quantifier symbols without changing logical meaning.",
+        "evidence_quotes": [
+          {
+            "quote": "You cannot simply reorder the quantifier symbols.",
+            "approx_start_sec": 23,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "1D": {
+    "segment_key": "1D",
+    "package_id": "dev_2a_01_logic_predicates",
+    "header": "[Segment 1D - Validation: Nested Quantifier Model & Counterexample]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Alternating quantifier order",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the notion that the order of alternating quantifiers (∀ then ∃, or ∃ then ∀) is a distinct syntactic feature that can affect logical statements.",
+        "evidence_quotes": [
+          {
+            "quote": "why quantifier order cannot be swapped",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Impact of swapping quantifier order on formula truth",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Swapping the order of alternating quantifiers can radically change the truth value of a formula, as demonstrated with concrete examples.",
+        "evidence_quotes": [
+          {
+            "quote": "changing the order of alternating quantifiers radically alters the truth value of the formula",
+            "approx_start_sec": 30,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Relation Q(x,y) defined as x + y = 0 over ℝ",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The relation Q(x, y) was defined explicitly as the equation x + y = 0 within the domain of real numbers.",
+        "evidence_quotes": [
+          {
+            "quote": "Q(x, y) is the relation 'x + y = 0'",
+            "approx_start_sec": 5,
+            "approx_end_sec": 7
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Statement A (∀x∈ℝ ∃y∈ℝ (x + y = 0))",
+        "parent_id": "C01",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Statement A was presented as: for every real x there exists a real y such that x + y = 0.",
+        "evidence_quotes": [
+          {
+            "quote": "Statement A: for-all x in R, there-exists y in R such that x + y = 0",
+            "approx_start_sec": 8,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Existence of additive inverse for any real number",
+        "parent_id": "C04",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "The truth of Statement A was justified by the additive inverse property: for any real x, y = -x satisfies x + y = 0.",
+        "evidence_quotes": [
+          {
+            "quote": "For every real number x you give me, I can find an additive inverse y = -x such that x + (-x) = 0",
+            "approx_start_sec": 12,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Statement B (∃y∈ℝ ∀x∈ℝ (x + y = 0))",
+        "parent_id": "C01",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Statement B was presented as: there exists a single real y such that for all real x, x + y = 0.",
+        "evidence_quotes": [
+          {
+            "quote": "Statement B: there-exists y in R such that for-all x in R, x + y = 0",
+            "approx_start_sec": 20,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Impossibility of a universal y satisfying x + y = 0 for all x",
+        "parent_id": "C06",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "The lecture argued that no single y can satisfy the equation for every x because y would need to be simultaneously -1 and -2, which is impossible.",
+        "evidence_quotes": [
+          {
+            "quote": "Since y cannot simultaneously be -1 and -2, no such single element y exists in the domain",
+            "approx_start_sec": 26,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Concrete counterexample demonstrating falsehood of Statement B",
+        "parent_id": "C07",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "A concrete numerical example (x = 1 gives y = -1, x = 2 gives y = -2) was used to show that Statement B is false, thereby serving as a counterexample to quantifier order swapping.",
+        "evidence_quotes": [
+          {
+            "quote": "This concrete numerical structure proves that changing the order of alternating quantifiers radically alters the truth value of the formula",
+            "approx_start_sec": 32,
+            "approx_end_sec": 36
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "2A": {
+    "segment_key": "2A",
+    "package_id": "dev_2a_02_pharmacology_clearance",
+    "header": "[Segment 2A - Diagnostic: Algebraic Clearance Derivation]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "First-order elimination kinetics",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture identifies first-order elimination kinetics as the kinetic model where the elimination rate is proportional to the amount of drug present.",
+        "evidence_quotes": [
+          {
+            "quote": "Assuming first-order elimination kinetics, the rate of drug elimination dAb/dt is proportional to the amount of drug in the body",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Rate of drug elimination equation (dAb/dt = -k_e·Ab)",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The rate of elimination is expressed mathematically as the derivative of amount with respect to time equals negative elimination constant times amount.",
+        "evidence_quotes": [
+          {
+            "quote": "dAb/dt equals minus k_e times Ab",
+            "approx_start_sec": 5,
+            "approx_end_sec": 8
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Relationship between amount in body, plasma concentration, and volume of distribution (Ab = Cp·Vd)",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The amount of drug in the body is defined as the product of plasma concentration and apparent volume of distribution.",
+        "evidence_quotes": [
+          {
+            "quote": "the amount of drug Ab equals the plasma concentration C_p multiplied by the apparent volume of distribution V_d",
+            "approx_start_sec": 8,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Definition of clearance (CL) as volume cleared per unit time",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Clearance is defined as the volume of biological fluid completely cleared of drug per unit time.",
+        "evidence_quotes": [
+          {
+            "quote": "Clearance CL is defined as the volume of biological fluid completely cleared of drug per unit time",
+            "approx_start_sec": 12,
+            "approx_end_sec": 16
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Rate of elimination expressed via clearance (rate = CL·Cp)",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The lecture states that the rate of elimination can also be written as clearance multiplied by plasma concentration.",
+        "evidence_quotes": [
+          {
+            "quote": "rate of elimination equals CL times C_p",
+            "approx_start_sec": 16,
+            "approx_end_sec": 19
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Derivation of CL = k_e·V_d",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "By equating the two expressions for elimination rate and dividing by Cp, the lecture derives the identity CL = k_e·V_d.",
+        "evidence_quotes": [
+          {
+            "quote": "Equating these two expressions: CL times C_p equals k_e times V_d times C_p. Dividing both sides by C_p, we obtain the fundamental mathematical identity: CL equals k_e multiplied by V_d",
+            "approx_start_sec": 19,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Half‑life relationship to elimination constant (t_half = 0.693/k_e)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The half‑life is defined as 0.693 divided by the first‑order elimination constant.",
+        "evidence_quotes": [
+          {
+            "quote": "since half-life t_half equals 0.693 divided by k_e",
+            "approx_start_sec": 27,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Clearance expressed via volume of distribution and half‑life (CL = 0.693·V_d / t_half)",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "Substituting the half‑life expression into the CL identity yields a practical formula for clinicians to calculate systemic clearance from concentration‑time data.",
+        "evidence_quotes": [
+          {
+            "quote": "we can substitute to write CL equals 0.693 times V_d divided by t_half. This algebraic equation allows clinicians to calculate systemic clearance directly from concentration-time curves.",
+            "approx_start_sec": 30,
+            "approx_end_sec": 38
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "2B": {
+    "segment_key": "2B",
+    "package_id": "dev_2a_02_pharmacology_clearance",
+    "header": "[Segment 2B - Diagnostic: Physiological Organ Extraction Mechanism]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Physiological clearance equation (CL = Q × E)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the physiological clearance formula where organ clearance equals organ blood flow multiplied by the extraction ratio.",
+        "evidence_quotes": [
+          {
+            "quote": "The physiological clearance of that organ is therefore CL_organ equals organ blood flow Q multiplied by extraction ratio E: CL equals Q times E.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Extraction ratio (E) definition",
+        "parent_id": "C01",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Extraction ratio is defined as the fraction of drug removed in a single pass, calculated as (C_in – C_out) / C_in.",
+        "evidence_quotes": [
+          {
+            "quote": "The extraction ratio E represents the fraction of drug removed during a single pass through the capillary bed: E equals (C_in minus C_out) divided by C_in.",
+            "approx_start_sec": 2,
+            "approx_end_sec": 8
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Organ blood flow (Q) as a determinant of clearance",
+        "parent_id": "C01",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Blood enters the organ at arterial flow rate Q; Q is a key parameter in the clearance equation.",
+        "evidence_quotes": [
+          {
+            "quote": "Consider an eliminating organ, such as the liver or kidney. Blood enters the organ at arterial flow rate Q with entering concentration C_in, and exits at venous concentration C_out.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 4
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Perfusion‑limited clearance (high‑extraction drugs)",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "When E approaches 1, clearance is limited by blood flow; changes in Q directly alter CL regardless of enzyme activity.",
+        "evidence_quotes": [
+          {
+            "quote": "For high-extraction drugs where E approaches 1, clearance is perfusion-limited: changes in blood flow Q directly alter clearance, regardless of enzyme activity.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Capacity‑limited clearance (low‑extraction drugs)",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "When E < 0.3, clearance is limited by intrinsic metabolic enzyme activity (CL_int) and the unbound fraction (f_u).",
+        "evidence_quotes": [
+          {
+            "quote": "For low-extraction drugs where E is less than 0.3, clearance is capacity-limited, restricted by the intrinsic metabolic enzyme activity CL_int and unbound fraction f_u.",
+            "approx_start_sec": 19,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Intrinsic metabolic enzyme activity (CL_int)",
+        "parent_id": "C05",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "CL_int represents the maximal enzymatic capacity of the organ to metabolize drug, governing clearance for low‑extraction compounds.",
+        "evidence_quotes": [
+          {
+            "quote": "restricted by the intrinsic metabolic enzyme activity CL_int",
+            "approx_start_sec": 21,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "MEDIUM"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Unbound fraction (f_u)",
+        "parent_id": "C05",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "f_u denotes the proportion of drug not bound to plasma proteins, influencing the amount available for extraction.",
+        "evidence_quotes": [
+          {
+            "quote": "and unbound fraction f_u",
+            "approx_start_sec": 22,
+            "approx_end_sec": 23
+          }
+        ],
+        "confidence": "MEDIUM"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Distinction between descriptive clearance equation (CL = k_e·V_d) and physiological mechanism",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture contrasted a purely descriptive mathematical equation with the mechanistic, physiologically based clearance model.",
+        "evidence_quotes": [
+          {
+            "quote": "However, an equation like CL = k_e * V_d is purely descriptive mathematics—it does not explain the biological mechanism of how organs remove drug!",
+            "approx_start_sec": -2,
+            "approx_end_sec": 1
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "2C": {
+    "segment_key": "2C",
+    "package_id": "dev_2a_02_pharmacology_clearance",
+    "header": "[Segment 2C - Validation: Formal Mass-Balance Excretion Equation]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Mass‑balance perspective on renal elimination",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture introduced renal elimination as a problem of mass balance, framing the subsequent equations in that context.",
+        "evidence_quotes": [
+          {
+            "quote": "Let us look at renal elimination from a formal mass‑balance perspective.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 3
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Definition of urinary drug excretion rate (E = V × U)",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Excretion rate is expressed as the product of urinary flow rate (V) and urinary drug concentration (U).",
+        "evidence_quotes": [
+          {
+            "quote": "The rate of urinary drug excretion equals urinary flow rate V multiplied by the concentration of drug in the urine U.",
+            "approx_start_sec": 4,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Renal clearance definition (E = CL_R × P)",
+        "parent_id": "C01",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Renal clearance (CL_R) is defined by equating excretion rate to CL_R times systemic plasma concentration (P).",
+        "evidence_quotes": [
+          {
+            "quote": "By definition of renal clearance, excretion rate equals renal clearance CL_R multiplied by systemic plasma concentration P.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Classical clinical clearance equation (CL_R = (U·V)/P)",
+        "parent_id": "C01",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Setting the two expressions for excretion rate equal yields the standard formula for renal clearance.",
+        "evidence_quotes": [
+          {
+            "quote": "Setting excretion rate equal to CL_R times P gives the classical clinical clearance equation: CL_R equals (U times V) divided by P.",
+            "approx_start_sec": 16,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Closed‑form algebraic relationship",
+        "parent_id": "C04",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The clearance equation is described as a closed‑form algebraic relationship, meaning it can be solved directly without iterative methods.",
+        "evidence_quotes": [
+          {
+            "quote": "This is a closed‑form algebraic relationship:",
+            "approx_start_sec": 23,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "MEDIUM"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Practical measurement protocol for CL_R",
+        "parent_id": "C04",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "To compute renal clearance, one measures 24‑hour urine volume (V), urinary concentration (U), and mid‑interval plasma concentration (P) and substitutes them into the formula.",
+        "evidence_quotes": [
+          {
+            "quote": "if you measure the 24‑hour urine volume V, the urinary concentration U, and the mid‑interval plasma concentration P, you compute the renal clearance in milliliters per minute.",
+            "approx_start_sec": 26,
+            "approx_end_sec": 33
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "2D": {
+    "segment_key": "2D",
+    "package_id": "dev_2a_02_pharmacology_clearance",
+    "header": "[Segment 2D - Validation: Nephron Cellular Transport Mechanisms]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Clinical Clearance Equation (CL_R = U·V / P)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the standard clinical clearance equation CL_R = U·V / P as a starting point.",
+        "evidence_quotes": [
+          {
+            "quote": "Yet the clinical equation CL_R = U*V / P tells us nothing about the cellular transport biology occurring inside the nephron.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Net Vector Sum Model of Renal Drug Elimination",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Renal drug elimination is described as the net vector sum of three distinct cellular processes.",
+        "evidence_quotes": [
+          {
+            "quote": "Renal drug elimination is the net vector sum of three distinct cellular processes:",
+            "approx_start_sec": 5,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Glomerular Filtration Process",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Free, unbound drug passes passively across the glomerular filtration barrier at a rate equal to GFR multiplied by the unbound plasma fraction f_u.",
+        "evidence_quotes": [
+          {
+            "quote": "First, Glomerular Filtration: free, unbound drug passes passively across the glomerular filtration barrier (podocytes and fenestrated endothelium) at the rate of GFR times the unbound plasma fraction f_u.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Glomerular Filtration Barrier Components (podocytes and fenestrated endothelium)",
+        "parent_id": "C03",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The barrier consists of podocytes and fenestrated endothelium.",
+        "evidence_quotes": [
+          {
+            "quote": "(podocytes and fenestrated endothelium)",
+            "approx_start_sec": 12,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Active Tubular Secretion",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Basolateral and apical membrane transporters (OAT1, OAT3, OCT2) actively pump drug from peritubular capillaries into the tubular lumen; the process is saturable and ATP‑dependent.",
+        "evidence_quotes": [
+          {
+            "quote": "Second, Active Tubular Secretion: basolateral and apical membrane transporters—specifically Organic Anion Transporters like OAT1 and OAT3, and Organic Cation Transporters like OCT2—actively pump drug molecules from peritubular capillaries into the tubular lumen against a concentration gradient, which is a saturable, ATP-dependent transport process.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Organic Anion Transporters (OAT1, OAT3)",
+        "parent_id": "C05",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "OAT1 and OAT3 are named as the organic anion transporters involved in active secretion.",
+        "evidence_quotes": [
+          {
+            "quote": "Organic Anion Transporters like OAT1 and OAT3",
+            "approx_start_sec": 22,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Organic Cation Transporter (OCT2)",
+        "parent_id": "C05",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "OCT2 is identified as the organic cation transporter participating in active secretion.",
+        "evidence_quotes": [
+          {
+            "quote": "Organic Cation Transporters like OCT2",
+            "approx_start_sec": 24,
+            "approx_end_sec": 26
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Passive Tubular Reabsorption",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Un‑ionized, lipophilic drug molecules diffuse back across tubular epithelial cells; the rate is heavily modulated by urinary pH and urine flow rate.",
+        "evidence_quotes": [
+          {
+            "quote": "Third, Passive Tubular Reabsorption: un-ionized, lipophilic drug molecules diffuse back across tubular epithelial cells into the bloodstream, a process heavily modulated by urinary pH and urine flow rate.",
+            "approx_start_sec": 30,
+            "approx_end_sec": 40
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C09",
+        "name": "Physiological Renal Clearance Formula",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The overall clearance is expressed as CL_R = (f_u × GFR) + CL_secretion – CL_reabsorption.",
+        "evidence_quotes": [
+          {
+            "quote": "Thus physiological renal clearance is CL_R equals (f_u times GFR) plus CL_secretion minus CL_reabsorption.",
+            "approx_start_sec": 40,
+            "approx_end_sec": 45
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C10",
+        "name": "Unbound Plasma Fraction (f_u)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "f_u represents the fraction of drug that is free (unbound) in plasma and participates in filtration and secretion processes.",
+        "evidence_quotes": [
+          {
+            "quote": "at the rate of GFR times the unbound plasma fraction f_u",
+            "approx_start_sec": 12,
+            "approx_end_sec": 14
+          },
+          {
+            "quote": "(f_u times GFR) plus CL_secretion",
+            "approx_start_sec": 41,
+            "approx_end_sec": 42
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "3A": {
+    "segment_key": "3A",
+    "package_id": "dev_2a_03_clinical_dosing",
+    "header": "[Segment 3A - Diagnostic: Conversational Gentamicin Walkthrough]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Extended‑interval dosing regimen (5–7 mg/kg once daily)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture identifies the standard extended‑interval dosing range for gentamicin (5–7 mg per kilogram given once daily) as the typical approach for a septic patient with normal renal function.",
+        "evidence_quotes": [
+          {
+            "quote": "you typically aim for an extended-interval dose of 5 to 7 milligrams per kilogram once daily",
+            "approx_start_sec": 5,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Weight‑based dose calculation (mg × kg)",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The speaker demonstrates the calculation by multiplying the chosen mg/kg dose by the patient’s body weight to obtain the total milligram dose.",
+        "evidence_quotes": [
+          {
+            "quote": "So in your head you multiply 5 mg/kg by 80 kg, which gives you about 400 milligrams",
+            "approx_start_sec": 9,
+            "approx_end_sec": 13
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Serum creatinine as a bedside indicator of renal function",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Serum creatinine level is presented as the primary laboratory value used to gauge kidney function before finalizing the gentamicin dose.",
+        "evidence_quotes": [
+          {
+            "quote": "Now, you always glance at the serum creatinine—if the creatinine is around 1.0 mg/dL",
+            "approx_start_sec": 13,
+            "approx_end_sec": 17
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Extending dosing interval when renal function is reduced",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "If creatinine is elevated (e.g., 1.8 mg/dL), the interval between doses is lengthened to every 36–48 hours.",
+        "evidence_quotes": [
+          {
+            "quote": "you’d probably stretch that out to every 36 or 48 hours",
+            "approx_start_sec": 17,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Reducing mg/kg dose for impaired renal function",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "When kidney function is sluggish, the dose may be lowered to 3 mg/kg instead of the standard 5 mg/kg.",
+        "evidence_quotes": [
+          {
+            "quote": "or drop the dose down to 3 mg/kg",
+            "approx_start_sec": 20,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Clinical pharmacist’s role in bedside gentamicin dosing",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The speaker notes that experienced clinical pharmacists perform this rapid dosing assessment during morning rounds.",
+        "evidence_quotes": [
+          {
+            "quote": "It's a quick conversational bedside assessment that experienced clinical pharmacists do on morning rounds",
+            "approx_start_sec": 22,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "3B": {
+    "segment_key": "3B",
+    "package_id": "dev_2a_03_clinical_dosing",
+    "header": "[Segment 3B - Diagnostic: Explicit Stepwise Gentamicin Execution Trace]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Patient Parameters Identification",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture listed the patient’s age, height, actual weight, and serum creatinine as the initial data needed for dosing.",
+        "evidence_quotes": [
+          {
+            "quote": "Patient is a 65-year-old male, height 5 feet 10 inches (178 cm), actual weight 85 kg, serum creatinine S_cr = 1.4 mg/dL.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Ideal Body Weight (IBW) Calculation",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "IBW is computed as 50 kg plus 2.3 kg for each inch over 5 feet; for a 10‑inch excess this yields 73 kg.",
+        "evidence_quotes": [
+          {
+            "quote": "IBW equals 50 kg plus 2.3 kg for each inch over 5 feet: 50 + 2.3 * 10 = 50 + 23 = 73.0 kg.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Weight Adjustment Decision Rule",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "When actual weight exceeds IBW, the percentage of actual/IBW is calculated; if it is below 120 % the IBW is used for dosing.",
+        "evidence_quotes": [
+          {
+            "quote": "Because actual weight (85 kg) is greater than IBW, we check percentage: 85 / 73 = 116%, less than 120%, so we use IBW = 73 kg.",
+            "approx_start_sec": 12,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Creatinine Clearance via Cockcroft‑Gault Formula",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "CrCl is calculated with the Cockcroft‑Gault equation: ((140 − age) × weight) / (72 × S_cr). The lecture applied the numbers to obtain 54.3 mL/min.",
+        "evidence_quotes": [
+          {
+            "quote": "CrCl equals ((140 minus age) times weight in kg) divided by (72 times S_cr). CrCl = ((140 - 65) * 73) / (72 * 1.4) = (75 * 73) / 100.8 = 5475 / 100.8 = 54.3 mL/min.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Target Dose Determination (7 mg/kg)",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The once‑daily gentamicin dose is set at 7 mg per kilogram of the dosing weight (IBW), yielding 511 mg which is then rounded.",
+        "evidence_quotes": [
+          {
+            "quote": "Target once-daily dose is 7 mg/kg based on dosing weight: Dose = 7 mg/kg * 73 kg = 511 mg, rounded to 500 mg.",
+            "approx_start_sec": 30,
+            "approx_end_sec": 38
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Dose Rounding Convention",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "The calculated dose (511 mg) is rounded to the nearest practical vial size, here 500 mg, reflecting common clinical rounding practice.",
+        "evidence_quotes": [
+          {
+            "quote": "511 mg, rounded to 500 mg.",
+            "approx_start_sec": 38,
+            "approx_end_sec": 44
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Dosing Interval Selection Using Hartford Nomogram",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "For a creatinine clearance of 40–60 mL/min, the Hartford nomogram recommends an extended dosing interval of 36 hours.",
+        "evidence_quotes": [
+          {
+            "quote": "For CrCl of 40 to 60 mL/min, the Hartford nomogram specifies an extended interval of tau = 36 hours.",
+            "approx_start_sec": 44,
+            "approx_end_sec": 52
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Final Gentamicin Regimen Specification",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The lecture concludes with the complete prescription: Gentamicin 500 mg IV infusion every 36 hours.",
+        "evidence_quotes": [
+          {
+            "quote": "Final Regimen: Gentamicin 500 mg IV infusion every 36 hours.",
+            "approx_start_sec": 52,
+            "approx_end_sec": 60
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "3C": {
+    "segment_key": "3C",
+    "package_id": "dev_2a_03_clinical_dosing",
+    "header": "[Segment 3C - Validation: Conversational Phenytoin Walkthrough]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "IV phenytoin loading dose calculation (mg/kg × patient weight)",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The lecture presented the formula for calculating a loading dose of IV phenytoin by multiplying a per‑kilogram dose (15 mg/kg) by the estimated patient weight (≈70 kg) to obtain the total milligram amount.",
+        "evidence_quotes": [
+          {
+            "quote": "Let's load the patient with 15 to 20 milligrams per kilogram.' If the patient looks to be about 70 kilograms, 15 mg/kg times 70 kg is about 1050 milligrams",
+            "approx_start_sec": 0,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Estimation and rounding of patient weight for dose calculation",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The speaker identified the patient’s approximate weight (≈70 kg) as a necessary input for the dose calculation.",
+        "evidence_quotes": [
+          {
+            "quote": "If the patient looks to be about 70 kilograms",
+            "approx_start_sec": 5,
+            "approx_end_sec": 7
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Rounding the calculated dose to a practical IV order (1000 mg)",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "After computing ~1050 mg, the clinician verbally ordered a rounded, convenient dose of 1000 mg IV piggyback in normal saline.",
+        "evidence_quotes": [
+          {
+            "quote": "so you verbally order a 1000 mg IV piggyback in normal saline",
+            "approx_start_sec": 12,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Maximum infusion rate constraint to avoid hypotension and arrhythmias (≤ 50 mg/min)",
+        "parent_id": "root",
+        "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+        "observed_summary": "The instructor specified a safety limit for the infusion rate—no faster than 50 mg per minute—to prevent cardiovascular adverse effects.",
+        "evidence_quotes": [
+          {
+            "quote": "You tell the nurse to infuse it no faster than 50 mg per minute to avoid hypotension and arrhythmias",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Estimating infusion duration from dose and rate (≈20–25 minutes)",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Using the total dose (1000 mg) and the maximum rate (50 mg/min), the speaker calculated that the infusion would take roughly 20 to 25 minutes.",
+        "evidence_quotes": [
+          {
+            "quote": "so it will run over approximately 20 to 25 minutes",
+            "approx_start_sec": 20,
+            "approx_end_sec": 22
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Informal conversational validation of order magnitude and rate constraint",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The segment described an informal verbal walkthrough where the clinical team confirms the target dose and infusion rate through conversation.",
+        "evidence_quotes": [
+          {
+            "quote": "It's an informal verbal walkthrough where the clinical team confirms the target order of magnitude and rate constraint conversationally.",
+            "approx_start_sec": 22,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "3D": {
+    "segment_key": "3D",
+    "package_id": "dev_2a_03_clinical_dosing",
+    "header": "[Segment 3D - Validation: Explicit Stepwise Vancomycin Execution Trace]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Clinical Goal: Target AUC24/MIC ratio for MRSA bacteremia",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture states the therapeutic objective is a 24‑hour area‑under‑the‑curve to MIC ratio between 400 and 600 mg·h/L for MRSA bloodstream infection.",
+        "evidence_quotes": [
+          {
+            "quote": "Target 24-hour Area Under the Curve (AUC24) to MIC ratio between 400 and 600 mg*h/L for MRSA bacteremia.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Estimation of Patient Elimination Constant (kₑ)",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "kₑ is calculated from creatinine clearance (CrCl) using the linear formula kₑ = 0.00083 × CrCl + 0.0044, demonstrated with CrCl = 60 mL/min yielding kₑ = 0.0542 h⁻¹.",
+        "evidence_quotes": [
+          {
+            "quote": "For a patient with CrCl = 60 mL/min, k_e equals 0.00083 * CrCl + 0.0044 = (0.00083 * 60) + 0.0044 = 0.0498 + 0.0044 = 0.0542 h^-1.",
+            "approx_start_sec": 6,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Estimation of Volume of Distribution (V_d)",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "V_d is derived from body weight using V_d = 0.7 L/kg × weight; with a 70 kg patient the result is 49.0 L.",
+        "evidence_quotes": [
+          {
+            "quote": "V_d equals 0.7 L/kg * 70 kg = 49.0 L.",
+            "approx_start_sec": 16,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Calculation of Systemic Clearance (CL)",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Systemic clearance is obtained by multiplying the elimination constant by the volume of distribution: CL = kₑ × V_d, giving 2.656 L/h for the example values.",
+        "evidence_quotes": [
+          {
+            "quote": "CL equals k_e * V_d = 0.0542 h^-1 * 49.0 L = 2.656 L/h.",
+            "approx_start_sec": 21,
+            "approx_end_sec": 27
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Required 24‑Hour Dose Calculation",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The daily vancomycin dose is computed as the product of the target AUC24 (500 mg·h/L) and the calculated clearance, resulting in 1328 mg per day.",
+        "evidence_quotes": [
+          {
+            "quote": "Target AUC24 = 500 mg*h/L. Daily Dose = AUC24 * CL = 500 mg*h/L * 2.656 L/h = 1328 mg/day.",
+            "approx_start_sec": 28,
+            "approx_end_sec": 35
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Selection of Dosing Interval and Practical Dose Rounding",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The 24‑hour dose is split into 12‑hour intervals (≈664 mg per dose) and then rounded to the nearest standard vial size, yielding 750 mg IV every 12 hours.",
+        "evidence_quotes": [
+          {
+            "quote": "Divide daily dose into 12-hour intervals: 1328 / 2 = 664 mg q12h. Rounding to standard vial sizes yields Vancomycin 750 mg IV every 12 hours.",
+            "approx_start_sec": 36,
+            "approx_end_sec": 44
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Prediction of Expected AUC24 from Chosen Dose",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "Using the selected dose (750 mg q12h) and the previously calculated clearance, the expected AUC24 is computed as (dose × 2) / CL = 564.7 mg·h/L, confirming it lies within the therapeutic window.",
+        "evidence_quotes": [
+          {
+            "quote": "Expected AUC24 = (750 * 2) / 2.656 = 1500 / 2.656 = 564.7 mg*h/L, which falls strictly within the 400-600 therapeutic window.",
+            "approx_start_sec": 45,
+            "approx_end_sec": 53
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "4A": {
+    "segment_key": "4A",
+    "package_id": "dev_2a_04_signal_processing_fourier",
+    "header": "[Segment 4A - Diagnostic: DFT Parameter Roster]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Sampling interval (T_s)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Defined as the time duration between successive uniform samples, measured in seconds.",
+        "evidence_quotes": [
+          {
+            "quote": "First, sampling interval T_s: the time duration between successive uniform samples in seconds.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 4
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Sampling frequency (f_s)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Defined as the reciprocal of the sampling interval, measured in Hertz (samples per second).",
+        "evidence_quotes": [
+          {
+            "quote": "Second, sampling frequency f_s: defined as 1 over T_s, measured in Hertz or samples per second.",
+            "approx_start_sec": 4,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Transform length (N)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "An integer specifying the total number of discrete‑time samples evaluated in the DFT block.",
+        "evidence_quotes": [
+          {
+            "quote": "Third, transform length N: an integer specifying the total number of discrete time samples evaluated in the block.",
+            "approx_start_sec": 9,
+            "approx_end_sec": 14
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Observation window duration (T_0)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The total time spanned by the observation window, equal to N multiplied by the sampling interval T_s.",
+        "evidence_quotes": [
+          {
+            "quote": "Fourth, observation window duration T_0: which equals N multiplied by T_s.",
+            "approx_start_sec": 14,
+            "approx_end_sec": 18
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Discrete frequency bin spacing (Δf)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "Resolution between adjacent spectral lines, defined as f_s divided by N or equivalently 1 over T_0.",
+        "evidence_quotes": [
+          {
+            "quote": "Fifth, discrete frequency bin spacing Delta f: the resolution between adjacent spectral lines, defined as f_s divided by N, or 1 over T_0.",
+            "approx_start_sec": 18,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Discrete frequency index (k)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "An integer that runs from 0 up to N‑1, used to label each frequency bin.",
+        "evidence_quotes": [
+          {
+            "quote": "Sixth, discrete frequency index k: an integer running from 0 up to N minus 1.",
+            "approx_start_sec": 24,
+            "approx_end_sec": 28
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Fundamental relationships among DFT parameters",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "The lecture presented the algebraic links: f_s = 1/T_s, T_0 = N·T_s, and Δf = f_s/N = 1/T_0, establishing how each parameter derives from the others.",
+        "evidence_quotes": [
+          {
+            "quote": "Second, sampling frequency f_s: defined as 1 over T_s... Fourth, observation window duration T_0: which equals N multiplied by T_s... Fifth, discrete frequency bin spacing Delta f: ... defined as f_s divided by N, or 1 over T_0.",
+            "approx_start_sec": 4,
+            "approx_end_sec": 24
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "4B": {
+    "segment_key": "4B",
+    "package_id": "dev_2a_04_signal_processing_fourier",
+    "header": "[Segment 4B - Diagnostic: DFT Structural Primitives]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "DFT as an orthogonal linear transformation on \\(\\mathbb{C}^N\\)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The lecture states that the DFT is not merely a set of parameters but an orthogonal linear transformation acting on the complex vector space of dimension N.",
+        "evidence_quotes": [
+          {
+            "quote": "The DFT is not just a collection of parameter definitions; it is an orthogonal linear transformation on the vector space C^N.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 5
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Forward DFT equation",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The forward analysis maps the time‑domain sequence \\(x[n]\\) to frequency coefficients \\(X[k]\\) via a summation over \\(n\\) with the twiddle factor raised to \\(k n\\).",
+        "evidence_quotes": [
+          {
+            "quote": "X[k] equals the summation from n equals 0 to N minus 1 of x[n] times W_N to the power of (k times n)",
+            "approx_start_sec": 5,
+            "approx_end_sec": 10
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Twiddle factor primitive \\(W_N = e^{-j 2\\pi / N}\\)",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The basic complex exponential used in the DFT is defined as the twiddle factor \\(W_N\\).",
+        "evidence_quotes": [
+          {
+            "quote": "where W_N is the twiddle factor primitive defined as e to the power of minus j times 2 pi over N",
+            "approx_start_sec": 10,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Basis Function Matrix \\(W\\) – N×N Vandermonde matrix of orthogonal sinusoids",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Component 1 is the basis matrix, an N‑by‑N Vandermonde matrix whose columns are orthogonal discrete harmonic sinusoids.",
+        "evidence_quotes": [
+          {
+            "quote": "Component 1: The Basis Function Matrix W: an N by N Vandermonde matrix whose columns are orthogonal discrete harmonic sinusoids.",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Inner Product Projection Operator",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Component 2 projects the input vector onto the orthogonal basis vectors, effecting the inner‑product computation of the DFT.",
+        "evidence_quotes": [
+          {
+            "quote": "Component 2: The Inner Product Projection Operator: projecting the discrete input sequence vector x onto the orthogonal basis vectors.",
+            "approx_start_sec": 20,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Inverse Synthesis Operator",
+        "parent_id": "root",
+        "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+        "observed_summary": "Component 3 reconstructs the time‑domain signal by a scaled inverse summation using the conjugate twiddle factor.",
+        "evidence_quotes": [
+          {
+            "quote": "Component 3: The Inverse Synthesis Operator: x[n] equals 1 over N times the summation from k equals 0 to N minus 1 of X[k] times W_N to the power of minus (k times n), reconstructing the discrete time-domain signal as a linear superposition of orthogonal basis components.",
+            "approx_start_sec": 25,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Orthogonality of DFT basis vectors",
+        "parent_id": "root",
+        "epistemic_dimension": "JUSTIFICATION_WHY",
+        "observed_summary": "The lecture emphasizes that the columns of the basis matrix are orthogonal, which underpins the invertibility and energy‑preserving properties of the DFT.",
+        "evidence_quotes": [
+          {
+            "quote": "whose columns are orthogonal discrete harmonic sinusoids",
+            "approx_start_sec": 15,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "4C": {
+    "segment_key": "4C",
+    "package_id": "dev_2a_04_signal_processing_fourier",
+    "header": "[Segment 4C - Validation: FIR Filter Parameter Roster]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "Finite Impulse Response (FIR) lowpass filter",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduces the FIR lowpass filter as the type of digital filter being designed.",
+        "evidence_quotes": [
+          {
+            "quote": "when specifying a Finite Impulse Response (FIR) lowpass filter, engineers enumerate a parameter roster",
+            "approx_start_sec": 0,
+            "approx_end_sec": 4
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Filter length / order M (number of delay stages)",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "M is defined as the filter length or order, i.e., the number of delay stages in the FIR filter.",
+        "evidence_quotes": [
+          {
+            "quote": "Parameter 1: Filter length or order M: the number of delay stages in the filter.",
+            "approx_start_sec": 5,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Normalized passband edge frequency \\(\\omega_p\\)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "\\(\\omega_p\\) is the boundary of the passband expressed in radians per sample.",
+        "evidence_quotes": [
+          {
+            "quote": "Parameter 2: Normalized passband edge frequency omega_p: the boundary of the passband in radians per sample.",
+            "approx_start_sec": 10,
+            "approx_end_sec": 15
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Normalized stopband edge frequency \\(\\omega_s\\)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "\\(\\omega_s\\) marks where the required attenuation must begin, also expressed in radians per sample.",
+        "evidence_quotes": [
+          {
+            "quote": "Parameter 3: Normalized stopband edge frequency omega_s: where attenuation must be achieved.",
+            "approx_start_sec": 16,
+            "approx_end_sec": 20
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Transition bandwidth \\(\\Delta\\omega = \\omega_s - \\omega_p\\)",
+        "parent_id": "root",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The transition bandwidth is defined as the difference between the stopband and passband edge frequencies.",
+        "evidence_quotes": [
+          {
+            "quote": "Parameter 4: Transition bandwidth Delta omega: defined as omega_s minus omega_p.",
+            "approx_start_sec": 21,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Maximum passband ripple \\(\\delta_p\\)",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "\\(\\delta_p\\) specifies the allowable oscillation (ripple) within the passband.",
+        "evidence_quotes": [
+          {
+            "quote": "Parameter 5: Maximum passband ripple delta_p: allowable oscillation in the passband.",
+            "approx_start_sec": 26,
+            "approx_end_sec": 30
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "Minimum stopband attenuation \\(A_s = -20\\log_{10}(\\delta_s)\\) dB",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The required stopband attenuation is expressed in decibels as \\(-20\\log_{10}(\\delta_s)\\).",
+        "evidence_quotes": [
+          {
+            "quote": "Parameter 6: Minimum stopband attenuation A_s: expressed in decibels as minus 20 log10 of delta_s.",
+            "approx_start_sec": 31,
+            "approx_end_sec": 36
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "Parameter roster for FIR filter specification",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Engineers use a structured list of six parameters to capture the performance requirements of an FIR lowpass filter.",
+        "evidence_quotes": [
+          {
+            "quote": "engineers enumerate a parameter roster: Parameter 1 ... Parameter 6 ... These metrics define the filter's performance requirements.",
+            "approx_start_sec": 0,
+            "approx_end_sec": 40
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  },
+  "4D": {
+    "segment_key": "4D",
+    "package_id": "dev_2a_04_signal_processing_fourier",
+    "header": "[Segment 4D - Validation: FIR Filter Structural Signal Flow Graph Architecture]",
+    "concepts": [
+      {
+        "concept_id": "C01",
+        "name": "FIR filter difference equation",
+        "parent_id": "root",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "The lecture introduced the mathematical definition of the FIR filter as y[n] = Σ_{k=0}^{M} b_k·x[n‑k].",
+        "evidence_quotes": [
+          {
+            "quote": "The filter difference equation is y[n] equals the summation from k equals 0 to M of b_k times x[n minus k].",
+            "approx_start_sec": 0,
+            "approx_end_sec": 4
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C02",
+        "name": "Direct Form I structure",
+        "parent_id": "root",
+        "epistemic_dimension": "MEANING",
+        "observed_summary": "The FIR filter is implemented using a Direct Form I signal‑flow architecture composed of three primitive blocks.",
+        "evidence_quotes": [
+          {
+            "quote": "Architecturally, this consists of three physical primitive blocks connected in a Direct Form I structure:",
+            "approx_start_sec": 4,
+            "approx_end_sec": 7
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C03",
+        "name": "Tapped delay line primitive",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Primitive 1 is a tapped delay line made of M unit‑delay elements (z⁻¹) arranged in series, forming a sequential state register of past input samples.",
+        "evidence_quotes": [
+          {
+            "quote": "Primitive 1: A tapped delay line consisting of M unit-delay memory elements denoted by z^-1 connected in series, creating a sequential state register [x[n], x[n-1], ..., x[n-M]].",
+            "approx_start_sec": 7,
+            "approx_end_sec": 13
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C04",
+        "name": "Unit‑delay memory element (z⁻¹)",
+        "parent_id": "C03",
+        "epistemic_dimension": "IDENTIFICATION",
+        "observed_summary": "Each memory element is represented by the z⁻¹ operator, indicating a one‑sample delay.",
+        "evidence_quotes": [
+          {
+            "quote": "M unit-delay memory elements denoted by z^-1",
+            "approx_start_sec": 8,
+            "approx_end_sec": 9
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C05",
+        "name": "Sequential state register of delayed samples",
+        "parent_id": "C03",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "The series of unit‑delay elements stores the current and previous M input samples as a register vector.",
+        "evidence_quotes": [
+          {
+            "quote": "creating a sequential state register [x[n], x[n-1], ..., x[n-M]]",
+            "approx_start_sec": 10,
+            "approx_end_sec": 12
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C06",
+        "name": "Feedforward coefficient multiplier bank",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Primitive 2 is a bank of M+1 multiplier nodes that scale each tap of the delay line by its corresponding coefficient b_k.",
+        "evidence_quotes": [
+          {
+            "quote": "Primitive 2: A bank of M+1 feedforward coefficient multiplier nodes that scale each delayed tap by the constant filter tap weight b_k.",
+            "approx_start_sec": 13,
+            "approx_end_sec": 17
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C07",
+        "name": "M+1 feedforward multiplier nodes",
+        "parent_id": "C06",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "There are exactly M+1 multiplier units, one for each tap (including the zero‑delay tap), each performing a multiplication by b_k.",
+        "evidence_quotes": [
+          {
+            "quote": "M+1 feedforward coefficient multiplier nodes that scale each delayed tap by the constant filter tap weight b_k",
+            "approx_start_sec": 14,
+            "approx_end_sec": 16
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C08",
+        "name": "M‑input summation adder tree",
+        "parent_id": "C02",
+        "epistemic_dimension": "STRUCTURE_COMPONENTS",
+        "observed_summary": "Primitive 3 is an adder tree with M inputs that sums all scaled tap outputs to produce y[n].",
+        "evidence_quotes": [
+          {
+            "quote": "Primitive 3: An M-input summation adder tree that accumulates all scaled tap outputs simultaneously to produce the final output sample y[n].",
+            "approx_start_sec": 17,
+            "approx_end_sec": 21
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "concept_id": "C09",
+        "name": "Hardware pipeline registers, latency, and computational parallelism",
+        "parent_id": "root",
+        "epistemic_dimension": "APPLICATION_INTERPRETATION",
+        "observed_summary": "The described signal‑flow topology determines the number of pipeline registers, the processing latency, and the degree of parallel computation available on a digital signal processor.",
+        "evidence_quotes": [
+          {
+            "quote": "This signal flow topology dictates the hardware pipeline registers, latency, and computational parallelism of the digital signal processor.",
+            "approx_start_sec": 21,
+            "approx_end_sec": 25
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "annotator_id": "Annotator_B_Observational_Evaluator",
+  "annotation_timestamp": "2026-10-02T09:15:00Z",
+  "annotation_protocol": "Blind to model outputs and blind to normative ratings. Assessed independently.",
+  "packages": {
+    "pkg_11_physics_thermodynamics": {
+      "observed_levels": {
+        "IDENTIFICATION": 2,
+        "MEANING": 4,
+        "STRUCTURE_COMPONENTS": 5,
+        "RELATIONSHIPS_MECHANISM": 5,
+        "JUSTIFICATION_WHY": 5,
+        "APPLICATION_INTERPRETATION": 6,
+        "BOUNDARIES_EXCEPTIONS": 1,
+        "TRANSFER_SYNTHESIS": 0
+      }
+    },
+    "pkg_12_pharmacology_clearance": {
+      "observed_levels": {
+        "IDENTIFICATION": 2,
+        "MEANING": 4,
+        "STRUCTURE_COMPONENTS": 4,
+        "RELATIONSHIPS_MECHANISM": 4,
+        "JUSTIFICATION_WHY": 5,
+        "APPLICATION_INTERPRETATION": 6,
+        "BOUNDARIES_EXCEPTIONS": 1,
+        "TRANSFER_SYNTHESIS": 0
+      }
+    },
+    "pkg_13_logic_predicates": {
+      "observed_levels": {
+        "IDENTIFICATION": 2,
+        "MEANING": 4,
+        "STRUCTURE_COMPONENTS": 5,
+        "RELATIONSHIPS_MECHANISM": 5,
+        "JUSTIFICATION_WHY": 2,
+        "APPLICATION_INTERPRETATION": 6,
+        "BOUNDARIES_EXCEPTIONS": 1,
+        "TRANSFER_SYNTHESIS": 0
+      }
+    },
+    "pkg_14_signal_processing_fourier": {
+      "observed_levels": {
+        "IDENTIFICATION": 2,
+        "MEANING": 4,
+        "STRUCTURE_COMPONENTS": 5,
+        "RELATIONSHIPS_MECHANISM": 4,
+        "JUSTIFICATION_WHY": 3,
+        "APPLICATION_INTERPRETATION": 6,
+        "BOUNDARIES_EXCEPTIONS": 1,
+        "TRANSFER_SYNTHESIS": 0
+      }
+    }
+  }
+}

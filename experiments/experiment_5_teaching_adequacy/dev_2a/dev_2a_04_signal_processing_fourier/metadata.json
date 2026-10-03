@@ -1,0 +1,32 @@
+{
+  "package_id": "dev_2a_04_signal_processing_fourier",
+  "domain": "Electrical Engineering & Signal Processing",
+  "subject": "Discrete-Time Signals and Systems",
+  "topic": "Discrete Fourier Analysis: Parameter Lists vs. Structural Primitives",
+  "learner_level": "Undergraduate B.Tech Electrical / Telecommunications (Semester 4)",
+  "syllabus_context": "Unit IV: The Discrete Fourier Transform (DFT). Continuous-time to discrete-time sampling, Nyquist rate, N-point DFT mathematical structure, orthogonal basis functions, synthesis and analysis equations, and FIR filter structures.",
+  "declared_learning_objective": "State the discrete sampling parameters and frequency resolution equations, formulate the structural matrix definition of the N-point DFT, differentiate scalar parameter rosters from structural basis decompositions, and diagram signal flow graph architectures for discrete-time systems.",
+  "provenance": {
+    "mode": "DEVELOPMENT_DIAGNOSTIC_CORPUS_OPTION_B",
+    "source_type": "SYNTHETIC_PEDAGOGICAL_MICROLECTURE",
+    "institution": "Milestone v3.6 Diagnostic Investigation",
+    "access_date": "2026-10-02",
+    "license_or_usage_basis": "Internal Educational Research"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Equations and block diagram architecture rendered on lecture slides."
+  },
+  "predeclared_split": {
+    "diagnostic_segments": [
+      "segment_4A_dft_parameter_roster",
+      "segment_4B_dft_structural_primitives"
+    ],
+    "validation_segments": [
+      "segment_4C_fir_parameter_roster",
+      "segment_4D_fir_structural_signal_flow"
+    ]
+  }
+}

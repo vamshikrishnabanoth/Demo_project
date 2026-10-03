@@ -1,0 +1,9 @@
+{
+  "segment_key": "3A",
+  "package_id": "dev_3b_03_critical_care_infusions",
+  "domain": "03",
+  "topic": "Bedside Heuristic Vasopressor Titration Rule",
+  "split": "CHALLENGE",
+  "target_dimension": "APPLICATION_INTERPRETATION",
+  "target_threshold": 6
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "p5_1_profiles_heldout.json",
+    "sha256": "76ae225d67550034b12616624f9847d0baf019ee44a16593e8408f3faca88033"
+  },
+  {
+    "file": "p5_2a_concepts_heldout.json",
+    "sha256": "8ba59bc8a93687e22c55e5315ec7790fcd557bde63204abd730e9f7d94d276cb"
+  },
+  {
+    "file": "p5_2b_episodes_heldout.json",
+    "sha256": "5ee7256cc9e57cae30a3035155a9123d0b80e209a3481fcccd936462779f779a"
+  },
+  {
+    "file": "p5_3_diagnostic_matrix_heldout.json",
+    "sha256": "6dc47ba3b6f32c8898c1da50a1914859770a240396d737a732246fb9184909e7"
+  },
+  {
+    "file": "p5_3_evaluation_summary_heldout.json",
+    "sha256": "4e7e0f4e29f8a4adca0ddd2e9ba52c2de70a20790e3fb3d1e0a1d277f4bc9405"
+  }
+]

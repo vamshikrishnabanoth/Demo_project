@@ -1,0 +1,183 @@
+{
+  "annotator_id": "Annotator_B_Curriculum_Specialist",
+  "annotation_timestamp": "2026-10-02T08:15:00Z",
+  "annotation_protocol": "Blind to model outputs and blind to lecture transcripts. Rated independently.",
+  "packages": {
+    "pkg_11_physics_thermodynamics": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Heat engine components and reservoirs."
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Carnot principle and reversibility."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Four processes of Carnot cycle on P-V diagram."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "First Law energy balance and work calculation."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Proof that eta depends solely on T_H and T_C."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Solving heat engine cycle problems."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Irreversible cycles and Clausius theorem."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 2,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Refrigeration cycles."
+        }
+      }
+    },
+    "pkg_12_pharmacology_clearance": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "PK parameter names."
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "One-compartment model meaning."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Key parameters: Dose, Vd, CL, ke."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "How clearance relates to half-life."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Deriving concentration decay and half-life."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Patient case dosage calculation."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Zero-order saturation kinetics."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 2,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Multi-compartment kinetics outside single-lecture scope."
+        }
+      }
+    },
+    "pkg_13_logic_predicates": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "FOL primitives."
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Universal and existential quantifier semantics."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Model M = <D, I>."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Satisfaction under variable assignments."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Soundness proof of UI."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Translating sentences and model truth testing."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Empty domain limits."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 2,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "Higher-order logic extensions."
+        }
+      }
+    },
+    "pkg_14_signal_processing_fourier": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Signals and sampling frequency."
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Frequency decomposition concept."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "DFT formula and spectral resolution."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Sampling criterion to prevent aliasing."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Mathematical proof of sampling theorem."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Calculating 4-point DFT."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Anti-aliasing filter limits and spectral leakage."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 2,
+          "alignment": "PERMISSIBLE_SCOPE_OMISSION",
+          "rationale": "FFT algorithms."
+        }
+      }
+    }
+  }
+}

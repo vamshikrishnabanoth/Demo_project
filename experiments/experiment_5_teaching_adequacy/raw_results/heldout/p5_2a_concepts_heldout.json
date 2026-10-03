@@ -1,0 +1,433 @@
+{
+  "packages": {
+    "pkg_07_os_deadlocks": {
+      "package_id": "pkg_07_os_deadlocks",
+      "concept_hierarchy": {
+        "root": "Deadlock Characterization, Prevention, and Banker's Algorithm",
+        "children": [
+          {
+            "id": "L1_DeadlockFundamentals",
+            "name": "Deadlock Fundamentals",
+            "parent": "root",
+            "verbatim_evidence": [
+              "A deadlock occurs when a set of concurrent processes is permanently blocked because each process holds at least one resource and is waiting for another resource currently held by another process in that same set."
+            ],
+            "children": [
+              {
+                "id": "L2_DefDeadlock",
+                "name": "Definition of Deadlock",
+                "parent": "L1_DeadlockFundamentals",
+                "verbatim_evidence": [
+                  "A deadlock occurs when a set of concurrent processes is permanently blocked because each process holds at least one resource and is waiting for another resource currently held by another process in that same set."
+                ],
+                "children": []
+              },
+              {
+                "id": "L2_MutualExclusion",
+                "name": "Coffman Condition \u2013 Mutual Exclusion",
+                "parent": "L1_DeadlockFundamentals",
+                "verbatim_evidence": [
+                  "First, Mutual Exclusion: at least one resource must be non-shareable, meaning only one process can hold it at any given instant."
+                ],
+                "children": []
+              },
+              {
+                "id": "L2_HoldWait",
+                "name": "Coffman Condition \u2013 Hold and Wait",
+                "parent": "L1_DeadlockFundamentals",
+                "verbatim_evidence": [
+                  "Second, Hold and Wait: a process must currently hold at least one resource while waiting to acquire additional resources held by other processes."
+                ],
+                "children": []
+              },
+              {
+                "id": "L2_NoPreemption",
+                "name": "Coffman Condition \u2013 No Preemption",
+                "parent": "L1_DeadlockFundamentals",
+                "verbatim_evidence": [
+                  "Third, No Preemption: resources cannot be forcibly confiscated from a process; they can only be released voluntarily after the process completes its task."
+                ],
+                "children": []
+              },
+              {
+                "id": "L2_CircularWait",
+                "name": "Coffman Condition \u2013 Circular Wait",
+                "parent": "L1_DeadlockFundamentals",
+                "verbatim_evidence": [
+                  "Fourth, Circular Wait: there must exist a closed chain of processes P0, P1 through Pn, such that P0 is waiting for a resource held by P1, P1 is waiting for P2, and Pn is waiting for a resource held by P0."
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "L1_DeadlockPrevention",
+            "name": "Deadlock Prevention",
+            "parent": "root",
+            "verbatim_evidence": [
+              "Prevention works by designing resource-request protocols that invalidate at least one Coffman condition before the system runs."
+            ],
+            "children": [
+              {
+                "id": "L2_GlobalOrdering",
+                "name": "Global Resource Ordering to Break Circular Wait",
+                "parent": "L1_DeadlockPrevention",
+                "verbatim_evidence": [
+                  "to break Circular Wait, we assign a global integer ordering F(R) to all resources and mandate that processes can only request resources in strictly ascending numerical order.",
+                  "This prevents cycles, but it can severely degrade resource utilization."
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "L1_DeadlockAvoidance",
+            "name": "Deadlock Avoidance (Banker's Algorithm)",
+            "parent": "root",
+            "verbatim_evidence": [
+              "Deadlock Avoidance takes a dynamic approach. The operating system requires advance knowledge of the maximum resources each process will ever claim."
+            ],
+            "children": [
+              {
+                "id": "L2_SafeState",
+                "name": "Safe State Definition",
+                "parent": "L1_DeadlockAvoidance",
+                "verbatim_evidence": [
+                  "What is a Safe State? A state is safe if there exists a Safe Sequence <P0, P1, ..., Pn> of processes such that, for each process Pi, the maximum resources Pi may still request can be satisfied by the currently available resources plus the resources already held by all preceding processes Pj where j < i.",
+                  "An unsafe state is NOT necessarily a deadlock, but it carries the risk of transitioning into a deadlock."
+                ],
+                "children": []
+              },
+              {
+                "id": "L2_DataStructures",
+                "name": "Banker's Algorithm Core Data Structures",
+                "parent": "L1_DeadlockAvoidance",
+                "verbatim_evidence": [
+                  "1. Available: a vector of length m indicating the number of available instances of each resource type.",
+                  "2. Max: an n by m matrix where Max[i, j] defines the maximum demand of process Pi for resource Rj.",
+                  "3. Allocation: an n by m matrix where Allocation[i, j] defines the instances of Rj currently allocated to Pi.",
+                  "4. Need: an n by m matrix where Need[i, j] = Max[i, j] - Allocation[i, j], representing the remaining resources Pi may request."
+                ],
+                "children": []
+              },
+              {
+                "id": "L2_SafetyAlgorithm",
+                "name": "Safety Algorithm Execution Steps",
+                "parent": "L1_DeadlockAvoidance",
+                "verbatim_evidence": [
+                  "Step 1: Can P0 run? Need[0] is [7, 4, 3]. Is [7, 4, 3] <= Work [3, 3, 2]? No, 7 > 3. P0 must wait.",
+                  "Can P1 run? Need[1] is [1, 2, 2]. Is [1, 2, 2] <= Work [3, 3, 2]? Yes! 1 <= 3, 2 <= 3, 2 <= 2.",
+                  "Since no remaining process can finish, Finish has false values, and no complete safe sequence can be constructed. The system is in an UNSAFE state!"
+                ],
+                "children": []
+              },
+              {
+                "id": "L2_ResourceRequest",
+                "name": "Resource-Request Algorithm (Safety Test)",
+                "parent": "L1_DeadlockAvoidance",
+                "verbatim_evidence": [
+                  "When a process issues an immediate request, the Resource-Request algorithm simulates the allocation: if the resulting state is safe, the transaction commits; if unsafe, the process is made to wait and the state is rolled back."
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      "total_concepts": 3,
+      "execution_stats": {
+        "latency_ms": 6900,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_08_biochem_kinetics": {
+      "package_id": "pkg_08_biochem_kinetics",
+      "concept_hierarchy": {
+        "root": "Michaelis-Menten Enzyme Kinetics & Catalytic Regulation",
+        "children": [
+          {
+            "id": "C1",
+            "name": "Fundamentals of Enzyme Catalysis",
+            "parent": "root",
+            "verbatim_evidence": [
+              "Enzymes are specialized biological catalysts that accelerate chemical reactions by dramatically lowering the activation energy without being consumed in the process."
+            ],
+            "children": [
+              {
+                "id": "C1.1",
+                "name": "Enzyme as catalyst lowering activation energy",
+                "parent": "C1",
+                "verbatim_evidence": [
+                  "Enzymes are specialized biological catalysts that accelerate chemical reactions by dramatically lowering the activation energy without being consumed in the process."
+                ],
+                "children": []
+              },
+              {
+                "id": "C1.2",
+                "name": "Substrate binding to active site forming ES complex",
+                "parent": "C1",
+                "verbatim_evidence": [
+                  "The reacting molecule is the Substrate (S), which binds reversibly to the enzyme's Active Site (E) to form an Enzyme-Substrate complex (ES)..."
+                ],
+                "children": []
+              },
+              {
+                "id": "C1.3",
+                "name": "Reaction scheme E + S \u21cc ES \u2192 E + P",
+                "parent": "C1",
+                "verbatim_evidence": [
+                  "We write the general reaction scheme as: E + S <=(k1, k-1)=> ES --(k2)--> E + P"
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "C2",
+            "name": "Quasi\u2011Steady\u2011State Derivation of the Michaelis\u2011Menten Equation",
+            "parent": "root",
+            "verbatim_evidence": [
+              "In 1925, Briggs and Haldane introduced the Quasi-Steady-State Assumption. They realized that after a brief transient phase, the concentration of the intermediate ES complex remains essentially constant over time: d[ES]/dt = 0."
+            ],
+            "children": [
+              {
+                "id": "C2.1",
+                "name": "Quasi\u2011Steady\u2011State Assumption (d[ES]/dt = 0)",
+                "parent": "C2",
+                "verbatim_evidence": [
+                  "In 1925, Briggs and Haldane introduced the Quasi-Steady-State Assumption. ... d[ES]/dt = 0."
+                ],
+                "children": []
+              },
+              {
+                "id": "C2.2",
+                "name": "Formation and breakdown rates of ES",
+                "parent": "C2",
+                "verbatim_evidence": [
+                  "The rate of ES formation from free enzyme and substrate is k1 * [E] * [S]. The rate of ES breakdown has two routes: reverting to E + S via k-1, or forming product via k2. So breakdown rate is (k-1 + k2) * [ES]."
+                ],
+                "children": []
+              },
+              {
+                "id": "C2.3",
+                "name": "Definition of Michaelis constant Km",
+                "parent": "C2",
+                "verbatim_evidence": [
+                  "Let us define the Michaelis constant, Km: Km = (k-1 + k2) / k1."
+                ],
+                "children": []
+              },
+              {
+                "id": "C2.4",
+                "name": "Expression for [ES] in terms of [S] and Km",
+                "parent": "C2",
+                "verbatim_evidence": [
+                  "Therefore, the concentration of the active complex is: [ES] = [E_total] * [S] / (Km + [S])."
+                ],
+                "children": []
+              },
+              {
+                "id": "C2.5",
+                "name": "Derivation of v\u2080 = (Vmax [S])/(Km + [S])",
+                "parent": "C2",
+                "verbatim_evidence": [
+                  "Since the rate of product formation is v0 = k2 * [ES], and the maximum possible velocity occurs when all enzyme is bound (Vmax = k2 * [E_total]), we multiply by k2 to obtain the Michaelis-Menten equation: v0 = (Vmax * [S]) / (Km + [S])."
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "C3",
+            "name": "Physical Meaning of Km and Vmax",
+            "parent": "root",
+            "verbatim_evidence": [
+              "Km is precisely the substrate concentration at which the reaction velocity is half of its maximum value!"
+            ],
+            "children": [
+              {
+                "id": "C3.1",
+                "name": "Km as substrate concentration at half\u2011Vmax",
+                "parent": "C3",
+                "verbatim_evidence": [
+                  "If we set [S] equal to Km in the equation: ... v0 = Vmax / 2. Km is precisely the substrate concentration at which the reaction velocity is half of its maximum value!"
+                ],
+                "children": []
+              },
+              {
+                "id": "C3.2",
+                "name": "Low Km indicates high substrate affinity",
+                "parent": "C3",
+                "verbatim_evidence": [
+                  "An enzyme with a low Km requires very little substrate to achieve half-maximal velocity, indicating high affinity for its substrate."
+                ],
+                "children": []
+              },
+              {
+                "id": "C3.3",
+                "name": "Vmax definition (Vmax = k2 [E_total])",
+                "parent": "C3",
+                "verbatim_evidence": [
+                  "the maximum possible velocity occurs when all enzyme is bound (Vmax = k2 * [E_total])"
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      "total_concepts": 3,
+      "execution_stats": {
+        "latency_ms": 6841,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_09_discrete_math_trees": {
+      "package_id": "pkg_09_discrete_math_trees",
+      "concept_hierarchy": {
+        "root": "Minimum Spanning Tree (MST) Theory and Kruskal's Algorithm",
+        "children": [
+          {
+            "id": "C01",
+            "name": "Spanning Tree and Minimum Spanning Tree Definitions",
+            "parent": "root",
+            "verbatim_evidence": [
+              "A spanning tree T = (V, E_T) of G is a subgraph that contains all vertices V of G, is connected, and contains no cycles."
+            ],
+            "children": [
+              {
+                "id": "C01_1",
+                "name": "Spanning tree edge count property",
+                "parent": "C01",
+                "verbatim_evidence": [
+                  "For a graph with |V| = n vertices, every spanning tree possesses exactly n - 1 edges."
+                ],
+                "children": []
+              },
+              {
+                "id": "C01_2",
+                "name": "Minimum spanning tree objective",
+                "parent": "C01",
+                "verbatim_evidence": [
+                  "The Minimum Spanning Tree is a spanning tree whose total edge weight W(T) = sum of w(e) for all e in E_T is minimized."
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "C02",
+            "name": "Cut Property Theorem",
+            "parent": "root",
+            "verbatim_evidence": [
+              "The Cut Property states: For any cut (S, V \\ S) in G, if edge e* is a strictly minimum-weight edge crossing the cut, then e* must belong to every minimum spanning tree of G."
+            ],
+            "children": [
+              {
+                "id": "C02_1",
+                "name": "Definition of a cut",
+                "parent": "C02",
+                "verbatim_evidence": [
+                  "Let us define a cut (S, V \\ S) as a partition of the vertex set V into two disjoint, non-empty subsets S and V \\ S."
+                ],
+                "children": []
+              },
+              {
+                "id": "C02_2",
+                "name": "Crossing edge definition",
+                "parent": "C02",
+                "verbatim_evidence": [
+                  "An edge e = (u, v) crosses the cut if one endpoint u lies in S and the other endpoint v lies in V \\ S."
+                ],
+                "children": []
+              },
+              {
+                "id": "C02_3",
+                "name": "Proof via exchange argument",
+                "parent": "C02",
+                "verbatim_evidence": [
+                  "Because e* is strictly cheaper than any other crossing edge, w(e*) < w(e'), which implies W(T') < W(T). But this contradicts our assumption that T was minimal!"
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      "total_concepts": 2,
+      "execution_stats": {
+        "latency_ms": 5025,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_10_microecon_game_theory": {
+      "package_id": "pkg_10_microecon_game_theory",
+      "concept_hierarchy": {
+        "root": "Strategic Form Games, Dominance Solvability, and Pure Nash Equilibrium",
+        "children": [
+          {
+            "id": "C01",
+            "name": "Strategic Form Game Foundations",
+            "parent": "root",
+            "verbatim_evidence": [
+              "A strategic form game consists of three essential primitives:"
+            ],
+            "children": [
+              {
+                "id": "C01_1",
+                "name": "Players and Strategy Sets",
+                "parent": "C01",
+                "verbatim_evidence": [
+                  "A finite set of players N = {1, 2, ..., n}."
+                ],
+                "children": []
+              },
+              {
+                "id": "C01_2",
+                "name": "Payoff Functions and Strategy Profiles",
+                "parent": "C01",
+                "verbatim_evidence": [
+                  "For each player i, a payoff function u_i: S -> R, which assigns a real-valued utility to every strategy profile s = (s_1, s_2, ..., s_n)."
+                ],
+                "children": []
+              },
+              {
+                "id": "C01_3",
+                "name": "Bi\u2011matrix Representation for Two\u2011Player Games",
+                "parent": "C01",
+                "verbatim_evidence": [
+                  "In a standard two-player game, we represent this using a bi-matrix where player 1 chooses the row and player 2 chooses the column."
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "C02",
+            "name": "Strict Dominance and Iterated Elimination (IESDS)",
+            "parent": "root",
+            "verbatim_evidence": [
+              "Let us define Strict Dominance."
+            ],
+            "children": [
+              {
+                "id": "C02_1",
+                "name": "Definition of Strict Dominance",
+                "parent": "C02",
+                "verbatim_evidence": [
+                  "A strategy s_i' is strictly dominated for player i if there exists another strategy s_i'' in S_i such that: u_i(s_i'', s_{-i}) > u_i(s_i', s_{-i}) for all possible strategy profiles s_{-i} of the opposing players."
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      "total_concepts": 2,
+      "execution_stats": {
+        "latency_ms": 5109,
+        "model": "openai/gpt-oss-120b"
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "segment_key": "2A",
+  "package_id": "dev_3a_02_renal_pharmacokinetics",
+  "title": "Algebraic Mass-Balance Clearance Derivation",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "text": "Renal clearance is derived from the fundamental principle of mass conservation across the kidney. Under steady-state conditions, the rate of drug entering the renal artery equals the rate of drug exiting through the renal vein plus the rate of drug excreted in the urine. The urinary excretion rate is defined as the product of urine concentration C-u and urine flow rate V. By definition, renal clearance CL-R represents the virtual volume of plasma cleared of drug per unit time. Therefore, the rate of drug clearance from plasma, which is CL-R multiplied by plasma concentration C-p, must equal the urinary excretion rate: CL-R times C-p equals C-u times V. Dividing both sides algebraically by plasma concentration C-p yields the standard clearance formula: CL-R equals C-u times V divided by C-p. This algebraic derivation proves that renal clearance is directly proportional to urinary excretion and inversely proportional to plasma concentration under linear kinetics.",
+  "duration_seconds": 40
+}

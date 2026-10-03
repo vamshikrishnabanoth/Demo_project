@@ -1,0 +1,228 @@
+{
+  "packages": {
+    "pkg_07_os_deadlocks": {
+      "package_id": "pkg_07_os_deadlocks",
+      "episodes": [
+        {
+          "start": 0,
+          "end": 65,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Definition of Deadlock",
+          "revisitation": false
+        },
+        {
+          "start": 65,
+          "end": 140,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Coffman Conditions",
+          "revisitation": false
+        },
+        {
+          "start": 140,
+          "end": 210,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Deadlock Handling Paradigms",
+          "revisitation": false
+        },
+        {
+          "start": 210,
+          "end": 290,
+          "intellectual_activity": "FORMALIZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Banker's Algorithm Core Data Structures",
+          "revisitation": false
+        },
+        {
+          "start": 290,
+          "end": 410,
+          "intellectual_activity": "EXECUTE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Safety Algorithm Execution Steps",
+          "revisitation": true
+        },
+        {
+          "start": 410,
+          "end": 470,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Resource-Request Algorithm (Safety Test)",
+          "revisitation": true
+        }
+      ],
+      "total_episodes": 6,
+      "execution_stats": {
+        "latency_ms": 3345,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_08_biochem_kinetics": {
+      "package_id": "pkg_08_biochem_kinetics",
+      "episodes": [
+        {
+          "start": 0,
+          "end": 60,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Fundamentals of Enzyme Catalysis (C1)",
+          "revisitation": false
+        },
+        {
+          "start": 60,
+          "end": 120,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Substrate\u2011velocity relationship (hyperbolic saturation)",
+          "revisitation": false
+        },
+        {
+          "start": 120,
+          "end": 240,
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Quasi\u2011Steady\u2011State Derivation of Michaelis\u2011Menten (C2)",
+          "revisitation": false
+        },
+        {
+          "start": 240,
+          "end": 310,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Physical Meaning of Km and Vmax (C3)",
+          "revisitation": false
+        },
+        {
+          "start": 310,
+          "end": 410,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Lineweaver\u2011Burk analysis & inhibition types",
+          "revisitation": true
+        },
+        {
+          "start": 410,
+          "end": 460,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Scope limitation (omitted allosteric & Hill equation)",
+          "revisitation": false
+        }
+      ],
+      "total_episodes": 6,
+      "execution_stats": {
+        "latency_ms": 19820,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_09_discrete_math_trees": {
+      "package_id": "pkg_09_discrete_math_trees",
+      "episodes": [
+        {
+          "start": 0,
+          "end": 70,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Spanning Tree and Minimum Spanning Tree Definitions",
+          "revisitation": false
+        },
+        {
+          "start": 70,
+          "end": 165,
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Cut Property Theorem",
+          "revisitation": false
+        },
+        {
+          "start": 165,
+          "end": 260,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Kruskal's Algorithm",
+          "revisitation": true
+        },
+        {
+          "start": 260,
+          "end": 390,
+          "intellectual_activity": "EXECUTE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Kruskal's Algorithm Execution",
+          "revisitation": true
+        },
+        {
+          "start": 390,
+          "end": 440,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Kruskal vs Prim Comparison",
+          "revisitation": false
+        },
+        {
+          "start": 440,
+          "end": 495,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Scope Limitations",
+          "revisitation": false
+        }
+      ],
+      "total_episodes": 6,
+      "execution_stats": {
+        "latency_ms": 2526,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_10_microecon_game_theory": {
+      "package_id": "pkg_10_microecon_game_theory",
+      "episodes": [
+        {
+          "start": 0,
+          "end": 65,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Strategic Form Game Foundations",
+          "revisitation": false
+        },
+        {
+          "start": 65,
+          "end": 155,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Strict Dominance and Iterated Elimination (IESDS)",
+          "revisitation": false
+        },
+        {
+          "start": 155,
+          "end": 240,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Nash Equilibrium",
+          "revisitation": false
+        },
+        {
+          "start": 240,
+          "end": 415,
+          "intellectual_activity": "EXECUTE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Prisoner's Dilemma",
+          "revisitation": false
+        },
+        {
+          "start": 415,
+          "end": 485,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Scope Limitations",
+          "revisitation": false
+        }
+      ],
+      "total_episodes": 5,
+      "execution_stats": {
+        "latency_ms": 2522,
+        "model": "openai/gpt-oss-120b"
+      }
+    }
+  }
+}

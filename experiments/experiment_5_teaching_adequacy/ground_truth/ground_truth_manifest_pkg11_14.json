@@ -1,0 +1,66 @@
+[
+  {
+    "artifact": "benchmark_corpus/pkg_11_physics_thermodynamics/metadata.json",
+    "sha256": "47118ba9a596e09d84c788acb66230f5ec9b9c3e4db7fc673954814f55734488"
+  },
+  {
+    "artifact": "benchmark_corpus/pkg_11_physics_thermodynamics/transcript.json",
+    "sha256": "ebf46a7baac4262ee4064a7360d78df653956ccb30508c4b795eb84c58124298"
+  },
+  {
+    "artifact": "benchmark_corpus/pkg_12_pharmacology_clearance/metadata.json",
+    "sha256": "151d6a3da2c9c20e471cfb360077b3846e246d7d2df19eb2962dbca214472185"
+  },
+  {
+    "artifact": "benchmark_corpus/pkg_12_pharmacology_clearance/transcript.json",
+    "sha256": "e28366eca1e925f1fc4bcd12ca8b389155d0bbd8f9dc8a3b132b1206664ee8b4"
+  },
+  {
+    "artifact": "benchmark_corpus/pkg_13_logic_predicates/metadata.json",
+    "sha256": "158c8851609120a143b5681f4a26fbff380b0b545ff83a5ce5353cf1d9341e5c"
+  },
+  {
+    "artifact": "benchmark_corpus/pkg_13_logic_predicates/transcript.json",
+    "sha256": "63a7fae2dca4a390bab30f9e87d8da3f9c5d044c519d5a6e3e222669a27197b0"
+  },
+  {
+    "artifact": "benchmark_corpus/pkg_14_signal_processing_fourier/metadata.json",
+    "sha256": "b27c7c29ecc0d761243a20a1e02408bdac2c2c7ff78833ed88812bb4f9e2d4f1"
+  },
+  {
+    "artifact": "benchmark_corpus/pkg_14_signal_processing_fourier/transcript.json",
+    "sha256": "b60efd270cbe3647c14521373b3b3d80fc521b21f6ba1e554b7d7f2284b78c4b"
+  },
+  {
+    "artifact": "ground_truth/normative/annotator_A_normative_pkg11_14.json",
+    "sha256": "9557248522e5bd6395a0a8ceff98f923da67a266cb458953955db2c219f90713"
+  },
+  {
+    "artifact": "ground_truth/normative/annotator_B_normative_pkg11_14.json",
+    "sha256": "443bdcb09f99a4d1eb733acd4e837980c208f695e811d205ec4aa30d527ecfcc"
+  },
+  {
+    "artifact": "ground_truth/normative/normative_reference_profiles_pkg11_14.json",
+    "sha256": "756614695767e27f53d0d2335b977f73412f701b59058c74eb18b73cd45adbac"
+  },
+  {
+    "artifact": "ground_truth/observational/annotator_A_observational_pkg11_14.json",
+    "sha256": "eeab9a4a8b66fcfc3e829b63161f336daf2ee3defdd6c70696cf7da92dd3155d"
+  },
+  {
+    "artifact": "ground_truth/observational/annotator_B_observational_pkg11_14.json",
+    "sha256": "7fc52942b46a33f3089a7b479338ff174f5e4295f5c1f970d785a6d590f57a3a"
+  },
+  {
+    "artifact": "ground_truth/observational/observational_reference_evidence_pkg11_14.json",
+    "sha256": "637a4f6fa004873c36eed31a5192c1509a45ac8b777b6940e7db112ce8af3847"
+  },
+  {
+    "artifact": "runner/p5_3_coverage_gap_analyzer.js",
+    "sha256": "0884d2923fc5581a2e0e193c285e98acc646e9ea282a09db67238e4541bee9ee"
+  },
+  {
+    "artifact": "benchmark_corpus/corpus_verification_manifest.json",
+    "sha256": "a1f76a9b2f4f95df0b52444b52bbdc329370e09efc1c7e961a2bbf41755dae12"
+  }
+]

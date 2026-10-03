@@ -1,0 +1,947 @@
+{
+  "adjudication_timestamp": "2026-10-01T15:15:00Z",
+  "lead_adjudicator": "Consensus Panel (Annotator A & Annotator B)",
+  "packages": {
+    "pkg_07_os_deadlocks": {
+      "topic": "Deadlock Characterization, Prevention, and Banker's Algorithm",
+      "concept_hierarchy": {
+        "root": "Operating Systems Deadlocks & Avoidance",
+        "children": [
+          {
+            "id": "C01",
+            "name": "Deadlock Characterization & Coffman Conditions",
+            "parent": "root",
+            "children": [
+              "C01_1",
+              "C01_2"
+            ]
+          },
+          {
+            "id": "C01_1",
+            "name": "Resource Competition & Permanent Blocking Definition",
+            "parent": "C01",
+            "children": []
+          },
+          {
+            "id": "C01_2",
+            "name": "Four Coffman Conditions (Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait)",
+            "parent": "C01",
+            "children": []
+          },
+          {
+            "id": "C02",
+            "name": "Deadlock Handling Paradigms",
+            "parent": "root",
+            "children": [
+              "C02_1",
+              "C02_2"
+            ]
+          },
+          {
+            "id": "C02_1",
+            "name": "Deadlock Prevention via Ascending Resource Ordering F(R)",
+            "parent": "C02",
+            "children": []
+          },
+          {
+            "id": "C02_2",
+            "name": "Deadlock Avoidance & Safe State Invariant",
+            "parent": "C02",
+            "children": []
+          },
+          {
+            "id": "C03",
+            "name": "Dijkstra's Banker's Algorithm Structures",
+            "parent": "root",
+            "children": [
+              "C03_1"
+            ]
+          },
+          {
+            "id": "C03_1",
+            "name": "Available, Max, Allocation, and Need Matrices",
+            "parent": "C03",
+            "children": []
+          },
+          {
+            "id": "C04",
+            "name": "Safety Algorithm Execution & Trace",
+            "parent": "root",
+            "children": [
+              "C04_1"
+            ]
+          },
+          {
+            "id": "C04_1",
+            "name": "Numerical 3-Process Safety Test Revealing Unsafe State",
+            "parent": "C04",
+            "children": []
+          },
+          {
+            "id": "C05",
+            "name": "Omitted Detection & Recovery Scope",
+            "parent": "root",
+            "children": [
+              "C05_1"
+            ]
+          },
+          {
+            "id": "C05_1",
+            "name": "Wait-for Graphs & Checkpoint Rollback (Skipped)",
+            "parent": "C05",
+            "children": []
+          }
+        ]
+      },
+      "episodes": [
+        {
+          "start": 0,
+          "end": 65,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Deadlock definition & resource competition",
+          "revisitation": false
+        },
+        {
+          "start": 65,
+          "end": 140,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "The four Coffman conditions",
+          "revisitation": false
+        },
+        {
+          "start": 140,
+          "end": 210,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Prevention vs Avoidance & Safe State concept",
+          "revisitation": false
+        },
+        {
+          "start": 210,
+          "end": 290,
+          "intellectual_activity": "FORMALIZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Banker data structures & Need calculation",
+          "revisitation": false
+        },
+        {
+          "start": 290,
+          "end": 410,
+          "intellectual_activity": "EXECUTE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Numerical trace discovering unsafe state",
+          "revisitation": false
+        },
+        {
+          "start": 410,
+          "end": 470,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Scope notice: omission of detection graphs & recovery",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "A deadlock occurs when a set of concurrent processes is permanently blocked because each process holds at least one resource and is waiting for another resource."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Four simultaneous conditions\u2014known as the Coffman conditions\u2014must hold: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "evidence": "Data structures for n processes and m resource types: Available, Max, Allocation, Need matrix where Need[i,j] = Max[i,j] - Allocation[i,j]."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Safe sequence <P0, ..., Pn> definition: Work = Available, Work = Work + Allocation[i] when Need[i] <= Work."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 3,
+          "evidence": "Brief mention of ordering F(R) breaking circular wait but degrading utilization; missing deep mathematical justification of three-way trade-offs against detection/recovery."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "Full worked numerical trace on 3 processes P0, P1, P2 and 3 resources A, B, C; step-by-step vector subtractions proving unsafe state."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 2,
+          "evidence": "Lecturer explicitly stated: we will not be covering cycle-detection algorithms or checkpoint-rollback recovery strategies in this session due to time."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 0,
+          "evidence": "Distributed deadlock detection and consensus not discussed in lecture."
+        }
+      },
+      "diagnostic_coverage_matrix": {
+        "IDENTIFICATION": {
+          "expected": 2,
+          "observed": 2,
+          "status": "COVERED",
+          "diagnosis": "Deadlock condition and resource contention formally defined."
+        },
+        "MEANING": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "Four Coffman conditions articulated and explained thoroughly."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Banker's Algorithm matrices (Available, Max, Allocation, Need) formalized."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Safe sequence invariant and dynamic Work vector updates demonstrated."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected": 5,
+          "observed": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Three-way trade-offs between prevention, avoidance, and recovery only briefly mentioned without formal proof or comparative analysis."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Complete step-by-step numerical execution trace discovering unsafe state."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected": 5,
+          "observed": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Detection and recovery mechanisms (wait-for graphs, victim rollback) explicitly omitted due to time."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected": 3,
+          "observed": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "diagnosis": "Distributed deadlock mechanisms are non-mandatory extension outside today's single-node OS scope."
+        }
+      },
+      "actionable_gaps": [
+        "JUSTIFICATION_WHY",
+        "BOUNDARIES_EXCEPTIONS"
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS"
+      ]
+    },
+    "pkg_08_biochem_kinetics": {
+      "topic": "Michaelis-Menten Enzyme Kinetics and Lineweaver-Burk Analysis",
+      "concept_hierarchy": {
+        "root": "Enzyme Kinetics & Catalytic Mechanisms",
+        "children": [
+          {
+            "id": "C01",
+            "name": "Enzymatic Reaction Fundamentals",
+            "parent": "root",
+            "children": [
+              "C01_1"
+            ]
+          },
+          {
+            "id": "C01_1",
+            "name": "E + S <-> ES -> E + P Kinetic Model",
+            "parent": "C01",
+            "children": []
+          },
+          {
+            "id": "C02",
+            "name": "Briggs-Haldane Steady-State Derivation",
+            "parent": "root",
+            "children": [
+              "C02_1",
+              "C02_2"
+            ]
+          },
+          {
+            "id": "C02_1",
+            "name": "Quasi-Steady-State Invariant d[ES]/dt = 0",
+            "parent": "C02",
+            "children": []
+          },
+          {
+            "id": "C02_2",
+            "name": "Derivation of v0 = (Vmax[S]) / (Km + [S])",
+            "parent": "C02",
+            "children": []
+          },
+          {
+            "id": "C03",
+            "name": "Kinetic Parameters",
+            "parent": "root",
+            "children": [
+              "C03_1",
+              "C03_2"
+            ]
+          },
+          {
+            "id": "C03_1",
+            "name": "Vmax Limiting Saturation Velocity",
+            "parent": "C03",
+            "children": []
+          },
+          {
+            "id": "C03_2",
+            "name": "Km Michaelis Constant & Affinity Interpretation",
+            "parent": "C03",
+            "children": []
+          },
+          {
+            "id": "C04",
+            "name": "Lineweaver-Burk Double Reciprocal Analysis",
+            "parent": "root",
+            "children": [
+              "C04_1",
+              "C04_2"
+            ]
+          },
+          {
+            "id": "C04_1",
+            "name": "Linearization: 1/v0 = (Km/Vmax)(1/[S]) + 1/Vmax",
+            "parent": "C04",
+            "children": []
+          },
+          {
+            "id": "C04_2",
+            "name": "Competitive vs Non-Competitive Inhibition Diagnosis",
+            "parent": "C04",
+            "children": []
+          },
+          {
+            "id": "C05",
+            "name": "Omitted Allosteric Cooperativity",
+            "parent": "root",
+            "children": [
+              "C05_1"
+            ]
+          },
+          {
+            "id": "C05_1",
+            "name": "Sigmoidal Hill Equation Regulation (Postponed)",
+            "parent": "C05",
+            "children": []
+          }
+        ]
+      },
+      "episodes": [
+        {
+          "start": 0,
+          "end": 60,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Enzymatic reaction model E + S <-> ES -> E + P",
+          "revisitation": false
+        },
+        {
+          "start": 60,
+          "end": 175,
+          "intellectual_activity": "DERIVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Briggs-Haldane steady-state derivation of v0 equation",
+          "revisitation": false
+        },
+        {
+          "start": 175,
+          "end": 255,
+          "intellectual_activity": "INTERPRET",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Meaning of Vmax and Km affinity index",
+          "revisitation": false
+        },
+        {
+          "start": 255,
+          "end": 390,
+          "intellectual_activity": "FORMALIZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Lineweaver-Burk double reciprocal plot & inhibition comparison",
+          "revisitation": false
+        },
+        {
+          "start": 390,
+          "end": 460,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Scope limitation: Allosteric cooperativity and Hill equation postponed",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Enzyme, substrate, intermediate enzyme-substrate complex [ES], and product formation defined."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Vmax explained as asymptotic limit where all enzyme active sites are occupied; Km explained as substrate concentration at half-Vmax reflecting affinity."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "evidence": "Rate constants k1, k-1, k2; enzyme balance [E]t = [E] + [ES]; steady state assumption d[ES]/dt = 0."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Full mathematical derivation yielding v0 = (Vmax[S]) / (Km + [S])."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "Biochemical justification: why steady state holds when [S] >> [E] and why initial velocity prevents reverse reaction."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "Double reciprocal Lineweaver-Burk equation derived; competitive (same y-intercept, altered x-intercept) vs non-competitive (altered y-intercept, same x-intercept) contrasted."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 1,
+          "evidence": "Lecturer explicitly stated: we will not be discussing allosteric enzymes or non-hyperbolic sigmoidal Hill curves today; those are postponed to next week."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 0,
+          "evidence": "Metabolic pathway flux control and pharmacokinetic applications not taught."
+        }
+      },
+      "diagnostic_coverage_matrix": {
+        "IDENTIFICATION": {
+          "expected": 2,
+          "observed": 2,
+          "status": "COVERED",
+          "diagnosis": "Enzymatic primitives and velocity parameters formally identified."
+        },
+        "MEANING": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "Vmax and Km kinetic meanings articulated and explained."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Briggs-Haldane kinetic equations and conservation laws structured."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Hyperbolic velocity relationship mathematically derived."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Steady-state assumption biophysically justified."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Lineweaver-Burk double reciprocal analysis applied to competitive vs non-competitive inhibition."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected": 4,
+          "observed": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Allosteric cooperativity and sigmoidal Hill regulation explicitly postponed to next week."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected": 3,
+          "observed": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "diagnosis": "Pharmacokinetic clearance and in vivo metabolic flux are optional extensions."
+        }
+      },
+      "actionable_gaps": [
+        "BOUNDARIES_EXCEPTIONS"
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS"
+      ]
+    },
+    "pkg_09_discrete_math_trees": {
+      "topic": "Spanning Trees, Cut Property, and Kruskal's Algorithm with DSU",
+      "concept_hierarchy": {
+        "root": "Minimum Spanning Trees & Graph Algorithms",
+        "children": [
+          {
+            "id": "C01",
+            "name": "Spanning Tree Fundamentals",
+            "parent": "root",
+            "children": [
+              "C01_1",
+              "C01_2"
+            ]
+          },
+          {
+            "id": "C01_1",
+            "name": "Connected Undirected Subgraphs & |V|-1 Edge Property",
+            "parent": "C01",
+            "children": []
+          },
+          {
+            "id": "C01_2",
+            "name": "Minimum Spanning Tree Total Weight Minimization",
+            "parent": "C01",
+            "children": []
+          },
+          {
+            "id": "C02",
+            "name": "The Cut Property Theorem",
+            "parent": "root",
+            "children": [
+              "C02_1",
+              "C02_2"
+            ]
+          },
+          {
+            "id": "C02_1",
+            "name": "Cut Partition (S, V\\S) & Crossing Edges",
+            "parent": "C02",
+            "children": []
+          },
+          {
+            "id": "C02_2",
+            "name": "Exchange Argument Proof by Contradiction",
+            "parent": "C02",
+            "children": []
+          },
+          {
+            "id": "C03",
+            "name": "Kruskal's Greedy Algorithm Design",
+            "parent": "root",
+            "children": [
+              "C03_1",
+              "C03_2"
+            ]
+          },
+          {
+            "id": "C03_1",
+            "name": "Non-Decreasing Edge Sorting & Greedy Selection",
+            "parent": "C03",
+            "children": []
+          },
+          {
+            "id": "C03_2",
+            "name": "Disjoint Set Union (DSU) Find/Union with Path Compression",
+            "parent": "C03",
+            "children": []
+          },
+          {
+            "id": "C04",
+            "name": "Numerical Trace on 5-Node Graph",
+            "parent": "root",
+            "children": [
+              "C04_1"
+            ]
+          },
+          {
+            "id": "C04_1",
+            "name": "Step-by-Step Cycle Rejection & Termination",
+            "parent": "C04",
+            "children": []
+          },
+          {
+            "id": "C05",
+            "name": "Omitted Disconnected Forests & Directed Arborescences",
+            "parent": "root",
+            "children": [
+              "C05_1"
+            ]
+          },
+          {
+            "id": "C05_1",
+            "name": "Minimum Spanning Forests & Negative Weights (Skipped)",
+            "parent": "C05",
+            "children": []
+          }
+        ]
+      },
+      "episodes": [
+        {
+          "start": 0,
+          "end": 70,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Spanning tree definition and |V|-1 edges",
+          "revisitation": false
+        },
+        {
+          "start": 70,
+          "end": 165,
+          "intellectual_activity": "PROVE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Cut property theorem and exchange argument proof",
+          "revisitation": false
+        },
+        {
+          "start": 165,
+          "end": 260,
+          "intellectual_activity": "FORMALIZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Kruskal algorithm & DSU data structure",
+          "revisitation": false
+        },
+        {
+          "start": 260,
+          "end": 390,
+          "intellectual_activity": "EXECUTE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Step-by-step trace on 5-vertex graph",
+          "revisitation": false
+        },
+        {
+          "start": 390,
+          "end": 440,
+          "intellectual_activity": "COMPARE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Kruskal vs Prim algorithm comparison",
+          "revisitation": false
+        },
+        {
+          "start": 440,
+          "end": 495,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Scope limitation: Disconnected graphs and negative weights omitted",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Let G = (V, E) be a connected, undirected graph with positive real edge weights. A spanning tree T is an acyclic connected subgraph containing all vertices, with |V|-1 edges."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Minimum Spanning Tree minimizes total edge weight sum w(e)."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "evidence": "Cut (S, V\\S), crossing edges, DSU Find(u), Union(u,v) with union-by-rank and path compression, O(m log m) complexity."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Cycle prevention: Find(u) == Find(v) detects cycles; Find(u) != Find(v) triggers edge addition and union."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 6,
+          "evidence": "Rigorous cut-and-paste exchange argument proving that strictly minimum crossing edge must belong to every MST by contradiction."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "Step-by-step trace on 5 vertices A, B, C, D, E; 7 sorted edges evaluated; edges (B,D) and (A,C) discarded to avoid cycles; total weight = 10."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 2,
+          "evidence": "Lecturer explicitly stated: we are completely skipping disconnected forests, negative edge weights, and directed branchings today due to time constraints."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 0,
+          "evidence": "Euclidean TSP approximation via MST doubling not discussed in lecture."
+        }
+      },
+      "diagnostic_coverage_matrix": {
+        "IDENTIFICATION": {
+          "expected": 2,
+          "observed": 2,
+          "status": "COVERED",
+          "diagnosis": "Spanning tree and graph primitives formally identified."
+        },
+        "MEANING": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "MST optimization concept articulated."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Cut definitions and DSU data structures formalized."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Greedy cycle prevention mechanism demonstrated."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Cut Property theorem proved with rigorous exchange argument."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Worked Kruskal trace on 5 nodes executed."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected": 4,
+          "observed": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Disconnected graphs (spanning forests), negative weights, and directed graphs explicitly skipped."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected": 3,
+          "observed": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "diagnosis": "TSP heuristics and Steiner trees are optional extensions."
+        }
+      },
+      "actionable_gaps": [
+        "BOUNDARIES_EXCEPTIONS"
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS"
+      ]
+    },
+    "pkg_10_microecon_game_theory": {
+      "topic": "Strategic Form Games, Dominance Solvability, and Pure Nash Equilibrium",
+      "concept_hierarchy": {
+        "root": "Strategic Form Game Theory",
+        "children": [
+          {
+            "id": "C01",
+            "name": "Strategic Form Primitives",
+            "parent": "root",
+            "children": [
+              "C01_1",
+              "C01_2"
+            ]
+          },
+          {
+            "id": "C01_1",
+            "name": "Players N, Strategy Sets Si, Payoff Functions ui",
+            "parent": "C01",
+            "children": []
+          },
+          {
+            "id": "C01_2",
+            "name": "Bi-Matrix Representation of Two-Player Games",
+            "parent": "C01",
+            "children": []
+          },
+          {
+            "id": "C02",
+            "name": "Strict Dominance & IESDS",
+            "parent": "root",
+            "children": [
+              "C02_1",
+              "C02_2"
+            ]
+          },
+          {
+            "id": "C02_1",
+            "name": "Strict Dominance Inequality: ui(s'', s_-i) > ui(s', s_-i)",
+            "parent": "C02",
+            "children": []
+          },
+          {
+            "id": "C02_2",
+            "name": "Iterated Elimination of Strictly Dominated Strategies",
+            "parent": "C02",
+            "children": []
+          },
+          {
+            "id": "C03",
+            "name": "Pure Nash Equilibrium",
+            "parent": "root",
+            "children": [
+              "C03_1",
+              "C03_2"
+            ]
+          },
+          {
+            "id": "C03_1",
+            "name": "Mutual Best Responses & No Profitable Unilateral Deviation",
+            "parent": "C03",
+            "children": []
+          },
+          {
+            "id": "C03_2",
+            "name": "Underline Method for Finding Pure Equilibria",
+            "parent": "C03",
+            "children": []
+          },
+          {
+            "id": "C04",
+            "name": "Prisoner's Dilemma Analysis",
+            "parent": "root",
+            "children": [
+              "C04_1",
+              "C04_2"
+            ]
+          },
+          {
+            "id": "C04_1",
+            "name": "Dominant Strategy Calculation: (Defect, Defect)",
+            "parent": "C04",
+            "children": []
+          },
+          {
+            "id": "C04_2",
+            "name": "Pareto Inefficiency Proof: (1,1) vs (3,3)",
+            "parent": "C04",
+            "children": []
+          },
+          {
+            "id": "C05",
+            "name": "Omitted Mixed Strategies & Coordination Games",
+            "parent": "root",
+            "children": [
+              "C05_1"
+            ]
+          },
+          {
+            "id": "C05_1",
+            "name": "Mixed Strategy Randomization & Stag Hunt (Postponed)",
+            "parent": "C05",
+            "children": []
+          }
+        ]
+      },
+      "episodes": [
+        {
+          "start": 0,
+          "end": 65,
+          "intellectual_activity": "EXPLAIN",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Primitives of strategic form games and bi-matrix",
+          "revisitation": false
+        },
+        {
+          "start": 65,
+          "end": 155,
+          "intellectual_activity": "FORMALIZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Strict dominance definition & IESDS elimination",
+          "revisitation": false
+        },
+        {
+          "start": 155,
+          "end": 240,
+          "intellectual_activity": "FORMALIZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Nash equilibrium & best-response underline method",
+          "revisitation": false
+        },
+        {
+          "start": 240,
+          "end": 415,
+          "intellectual_activity": "ANALYZE",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Prisoner's Dilemma: dominant strategy & Pareto inefficiency",
+          "revisitation": false
+        },
+        {
+          "start": 415,
+          "end": 485,
+          "intellectual_activity": "LIMIT",
+          "interaction_mode": "LECTURE_MONOLOGUE",
+          "dominant_concept": "Scope limitation: Coordination games & mixed strategies postponed",
+          "revisitation": false
+        }
+      ],
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Strategic form game primitives: finite player set N = {1,...,n}, pure strategy set Si, and payoff function ui: S -> R."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Strict dominance defined with strict inequality for all opponent profiles; Nash equilibrium defined as mutual best responses."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "evidence": "Bi-matrix structure with payoff pairs (u1, u2); IESDS iterative elimination algorithm."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Best-response underline method: row player max underlined per column, column player max per row."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 6,
+          "evidence": "Theoretical proof of Pareto suboptimality: individual rational dominance leads to (1,1) which is strictly inferior to (3,3)."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "Full worked payoff matrix solution of Prisoner's Dilemma showing Defect dominates Cooperate."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 1,
+          "evidence": "Lecturer explicitly stated: we will NOT be discussing mixed strategies, expected utility with probabilities, or focal points in coordination games today; postponed to next week."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "evidence": "Verbal mention that game theory applies to environmental pollution and arms races, but no formal modeling."
+        }
+      },
+      "diagnostic_coverage_matrix": {
+        "IDENTIFICATION": {
+          "expected": 2,
+          "observed": 2,
+          "status": "COVERED",
+          "diagnosis": "Strategic game primitives formally identified."
+        },
+        "MEANING": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "Strict dominance and Nash equilibrium concepts articulated."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Bi-matrix representation and IESDS procedure formalized."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Best-response correspondence and underline method demonstrated."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Pareto suboptimality rigorously justified."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Prisoner's Dilemma matrix solved via dominant strategy analysis."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected": 5,
+          "observed": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Coordination games with multiple equilibria and mixed strategies explicitly postponed."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected": 3,
+          "observed": 1,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "diagnosis": "Cournot competition and pollution modeling are optional real-world extensions."
+        }
+      },
+      "actionable_gaps": [
+        "BOUNDARIES_EXCEPTIONS"
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS"
+      ]
+    }
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "component": "P5.1 Normative Expected Depth (dev_3b Challenge Corpus)",
+  "packages": {
+    "dev_3b_01_discrete_probability": {
+      "topic": "Discrete Probability Spaces, Axiomatic Bounds, and Model Valuations",
+      "declared_objective": "State Kolmogorov axioms, distinguish syntactic inequality bounds from explicit sample space model valuations, evaluate partition event probabilities over discrete universes, and analyze conditional independence.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED"
+        }
+      }
+    },
+    "dev_3b_02_renal_pharmacokinetics": {
+      "topic": "Renal Clearance Kinetics, Mass-Balance Filtration, and Tubular Transport Mechanisms",
+      "declared_objective": "Calculate renal drug clearance, derive mass-balance filtration equation, distinguish formal algebraic formulas from active cellular transport mechanisms in the nephron, and evaluate capacity-limited secretion.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED"
+        }
+      }
+    },
+    "dev_3b_03_critical_care_infusions": {
+      "topic": "Continuous Vasoactive Infusion Kinetics, Dilution Mathematics, and Dynamic Titration Traces",
+      "declared_objective": "Calculate intravenous solution dilutions, execute multi-step weight-based continuous infusion dosing, distinguish bedside heuristics from stepwise arithmetic traces, and model MAP response titration.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED"
+        }
+      }
+    },
+    "dev_3b_04_fft_pipelined_radix2": {
+      "topic": "Pipelined Radix-2 FFT Architectures, Hardware Butterfly Primitives, and Datapath Realization",
+      "declared_objective": "Specify pipelined FFT hardware constraints, distinguish parameter rosters from concrete digital logic primitives, analyze decimation-in-time butterfly datapaths, and evaluate commutator buffering.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "alignment": "REQUIRED"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "RECOMMENDED"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "segment_key": "4A",
+  "package_id": "dev_3b_04_fft_pipelined_radix2",
+  "title": "Pipelined Radix-2 FFT Hardware Specification Parameters",
+  "split": "CHALLENGE",
+  "target_dimension": "STRUCTURE_COMPONENTS",
+  "text": "When designing a pipelined fast Fourier transform processor for wireless digital signal processing, the engineering specification establishes the macro-level operational parameters. First, the block transform length N is specified as 1024 complex points, requiring exactly log-2 of N, or 10 sequential processing stages. Second, the system master clock is constrained to 125 megahertz, targeting a sustained processing throughput of 125 megasamples per second with an overall transform latency budget below 10 microseconds. Third, internal arithmetic precision requires a fixed-point wordlength of 16 bits for real components and 16 bits for imaginary components to preserve dynamic range. Fourth, the twiddle factor coefficients are quantized to 16 bits, guaranteeing a peak spurious-free dynamic range exceeding 85 decibels. Fifth, the input-output interface adheres to standard AXI-4 Stream handshaking with valid-ready signaling. These formal numerical constraints define the external specification bounds of the FFT core without specifying internal datapath architectures, butterfly registers, or commutator memories.",
+  "duration_seconds": 38
+}

@@ -1,0 +1,9 @@
+{
+  "segment_key": "2B",
+  "package_id": "dev_3b_02_renal_pharmacokinetics",
+  "title": "Glomerular Filtration Barrier and Transmembrane Active Secretion Biology",
+  "split": "CHALLENGE",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "text": "To understand why renal clearance values often substantially exceed the glomerular filtration rate, we must examine the cellular transport biology of the nephron. While passive glomerular filtration through podocyte slit diaphragms is physically constrained by 30-nanometer fenestrations and negative basement membrane charges, active tubular secretion in the proximal convoluted tubule utilizes specialized carrier proteins. On the basolateral membrane facing the peritubular capillary plexus, organic anion transporters OAT1 and OAT3 actively capture anionic drug molecules from circulation against steep concentration gradients. This transport is coupled to tertiary counter-transport with dicarboxylate alpha-ketoglutarate, sustained by basolateral sodium-potassium ATPase pumps. Following intracellular transcellular transit through the tubule cytoplasm, the drug is extruded into the tubular lumen across the apical brush-border membrane by ATP-dependent cassette pumps, specifically MRP2, MRP4, and breast cancer resistance protein BCRP. This active carrier-mediated machinery strips protein-bound drug fractions from blood, providing the physiological causal mechanism for renal drug elimination exceeding GFR.",
+  "duration_seconds": 40
+}

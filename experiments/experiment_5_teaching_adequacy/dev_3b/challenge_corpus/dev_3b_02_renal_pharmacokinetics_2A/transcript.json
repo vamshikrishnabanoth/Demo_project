@@ -1,0 +1,9 @@
+{
+  "segment_key": "2A",
+  "package_id": "dev_3b_02_renal_pharmacokinetics",
+  "title": "Steady-State Renal Mass Conservation and Clearance Derivation",
+  "split": "CHALLENGE",
+  "target_dimension": "JUSTIFICATION_WHY",
+  "text": "Renal clearance represents the virtual volume of arterial plasma completely cleared of drug per unit of time by the kidney. To establish the mathematical justification for clearance formulas, we apply the physical principle of mass conservation across the renal vasculature under steady-state conditions. In a closed biological system, the rate of drug entering the kidney via the renal artery must equal the rate of drug leaving via the renal vein plus the rate of drug excreted into the urinary collecting duct. The mass excretion rate in urine equals urinary drug concentration C-u multiplied by urinary volumetric flow rate V. At steady-state plasma equilibrium, the rate of drug presentation cleared from plasma is defined as renal clearance CL-R multiplied by arterial plasma concentration C-p. Equating the plasma clearance rate to the urinary excretion rate yields the fundamental mass-balance equality: CL-R times C-p equals C-u times V. Dividing both sides algebraically by plasma concentration C-p produces the canonical clearance equation: CL-R equals C-u times V divided by C-p under linear kinetics.",
+  "duration_seconds": 40
+}

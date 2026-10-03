@@ -1,0 +1,32 @@
+{
+  "lecture_id": "lecture_pharmacokinetics_clearance",
+  "total_duration_seconds": 465,
+  "raw_transcript": "Good afternoon, class. Today we cover quantitative clinical pharmacokinetics: specifically, how drugs distribute and clear from the human body following an intravenous bolus.\n\nTo model drug disposition mathematically, we use compartment models. The simplest model is the One-Compartment Open Model. In this model, the body is treated as a single, well-mixed kinetic container of volume V_d. When an intravenous bolus dose D is administered, the drug instantaneously dissolves and uniformly distributes throughout this volume, producing an initial peak plasma concentration C_0.\n\nLet us define the fundamental parameters governing this system:\n1. Dose (D): the total amount of active drug injected directly into the systemic circulation, typically in milligrams.\n2. Initial Concentration (C_0): the hypothetical drug concentration immediately after complete distribution, measured in milligrams per liter.\n3. Apparent Volume of Distribution (V_d): defined as the proportionality factor relating the total amount of drug in the body to the measured plasma concentration: V_d equals Dose divided by C_0. It does not necessarily represent a true anatomical fluid volume, but rather the apparent volume required to account for all drug at the concentration measured in plasma. A highly lipid-soluble drug that binds tissue proteins will exhibit an enormous V_d, sometimes exceeding hundreds of liters.\n4. Elimination Rate Constant (k_e): the fraction of drug removed from the body per unit time, with units of inverse hours (hr^-1).\n5. Total Systemic Clearance (CL): the volume of blood or plasma completely cleared of drug per unit time, usually expressed in liters per hour (L/hr).\n6. Elimination Half-Life (t_1/2): the time required for the plasma concentration to decrease by exactly 50%.\n\nNow, let us derive the governing differential equation.\nAssuming first-order elimination kinetics, the rate of drug elimination is directly proportional to the amount of drug remaining in the body: dC/dt equals minus k_e times C.\nSeparating variables: dC over C equals minus k_e dt.\nIntegrating both sides from time zero (where C = C_0) to time t: natural log of C(t) minus natural log of C_0 equals minus k_e times t.\nExponentiating both sides yields the classical exponential decay equation: C(t) equals C_0 times e to the power of minus k_e times t.\nOn a semi-logarithmic plot, log of C versus t forms a straight line with slope equal to minus k_e over 2.303.\n\nFrom this equation, we derive the elimination half-life.\nAt time t equals t_1/2, the concentration is exactly half the initial concentration: C(t_1/2) equals 0.5 times C_0.\nSubstitute this in: 0.5 C_0 equals C_0 times e to the minus k_e times t_1/2.\nDividing by C_0: 0.5 equals e to the minus k_e times t_1/2.\nTaking the natural logarithm: ln(0.5) equals minus k_e times t_1/2.\nSince ln(0.5) is minus 0.693, we get: minus 0.693 equals minus k_e times t_1/2, or:\nt_1/2 equals 0.693 divided by k_e.\nFurthermore, because Clearance is the rate of elimination divided by concentration, CL equals (k_e * Amount) / (Amount / V_d), giving the essential physiological bridge:\nClearance equals k_e times V_d.\nNotice that half-life is a hybrid parameter: it depends directly on both Clearance and Volume of Distribution.\n\nLet us apply these formulas to a clinical patient scenario.\nA 70-kilogram patient receives a single IV bolus of 500 milligrams of an antibiotic. Plasma concentration measured immediately after distribution is C_0 equals 25 milligrams per liter.\nStep 1: Calculate the apparent Volume of Distribution.\nV_d equals Dose divided by C_0 equals 500 mg divided by 25 mg/L equals 20 Liters.\nStep 2: Subsequent blood sampling shows that the elimination rate constant k_e is 0.1 per hour.\nWhat is the patient's systemic clearance?\nCL equals k_e times V_d equals 0.1 hr^-1 times 20 L equals 2.0 Liters per hour.\nStep 3: What is the drug's elimination half-life?\nt_1/2 equals 0.693 divided by k_e equals 0.693 divided by 0.1 equals 6.93 hours.\nStep 4: What will the plasma drug concentration be after 12 hours?\nC(12) equals C_0 times e^(-k_e * 12) equals 25 times e^(-0.1 * 12) equals 25 times e^(-1.2) equals 25 times 0.301 equals 7.53 milligrams per liter.\n\nNow, observe that our entire derivation and worked example are based strictly on linear, first-order kinetics. In the syllabus, you will see a requirement to analyze non-linear, capacity-limited elimination where hepatic metabolic enzymes become saturated, such as in high-dose phenytoin or ethanol overdoses. Under saturation kinetics, the clearance is not constant, and elimination follows the Michaelis-Menten rate law dC/dt = -(V_max * C) / (K_m + C). However, because of time constraints today, we will not cover capacity-limited saturation kinetics or overdose calculations in this lecture; that will be treated in advanced toxicokinetics next month.\nAlso, note that in clinical reality, many drugs exhibit multi-compartmental kinetics with an initial distribution alpha-phase before the terminal elimination beta-phase. We have simplified this to a single compartment today. Be sure you know the V_d, CL, and half-life formulas for tomorrow's quiz.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 60,
+      "text": "Introduction to pharmacokinetic modeling. One-compartment open model concept and IV bolus assumptions."
+    },
+    {
+      "start": 60,
+      "end": 150,
+      "text": "Definitions: Dose D, initial concentration C_0, Volume of Distribution V_d = Dose/C_0, elimination rate k_e, clearance CL, half-life t_1/2."
+    },
+    {
+      "start": 150,
+      "end": 250,
+      "text": "Derivations: First-order differential decay dC/dt = -k_e*C yielding C(t) = C_0*e^(-k_e*t). Deriving half-life t_1/2 = 0.693/k_e and CL = k_e*V_d."
+    },
+    {
+      "start": 250,
+      "end": 380,
+      "text": "Clinical numerical case: 500mg IV dose, C_0=25mg/L, k_e=0.1/hr. Calculating V_d=20L, CL=2L/hr, t_1/2=6.93hr, C(12)=7.53mg/L."
+    },
+    {
+      "start": 380,
+      "end": 465,
+      "text": "Limitations: Omitting non-linear Michaelis-Menten saturation kinetics (phenytoin/overdose) and multi-compartment alpha/beta distribution due to time constraints."
+    }
+  ]
+}

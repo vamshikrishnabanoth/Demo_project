@@ -1,0 +1,9 @@
+{
+  "segment_key": "4A",
+  "package_id": "dev_3b_04_fft_pipelined_radix2",
+  "domain": "04",
+  "topic": "Pipelined Radix-2 FFT Hardware Specification Parameters",
+  "split": "CHALLENGE",
+  "target_dimension": "STRUCTURE_COMPONENTS",
+  "target_threshold": 5
+}

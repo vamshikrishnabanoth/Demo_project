@@ -1,0 +1,9 @@
+{
+  "segment_key": "3B",
+  "package_id": "dev_3a_03_critical_care_infusions",
+  "title": "Stepwise 5-Step Continuous Infusion Calculation Trace",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "APPLICATION_INTERPRETATION",
+  "text": "Let us execute a complete, rigorous five-step calculation trace to program an electronic smart pump for a 70 kg patient requiring 0.10 micrograms per kilogram per minute of norepinephrine. Step 1: calculate the total mass delivery rate per minute by multiplying the weight-based dose by patient weight: 0.10 micrograms per kilogram per minute times 70 kilograms equals exactly 7.0 micrograms per minute. Step 2: convert the minute delivery rate to an hourly mass rate: 7.0 micrograms per minute times 60 minutes per hour equals 420.0 micrograms per hour, which equals 0.420 milligrams per hour. Step 3: calculate the solution drug concentration: the bag contains 4.0 milligrams in 250.0 millilitres, yielding 4.0 divided by 250.0, which equals 0.0160 milligrams per millilitre (or 16.0 micrograms per millilitre). Step 4: calculate the volumetric smart pump delivery rate in millilitres per hour: divide the required hourly mass rate of 0.420 milligrams per hour by the solution concentration of 0.0160 milligrams per millilitre, yielding exactly 26.25 millilitres per hour. Step 5: program the infusion pump to 26.3 millilitres per hour and set a dynamic titration protocol: if mean arterial pressure remains below 65 mmHg after 10 minutes, titrate upward by 0.02 micrograms per kilogram per minute (corresponding to an incremental 5.25 millilitres per hour). This rigorous five-step trace provides full mathematical execution.",
+  "duration_seconds": 40
+}

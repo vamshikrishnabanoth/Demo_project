@@ -1,0 +1,9 @@
+{
+  "segment_key": "4B",
+  "package_id": "dev_3a_04_signal_processing_structures",
+  "title": "Radix-2 Butterfly Datapath Hardware Primitives",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "STRUCTURE_COMPONENTS",
+  "text": "The spatial hardware realization of a Radix-2 decimation-in-time FFT processor is built from explicit physical constituent primitives arranged in a pipelined signal flow graph. At each stage, the core processing element consists of a dual-operand complex butterfly arithmetic unit. The upper datapath primitive incorporates a 16-bit complex dual-adder that sums input sample A with the scaled twiddle-multiplied input B. The lower datapath primitive incorporates a matched 16-bit complex subtractor generating A minus W times B. The complex multiplier array is instantiated using four dedicated DSP hardware slices: two multipliers compute the real cross-products X-r times W-r and X-i times W-i feeding an adder, while two multipliers compute the imaginary cross-products feeding a second adder. Connecting the stages are synchronous dual-ported ping-pong RAM buffers and shift-register delay FIFOs of length N divided by two to align the phase of paired samples. This complete structural blueprint details the interconnected hardware registers, adders, and multiplier blocks.",
+  "duration_seconds": 40
+}

@@ -1,0 +1,157 @@
+{
+  "document": "dev_2b_adjudication_summary.json",
+  "milestone": "Milestone v3.6 Phase 7 Track 1: Challenge Set Adjudication Summary",
+  "rubric_version": "1.1.0-frozen",
+  "sample_size": 8,
+  "pre_adjudication_metrics": {
+    "exact_depth_concordance": "7 / 8",
+    "exact_depth_concordance_pct": 87.5,
+    "boundary_decision_agreement": "8 / 8",
+    "boundary_decision_agreement_pct": 100.0,
+    "cohens_kappa_exact_depth": 0.8431,
+    "contingency_table": {
+      "2": {
+        "2": 1,
+        "3": 1,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "3": {
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      },
+      "4": {
+        "2": 0,
+        "3": 0,
+        "4": 2,
+        "5": 0,
+        "6": 0
+      },
+      "5": {
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 2,
+        "6": 0
+      },
+      "6": {
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 1
+      }
+    },
+    "marginal_distributions": {
+      "annotator_A": {
+        "2": 0.25,
+        "3": 0.125,
+        "4": 0.25,
+        "5": 0.25,
+        "6": 0.125
+      },
+      "annotator_B": {
+        "2": 0.125,
+        "3": 0.25,
+        "4": 0.25,
+        "5": 0.25,
+        "6": 0.125
+      }
+    }
+  },
+  "qualitative_disagreements": [
+    {
+      "segment_key": "1A",
+      "segment_id": "segment_1A_syntactic_property_recitation",
+      "package_id": "dev_2b_01_set_theory_relations",
+      "dimension": "MEANING",
+      "annotator_A_depth": 2,
+      "annotator_B_depth": 3,
+      "annotator_A_rationale": "Recites the axiomatic algebraic definitions of reflexivity, symmetry, and transitivity. It presents algebraic criteria and mechanical formula checking without defining a concrete universe of discourse, domain elements, equivalence classes, or model truth conditions. Under Rubric v1.1.0, this is Level 2 TERMINOLOGY_DEFINITIONS_SYNTAX.",
+      "annotator_B_rationale": "States the algebraic axioms of an equivalence relation and introduces a mechanical procedural rule of verification against propositional definitions. While it references verification procedures (Level 3 procedural step), it contains no universe of discourse, partition models, or element truth valuations. Meets boundary verdict FALLS_SHORT_OF_LEVEL_4_SEMANTICS.",
+      "adjudication_decision": {
+        "adjudicated_depth": 2,
+        "operational_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "rationale": "Annotator A noted axiomatic rewrite property recitation (Level 2); Annotator B noted the procedural verification checking rule (Level 3). Both raters concurred 100% on the boundary decision (FALLS_SHORT_OF_LEVEL_4_SEMANTICS). Under Rubric v1.1.0 Section 2.2, mechanical procedural instructions devoid of domain elements or model valuations remain constrained to Level 2. Adjudicated at Level 2."
+      }
+    }
+  ],
+  "adjudicated_reference_profiles": {
+    "1A": {
+      "package_id": "dev_2b_01_set_theory_relations",
+      "segment_id": "segment_1A_syntactic_property_recitation",
+      "target_dimension": "MEANING",
+      "adjudicated_depth": 2,
+      "operational_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+      "adjudication_rationale": "Axiomatic recitation of reflexivity, symmetry, and transitivity without universe elements or valuations. Constrained to Level 2.",
+      "pre_adjudication_divergence": true
+    },
+    "1B": {
+      "package_id": "dev_2b_01_set_theory_relations",
+      "segment_id": "segment_1B_concrete_domain_partition_model",
+      "target_dimension": "MEANING",
+      "adjudicated_depth": 4,
+      "operational_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+      "adjudication_rationale": "Full concordance: Concrete partition model over S={a,b,c,d} with truth valuations for equivalence classes satisfies Level 4 Semantic Models.",
+      "pre_adjudication_divergence": false
+    },
+    "2A": {
+      "package_id": "dev_2b_02_hepatic_metabolism",
+      "segment_id": "segment_2A_algebraic_kinetic_derivation",
+      "target_dimension": "JUSTIFICATION_WHY",
+      "adjudicated_depth": 4,
+      "operational_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "adjudication_rationale": "Full concordance: Algebraic clearance derivation CL_H = f_e * k_el * V_d is capped at Level 4 FORMAL_MATHEMATICAL_IDENTITY; provides zero tissue/cellular transport mechanism.",
+      "pre_adjudication_divergence": false
+    },
+    "2B": {
+      "package_id": "dev_2b_02_hepatic_metabolism",
+      "segment_id": "segment_2B_microsomal_enzyme_kinetics",
+      "target_dimension": "JUSTIFICATION_WHY",
+      "adjudicated_depth": 5,
+      "operational_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+      "adjudication_rationale": "Full concordance: Sinusoidal blood perfusion, OATP1B1 transporter influx, and CYP3A4 microsomal kinetics satisfy Level 5 Causal Biological Mechanism.",
+      "pre_adjudication_divergence": false
+    },
+    "3A": {
+      "package_id": "dev_2b_03_aminoglycoside_dosing",
+      "segment_id": "segment_3A_bedside_conversational_estimation",
+      "target_dimension": "APPLICATION_INTERPRETATION",
+      "adjudicated_depth": 3,
+      "operational_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "adjudication_rationale": "Full concordance: Conversational bedside mental math and heuristic interval stretching capped at Level 3 INFORMAL_CLINICAL_ESTIMATION.",
+      "pre_adjudication_divergence": false
+    },
+    "3B": {
+      "package_id": "dev_2b_03_aminoglycoside_dosing",
+      "segment_id": "segment_3B_stepwise_hartford_nomogram_trace",
+      "target_dimension": "APPLICATION_INTERPRETATION",
+      "adjudicated_depth": 6,
+      "operational_verdict": "SATISFIES_LEVEL_6_TRACE",
+      "adjudication_rationale": "Full concordance: Chained 6-step calculation trace (weight adjustment, Cockcroft-Gault, vial rounding, Hartford nomogram) satisfies Level 6 Rigorous Stepwise Execution Trace.",
+      "pre_adjudication_divergence": false
+    },
+    "4A": {
+      "package_id": "dev_2b_04_iir_filter_realization",
+      "segment_id": "segment_4A_iir_specification_parameter_roster",
+      "target_dimension": "STRUCTURE_COMPONENTS",
+      "adjudicated_depth": 2,
+      "operational_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+      "adjudication_rationale": "Full concordance: Itemized roster of 6 scalar specification parameters and design bounds capped at Level 2 PARAMETER_SPECIFICATION_ROSTER.",
+      "pre_adjudication_divergence": false
+    },
+    "4B": {
+      "package_id": "dev_2b_04_iir_filter_realization",
+      "segment_id": "segment_4B_direct_form_ii_hardware_flow",
+      "target_dimension": "STRUCTURE_COMPONENTS",
+      "adjudicated_depth": 5,
+      "operational_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+      "adjudication_rationale": "Full concordance: Direct Form II canonical hardware signal flow graph primitives (z^-1 registers, multipliers, adder tree) satisfy Level 5 Architectural Constituent Primitives.",
+      "pre_adjudication_divergence": false
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "document": "dev_2b_track1_manifest.json",
+  "milestone": "Milestone v3.6 Phase 7 Track 1: Human Reliability Manifest",
+  "version": "1.0.0-frozen",
+  "timestamp": "2026-10-02T20:30:00Z",
+  "files_count": 3,
+  "artifacts": {
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\annotator_A_dev2b_challenge.json": {
+      "size_bytes": 8253,
+      "sha256": "535a2ca065f616d80b21ba20c226cdc30f9fc5d5d309adde7fb02a254f279f88"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\annotator_B_dev2b_challenge.json": {
+      "size_bytes": 8254,
+      "sha256": "cdc8c28c6e467edd282c95321531cc8c45ffe014a57810da67ffb563d98c27ae"
+    },
+    "experiments\\experiment_5_teaching_adequacy\\dev_2b\\dev_2b_adjudication_summary.json": {
+      "size_bytes": 7145,
+      "sha256": "344d8b2efe1672a45419cae8eed524d0f339015cbed8ff1402f3ff1f936d8e14"
+    }
+  }
+}

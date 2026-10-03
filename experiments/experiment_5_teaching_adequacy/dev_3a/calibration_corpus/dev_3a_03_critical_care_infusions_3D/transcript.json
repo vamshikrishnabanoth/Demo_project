@@ -1,0 +1,9 @@
+{
+  "segment_key": "3D",
+  "package_id": "dev_3a_03_critical_care_infusions",
+  "title": "Stepwise Dopamine Renal-to-Inotropic Titration Trace",
+  "split": "VALIDATION",
+  "target_dimension": "APPLICATION_INTERPRETATION",
+  "text": "We will now trace the complete five-step mathematical calculation required to escalate a continuous dopamine infusion from a renal dose of 3.0 micrograms per kilogram per minute to an inotropic dose of 7.5 micrograms per kilogram per minute for a 60 kilogram patient, using an 800 microgram per millilitre bag. Step 1: calculate the initial renal mass rate: 3.0 micrograms per kilogram per minute times 60 kilograms equals 180 micrograms per minute. Step 2: convert to hourly volume rate: 180 micrograms per minute times 60 minutes equals 10,800 micrograms per hour; dividing by the bag concentration of 800 micrograms per millilitre gives an initial rate of 13.5 millilitres per hour. Step 3: calculate the escalated inotropic mass rate: 7.5 micrograms per kilogram per minute times 60 kilograms equals 450 micrograms per minute. Step 4: calculate the target hourly volume rate: 450 micrograms per minute times 60 minutes equals 27,000 micrograms per hour; dividing by 800 micrograms per millilitre gives a new rate of 33.75 millilitres per hour. Step 5: calculate the net titration delta: subtract 13.5 from 33.75 to program a precise pump rate increase of 20.25 millilitres per hour (rounded to 20.3 mL/hr) while monitoring for tachycardia. This complete five-step trace provides every intermediate state.",
+  "duration_seconds": 40
+}

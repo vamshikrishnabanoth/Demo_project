@@ -1,0 +1,339 @@
+{
+  "document": "phase6_paired_model_evaluation.json",
+  "milestone": "Milestone v3.6 Step 2A Phase 6: Paired Model Evaluation",
+  "timestamp": "2026-10-02T14:05:38.989Z",
+  "eval_model": "openai/gpt-oss-120b",
+  "temperature": 0,
+  "adoption_decision_rule": {
+    "rule1_isolated_segment_eval": {
+      "status": "SATISFIED",
+      "note": "All segments evaluated in strict isolation"
+    },
+    "rule2_dual_metric_reporting": {
+      "status": "SATISFIED",
+      "note": "Reported exact depth and boundary decision metrics separately"
+    },
+    "rule3_mandatory_2_2_per_pattern": {
+      "status": "FAIL",
+      "pattern_breakdown": {
+        "Pattern 1 (Logic)": {
+          "targeted": [
+            "1C",
+            "1D"
+          ],
+          "baseline_boundary": 1,
+          "cand_boundary": 1
+        },
+        "Pattern 2 (Pharmacology)": {
+          "targeted": [
+            "2C",
+            "2D"
+          ],
+          "baseline_boundary": 1,
+          "cand_boundary": 1
+        },
+        "Pattern 3 (Clinical)": {
+          "targeted": [
+            "3C",
+            "3D"
+          ],
+          "baseline_boundary": 2,
+          "cand_boundary": 2
+        },
+        "Pattern 4 (DSP)": {
+          "targeted": [
+            "4C",
+            "4D"
+          ],
+          "baseline_boundary": 1,
+          "cand_boundary": 1
+        }
+      }
+    },
+    "rule4_zero_regression_gate": {
+      "status": "FAIL",
+      "diagnostic_regressions": 3,
+      "total_diagnostic_cases": 8
+    },
+    "rule5_raw_counts_reporting": {
+      "status": "SATISFIED",
+      "note": "All counts reported as raw ratios alongside percentages"
+    },
+    "final_verdict": "REJECTED"
+  },
+  "validation_aggregate_metrics": {
+    "sample_size": 8,
+    "baseline": {
+      "exact_depth_concordance": "3 / 8",
+      "exact_depth_concordance_pct": 37.5,
+      "boundary_decision_agreement": "5 / 8",
+      "boundary_decision_agreement_pct": 62.5
+    },
+    "candidate": {
+      "exact_depth_concordance": "1 / 8",
+      "exact_depth_concordance_pct": 12.5,
+      "boundary_decision_agreement": "5 / 8",
+      "boundary_decision_agreement_pct": 62.5
+    }
+  },
+  "validation_segment_comparisons": {
+    "1C": {
+      "segment_key": "1C",
+      "dimension": "MEANING",
+      "human_ref_depth": 2,
+      "human_ref_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+      "baseline": {
+        "observed_depth": 2,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "exact_match": true,
+        "boundary_match": true,
+        "evidence_synthesis": "Concept C02 stated that universal and existential quantifiers are non‑commutative, but offered only a declarative remark without proof."
+      },
+      "candidate": {
+        "observed_depth": 3,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "exact_match": false,
+        "boundary_match": true,
+        "evidence_synthesis": "C04 and C05 explain the semantic role of a Skolem function f(x) and a global constant as witnesses, providing a Level‑3 operational meaning."
+      }
+    },
+    "1D": {
+      "segment_key": "1D",
+      "dimension": "MEANING",
+      "human_ref_depth": 4,
+      "human_ref_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+      "baseline": {
+        "observed_depth": 3,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "C02 explained that swapping universal and existential quantifiers yields fundamentally different statements."
+      },
+      "candidate": {
+        "observed_depth": 3,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "C04 and C06 assign truth values to the quantified statements and explain the cause‑effect (existence of additive inverses) behind each truth value."
+      }
+    },
+    "2C": {
+      "segment_key": "2C",
+      "dimension": "JUSTIFICATION_WHY",
+      "human_ref_depth": 4,
+      "human_ref_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "baseline": {
+        "observed_depth": 0,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "exact_match": false,
+        "boundary_match": true,
+        "evidence_synthesis": "No theoretical derivation or rationale explaining why clearance relates to V, U, and plasma concentration was provided."
+      },
+      "candidate": {
+        "observed_depth": 0,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "exact_match": false,
+        "boundary_match": true,
+        "evidence_synthesis": "No explicit physiological or theoretical justification for the clearance relationship is presented in the record."
+      }
+    },
+    "2D": {
+      "segment_key": "2D",
+      "dimension": "JUSTIFICATION_WHY",
+      "human_ref_depth": 5,
+      "human_ref_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+      "baseline": {
+        "observed_depth": 2,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "The integrated clearance identity was presented without a step‑by‑step derivation or proof."
+      },
+      "candidate": {
+        "observed_depth": 2,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "The composite clearance equation (C08) is presented without derivation or causal rationale, lacking step‑by‑step justification."
+      }
+    },
+    "3C": {
+      "segment_key": "3C",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "human_ref_depth": 3,
+      "human_ref_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "baseline": {
+        "observed_depth": 1,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "exact_match": false,
+        "boundary_match": true,
+        "evidence_synthesis": "Only a verbal medication order (C03) was shown; no worked execution trace or detailed case analysis was provided."
+      },
+      "candidate": {
+        "observed_depth": 2,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "exact_match": false,
+        "boundary_match": true,
+        "evidence_synthesis": "The dose is verbally rounded to 1000 mg and the team confirms it conversationally; no worked code trace or detailed stepwise execution is shown."
+      }
+    },
+    "3D": {
+      "segment_key": "3D",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "human_ref_depth": 6,
+      "human_ref_verdict": "SATISFIES_LEVEL_6_TRACE",
+      "baseline": {
+        "observed_depth": 6,
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "exact_match": true,
+        "boundary_match": true,
+        "evidence_synthesis": "C05‑C07 walk through a complete dose calculation, interval selection, rounding, and back‑calculation of expected AUC24 with concrete numbers."
+      },
+      "candidate": {
+        "observed_depth": 6,
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "exact_match": true,
+        "boundary_match": true,
+        "evidence_synthesis": "A complete numerical dosing workflow was traced: target AUC → clearance → daily dose → interval splitting, rounding, and predicted AUC24."
+      }
+    },
+    "4C": {
+      "segment_key": "4C",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "human_ref_depth": 2,
+      "human_ref_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+      "baseline": {
+        "observed_depth": 2,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "exact_match": true,
+        "boundary_match": true,
+        "evidence_synthesis": "C06 presents the formula Aₛ = –20 log₁₀(δₛ) linking attenuation to stopband ripple, without further structural elaboration."
+      },
+      "candidate": {
+        "observed_depth": 4,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "exact_match": false,
+        "boundary_match": true,
+        "evidence_synthesis": "C01 describes filter length (order) M as the number of delay stages, a foundational structural primitive meeting Level 4 criteria."
+      }
+    },
+    "4D": {
+      "segment_key": "4D",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "human_ref_depth": 5,
+      "human_ref_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+      "baseline": {
+        "observed_depth": 2,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "C05 and C07 describe the delay‑line register vector and multiplier nodes, but only as static component descriptions."
+      },
+      "candidate": {
+        "observed_depth": 4,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "exact_match": false,
+        "boundary_match": false,
+        "evidence_synthesis": "C03‑C05 enumerate the tapped delay line, multiplier bank, and adder tree, describing multi‑component structural primitives without needing runtime simulation."
+      }
+    }
+  },
+  "diagnostic_zero_regression_summary": {
+    "1A": {
+      "segment_key": "1A",
+      "dimension": "MEANING",
+      "human_ref_depth": 2,
+      "human_ref_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+      "candidate": {
+        "observed_depth": 3,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "is_boundary_correct": true,
+        "evidence_synthesis": "C03‑C05 explained how negation interacts with quantifiers and gave the two De Morgan equivalences."
+      }
+    },
+    "1B": {
+      "segment_key": "1B",
+      "dimension": "MEANING",
+      "human_ref_depth": 4,
+      "human_ref_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+      "candidate": {
+        "observed_depth": 3,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+        "is_boundary_correct": false,
+        "evidence_synthesis": "Universal and existential quantifiers are explained as generalized conjunction and disjunction over the domain, an explicit semantic mapping (Level 3)."
+      }
+    },
+    "2A": {
+      "segment_key": "2A",
+      "dimension": "JUSTIFICATION_WHY",
+      "human_ref_depth": 4,
+      "human_ref_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "candidate": {
+        "observed_depth": 4,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "is_boundary_correct": true,
+        "evidence_synthesis": "The derivation in C06 is algebraic only; no physiological or causal rationale is provided to reach a formal proof level."
+      }
+    },
+    "2B": {
+      "segment_key": "2B",
+      "dimension": "JUSTIFICATION_WHY",
+      "human_ref_depth": 5,
+      "human_ref_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+      "candidate": {
+        "observed_depth": 3,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+        "is_boundary_correct": false,
+        "evidence_synthesis": "C08 contrasts a descriptive equation with a mechanistic model but offers only a brief rationale, lacking a step‑by‑step derivation."
+      }
+    },
+    "3A": {
+      "segment_key": "3A",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "human_ref_depth": 3,
+      "human_ref_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "candidate": {
+        "observed_depth": 3,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+        "is_boundary_correct": true,
+        "evidence_synthesis": "Dosing was framed as a rapid conversational bedside assessment, lacking a worked numerical trace."
+      }
+    },
+    "3B": {
+      "segment_key": "3B",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "human_ref_depth": 6,
+      "human_ref_verdict": "SATISFIES_LEVEL_6_TRACE",
+      "candidate": {
+        "observed_depth": 6,
+        "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+        "is_boundary_correct": true,
+        "evidence_synthesis": "C05, C06, and C07 walk through the dose calculation, rounding, interval selection, and final regimen, constituting a complete worked execution trace."
+      }
+    },
+    "4A": {
+      "segment_key": "4A",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "human_ref_depth": 2,
+      "human_ref_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+      "candidate": {
+        "observed_depth": 0,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "is_boundary_correct": true,
+        "evidence_synthesis": "The lecture does not mention structural primitives such as DFT basis vectors, complex exponentials, or matrix formulation."
+      }
+    },
+    "4B": {
+      "segment_key": "4B",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "human_ref_depth": 5,
+      "human_ref_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+      "candidate": {
+        "observed_depth": 4,
+        "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+        "is_boundary_correct": false,
+        "evidence_synthesis": "Forward transform equation and Vandermonde matrix description together specify the structural components of the DFT at a detailed level."
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "package_id": "dev_2a_01_logic_predicates",
+  "domain": "Discrete Mathematics / Formal Logic",
+  "subject": "Predicate Logic, Quantifiers, and Model Theory",
+  "topic": "Quantifier Duality, Negation Equivalence, and Domain Semantics",
+  "learner_level": "Undergraduate Computer Science / Mathematics (Semester 2)",
+  "syllabus_context": "Unit II: First-Order Logic and Quantifiers. Universal and existential quantifiers, quantifier negation rules, De Morgan's laws for quantifiers, domain of discourse interpretations, countermodels, nested quantifiers and alternation.",
+  "declared_learning_objective": "State and apply De Morgan's laws for quantifiers, explain why negation swaps universal and existential quantifiers using domain model semantics, construct countermodels to disprove invalid equivalences, and evaluate nested quantifier statements over discrete domains.",
+  "provenance": {
+    "mode": "DEVELOPMENT_DIAGNOSTIC_CORPUS_OPTION_B",
+    "source_type": "SYNTHETIC_PEDAGOGICAL_MICROLECTURE",
+    "institution": "Milestone v3.6 Diagnostic Investigation",
+    "access_date": "2026-10-02",
+    "license_or_usage_basis": "Internal Educational Research"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Symbolic blackboard notation for quantifiers and Venn/domain diagrams described in accompanying spoken audio."
+  },
+  "predeclared_split": {
+    "diagnostic_segments": [
+      "segment_1A_syntactic_duality",
+      "segment_1B_domain_semantics"
+    ],
+    "validation_segments": [
+      "segment_1C_nested_rule_manipulation",
+      "segment_1D_nested_model_counterexample"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "package_id": "dev_2b_01_set_theory_relations",
+  "domain": "Mathematics & Computer Science",
+  "subject": "Discrete Mathematics & Formal Proofs",
+  "topic": "Equivalence Relations, Partitions, and Model-Theoretic Quotient Sets",
+  "learner_level": "Undergraduate / Upper Division",
+  "syllabus_context": "Week 4: Binary Relations, Equivalence Classes, and Quotient Algebras",
+  "declared_learning_objective": "Define equivalence relations, distinguish syntactic relation reflexivity/symmetry/transitivity definitions from concrete partition domain models, and evaluate equivalence classes over discrete universe elements.",
+  "prerequisites": [
+    "Propositional logic",
+    "Basic set notation"
+  ],
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "none"
+  },
+  "contrast_design": {
+    "targeted_pattern": "Pattern 1: Formal Logic Semantics",
+    "negative_segment_id": "segment_1A_syntactic_property_recitation",
+    "negative_target_depth": 2,
+    "negative_distinction": "Algebraic property rewrite rules without domain elements",
+    "positive_segment_id": "segment_1B_concrete_domain_partition_model",
+    "positive_target_depth": 4,
+    "positive_distinction": "Explicit partition model over concrete set S={a,b,c,d} with truth valuations"
+  }
+}

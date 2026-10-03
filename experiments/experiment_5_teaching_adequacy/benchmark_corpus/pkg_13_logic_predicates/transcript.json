@@ -1,0 +1,32 @@
+{
+  "lecture_id": "lecture_first_order_predicate_logic",
+  "total_duration_seconds": 475,
+  "raw_transcript": "Good afternoon, colleagues. Today we transition from propositional logic to First-Order Predicate Logic, also known as First-Order Logic or FOL.\n\nPropositional logic treats simple assertions as indivisible atomic letters P, Q, and R. But consider the classic syllogism: 'All humans are mortal. Socrates is human. Therefore, Socrates is mortal.' Propositional logic cannot demonstrate the validity of this inference because the internal subject-predicate structure of the statements is lost. First-Order Logic enriches our vocabulary with predicates, individual terms, and quantifiers to capture this internal structure.\n\nLet us define the formal syntax of First-Order Logic:\n1. Individual Constants: denote specific individual objects in our domain, written as lowercase letters a, b, c (for example, s for Socrates).\n2. Variables: serve as placeholders that range over objects in the domain, denoted by x, y, z.\n3. Predicate Symbols: represent properties of individuals or relations among individuals. A 1-place predicate like H(x) means 'x is human'. A 2-place relation like A(x, y) means 'x admires y'.\n4. Quantifiers: we have two fundamental quantifiers:\n   - The Universal Quantifier, written as upside-down A, meaning 'for all x' or 'for every x'.\n   - The Existential Quantifier, written as backwards E, meaning 'there exists at least one x' or 'for some x'.\n5. Scope and Binding: in the formula forall x (H(x) -> M(x)), the parentheses define the scope of the universal quantifier. The variable x occurring inside H(x) and M(x) is bound by the quantifier. A variable that is not bound by any quantifier is called a free variable. A formula with no free variables is a closed sentence.\n\nNow, consider the semantic duality of quantifiers under negation:\nTo say 'Not everyone is happy' is logically equivalent to saying 'There exists someone who is not happy': not forall x H(x) is equivalent to exists x not H(x).\nSimilarly, to say 'No one is happy' is logically equivalent to saying 'For everyone, they are not happy': not exists x H(x) is equivalent to forall x not H(x).\n\nNow let us examine formal model-theoretic semantics, initiated by Alfred Tarski.\nA Model M is an ordered pair M = <D, I>, where:\n- D is the Domain of Discourse: a non-empty set of objects that the logic talks about.\n- I is the Interpretation Function, which assigns meaning to non-logical symbols:\n  * To each individual constant c, I(c) is an element of D.\n  * To each n-place predicate symbol P, I(P) is a set of n-tuples of elements from D.\nTo evaluate open formulas, we define a variable assignment g, which maps each variable x to an object in D.\nThe formal satisfaction condition states:\nM, g satisfies forall x phi if and only if for every element d in D, M with assignment g modified so x maps to d satisfies phi.\nM, g satisfies exists x phi if and only if there exists at least one element d in D such that M with assignment g modified so x maps to d satisfies phi.\n\nLet us trace a worked example of formalization and model evaluation.\nSuppose our English sentence is: 'Every philosopher admires some logician.'\nLet P(x) mean 'x is a philosopher', L(y) mean 'y is a logician', and A(x, y) mean 'x admires y'.\nThe correct translation requires nested quantifiers:\nforall x (P(x) -> exists y (L(y) and A(x, y))).\nNow let us define a concrete model M = <D, I> to test whether this sentence is true:\nLet Domain D = {p1, l1, l2}.\nLet interpretation of Philosopher I(P) = {p1}.\nLet interpretation of Logician I(L) = {l1, l2}.\nLet interpretation of Admires I(A) = { (p1, l1) }.\nDoes M satisfy the sentence?\nWe check forall x: The only philosopher is p1. When x = p1, the antecedent P(p1) is true.\nNow we must check if exists y such that L(y) and A(p1, y).\nDoes there exist a logician that p1 admires? Yes! For y = l1, l1 is in I(L) and (p1, l1) is in I(A).\nTherefore, the sentence evaluates to TRUE in this model M.\n\nNow let us touch upon inference rules. The standard deductive system has two quantifier rules:\n1. Universal Instantiation (UI): from forall x phi, you may infer phi with variable x replaced by any constant c, written phi[c/x].\n2. Existential Generalization (EG): from phi[c], you may infer exists x phi.\nNow, the syllabus specifies that we must prove the formal semantic soundness of Universal Instantiation using model theory. However, we have run out of time today. We will simply accept Universal Instantiation as an intuitive rule for now without doing the formal induction proof of soundness across all possible models.\nFurthermore, the syllabus lists pathological edge cases involving empty domains and vacuous quantification. In standard Tarskian logic, the domain D is axiomatically required to be non-empty. If D were empty, forall x P(x) would be vacuously true while exists x P(x) would be false, violating standard existential entailment. Systems that handle empty domains are called Free Logics, but we will not explore Free Logic in this course. Focus on translations and model evaluations for Friday's quiz.",
+  "segments": [
+    {
+      "start": 0,
+      "end": 70,
+      "text": "Limits of propositional logic; introducing First-Order Predicate Logic. Syllogistic motivations."
+    },
+    {
+      "start": 70,
+      "end": 160,
+      "text": "Syntax: individual constants, variables, predicates, universal (forall) and existential (exists) quantifiers, scope, binding."
+    },
+    {
+      "start": 160,
+      "end": 250,
+      "text": "Quantifier duality and Tarskian model-theoretic semantics: Model M = <D, I>, interpretation function, and satisfaction conditions."
+    },
+    {
+      "start": 250,
+      "end": 380,
+      "text": "Worked problem: Translating 'Every philosopher admires some logician' and evaluating truth in a concrete 3-element model."
+    },
+    {
+      "start": 380,
+      "end": 475,
+      "text": "Inference rules: Listing UI and EG. Limitations: Omitting formal semantic soundness proof of UI and empty domain / Free Logic edge cases."
+    }
+  ]
+}

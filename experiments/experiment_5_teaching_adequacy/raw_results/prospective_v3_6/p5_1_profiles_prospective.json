@@ -1,0 +1,247 @@
+{
+  "generation_timestamp": "2026-10-01T18:41:39.392Z",
+  "benchmark_scope": "Step 1B Prospective Generalization (pkg_11 to pkg_14)",
+  "component": "P5.1 Normative Expected Depth",
+  "packages": {
+    "pkg_11_physics_thermodynamics": {
+      "topic": "The Carnot Cycle, Maximum Theoretical Efficiency, and Entropy",
+      "declared_objective": "Explain the four reversible thermodynamic processes of the Carnot cycle, derive the theoretical thermal efficiency eta = 1 - T_C/T_H from the First and Second Laws, calculate work output and heat rejected in numerical engine cycles, and evaluate the Clausius inequality and entropy generation in irreversible cycles and near absolute zero.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name the four Carnot processes, the efficiency formula, entropy, and key symbols (T_H, T_C, Q_H, Q_C, W).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Provide clear conceptual definitions of each reversible process, the meaning of thermal efficiency, and the physical significance of entropy and the Clausius inequality.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Detail the internal elements of the cycle: isothermal expansion, adiabatic expansion, isothermal compression, adiabatic compression, including state variables and governing equations.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Explain the dynamic interaction of heat and work across the four steps, showing how Q_H, Q_C, and W are linked and how the cycle returns to its initial state.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Derive eta = 1 - T_C/T_H rigorously using the First Law (energy balance) and the Second Law (entropy balance), establishing Carnot's theorem and why no engine can surpass this efficiency.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Solve numerical problems: compute W, Q_H, Q_C for given T_H, T_C, and volume ratios; apply the derived efficiency; and evaluate entropy change for reversible and irreversible examples.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Analyse edge cases: irreversible cycles, entropy generation, Clausius inequality violations, and behavior as T_C → 0 K (approach to absolute zero).",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Encourage transfer of Carnot concepts to other engine models (e.g., Otto, Rankine) and to broader contexts such as refrigeration cycles or quantum heat engines.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3373,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_12_pharmacology_clearance": {
+      "topic": "One-Compartment Intravenous Pharmacokinetics: Clearance and Half-Life",
+      "declared_objective": "Formulate the one-compartment intravenous bolus pharmacokinetic model, derive the plasma concentration decay equation C(t) = C_0 * e^(-k_e * t), calculate volume of distribution and total clearance, solve multi-step dosage half-life calculations, and evaluate non-linear Michaelis-Menten elimination saturation in clinical overdoses.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name and recognize all core symbols and terms (C(t), C0, k_e, V_d, CL, t_1/2, Michaelis-Menten parameters) that appear in the model.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "A qualitative understanding of what each term represents (e.g., clearance as volume cleared per time) and why it matters for drug dosing is essential for the objective.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Students need to enumerate the model’s constituent elements—compartment, initial concentration, elimination rate constant, volume of distribution, clearance—and the syntax of the exponential decay equation.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Deriving and explaining the dynamic links (e.g., CL = k_e·V_d, t_1/2 = ln2/k_e) shows how parameters interact during drug elimination.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Formal derivation of C(t) from first‑order differential equations and proof of the CL‑k_e‑V_d relationship, plus theoretical basis for Michaelis‑Menten saturation, are core to the learning goal.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Learners must perform calculations of V_d, CL, half‑life, and execute multi‑step dosing scenarios, including a non‑linear overdose case, to demonstrate mastery.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Critical evaluation of when first‑order assumptions break down, capacity‑limited elimination limits, and clinical implications of saturation are necessary for safe application.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 6,
+          "alignment": "RECOMMENDED",
+          "rationale": "Applying the one‑compartment framework to other routes (e.g., oral), population PK scaling, or renal/hepatic impairment scenarios deepens understanding but is secondary to core objectives.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3123,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_13_logic_predicates": {
+      "topic": "First-Order Predicate Logic: Quantifiers, Variable Binding, and Semantics",
+      "declared_objective": "Translate complex English statements into first-order predicate logic with nested quantifiers, specify model structures M = <D, I> to evaluate the truth of quantified formulas, prove validity of quantifier inference rules, and evaluate pathological edge cases involving empty domains and vacuous quantification.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name universal/existential quantifiers, bound/free variables, and the components of a model M = <D, I>.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual definition of quantifier semantics (truth under assignments) and the significance of binding and scope is essential for translation and evaluation tasks.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Students need to understand the syntactic architecture of formulas (quantifier scope, nesting, variable occurrences) and the internal makeup of a model (domain, interpretation function).",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Dynamic interaction between quantifiers, variable binding, and assignment evaluation must be articulated to follow inference rule operation.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Proof of soundness/validity for Universal Instantiation and Existential Generalization requires formal derivations and theoretical justification.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Learners must execute complete translations of complex English sentences, construct concrete models, and compute truth values for nested quantified formulas.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Explicit analysis of empty domains, vacuous truth, and other edge cases is stipulated in the objective.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 5,
+          "alignment": "RECOMMENDED",
+          "rationale": "Connecting FOL quantifier reasoning to other logical systems (e.g., modal logic, database query languages) deepens understanding and supports transfer of skills.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3052,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_14_signal_processing_fourier": {
+      "topic": "Discrete Fourier Transform (DFT) and Nyquist-Shannon Sampling Theorem",
+      "declared_objective": "Formulate the Discrete Fourier Transform (DFT) analysis equation, calculate frequency bin indices and spectral resolution for discrete sampling windows, prove the Nyquist-Shannon sampling criterion to prevent spectral aliasing, and evaluate anti-aliasing filter roll-off and finite-record spectral leakage.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must correctly name DFT, analysis/synthesis equations, frequency bin, sampling rate, Nyquist criterion, aliasing, and anti‑aliasing filter.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Provide qualitative definitions and intuition for what the DFT represents, why frequency bins matter, and the significance of the Nyquist limit.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Detail the internal elements of the DFT analysis equation (summation index, N, exponent, Δf) and the parameters of the sampling system (f_s, N, filter order).",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Explain how time‑domain samples map to frequency bins, how f_s determines Δf, and how the anti‑aliasing filter interacts with the sampled spectrum.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Derive the Nyquist‑Shannon sampling theorem from first principles, showing mathematically why f_s > 2f_max prevents spectral overlap.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Solve problems that compute bin indices, spectral resolution (Δf), and evaluate a given anti‑aliasing filter’s roll‑off and leakage using windowed DFT examples.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 7,
+          "alignment": "REQUIRED",
+          "rationale": "Analyse edge cases such as f_s = 2f_max, non‑ideal filter attenuation, and finite‑record effects that cause leakage and aliasing.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 5,
+          "alignment": "RECOMMENDED",
+          "rationale": "Connect DFT/NYquist concepts to related domains (FFT implementation, DTFT, multirate processing, image frequency analysis) to illustrate broader applicability.",
+          "confidence": "MEDIUM"
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 3385,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    }
+  }
+}

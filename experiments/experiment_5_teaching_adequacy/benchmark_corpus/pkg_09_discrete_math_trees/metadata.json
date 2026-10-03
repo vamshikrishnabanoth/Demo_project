@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_09_discrete_math_trees",
+  "domain": "Computer Science / Discrete Mathematics",
+  "subject": "Graph Theory and Network Algorithms",
+  "topic": "Spanning Trees, Cut Property, and Kruskal's Algorithm with DSU",
+  "learner_level": "Undergraduate B.Tech CSE / B.Sc Math (Semester 3)",
+  "syllabus_context": "Unit III: Trees and Spanning Forests. Free trees, spanning tree characterization, fundamental cycle property, cut property theorem, Kruskal's greedy algorithm, Disjoint Set Union (DSU) with union-by-rank and path compression, Prim's algorithm comparison, complexity bounds, minimum spanning forest extensions.",
+  "declared_learning_objective": "Define spanning trees in connected undirected graphs, prove the Cut Property theorem, trace Kruskal's greedy algorithm using Disjoint Set Union data structures, compare asymptotic complexity with Prim's algorithm, and evaluate edge weight conditions and spanning forest limits.",
+  "provenance": {
+    "mode": "CURATED_CONTROLLED_BENCHMARK",
+    "source_type": "CURATED_PEDAGOGICAL_TRANSCRIPT",
+    "source": "Standard Academic Discrete Mathematics & Algorithms Lecture Series",
+    "institution": "Controlled Educational Benchmark Corpus",
+    "access_date": "2026-10-01",
+    "license_or_usage_basis": "Educational Research Dataset"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Graph diagrams, cut partitions (S, V-S), and DSU parent pointers drawn on blackboard and spoken aloud."
+  }
+}

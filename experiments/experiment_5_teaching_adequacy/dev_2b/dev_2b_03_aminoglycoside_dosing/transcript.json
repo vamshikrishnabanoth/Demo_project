@@ -1,0 +1,23 @@
+{
+  "lecture_id": "dev_2b_03",
+  "total_duration_seconds": 270,
+  "raw_transcript": "Welcome team. Today we review clinical dosing protocols for once-daily aminoglycoside therapy.\n\n[Segment 3A - Negative Boundary: Bedside Conversational Estimation]\nLet's discuss how clinical teams on rounds handle extended-interval tobramycin dosing at the bedside. For an adult patient admitted with suspected gram-negative bacteremia, the team lead might say: 'Let's start high-dose tobramycin at about 7 milligrams per kilogram.' If the patient looks to be average size, say around 70 kilograms, you do quick mental math: 7 times 70 is about 490 milligrams, so you verbally tell the intern to order a 500 milligram IV infusion. You glance at their basic metabolic panel: if serum creatinine is around 0.9 or 1.0, you administer it every 24 hours. If they are an older patient with creatinine hovering around 1.6 or 1.8, you conversationally suggest stretching the interval to every 36 or 48 hours to be safe. It is an informal bedside approximation that establishes the general therapeutic dosing scale.\n\n[Segment 3B - Positive Boundary: Stepwise Hartford Nomogram Execution Trace]\nNow let us execute the rigorous 6-step clinical pharmacokinetic calculation trace required for institutional antimicrobial stewardship: Step 1: Baseline Demographics. Patient is a 62-year-old female, height 5 feet 5 inches (165 cm), actual weight 76 kg, serum creatinine S_cr = 1.3 mg/dL. Step 2: Ideal and Dosing Weight. Ideal Body Weight equals 45.5 kg plus 2.3 kg per inch over 5 feet: 45.5 + (2.3 * 5) = 45.5 + 11.5 = 57.0 kg. Actual weight is 76 / 57 = 133% of IBW, which exceeds 120%, so we calculate Adjusted Dosing Weight: Dosing Weight = IBW + 0.4 * (Actual - IBW) = 57.0 + 0.4 * (19.0) = 57.0 + 7.6 = 64.6 kg. Step 3: Creatinine Clearance. CrCl via Cockcroft-Gault equals ((140 - 62) * 64.6 * 0.85) / (72 * 1.3) = (78 * 64.6 * 0.85) / 93.6 = 4283.0 / 93.6 = 45.8 mL/min. Step 4: Dose Determination. Target extended-interval dose is 7 mg/kg based on dosing weight: Dose = 7 mg/kg * 64.6 kg = 452.2 mg. Rounding to standard 40 mg/mL vial increments yields Tobramycin 450 mg IV. Step 5: Dosing Interval via Hartford Nomogram. For CrCl between 40 and 59 mL/min, the Hartford protocol specifies an extended interval of tau = 36 hours. Step 6: Monitoring Plan. A random serum concentration drawn at 10 hours post-infusion is plotted on the Hartford nomogram to verify whether the 36-hour interval maintains peak bactericidal activity while preventing nephrotoxicity.",
+  "segments": [
+    {
+      "segment_id": "segment_3A_bedside_conversational_estimation",
+      "split": "CHALLENGE_NEGATIVE",
+      "start": 0,
+      "end": 115,
+      "target_distinction": "Pattern 3 Negative: Bedside mental math and conversational interval adjustment (Level 3)",
+      "summary": "Conversational estimation without explicit chained intermediate states."
+    },
+    {
+      "segment_id": "segment_3B_stepwise_hartford_nomogram_trace",
+      "split": "CHALLENGE_POSITIVE",
+      "start": 115,
+      "end": 270,
+      "target_distinction": "Pattern 3 Positive: Chained 6-step calculation trace with intermediate numerical states (Level 6)",
+      "summary": "IBW, adjusted weight, Cockcroft-Gault CrCl, target dose, Hartford nomogram interval, and monitoring."
+    }
+  ]
+}

@@ -1,0 +1,507 @@
+{
+  "reconstruction_timestamp": "2026-10-01T18:44:25.389Z",
+  "benchmark_scope": "Step 1B Prospective Generalization (pkg_11 to pkg_14)",
+  "component": "P5.2A Observational Concepts",
+  "packages": {
+    "pkg_11_physics_thermodynamics": {
+      "topic": "The Carnot Cycle, Maximum Theoretical Efficiency, and Entropy",
+      "domain": "Classical Physics / Physical Chemistry",
+      "root_concept": "Carnot Cycle, Maximum Theoretical Efficiency, and Entropy",
+      "concept_count": 4,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Heat engine definition and energy balance (First Law)",
+          "parent_id": "root",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "A heat engine is defined as a device that operates in a thermodynamic cycle, absorbs heat Q_H from a high‑temperature reservoir at T_H, does net work W, and rejects heat Q_C to a low‑temperature reservoir at T_C; the First Law gives W = Q_H – Q_C and the thermal efficiency η = W/Q_H = 1 – Q_C/Q_H.",
+          "evidence_quotes": [
+            {
+              "quote": "Recall that a heat engine is any device that operates in a thermodynamic cycle, absorbs heat Q_H from a high-temperature thermal reservoir at T_H, converts a fraction of this thermal energy into net mechanical work W, and rejects the remaining heat Q_C to a low-temperature reservoir at T_C. By the First Law of Thermodynamics, energy is conserved, so net work output is W equals Q_H minus Q_C.",
+              "approx_start_sec": 5,
+              "approx_end_sec": 25
+            },
+            {
+              "quote": "The thermal efficiency of any heat engine is defined as the desired output divided by the required energy input, which is eta equals W over Q_H, or 1 minus Q_C over Q_H.",
+              "approx_start_sec": 26,
+              "approx_end_sec": 35
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Carnot cycle as the reversible benchmark",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The Carnot cycle is introduced as the theoretical reversible engine that sets the maximum possible efficiency for any engine operating between two temperatures, as established by Sadi Carnot in 1824.",
+          "evidence_quotes": [
+            {
+              "quote": "In 1824, French engineer Nicolas Léonard Sadi Carnot established that no heat engine operating between two given temperatures can be more efficient than a reversible engine operating between the same two temperatures. This theoretical ideal is known as the Carnot cycle.",
+              "approx_start_sec": 36,
+              "approx_end_sec": 48
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Four reversible processes of the Carnot cycle for an ideal gas",
+          "parent_id": "root",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "The lecture enumerates the four reversible steps: (1) isothermal expansion at T_H (heat absorbed Q_H = nRT_H ln(V2/V1)), (2) adiabatic expansion (temperature drops from T_H to T_C), (3) isothermal compression at T_C (heat rejected Q_C = nRT_C ln(V3/V4)), and (4) adiabatic compression (temperature rises back to T_H).",
+          "evidence_quotes": [
+            {
+              "quote": "Process 1 to 2 is Reversible Isothermal Expansion... The gas expands slowly from volume V1 to V2 while absorbing heat Q_H... Q_H equals n times R times T_H times natural log of V2 over V1.",
+              "approx_start_sec": 49,
+              "approx_end_sec": 65
+            },
+            {
+              "quote": "Process 2 to 3 is Reversible Adiabatic Expansion... the working fluid temperature drops from the source temperature T_H down to the sink temperature T_C.",
+              "approx_start_sec": 66,
+              "approx_end_sec": 73
+            },
+            {
+              "quote": "Process 3 to 4 is Reversible Isothermal Compression... The magnitude of heat rejected is Q_C equals n times R times T_C times natural log of V3 over V4.",
+              "approx_start_sec": 74,
+              "approx_end_sec": 85
+            },
+            {
+              "quote": "Process 4 to 1 is Reversible Adiabatic Compression... raising its temperature from T_C back up to T_H, completing the closed cycle.",
+              "approx_start_sec": 86,
+              "approx_end_sec": 93
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C04",
+          "name": "Derivation of the Carnot efficiency η = 1 – T_C/T_H",
+          "parent_id": "root",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "Starting from η = 1 – Q_C/Q_H, the isothermal heat expressions are substituted, the nR terms cancel, and the adiabatic relations are used to show V2/V1 = V3/V4, which cancels the logarithmic terms, yielding η_Carnot = 1 – T_C/T_H; the result depends only on reservoir temperatures.",
+          "evidence_quotes": [
+            {
+              "quote": "We know that eta equals 1 minus Q_C over Q_H. Substituting our isothermal heat expressions... the n and R terms cancel, giving (T_C ln(V3/V4)) over (T_H ln(V2/V1)).",
+              "approx_start_sec": 94,
+              "approx_end_sec": 105
+            },
+            {
+              "quote": "For adiabatic expansion 2 to 3: T_H times V2^(gamma‑1) equals T_C times V3^(gamma‑1). For adiabatic compression 4 to 1: T_H times V1^(gamma‑1) equals T_C times V4^(gamma‑1). Dividing... V2 over V1 equals V3 over V4! Therefore, the logarithmic volume terms ... cancel out completely!",
+              "approx_start_sec": 106,
+              "approx_end_sec": 124
+            },
+            {
+              "quote": "We arrive at the definitive result: eta_Carnot equals 1 minus T_C over T_H.",
+              "approx_start_sec": 125,
+              "approx_end_sec": 128
+            }
+          ]
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 4349,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 5
+      }
+    },
+    "pkg_12_pharmacology_clearance": {
+      "topic": "One-Compartment Intravenous Pharmacokinetics: Clearance and Half-Life",
+      "domain": "Clinical Medicine / Pharmacology",
+      "root_concept": "One-Compartment Intravenous Pharmacokinetics",
+      "concept_count": 6,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "One-Compartment Open Model",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The lecture introduced the one‑compartment open model, describing the body as a single, well‑mixed kinetic container of volume V_d that receives an IV bolus dose.",
+          "evidence_quotes": [
+            {
+              "quote": "The simplest model is the One-Compartment Open Model. In this model, the body is treated as a single, well-mixed kinetic container of volume V_d.",
+              "approx_start_sec": 5,
+              "approx_end_sec": 12
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Apparent Volume of Distribution (V_d)",
+          "parent_id": "root",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "V_d is defined as the proportionality factor relating total drug amount to plasma concentration (V_d = Dose / C_0) and explained as an apparent, not anatomical, volume that can be very large for lipid‑soluble drugs.",
+          "evidence_quotes": [
+            {
+              "quote": "Apparent Volume of Distribution (V_d): defined as the proportionality factor relating the total amount of drug in the body to the measured plasma concentration: V_d equals Dose divided by C_0. It does not necessarily represent a true anatomical fluid volume...",
+              "approx_start_sec": 20,
+              "approx_end_sec": 30
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Elimination Rate Constant (k_e)",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "k_e is the fraction of drug removed per unit time, expressed in hr⁻¹, and serves as the slope parameter for first‑order elimination.",
+          "evidence_quotes": [
+            {
+              "quote": "Elimination Rate Constant (k_e): the fraction of drug removed from the body per unit time, with units of inverse hours (hr^-1).",
+              "approx_start_sec": 35,
+              "approx_end_sec": 38
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C04",
+          "name": "Total Systemic Clearance (CL) and its relationship CL = k_e·V_d",
+          "parent_id": "root",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "Clearance is the volume of plasma cleared per unit time (L/hr). The lecture derived CL = k_e × V_d from the definition of clearance as rate of elimination divided by concentration.",
+          "evidence_quotes": [
+            {
+              "quote": "Total Systemic Clearance (CL): the volume of blood or plasma completely cleared of drug per unit time... Clearance equals k_e times V_d.",
+              "approx_start_sec": 45,
+              "approx_end_sec": 52
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C05",
+          "name": "Elimination Half‑Life (t_1/2) and formula t_1/2 = 0.693/k_e",
+          "parent_id": "root",
+          "epistemic_dimension": "JUSTIFICATION_WHY",
+          "observed_summary": "Half‑life is the time for plasma concentration to fall by 50%; derived mathematically as t_1/2 = 0.693/k_e.",
+          "evidence_quotes": [
+            {
+              "quote": "Elimination Half-Life (t_1/2): the time required for the plasma concentration to decrease by exactly 50%... t_1/2 equals 0.693 divided by k_e.",
+              "approx_start_sec": 55,
+              "approx_end_sec": 62
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C06",
+          "name": "First‑order elimination differential equation and exponential decay solution",
+          "parent_id": "root",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "Assuming first‑order kinetics, dC/dt = –k_e·C; integration yields C(t) = C_0·e^(–k_e·t).",
+          "evidence_quotes": [
+            {
+              "quote": "Assuming first-order elimination kinetics, the rate of drug elimination is directly proportional to the amount of drug remaining in the body: dC/dt equals minus k_e times C... Exponentiating both sides yields the classical exponential decay equation: C(t) equals C_0 times e to the power of minus k_e times t.",
+              "approx_start_sec": 65,
+              "approx_end_sec": 78
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 4294,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 5
+      }
+    },
+    "pkg_13_logic_predicates": {
+      "topic": "First-Order Predicate Logic: Quantifiers, Variable Binding, and Semantics",
+      "domain": "Humanities / Symbolic Logic & Philosophy",
+      "root_concept": "First-Order Predicate Logic (FOL)",
+      "concept_count": 9,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Non‑logical symbols (individual constants, variables, predicate symbols)",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "Introduced constants as lowercase letters denoting specific objects, variables as placeholders ranging over the domain, and predicate symbols for properties and relations.",
+          "evidence_quotes": [
+            {
+              "quote": "Individual Constants: denote specific individual objects in our domain, written as lowercase letters a, b, c (for example, s for Socrates).",
+              "approx_start_sec": 30,
+              "approx_end_sec": 45
+            },
+            {
+              "quote": "Variables: serve as placeholders that range over objects in the domain, denoted by x, y, z.",
+              "approx_start_sec": 45,
+              "approx_end_sec": 55
+            },
+            {
+              "quote": "Predicate Symbols: represent properties of individuals or relations among individuals. A 1‑place predicate like H(x) means 'x is human'. A 2‑place relation like A(x, y) means 'x admires y'.",
+              "approx_start_sec": 55,
+              "approx_end_sec": 70
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Quantifiers (universal and existential)",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "Defined the universal quantifier (∀) as ‘for all x’ and the existential quantifier (∃) as ‘there exists at least one x’.",
+          "evidence_quotes": [
+            {
+              "quote": "Quantifiers: we have two fundamental quantifiers: - The Universal Quantifier, written as upside‑down A, meaning 'for all x' or 'for every x'. - The Existential Quantifier, written as backwards E, meaning 'there exists at least one x' or 'for some x'.",
+              "approx_start_sec": 70,
+              "approx_end_sec": 90
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Scope and variable binding (free vs. bound variables)",
+          "parent_id": "root",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "Explained how parentheses delimit the scope of a quantifier, how a variable inside that scope is bound, and that variables not bound are free; a formula with no free variables is a closed sentence.",
+          "evidence_quotes": [
+            {
+              "quote": "Scope and Binding: in the formula forall x (H(x) -> M(x)), the parentheses define the scope of the universal quantifier. The variable x occurring inside H(x) and M(x) is bound by the quantifier. A variable that is not bound by any quantifier is called a free variable. A formula with no free variables is a closed sentence.",
+              "approx_start_sec": 95,
+              "approx_end_sec": 115
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C04",
+          "name": "Quantifier negation duality",
+          "parent_id": "root",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "Stated the logical equivalences ¬∀x H(x) ⇔ ∃x ¬H(x) and ¬∃x H(x) ⇔ ∀x ¬H(x).",
+          "evidence_quotes": [
+            {
+              "quote": "To say 'Not everyone is happy' is logically equivalent to saying 'There exists someone who is not happy': not forall x H(x) is equivalent to exists x not H(x). Similarly, to say 'No one is happy' is logically equivalent to saying 'For everyone, they are not happy': not exists x H(x) is equivalent to forall x not H(x).",
+              "approx_start_sec": 120,
+              "approx_end_sec": 140
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C05",
+          "name": "Model‑theoretic semantics (model structure: domain and interpretation)",
+          "parent_id": "root",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "Defined a model M = ⟨D, I⟩ where D is a non‑empty domain of objects and I assigns each constant an element of D and each n‑place predicate a set of n‑tuples from D.",
+          "evidence_quotes": [
+            {
+              "quote": "A Model M is an ordered pair M = <D, I>, where: - D is the Domain of Discourse: a non‑empty set of objects that the logic talks about. - I is the Interpretation Function, which assigns meaning to non‑logical symbols: * To each individual constant c, I(c) is an element of D. * To each n‑place predicate symbol P, I(P) is a set of n‑tuples of elements from D.",
+              "approx_start_sec": 150,
+              "approx_end_sec": 180
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C06",
+          "name": "Variable assignment and satisfaction conditions for quantifiers",
+          "parent_id": "root",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "Introduced a variable assignment g mapping variables to domain elements and gave the truth conditions: M,g ⊨ ∀x φ iff for every d∈D, M,g[x↦d] ⊨ φ; and M,g ⊨ ∃x φ iff there exists d∈D such that M,g[x↦d] ⊨ φ.",
+          "evidence_quotes": [
+            {
+              "quote": "The formal satisfaction condition states: M, g satisfies forall x phi if and only if for every element d in D, M with assignment g modified so x maps to d satisfies phi. M, g satisfies exists x phi if and only if there exists at least one element d in D such that M with assignment g modified so x maps to d satisfies phi.",
+              "approx_start_sec": 185,
+              "approx_end_sec": 210
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C07",
+          "name": "Worked example: translation and model evaluation of a quantified sentence",
+          "parent_id": "root",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "observed_summary": "Translated ‘Every philosopher admires some logician’ as ∀x(P(x) → ∃y(L(y) ∧ A(x,y))) and evaluated it in a concrete model with domain {p1,l1,l2}, showing the sentence is true because p1 (the only philosopher) admires l1 (a logician).",
+          "evidence_quotes": [
+            {
+              "quote": "Suppose our English sentence is: 'Every philosopher admires some logician.' ... The correct translation requires nested quantifiers: forall x (P(x) -> exists y (L(y) and A(x, y))). ... Let Domain D = {p1, l1, l2}. ... Does M satisfy the sentence? ... Therefore, the sentence evaluates to TRUE in this model M.",
+              "approx_start_sec": 220,
+              "approx_end_sec": 260
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C08",
+          "name": "Quantifier inference rules (Universal Instantiation and Existential Generalization)",
+          "parent_id": "root",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "observed_summary": "Stated the two standard quantifier rules: UI allows inference from ∀x φ to φ[c/x]; EG allows inference from φ[c] to ∃x φ.",
+          "evidence_quotes": [
+            {
+              "quote": "The standard deductive system has two quantifier rules: 1. Universal Instantiation (UI): from forall x phi, you may infer phi with variable x replaced by any constant c, written phi[c/x]. 2. Existential Generalization (EG): from phi[c], you may infer exists x phi.",
+              "approx_start_sec": 270,
+              "approx_end_sec": 285
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C09",
+          "name": "Boundary case: empty domains and free logic",
+          "parent_id": "root",
+          "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+          "observed_summary": "Noted that standard Tarskian semantics require a non‑empty domain; if the domain were empty, ∀x P(x) would be vacuously true and ∃x P(x) false, leading to free‑logic systems that relax this requirement.",
+          "evidence_quotes": [
+            {
+              "quote": "In standard Tarskian logic, the domain D is axiomatically required to be non‑empty. If D were empty, forall x P(x) would be vacuously true while exists x P(x) would be false, violating standard existential entailment. Systems that handle empty domains are called Free Logics...",
+              "approx_start_sec": 290,
+              "approx_end_sec": 315
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 8508,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    },
+    "pkg_14_signal_processing_fourier": {
+      "topic": "Discrete Fourier Transform (DFT) and Nyquist-Shannon Sampling Theorem",
+      "domain": "Electrical Engineering / Telecommunications",
+      "root_concept": "Discrete Fourier Transform and Nyquist‑Shannon Sampling Theorem",
+      "concept_count": 8,
+      "concepts": [
+        {
+          "concept_id": "C01",
+          "name": "Continuous‑to‑discrete signal conversion (sampling)",
+          "parent_id": "root",
+          "epistemic_dimension": "MEANING",
+          "observed_summary": "The lecture defined how a continuous‑time signal x(t) is turned into a discrete‑time sequence x[n] by sampling at uniform intervals T_s, with x[n] = x(n T_s).",
+          "evidence_quotes": [
+            {
+              "quote": "We convert continuous signals to discrete sequences x[n] by sampling at uniform time intervals T_s, where sampling frequency f_s equals 1 over T_s, such that x[n] = x(n T_s).",
+              "approx_start_sec": 10,
+              "approx_end_sec": 20
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C02",
+          "name": "Sampling parameters: interval T_s and frequency f_s",
+          "parent_id": "C01",
+          "epistemic_dimension": "STRUCTURE_COMPONENTS",
+          "observed_summary": "The instructor identified the sampling interval T_s and its reciprocal sampling frequency f_s = 1/T_s as the fundamental parameters governing the discrete representation.",
+          "evidence_quotes": [
+            {
+              "quote": "sampling at uniform time intervals T_s, where sampling frequency f_s equals 1 over T_s",
+              "approx_start_sec": 12,
+              "approx_end_sec": 18
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C03",
+          "name": "Discrete Fourier Transform (DFT) definition",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The DFT was introduced as the tool to analyse the frequency content of a finite discrete sequence of length N, with the analysis equation X[k] = Σ_{n=0}^{N‑1} x[n]·e^{‑j2πkn/N}.",
+          "evidence_quotes": [
+            {
+              "quote": "To analyze the frequency content of a finite discrete sequence of length N, we use the Discrete Fourier Transform, or DFT. The DFT Analysis Equation transforms N time-domain samples x[0] through x[N-1] into N frequency-domain coefficients X[0] through X[N-1]: X[k] equals the summation from n equals 0 to N minus 1 of x[n] times e to the power of minus j times 2 pi times k times n divided by N, for k = 0, 1 up to N-1.",
+              "approx_start_sec": 30,
+              "approx_end_sec": 45
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C04",
+          "name": "Twiddle factor notation W_N^{kn}",
+          "parent_id": "C03",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The exponential term e^{‑j2πkn/N} was identified as the twiddle factor, denoted W_N^{kn}.",
+          "evidence_quotes": [
+            {
+              "quote": "The term e^(-j 2 pi k n / N) is often denoted as the twiddle factor W_N^(k n).",
+              "approx_start_sec": 50,
+              "approx_end_sec": 55
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C05",
+          "name": "Frequency‑bin mapping and spectral resolution",
+          "parent_id": "C03",
+          "epistemic_dimension": "RELATIONSHIPS_MECHANISM",
+          "observed_summary": "The relationship between DFT index k and physical frequency was given as f_k = k·f_s/N, and the spacing Δf = f_s/N was defined as the spectral resolution, which improves with larger N.",
+          "evidence_quotes": [
+            {
+              "quote": "What frequency does index k actually correspond to in Hertz? The frequency of bin k is given by f_k equals k times f_s divided by N. The spacing between adjacent frequency bins is Delta f equals f_s divided by N, which is called the Spectral Resolution of the DFT.",
+              "approx_start_sec": 60,
+              "approx_end_sec": 70
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C06",
+          "name": "Worked 4‑point DFT example",
+          "parent_id": "C03",
+          "epistemic_dimension": "APPLICATION_INTERPRETATION",
+          "observed_summary": "A concrete calculation for N=4 with input x=[1,2,0,‑1] was performed, showing X[0]=2 and X[1]=1‑3j with magnitude √10 ≈ 3.16.",
+          "evidence_quotes": [
+            {
+              "quote": "Let us trace a worked numerical calculation for an N = 4 point DFT. Suppose our discrete input sequence is x = [1, 2, 0, -1]... For k = 0 (the DC component): X[0] equals ... 2. For k = 1: X[1] equals ... 1 - 3j! The magnitude is |X[1]| = sqrt(1^2 + (-3)^2) = sqrt(10) approx 3.16.",
+              "approx_start_sec": 80,
+              "approx_end_sec": 110
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C07",
+          "name": "Nyquist‑Shannon Sampling Theorem statement",
+          "parent_id": "root",
+          "epistemic_dimension": "IDENTIFICATION",
+          "observed_summary": "The theorem was stated: to avoid aliasing the sampling rate must satisfy f_s > 2 f_max, with f_Nyquist = f_s/2 as the Nyquist (folding) frequency.",
+          "evidence_quotes": [
+            {
+              "quote": "Now, let us examine the fundamental limit of sampling: the Nyquist-Shannon Sampling Theorem... To avoid aliasing, the sampling rate must strictly satisfy the Nyquist Criterion: f_s must be strictly greater than twice the highest frequency present in the signal: f_s > 2 * f_max.",
+              "approx_start_sec": 130,
+              "approx_end_sec": 150
+            }
+          ],
+          "confidence": "HIGH"
+        },
+        {
+          "concept_id": "C08",
+          "name": "Aliasing and its spectral‑replica explanation",
+          "parent_id": "C07",
+          "epistemic_dimension": "BOUNDARIES_EXCEPTIONS",
+          "observed_summary": "Aliasing was described as the overlap of spectral replicas when signal components exceed f_s/2, causing higher frequencies to fold back into the baseband and become indistinguishable from low‑frequency content.",
+          "evidence_quotes": [
+            {
+              "quote": "If the continuous signal contains frequencies higher than half the sampling rate, these spectral replicas overlap. This catastrophic distortion is called Aliasing. Frequencies higher than f_s / 2 fold back into the lower frequency spectrum and become indistinguishable from genuine low-frequency signals.",
+              "approx_start_sec": 150,
+              "approx_end_sec": 165
+            }
+          ],
+          "confidence": "HIGH"
+        }
+      ],
+      "execution_stats": {
+        "latency_ms": 7113,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0
+      }
+    }
+  }
+}

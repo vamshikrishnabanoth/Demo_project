@@ -1,0 +1,9 @@
+{
+  "segment_key": "3C",
+  "package_id": "dev_3a_03_critical_care_infusions",
+  "title": "Single-Step IV Solution Dilution Calculation",
+  "split": "VALIDATION",
+  "target_dimension": "APPLICATION_INTERPRETATION",
+  "text": "In the hospital pharmacy cleanroom, preparing continuous intravenous infusions begins with standard dilution math. When reconstituting a dopamine infusion, the protocol directs adding 400 milligrams of dopamine hydrochloride to a 500 millilitre infusion bag of normal saline. We compute the resulting final concentration by dividing total solute mass by total solution volume: 400 milligrams divided by 500 millilitres yields 0.8 milligrams per millilitre. To convert this into clinical bedside units, we multiply 0.8 milligrams per millilitre by 1000 micrograms per milligram, resulting in 800 micrograms per millilitre. The technician labels the bag with this concentration value. This single-step calculation determines the static solution concentration in the pharmacy before dispensing; it involves no patient weight adjustments, no infusion pump programming, and no titration steps.",
+  "duration_seconds": 40
+}

@@ -1,0 +1,9 @@
+{
+  "segment_key": "1A",
+  "package_id": "dev_3a_01_discrete_probability",
+  "title": "Axiomatic Probability Bounds",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "MEANING",
+  "text": "In axiomatic probability theory, we establish a probability space as a triple containing a sample space Omega, an event space F, and a probability measure P. The foundational Kolmogorov axioms state that for any event A, the probability P(A) is non-negative, meaning P(A) is greater than or equal to zero. Furthermore, the probability of the entire sample space P(Omega) equals exactly one. Third, for any sequence of mutually disjoint events, the probability of their union equals the sum of their individual probabilities. From these syntactic axioms, we directly deduce that the empty set has probability zero and that the complement rule holds: P(not A) equals one minus P(A). By combining these algebraic identities, we obtain standard inequality bounds such as Boole's inequality and the monotonicity bound: if event A is a subset of event B, then P(A) is less than or equal to P(B). We apply these formulas algebraically to check boundary validity.",
+  "duration_seconds": 40
+}

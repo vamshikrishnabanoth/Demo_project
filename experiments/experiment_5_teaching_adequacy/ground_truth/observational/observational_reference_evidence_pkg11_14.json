@@ -1,0 +1,498 @@
+{
+  "adjudication_timestamp": "2026-10-02T09:30:00Z",
+  "lead_adjudicator": "Consensus Panel (Annotators A & B)",
+  "adjudication_protocol": "Consensus evaluation synthesizing observational evidence against normative reference profiles.",
+  "packages": {
+    "pkg_11_physics_thermodynamics": {
+      "topic": "The Carnot Cycle, Maximum Theoretical Efficiency, and Entropy",
+      "concept_hierarchy": {
+        "root": "Carnot Cycle & Second Law",
+        "children": [
+          {
+            "id": "C01",
+            "name": "Heat Engine Energy Balance W = Q_H - Q_C",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C02",
+            "name": "Four Reversible Cycle Processes",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C03",
+            "name": "Thermal Efficiency Derivation eta = 1 - T_C/T_H",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C04",
+            "name": "State Variable Entropy Definition dS = dQ_rev / T",
+            "parent": "root",
+            "children": []
+          }
+        ]
+      },
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Definitions of thermal reservoirs, heat engines, and net work given in opening segment."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Carnot principle explained: reversible engine efficiency is theoretical maximum between two reservoirs."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "evidence": "Complete detailed walkthrough of all 4 processes: 2 isothermals and 2 adiabatics with volume ratios."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "P-V area representing net cycle work, First Law energy conservation W = Q_H - Q_C."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "Step-by-step mathematical proof: isothermal heat expressions and adiabatic volume cancellations yielding eta = 1 - T_C/T_H."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "Full numerical execution for turbine engine: T_H=800K, T_C=300K, Q_H=2000J -> eta=62.5%, W=1250J, Q_C=750J."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 1,
+          "evidence": "Passing disclaimer only: noted that real-world friction causes irreversibility, but omitted Clausius inequality and entropy generation."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "evidence": "Passing mention of refrigeration cycles."
+        }
+      },
+      "diagnostic_coverage_matrix": {
+        "IDENTIFICATION": {
+          "expected": 2,
+          "observed": 2,
+          "status": "COVERED",
+          "diagnosis": "Heat engine components and energy reservoirs defined."
+        },
+        "MEANING": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "Carnot principle and reversibility explained thoroughly."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "All four thermodynamic cycle processes explained in detail."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Energy balance and work enclosed in P-V cycle established."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Mathematical derivation of Carnot efficiency proved rigorously."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Complete numerical cycle problem executed step-by-step."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected": 5,
+          "observed": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Clausius inequality and irreversible entropy generation omitted due to time limits; passing disclaimer capped at Level 1."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected": 2,
+          "observed": 1,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "diagnosis": "Reversed refrigeration cycles outside primary heat engine objective."
+        }
+      },
+      "actionable_gaps": [
+        "BOUNDARIES_EXCEPTIONS"
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS"
+      ]
+    },
+    "pkg_12_pharmacology_clearance": {
+      "topic": "One-Compartment Intravenous Pharmacokinetics: Clearance and Half-Life",
+      "concept_hierarchy": {
+        "root": "One-Compartment Pharmacokinetics",
+        "children": [
+          {
+            "id": "C01",
+            "name": "One-Compartment Model Assumptions",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C02",
+            "name": "Primary Parameters (Dose, C_0, V_d, k_e, CL, t_1/2)",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C03",
+            "name": "Exponential Decay Derivation C(t) = C_0 e^(-k_e t)",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C04",
+            "name": "Parameter Coordination CL = k_e * V_d",
+            "parent": "root",
+            "children": []
+          }
+        ]
+      },
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Named Dose, C_0, V_d, k_e, clearance, half-life."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "One-compartment open kinetic model explained: body as well-mixed container with instant drug distribution."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 4,
+          "evidence": "Definitions of V_d, k_e, clearance, half-life."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 3,
+          "evidence": "Lecturer taught simple univariate decay; omitted multi-compartment alpha distribution vs beta elimination phase interactions required by curriculum."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "evidence": "Integrated dC/dt = -k_e*C step-by-step; derived t_1/2 = 0.693/k_e and CL = k_e * V_d."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "Complete clinical case: 500mg IV, C_0=25mg/L -> V_d=20L, k_e=0.1/hr -> CL=2L/hr, t_1/2=6.93hr, C(12)=7.53mg/L."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 1,
+          "evidence": "Passing disclaimer only: admitted capacity-limited Michaelis-Menten elimination (phenytoin/overdose) was omitted."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "evidence": "Brief passing mention of chronic dosing."
+        }
+      },
+      "diagnostic_coverage_matrix": {
+        "IDENTIFICATION": {
+          "expected": 2,
+          "observed": 2,
+          "status": "COVERED",
+          "diagnosis": "Pharmacokinetic parameters identified."
+        },
+        "MEANING": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "One-compartment model concept explained clearly."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "PK parameter definitions covered."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected": 5,
+          "observed": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Expected multi-compartment distribution vs elimination phase dynamics; lecture restricted to single-compartment decay."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Differential decay and half-life derived rigorously."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Complete clinical dosage case executed."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected": 5,
+          "observed": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Non-linear Michaelis-Menten saturation kinetics explicitly declared in objective but omitted in lecture; passing disclaimer capped at Level 1."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected": 2,
+          "observed": 1,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "diagnosis": "Chronic multiple-dosing regimens outside bolus lecture scope."
+        }
+      },
+      "actionable_gaps": [
+        "RELATIONSHIPS_MECHANISM",
+        "BOUNDARIES_EXCEPTIONS"
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS"
+      ]
+    },
+    "pkg_13_logic_predicates": {
+      "topic": "First-Order Predicate Logic: Quantifiers, Variable Binding, and Semantics",
+      "concept_hierarchy": {
+        "root": "First-Order Predicate Logic",
+        "children": [
+          {
+            "id": "C01",
+            "name": "FOL Syntax (Constants, Variables, Predicates, Quantifiers)",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C02",
+            "name": "Quantifier Scoping and Variable Binding",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C03",
+            "name": "Model-Theoretic Structure M = <D, I> & Satisfaction",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C04",
+            "name": "Quantifier Inference Rules (UI, EG)",
+            "parent": "root",
+            "children": []
+          }
+        ]
+      },
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Constants, variables, predicates, universal and existential quantifiers defined."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Quantifier semantics, variable binding, free vs bound variables, quantifier negation duality explained."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "evidence": "Model M = <D, I>, domain D, interpretation function I, and variable assignment g."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Formal Tarskian satisfaction conditions for forall and exists under modified variable assignments."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 2,
+          "evidence": "Listed Universal Instantiation and Existential Generalization rules statically; explicitly omitted semantic soundness proof."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "Worked formalization of 'Every philosopher admires some logician' and truth testing in concrete 3-element model."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 1,
+          "evidence": "Passing disclaimer only: stated that empty domains require Free Logic, but refused to cover it."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "evidence": "Brief passing mention."
+        }
+      },
+      "diagnostic_coverage_matrix": {
+        "IDENTIFICATION": {
+          "expected": 2,
+          "observed": 2,
+          "status": "COVERED",
+          "diagnosis": "FOL primitives defined."
+        },
+        "MEANING": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "Quantifier semantics and duality explained thoroughly."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Model structures and interpretation functions detailed."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Tarskian satisfaction conditions explained."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected": 5,
+          "observed": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Objective required proving validity/soundness of quantifier rules; lecturer stated rules without model-theoretic soundness proof."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "Formalization and model evaluation executed step-by-step."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected": 5,
+          "observed": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Objective declared empty domain and vacuous quantification evaluation; lecturer gave passing disclaimer about Free Logic capped at Level 1."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected": 2,
+          "observed": 1,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "diagnosis": "Higher-order logic extensions outside introductory predicate logic scope."
+        }
+      },
+      "actionable_gaps": [
+        "JUSTIFICATION_WHY",
+        "BOUNDARIES_EXCEPTIONS"
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS"
+      ]
+    },
+    "pkg_14_signal_processing_fourier": {
+      "topic": "Discrete Fourier Transform (DFT) and Nyquist-Shannon Sampling Theorem",
+      "concept_hierarchy": {
+        "root": "DFT and Sampling Theorem",
+        "children": [
+          {
+            "id": "C01",
+            "name": "Sampling of Continuous Signals x(t) -> x[n]",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C02",
+            "name": "DFT Analysis Equation and Frequency Bins",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C03",
+            "name": "Nyquist Sampling Criterion f_s > 2 f_max",
+            "parent": "root",
+            "children": []
+          },
+          {
+            "id": "C04",
+            "name": "Spectral Aliasing Folding Mechanism",
+            "parent": "root",
+            "children": []
+          }
+        ]
+      },
+      "observed_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "evidence": "Continuous signals, sampling rate f_s, sampling period T_s."
+        },
+        "MEANING": {
+          "level": 4,
+          "evidence": "Frequency decomposition concept: representing signals as linear combinations of complex sinusoids."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "evidence": "DFT analysis equation, twiddle factors W_N^(kn), frequency bin spacing Delta f = f_s / N."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "evidence": "Spectral replication under sampling and aliasing folding mechanism when f_s < 2 f_max."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 3,
+          "evidence": "Stated criterion f_s > 2 f_max and gave wheel-spinning analogy; omitted analytical Dirac comb impulse train convolution proof."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "evidence": "Complete numerical trace of N=4 DFT for x=[1, 2, 0, -1] calculating X[0]=2 and X[1]=1-3j."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 1,
+          "evidence": "Passing disclaimer only: admitted analog anti-aliasing filter roll-off and window spectral leakage were not covered."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 1,
+          "evidence": "Brief passing mention of FFT."
+        }
+      },
+      "diagnostic_coverage_matrix": {
+        "IDENTIFICATION": {
+          "expected": 2,
+          "observed": 2,
+          "status": "COVERED",
+          "diagnosis": "Sampling variables identified."
+        },
+        "MEANING": {
+          "expected": 4,
+          "observed": 4,
+          "status": "COVERED",
+          "diagnosis": "Frequency domain representation explained."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "DFT formula and frequency resolution detailed."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected": 5,
+          "observed": 5,
+          "status": "COVERED",
+          "diagnosis": "Spectral replication and aliasing dynamics explained."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected": 5,
+          "observed": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Objective declared proving sampling theorem; lecturer gave verbal wheel analogy without Dirac comb frequency convolution proof."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected": 6,
+          "observed": 6,
+          "status": "COVERED",
+          "diagnosis": "4-point DFT numerical problem executed step-by-step."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected": 5,
+          "observed": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "diagnosis": "Anti-aliasing filter roll-off and finite-window spectral leakage explicitly declared in objective but omitted in lecture; passing disclaimer capped at Level 1."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected": 2,
+          "observed": 1,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "diagnosis": "Fast Fourier Transform butterfly optimization outside fundamental DFT scope."
+        }
+      },
+      "actionable_gaps": [
+        "JUSTIFICATION_WHY",
+        "BOUNDARIES_EXCEPTIONS"
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS"
+      ]
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "annotator_id": "Annotator_A_Curriculum_Specialist",
+  "annotation_timestamp": "2026-10-02T08:00:00Z",
+  "annotation_protocol": "Blind to model outputs and blind to lecture transcripts. Rated from syllabus, learner level, and declared objectives.",
+  "packages": {
+    "pkg_11_physics_thermodynamics": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Definitions of thermal reservoirs, heat engine, heat absorbed/rejected, and work."
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Carnot principle: maximum theoretical efficiency of reversible heat engines."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Four thermodynamic processes: 2 reversible isothermals and 2 reversible adiabatics."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Net work enclosed in P-V cycle, First Law energy conservation W = Q_H - Q_C."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Derivation of eta = 1 - T_C/T_H using isothermal heat and adiabatic volume relations."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Numerical cycle calculation for temperatures, efficiency, heat rejected, and work."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Second Law boundaries: Clausius inequality for irreversible cycles and entropy generation."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "OPTIONAL",
+          "rationale": "Reversed Carnot cycle as refrigerator/heat pump and Third Law absolute zero limits."
+        }
+      }
+    },
+    "pkg_12_pharmacology_clearance": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Naming pharmacokinetics, IV bolus, clearance, volume of distribution, half-life."
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "One-compartment open kinetic model concept and homogeneous drug distribution."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Fundamental PK parameters: Dose, C_0, V_d, k_e, CL, t_1/2."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Inter-relationship between clearance, volume of distribution, and half-life: CL = k_e * V_d."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Derivation of first-order exponential decay C(t) = C_0 * e^(-k_e*t) and t_1/2 = 0.693/k_e."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Clinical dosage calculations: calculating V_d, CL, half-life, and remaining concentration."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Capacity-limited non-linear Michaelis-Menten elimination kinetics in drug overdoses."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "OPTIONAL",
+          "rationale": "Multi-compartment distribution alpha-phase and chronic multi-dose accumulation."
+        }
+      }
+    },
+    "pkg_13_logic_predicates": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Constants, variables, predicate symbols, universal and existential quantifiers."
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Meaning of universal and existential quantification, quantifier negation dualities."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Model-theoretic structure M = <D, I>, interpretation function, and variable assignment g."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Tarskian satisfaction conditions for quantified sentences and scope/variable binding."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Semantic soundness proof of quantifier inference rules (Universal Instantiation)."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Translating natural language statements and evaluating truth in concrete model structures."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Pathological edge cases: empty domains of discourse, vacuous truth, and Free Logic limits."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "OPTIONAL",
+          "rationale": "Second-order logic extensions, undecidability of FOL, and Church-Turing theorem."
+        }
+      }
+    },
+    "pkg_14_signal_processing_fourier": {
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Continuous signal, discrete sampled sequence, sampling frequency f_s, interval T_s."
+        },
+        "MEANING": {
+          "expected_level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Frequency domain decomposition concept and complex harmonic representation."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "DFT analysis equation, twiddle factors, frequency bin spacing Delta f = f_s / N."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Nyquist-Shannon sampling criterion: spectral replication and aliasing folding f_s > 2 f_max."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Mathematical proof of sampling theorem via Dirac comb impulse train convolution."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Worked numerical calculation of DFT coefficients and frequency bin identification."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Anti-aliasing analog filter roll-off limits, transition bands, and window spectral leakage."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_level": 3,
+          "alignment": "OPTIONAL",
+          "rationale": "Fast Fourier Transform (FFT) Cooley-Tukey butterfly algorithm and 2D image processing."
+        }
+      }
+    }
+  }
+}

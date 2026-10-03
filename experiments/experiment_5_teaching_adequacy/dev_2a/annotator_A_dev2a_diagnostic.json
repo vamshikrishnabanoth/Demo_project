@@ -1,0 +1,89 @@
+{
+  "annotator_id": "Annotator_A_Blind",
+  "timestamp": "2026-10-02T15:10:00Z",
+  "review_mode": "BLIND_TO_MODEL_AND_PRIOR_LABELS",
+  "rubric_reference_version": "1.0.0-frozen",
+  "rubric_reference_hash": "79e4e238a8587e809dd2f8b27430cdc63d3a14b7f4cd42da366c32c085f032a1",
+  "annotations": [
+    {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1A_syntactic_duality",
+      "evaluated_dimension": "MEANING",
+      "observed_depth": 2,
+      "depth_label": "LEVEL_2_TERMINOLOGY_DEFINITIONS",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4",
+      "evidence_quote": "whenever a negation sign passes through a quantifier, the universal quantifier flips into an existential quantifier... This is a standard syntactic substitution rule",
+      "rationale": "Recites De Morgan rules mechanically as a symbol-flipping substitution. Contains zero universe of discourse, truth valuations, or concrete witness elements. Matches Rubric 1 negative counter-indicator."
+    },
+    {
+      "package_id": "dev_2a_01_logic_predicates",
+      "segment_id": "segment_1B_domain_semantics",
+      "evaluated_dimension": "MEANING",
+      "observed_depth": 4,
+      "depth_label": "LEVEL_4_CONCEPTUAL_EXPOSITION",
+      "boundary_verdict": "SATISFIES_LEVEL_4",
+      "evidence_quote": "Consider a universe of discourse or domain D... generalized conjunction over the entire domain... not all integers are prime is true because there exists a witness x=4",
+      "rationale": "Articulates model-theoretic justification. Expands for-all as conjunction over domain D, shows negation yields disjunction, and uses concrete domain witness x=4 to demonstrate existential truth conditions. Meets all Level 4 positive criteria."
+    },
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2A_algebraic_elimination",
+      "evaluated_dimension": "CORE_CONCEPTS",
+      "observed_depth": 4,
+      "depth_label": "LEVEL_4_FORMAL_MATHEMATICAL_IDENTITY",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "evidence_quote": "Equating these two expressions: CL times C_p equals k_e times V_d times C_p. Dividing both sides by C_p, we obtain the fundamental mathematical identity: CL equals k_e multiplied by V_d.",
+      "rationale": "Derives CL = ke * Vd algebraically from first-order differential equations. Fully explains mathematical relationship (Level 4), but provides zero anatomical, vascular, or cellular mechanism."
+    },
+    {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "segment_id": "segment_2B_organ_extraction_mechanism",
+      "evaluated_dimension": "CORE_CONCEPTS",
+      "observed_depth": 5,
+      "depth_label": "LEVEL_5_CAUSAL_EMPIRICAL_MECHANISM",
+      "boundary_verdict": "SATISFIES_LEVEL_5_MECHANISM",
+      "evidence_quote": "clearance is governed by organ blood perfusion and cellular extraction... arterial flow rate Q with entering concentration C_in... CL equals Q times E... perfusion-limited vs capacity-limited",
+      "rationale": "Explicitly details physiological organ clearance mechanism: organ perfusion Q, extraction ratio E across capillary beds, and contrasts perfusion-limited with intrinsic enzyme capacity-limited clearance. Meets Level 5 mechanism criteria."
+    },
+    {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3A_conversational_gentamicin_walkthrough",
+      "evaluated_dimension": "WORKED_APPLICATION",
+      "observed_depth": 3,
+      "depth_label": "LEVEL_3_INFORMAL_VERBAL_WALKTHROUGH",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "evidence_quote": "So in your head you multiply 5 mg/kg by 80 kg, which gives you about 400 milligrams... If their kidneys are a bit sluggish, maybe creatinine is 1.8, you'd probably stretch that out to every 36 or 48 hours",
+      "rationale": "Conversational bedside walkthrough with rough mental multiplication and qualitative heuristics. Lacks explicit multi-step calculation states, CrCl formula execution, or nomogram trace. Matches Rubric 3 negative counter-indicator."
+    },
+    {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "segment_id": "segment_3B_stepwise_gentamicin_execution_trace",
+      "evaluated_dimension": "WORKED_APPLICATION",
+      "observed_depth": 6,
+      "depth_label": "LEVEL_6_RIGOROUS_STEPWISE_EXECUTION_TRACE",
+      "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+      "evidence_quote": "Step 1: Patient Parameters... Step 2: IBW Calculation... Step 3: CrCl via Cockcroft-Gault... Step 4: Target Dose... Step 5: Dosing Interval Selection... Final Regimen: Gentamicin 500 mg IV infusion every 36 hours.",
+      "rationale": "Rigorous 5-step blackboard execution trace with sequentially chained numerical calculations, explicit intermediate states, units, boundary checks, and final dosing order. Fully satisfies Level 6 positive criteria."
+    },
+    {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4A_dft_parameter_roster",
+      "evaluated_dimension": "STRUCTURE_COMPONENTS",
+      "observed_depth": 2,
+      "depth_label": "LEVEL_2_PARAMETER_SPECIFICATION_ROSTER",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_STRUCTURE",
+      "evidence_quote": "listing the essential parameters... First, sampling interval T_s... Second, sampling frequency f_s... Third, transform length N... These six variables constitute the standard descriptive parameter set",
+      "rationale": "Enumerates six scalar parameters as an itemized glossary roster. Does not articulate constituent hardware/software primitives or basis decomposition. Matches Rubric 4 negative counter-indicator."
+    },
+    {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "segment_id": "segment_4B_dft_structural_primitives",
+      "evaluated_dimension": "STRUCTURE_COMPONENTS",
+      "observed_depth": 5,
+      "depth_label": "LEVEL_5_ARCHITECTURAL_CONSTITUENT_PRIMITIVES",
+      "boundary_verdict": "SATISFIES_LEVEL_5_STRUCTURE",
+      "evidence_quote": "Component 1: The Basis Function Matrix W: an N by N Vandermonde matrix... Component 2: The Inner Product Projection Operator... Component 3: The Inverse Synthesis Operator",
+      "rationale": "Specifies internal structural constituent primitives: orthogonal Vandermonde basis matrix, projection inner product, and inverse synthesis linear superposition. Meets Level 5 architectural primitive criteria."
+    }
+  ]
+}

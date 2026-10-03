@@ -1,0 +1,715 @@
+{
+  "evaluation_timestamp": "2026-10-01T18:58:55.509Z",
+  "benchmark_scope": "Milestone v3.6 Step 1B: Prospective Generalization Evaluation (pkg_11 to pkg_14)",
+  "lead_model": "openai/gpt-oss-120b",
+  "acceptance_gates": {
+    "gate_1_actionable_gap_recall": {
+      "target": ">= 80.0%",
+      "target_count": ">= 6 of 7",
+      "achieved": "85.71%",
+      "achieved_count": "6/7",
+      "passed": true
+    },
+    "gate_2_actionable_gap_precision": {
+      "target": ">= 50.0%",
+      "target_condition": "FP <= TP",
+      "achieved": "66.67%",
+      "achieved_counts": "TP=6, FP=3",
+      "passed": true
+    },
+    "gate_3_permissible_omission_specificity": {
+      "target": ">= 85.0%",
+      "target_count": ">= 24 of 28 non-permissible dims",
+      "achieved": "100.00%",
+      "achieved_counts": "TN=28, FP=0 (denom=28)",
+      "passed": true
+    },
+    "primary_verdict": "PASS"
+  },
+  "structural_reliability": {
+    "total_dimensions": 32,
+    "valid_dimensions": 32,
+    "structural_incompletes": 0,
+    "structural_completeness_pct": 100,
+    "reliability_distribution": {
+      "valid_first_response": 4,
+      "valid_after_retry": 0,
+      "incomplete_after_retry": 0
+    }
+  },
+  "pedagogical_evaluation": {
+    "denominator_valid_dimensions": 32,
+    "observed_depth_made": 1.2813,
+    "observed_depth_sdb": -0.7188,
+    "exact_status_concordance_pct": 62.5,
+    "status_concordance_counts": "20/32",
+    "actionable_gaps": {
+      "tp": 6,
+      "fp": 3,
+      "fn": 1,
+      "tn": 22,
+      "precision_pct": 66.67,
+      "recall_pct": 85.71,
+      "specificity_pct": 88,
+      "f1_score_pct": 75,
+      "ground_truth_total": 7,
+      "predicted_total": 9
+    },
+    "secondary_advisory_gaps": {
+      "total_predicted": 2,
+      "items": [
+        {
+          "package_id": "pkg_13_logic_predicates",
+          "dimension": "TRANSFER_SYNTHESIS",
+          "expected_depth": 5,
+          "observed_depth": 0,
+          "evidence": "No material was found linking predicate‑logic concepts to other domains or novel synthesis."
+        },
+        {
+          "package_id": "pkg_14_signal_processing_fourier",
+          "dimension": "TRANSFER_SYNTHESIS",
+          "expected_depth": 5,
+          "observed_depth": 0,
+          "evidence": "No material was observed that connected DFT or sampling concepts to other domains or novel problem contexts."
+        }
+      ]
+    },
+    "permissible_scope_omissions": {
+      "tp": 2,
+      "fp": 0,
+      "fn": 2,
+      "tn": 28,
+      "specificity_pct": 100,
+      "ground_truth_total": 4,
+      "non_permissible_denominator": 28
+    }
+  },
+  "dimension_disagreements": [
+    {
+      "package_id": "pkg_11_physics_thermodynamics",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 3,
+      "gt_observed_depth": 5,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C03 lists the four reversible steps with the isothermal heat expressions, but does not trace their dynamic interaction."
+    },
+    {
+      "package_id": "pkg_11_physics_thermodynamics",
+      "dimension": "JUSTIFICATION_WHY",
+      "expected_depth": 5,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 5,
+      "pred_status": "NOT_OBSERVED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "No concept or episode explicitly explains why the Carnot efficiency is the theoretical maximum."
+    },
+    {
+      "package_id": "pkg_11_physics_thermodynamics",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "expected_depth": 6,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 5,
+      "gt_observed_depth": 6,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "E04 applies the derived Carnot efficiency, but the record lacks a concrete numerical worked example."
+    },
+    {
+      "package_id": "pkg_12_pharmacology_clearance",
+      "dimension": "MEANING",
+      "expected_depth": 3,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 2,
+      "gt_observed_depth": 4,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "V_d defined as Dose/C0 and described as an apparent volume (C02, E02) without deeper analysis."
+    },
+    {
+      "package_id": "pkg_12_pharmacology_clearance",
+      "dimension": "RELATIONSHIPS_MECHANISM",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 5,
+      "gt_observed_depth": 3,
+      "pred_status": "COVERED",
+      "gt_status": "ACTIONABLE_COVERAGE_GAP",
+      "evidence_synthesis": "Derived CL = k_e·V_d linking clearance to elimination rate and volume (C04, E04)."
+    },
+    {
+      "package_id": "pkg_12_pharmacology_clearance",
+      "dimension": "APPLICATION_INTERPRETATION",
+      "expected_depth": 6,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 3,
+      "gt_observed_depth": 6,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "Applied the clearance relationship verbally (C04, E04) but no worked numerical or code‑level example was provided."
+    },
+    {
+      "package_id": "pkg_13_logic_predicates",
+      "dimension": "MEANING",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 2,
+      "gt_observed_depth": 4,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C04 only stated the quantifier‑negation equivalences without derivation or deeper explanation."
+    },
+    {
+      "package_id": "pkg_13_logic_predicates",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 3,
+      "gt_observed_depth": 5,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C05 described the model ⟨D, I⟩ and the role of constants and predicates, but did not elaborate on dynamic aspects."
+    },
+    {
+      "package_id": "pkg_13_logic_predicates",
+      "dimension": "TRANSFER_SYNTHESIS",
+      "expected_depth": 5,
+      "alignment_tier": "RECOMMENDED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 1,
+      "pred_status": "SECONDARY_ADVISORY_GAP",
+      "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+      "evidence_synthesis": "No material was found linking predicate‑logic concepts to other domains or novel synthesis."
+    },
+    {
+      "package_id": "pkg_14_signal_processing_fourier",
+      "dimension": "STRUCTURE_COMPONENTS",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 2,
+      "gt_observed_depth": 5,
+      "pred_status": "ACTIONABLE_COVERAGE_GAP",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C02 named the sampling interval T_s and frequency f_s but did not elaborate on their interaction or systemic role."
+    },
+    {
+      "package_id": "pkg_14_signal_processing_fourier",
+      "dimension": "RELATIONSHIPS_MECHANISM",
+      "expected_depth": 4,
+      "alignment_tier": "REQUIRED",
+      "pred_observed_depth": 3,
+      "gt_observed_depth": 5,
+      "pred_status": "PARTIALLY_COVERED",
+      "gt_status": "COVERED",
+      "evidence_synthesis": "C05 related DFT index k to physical frequency f_k = k·f_s/N and defined spectral resolution Δf = f_s/N, showing a univariate relationship."
+    },
+    {
+      "package_id": "pkg_14_signal_processing_fourier",
+      "dimension": "TRANSFER_SYNTHESIS",
+      "expected_depth": 5,
+      "alignment_tier": "RECOMMENDED",
+      "pred_observed_depth": 0,
+      "gt_observed_depth": 1,
+      "pred_status": "SECONDARY_ADVISORY_GAP",
+      "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+      "evidence_synthesis": "No material was observed that connected DFT or sampling concepts to other domains or novel problem contexts."
+    }
+  ],
+  "packages": {
+    "pkg_11_physics_thermodynamics": {
+      "package_id": "pkg_11_physics_thermodynamics",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 1.25,
+      "observed_depth_sdb": -1.25,
+      "status_concordance_pct": 62.5,
+      "actionable_gaps": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 7,
+        "precision_pct": 100,
+        "recall_pct": 100,
+        "specificity_pct": 100,
+        "predicted_count": 1,
+        "gt_count": 1
+      },
+      "secondary_advisory_gaps": {
+        "count": 0,
+        "items": []
+      },
+      "permissible_omissions": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 7,
+        "specificity_pct": 100
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C02 explicitly names the Carnot cycle as the reversible benchmark."
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 3,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C01 defines a heat engine, states the First‑Law energy balance and the efficiency formula."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 3,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C03 lists the four reversible steps with the isothermal heat expressions, but does not trace their dynamic interaction."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 5,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C04 provides a step‑by‑step derivation linking Q_H, Q_C, and the temperatures to obtain η = 1‑T_C/T_H."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 0,
+          "depth_diff": -5,
+          "gt_status": "COVERED",
+          "pred_status": "NOT_OBSERVED",
+          "status_match": false,
+          "evidence_synthesis": "No concept or episode explicitly explains why the Carnot efficiency is the theoretical maximum."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 6,
+          "pred_observed_depth": 5,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "E04 applies the derived Carnot efficiency, but the record lacks a concrete numerical worked example."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 1,
+          "depth_diff": 0,
+          "gt_status": "ACTIONABLE_COVERAGE_GAP",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": true,
+          "evidence_synthesis": "E06 contains a brief limitation remark (C05 LIMIT) without any systematic analysis of irreversible cases or entropy considerations."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 0,
+          "depth_diff": -1,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": true,
+          "evidence_synthesis": "No cross‑domain synthesis or novel problem design is evident in the transcript."
+        }
+      }
+    },
+    "pkg_12_pharmacology_clearance": {
+      "package_id": "pkg_12_pharmacology_clearance",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 1.25,
+      "observed_depth_sdb": -0.5,
+      "status_concordance_pct": 62.5,
+      "actionable_gaps": {
+        "tp": 1,
+        "fp": 1,
+        "fn": 1,
+        "tn": 5,
+        "precision_pct": 50,
+        "recall_pct": 50,
+        "specificity_pct": 83.3,
+        "predicted_count": 2,
+        "gt_count": 2
+      },
+      "secondary_advisory_gaps": {
+        "count": 0,
+        "items": []
+      },
+      "permissible_omissions": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 7,
+        "specificity_pct": 100
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "Lecture introduced the one‑compartment open model and described its well‑mixed nature (C01, E01)."
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 2,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "V_d defined as Dose/C0 and described as an apparent volume (C02, E02) without deeper analysis."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 5,
+          "depth_diff": 1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "Derived the first‑order elimination differential equation and its exponential solution (C06, E03)."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 3,
+          "pred_observed_depth": 5,
+          "depth_diff": 2,
+          "gt_status": "ACTIONABLE_COVERAGE_GAP",
+          "pred_status": "COVERED",
+          "status_match": false,
+          "evidence_synthesis": "Derived CL = k_e·V_d linking clearance to elimination rate and volume (C04, E04)."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 5,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "Derived half‑life formula t½ = 0.693/k_e (C05)."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 6,
+          "pred_observed_depth": 3,
+          "depth_diff": -3,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "Applied the clearance relationship verbally (C04, E04) but no worked numerical or code‑level example was provided."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 0,
+          "depth_diff": -1,
+          "gt_status": "ACTIONABLE_COVERAGE_GAP",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": true,
+          "evidence_synthesis": "No discussion of model limits, edge cases, or pathological scenarios was observed."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 6,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 0,
+          "depth_diff": -1,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "status_match": true,
+          "evidence_synthesis": "No cross‑domain synthesis or novel application was presented."
+        }
+      }
+    },
+    "pkg_13_logic_predicates": {
+      "package_id": "pkg_13_logic_predicates",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 1.125,
+      "observed_depth_sdb": -0.375,
+      "status_concordance_pct": 62.5,
+      "actionable_gaps": {
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "tn": 5,
+        "precision_pct": 66.7,
+        "recall_pct": 100,
+        "specificity_pct": 83.3,
+        "predicted_count": 3,
+        "gt_count": 2
+      },
+      "secondary_advisory_gaps": {
+        "count": 1,
+        "items": [
+          "TRANSFER_SYNTHESIS (Expected 5, observed 0): No material was found linking predicate‑logic concepts to other domains or novel synthesis."
+        ]
+      },
+      "permissible_omissions": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "tn": 7,
+        "specificity_pct": 100
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C01 and C02 introduced constants, variables, predicate symbols, and the two quantifiers with clear definitions."
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 2,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "C04 only stated the quantifier‑negation equivalences without derivation or deeper explanation."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 3,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C05 described the model ⟨D, I⟩ and the role of constants and predicates, but did not elaborate on dynamic aspects."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 4,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C03 explained scope and binding; C06 gave the assignment function and truth conditions, showing interaction between variables and quantifiers."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "ACTIONABLE_COVERAGE_GAP",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": true,
+          "evidence_synthesis": "No explicit proof or rationale for the semantics of quantifiers was provided; only definitional statements appear."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 6,
+          "pred_observed_depth": 6,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C07 walked through a concrete model evaluation; C08 listed inference rules, constituting a full worked example."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 4,
+          "depth_diff": 3,
+          "gt_status": "ACTIONABLE_COVERAGE_GAP",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": true,
+          "evidence_synthesis": "C09 mentioned empty‑domain semantics and free logic but did not perform a deep stress‑test or pathological analysis."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 0,
+          "depth_diff": -1,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "SECONDARY_ADVISORY_GAP",
+          "status_match": false,
+          "evidence_synthesis": "No material was found linking predicate‑logic concepts to other domains or novel synthesis."
+        }
+      }
+    },
+    "pkg_14_signal_processing_fourier": {
+      "package_id": "pkg_14_signal_processing_fourier",
+      "reliability": "valid_first_response",
+      "total_dimensions": 8,
+      "valid_dimensions": 8,
+      "structural_incompletes": 0,
+      "observed_depth_made": 1.5,
+      "observed_depth_sdb": -0.75,
+      "status_concordance_pct": 62.5,
+      "actionable_gaps": {
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "tn": 5,
+        "precision_pct": 66.7,
+        "recall_pct": 100,
+        "specificity_pct": 83.3,
+        "predicted_count": 3,
+        "gt_count": 2
+      },
+      "secondary_advisory_gaps": {
+        "count": 1,
+        "items": [
+          "TRANSFER_SYNTHESIS (Expected 5, observed 0): No material was observed that connected DFT or sampling concepts to other domains or novel problem contexts."
+        ]
+      },
+      "permissible_omissions": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "tn": 7,
+        "specificity_pct": 100
+      },
+      "dimensions": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 2,
+          "pred_observed_depth": 2,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C03 introduced the DFT definition with its equation and C07 stated the Nyquist‑Shannon theorem, both meeting the required depth."
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 4,
+          "pred_observed_depth": 3,
+          "depth_diff": -1,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C01 defined continuous‑to‑discrete conversion and gave the formula x[n]=x(nT_s), providing a clear operational step."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 2,
+          "depth_diff": -3,
+          "gt_status": "COVERED",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": false,
+          "evidence_synthesis": "C02 named the sampling interval T_s and frequency f_s but did not elaborate on their interaction or systemic role."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 5,
+          "pred_observed_depth": 3,
+          "depth_diff": -2,
+          "gt_status": "COVERED",
+          "pred_status": "PARTIALLY_COVERED",
+          "status_match": false,
+          "evidence_synthesis": "C05 related DFT index k to physical frequency f_k = k·f_s/N and defined spectral resolution Δf = f_s/N, showing a univariate relationship."
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 3,
+          "pred_observed_depth": 1,
+          "depth_diff": -2,
+          "gt_status": "ACTIONABLE_COVERAGE_GAP",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": true,
+          "evidence_synthesis": "The Nyquist condition was merely stated (C07) without any derivation, proof, or deeper rationale."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 6,
+          "pred_observed_depth": 6,
+          "depth_diff": 0,
+          "gt_status": "COVERED",
+          "pred_status": "COVERED",
+          "status_match": true,
+          "evidence_synthesis": "C06 walked through a complete 4‑point DFT calculation with numeric results, satisfying worked‑execution depth."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 4,
+          "depth_diff": 3,
+          "gt_status": "ACTIONABLE_COVERAGE_GAP",
+          "pred_status": "ACTIONABLE_COVERAGE_GAP",
+          "status_match": true,
+          "evidence_synthesis": "C08 explained aliasing as spectral‑replica overlap, providing a systemic description but lacking in‑depth boundary analysis or pathological cases."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "gt_observed_depth": 1,
+          "pred_observed_depth": 0,
+          "depth_diff": -1,
+          "gt_status": "PERMISSIBLE_SCOPE_OMISSION",
+          "pred_status": "SECONDARY_ADVISORY_GAP",
+          "status_match": false,
+          "evidence_synthesis": "No material was observed that connected DFT or sampling concepts to other domains or novel problem contexts."
+        }
+      }
+    }
+  }
+}

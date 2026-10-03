@@ -1,0 +1,360 @@
+{
+  "packages": {
+    "pkg_07_os_deadlocks": {
+      "package_id": "pkg_07_os_deadlocks",
+      "topic": "Deadlock Characterization, Prevention, and Banker's Algorithm",
+      "diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "The lecture explicitly named the four Coffman conditions, the notion of a safe state, and Dijkstra's Banker's Algorithm (verbatim lines list each condition).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Definitions of each Coffman condition and of safe/unsafe states were given, but the deeper intuition linking them and the safety invariant was not fully developed.",
+          "confidence": "MEDIUM"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The instructor enumerated the core data structures (Available, Max, Allocation, Need) and mentioned processes/resources, without detailed systemic interaction or formal rationale.",
+          "confidence": "MEDIUM"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 6,
+          "status": "COVERED",
+          "evidence_synthesis": "The safety\u2011check mechanism of the Banker's Algorithm and the effect of global ordering on cycles were demonstrated with concrete numeric examples and step\u2011by\u2011step execution.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture explained why invalidating a Coffman condition prevents deadlock and compared prevention, avoidance, and detection, yet it lacked formal proofs of necessity/sufficiency.",
+          "confidence": "MEDIUM"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 6,
+          "status": "COVERED",
+          "evidence_synthesis": "A complete trace of the safety algorithm with specific vectors and a discussion of the resource\u2011request test were presented, showing concrete application.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "Limitations such as the need for prior maximum demand, static system assumptions, and the utilization impact of global ordering were identified.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No references to applying the safety\u2011checking ideas to other domains (e.g., distributed or cloud resource scheduling) were found in the transcript.",
+          "confidence": "HIGH"
+        }
+      },
+      "actionable_gaps": [
+        "MEANING (Expected 5, Observed 4): Definitions of each Coffman condition and of safe/unsafe states were given, but the deeper intuition linking them and the safety invariant was not fully developed.",
+        "STRUCTURE_COMPONENTS (Expected 5, Observed 3): The instructor enumerated the core data structures (Available, Max, Allocation, Need) and mentioned processes/resources, without detailed systemic interaction or formal rationale.",
+        "JUSTIFICATION_WHY (Expected 6, Observed 5): The lecture explained why invalidating a Coffman condition prevents deadlock and compared prevention, avoidance, and detection, yet it lacked formal proofs of necessity/sufficiency."
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS (Expected 4, Observed 0): No references to applying the safety\u2011checking ideas to other domains (e.g., distributed or cloud resource scheduling) were found in the transcript."
+      ],
+      "summary_diagnosis": {
+        "covered_count": 4,
+        "partially_covered_count": 0,
+        "actionable_gap_count": 3,
+        "permissible_omission_count": 1,
+        "insufficient_evidence_count": 0
+      },
+      "execution_stats": {
+        "latency_ms": 5506,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_08_biochem_kinetics": {
+      "package_id": "pkg_08_biochem_kinetics",
+      "topic": "Michaelis-Menten Enzyme Kinetics & Catalytic Regulation",
+      "diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "The lecture named the Michaelis\u2011Menten equation, Km, Vmax (k2[E_total]) and discussed competitive and non\u2011competitive inhibition types.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "Km was explained as the substrate concentration at half\u2011Vmax and linked to substrate affinity; catalytic efficiency (kcat/Km) was not explicitly addressed.",
+          "confidence": "MEDIUM"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "Core species E, S, ES and product P were identified via the reaction scheme, though the EP complex was not mentioned.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "The quasi\u2011steady\u2011state assumption, formation/breakdown of ES, and the effect of inhibition on Vmax or Km were formally derived and linked to enzyme mechanisms.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "Derivation invoked Briggs\u2011Haldane steady\u2011state reasoning and provided the algebraic steps leading to the Michaelis\u2011Menten rate law.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "Lineweaver\u2011Burk double\u2011reciprocal plots were constructed, and slope/intercept changes were interpreted for competitive versus non\u2011competitive inhibition, with example calculations.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 3,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 2,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "A brief limitation segment noted that allosteric regulation and the Hill equation were omitted, without deeper discussion of model boundaries.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 2,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No transfer of kinetic reasoning to other enzymes or alternative models was presented.",
+          "confidence": "HIGH"
+        }
+      },
+      "actionable_gaps": [],
+      "permissible_omissions": [
+        "BOUNDARIES_EXCEPTIONS (Expected 3, Observed 2): A brief limitation segment noted that allosteric regulation and the Hill equation were omitted, without deeper discussion of model boundaries.",
+        "TRANSFER_SYNTHESIS (Expected 2, Observed 0): No transfer of kinetic reasoning to other enzymes or alternative models was presented."
+      ],
+      "summary_diagnosis": {
+        "covered_count": 6,
+        "partially_covered_count": 0,
+        "actionable_gap_count": 0,
+        "permissible_omission_count": 2,
+        "insufficient_evidence_count": 0
+      },
+      "execution_stats": {
+        "latency_ms": 5967,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_09_discrete_math_trees": {
+      "package_id": "pkg_09_discrete_math_trees",
+      "topic": "Spanning Trees, Cut Property, and Kruskal's Algorithm with DSU",
+      "diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "Spanning tree and cut property were defined verbatim; Kruskal's algorithm and DSU were named, satisfying basic definition depth.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "The instructor explained why a spanning tree connects all vertices and why the cut property holds, providing intuitive, systemic reasoning.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "NOT_OBSERVED",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        }
+      },
+      "actionable_gaps": [
+        "STRUCTURE_COMPONENTS (Expected 5, Observed 0): No observable evidence found in instructional record.",
+        "RELATIONSHIPS_MECHANISM (Expected 5, Observed 0): No observable evidence found in instructional record.",
+        "JUSTIFICATION_WHY (Expected 6, Observed 0): No observable evidence found in instructional record.",
+        "APPLICATION_INTERPRETATION (Expected 5, Observed 0): No observable evidence found in instructional record.",
+        "BOUNDARIES_EXCEPTIONS (Expected 4, Observed 0): No observable evidence found in instructional record."
+      ],
+      "permissible_omissions": [],
+      "summary_diagnosis": {
+        "covered_count": 2,
+        "partially_covered_count": 0,
+        "actionable_gap_count": 5,
+        "permissible_omission_count": 0,
+        "insufficient_evidence_count": 0
+      },
+      "execution_stats": {
+        "latency_ms": 3705,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_10_microecon_game_theory": {
+      "package_id": "pkg_10_microecon_game_theory",
+      "topic": "Strategic Form Games, Dominance Solvability, and Pure Nash Equilibrium",
+      "diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "The lecture introduced the term \u201cstrategic form game\u201d and defined strict dominance and Nash equilibrium, and the board displayed the bi\u2011matrix notation.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 2,
+          "alignment_tier": "OPTIONAL",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No observable evidence found in instructional record.",
+          "confidence": "HIGH"
+        }
+      },
+      "actionable_gaps": [
+        "MEANING (Expected 4, Observed 0): No observable evidence found in instructional record.",
+        "STRUCTURE_COMPONENTS (Expected 5, Observed 0): No observable evidence found in instructional record.",
+        "RELATIONSHIPS_MECHANISM (Expected 5, Observed 0): No observable evidence found in instructional record.",
+        "JUSTIFICATION_WHY (Expected 5, Observed 0): No observable evidence found in instructional record.",
+        "APPLICATION_INTERPRETATION (Expected 6, Observed 0): No observable evidence found in instructional record.",
+        "BOUNDARIES_EXCEPTIONS (Expected 4, Observed 0): No observable evidence found in instructional record."
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS (Expected 2, Observed 0): No observable evidence found in instructional record."
+      ],
+      "summary_diagnosis": {
+        "covered_count": 1,
+        "partially_covered_count": 0,
+        "actionable_gap_count": 6,
+        "permissible_omission_count": 1,
+        "insufficient_evidence_count": 0
+      },
+      "execution_stats": {
+        "latency_ms": 3855,
+        "model": "openai/gpt-oss-120b"
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_12_pharmacology_clearance",
+  "domain": "Clinical Medicine / Pharmacology",
+  "subject": "Pharmacokinetics and Biopharmaceutics",
+  "topic": "One-Compartment Intravenous Pharmacokinetics: Clearance and Half-Life",
+  "learner_level": "PharmD / Second-Year Medical Students (Pharmacology Block)",
+  "syllabus_context": "Module 2: Basic Pharmacokinetics. Physiological compartments, intravenous bolus administration, first-order elimination rate constant (k_e), apparent volume of distribution (V_d), systemic clearance (CL), elimination half-life (t_1/2), relationship CL = k_e * V_d, and non-linear (capacity-limited) elimination kinetics.",
+  "declared_learning_objective": "Formulate the one-compartment intravenous bolus pharmacokinetic model, derive the plasma concentration decay equation C(t) = C_0 * e^(-k_e * t), calculate volume of distribution and total clearance, solve multi-step dosage half-life calculations, and evaluate non-linear Michaelis-Menten elimination saturation in clinical overdoses.",
+  "provenance": {
+    "mode": "CURATED_CONTROLLED_BENCHMARK",
+    "source_type": "CURATED_PEDAGOGICAL_TRANSCRIPT",
+    "source": "Standard University Medical School Pharmacology Lecture Series",
+    "institution": "Controlled Educational Benchmark Corpus",
+    "access_date": "2026-10-01",
+    "license_or_usage_basis": "Educational Research Dataset"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Plasma drug concentration-time semi-logarithmic decay curves and clinical dose equations projected on screen."
+  }
+}

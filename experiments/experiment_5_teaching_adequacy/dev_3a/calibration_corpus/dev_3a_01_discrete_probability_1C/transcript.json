@@ -1,0 +1,9 @@
+{
+  "segment_key": "1C",
+  "package_id": "dev_3a_01_discrete_probability",
+  "title": "Syntactic Union Bound Equations",
+  "split": "VALIDATION",
+  "target_dimension": "MEANING",
+  "text": "When computing probabilities of multiple overlapping failure modes, we frequently employ the union bound, also known as Boole's inequality. In formal notation, for any countable collection of events E-1, E-2, through E-n, the probability of the union of E-i is bounded above by the sum of their individual probabilities: P of the union is less than or equal to the sum of P(E-i). If the events are mutually exclusive, this inequality becomes an exact equality. We also write the inclusion-exclusion formula: P(A union B) equals P(A) plus P(B) minus P(A intersect B). For three events, we add the pairwise intersections and subtract the three-way intersection. These equations represent purely syntactic rewrite identities between set operators and numerical additions. We use these algebraic formulas to compute upper limits on failure probabilities in safety analyses without constructing the underlying probability distribution or universe elements.",
+  "duration_seconds": 40
+}

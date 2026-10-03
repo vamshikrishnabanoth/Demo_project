@@ -1,0 +1,9 @@
+{
+  "segment_key": "1C",
+  "package_id": "dev_3a_01_discrete_probability",
+  "domain": "01",
+  "topic": "Syntactic Union Bound Equations",
+  "split": "VALIDATION",
+  "target_dimension": "MEANING",
+  "target_threshold": 4
+}

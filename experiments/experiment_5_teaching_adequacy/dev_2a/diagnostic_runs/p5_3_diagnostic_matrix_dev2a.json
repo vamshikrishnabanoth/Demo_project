@@ -1,0 +1,405 @@
+{
+  "component": "P5.3 Diagnostic Coverage Matrix (dev_2a)",
+  "packages": {
+    "dev_2a_01_logic_predicates": {
+      "package_id": "dev_2a_01_logic_predicates",
+      "topic": "Quantifier Duality, Negation Equivalence, and Domain Semantics",
+      "observability_assessment": {
+        "audio_clarity": "HIGH",
+        "transcript_completeness": "COMPLETE",
+        "known_limitations": "Symbolic blackboard notation for quantifiers and Venn/domain diagrams described in accompanying spoken audio."
+      },
+      "diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 presented the two De Morgan equivalences for quantifiers, explicitly stating the rule for moving negation across a quantifier (Episode E01).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C02 explained ∀x P(x) as a conjunction over the domain (Episode E02); existential meaning was not explicitly covered.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C06 introduced Skolem functions as witnesses dependent on universal variables, defining the structural component for existential instantiation.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C05 asserted that quantifier order matters, contrasting ∀x∃y Q(x,y) with ∃y∀x Q(x,y) (Episode E03).",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C04 linked the syntactic De Morgan rules to the semantic Boolean duality of conjunction and disjunction, providing a rationale for quantifier duality.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 6,
+          "status": "COVERED",
+          "evidence_synthesis": "C07 used the real numbers and the relation x + y = 0 to show ∀x∃y (x+y=0) is true while ∃y∀x (x+y=0) is false, walking through the example step‑by‑step (Episode E04).",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No discussion of edge cases, pathological inputs, or boundary analysis for quantifier duality was found in the recording.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 6,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "The lecture did not extend quantifier duality to other domains or novel problem designs.",
+          "confidence": "HIGH"
+        }
+      },
+      "actionable_gaps": [],
+      "secondary_advisory_gaps": [
+        "BOUNDARIES_EXCEPTIONS (Expected 7, observed 0): No discussion of edge cases, pathological inputs, or boundary analysis for quantifier duality was found in the recording.",
+        "TRANSFER_SYNTHESIS (Expected 6, observed 0): The lecture did not extend quantifier duality to other domains or novel problem designs."
+      ],
+      "permissible_omissions": [],
+      "structural_incompletes": [],
+      "summary_diagnosis": {
+        "covered_count": 2,
+        "partially_covered_count": 4,
+        "actionable_gap_count": 0,
+        "secondary_advisory_gap_count": 2,
+        "permissible_omission_count": 0,
+        "insufficient_evidence_count": 0,
+        "structural_incomplete_count": 0
+      },
+      "execution_stats": {
+        "latency_ms": 5794,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0,
+        "response_reliability": "valid_first_response"
+      }
+    },
+    "dev_2a_02_pharmacology_clearance": {
+      "package_id": "dev_2a_02_pharmacology_clearance",
+      "topic": "Clearance Kinetics: Mathematical Identity vs. Physiological Extraction",
+      "observability_assessment": {
+        "audio_clarity": "HIGH",
+        "transcript_completeness": "COMPLETE",
+        "known_limitations": "Pharmacokinetic formulas and organ vascular schematics discussed verbally and sketched on board."
+      },
+      "diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "Derivation of the clearance identity CL = k_e·V_d (C01) was presented with step‑by‑step algebraic manipulation (E01).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "Derivation of the inverse relationship t_half = 0.693/k_e (C02) was explained in detail (E02).",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "Cellular contributors to renal clearance (glomerular filtration, secretion, reabsorption) were enumerated and combined in the formula (C07, E07).",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "Organ clearance expressed as Q·E linking blood flow and extraction ratio was explained (C03, E03).",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "Justification of perfusion‑limited vs. capacity‑limited clearance with intrinsic clearance and extraction ratio was provided (C05, E05).",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 6,
+          "status": "COVERED",
+          "evidence_synthesis": "Live demonstration calculating renal clearance from urine and plasma concentrations with a numeric example (C06, E06).",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No discussion of boundary conditions, failure modes, or pathological extraction scenarios was detected.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "The lecture did not include cross‑domain synthesis or novel integration of clearance concepts.",
+          "confidence": "HIGH"
+        }
+      },
+      "actionable_gaps": [
+        "BOUNDARIES_EXCEPTIONS (Expected 7, observed 0): No discussion of boundary conditions, failure modes, or pathological extraction scenarios was detected."
+      ],
+      "secondary_advisory_gaps": [],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS (Expected 8, observed 0): The lecture did not include cross‑domain synthesis or novel integration of clearance concepts."
+      ],
+      "structural_incompletes": [],
+      "summary_diagnosis": {
+        "covered_count": 6,
+        "partially_covered_count": 0,
+        "actionable_gap_count": 1,
+        "secondary_advisory_gap_count": 0,
+        "permissible_omission_count": 1,
+        "insufficient_evidence_count": 0,
+        "structural_incomplete_count": 0
+      },
+      "execution_stats": {
+        "latency_ms": 16871,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0,
+        "response_reliability": "valid_first_response"
+      }
+    },
+    "dev_2a_03_clinical_dosing": {
+      "package_id": "dev_2a_03_clinical_dosing",
+      "topic": "Worked Clinical Dosing: Conversational Walkthrough vs. Explicit State Execution Trace",
+      "observability_assessment": {
+        "audio_clarity": "HIGH",
+        "transcript_completeness": "COMPLETE",
+        "known_limitations": "Verbal dialogue combined with blackboard calculation steps and unit conversions."
+      },
+      "diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No explicit statement identifying the dosing topic or its scope was found in the transcript.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "Cockcroft‑Gault formula and numeric example were presented, providing the meaning of creatinine clearance.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "IBW calculation formula and example were given, defining a dosing component but without deeper multi‑variable interaction.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "Gentamicin dose and interval selection using IBW and CrCl with the Hartford nomogram demonstrated interaction between variables.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "Vancomycin AUC‑guided dosing was derived step‑by‑step, justifying the chosen regimen.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 6,
+          "status": "COVERED",
+          "evidence_synthesis": "Live trace of extended‑interval gentamicin dosing and phenytoin loading‑dose example provided concrete numerical execution.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No discussion of dosing limits, failure modes, or pathological patient scenarios was observed.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "The lecture did not synthesize dosing concepts across other therapeutic areas or domains.",
+          "confidence": "HIGH"
+        }
+      },
+      "actionable_gaps": [
+        "IDENTIFICATION (Expected 3, observed 0): No explicit statement identifying the dosing topic or its scope was found in the transcript.",
+        "BOUNDARIES_EXCEPTIONS (Expected 7, observed 0): No discussion of dosing limits, failure modes, or pathological patient scenarios was observed."
+      ],
+      "secondary_advisory_gaps": [],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS (Expected 8, observed 0): The lecture did not synthesize dosing concepts across other therapeutic areas or domains."
+      ],
+      "structural_incompletes": [],
+      "summary_diagnosis": {
+        "covered_count": 4,
+        "partially_covered_count": 1,
+        "actionable_gap_count": 2,
+        "secondary_advisory_gap_count": 0,
+        "permissible_omission_count": 1,
+        "insufficient_evidence_count": 0,
+        "structural_incomplete_count": 0
+      },
+      "execution_stats": {
+        "latency_ms": 5775,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0,
+        "response_reliability": "valid_first_response"
+      }
+    },
+    "dev_2a_04_signal_processing_fourier": {
+      "package_id": "dev_2a_04_signal_processing_fourier",
+      "topic": "Discrete Fourier Analysis: Parameter Lists vs. Structural Primitives",
+      "observability_assessment": {
+        "audio_clarity": "HIGH",
+        "transcript_completeness": "COMPLETE",
+        "known_limitations": "Equations and block diagram architecture rendered on lecture slides."
+      },
+      "diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 listed six DFT parameters and C05 listed six FIR filter parameters, both presented as enumerations.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C04 described the Vandermonde basis matrix and C07‑C09 defined primitives, but only static definitions were given.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C03 outlined DFT components and C06 detailed Direct Form I FIR structure, without showing interactions or dynamic behavior.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C02 stated the reciprocal relationship f_s = 1/T_s, providing a simple univariate operational step.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No explicit justification or rationale for the parameter choices or structural design was observed.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture did not include worked examples, case studies, or implementation traces for DFT or FIR filters.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No discussion of edge cases, limitations, or pathological inputs was found.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "OPTIONAL",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No cross‑domain synthesis or novel application was presented.",
+          "confidence": "HIGH"
+        }
+      },
+      "actionable_gaps": [
+        "STRUCTURE_COMPONENTS (Expected 4, observed 2): C03 outlined DFT components and C06 detailed Direct Form I FIR structure, without showing interactions or dynamic behavior.",
+        "APPLICATION_INTERPRETATION (Expected 6, observed 0): The lecture did not include worked examples, case studies, or implementation traces for DFT or FIR filters."
+      ],
+      "secondary_advisory_gaps": [
+        "JUSTIFICATION_WHY (Expected 5, observed 0): No explicit justification or rationale for the parameter choices or structural design was observed.",
+        "BOUNDARIES_EXCEPTIONS (Expected 7, observed 0): No discussion of edge cases, limitations, or pathological inputs was found."
+      ],
+      "permissible_omissions": [
+        "TRANSFER_SYNTHESIS (Expected 8, observed 0): No cross‑domain synthesis or novel application was presented."
+      ],
+      "structural_incompletes": [],
+      "summary_diagnosis": {
+        "covered_count": 1,
+        "partially_covered_count": 2,
+        "actionable_gap_count": 2,
+        "secondary_advisory_gap_count": 2,
+        "permissible_omission_count": 1,
+        "insufficient_evidence_count": 0,
+        "structural_incomplete_count": 0
+      },
+      "execution_stats": {
+        "latency_ms": 4573,
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0,
+        "retries": 0,
+        "response_reliability": "valid_first_response"
+      }
+    }
+  }
+}

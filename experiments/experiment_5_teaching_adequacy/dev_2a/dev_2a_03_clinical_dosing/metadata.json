@@ -1,0 +1,32 @@
+{
+  "package_id": "dev_2a_03_clinical_dosing",
+  "domain": "Clinical Pharmacology & Pharmacotherapy",
+  "subject": "Applied Therapeutic Drug Dosing and Regimen Calculation",
+  "topic": "Worked Clinical Dosing: Conversational Walkthrough vs. Explicit State Execution Trace",
+  "learner_level": "Undergraduate Medicine (MBBS) / Clinical Pharmacy (PharmD Year 4)",
+  "syllabus_context": "Clinical Pharmacokinetics Unit 4: Aminoglycoside and Glycopeptide Dosing. Creatinine clearance estimation, Cockcroft-Gault equation, loading dose calculation, maintenance dose determination, and dosing interval adjustment.",
+  "declared_learning_objective": "Calculate individual creatinine clearance using the Cockcroft-Gault equation, determine loading and maintenance doses for narrow therapeutic index antibiotics, evaluate conversational clinical approximations versus rigorous multi-step calculation traces, and adjust dosing regimens for renal impairment.",
+  "provenance": {
+    "mode": "DEVELOPMENT_DIAGNOSTIC_CORPUS_OPTION_B",
+    "source_type": "SYNTHETIC_PEDAGOGICAL_MICROLECTURE",
+    "institution": "Milestone v3.6 Diagnostic Investigation",
+    "access_date": "2026-10-02",
+    "license_or_usage_basis": "Internal Educational Research"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Verbal dialogue combined with blackboard calculation steps and unit conversions."
+  },
+  "predeclared_split": {
+    "diagnostic_segments": [
+      "segment_3A_conversational_gentamicin_walkthrough",
+      "segment_3B_stepwise_gentamicin_execution_trace"
+    ],
+    "validation_segments": [
+      "segment_3C_conversational_phenytoin_walkthrough",
+      "segment_3D_stepwise_vancomycin_execution_trace"
+    ]
+  }
+}

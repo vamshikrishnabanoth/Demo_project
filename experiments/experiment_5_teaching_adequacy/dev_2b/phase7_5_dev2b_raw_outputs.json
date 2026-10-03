@@ -1,0 +1,1346 @@
+{
+  "1A": {
+    "case_key": "1A",
+    "package_id": "dev_2b_01_set_theory_relations",
+    "dimension": "MEANING",
+    "threshold": 4,
+    "baseline": {
+      "observed_depth": 2,
+      "status": "PARTIALLY_COVERED",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "C02 defined equivalence relation via three axioms but did not illustrate operational use.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_0",
+        "keyPrefix": "gsk_AieJ...",
+        "promptHash": "10a632cb5df3d125",
+        "timestamp": "2026-10-02T16:32:55.557Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 introduced a binary relation R on set A, providing a definition.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C02 defined equivalence relation via three axioms but did not illustrate operational use.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "C03‑C05 described reflexivity, symmetry, and transitivity properties as individual rules.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No explicit discussion of how the three properties interact to form equivalence classes; only listed separately.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Lecture did not provide any rationale, proof, or motivation for equivalence relations.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C06 instructed students to mechanically check each property, but no worked example or concrete execution was shown.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No mention of edge cases, non‑equivalence, or limitations was found.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No activity linking equivalence relations to other domains or novel synthesis was observed.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "candidate_v1_2_0": {
+      "observed_depth": 2,
+      "status": "PARTIALLY_COVERED",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_4_SEMANTICS",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "C02 gives a formal definition of an equivalence relation and lists its three axioms, but no operational or causal explanation (Level 2).",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_2",
+        "keyPrefix": "gsk_Lc67...",
+        "promptHash": "2d5a9500c1726ee9",
+        "timestamp": "2026-10-02T16:33:02.334Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 explicitly defines a binary relation R on set A, providing a static definition (Level 2).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C02 gives a formal definition of an equivalence relation and lists its three axioms, but no operational or causal explanation (Level 2).",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C03‑C05 enumerate reflexivity, symmetry, and transitivity conditions without demonstrating their interaction (Level 2).",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No episode or concept describes dynamic interaction between equivalence relations and induced partitions.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture lacks a proof or causal rationale linking equivalence relations to partitioning of the set.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C06 outlines a mechanical checklist for verifying the three properties, which is a simple procedural step (Level 3) and not a worked numerical or code trace.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No discussion of edge cases, non‑equivalence scenarios, or failure modes was found.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "The lecture does not synthesize equivalence‑relation concepts with other domains or novel problem contexts.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  },
+  "1B": {
+    "case_key": "1B",
+    "package_id": "dev_2b_01_set_theory_relations",
+    "dimension": "MEANING",
+    "threshold": 4,
+    "baseline": {
+      "observed_depth": 4,
+      "status": "COVERED",
+      "boundary_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+      "binary_verdict": "SATISFIES",
+      "evidence_synthesis": "C05 and C06 discuss covering, disjointness, and the equivalence‑partition correspondence, showing set‑level properties.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_0",
+        "keyPrefix": "gsk_AieJ...",
+        "promptHash": "10a632cb5df3d125",
+        "timestamp": "2026-10-02T16:33:20.468Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 and C02 explicitly name the three axioms and present a concrete set S={a,b,c,d}, providing more than a nominal mention.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "C05 and C06 discuss covering, disjointness, and the equivalence‑partition correspondence, showing set‑level properties.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C03 lists the ordered‑pair definition of R, but no deeper operational discussion beyond the static enumeration.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "The lecture links the relation R to its equivalence classes (C04) and notes the partition outcome, illustrating a single cause‑effect link.",
+          "confidence": "MEDIUM"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "C07 uses a concrete model to argue why reflexivity, symmetry, and transitivity guarantee a valid partition, providing a step‑by‑step rationale.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C04 walks through computing the two equivalence classes from R, a worked derivation though without a full problem set or code trace.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No episode addressed edge cases, failure modes, or limits of equivalence relations; search of transcript found no such discussion.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "The session did not extend the concept to other domains or novel synthesis; no transfer examples were observed.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "candidate_v1_2_0": {
+      "observed_depth": 4,
+      "status": "COVERED",
+      "boundary_verdict": "SATISFIES_LEVEL_4_SEMANTICS",
+      "binary_verdict": "SATISFIES",
+      "evidence_synthesis": "C05 explains covering and disjointness of classes, and C06 links equivalence relations to partitions, showing systemic interaction between relational semantics and set partitions.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_2",
+        "keyPrefix": "gsk_Lc67...",
+        "promptHash": "2d5a9500c1726ee9",
+        "timestamp": "2026-10-02T16:33:28.864Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 names the three axioms and C02 introduces the concrete set S, providing a static definition of the relation's identity.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "C05 explains covering and disjointness of classes, and C06 links equivalence relations to partitions, showing systemic interaction between relational semantics and set partitions.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C03 lists the ordered pairs of R, giving a static description of the relation's structure without deeper compositional detail.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "C04 computes equivalence classes from R, illustrating how the relation dynamically determines class membership.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "C07 provides a concrete model demonstrating why the three axioms guarantee a proper partition, constituting a substantive derivation.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C04 works through the derivation of the two equivalence classes, a step‑by‑step calculation but without a full numerical trace or extended case analysis.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 4,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No discussion of edge cases, pathological equivalence relations, or limits was found in the single instructional episode.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 5,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "The lecture did not synthesize the equivalence‑relation concept with other domains nor propose novel cross‑domain applications.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  },
+  "2A": {
+    "case_key": "2A",
+    "package_id": "dev_2b_02_hepatic_metabolism",
+    "dimension": "JUSTIFICATION_WHY",
+    "threshold": 5,
+    "baseline": {
+      "observed_depth": 0,
+      "status": "ACTIONABLE_COVERAGE_GAP",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "No taught concept or episode provides a rationale or theoretical justification for the clearance formulas or enzyme kinetics.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_0",
+        "keyPrefix": "gsk_AieJ...",
+        "promptHash": "10a632cb5df3d125",
+        "timestamp": "2026-10-02T16:33:45.672Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "Concept C03 explicitly defines f_e as the fixed fraction of total elimination due to hepatic metabolism (static definition).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "Concept C01 provides a static definition of first‑order elimination kinetics and k_el without demonstrating dynamic implications.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Concept C07 introduces V_d as a parameter only via definition; no deeper structural analysis or multi‑component description is present.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Concepts C02, C04, and C05 each state static multiplicative relationships (e.g., CL = k_el·V_d) without showing dynamic interaction or feedback.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No taught concept or episode provides a rationale or theoretical justification for the clearance formulas or enzyme kinetics.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "Concept C06 walks through an algebraic solution for k_el and hepatic clearance from patient data, constituting a substantive derivation but not a full worked numerical trace.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No discussion of limits, pathological cases, or boundary conditions for the elimination models is observed.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 6,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "The lecture does not extend the clearance concepts to other domains or novel synthesis scenarios.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "candidate_v1_2_0": {
+      "observed_depth": 0,
+      "status": "ACTIONABLE_COVERAGE_GAP",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "No concept or episode offers a causal or mechanistic justification for the clearance formulas; only statements of relationships are given.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_2",
+        "keyPrefix": "gsk_Lc67...",
+        "promptHash": "2d5a9500c1726ee9",
+        "timestamp": "2026-10-02T16:34:03.401Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "Concept C03 explicitly identifies the hepatic fraction f_e as a fixed component of total elimination.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "Concept C01 provides a static definition of first‑order elimination kinetics and k_el, but no deeper semantic model is presented.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Concept C07 mentions apparent volume of distribution V_d as a parameter without detailed structural specification or constituent primitives.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Concepts C02, C04, and C05 present algebraic relationships (CL = k_el·V_d, CL_H = f_e·k_el·V_d, t½ = 0.693/k_el) without dynamic interaction or multi‑variable mechanisms.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No concept or episode offers a causal or mechanistic justification for the clearance formulas; only statements of relationships are given.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "Concept C06 walks through an algebraic derivation to compute k_el and hepatic clearance from half‑life and V_d, stopping short of a concrete numerical worked example.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture contains no discussion of model limitations, saturation kinetics, or pathological cases such as enzyme inhibition.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 6,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No evidence of cross‑domain synthesis or novel integration of clearance models with other pharmacokinetic frameworks.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  },
+  "2B": {
+    "case_key": "2B",
+    "package_id": "dev_2b_02_hepatic_metabolism",
+    "dimension": "JUSTIFICATION_WHY",
+    "threshold": 5,
+    "baseline": {
+      "observed_depth": 2,
+      "status": "ACTIONABLE_COVERAGE_GAP",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "Michaelis‑Menten kinetics were stated without derivation or rationale for its applicability to microsomal metabolism.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_0",
+        "keyPrefix": "gsk_AieJ...",
+        "promptHash": "10a632cb5df3d125",
+        "timestamp": "2026-10-02T16:34:22.195Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "Lecture named the clearance equation, OATP1B1 transporter, CYP3A4/2D6 enzymes, and Michaelis‑Menten kinetics.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "Metabolism described as combined transport and enzymatic conversion within liver lobules.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "Blood flow rate Q_H and intrinsic clearance formula CL_int = Vmax/(Km+[C]) were presented with their variables.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "Transendothelial drug passage and NADPH‑dependent monooxygenation were explained as mechanistic steps linking compartments.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Michaelis‑Menten kinetics were stated without derivation or rationale for its applicability to microsomal metabolism.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Linear‑condition organ clearance formula was given, but no worked numerical example or case analysis was provided.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No discussion of saturation, high‑concentration limits, or enzyme inhibition was found.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 6,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No cross‑domain synthesis or novel integration was observed.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "candidate_v1_2_0": {
+      "observed_depth": 2,
+      "status": "ACTIONABLE_COVERAGE_GAP",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_MECHANISM",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "No step‑by‑step derivation or causal mechanistic explanation of clearance equations was provided.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_2",
+        "keyPrefix": "gsk_Lc67...",
+        "promptHash": "2d5a9500c1726ee9",
+        "timestamp": "2026-10-02T16:34:32.125Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 presented the phenomenological clearance equation and C05, C06, C08 identified specific transporters and enzymes.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C02 described hepatic metabolism as a combined transport and enzymatic conversion within liver lobules.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C03 defined hepatic sinusoidal blood flow Q_H and C09 gave the intrinsic clearance formula CL_int = V_max/(K_m+[C]).",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C04 explained transendothelial passage of unbound drug and C07 described NADPH‑dependent monooxygenation by P450 enzymes.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No step‑by‑step derivation or causal mechanistic explanation of clearance equations was provided.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C10 gave a linear‑condition clearance formula but lacked a worked numerical example or case analysis.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No discussion of saturation, high‑concentration limits, or pathological scenarios was found.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 6,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "The lecture did not include cross‑domain synthesis or novel integration of concepts.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  },
+  "3A": {
+    "case_key": "3A",
+    "package_id": "dev_2b_03_aminoglycoside_dosing",
+    "dimension": "APPLICATION_INTERPRETATION",
+    "threshold": 6,
+    "baseline": {
+      "observed_depth": 6,
+      "status": "COVERED",
+      "boundary_verdict": "SATISFIES_LEVEL_6_TRACE",
+      "binary_verdict": "SATISFIES",
+      "evidence_synthesis": "Performs mental multiplication (7 mg/kg × 70 kg ≈ 490 mg) and rounds to a 500 mg vial, demonstrating a concrete numeric calculation.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_0",
+        "keyPrefix": "gsk_AieJ...",
+        "promptHash": "10a632cb5df3d125",
+        "timestamp": "2026-10-02T16:34:50.228Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "Lecture states tobramycin start dose ≈7 mg/kg and uses serum creatinine to guide interval, providing static dosage identification.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Speaker characterizes the bedside calculations as an informal decision tool, offering only a nominal description of its purpose.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No mention of drug pharmacokinetic parameters, molecular structure, or detailed dosing components beyond the dose amount.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Explains that higher serum creatinine leads to extending the dosing interval, a single cause‑effect relationship.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No rationale provided for the high‑dose strategy or for renal‑function based interval adjustments.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 6,
+          "status": "COVERED",
+          "evidence_synthesis": "Performs mental multiplication (7 mg/kg × 70 kg ≈ 490 mg) and rounds to a 500 mg vial, demonstrating a concrete numeric calculation.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Lecture does not discuss toxicity thresholds, extreme renal impairment, or other edge cases.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No cross‑domain synthesis or novel integration of dosing heuristics with other clinical frameworks is presented.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "candidate_v1_2_0": {
+      "observed_depth": 3,
+      "status": "ACTIONABLE_COVERAGE_GAP",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "C02 and C03 walk through mental multiplication and rounding to a vial size, each a single‑step calculation (Level 3).",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_2",
+        "keyPrefix": "gsk_Lc67...",
+        "promptHash": "2d5a9500c1726ee9",
+        "timestamp": "2026-10-02T16:34:57.974Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 states the 7 mg·kg⁻¹ tobramycin guideline and C04 names serum creatinine as a dosing marker, providing concrete operational detail (Level 3).",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C06 only labels the method as an informal bedside approximation, offering a static definition (Level 2).",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No discussion of pharmacokinetic structures (e.g., clearance, volume) was found in the transcript.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C05 links higher serum creatinine to extended dosing intervals, describing a two‑variable cause‑effect relationship (Level 4).",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture does not provide any rationale or mechanistic explanation for the dosing guideline.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C02 and C03 walk through mental multiplication and rounding to a vial size, each a single‑step calculation (Level 3).",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No discussion of dosing limits, toxicity thresholds, or pathological cases appears.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "The session lacks any cross‑domain synthesis or novel application beyond the bedside heuristic.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  },
+  "3B": {
+    "case_key": "3B",
+    "package_id": "dev_2b_03_aminoglycoside_dosing",
+    "dimension": "APPLICATION_INTERPRETATION",
+    "threshold": 6,
+    "baseline": {
+      "observed_depth": 5,
+      "status": "PARTIALLY_COVERED",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "C06 and C07 walk through a single concrete example (CrCl = 45.8 mL/min → 36‑h interval; serum level plotted) but lack a full step‑by‑step worked problem trace.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_0",
+        "keyPrefix": "gsk_AieJ...",
+        "promptHash": "10a632cb5df3d125",
+        "timestamp": "2026-10-02T16:35:15.938Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 lists the patient’s age, sex, height, weight, and serum creatinine; C04 presents the Cockcroft‑Gault equation, providing the necessary identifiers for dosing.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "C06 maps a calculated CrCl (45.8 mL/min) to a 36‑hour dosing interval, showing the systemic link between renal function and dosing frequency.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "C02 and C03 provide explicit formulas for IBW and ADW, demonstrating interaction of height, weight, and percentage thresholds.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C03, C05, and C06 illustrate multi‑variable mappings (weight → dose, CrCl → interval) but stop at formula application without deeper derivation.",
+          "confidence": "MEDIUM"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture states the target dose (7 mg/kg) and interval selection rules without providing the underlying pharmacologic or physiological rationale.",
+          "confidence": "MEDIUM"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C06 and C07 walk through a single concrete example (CrCl = 45.8 mL/min → 36‑h interval; serum level plotted) but lack a full step‑by‑step worked problem trace.",
+          "confidence": "MEDIUM"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C08 mentions the >120 % IBW threshold as a boundary condition but does not explore edge‑case analysis, failure modes, or stress‑testing of the rule.",
+          "confidence": "MEDIUM"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No evidence of cross‑domain synthesis, novel problem design, or transfer of dosing heuristics to other therapeutic contexts was found.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "candidate_v1_2_0": {
+      "observed_depth": 4,
+      "status": "ACTIONABLE_COVERAGE_GAP",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_6_TRACE",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "Hartford nomogram interval selection and monitoring plan were described, but without a worked numerical trace or concrete code‑level execution.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_2",
+        "keyPrefix": "gsk_Lc67...",
+        "promptHash": "2d5a9500c1726ee9",
+        "timestamp": "2026-10-02T16:35:50.862Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "Baseline demographics and Cockcroft‑Gault formula were listed, providing a static description of required data without deeper operational explanation.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No conceptual definition or semantic interpretation of adjusted dosing weight, CrCl relevance, or dosing rationale was presented.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "IBW formula was given as a parameter roster; no deeper structural blueprint (e.g., full dosing algorithm architecture) was provided.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Conditional ADW calculation and dose‑by‑weight multiplication were described, but only as isolated univariate steps without multi‑variable dynamics.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture did not provide a step‑by‑step physiological or pharmacokinetic rationale for the chosen dosing weight, dose, or interval.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "Hartford nomogram interval selection and monitoring plan were described, but without a worked numerical trace or concrete code‑level execution.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "A single boundary condition (IBW > 120 %) was mentioned; no in‑depth analysis of pathological cases or stress‑testing was performed.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "The session contained no cross‑domain synthesis or novel integration beyond aminoglycoside dosing.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  },
+  "4A": {
+    "case_key": "4A",
+    "package_id": "dev_2b_04_iir_filter_realization",
+    "dimension": "STRUCTURE_COMPONENTS",
+    "threshold": 5,
+    "baseline": {
+      "observed_depth": 3,
+      "status": "PARTIALLY_COVERED",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "C06 defines filter order and pole count and notes that order affects transition steepness, a single cause‑effect link.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_3",
+        "keyPrefix": "gsk_82zS...",
+        "promptHash": "10a632cb5df3d125",
+        "timestamp": "2026-10-02T16:36:11.612Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C02, C03, and C07 explicitly name the passband/stopband cutoffs and filter families, providing static definitions.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C01, C04, and C05 describe sampling frequency, passband ripple, and stopband attenuation but stop at static description without causal explanation.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C06 defines filter order and pole count and notes that order affects transition steepness, a single cause‑effect link.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No episode or concept details the dynamic interaction between filter coefficients, states, or feedback loops; only a passing mention of filter families.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture does not provide a substantive rationale linking specifications to performance or design constraints beyond nominal identification.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C08 mentions the parameter roster as a pre‑synthesis tool but offers no worked numerical example, code trace, or detailed design walkthrough.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "The recording contains no discussion of edge cases, stability limits, or failure modes for IIR filters.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "OPTIONAL",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No cross‑domain synthesis or novel design task is presented in the material.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "candidate_v1_2_0": {
+      "observed_depth": 2,
+      "status": "ACTIONABLE_COVERAGE_GAP",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "C06 mentions filter order N as the integer pole count but gives no deeper structural detail.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_0",
+        "keyPrefix": "gsk_AieJ...",
+        "promptHash": "2d5a9500c1726ee9",
+        "timestamp": "2026-10-02T16:36:23.515Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C02, C03, and C07 explicitly name passband/stopband cutoffs and the Butterworth/Chebyshev filter families.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C01, C04, and C05 provide static definitions of sampling frequency, passband ripple, and stopband attenuation.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C06 mentions filter order N as the integer pole count but gives no deeper structural detail.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "No segment describes dynamic interaction between parameters, filter structure, or signal flow.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 0,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "The lecture offers no derivations, proofs, or causal rationale for the specifications.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 1,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C08 briefly notes the parameter roster as a pre‑synthesis requirement without a worked example or case analysis.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No discussion of edge cases, stability limits, or parameter boundaries was found.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "OPTIONAL",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "The recording contains no cross‑domain synthesis or novel application of the filter specifications.",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  },
+  "4B": {
+    "case_key": "4B",
+    "package_id": "dev_2b_04_iir_filter_realization",
+    "dimension": "STRUCTURE_COMPONENTS",
+    "threshold": 5,
+    "baseline": {
+      "observed_depth": 4,
+      "status": "COVERED",
+      "boundary_verdict": "FALLS_SHORT_OF_LEVEL_5_PRIMITIVES",
+      "binary_verdict": "FALLS_SHORT",
+      "evidence_synthesis": "C03‑C05 described the shared tapped delay line, feedback multiplier bank, and feedforward multiplier bank, detailing the primitive hardware blocks.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_2",
+        "keyPrefix": "gsk_Lc67...",
+        "promptHash": "10a632cb5df3d125",
+        "timestamp": "2026-10-02T16:36:32.293Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 introduced the generic N‑th order IIR difference equation, providing a formal definition of the filter equation.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "C02 explained the role of the intermediate state variable w[n] in Direct Form II, linking it to the filter’s internal state.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "COVERED",
+          "evidence_synthesis": "C03‑C05 described the shared tapped delay line, feedback multiplier bank, and feedforward multiplier bank, detailing the primitive hardware blocks.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "C07 contrasted Direct Form I and II, highlighting how the shared delay line creates a register‑count reduction, illustrating interaction between feedback and feedforward paths.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "C06 justified Direct Form II’s memory advantage by explaining the halving of registers due to the shared delay line.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "PARTIALLY_COVERED",
+          "evidence_synthesis": "C08 presented the signal‑flow graph primitives for hardware implementation, but did not include a concrete numerical or code‑level execution trace.",
+          "confidence": "MEDIUM"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No episode or concept addressed edge cases, stability limits, or pathological coefficient values for IIR filters.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "OPTIONAL",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "No cross‑domain synthesis or novel design linking IIR filters to other fields was observed.",
+          "confidence": "HIGH"
+        }
+      }
+    },
+    "candidate_v1_2_0": {
+      "observed_depth": 5,
+      "status": "COVERED",
+      "boundary_verdict": "SATISFIES_LEVEL_5_PRIMITIVES",
+      "binary_verdict": "SATISFIES",
+      "evidence_synthesis": "C03‑C05 detailed the shared tapped delay line, feedback and feedforward multiplier banks, and adder tree, delivering a complete architectural blueprint of the Direct Form II primitives.",
+      "meta": {
+        "model": "openai/gpt-oss-120b",
+        "provider": "Groq",
+        "keySlot": "key_slot_0",
+        "keyPrefix": "gsk_AieJ...",
+        "promptHash": "2d5a9500c1726ee9",
+        "timestamp": "2026-10-02T16:36:51.766Z"
+      },
+      "full_diagnostic_matrix": {
+        "IDENTIFICATION": {
+          "expected_depth": 2,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 2,
+          "status": "COVERED",
+          "evidence_synthesis": "C01 presented the generic N‑th order IIR difference equation, providing a static definition of the filter.",
+          "confidence": "HIGH"
+        },
+        "MEANING": {
+          "expected_depth": 3,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 3,
+          "status": "COVERED",
+          "evidence_synthesis": "C02 explained the intermediate state variable w[n] and its role in decomposing the difference equation, constituting a univariate operational step.",
+          "confidence": "HIGH"
+        },
+        "STRUCTURE_COMPONENTS": {
+          "expected_depth": 4,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "C03‑C05 detailed the shared tapped delay line, feedback and feedforward multiplier banks, and adder tree, delivering a complete architectural blueprint of the Direct Form II primitives.",
+          "confidence": "HIGH"
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "C07 compared Direct Form I and II, articulating how the shared delay line reduces register count, providing a causal mechanism linking architecture to resource usage.",
+          "confidence": "HIGH"
+        },
+        "JUSTIFICATION_WHY": {
+          "expected_depth": 5,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 5,
+          "status": "COVERED",
+          "evidence_synthesis": "C06 justified the memory advantage of Direct Form II by explaining the register‑count reduction due to the shared delay line.",
+          "confidence": "HIGH"
+        },
+        "APPLICATION_INTERPRETATION": {
+          "expected_depth": 6,
+          "alignment_tier": "REQUIRED",
+          "observed_depth": 4,
+          "status": "ACTIONABLE_COVERAGE_GAP",
+          "evidence_synthesis": "C08 described the hardware signal‑flow graph but did not present a worked numerical or code trace of filter operation.",
+          "confidence": "HIGH"
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "expected_depth": 7,
+          "alignment_tier": "RECOMMENDED",
+          "observed_depth": 0,
+          "status": "SECONDARY_ADVISORY_GAP",
+          "evidence_synthesis": "No episode addressed pathological inputs, stability limits, or edge‑case behavior of the IIR filter.",
+          "confidence": "HIGH"
+        },
+        "TRANSFER_SYNTHESIS": {
+          "expected_depth": 8,
+          "alignment_tier": "OPTIONAL",
+          "observed_depth": 0,
+          "status": "PERMISSIBLE_SCOPE_OMISSION",
+          "evidence_synthesis": "The lecture did not extend the Direct Form II concepts to other domains (e.g., control systems or adaptive filtering).",
+          "confidence": "HIGH"
+        }
+      }
+    }
+  }
+}

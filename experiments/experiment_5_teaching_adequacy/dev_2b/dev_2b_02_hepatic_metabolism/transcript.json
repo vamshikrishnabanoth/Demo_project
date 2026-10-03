@@ -1,0 +1,23 @@
+{
+  "lecture_id": "dev_2b_02",
+  "total_duration_seconds": 250,
+  "raw_transcript": "Welcome class. Today we address hepatic drug elimination and metabolism.\n\n[Segment 2A - Negative Boundary: Algebraic Kinetic Parameter Derivation]\nLet us examine hepatic elimination from a classical mathematical modeling perspective. In first-order elimination kinetics, the systemic elimination rate constant k_el is defined as the fraction of drug removed per unit time. Multiplying the total apparent volume of distribution V_d by the elimination rate constant k_el yields systemic clearance: CL equals k_el multiplied by V_d. If hepatic metabolism accounts for a fixed fraction f_e of total elimination, hepatic clearance CL_H is simply the product of systemic clearance and f_e: CL_H equals f_e times k_el times V_d. Furthermore, the half-life of elimination is related through the natural logarithm of 2: t_half equals 0.693 divided by k_el. We can solve this system algebraically: given patient half-life and distribution volume, we calculate the elimination rate constant and compute hepatic clearance in liters per hour using standard algebraic substitution.\n\n[Segment 2B - Positive Boundary: Microsomal Enzyme Transport and Kinetics]\nYet the algebraic equation CL_H = k_el * V_d is a phenomenological parameter fit that reveals nothing about the actual biological mechanism inside hepatocytes. Hepatic drug metabolism is a physiological transport and biotransformation process occurring within the liver lobules. Arterial and portal venous blood enters the hepatic sinusoids at flow rate Q_H. Free, unbound drug molecules in plasma cross the fenestrated sinusoidal endothelium into the Space of Disse and enter hepatocytes via basolateral influx carriers like OATP1B1. Inside the hepatocyte endoplasmic reticulum, membrane-bound microsomal enzymes\u2014predominantly Cytochrome P450 oxidases like CYP3A4 and CYP2D6\u2014catalyze NADPH-dependent monooxygenation. This enzymatic transformation follows Michaelis-Menten saturation kinetics: the intrinsic metabolic clearance CL_int equals the maximal reaction velocity V_max divided by the Michaelis constant K_m plus drug concentration. Under linear conditions where concentration is well below K_m, organ clearance is CL_H equals Q_H times (f_u * CL_int) divided by (Q_H plus f_u * CL_int).",
+  "segments": [
+    {
+      "segment_id": "segment_2A_algebraic_kinetic_derivation",
+      "split": "CHALLENGE_NEGATIVE",
+      "start": 0,
+      "end": 120,
+      "target_distinction": "Pattern 2 Negative: Algebraic derivation of CL_H from V_d and k_el (Level 4)",
+      "summary": "Mathematical parameter derivation of clearance without tissue or cellular mechanism."
+    },
+    {
+      "segment_id": "segment_2B_microsomal_enzyme_kinetics",
+      "split": "CHALLENGE_POSITIVE",
+      "start": 120,
+      "end": 250,
+      "target_distinction": "Pattern 2 Positive: Hepatocyte sinusoidal transport and CYP3A4 Michaelis-Menten kinetics (Level 5)",
+      "summary": "Sinusoidal perfusion, OATP influx, CYP450 microsomal kinetics, and intrinsic clearance formula."
+    }
+  ]
+}

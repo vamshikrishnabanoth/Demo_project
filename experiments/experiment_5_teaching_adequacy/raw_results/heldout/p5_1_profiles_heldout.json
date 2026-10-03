@@ -1,0 +1,208 @@
+{
+  "packages": {
+    "pkg_07_os_deadlocks": {
+      "package_id": "pkg_07_os_deadlocks",
+      "topic": "Deadlock Characterization, Prevention, and Banker's Algorithm",
+      "declared_objective": "Explain the four Coffman conditions necessary for deadlock, analyze safe versus unsafe system states, trace Dijkstra's Banker's Algorithm with multiple resource instances to evaluate safety, and evaluate the trade\u2011offs between deadlock prevention, avoidance, and detection and recovery mechanisms.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name the four Coffman conditions, the notion of a safe state, and Dijkstra's Banker's Algorithm as defined in the syllabus."
+        },
+        "MEANING": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual definition of each condition, safe/unsafe states, and the intuition behind the safety invariant is essential for meaningful discussion."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Learners need to enumerate the core elements of the deadlock model (processes, resources, allocation graph) and the data structures used by the Banker's Algorithm (Available, Max, Allocation, Need, Request)."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Understanding how the conditions interact to produce deadlock, how cycles in the allocation graph reflect deadlock, and how the safety\u2011check mechanism of the Banker's Algorithm operates is central to the objective."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Students must articulate the theoretical justification (necessity and sufficiency) of the Coffman conditions, prove why the safety invariant guarantees deadlock\u2011free execution, and reason about the inherent trade\u2011offs of prevention, avoidance, and detection."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "A complete trace of the Banker's Algorithm on a multi\u2011instance example, plus analysis of prevention/avoidance/detection scenarios, demonstrates applied competence."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Learners should identify limits of the Banker's Algorithm (e.g., need for prior maximum demand, static system assumptions) and situations where each deadlock strategy fails or is impractical."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "Ability to transfer the safety\u2011checking ideas to other resource\u2011allocation contexts (e.g., distributed systems, cloud resource scheduling) enriches understanding but is beyond the core syllabus requirement."
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 2600,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_08_biochem_kinetics": {
+      "package_id": "pkg_08_biochem_kinetics",
+      "topic": "Michaelis-Menten Enzyme Kinetics & Catalytic Regulation",
+      "declared_objective": "Derive the Michaelis-Menten rate equation under the Briggs-Haldane steady-state assumption, explain the biochemical meaning of Km and catalytic efficiency (kcat/Km), contrast competitive versus non-competitive inhibition using Lineweaver-Burk transformations, and analyze allosteric feedback inhibition.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name the Michaelis-Menten equation, Km, kcat, and the standard inhibition classifications; nominal recognition is essential for any further work."
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Beyond naming, learners need a conceptual grasp of what Km represents (substrate affinity) and why kcat/Km measures catalytic efficiency, linking mathematical symbols to biochemical intuition."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Identify the core species (E, S, ES, EP) and kinetic parameters; understanding these primitives enables the derivation and interpretation steps."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Explain how the steady\u2011state approximation couples formation and breakdown of ES, how inhibition alters Vmax or Km, and how allosteric effectors modify enzyme conformations; this requires grasping invariant operations and dynamic interactions."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Derivation of the rate law must be justified mathematically (Briggs\u2011Haldane) and biochemically (why steady\u2011state holds, why Km equals (k\u20111+k2)/k1); proofs and causal reasoning are central to the objective."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Students must execute Lineweaver\u2011Burk transformations, interpret slope/intercept changes for competitive vs non\u2011competitive inhibition, and calculate kcat/Km from experimental data\u2014practical problem\u2011solving."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 3,
+          "alignment": "RECOMMENDED",
+          "rationale": "Discuss limits of the Michaelis\u2011Menten model (e.g., substrate inhibition, rapid equilibrium failure) and cases where allosteric regulation violates classic assumptions; important but not core for a single lecture."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 2,
+          "alignment": "RECOMMENDED",
+          "rationale": "Encourage learners to transfer kinetic reasoning to novel enzymes or to compare with alternative models (e.g., Hill equation), fostering synthesis without deep exploration at this stage."
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 2441,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_09_discrete_math_trees": {
+      "package_id": "pkg_09_discrete_math_trees",
+      "topic": "Spanning Trees, Cut Property, and Kruskal's Algorithm with DSU",
+      "declared_objective": "Define spanning trees in connected undirected graphs, prove the Cut Property theorem, trace Kruskal's greedy algorithm using Disjoint Set Union data structures, compare asymptotic complexity with Prim's algorithm, and evaluate edge weight conditions and spanning forest limits.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 3,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name and formally state what a spanning tree, cut, Kruskal's algorithm, and DSU are; this is basic nomenclature expected in a third\u2011semester course."
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Beyond naming, learners need clear conceptual definitions and intuitive explanations of why a spanning tree connects all vertices, what the cut property asserts, and how DSU represents disjoint sets."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "The curriculum expects identification of core components: vertices, edges, cycles, cuts, DSU fields (parent, rank), and algorithmic primitives (find, union, edge sorting)."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Students must understand invariant operations: how the cut property guides edge selection, how DSU prevents cycles, and how these mechanisms interact within Kruskal's greedy process."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "Proof of the Cut Property and correctness of Kruskal\u2019s algorithm are central; learners must construct formal arguments and recognize causal necessity of each step."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "A worked trace on a representative graph, including DSU operations and a complexity comparison with Prim\u2019s algorithm, is essential for applied competence."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Students must articulate limits: handling equal edge weights, disconnected graphs (spanning forests), and failure modes of DSU without path compression or union\u2011by\u2011rank."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 4,
+          "alignment": "RECOMMENDED",
+          "rationale": "While not mandatory for the core objective, extending the concepts to other MST algorithms, dynamic graph updates, and broader network\u2011design problems enriches deeper synthesis."
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 2573,
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    "pkg_10_microecon_game_theory": {
+      "package_id": "pkg_10_microecon_game_theory",
+      "topic": "Strategic Form Games, Dominance Solvability, and Pure Nash Equilibrium",
+      "declared_objective": "Formulate strategic form games with payoff matrices, solve games via Iterated Elimination of Strictly Dominated Strategies (IESDS), identify pure-strategy Nash equilibria using best-response analysis, explain why dominant-strategy equilibria may be Pareto inefficient (Prisoner's Dilemma), and evaluate conditions where pure equilibria fail to exist or multiple equilibria arise.",
+      "expected_dimensions": {
+        "IDENTIFICATION": {
+          "level": 2,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to name and recognize the formal objects (strategic form game, dominated strategy, Nash equilibrium) and write the standard matrix notation."
+        },
+        "MEANING": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "A clear conceptual grasp of what dominance, best\u2011response, and Nash equilibrium mean is essential for interpreting the strategic situation beyond mere symbols."
+        },
+        "STRUCTURE_COMPONENTS": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Learners need to identify all constituent parts\u2014players, strategy sets, payoff functions, best\u2011response correspondences, and the elimination process\u2014and understand how they are organized within a payoff matrix."
+        },
+        "RELATIONSHIPS_MECHANISM": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Understanding the invariant operations (e.g., iterated elimination) and how strategies interact through best\u2011responses is crucial for moving from definition to solution."
+        },
+        "JUSTIFICATION_WHY": {
+          "level": 5,
+          "alignment": "REQUIRED",
+          "rationale": "Students must be able to justify why IESDS preserves Nash equilibria, why dominant\u2011strategy outcomes can be Pareto\u2011inefficient, and when pure equilibria may not exist, using short proofs or logical arguments."
+        },
+        "APPLICATION_INTERPRETATION": {
+          "level": 6,
+          "alignment": "REQUIRED",
+          "rationale": "The course expects learners to execute full solution traces on canonical games (Prisoner's Dilemma, coordination games, etc.), applying IESDS and best\u2011response analysis to locate pure\u2011strategy Nash equilibria."
+        },
+        "BOUNDARIES_EXCEPTIONS": {
+          "level": 4,
+          "alignment": "REQUIRED",
+          "rationale": "Students should recognize the limits of IESDS (e.g., weak dominance), cases with multiple or no pure equilibria, and edge conditions where dominance solvability fails."
+        },
+        "TRANSFER_SYNTHESIS": {
+          "level": 2,
+          "alignment": "OPTIONAL",
+          "rationale": "At this stage, a brief ability to map the concepts to other settings (e.g., auctions, evolutionary games) is valuable but not required for meeting the core objective."
+        }
+      },
+      "execution_stats": {
+        "latency_ms": 2615,
+        "model": "openai/gpt-oss-120b"
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "lecture_id": "dev_2b_04",
+  "total_duration_seconds": 240,
+  "raw_transcript": "Welcome back. Today we examine the architectural synthesis of Infinite Impulse Response digital filters.\n\n[Segment 4A - Negative Boundary: IIR Filter Specification Parameter Roster]\nIn digital filter engineering, when specifying an Infinite Impulse Response (IIR) lowpass Butterworth or Chebyshev filter, system engineers first enumerate an itemized parameter roster: Metric 1: Sampling frequency f_s, defining the Nyquist boundary at f_s / 2 in hertz. Metric 2: Passband cutoff frequency f_pass, where the magnitude response must remain within allowable limits. Metric 3: Stopband cutoff frequency f_stop, where minimum required attenuation begins. Metric 4: Maximum passband ripple A_pass, expressed in decibels as peak allowable passband variation. Metric 5: Minimum stopband attenuation A_stop, representing the required suppression level in decibels. Metric 6: Filter order N, the integer number of poles determining the steepness of the transition band. These scalar numerical metrics establish the filter's performance requirements before architectural hardware synthesis.\n\n[Segment 4B - Positive Boundary: Direct Form II Canonical Hardware Signal Flow Graph]\nIn contrast, the physical hardware realization of the IIR filter is governed by its Direct Form II canonical signal flow graph primitives. The general N-th order difference equation is y[n] equals the sum from k=0 to N of b_k x[n-k] minus the sum from k=1 to N of a_k y[n-k]. Architecturally, Direct Form II decomposes this into an intermediate state variable w[n] to minimize memory hardware: Primitive 1: A shared tapped delay line consisting of N unit-delay memory registers z^-1 in series, storing the sequential internal state vector [w[n-1], w[n-2], ..., w[n-N]]. Primitive 2: A bank of feedback multiplier nodes scaling delayed states by coefficient -a_k, which sum with input x[n] to produce current state w[n]. Primitive 3: A bank of feedforward multiplier nodes scaling delayed states by coefficient b_k, which sum through an adder tree to produce output sample y[n]. This canonical realization halves the required register count compared to Direct Form I.",
+  "segments": [
+    {
+      "segment_id": "segment_4A_iir_specification_parameter_roster",
+      "split": "CHALLENGE_NEGATIVE",
+      "start": 0,
+      "end": 110,
+      "target_distinction": "Pattern 4 Negative: Itemized roster of 6 scalar specification parameters (Level 2)",
+      "summary": "Enumeration of f_s, f_pass, f_stop, A_pass, A_stop, and N specification bounds."
+    },
+    {
+      "segment_id": "segment_4B_direct_form_ii_hardware_flow",
+      "split": "CHALLENGE_POSITIVE",
+      "start": 110,
+      "end": 240,
+      "target_distinction": "Pattern 4 Positive: Canonical Direct Form II hardware signal flow graph primitives (Level 5)",
+      "summary": "Shared tapped delay line z^-1, feedback multiplier bank, feedforward multiplier bank, and adder nodes."
+    }
+  ]
+}

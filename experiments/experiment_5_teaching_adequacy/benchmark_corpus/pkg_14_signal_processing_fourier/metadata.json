@@ -1,0 +1,23 @@
+{
+  "package_id": "pkg_14_signal_processing_fourier",
+  "domain": "Electrical Engineering / Telecommunications",
+  "subject": "Digital Signal Processing (DSP) & Linear Systems",
+  "topic": "Discrete Fourier Transform (DFT) and Nyquist-Shannon Sampling Theorem",
+  "learner_level": "Undergraduate B.Tech Electrical / Telecommunication Engineering (Semester 5)",
+  "syllabus_context": "Unit II: Discrete-Time Signals and Frequency Analysis. Sampling of continuous-time signals, frequency spectrum, Discrete Fourier Transform (DFT) definition, synthesis and analysis equations, DFT frequency bin spacing Delta f = f_s / N, Nyquist sampling rate and criterion f_s > 2 f_max, spectral aliasing foldover, and anti-aliasing filtering.",
+  "declared_learning_objective": "Formulate the Discrete Fourier Transform (DFT) analysis equation, calculate frequency bin indices and spectral resolution for discrete sampling windows, prove the Nyquist-Shannon sampling criterion to prevent spectral aliasing, and evaluate anti-aliasing filter roll-off and finite-record spectral leakage.",
+  "provenance": {
+    "mode": "CURATED_CONTROLLED_BENCHMARK",
+    "source_type": "CURATED_PEDAGOGICAL_TRANSCRIPT",
+    "source": "Standard Academic Digital Signal Processing Lecture Series",
+    "institution": "Controlled Educational Benchmark Corpus",
+    "access_date": "2026-10-01",
+    "license_or_usage_basis": "Educational Research Dataset"
+  },
+  "recording_quality": {
+    "audio_clarity": "HIGH",
+    "visual_channel_available": true,
+    "transcript_completeness": "COMPLETE",
+    "known_observability_limitations": "Complex exponential twiddle factors and frequency spectrum foldover diagrams drawn on chalkboard."
+  }
+}

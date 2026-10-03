@@ -1,0 +1,1114 @@
+{
+  "1A": {
+    "segment_key": "1A",
+    "package_id": "dev_3a_01_discrete_probability",
+    "split": "DIAGNOSTIC",
+    "target_dimension": "MEANING",
+    "target_threshold": 4,
+    "ref_depth": 2,
+    "observed_depth": 2,
+    "depth_concordance": "MATCH",
+    "ref_boundary": "FALLS_SHORT",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "Lecture listed the axioms and probability space but did not elaborate on their conceptual significance or why they are needed.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C02‑C04 explicitly defined the three Kolmogorov axioms, providing static definitions (Level 2).",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "Lecture listed the axioms and probability space but did not elaborate on their conceptual significance or why they are needed.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C01 gave a static definition of the triple (Ω, F, P) without showing interactions among the components.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "C05 derived P(∅)=0 and C06 derived the complement rule, demonstrating multi‑variable dynamics between events and the measure.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 5,
+        "status": "COVERED",
+        "evidence_synthesis": "C07 (Boole’s inequality) and C08 (monotonicity bound) were derived step‑by‑step from the axioms, providing substantive justification.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 5,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "Bounds were presented and derived but no concrete numerical or code‑based worked example was shown.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "No discussion of pathological cases, tightness of bounds, or failure scenarios was found in the transcript.",
+        "confidence": "HIGH"
+      },
+      "TRANSFER_SYNTHESIS": {
+        "expected_depth": 6,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "The segment did not connect the probability bounds to other domains or propose novel synthesis.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 4800,
+      "retries": 0
+    }
+  },
+  "1B": {
+    "segment_key": "1B",
+    "package_id": "dev_3a_01_discrete_probability",
+    "split": "DIAGNOSTIC",
+    "target_dimension": "MEANING",
+    "target_threshold": 4,
+    "ref_depth": 4,
+    "observed_depth": 3,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "SATISFIES",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MISMATCH",
+    "evidence_synthesis": "C07 explained probability statements as truth valuations over domain elements, offering a conceptual interpretation of meaning.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01 introduced Ω with four outcomes and C04 defined events A and B, providing concrete identification of sample‑space elements.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C07 explained probability statements as truth valuations over domain elements, offering a conceptual interpretation of meaning.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "C02 assigned probability masses to each outcome and C08 described event B as a partition block, detailing component structure.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "C05 computed event probabilities via summation and C06 evaluated intersection probability, illustrating relationships between events.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C03 noted that the assigned probabilities sum to 1, stating the normalization condition without derivation.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The lecture presented definitions and simple calculations but did not include a worked problem or case analysis.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "No discussion of edge cases, limits, or pathological partitions was found in the segment.",
+        "confidence": "HIGH"
+      },
+      "TRANSFER_SYNTHESIS": {
+        "expected_depth": 6,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "The segment did not extend concepts to other domains or provide novel synthesis.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 4936,
+      "retries": 5
+    }
+  },
+  "1C": {
+    "segment_key": "1C",
+    "package_id": "dev_3a_01_discrete_probability",
+    "split": "VALIDATION",
+    "target_dimension": "MEANING",
+    "target_threshold": 4,
+    "ref_depth": 2,
+    "observed_depth": 3,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "FALLS_SHORT",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "C06 explained that the presented equations are syntactic rewrite identities, but no deeper conceptual analysis was provided.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01 explicitly named and defined the union bound (Boole's inequality).",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C06 explained that the presented equations are syntactic rewrite identities, but no deeper conceptual analysis was provided.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C02, C04, and C05 presented the formal formulas for the union bound and inclusion‑exclusion, offering static definitions without dynamic elaboration.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No episode demonstrated dynamic interaction between events beyond static formulas; only static statements were given.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The lecture did not provide a derivation or proof of the union bound; only the statement of the inequality was given.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C07 mentioned using the bound for safety analysis but did not work through a concrete example or calculation.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 5314,
+      "retries": 0
+    }
+  },
+  "2A": {
+    "segment_key": "2A",
+    "package_id": "dev_3a_02_renal_pharmacokinetics",
+    "split": "DIAGNOSTIC",
+    "target_dimension": "JUSTIFICATION_WHY",
+    "target_threshold": 5,
+    "ref_depth": 4,
+    "observed_depth": 0,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "FALLS_SHORT",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C04 explicitly defines renal clearance as the virtual plasma volume cleared per unit time (static definition).",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 3161,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "2B": {
+    "segment_key": "2B",
+    "package_id": "dev_3a_02_renal_pharmacokinetics",
+    "split": "DIAGNOSTIC",
+    "target_dimension": "JUSTIFICATION_WHY",
+    "target_threshold": 5,
+    "ref_depth": 5,
+    "observed_depth": 0,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "SATISFIES",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MISMATCH",
+    "evidence_synthesis": "",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01 and C04 explicitly name renal clearance exceeding GFR and active tubular secretion using carrier proteins.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 3294,
+      "org": "Org_kyc (FRESH)"
+    }
+  },
+  "3A": {
+    "segment_key": "3A",
+    "package_id": "dev_3a_03_critical_care_infusions",
+    "split": "DIAGNOSTIC",
+    "target_dimension": "APPLICATION_INTERPRETATION",
+    "target_threshold": 6,
+    "ref_depth": 3,
+    "observed_depth": 3,
+    "depth_concordance": "MATCH",
+    "ref_boundary": "FALLS_SHORT",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "C05 records entering a pump rate of 15 mL·hr⁻¹ but lacks a worked example tracing MAP response over time.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01 explicitly identifies a septic shock patient with MAP < 65 mmHg, matching the expected definition level.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C02 states the standard norepinephrine dose (0.1 µg·kg⁻¹·min⁻¹) but does not elaborate its operational implication.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C03 lists the concentration bag (4 mg/250 mL) without describing how it functions in dosing calculations.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "C04 and C06 together describe conversion of dose to infusion rate and titration increments, showing multi‑variable interaction.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 1,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C07 only mentions rapid delivery as a rationale without any derivation or deeper justification.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C05 records entering a pump rate of 15 mL·hr⁻¹ but lacks a worked example tracing MAP response over time.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "No concept or episode addresses limits, contraindications, or failure modes of the rule‑of‑thumb.",
+        "confidence": "HIGH"
+      },
+      "TRANSFER_SYNTHESIS": {
+        "expected_depth": 6,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "The lecture does not extend the rule‑of‑thumb to other vasopressors or clinical contexts.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 4933,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "3B": {
+    "segment_key": "3B",
+    "package_id": "dev_3a_03_critical_care_infusions",
+    "split": "DIAGNOSTIC",
+    "target_dimension": "APPLICATION_INTERPRETATION",
+    "target_threshold": 6,
+    "ref_depth": 6,
+    "observed_depth": 6,
+    "depth_concordance": "MATCH",
+    "ref_boundary": "SATISFIES",
+    "observed_boundary": "SATISFIES",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "C06 directs learners to program the pump with the computed rate, and C07 outlines the conditional titration step; EP_01 walks through the entire calculation and implementation.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "NOT_OBSERVED",
+        "evidence_synthesis": "The transcript contains no explicit naming or framing of the topic as a distinct concept; searches for a statement like \"this segment covers continuous IV infusion\" returned no results.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "C04 explicitly derives the drug concentration (mg/mL) by dividing total drug mass by solution volume, providing the semantic meaning of concentration.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C03 states the conversion factor 1 mg = 1000 µg, a static definition of units without further dynamic interaction.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 6,
+        "status": "COVERED",
+        "evidence_synthesis": "C01, C02, and C05 together trace the multi‑step calculation from weight‑based dose to pump rate, and EP_01 presents a complete worked trace of the five‑step infusion calculation.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "NOT_OBSERVED",
+        "evidence_synthesis": "No rationale for the chosen dose, the MAP‑based titration rule, or physiological justification appears in the concepts or episode description.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 6,
+        "status": "COVERED",
+        "evidence_synthesis": "C06 directs learners to program the pump with the computed rate, and C07 outlines the conditional titration step; EP_01 walks through the entire calculation and implementation.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "The segment does not discuss edge cases, failure modes, or limits of the infusion protocol.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 9320,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "4A": {
+    "segment_key": "4A",
+    "package_id": "dev_3a_04_signal_processing_structures",
+    "split": "DIAGNOSTIC",
+    "target_dimension": "STRUCTURE_COMPONENTS",
+    "target_threshold": 5,
+    "ref_depth": 2,
+    "observed_depth": 2,
+    "depth_concordance": "MATCH",
+    "ref_boundary": "FALLS_SHORT",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "Only C03 mentions the 16‑bit fixed‑point precision; no deeper discussion of pipeline datapaths, registers, or internal structures is present.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01, C04, and C05 explicitly define the 1024‑point block size, 10 stages, and 16‑bit word lengths, providing static definitions.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "C02, C06, and C08 state the clock frequency, latency budget, and input data‑rate, linking a single parameter to an operational constraint.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "Only C03 mentions the 16‑bit fixed‑point precision; no deeper discussion of pipeline datapaths, registers, or internal structures is present.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 41161,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "4B": {
+    "segment_key": "4B",
+    "package_id": "dev_3a_04_signal_processing_structures",
+    "split": "DIAGNOSTIC",
+    "target_dimension": "STRUCTURE_COMPONENTS",
+    "target_threshold": 5,
+    "ref_depth": 5,
+    "observed_depth": 4,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "SATISFIES",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MISMATCH",
+    "evidence_synthesis": "Concepts C03‑C05 detail the 16‑bit adder, subtractor, and four‑DSP‑slice multiplier array, describing component composition and internal interactions.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "Concept C02 names the dual‑operand complex butterfly unit and C06 names the ping‑pong RAM buffers, providing static definitions.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "Concepts C01 and C07 explain the purpose of the pipelined architecture and the role of shift‑register FIFOs for phase alignment.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "Concepts C03‑C05 detail the 16‑bit adder, subtractor, and four‑DSP‑slice multiplier array, describing component composition and internal interactions.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "The lecture mentions how adders and multipliers are connected within the butterfly, but only a single‑step description is given.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "NOT_OBSERVED",
+        "evidence_synthesis": "No explicit rationale or design justification for choosing these primitives is presented in the record.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "Concept C08 provides a high‑level blueprint of interconnections, lacking a worked numerical or code‑level trace.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "The segment does not discuss limitations, edge cases, or failure modes of the hardware primitives.",
+        "confidence": "HIGH"
+      },
+      "TRANSFER_SYNTHESIS": {
+        "expected_depth": 6,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "No cross‑domain synthesis or novel application of the FFT primitives is evident.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 21139,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "1D": {
+    "segment_key": "1D",
+    "package_id": "dev_3a_01_discrete_probability",
+    "split": "VALIDATION",
+    "target_dimension": "MEANING",
+    "target_threshold": 4,
+    "ref_depth": 4,
+    "observed_depth": 0,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "SATISFIES",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MISMATCH",
+    "evidence_synthesis": "No explicit discussion of the conceptual meaning or interpretation of the joint probability matrix was found.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture introduced variables X and Y with their binary domains, providing a static definition.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No explicit discussion of the conceptual meaning or interpretation of the joint probability matrix was found.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "A 2×2 joint probability matrix was constructed to assign probabilities to each joint state of X and Y.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "Marginals were derived by summing matrix rows/columns, conditional probabilities computed via joint/marginal ratios, and the dependence structure was described.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The lecture did not present a formal justification or proof of the probability rules used.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "Specific joint probabilities were listed and the marginal P(X=1)=0.80 was interpreted as server uptime, but no worked problem or detailed analysis was provided.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "The segment did not address edge cases, boundary conditions, or pathological scenarios for the joint model.",
+        "confidence": "HIGH"
+      },
+      "TRANSFER_SYNTHESIS": {
+        "expected_depth": 6,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "No cross‑domain transfer or synthesis of the joint probability model to other contexts was presented.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 33602,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "2C": {
+    "segment_key": "2C",
+    "package_id": "dev_3a_02_renal_pharmacokinetics",
+    "split": "VALIDATION",
+    "target_dimension": "JUSTIFICATION_WHY",
+    "target_threshold": 5,
+    "ref_depth": 4,
+    "observed_depth": 0,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "FALLS_SHORT",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "The physiological rationale for why the clearance ratio indicates secretion or reabsorption is absent from the recorded material.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01 explicitly defines the renal clearance ratio, providing a clear definition.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No concept or episode described the conceptual meaning or significance of the clearance ratio beyond its definition.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C02 lists the three measurable quantities (CL‑R, f‑u, GFR) that compose the ratio, but does not elaborate on their functional roles.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "C03 presents the filtration relationship (f‑u × GFR) and C05 shows subtraction of this component from total clearance to isolate net flux, together demonstrating multi‑variable interaction.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The physiological rationale for why the clearance ratio indicates secretion or reabsorption is absent from the recorded material.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C04 interprets CR magnitude and C06 mentions calculation from lab values, but no worked numerical example or detailed case analysis is provided.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "No discussion of boundary conditions, extreme values, or pathological cases for the clearance ratio is present.",
+        "confidence": "HIGH"
+      },
+      "TRANSFER_SYNTHESIS": {
+        "expected_depth": 6,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "The segment does not synthesize the clearance ratio concept with other domains or propose novel applications.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 35477,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "2D": {
+    "segment_key": "2D",
+    "package_id": "dev_3a_02_renal_pharmacokinetics",
+    "split": "VALIDATION",
+    "target_dimension": "JUSTIFICATION_WHY",
+    "target_threshold": 5,
+    "ref_depth": 5,
+    "observed_depth": 0,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "SATISFIES",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MISMATCH",
+    "evidence_synthesis": "No deeper justification or derivation of why pH manipulation or transporter saturation is critical was presented beyond the brief physiological note.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No explicit statement identifying the topic or naming the concept of tubular ion trapping and transporter saturation was found in the transcript.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "The lecture explained that urinary pH manipulation alters the biophysical environment governing diffusion and ion trapping, providing a physiological justification.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "Non‑ionic diffusion across the apical lipid bilayer and the function of the NHE3 antiporter were described, detailing the components involved.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "The ion trapping mechanism was described, linking drug ionization in tubular fluid to inhibited diffusion across the hydrophobic apical membrane.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No deeper justification or derivation of why pH manipulation or transporter saturation is critical was presented beyond the brief physiological note.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The lecture did not include worked numerical examples, case studies, or problem traces illustrating application of ion trapping or saturation concepts.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 19204,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "3C": {
+    "segment_key": "3C",
+    "package_id": "dev_3a_03_critical_care_infusions",
+    "split": "VALIDATION",
+    "target_dimension": "APPLICATION_INTERPRETATION",
+    "target_threshold": 6,
+    "ref_depth": 3,
+    "observed_depth": 2,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "FALLS_SHORT",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "C05 mentioned labeling the bag with the computed concentration but lacked a worked case, patient‑specific application, or pump‑programming trace.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C07 explicitly identified the dilution step as the initial part of continuous IV infusion preparation.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C01 introduced the basic principle of standard dilution calculations, providing a static definition without detailed operational steps.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C02 specified adding 400 mg dopamine hydrochloride to a 500 mL saline bag, describing concrete solution components.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C03 and C04 detailed the concentration calculation (mass/volume) and unit conversion to µg/mL, presenting sequential operational steps.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No concept or episode provided a theoretical or clinical rationale for the dilution calculations.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C05 mentioned labeling the bag with the computed concentration but lacked a worked case, patient‑specific application, or pump‑programming trace.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 1,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "C06 noted the calculation is limited to static pharmacy‑side preparation, a brief disclaimer without deeper boundary analysis.",
+        "confidence": "HIGH"
+      },
+      "TRANSFER_SYNTHESIS": {
+        "expected_depth": 6,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "The lecture did not address transfer of the dilution knowledge to other contexts or novel synthesis.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 34955,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "3D": {
+    "segment_key": "3D",
+    "package_id": "dev_3a_03_critical_care_infusions",
+    "split": "VALIDATION",
+    "target_dimension": "APPLICATION_INTERPRETATION",
+    "target_threshold": 6,
+    "ref_depth": 6,
+    "observed_depth": 6,
+    "depth_concordance": "MATCH",
+    "ref_boundary": "SATISFIES",
+    "observed_boundary": "SATISFIES",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "EP_01 walked through the full stepwise titration trace, executing the calculations and showing the resulting infusion rates.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01 explicitly named the renal (3 µg/kg/min) and inotropic (7.5 µg/kg/min) dopamine doses.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "No segment identified the clinical purpose or physiological meaning of the dosing levels.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C02 presented patient weight (60 kg) as the parameter used to convert per‑kg dose to absolute mass rate.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "C03‑C05 traced the calculations from dose and weight to mass rate and infusion volume, showing multi‑variable interactions.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The lecture did not provide rationale for selecting renal versus inotropic dopamine targets.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 6,
+        "status": "COVERED",
+        "evidence_synthesis": "EP_01 walked through the full stepwise titration trace, executing the calculations and showing the resulting infusion rates.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "PERMISSIBLE_SCOPE_OMISSION",
+        "evidence_synthesis": "No discussion of dose limits, contraindications, or failure scenarios was observed.",
+        "confidence": "HIGH"
+      },
+      "TRANSFER_SYNTHESIS": {
+        "expected_depth": 6,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 0,
+        "status": "PERMISSIBLE_SCOPE_OMISSION",
+        "evidence_synthesis": "The segment did not extend the titration concept to other drugs or clinical contexts.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 19307,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "4C": {
+    "segment_key": "4C",
+    "package_id": "dev_3a_04_signal_processing_structures",
+    "split": "VALIDATION",
+    "target_dimension": "STRUCTURE_COMPONENTS",
+    "target_threshold": 5,
+    "ref_depth": 2,
+    "observed_depth": 2,
+    "depth_concordance": "MATCH",
+    "ref_boundary": "FALLS_SHORT",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MATCH",
+    "evidence_synthesis": "C03 gave the formula k·N/2^m for twiddle‑factor exponents and C04 specified memory depth, but no derivation or multi‑step construction was shown.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01 introduced the DIF FFT architecture and listed its butterfly stage sequence; C06 and C07 stated throughput and voltage specs, providing static definitions.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "COVERED",
+        "evidence_synthesis": "C02 explained the natural‑order input versus bit‑reversed output mapping, and C08 described the purpose of the parameter roster, constituting a single operational relationship.",
+        "confidence": "HIGH"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C03 gave the formula k·N/2^m for twiddle‑factor exponents and C04 specified memory depth, but no derivation or multi‑step construction was shown.",
+        "confidence": "HIGH"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 3,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C01 mentioned the ordered butterfly stages, indicating a sequential interaction, yet no multi‑variable dynamics were demonstrated.",
+        "confidence": "HIGH"
+      },
+      "JUSTIFICATION_WHY": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "C05 cited a round‑off noise bound (<0.5 LSB) without deriving why the bound holds, offering only a static statement.",
+        "confidence": "HIGH"
+      },
+      "APPLICATION_INTERPRETATION": {
+        "expected_depth": 6,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 0,
+        "status": "ACTIONABLE_COVERAGE_GAP",
+        "evidence_synthesis": "The monologue covered parameter definitions but did not present a worked FFT computation or code trace.",
+        "confidence": "HIGH"
+      },
+      "BOUNDARIES_EXCEPTIONS": {
+        "expected_depth": 7,
+        "alignment_tier": "RECOMMENDED",
+        "observed_depth": 2,
+        "status": "SECONDARY_ADVISORY_GAP",
+        "evidence_synthesis": "C05 provided a numeric noise limit but did not explore edge cases or stress‑test the bound.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 20293,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  },
+  "4D": {
+    "segment_key": "4D",
+    "package_id": "dev_3a_04_signal_processing_structures",
+    "split": "VALIDATION",
+    "target_dimension": "STRUCTURE_COMPONENTS",
+    "target_threshold": 5,
+    "ref_depth": 5,
+    "observed_depth": 4,
+    "depth_concordance": "MISMATCH",
+    "ref_boundary": "SATISFIES",
+    "observed_boundary": "FALLS_SHORT",
+    "boundary_concordance": "MISMATCH",
+    "evidence_synthesis": "C02, C05 and C08 describe the shift‑register delay line, Gauss‑based twiddle multiplier, and dual‑port SRAM banks with sizing details, showing multi‑component interaction.",
+    "full_matrix": {
+      "IDENTIFICATION": {
+        "expected_depth": 2,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 2,
+        "status": "COVERED",
+        "evidence_synthesis": "C01, C03 and C07 name the overall R2SDF architecture, the 2‑by‑2 commutator, and the bit‑reversal address generator.",
+        "confidence": "HIGH"
+      },
+      "MEANING": {
+        "expected_depth": 3,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 1,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "The monologue briefly notes that the pipeline implements an FFT, but no deeper explanation of its purpose or role is provided.",
+        "confidence": "MEDIUM"
+      },
+      "STRUCTURE_COMPONENTS": {
+        "expected_depth": 5,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "PARTIALLY_COVERED",
+        "evidence_synthesis": "C02, C05 and C08 describe the shift‑register delay line, Gauss‑based twiddle multiplier, and dual‑port SRAM banks with sizing details, showing multi‑component interaction.",
+        "confidence": "MEDIUM"
+      },
+      "RELATIONSHIPS_MECHANISM": {
+        "expected_depth": 4,
+        "alignment_tier": "REQUIRED",
+        "observed_depth": 4,
+        "status": "COVERED",
+        "evidence_synthesis": "C04 explains the data flow between the butterfly PE, adder/subtractor and twiddle multiplier; C06 details how delay registers shrink across stages.",
+        "confidence": "HIGH"
+      }
+    },
+    "execution_stats": {
+      "latency_ms": 35472,
+      "org": "Org_kp6 (KEY_5/KEY)"
+    }
+  }
+}

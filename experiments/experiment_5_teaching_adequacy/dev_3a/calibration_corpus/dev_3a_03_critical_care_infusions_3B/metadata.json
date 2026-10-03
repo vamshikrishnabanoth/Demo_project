@@ -1,0 +1,9 @@
+{
+  "segment_key": "3B",
+  "package_id": "dev_3a_03_critical_care_infusions",
+  "domain": "03",
+  "topic": "Stepwise 5-Step Continuous Infusion Calculation Trace",
+  "split": "DIAGNOSTIC",
+  "target_dimension": "APPLICATION_INTERPRETATION",
+  "target_threshold": 6
+}
