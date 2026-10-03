@@ -4306,7 +4306,11 @@ exports.transcribe = async (req, res) => {
             isCurricular: depthAnalysis.isCurricular,
             reason: depthAnalysis.reason,
             lectureDepth: depthAnalysis.lectureDepth,
-            detectedFocus: depthAnalysis.detectedFocus
+            detectedFocus: depthAnalysis.detectedFocus,
+            segments: result ? (result.segments || []) : [],
+            duration: result ? (result.duration || 0) : null,
+            duration_formatted: result ? (result.duration_formatted || null) : null,
+            language: result ? (result.language || 'en') : 'en'
         });
     } catch (err) {
         console.error('Error in transcribe controller:', err.message);
@@ -4535,8 +4539,8 @@ exports.analyzeLectureRecording = async (req, res) => {
                     text: rawText,
                     rawText: rawText,
                     segments: parsedSegs,
-                    duration: parsedSegs.length > 0 ? parsedSegs[parsedSegs.length - 1].end : 120,
-                    duration_formatted: lectureAnalyzer.formatTimestamp(parsedSegs.length > 0 ? parsedSegs[parsedSegs.length - 1].end : 120),
+                    duration: null,
+                    duration_formatted: null,
                     language: 'en'
                 };
             }
@@ -4589,7 +4593,19 @@ exports.getLectureAnalysisStatus = async (req, res) => {
     if (!task) {
         return res.status(404).json({ status: 'EXPIRED', msg: 'Task not found or expired.' });
     }
-    res.json(task);
+    res.json({
+        id: task.id,
+        status: task.status,
+        state: task.state || task.status,
+        stage: task.stage,
+        stageLabel: task.stageLabel,
+        progressPct: task.progressPct || 0,
+        result: task.result || null,
+        error: task.error || null,
+        errorCode: task.errorCode || null,
+        createdAt: task.createdAt,
+        completedAt: task.completedAt || null
+    });
 };
 
 exports.generateQuizFromCleanedLecture = async (req, res) => {

@@ -113,6 +113,9 @@ export default function CreateQuizTopic() {
     const [keyTopics, setKeyTopics] = useState([]);
     const [lectureWordCount, setLectureWordCount] = useState(0);
     const [recommendedQuestions, setRecommendedQuestions] = useState('');
+    const [depthLoading, setDepthLoading] = useState(false);
+    const [depthError, setDepthError] = useState(false);
+    const [depthRetryCount, setDepthRetryCount] = useState(0);
 
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
@@ -246,6 +249,8 @@ export default function CreateQuizTopic() {
             setKeyTopics([]);
             setLectureWordCount(0);
             setRecommendedQuestions('');
+            setDepthLoading(false);
+            setDepthError(false);
             return;
         }
 
@@ -255,6 +260,8 @@ export default function CreateQuizTopic() {
             .join(' ');
         
         if (voiceTexts.length > 25) {
+            setDepthLoading(true);
+            setDepthError(false);
             const timer = setTimeout(async () => {
                 try {
                     const primaryVoiceName = inputs.find(inp => inp.type === 'voice' || inp.type === 'audio')?.source_name || '';
@@ -266,6 +273,7 @@ export default function CreateQuizTopic() {
                         setKeyTopics(res.data.keyTopics || []);
                         setLectureWordCount(res.data.wordCount || voiceTexts.trim().split(/\s+/).length);
                         setRecommendedQuestions(res.data.recommendedQuestions || '');
+                        setDepthError(false);
                     } else if (res.data && !res.data.isAcademic) {
                         setLectureDepth({ rating: 'Non-Academic', score: 10, characteristics: {} });
                         setDetectedFocus([]);
@@ -273,14 +281,18 @@ export default function CreateQuizTopic() {
                         setKeyTopics([]);
                         setLectureWordCount(0);
                         setRecommendedQuestions('');
+                        setDepthError(false);
+                    } else {
+                        // Empty or unexpected response: never manufacture a score
+                        setLectureDepth(null);
+                        setDepthError(true);
                     }
-                } catch (_) {
-                    // Local fallback
-                    const words = voiceTexts.trim().split(/\s+/).length;
-                    const rating = words > 150 ? 'Comprehensive' : (words > 50 ? 'Developing' : 'Introductory');
-                    setLectureDepth({ rating, score: words > 150 ? 80 : (words > 50 ? 60 : 40), characteristics: { conceptExplanation: 'Strong', reasoning: 'Light', examples: 'Present', procedures: 'Strong' } });
-                    setLectureWordCount(words);
-                    setRecommendedQuestions(words > 3000 ? '5 to 25 Questions' : (words > 1000 ? '5 to 15 Questions' : '3 to 10 Questions'));
+                } catch (err) {
+                    console.warn('[DepthAnalysis] Failed to analyze lecture depth:', err);
+                    setLectureDepth(null);
+                    setDepthError(true);
+                } finally {
+                    setDepthLoading(false);
                 }
             }, 600);
             return () => clearTimeout(timer);
@@ -291,8 +303,10 @@ export default function CreateQuizTopic() {
             setKeyTopics([]);
             setLectureWordCount(0);
             setRecommendedQuestions('');
+            setDepthLoading(false);
+            setDepthError(false);
         }
-    }, [inputs]);
+    }, [inputs, depthRetryCount]);
 
     const stopPolling = useCallback(() => {
         if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
@@ -402,6 +416,9 @@ export default function CreateQuizTopic() {
                     status: 'ready',
                     fetchingMetadata: false,
                     content: transcribeRes.data.text,
+                    segments: transcribeRes.data.segments || [],
+                    duration: transcribeRes.data.duration || null,
+                    duration_formatted: transcribeRes.data.duration_formatted || null,
                     lectureDepth: transcribeRes.data.lectureDepth || null,
                     errorMsg: null
                 } : item));
@@ -724,6 +741,9 @@ export default function CreateQuizTopic() {
                     formData.append('file', audioBlob, 'lecture_recording.webm');
 
                     let transcriptText = '';
+                    let transcriptSegments = [];
+                    let transcriptDuration = null;
+                    let transcriptDurationFormatted = null;
                     let isAcademic = true;
                     let academicFailureReason = null;
 
@@ -733,6 +753,9 @@ export default function CreateQuizTopic() {
                             timeout: 30000
                         });
                         transcriptText = localRes.data.text;
+                        transcriptSegments = localRes.data.segments || [];
+                        transcriptDuration = localRes.data.duration || null;
+                        transcriptDurationFormatted = localRes.data.duration_formatted || null;
                         const depthRes = await api.post('/quiz/analyze-depth', { text: transcriptText });
                         isAcademic = depthRes.data?.isAcademic !== false;
                         academicFailureReason = depthRes.data?.reason;
@@ -741,6 +764,9 @@ export default function CreateQuizTopic() {
                             headers: { 'Content-Type': 'multipart/form-data' }
                         });
                         transcriptText = transcribeRes.data.text;
+                        transcriptSegments = transcribeRes.data?.segments || [];
+                        transcriptDuration = transcribeRes.data?.duration || null;
+                        transcriptDurationFormatted = transcribeRes.data?.duration_formatted || null;
                         isAcademic = transcribeRes.data?.isAcademic !== false;
                         academicFailureReason = transcribeRes.data?.reason;
                     }
@@ -766,6 +792,9 @@ export default function CreateQuizTopic() {
                             id: inputId,
                             type: 'voice',
                             content: transcriptText,
+                            segments: transcriptSegments,
+                            duration: transcriptDuration,
+                            duration_formatted: transcriptDurationFormatted,
                             source_name: `Recording (${timeStr})`,
                             hasRecordedBlob: true,
                             recordedAt: recDate.toISOString()
@@ -870,17 +899,26 @@ export default function CreateQuizTopic() {
             formData.append('file', blob, 'recovered_recording.webm');
 
             let transcriptText = '';
+            let transcriptSegments = [];
+            let transcriptDuration = null;
+            let transcriptDurationFormatted = null;
             try {
                 const localRes = await api.post('http://localhost:8000/transcribe', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                     timeout: 30000
                 });
                 transcriptText = localRes.data.text;
+                transcriptSegments = localRes.data.segments || [];
+                transcriptDuration = localRes.data.duration || null;
+                transcriptDurationFormatted = localRes.data.duration_formatted || null;
             } catch (_) {
                 const transcribeRes = await api.post('/quiz/transcribe', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 transcriptText = transcribeRes.data.text;
+                transcriptSegments = transcribeRes.data?.segments || [];
+                transcriptDuration = transcribeRes.data?.duration || null;
+                transcriptDurationFormatted = transcribeRes.data?.duration_formatted || null;
             }
 
             if (transcriptText && transcriptText.trim().length > 5) {
@@ -897,6 +935,9 @@ export default function CreateQuizTopic() {
                     id: inputId,
                     type: 'voice',
                     content: transcriptText,
+                    segments: transcriptSegments,
+                    duration: transcriptDuration,
+                    duration_formatted: transcriptDurationFormatted,
                     source_name: `Recovered Recording (${timeStr})`,
                     hasRecordedBlob: true,
                     recordedAt: recDate.toISOString()
@@ -1525,73 +1566,101 @@ export default function CreateQuizTopic() {
                         </div>
 
                         {/* 4. LECTURE CONTENT & ASSESSMENT SCOPE CARD (Voice input only) */}
-                        {inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
-                            <div className="p-4.5 bg-[#fff8f3] border-2 border-[#f5d0b5] rounded-3xl space-y-3.5 shadow-xs transition-all animate-in fade-in duration-200">
-                                <div className="flex items-center justify-between pb-1 border-b border-[#f5d0b5]/70">
-                                    <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider flex items-center gap-2">
-                                        <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
-                                        Lecture Profile: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
-                                    </span>
-                                    <span className="text-[10px] font-mono font-black text-[#9a3412] bg-[#fbf0e8] px-2.5 py-0.5 rounded-full border border-[#f5d0b5]">
-                                        Depth: {lectureDepth.score}/100
-                                    </span>
-                                </div>
-
-                                {/* 1. What Was Taught (1-Line Pedagogical Overview) */}
-                                <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
-                                    <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                        <span>📖</span> What Was Taught
-                                    </p>
-                                    <p className="text-xs font-semibold text-slate-800 leading-relaxed">
-                                        {whatWasTaught || `A comprehensive lecture exploring ${inputs.map(i => i.source_name).filter(Boolean)[0] || 'core concepts'} with detailed conceptual foundations, operational mechanisms, and step-by-step traces.`}
-                                    </p>
-                                </div>
-
-                                {/* 2. Key Topics to be Assessed / Subtopics */}
-                                {((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
-                                    <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
-                                        <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                            <span>🎯</span> Key Topics to be Assessed
-                                        </p>
-                                        <div className="flex flex-wrap gap-2 pt-0.5">
-                                            {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus).map((topic, i) => (
-                                                <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
-                                                    <span>{topic}</span>
-                                                </span>
-                                            ))}
-                                        </div>
+                        {inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') && (
+                            <>
+                                {depthLoading && (
+                                    <div className="p-4 bg-orange-50/60 border border-orange-200/70 rounded-3xl flex items-center justify-center gap-3 text-xs text-orange-800 font-medium animate-pulse">
+                                        <Loader2 size={16} className="animate-spin text-[#ea580c]" />
+                                        <span>Analyzing lecture pedagogy and assessment scope...</span>
                                     </div>
                                 )}
 
-                                {/* 3. Assessment Scope & Content Volume */}
-                                <div className="bg-white/90 px-3.5 py-2.5 rounded-2xl border border-orange-200/70 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600 shadow-2xs">
-                                    <span className="flex items-center gap-1.5 text-slate-700">
-                                        <span>📊</span> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</span>
-                                    </span>
-                                    <span className="flex items-center gap-1.5 text-slate-700">
-                                        <span>🎯</span> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions || '5 to 25 Questions (Strong Evidence Base)'}</span>
-                                    </span>
-                                </div>
-
-                                {/* 4. Pedagogical Depth Characteristics */}
-                                {lectureDepth.characteristics && (
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] font-bold text-slate-600">
-                                        <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                            Concepts: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.conceptExplanation || 'Strong'}</span>
+                                {!depthLoading && depthError && (
+                                    <div className="p-4 bg-amber-50/90 border border-amber-200 rounded-3xl flex items-center justify-between gap-3 text-xs text-amber-800 shadow-2xs">
+                                        <div className="flex items-center gap-2">
+                                            <AlertCircle size={16} className="text-amber-600 shrink-0" />
+                                            <span>Pedagogical depth analysis is temporarily unavailable. Question generation will still operate normally using your lecture transcript.</span>
                                         </div>
-                                        <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                            Reasoning: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.reasoning || 'Light'}</span>
-                                        </div>
-                                        <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                            Examples: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.examples || 'Present'}</span>
-                                        </div>
-                                        <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                            Procedures: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.procedures || 'Strong'}</span>
-                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setDepthRetryCount(c => c + 1)}
+                                            className="px-3 py-1.5 bg-white border border-amber-300 rounded-xl text-amber-800 font-bold hover:bg-amber-100/60 active:scale-95 transition-all text-[11px] shrink-0 flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                                        >
+                                            <RefreshCw size={12} />
+                                            Retry
+                                        </button>
                                     </div>
                                 )}
-                            </div>
+
+                                {!depthLoading && !depthError && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
+                                    <div className="p-4.5 bg-[#fff8f3] border-2 border-[#f5d0b5] rounded-3xl space-y-3.5 shadow-xs transition-all animate-in fade-in duration-200">
+                                        <div className="flex items-center justify-between pb-1 border-b border-[#f5d0b5]/70">
+                                            <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider flex items-center gap-2">
+                                                <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
+                                                Lecture Profile: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
+                                            </span>
+                                            <span className="text-[10px] font-mono font-black text-[#9a3412] bg-[#fbf0e8] px-2.5 py-0.5 rounded-full border border-[#f5d0b5]">
+                                                Depth: {lectureDepth.score}/100
+                                            </span>
+                                        </div>
+
+                                        {/* 1. What Was Taught (1-Line Pedagogical Overview) */}
+                                        <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
+                                            <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                <span>📖</span> What Was Taught
+                                            </p>
+                                            <p className="text-xs font-semibold text-slate-800 leading-relaxed">
+                                                {whatWasTaught || `A comprehensive lecture exploring ${inputs.map(i => i.source_name).filter(Boolean)[0] || 'core concepts'} with detailed conceptual foundations, operational mechanisms, and step-by-step traces.`}
+                                            </p>
+                                        </div>
+
+                                        {/* 2. Key Topics to be Assessed / Subtopics */}
+                                        {((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
+                                            <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                    <span>🎯</span> Key Topics to be Assessed
+                                                </p>
+                                                <div className="flex flex-wrap gap-2 pt-0.5">
+                                                    {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus).map((topic, i) => (
+                                                        <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
+                                                            <span>{topic}</span>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* 3. Assessment Scope & Content Volume */}
+                                        <div className="bg-white/90 px-3.5 py-2.5 rounded-2xl border border-orange-200/70 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600 shadow-2xs">
+                                            <span className="flex items-center gap-1.5 text-slate-700">
+                                                <span>📊</span> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</span>
+                                            </span>
+                                            <span className="flex items-center gap-1.5 text-slate-700">
+                                                <span>🎯</span> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions || '5 to 25 Questions (Strong Evidence Base)'}</span>
+                                            </span>
+                                        </div>
+
+                                        {/* 4. Pedagogical Depth Characteristics */}
+                                        {lectureDepth.characteristics && (
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] font-bold text-slate-600">
+                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                                    Concepts: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.conceptExplanation || 'Strong'}</span>
+                                                </div>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                                    Reasoning: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.reasoning || 'Light'}</span>
+                                                </div>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                                    Examples: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.examples || 'Present'}</span>
+                                                </div>
+                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
+                                                    Procedures: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.procedures || 'Strong'}</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
 
