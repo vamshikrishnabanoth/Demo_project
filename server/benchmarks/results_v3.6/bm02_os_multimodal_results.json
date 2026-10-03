@@ -1,0 +1,745 @@
+{
+  "sessionInputs": {
+    "sessionId": "post_fix_bm02_os_1791041196550",
+    "voiceTranscript": "\n    Welcome everyone. Today we are diving deep into Operating Systems memory management and virtual memory.\n    Remember that the central processing unit operates strictly on virtual addresses, which must be mapped to physical memory frames.\n    The hardware component that performs this translation is the Memory Management Unit, or MMU.\n    Notice how the address is split into two parts: the virtual page number and the page offset.\n    Note that the operating system maintains a page table for each process to track these mappings.\n    If a process tries to access a virtual page that is not currently loaded in physical memory, a page fault exception is triggered.\n    Pay attention to the page fault handling sequence: the trap transfers control to the operating system kernel,\n    the OS finds a free physical frame on disk, swaps the page from backing store into RAM, updates the page table entry,\n    and then restarts the instruction that caused the fault.\n    A critical concept for the exam is the Translation Lookaside Buffer, or TLB, which caches recent translations.\n    Careful with page replacement algorithms: FIFO suffers from Belady's anomaly, while LRU approximates optimal replacement.\n  ",
+    "documentTexts": [
+      "\n\nOPERATING SYSTEMS \nUNIT-3 \n3.1 Inter Process Communication Mechanisms: \nIn an operating system, we often have multiple processes running at the same time. Sometimes, these \nprocesses need to communicate with each other — either to share data or to inform one another that \nsomething has happened (like an event or a status change). This communication between processes is \ncalled Interprocess Communication (IPC). Operating systems provide special mechanisms or methods to \nmake this communication possible. \nWhy do processes need to communicate? \nImagine different processes doing different jobs, like: \n One process is reading data from a file. \n Another process is processing that data. \n A third one is showing the result to the user. \nIf these processes don’t communicate or share information, they can’t work together properly. \nTypes of Processes (Based on Communication) \n1. Independent Process \n These processes don’t share any data with other processes. \n They work completely on their own. \n They don’t get affected by what other processes are doing. \n Example: A calculator app running in the background while you're typing a document — they don’t \ninteract with each other. \n2. Cooperating Process \n These processes share data with other processes. \n They depend on or get affected by other processes. \n For these processes to work correctly, they must communicate and share data, which is done using \nIPC. \n Example: A video editing software (one process loading video frames, another adding effects) — \nthey need to cooperate. \n \n\nWhy Do We Need Cooperating Processes? \nHere are some main reasons why cooperation among processes is important: \n1. Information Sharing \n Many users or programs may need access to the same file or data. \n For example, multiple users may read a file stored in a shared drive. \n The system should allow such safe and coordinated access. \n2. Computation Speedup \n If a large task is broken into smaller subtasks, and those subtasks run at the same time (in parallel), \nthe job finishes faster. \n Example: When a video is rendered using multiple cores — each core does a part of the work. \n3. Modularity \n A complex system is easier to manage when it’s divided into smaller, separate parts (modules). \n Each module can be created as an independent process. \n This makes the system easier to develop, test, and maintain. \n4. Convenience \n Users often perform multiple tasks at the same time. \n For example: You may be writing a document, downloading a file, and listening to music — all at \nonce. \n All these tasks run in parallel, and some of them may need to communicate for smooth functioning. \nTwo Main Models of IPC \nThere are two major ways in which processes can communicate: \n1. Message Passing \n Processes send and receive messages from each other. \n No shared memory is used. \n Suitable for systems where processes are running on different computers or don’t have common \nmemory. \n It is simple and secure because messages go through the operating system. \n \n\n2. Shared Memory \n A specific area of memory is made common (shared) between processes. \n Processes can read from and write to this shared area. \n Communication is faster compared to message passing. \n But it is more complex because processes must make sure they don’t overwrite each other’s data. \n1. Message-Passing Systems  \nIn a message-passing system, two or more processes communicate with each other by sending and \nreceiving messages. This model is useful when processes do not share the same memory and especially \nimportant in distributed systems (like different computers connected over a network). \nKey Points: \n In this model, processes don’t share memory – they just exchange messages. \n It helps synchronize the processes (i.e., keep them working in proper order). \n It's mostly used when processes are on different systems or machines. \n Two main actions involved: \no Send (sending a message) \no Receive (receiving a message) \n Messages can be of fixed size or variable size. \n Example: In an internet chat app, users communicate by sending and receiving messages. \nCommunication Link Example: \nLet’s say Process P and Process Q want to talk to each other. They can send and receive messages through \na communication link like: \n A hardware bus (if on the same machine), or \n A network (if on different machines). \n\nHow Logical Communication Links Are Implemented: \nThere are 3 main methods used to set up communication between processes: \n1. NAMING \nProcesses must know where to send or from whom to receive messages. There are two ways of doing this: \na) Direct Communication \n Processes talk to each other directly by using names. \n Example: \no send (P, message) → Send message to process P \no receive (Q, message) → Receive message from process Q \nProperties of direct communication: \n A link is created automatically if two processes want to communicate. \n Each communication link connects exactly two processes. \n Both sender and receiver must know each other’s name (ID). \nb) Indirect Communication \n Messages are sent through mailboxes (also called ports). \n A mailbox is like a message box where a process can drop messages, and another can pick them up. \nHow it works: \n send (A, message) → Send message to mailbox A \n receive (A, message) → Get message from mailbox A \nProperties of indirect communication: \n A mailbox has a unique ID. \n Multiple processes can share a mailbox. \n One process can use multiple mailboxes for communication. \n More than two processes can communicate using one mailbox. \n \n \n\n2. SYNCHRONIZATION \nThis refers to how sending and receiving happens — whether a process waits or continues immediately. \nThere are two types: \ni) Synchronous (Blocking) Communication \n Blocking Send: The sender waits until the message is received. \n Blocking Receive: The receiver waits until a message is available. \nii) Asynchronous (Non-Blocking) Communication \n Non-blocking Send: The sender sends the message and continues working without waiting. \n Non-blocking  Receive:  The  receiver  checks  —  if  a  message  is  there,  it  receives  it. \nIf not, it moves on (may get null or empty response). \n3. BUFFERING \nWhen  messages  are  sent,  they  are  usually  kept  in  a temporary  queue  until  received. \nThere are three types of buffering based on how this queue behaves: \na) Zero Capacity \n No queue at all. \n Sender must wait until receiver is ready. \n No message is stored in between. \nb) Bounded Capacity \n The queue has a fixed size (say, n messages max). \n If the queue is not full, message is stored, and sender can continue. \n If the queue is full, sender must wait until space is available. \nc) Unbounded Capacity \n The queue can grow as needed (no fixed size). \n Sender never needs to wait, because there’s always room for more messages. \n \n \n \n \n\n2. Pipes \n\n\nIn early UNIX systems, pipes were one of the first IPC (Interprocess Communication) mechanisms used \nto allow processes to communicate with each other. \nThere are two types of pipes in UNIX: \n1. Ordinary Pipes \n2. Named Pipes \n1. Ordinary Pipes \nOrdinary pipes are used for one-way communication between two related processes — usually a parent \nand its child process. They follow a Producer-Consumer model. \nHow They Work: \n One process writes data into one end of the pipe (called the write-end). \n The other process reads data from the other end (called the read-end). \nKey Points: \n Unidirectional: Only one-way communication is allowed. If we want two-way communication, we \nneed two separate pipes. \n Only works between related processes, like a parent and its child. \nCreation in UNIX: \n Pipes are created using the function: pipe(int fd[ ]) \n This function creates a pipe with two file descriptors: \no fd[0] → Read-end \no fd[1] \n→ Write\n-end \n \n\nExample Flow: \n A parent process creates a pipe. \n Then it forks a child process. \n The child process inherits the pipe from the parent. \n One process writes to the pipe, and the other reads from it. \nSystem Calls Used: \n Ordinary read() and write() system calls are used to communicate through the pipe. \nImportant: \n Ordinary pipes can't be used by unrelated processes. \n The pipe doesn’t show up as a file in the file system — it's just in memory. \n2. Named Pipes (FIFOs) \nNamed Pipes, also known as FIFOs (First In, First Out), are used for communication between unrelated \nprocesses. They allow two-way communication, but in a controlled manner. \nKey Features: \n No parent-child relation is needed. \n Once created, a named pipe appears as a file in the file system. \n It can be used by multiple processes at once. \n A named pipe continues to exist even after communication is done, until it is manually deleted. \nCreating a Named Pipe: \n Use the function: mkfifo() to create a FIFO. \n Then use normal file operations: open(), read(), write(), and close(). \nCommunication Nature: \n Although FIFOs support two-way communication, in practice, each FIFO handles only one \ndirection at a time. \n So if you want data to travel in both directions, you need to create two FIFOs (one for each \ndirection). \n \n\nSystem Support: Both UNIX and Windows support named pipes. \nLimitation: \n Communicating processes using FIFOs must be on the same machine. \n If communication is needed between different machines, use Sockets instead. \n3. Shared Memory:  \n\nIn the shared-memory model, a specific region of memory is shared between multiple processes that need \nto cooperate and exchange data. \nHow It Works: \n A shared memory region (or segment) is created inside a process’s address space. \n Other processes that want to communicate attach this segment to their own address space. \n Once attached, processes can read from or write to this shared area to exchange data. \nImportant Notes: \n Normally, operating systems don’t allow one process to access another process’s memory for safety. \n But in shared memory, this restriction is lifted by mutual agreement of the processes. \n The format and location of the data in the shared region is decided by the processes themselves, \nnot by the OS. \n It’s the responsibility of the processes to make sure they don't access or update the same memory \nlocation at the same time, which could cause data issues. \nInter-Process Communication (IPC) in UNIX/Linux \nIPC (Inter-Process Communication) allows processes to communicate with each other and coordinate their \nactions. This is essential for processes that need to share data or synchronize execution. \n \n\nThere are several types of IPC mechanisms provided by UNIX/Linux: \n1. Pipes \n2. FIFOs (Named Pipes) \n3. Semaphores (System V API) \n4. Message Queues (System V API) \n5. Shared Memory (System V API) \n6. IPC Status Commands \n1. Pipes \nDefinition: \nA pipe is a unidirectional communication channel used between related processes (such as a parent and its \nchild process). \nSystem Call: \nint pipe(int fd[2]); \nParameters: \n fd[0]: File descriptor for reading. \n fd[1]: File descriptor for writing. \nExplanation: \nThe pipe() system call creates a pair of file descriptors. One end is for reading and the other for writing. \nData written into fd[1] can be read from fd[0]. \nExample Program: \n#include <stdio.h> \n#include <unistd.h> \n#include <string.h> \nint main() { \n    int fd[2]; \n    char buffer[20]; \n    pipe(fd); // create pipe \n    if (fork() == 0) { // child process \n        close(fd[0]); // close read end \n\n        write(fd[1], \"Hello\", strlen(\"Hello\") + 1); // write message \n    } else { // parent process \n        close(fd[1]); // close write end \n        read(fd[0], buffer, sizeof(buffer)); // read message \n        printf(\"Received: %s\\n\", buffer); \n    } \n    return 0; \n} \nExplanation: \n A pipe is created. \n The child writes \"Hello\" to the pipe. \n The parent reads from the pipe and prints the message. \n1.1 Bidirectional Pipes (Using Two Pipes) \nDefinition: \nNormal pipes are unidirectional. To achieve two-way communication (like a conversation), we use two \npipes. \nConcept: \n One pipe is for communication from Parent to Child. \n The other pipe is for communication from Child to Parent. \nExample Program: \n#include <stdio.h> \n#include <unistd.h> \n#include <string.h> \n#include <sys/types.h> \nint main() { \n    int fd1[2], fd2[2]; \n    char parent_msg[] = \"Hello from Parent\"; \n    char child_msg[] = \"Hello from Child\"; \n    char buffer[100]; \n    pipe(fd1); // Parent to Child \n    pipe(fd2); // Child to Parent \n    if (fork() == 0) { // Child process \n\n        close(fd1[1]); // Close write end of fd1 \n        close(fd2[0]); // Close read end of fd2 \n        read(fd1[0], buffer, sizeof(buffer)); \n        printf(\"Child received: %s\\n\", buffer); \n        write(fd2[1], child_msg, strlen(child_msg) + 1); \n    } else { // Parent process \n        close(fd1[0]); // Close read end of fd1 \n        close(fd2[1]); // Close write end of fd2 \n        write(fd1[1], parent_msg, strlen(parent_msg) + 1); \n        read(fd2[0], buffer, sizeof(buffer)); \n        printf(\"Parent received: %s\\n\", buffer); \n    } \n    return 0; \n} \n \n2. FIFOs (Named Pipes) \nDefinition: \nFIFOs (named pipes) are special file types that allow communication between unrelated processes. Unlike \nregular pipes, FIFOs exist in the filesystem with a name. \nSystem Call: \nint mkfifo(const char *pathname, mode_t mode); \n \nWhat does mkfifo() do?  \nmkfifo() creates a named pipe (FIFO) special file in the filesystem. This FIFO can then be opened using \nopen() and used just like a regular file descriptor for reading or writing. \nParameters:   \npathname: The name of the FIFO file to be created. mode: The file permission bits (e.g., 0666 allows \nread/write for all users). \n \n\nExample Programs: \nWriter.c \n#include <fcntl.h> \n#include <sys/stat.h> \n#include <unistd.h> \nint main() { \n    int fd; \n    mkfifo(\"myfifo\", 0666); // create FIFO file \n    fd = open(\"myfifo\", O_WRONLY); // open FIFO in write-only mode \n    write(fd, \"Hello FIFO\", 10); // write to FIFO \n    close(fd); \n    return 0; \n} \nReader.c \n#include <fcntl.h> \n#include <sys/stat.h> \n#include <unistd.h> \n#include <stdio.h> \nint main() { \n    int fd; \n    char buffer[20]; \n    fd = open(\"myfifo\", O_RDONLY); // open FIFO in read-only mode \n    read(fd, buffer, sizeof(buffer)); // read from FIFO \n    printf(\"Received: %s\\n\", buffer); \n    close(fd); \n    return 0; \n} \nExplanation: \n mkfifo(\"myfifo\", 0666) creates a named pipe in the filesystem. \n One program opens it in write mode and sends data. \n Another opens it in read mode and receives the data. \n Used for communication between independent programs. \n \n \n\n3. Semaphores (System V IPC) \nDefinition: \nA semaphore is a synchronization tool used to control access to a shared resource by multiple processes in \na concurrent system. \nSystem V semaphores use a semaphore set, which may contain one or more semaphores. \nUsed For: \n Ensuring mutual exclusion \n Synchronizing processes \nImportant System Calls: "
+    ],
+    "difficulty": "Balanced",
+    "count": 5
+  },
+  "result": {
+    "sessionId": "post_fix_bm02_os_1791041196550",
+    "pipelineStatus": "COMPLETED",
+    "evidenceSafety": "GROUNDED",
+    "quizQualityStatus": "QUALITY_PASSED",
+    "quizTitle": "Memory Management and Inter‑Process Communication",
+    "subject": "Operating Systems",
+    "requestedCount": 5,
+    "deliveredCount": 5,
+    "notice": null,
+    "alignmentWarning": null,
+    "unalignedDocuments": [],
+    "lectureDepth": {
+      "rating": "Comprehensive",
+      "score": 99,
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Strong",
+        "examples": "Present",
+        "procedures": "Moderate"
+      }
+    },
+    "representationMode": "UNIFIED",
+    "routerReason": "[Adaptive PDI Router: PDI=0.900] Multimodal Classroom (Audio + PPT/Code with PDI=0.900): Requires Unified Synthesis of technical slide concepts (WHAT) and spoken teacher emphasis (WHY).",
+    "questions": [
+      {
+        "targetId": "T01",
+        "questionText": "Which hardware component is responsible for translating virtual addresses into physical memory frames?",
+        "options": [
+          "CPU Arithmetic Logic Unit (ALU)",
+          "Memory Management Unit (MMU)",
+          "Translation Lookaside Buffer (TLB)",
+          "Page Fault Handler"
+        ],
+        "correctAnswer": "Memory Management Unit (MMU)",
+        "explanation": "The evidence states that the hardware component performing the translation from virtual addresses to physical frames is the Memory Management Unit (MMU). The TLB is a cache for recent translations, the page fault handler deals with missing pages, and the ALU performs arithmetic/logic operations, not address translation.",
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Easy",
+          "concept": "Virtual address translation and page table mapping",
+          "subtopic": "Virtual Memory",
+          "tier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "groundingScore": 0.95,
+          "targetId": "T01",
+          "attempt": 1,
+          "decisionLedger": {
+            "questionId": "Q1",
+            "source": {
+              "tier": "DIRECT_EVIDENCE",
+              "supportingChunks": [
+                "chunk_01"
+              ]
+            },
+            "concept": "Virtual address translation and page table mapping",
+            "subtopic": "Virtual Memory",
+            "cognitiveDimension": "Conceptual",
+            "difficulty": "Easy",
+            "studentAnswerability": "HIGH",
+            "redundancy": {
+              "similarQuestion": null,
+              "similarity": 0,
+              "decision": "KEEP"
+            },
+            "agent3": {
+              "verdict": "PASS",
+              "groundingScore": 0.95
+            },
+            "grounding": {
+              "status": "GROUNDED"
+            }
+          },
+          "traceabilityAudit": {
+            "1_sourceOrigin": "DOCUMENT",
+            "2_supportingSessionChunks": [
+              "chunk_01"
+            ],
+            "3_agent1AssessmentReasoning": {
+              "whyAssessed": "Teacher emphasized Virtual address translation and page table mapping as a key learning outcome.",
+              "detectedEmphasis": {
+                "conceptual": "HIGH",
+                "application": "HIGH",
+                "syntax": "MEDIUM",
+                "calculation": "LOW"
+              },
+              "ruleApplied": "Teacher verbal emphasis elevates target priority."
+            },
+            "4_agent2FormulationReasoning": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+            },
+            "5_agent3EvaluationReasoning": {
+              "groundingScore": 0.95,
+              "derivabilityTier": "DIRECT_EVIDENCE",
+              "studentAnswerability": "HIGH",
+              "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+              "verdict": "PASS"
+            },
+            "6_deterministicCalculations": {
+              "preChecksPassed": true,
+              "mathVerified": "N/A"
+            },
+            "7_finalGroundingGateReasoning": {
+              "status": "PASSED",
+              "justification": "Question and options are directly justified by session evidence for Virtual address translation and page table mapping."
+            }
+          }
+        },
+        "semanticIdentity": {
+          "correctAnswerText": "Memory Management Unit (MMU)",
+          "distractorTexts": [
+            "Translation Lookaside Buffer (TLB)",
+            "Page Fault Handler",
+            "CPU Arithmetic Logic Unit (ALU)"
+          ]
+        },
+        "correctAnswerText": "Memory Management Unit (MMU)",
+        "correctAnswerKey": "B",
+        "correct_answer": "B",
+        "correct_answer_text": "Memory Management Unit (MMU)",
+        "__positionAssigned": true
+      },
+      {
+        "targetId": "T02",
+        "questionText": "Which of the following best describes the sequence of events that occurs when a process accesses a virtual page that is not currently loaded in physical memory?",
+        "options": [
+          "The CPU directly loads the page from disk into RAM without involving the OS.",
+          "The OS loads the page into RAM, updates the page table, and then restarts the instruction.",
+          "The OS updates the TLB entry, then loads the page into RAM, and finally restarts the instruction.",
+          "The OS finds a free physical frame, swaps the page from the backing store into RAM, updates the page table entry, and then restarts the instruction that caused the fault."
+        ],
+        "correctAnswer": "The OS finds a free physical frame, swaps the page from the backing store into RAM, updates the page table entry, and then restarts the instruction that caused the fault.",
+        "explanation": "When a page fault occurs, the CPU traps to the kernel. The OS locates a free frame, brings the required page from the backing store into that frame, updates the page table entry to reflect the new mapping, and finally restarts the faulting instruction. This sequence is explicitly described in the lecture notes and the document evidence.",
+        "metadata": {
+          "dimension": "Cause / Effect",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "concept": "Page fault handling and page table updates",
+          "subtopic": "Page Faults",
+          "tier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "groundingScore": 0.96,
+          "targetId": "T02",
+          "attempt": 1,
+          "decisionLedger": {
+            "questionId": "Q2",
+            "source": {
+              "tier": "DIRECT_EVIDENCE",
+              "supportingChunks": [
+                "chunk_01"
+              ]
+            },
+            "concept": "Page fault handling and page table updates",
+            "subtopic": "Page Faults",
+            "cognitiveDimension": "Cause / Effect",
+            "difficulty": "Medium",
+            "studentAnswerability": "HIGH",
+            "redundancy": {
+              "similarQuestion": null,
+              "similarity": 0,
+              "decision": "KEEP"
+            },
+            "agent3": {
+              "verdict": "PASS",
+              "groundingScore": 0.96
+            },
+            "grounding": {
+              "status": "GROUNDED"
+            }
+          },
+          "traceabilityAudit": {
+            "1_sourceOrigin": "DOCUMENT",
+            "2_supportingSessionChunks": [
+              "chunk_01"
+            ],
+            "3_agent1AssessmentReasoning": {
+              "whyAssessed": "Teacher emphasized Page fault handling and page table updates as a key learning outcome.",
+              "detectedEmphasis": {
+                "conceptual": "HIGH",
+                "application": "HIGH",
+                "syntax": "MEDIUM",
+                "calculation": "LOW"
+              },
+              "ruleApplied": "Teacher verbal emphasis elevates target priority."
+            },
+            "4_agent2FormulationReasoning": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Understand",
+              "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+            },
+            "5_agent3EvaluationReasoning": {
+              "groundingScore": 0.96,
+              "derivabilityTier": "DIRECT_EVIDENCE",
+              "studentAnswerability": "HIGH",
+              "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+              "verdict": "PASS"
+            },
+            "6_deterministicCalculations": {
+              "preChecksPassed": true,
+              "mathVerified": "N/A"
+            },
+            "7_finalGroundingGateReasoning": {
+              "status": "PASSED",
+              "justification": "Question and options are directly justified by session evidence for Page fault handling and page table updates."
+            }
+          }
+        },
+        "semanticIdentity": {
+          "correctAnswerText": "The OS finds a free physical frame, swaps the page from the backing store into RAM, updates the page table entry, and then restarts the instruction that caused the fault.",
+          "distractorTexts": [
+            "The OS loads the page into RAM, updates the page table, and then restarts the instruction.",
+            "The CPU directly loads the page from disk into RAM without involving the OS.",
+            "The OS updates the TLB entry, then loads the page into RAM, and finally restarts the instruction."
+          ]
+        },
+        "correctAnswerText": "The OS finds a free physical frame, swaps the page from the backing store into RAM, updates the page table entry, and then restarts the instruction that caused the fault.",
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "The OS finds a free physical frame, swaps the page from the backing store into RAM, updates the page table entry, and then restarts the instruction that caused the fault.",
+        "__positionAssigned": true
+      },
+      {
+        "targetId": "T03",
+        "questionText": "Which statement accurately describes the trade‑offs between FIFO and LRU page replacement policies regarding anomaly and optimality?",
+        "options": [
+          "Both FIFO and LRU are immune to Belady's anomaly.",
+          "FIFO always yields a higher hit rate than LRU for any page reference string.",
+          "FIFO suffers from Belady's anomaly, while LRU approximates optimal replacement.",
+          "LRU always achieves the optimal page replacement for all workloads."
+        ],
+        "correctAnswer": "FIFO suffers from Belady's anomaly, while LRU approximates optimal replacement.",
+        "explanation": "FIFO can exhibit Belady's anomaly, meaning that increasing the number of frames can worsen performance. LRU, on the other hand, approximates the optimal replacement algorithm and does not suffer from this anomaly.",
+        "metadata": {
+          "dimension": "Comparison / Tradeoff",
+          "cognitiveLevel": "Analyze",
+          "targetDifficulty": "Hard",
+          "concept": "Trade‑offs between FIFO and LRU replacement policies",
+          "subtopic": "Page Replacement Algorithms",
+          "tier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "groundingScore": 0.97,
+          "targetId": "T03",
+          "attempt": 1,
+          "decisionLedger": {
+            "questionId": "Q3",
+            "source": {
+              "tier": "DIRECT_EVIDENCE",
+              "supportingChunks": [
+                "chunk_01"
+              ]
+            },
+            "concept": "Trade‑offs between FIFO and LRU replacement policies",
+            "subtopic": "Page Replacement Algorithms",
+            "cognitiveDimension": "Comparison / Tradeoff",
+            "difficulty": "Hard",
+            "studentAnswerability": "HIGH",
+            "redundancy": {
+              "similarQuestion": null,
+              "similarity": 0,
+              "decision": "KEEP"
+            },
+            "agent3": {
+              "verdict": "PASS",
+              "groundingScore": 0.97
+            },
+            "grounding": {
+              "status": "GROUNDED"
+            }
+          },
+          "traceabilityAudit": {
+            "1_sourceOrigin": "DOCUMENT",
+            "2_supportingSessionChunks": [
+              "chunk_01"
+            ],
+            "3_agent1AssessmentReasoning": {
+              "whyAssessed": "Teacher emphasized Trade‑offs between FIFO and LRU replacement policies as a key learning outcome.",
+              "detectedEmphasis": {
+                "conceptual": "HIGH",
+                "application": "HIGH",
+                "syntax": "MEDIUM",
+                "calculation": "LOW"
+              },
+              "ruleApplied": "Teacher verbal emphasis elevates target priority."
+            },
+            "4_agent2FormulationReasoning": {
+              "dimension": "Comparison / Tradeoff",
+              "cognitiveLevel": "Analyze",
+              "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+            },
+            "5_agent3EvaluationReasoning": {
+              "groundingScore": 0.97,
+              "derivabilityTier": "DIRECT_EVIDENCE",
+              "studentAnswerability": "HIGH",
+              "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+              "verdict": "PASS"
+            },
+            "6_deterministicCalculations": {
+              "preChecksPassed": true,
+              "mathVerified": "N/A"
+            },
+            "7_finalGroundingGateReasoning": {
+              "status": "PASSED",
+              "justification": "Question and options are directly justified by session evidence for Trade‑offs between FIFO and LRU replacement policies."
+            }
+          }
+        },
+        "semanticIdentity": {
+          "correctAnswerText": "FIFO suffers from Belady's anomaly, while LRU approximates optimal replacement.",
+          "distractorTexts": [
+            "FIFO always yields a higher hit rate than LRU for any page reference string.",
+            "LRU always achieves the optimal page replacement for all workloads.",
+            "Both FIFO and LRU are immune to Belady's anomaly."
+          ]
+        },
+        "correctAnswerText": "FIFO suffers from Belady's anomaly, while LRU approximates optimal replacement.",
+        "correctAnswerKey": "C",
+        "correct_answer": "C",
+        "correct_answer_text": "FIFO suffers from Belady's anomaly, while LRU approximates optimal replacement.",
+        "__positionAssigned": true
+      },
+      {
+        "targetId": "T04",
+        "questionText": "Which of the following best describes the difference between message passing and shared memory communication?",
+        "options": [
+          "Message passing uses a communication link like a network or bus, while shared memory requires a common memory region.",
+          "Message passing allows processes to share memory directly, whereas shared memory requires messages to be sent.",
+          "Message passing is faster than shared memory because it avoids synchronization overhead.",
+          "Message passing is used only in distributed systems, while shared memory is used only in single-machine systems."
+        ],
+        "correctAnswer": "Message passing uses a communication link like a network or bus, while shared memory requires a common memory region.",
+        "explanation": "Message passing does not involve shared memory; processes exchange messages over a communication link (network or bus). Shared memory, on the other hand, provides a region of memory that all participating processes can read from and write to, which requires careful synchronization to avoid conflicts.",
+        "metadata": {
+          "dimension": "Comparison / Tradeoff",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "concept": "Message passing versus shared memory communication",
+          "subtopic": "IPC Mechanisms",
+          "tier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "groundingScore": 0.96,
+          "targetId": "T04",
+          "attempt": 1,
+          "decisionLedger": {
+            "questionId": "Q4",
+            "source": {
+              "tier": "DIRECT_EVIDENCE",
+              "supportingChunks": [
+                "chunk_01"
+              ]
+            },
+            "concept": "Message passing versus shared memory communication",
+            "subtopic": "IPC Mechanisms",
+            "cognitiveDimension": "Comparison / Tradeoff",
+            "difficulty": "Medium",
+            "studentAnswerability": "HIGH",
+            "redundancy": {
+              "similarQuestion": null,
+              "similarity": 0,
+              "decision": "KEEP"
+            },
+            "agent3": {
+              "verdict": "PASS",
+              "groundingScore": 0.96
+            },
+            "grounding": {
+              "status": "GROUNDED"
+            }
+          },
+          "traceabilityAudit": {
+            "1_sourceOrigin": "DOCUMENT",
+            "2_supportingSessionChunks": [
+              "chunk_01"
+            ],
+            "3_agent1AssessmentReasoning": {
+              "whyAssessed": "Teacher emphasized Message passing versus shared memory communication as a key learning outcome.",
+              "detectedEmphasis": {
+                "conceptual": "HIGH",
+                "application": "HIGH",
+                "syntax": "MEDIUM",
+                "calculation": "LOW"
+              },
+              "ruleApplied": "Teacher verbal emphasis elevates target priority."
+            },
+            "4_agent2FormulationReasoning": {
+              "dimension": "Comparison / Tradeoff",
+              "cognitiveLevel": "Understand",
+              "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+            },
+            "5_agent3EvaluationReasoning": {
+              "groundingScore": 0.96,
+              "derivabilityTier": "DIRECT_EVIDENCE",
+              "studentAnswerability": "HIGH",
+              "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+              "verdict": "PASS"
+            },
+            "6_deterministicCalculations": {
+              "preChecksPassed": true,
+              "mathVerified": "N/A"
+            },
+            "7_finalGroundingGateReasoning": {
+              "status": "PASSED",
+              "justification": "Question and options are directly justified by session evidence for Message passing versus shared memory communication."
+            }
+          }
+        },
+        "semanticIdentity": {
+          "correctAnswerText": "Message passing uses a communication link like a network or bus, while shared memory requires a common memory region.",
+          "distractorTexts": [
+            "Message passing allows processes to share memory directly, whereas shared memory requires messages to be sent.",
+            "Message passing is used only in distributed systems, while shared memory is used only in single-machine systems.",
+            "Message passing is faster than shared memory because it avoids synchronization overhead."
+          ]
+        },
+        "correctAnswerText": "Message passing uses a communication link like a network or bus, while shared memory requires a common memory region.",
+        "correctAnswerKey": "A",
+        "correct_answer": "A",
+        "correct_answer_text": "Message passing uses a communication link like a network or bus, while shared memory requires a common memory region.",
+        "__positionAssigned": true
+      },
+      {
+        "targetId": "T05",
+        "questionText": "What is the primary distinction between ordinary pipes and named pipes (FIFOs) regarding the relationship of the communicating processes?",
+        "options": [
+          "Ordinary pipes support bidirectional data flow, whereas named pipes are strictly unidirectional.",
+          "Ordinary pipes facilitate communication between unrelated processes, while named pipes are restricted to parent-child relationships.",
+          "Ordinary pipes persist as files in the file system, while named pipes exist only in memory.",
+          "Ordinary pipes are used for one-way communication between related processes, while named pipes enable communication between unrelated processes."
+        ],
+        "correctAnswer": "Ordinary pipes are used for one-way communication between related processes, while named pipes enable communication between unrelated processes.",
+        "explanation": "According to the technical specification, ordinary pipes are designed for one-way communication between related processes (typically parent and child) and do not appear in the file system. In contrast, named pipes (FIFOs) are specifically used for communication between unrelated processes.",
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "concept": "Usage of ordinary pipes and named pipes for inter‑process communication",
+          "subtopic": "Pipes & FIFOs",
+          "tier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "groundingScore": 0.95,
+          "targetId": "T05",
+          "attempt": 1,
+          "decisionLedger": {
+            "questionId": "Q5",
+            "source": {
+              "tier": "DIRECT_EVIDENCE",
+              "supportingChunks": [
+                "chunk_01"
+              ]
+            },
+            "concept": "Usage of ordinary pipes and named pipes for inter‑process communication",
+            "subtopic": "Pipes & FIFOs",
+            "cognitiveDimension": "Conceptual",
+            "difficulty": "Medium",
+            "studentAnswerability": "HIGH",
+            "redundancy": {
+              "similarQuestion": null,
+              "similarity": 0,
+              "decision": "KEEP"
+            },
+            "agent3": {
+              "verdict": "PASS",
+              "groundingScore": 0.95
+            },
+            "grounding": {
+              "status": "GROUNDED"
+            }
+          },
+          "traceabilityAudit": {
+            "1_sourceOrigin": "DOCUMENT",
+            "2_supportingSessionChunks": [
+              "chunk_01"
+            ],
+            "3_agent1AssessmentReasoning": {
+              "whyAssessed": "Teacher emphasized Usage of ordinary pipes and named pipes for inter‑process communication as a key learning outcome.",
+              "detectedEmphasis": {
+                "conceptual": "HIGH",
+                "application": "HIGH",
+                "syntax": "MEDIUM",
+                "calculation": "LOW"
+              },
+              "ruleApplied": "Teacher verbal emphasis elevates target priority."
+            },
+            "4_agent2FormulationReasoning": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+            },
+            "5_agent3EvaluationReasoning": {
+              "groundingScore": 0.95,
+              "derivabilityTier": "DIRECT_EVIDENCE",
+              "studentAnswerability": "HIGH",
+              "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+              "verdict": "PASS"
+            },
+            "6_deterministicCalculations": {
+              "preChecksPassed": true,
+              "mathVerified": "N/A"
+            },
+            "7_finalGroundingGateReasoning": {
+              "status": "PASSED",
+              "justification": "Question and options are directly justified by session evidence for Usage of ordinary pipes and named pipes for inter‑process communication."
+            }
+          }
+        },
+        "semanticIdentity": {
+          "correctAnswerText": "Ordinary pipes are used for one-way communication between related processes, while named pipes enable communication between unrelated processes.",
+          "distractorTexts": [
+            "Ordinary pipes facilitate communication between unrelated processes, while named pipes are restricted to parent-child relationships.",
+            "Ordinary pipes support bidirectional data flow, whereas named pipes are strictly unidirectional.",
+            "Ordinary pipes persist as files in the file system, while named pipes exist only in memory."
+          ]
+        },
+        "correctAnswerText": "Ordinary pipes are used for one-way communication between related processes, while named pipes enable communication between unrelated processes.",
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "Ordinary pipes are used for one-way communication between related processes, while named pipes enable communication between unrelated processes.",
+        "__positionAssigned": true
+      }
+    ],
+    "questionDecisionLedger": [
+      {
+        "questionId": "Q1",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Virtual address translation and page table mapping",
+        "subtopic": "Virtual Memory",
+        "cognitiveDimension": "Conceptual",
+        "difficulty": "Easy",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.95
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      {
+        "questionId": "Q2",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Page fault handling and page table updates",
+        "subtopic": "Page Faults",
+        "cognitiveDimension": "Cause / Effect",
+        "difficulty": "Medium",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.96
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      {
+        "questionId": "Q3",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Trade‑offs between FIFO and LRU replacement policies",
+        "subtopic": "Page Replacement Algorithms",
+        "cognitiveDimension": "Comparison / Tradeoff",
+        "difficulty": "Hard",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.97
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      {
+        "questionId": "Q4",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Message passing versus shared memory communication",
+        "subtopic": "IPC Mechanisms",
+        "cognitiveDimension": "Comparison / Tradeoff",
+        "difficulty": "Medium",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.96
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      {
+        "questionId": "Q5",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Usage of ordinary pipes and named pipes for inter‑process communication",
+        "subtopic": "Pipes & FIFOs",
+        "cognitiveDimension": "Conceptual",
+        "difficulty": "Medium",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.95
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      }
+    ],
+    "tcScore": {
+      "overallScore": 100,
+      "rating": "Comprehensive",
+      "breakdown": {
+        "plannedAloRatio": "5/5 subtopics (100%)",
+        "coreAloCount": "5 Core targets",
+        "secondaryAloCount": "0 Secondary targets",
+        "peripheralAloCount": "0 Peripheral targets",
+        "reserveCoreCount": "1 Core reserves",
+        "lectureDepthScore": "99/100",
+        "teacherEmphasis": "Aligned",
+        "total": "100/100"
+      }
+    },
+    "quizEvaluation": {
+      "quizQualityStatus": "QUALITY_PASSED",
+      "isBalanced": true,
+      "totalQuestions": 5,
+      "requestedCount": 5,
+      "uniqueDimensionsCount": 3,
+      "cognitiveDistribution": {
+        "Conceptual": 2,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 2
+      },
+      "conceptDistribution": {
+        "Virtual Memory": 1,
+        "Page Faults": 1,
+        "Page Replacement Algorithms": 1,
+        "IPC Mechanisms": 1,
+        "Pipes & FIFOs": 1
+      },
+      "derivabilityTiers": {
+        "DIRECT_EVIDENCE": 5,
+        "EVIDENCE_DERIVED": 0,
+        "FOUNDATIONAL_PREREQUISITE": 0,
+        "RELATED_EXTENSION": 0,
+        "VERIFICATION_FALLBACK": 0
+      },
+      "redundancy": {
+        "totalRedundantPairs": 0,
+        "highSimilarityPairs": []
+      },
+      "concentrationWarning": null,
+      "suggestion": null,
+      "coverageScore": 100,
+      "recommendations": []
+    },
+    "telemetry": {
+      "totalDurationMs": 12458,
+      "deliveredCount": 5,
+      "totalAttempts": 5,
+      "acceptanceRatePercent": 100,
+      "avgGroundingScore": 0.958,
+      "stageDurations": {
+        "EVIDENCE_PACKAGE": 18,
+        "AGENT_1_PLANNING": 4773,
+        "AGENT_3_QUESTION_EVAL": 12844,
+        "AGENT_3_QUIZ_EVAL": 1,
+        "DETERMINISTIC_POSTCHECKS": 1,
+        "FINAL_GROUNDING_GATE": 3
+      },
+      "dimensionCounts": {
+        "Conceptual": 2,
+        "Cause / Effect": 1,
+        "Comparison / Tradeoff": 2
+      },
+      "tcScoreBreakdown": {
+        "plannedAloRatio": "5/5 subtopics (100%)",
+        "coreAloCount": "5 Core targets",
+        "secondaryAloCount": "0 Secondary targets",
+        "peripheralAloCount": "0 Peripheral targets",
+        "reserveCoreCount": "1 Core reserves",
+        "lectureDepthScore": "99/100",
+        "teacherEmphasis": "Aligned",
+        "total": "100/100"
+      }
+    },
+    "traceSummaryPath": "server/logs/debug/sessions/post_fix_bm02_os_1791041196550/final_session_trace.json"
+  },
+  "elapsedMs": 12467
+}

@@ -40,7 +40,26 @@ class SourceService {
         extractedText = await new Promise((resolve, reject) => {
           officeParser.parseOffice(filePath, (data, err) => {
             if (err) return reject(err);
-            resolve(typeof data === 'string' ? data : JSON.stringify(data));
+            if (data && Array.isArray(data.content) && data.content.some(item => item.type === 'slide')) {
+              // Preserve slide boundaries directly from parser AST
+              const slideBlocks = data.content
+                .filter(item => item.type === 'slide')
+                .map((slide, idx) => {
+                  const texts = [];
+                  function extract(n) {
+                    if (!n) return;
+                    if (n.text) texts.push(n.text);
+                    if (Array.isArray(n.children)) n.children.forEach(extract);
+                  }
+                  extract(slide);
+                  const unique = [...new Set(texts)];
+                  return `--- Slide ${idx + 1} ---\n${unique.join('\n')}`;
+                });
+              if (slideBlocks.length > 0) {
+                return resolve(slideBlocks.join('\n\n'));
+              }
+            }
+            resolve(typeof data === 'string' ? data : (typeof data?.toText === 'function' ? data.toText() : JSON.stringify(data)));
           });
         });
       } else {

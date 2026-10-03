@@ -85,7 +85,17 @@ class RerankerService {
 
       const content = c.text || p.fullText || '';
 
-      return `${citationTag} Type: ${blockType} | Page: ${pageNum} | Section: "${section}"\n${content}`;
+      const sourceType = (c.sourceType || p.sourceType || '').toUpperCase();
+      let roleLabel = '';
+      if (sourceType === 'TRANSCRIPT' || sourceType === 'AUDIO' || sourceType === 'VOICE') {
+        roleLabel = '[SPOKEN LECTURE DEMONSTRATION & TEACHING EMPHASIS]';
+      } else if (sourceType === 'SLIDE' || sourceType === 'DOCUMENT' || sourceType === 'CODE') {
+        roleLabel = '[TECHNICAL SPECIFICATION & ARTIFACT REFERENCE]';
+      } else {
+        roleLabel = '[GENERAL REFERENCE CONTEXT]';
+      }
+
+      return `${citationTag} ${roleLabel}\nType: ${blockType} | Page: ${pageNum} | Section: "${section}"\n${content}`;
     });
 
     return {

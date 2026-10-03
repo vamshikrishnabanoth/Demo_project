@@ -94,9 +94,17 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
               const parentObj = childObj?.parentId ? evidencePackage.hierarchicalStore.parentMap?.[childObj.parentId] : null;
 
               if (parentObj) {
-                extraCrossModalContent += `\n\n=== [CROSS-MATERIAL LINKED EVIDENCE: ${parentObj.title} (${eid})] ===\n${parentObj.fullText.substring(0, 1000)}`;
+                const pSource = (parentObj.sourceType || '').toUpperCase();
+                const roleTag = (pSource === 'SLIDE' || pSource === 'DOCUMENT' || pSource === 'CODE')
+                  ? ' [TECHNICAL SPECIFICATION & ARTIFACT REFERENCE]'
+                  : ' [SPOKEN LECTURE DEMONSTRATION & TEACHING EMPHASIS]';
+                extraCrossModalContent += `\n\n=== [CROSS-MATERIAL LINKED EVIDENCE: ${parentObj.title} (${eid})${roleTag}] ===\n${parentObj.fullText.substring(0, 1000)}`;
               } else if (childObj) {
-                extraCrossModalContent += `\n\n=== [CROSS-MATERIAL LINKED EVIDENCE: ${eid}] ===\n${childObj.text}`;
+                const cSource = (childObj.sourceType || '').toUpperCase();
+                const roleTag = (cSource === 'SLIDE' || cSource === 'DOCUMENT' || cSource === 'CODE')
+                  ? ' [TECHNICAL SPECIFICATION & ARTIFACT REFERENCE]'
+                  : ' [SPOKEN LECTURE DEMONSTRATION & TEACHING EMPHASIS]';
+                extraCrossModalContent += `\n\n=== [CROSS-MATERIAL LINKED EVIDENCE: ${eid}${roleTag}] ===\n${childObj.text}`;
               }
             }
           }

@@ -235,9 +235,20 @@ class HierarchicalChunker {
       let slideSections = [];
       if (docText.includes('--- Slide ')) {
         slideSections = docText.split('--- Slide ').map(s => s.trim()).filter(Boolean);
-      } else {
-        // Each document element or markdown header section treated as slide unit
+      } else if (docText.includes('--- Page ')) {
+        slideSections = docText.split('--- Page ').map(s => s.trim()).filter(Boolean);
+      } else if (docArray.length > 1) {
         slideSections = docArray.map(d => d.trim()).filter(Boolean);
+      } else if (docArray.length === 1) {
+        // Heading / Title-based slide boundary fallback for unsegmented presentation text:
+        // Matches title lines followed immediately by numbered list items (1. ...)
+        const rawDoc = docArray[0].trim();
+        const headingSplit = rawDoc.split(/(?:^|\n\n|\r?\n)(?=[A-Z][A-Za-z0-9\s,&:\-\(\)]{3,80}\r?\n\s*1\.)/g).map(s => s.trim()).filter(Boolean);
+        if (headingSplit.length > 1) {
+          slideSections = headingSplit;
+        } else {
+          slideSections = [rawDoc];
+        }
       }
 
       for (let sIdx = 0; sIdx < slideSections.length; sIdx++) {
@@ -310,18 +321,18 @@ class HierarchicalChunker {
             title: `Slide ${slideNum} Full Context`,
             sourceType: 'SLIDE',
             fullText: secText,
-            wordCount: countWords(secText),
+            wordCount: secWords,
             childIds: [cEid]
           };
 
-          const childSnippet = secText.substring(0, 400);
+          // Retain full cohesive slide text for atomic slide indexing (do not truncate by arbitrary 400 characters)
           const childObj = {
             childId: cId,
             evidenceId: cEid,
             parentId: pEid,
             sourceType: 'SLIDE',
-            text: childSnippet,
-            wordCount: countWords(childSnippet),
+            text: secText,
+            wordCount: secWords,
             keywords: tokenizeKeywords(secText)
           };
 

@@ -490,18 +490,40 @@ class PipelineOrchestrator {
           if (targetFailed) {
             if (reservePool.length > 0 && totalAttempts < MAX_TOTAL_ATTEMPTS && passingQuestions.length < requestedCount) {
               totalSwaps++;
-              const reserveTarget = reservePool.shift();
+
+              // Layer 3: Importance-Preserving Tier Matcher
+              const failedTier = currentTarget.tier || 'Core';
+              let candidateIdx = reservePool.findIndex(r => (r.tier || 'Core') === failedTier);
+              let swapType = 'EXACT_TIER_MATCH';
+
+              if (candidateIdx === -1) {
+                candidateIdx = 0;
+                swapType = 'COVERAGE_TIER_DILUTION';
+                console.warn(`⚠️ [Orchestrator] Reserve tier dilution: No reserve with tier "${failedTier}" found for target ${currentTarget.targetId}. Falling back to tier "${reservePool[0].tier || 'Core'}".`);
+              }
+
+              const [reserveTarget] = reservePool.splice(candidateIdx, 1);
+
               await trace.recordStage({
                 stageOrder: `04_SWAP_${currentTarget.targetId}`,
                 stageName: 'TARGET_RESERVE_SWAP',
                 decisions: [
-                  `Target ${currentTarget.targetId} exhausted or duplicate.`,
-                  `Swapped in pre-generated reserve target ${reserveTarget.targetId} ("${reserveTarget.concept}").`
+                  `Target ${currentTarget.targetId} (Tier: ${failedTier}) exhausted or duplicate.`,
+                  `Swapped in reserve target ${reserveTarget.targetId} ("${reserveTarget.concept}", Tier: ${reserveTarget.tier || 'Core'}) via ${swapType}.`
                 ],
-                rulesApplied: ['Reserve Target Fallback Rule (no Agent 1 recall)'],
+                rulesApplied: ['Importance-Preserving Reserve Allocation Rule', 'Reserve Target Fallback Rule (no Agent 1 recall)'],
                 evidenceUsed: [currentTarget.targetId, reserveTarget.targetId],
-                output: { swappedFrom: currentTarget.targetId, swappedTo: reserveTarget.targetId },
-                validation: { status: 'PASS', checks: ['Reserve target available and swapped'] }
+                output: { 
+                  swappedFrom: currentTarget.targetId, 
+                  swappedTo: reserveTarget.targetId,
+                  swappedFromTier: failedTier,
+                  swappedToTier: reserveTarget.tier || 'Core',
+                  swappedTierMatch: swapType
+                },
+                validation: { 
+                  status: 'PASS', 
+                  checks: [`Reserve target available (${swapType})`] 
+                }
               });
               targetQueue.push(reserveTarget);
             } else {

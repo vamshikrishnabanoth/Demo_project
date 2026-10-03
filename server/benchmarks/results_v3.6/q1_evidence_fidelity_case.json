@@ -1,0 +1,12 @@
+{
+  "caseId": "FIDELITY_CASE_01_GIT_DEFINITION",
+  "benchmark": "BM-01",
+  "targetId": "T01",
+  "stem": "Which statement accurately defines Git according to the evidence provided?",
+  "deliveredOptionKey": "Git is a distributed version control system that tracks changes across multiple repositories.",
+  "sourceEvidenceSpoken": "So in the last class I have given you an introduction to Git where I told you Git is basically a distributed version control system which will be helping the developers to keep track about whatever changes they are doing in the project that they are developing",
+  "sourceEvidenceSlides": "Git Architecture: Three Trees & Snapshot Model. 1. Working Directory... 2. Staging Area... 3. Local Repository...",
+  "auditFinding": "SEMANTIC_EXTRAPOLATION",
+  "detail": "The model synthesized \"tracks changes across multiple repositories\" from general knowledge. While technically true in software engineering, the lecture evidence strictly defined it as tracking changes \"in the project that they are developing\". Preserved as a frozen test case to audit verbatim fidelity vs model pre-training drift.",
+  "recommendedAssertion": "Answer key must be strictly answerable from session materials without introducing unmentioned multi-repository synchronization claims unless taught in the session."
+}

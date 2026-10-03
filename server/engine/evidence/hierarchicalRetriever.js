@@ -112,8 +112,13 @@ class HierarchicalRetriever {
       const parentObj = store.parentMap[pEid];
       totalParentWords += parentObj.wordCount || 0;
 
+      const pSource = (parentObj.sourceType || '').toUpperCase();
+      const roleTag = (pSource === 'SLIDE' || pSource === 'DOCUMENT' || pSource === 'CODE')
+        ? ' [TECHNICAL SPECIFICATION & ARTIFACT REFERENCE]'
+        : ' [SPOKEN LECTURE DEMONSTRATION & TEACHING EMPHASIS]';
+
       promptSections.push(
-        `=== [PARENT CONTEXT: ${parentObj.title} (${parentObj.evidenceId})] ===\n` +
+        `=== [PARENT CONTEXT: ${parentObj.title} (${parentObj.evidenceId})${roleTag}] ===\n` +
         `${parentObj.fullText}\n` +
         `=== [END PARENT CONTEXT] ===`
       );

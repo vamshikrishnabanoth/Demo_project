@@ -1,0 +1,45 @@
+{
+  "milestone": "v3.6-pipeline-refinement",
+  "timestamp": "2026-10-03T15:28:29.521Z",
+  "environment": {
+    "nodeVersion": "v24.10.0",
+    "platform": "win32",
+    "generatorModel": "openai/gpt-oss-120b",
+    "plannerModel": "openai/gpt-oss-120b",
+    "whisperModel": "whisper-large-v3"
+  },
+  "benchmarks": {
+    "BM-01": {
+      "name": "Git Version Control Basics",
+      "modality": "Multimodal (Spoken Voice + PPTX Slides)",
+      "sampleSize": 6,
+      "delivered": 6,
+      "technicalTruthCount": 6,
+      "coreCoverage": "5/8 ALOs (62.5%)",
+      "slideBoundaryIntegrity": "5/5 slides (100%)",
+      "fidelityNotes": "Q1 exhibits semantic extrapolation (\"across multiple repositories\")"
+    },
+    "BM-02": {
+      "name": "Operating Systems: Paging & Virtual Memory",
+      "modality": "Multimodal (Spoken Voice + PDF Notes)",
+      "sampleSize": 5,
+      "delivered": 5,
+      "technicalTruthCount": 5,
+      "cognitiveDimensions": [
+        "Conceptual",
+        "Cause / Effect",
+        "Comparison / Tradeoff"
+      ],
+      "derivabilityTiers": "5/5 DIRECT_EVIDENCE"
+    },
+    "BM-03": {
+      "name": "Pure Voice-Only Lecture Degradation",
+      "modality": "Voice-Only (Spoken Transcript with docs: [])",
+      "sampleSize": 3,
+      "delivered": 3,
+      "technicalTruthCount": 3,
+      "untaughtFlagHallucinations": 0,
+      "baselineDefectResolved": "Eliminated --hard HEAD hallucination from git reset question"
+    }
+  }
+}

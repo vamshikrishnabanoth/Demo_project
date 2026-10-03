@@ -1,0 +1,492 @@
+{
+  "sessionInputs": {
+    "sessionId": "post_fix_bm03_voice_only_1791041105478",
+    "voiceTranscript": " Hello students, welcome to the next session. In today's session we will be learning about some of the basic Git commands. So in the last class I have given you an introduction to Git where I told you Git is basically a distributed version control system which will be helping the developers to keep track about whatever changes they are doing in the project that they are developing. So today let us talk about the different basic commands that are needed to use Git. So the first command you have is Git version. So if you want to know if the Git is installed in your system, then we will be using this particular command called as Git version. It will give you whatever the latest version that you have installed. The second one you have is Git config. so git config is a command which is used to give details give your details to the git tool okay so why do i need to give my details it is because whenever you are doing any changes in the project and you are saving the changes to keep track of those changes to know who has done that particular change your git has to know your information that is the reason you have to give your details like your username, your email ID and all to git. This is called as git config or it is also called as configuration, right? So, you can give two details about yourself which is the username and the second one you have is your email ID. So, to do that you have to give git space config space hyphen hyphen global, okay, space user dot name and in double quotes you can give your name. The same thing for your email ID also. So, you can say user.email and in double quotes, you can give your email ID as shown in this example. Okay. The next one you are using is git init. So, if you want to start a new project, to keep track of the changes that you are doing in that particular project, you have to create a local repository. That is called as git repository. Okay. Where your final changes will be maintained in the form of versions. The third stage of your git. if you remember the workflow. So, to keep changes, you have to create a Git repository and to create a repository in Git, you have to use a command called as git init. So, when you use git init, it will tell you that an empty repository has been created. Okay, the next command you have is git status. So, if you want to know, so say suppose you have created a project and you have done n number of changes. Okay, and you don't remember what are the changes that you have done. So if you want to know what are the changes you have done in your particular project, simply click a command called as git status. It will tell you what are the changes that you have made and which changes have not yet been saved into the repository. So simply give git status. The next one you have is git add So this is if you remember in your git workflow I told you we have three areas Working directory staging area and git repository So, from working directory, if you want to move your project into staging area, where you are deciding which changes have to be saved, then you have to use a command called as git add. Okay. So, if you can simply write git add space dot, that means all the changes that you have done in your project will be saved. Now, say suppose you don't want to save all the files. In your project, say suppose you have 10 files, in that only one particular file called as a.txt you want to save. Then you can write git space add space a.txt. So, only the changes of that particular file will be saved into the staging area. no if you want to if you want to add all the changes then simply write git space add space dot okay now from the staging area you have you want to save all the changes that you have made then you have to go for the next one which is called as git commit git commit will save the changes of your particular file into the repository which repository git repository to do that you have to use a command git commit and you have to give a message so this message will be telling what changes have you made okay so that in each version you will understand so when you open a particular version you will understand in that version what changes you have made in your particular project so message is you need to be adding it's optional but if you add a message then you will better understand of you can better keep track of the changes that you have made in your particular product okay so this is called as git commit right the next one is git diff so for example if you want to know what is the previous commit changes that i have made and what is the new change that i have made if you want to see the difference between your previous commit and the current commit okay previous version and the current version then you have to use a command which is called as git diff. It will compare the changes of your current file with the previous version. Okay. So for that you can simply write git diff. The next one you have is git help. Now say suppose you forgot how to use a particular command in git. Then simply write git space help space that command name. So it will give you it will open the manual page of your git and it will give you the complete details of what is that command how to use it what is its syntax it will give you some examples what are the various options of that particular command every details will be given when you use the command called as git help ok so these are the basic commands of git now I will take a small example and demonstrate how exactly these different types of commands are used now observe these two windows the top window is your git bash your local git tool and the second one is a folder okay so i have created a folder with the name called a sample example which I will be using as my git repository Okay So observe the changes as I keep on Now this is a normal folder. This folder should now be converted into a git repository. So before that let's start with knowing what is the git version. So I will simply type git space hyphen hyphen version and when I type enter you can see this is the latest version of your git. Okay now if you want to clear the screen simply write clear the window will be cleared. Now let me make this normal folder into a git repository. To do that what we have to do you have to type git space init. So when I say git space init this particular folder which is called a sample example is converted into a git repository. How do I know it? Simply type ls. So when I type ls it will show you what are the files inside this particular folder. So as you can see you don't have any folder but there is one hidden folder called as .git which will tell me that this particular folder is now not a normal folder it is a git repository. To know that simply type ls space hyphen la. It will give me the list of hidden files. So you can see there is one hidden file which is called as dot git here. Okay. So which is not shown in this particular folder but it is hidden. So whenever you get this dot git file that means this particular folder is now created. It is converted into a local git repository. Right. So now let me create a normal file here. a normal project file they support. So, I will write nano space a dot txt. You can use any id that you want. I am using nano. So, a dot txt file is created. Let me type something. Hello, this is new file. Okay. I am doing the necessary changes. Now, you can see here a dot txt file is created. You can see this particular file. Right. Now to know whatever changes you have made in this particular project you have to type now get status. So it is telling there is one file called as a.txt which you did not save anything. So what we have to do now we have to do the changes. So I have decided that let me do all the changes in this a.txt. Let me save all the changes in this a.txt. So what I have to do now I will type git add daughter. So it is telling everything is now being saved. So when I say now git status previously observed this A.txt is in red color. Now when I type git status you can see that A.txt is now in green color. That means it is telling you that the changes are ready to be committed. You have decided to do all the changes in A.txt. Now it is ready Now you save the final changes To do that final changes what I have to do I have to type git commit space hyphen m I am telling added new file file i telling that i have added a new file i sending a message okay now everything is successfully committed okay so how do i know it is committed simply type get space status so my status is telling that everything is committed and you are clean right now say suppose you want to do any any more changes now so again i will type a nano space a dot txt okay now say suppose i want to add a new line here add it new line i have added a new line i'm saving okay now i want to know what is the difference what are what are the different changes that i have done so what i will do i will say get space diff so my diff will tell you previously you had hello this is new file now you have added new line so it is telling me what are the changes that i have made so previous version is a dot t a dot txt in a now next new version is a dot txt in b right so you have to decide whether you want to keep these changes or not. Let me say that I want to keep. So, I will say git space add space dot. Okay. Now, everything is saved. So, I will say git space status. You can see that the changes are saved but I have not yet committed now. Now, say suppose you want to go back. Okay. After typing git add dot and you have decided to save these changes, now I want to go back. I don't want to commit now. So, what I will do? I will simply write git space reset. Okay, when you type git space reset, all the changes will be reverted back. How do you know that? Simply type git status. Now, you can see the red green file is again converted into red file. Okay, now say suppose you want to undo the changes also. So, in this particular a.txt, if you open this particular file, you can see a new line is there. Okay. Now, I want to undo that new line also. So, what I will do, I will simply type git space. I will type git space restore space dot. When I do that and when I open a.txt, you can see that the new line is also deleted. So, this is how you can come back right now let me show you how to use git help so you can type so i will type git help and say suppose you want to know about the function called as add so when i type enter then the git original manual page will open and it will give you the details of all these particular functions okay so this is these are the basic git commands that we will be using. In detail, we will see in the next session. Thank you.",
+    "documentTexts": [],
+    "difficulty": "Medium",
+    "count": 3
+  },
+  "result": {
+    "sessionId": "post_fix_bm03_voice_only_1791041105478",
+    "pipelineStatus": "COMPLETED",
+    "evidenceSafety": "GROUNDED",
+    "quizQualityStatus": "QUALITY_PASSED",
+    "quizTitle": "Git Basics",
+    "subject": "Version Control Systems",
+    "requestedCount": 3,
+    "deliveredCount": 3,
+    "notice": null,
+    "alignmentWarning": null,
+    "unalignedDocuments": [],
+    "lectureDepth": {
+      "rating": "Comprehensive",
+      "score": 100,
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Strong",
+        "examples": "Present",
+        "procedures": "Strong"
+      }
+    },
+    "representationMode": "BLUEPRINT",
+    "routerReason": "[Adaptive PDI Router: PDI=0.693] High Pedagogical Delivery Index (PDI=0.693 >= 0.60): Strong live interactive teaching and emphasis signals detected without slides. Routed to Instructional Blueprint.",
+    "questions": [
+      {
+        "targetId": "T02",
+        "questionText": "Which of the following commands correctly stages all modified files and then records a commit with a descriptive message?",
+        "options": [
+          "git add . && git commit -m \"Update description\"",
+          "git commit -m \"Update description\"",
+          "git add .",
+          "git status"
+        ],
+        "correctAnswer": "git add . && git commit -m \"Update description\"",
+        "explanation": "The evidence states that to add all changes you use 'git add .' and to save those staged changes you use 'git commit' with a message (e.g., '-m \"...\"'). Combining them with '&&' executes both steps in order, fulfilling the requirement to stage all changes and record a commit with a descriptive message. The other options either perform only one of the required actions or simply display repository status.",
+        "metadata": {
+          "dimension": "Application",
+          "cognitiveLevel": "Apply",
+          "targetDifficulty": "Medium",
+          "concept": "Apply `git add .` and `git commit -m` to stage all changes and record a commit with a descriptive message",
+          "subtopic": "Staging and Committing Changes",
+          "tier": "EVIDENCE_DERIVED",
+          "studentAnswerability": "HIGH",
+          "groundingScore": 0.96,
+          "targetId": "T02",
+          "attempt": 1,
+          "decisionLedger": {
+            "questionId": "Q1",
+            "source": {
+              "tier": "EVIDENCE_DERIVED",
+              "supportingChunks": [
+                "chunk_02"
+              ]
+            },
+            "concept": "Apply `git add .` and `git commit -m` to stage all changes and record a commit with a descriptive message",
+            "subtopic": "Staging and Committing Changes",
+            "cognitiveDimension": "Application",
+            "difficulty": "Medium",
+            "studentAnswerability": "HIGH",
+            "redundancy": {
+              "similarQuestion": null,
+              "similarity": 0,
+              "decision": "KEEP"
+            },
+            "agent3": {
+              "verdict": "PASS",
+              "groundingScore": 0.96
+            },
+            "grounding": {
+              "status": "GROUNDED"
+            }
+          },
+          "traceabilityAudit": {
+            "1_sourceOrigin": "DOCUMENT",
+            "2_supportingSessionChunks": [
+              "chunk_02"
+            ],
+            "3_agent1AssessmentReasoning": {
+              "whyAssessed": "Teacher emphasized Apply `git add .` and `git commit -m` to stage all changes and record a commit with a descriptive message as a key learning outcome.",
+              "detectedEmphasis": {
+                "conceptual": "HIGH",
+                "application": "HIGH",
+                "syntax": "MEDIUM",
+                "calculation": "LOW"
+              },
+              "ruleApplied": "Teacher verbal emphasis elevates target priority."
+            },
+            "4_agent2FormulationReasoning": {
+              "dimension": "Application",
+              "cognitiveLevel": "Apply",
+              "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+            },
+            "5_agent3EvaluationReasoning": {
+              "groundingScore": 0.96,
+              "derivabilityTier": "EVIDENCE_DERIVED",
+              "studentAnswerability": "HIGH",
+              "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+              "verdict": "PASS"
+            },
+            "6_deterministicCalculations": {
+              "preChecksPassed": true,
+              "mathVerified": "N/A"
+            },
+            "7_finalGroundingGateReasoning": {
+              "status": "PASSED",
+              "justification": "Question and options are directly justified by session evidence for Apply `git add .` and `git commit -m` to stage all changes and record a commit with a descriptive message."
+            }
+          }
+        },
+        "semanticIdentity": {
+          "correctAnswerText": "git add . && git commit -m \"Update description\"",
+          "distractorTexts": [
+            "git add .",
+            "git commit -m \"Update description\"",
+            "git status"
+          ]
+        },
+        "correctAnswerText": "git add . && git commit -m \"Update description\"",
+        "correctAnswerKey": "A",
+        "correct_answer": "A",
+        "correct_answer_text": "git add . && git commit -m \"Update description\"",
+        "__positionAssigned": true
+      },
+      {
+        "targetId": "T01",
+        "questionText": "What does the command `git init` do when executed in a directory?",
+        "options": [
+          "Commits staged changes to the repository",
+          "Clones a remote repository into the current directory",
+          "Shows the current repository status",
+          "Creates an empty Git repository in the current directory"
+        ],
+        "correctAnswer": "Creates an empty Git repository in the current directory",
+        "explanation": "According to the spoken lecture evidence, running `git init` converts the current folder into a Git repository and reports that an empty repository has been created. It does not clone, commit, or display status.",
+        "metadata": {
+          "dimension": "Foundational Prerequisite",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Easy",
+          "concept": "Understand the purpose and effect of `git init` to create an empty repository",
+          "subtopic": "Repository Initialization",
+          "tier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "groundingScore": 0.95,
+          "targetId": "T01",
+          "attempt": 1,
+          "decisionLedger": {
+            "questionId": "Q2",
+            "source": {
+              "tier": "DIRECT_EVIDENCE",
+              "supportingChunks": [
+                "chunk_01"
+              ]
+            },
+            "concept": "Understand the purpose and effect of `git init` to create an empty repository",
+            "subtopic": "Repository Initialization",
+            "cognitiveDimension": "Foundational Prerequisite",
+            "difficulty": "Easy",
+            "studentAnswerability": "HIGH",
+            "redundancy": {
+              "similarQuestion": null,
+              "similarity": 0,
+              "decision": "KEEP"
+            },
+            "agent3": {
+              "verdict": "PASS",
+              "groundingScore": 0.95
+            },
+            "grounding": {
+              "status": "GROUNDED"
+            }
+          },
+          "traceabilityAudit": {
+            "1_sourceOrigin": "DOCUMENT",
+            "2_supportingSessionChunks": [
+              "chunk_01"
+            ],
+            "3_agent1AssessmentReasoning": {
+              "whyAssessed": "Teacher emphasized Understand the purpose and effect of `git init` to create an empty repository as a key learning outcome.",
+              "detectedEmphasis": {
+                "conceptual": "HIGH",
+                "application": "HIGH",
+                "syntax": "MEDIUM",
+                "calculation": "LOW"
+              },
+              "ruleApplied": "Teacher verbal emphasis elevates target priority."
+            },
+            "4_agent2FormulationReasoning": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Understand",
+              "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+            },
+            "5_agent3EvaluationReasoning": {
+              "groundingScore": 0.95,
+              "derivabilityTier": "DIRECT_EVIDENCE",
+              "studentAnswerability": "HIGH",
+              "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+              "verdict": "PASS"
+            },
+            "6_deterministicCalculations": {
+              "preChecksPassed": true,
+              "mathVerified": "N/A"
+            },
+            "7_finalGroundingGateReasoning": {
+              "status": "PASSED",
+              "justification": "Question and options are directly justified by session evidence for Understand the purpose and effect of `git init` to create an empty repository."
+            }
+          }
+        },
+        "semanticIdentity": {
+          "correctAnswerText": "Creates an empty Git repository in the current directory",
+          "distractorTexts": [
+            "Clones a remote repository into the current directory",
+            "Commits staged changes to the repository",
+            "Shows the current repository status"
+          ]
+        },
+        "correctAnswerText": "Creates an empty Git repository in the current directory",
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "Creates an empty Git repository in the current directory",
+        "__positionAssigned": true
+      },
+      {
+        "targetId": "T03",
+        "questionText": "According to the provided evidence, which Git command should be used to revert all changes made in the working directory back to the state of the last commit?",
+        "options": [
+          "git revert HEAD",
+          "git clean -fd",
+          "git reset",
+          "git checkout ."
+        ],
+        "correctAnswer": "git reset",
+        "explanation": "The evidence explicitly states that typing 'git reset' reverts all changes, indicating that this command restores the working directory to the state of the last commit.",
+        "metadata": {
+          "dimension": "Cause / Effect",
+          "cognitiveLevel": "Analyze",
+          "targetDifficulty": "Medium",
+          "concept": "Analyze the use of `git diff` to compare commits and `git reset` to revert changes",
+          "subtopic": "Inspecting History and Reverting",
+          "tier": "DIRECT_EVIDENCE",
+          "studentAnswerability": "HIGH",
+          "groundingScore": 0.95,
+          "targetId": "T03",
+          "attempt": 2,
+          "decisionLedger": {
+            "questionId": "Q3",
+            "source": {
+              "tier": "DIRECT_EVIDENCE",
+              "supportingChunks": [
+                "chunk_03"
+              ]
+            },
+            "concept": "Analyze the use of `git diff` to compare commits and `git reset` to revert changes",
+            "subtopic": "Inspecting History and Reverting",
+            "cognitiveDimension": "Cause / Effect",
+            "difficulty": "Medium",
+            "studentAnswerability": "HIGH",
+            "redundancy": {
+              "similarQuestion": null,
+              "similarity": 0,
+              "decision": "KEEP"
+            },
+            "agent3": {
+              "verdict": "PASS",
+              "groundingScore": 0.95
+            },
+            "grounding": {
+              "status": "GROUNDED"
+            }
+          },
+          "traceabilityAudit": {
+            "1_sourceOrigin": "DOCUMENT",
+            "2_supportingSessionChunks": [
+              "chunk_03"
+            ],
+            "3_agent1AssessmentReasoning": {
+              "whyAssessed": "Teacher emphasized Analyze the use of `git diff` to compare commits and `git reset` to revert changes as a key learning outcome.",
+              "detectedEmphasis": {
+                "conceptual": "HIGH",
+                "application": "HIGH",
+                "syntax": "MEDIUM",
+                "calculation": "LOW"
+              },
+              "ruleApplied": "Teacher verbal emphasis elevates target priority."
+            },
+            "4_agent2FormulationReasoning": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Analyze",
+              "scenarioTransformation": "Contextual question scenario formulated without introducing un-taught domain knowledge."
+            },
+            "5_agent3EvaluationReasoning": {
+              "groundingScore": 0.95,
+              "derivabilityTier": "DIRECT_EVIDENCE",
+              "studentAnswerability": "HIGH",
+              "distractorAnalysis": "All 3 incorrect options represent genuine plausible student misconceptions and are distinct.",
+              "verdict": "PASS"
+            },
+            "6_deterministicCalculations": {
+              "preChecksPassed": true,
+              "mathVerified": "N/A"
+            },
+            "7_finalGroundingGateReasoning": {
+              "status": "PASSED",
+              "justification": "Question and options are directly justified by session evidence for Analyze the use of `git diff` to compare commits and `git reset` to revert changes."
+            }
+          }
+        },
+        "semanticIdentity": {
+          "correctAnswerText": "git reset",
+          "distractorTexts": [
+            "git revert HEAD",
+            "git checkout .",
+            "git clean -fd"
+          ]
+        },
+        "correctAnswerText": "git reset",
+        "correctAnswerKey": "C",
+        "correct_answer": "C",
+        "correct_answer_text": "git reset",
+        "__positionAssigned": true
+      }
+    ],
+    "questionDecisionLedger": [
+      {
+        "questionId": "Q1",
+        "source": {
+          "tier": "EVIDENCE_DERIVED",
+          "supportingChunks": [
+            "chunk_02"
+          ]
+        },
+        "concept": "Apply `git add .` and `git commit -m` to stage all changes and record a commit with a descriptive message",
+        "subtopic": "Staging and Committing Changes",
+        "cognitiveDimension": "Application",
+        "difficulty": "Medium",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.96
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      {
+        "questionId": "Q2",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_01"
+          ]
+        },
+        "concept": "Understand the purpose and effect of `git init` to create an empty repository",
+        "subtopic": "Repository Initialization",
+        "cognitiveDimension": "Foundational Prerequisite",
+        "difficulty": "Easy",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.95
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      },
+      {
+        "questionId": "Q3",
+        "source": {
+          "tier": "DIRECT_EVIDENCE",
+          "supportingChunks": [
+            "chunk_03"
+          ]
+        },
+        "concept": "Analyze the use of `git diff` to compare commits and `git reset` to revert changes",
+        "subtopic": "Inspecting History and Reverting",
+        "cognitiveDimension": "Cause / Effect",
+        "difficulty": "Medium",
+        "studentAnswerability": "HIGH",
+        "redundancy": {
+          "similarQuestion": null,
+          "similarity": 0,
+          "decision": "KEEP"
+        },
+        "agent3": {
+          "verdict": "PASS",
+          "groundingScore": 0.95
+        },
+        "grounding": {
+          "status": "GROUNDED"
+        }
+      }
+    ],
+    "tcScore": {
+      "overallScore": 100,
+      "rating": "Comprehensive",
+      "breakdown": {
+        "plannedAloRatio": "3/3 subtopics (100%)",
+        "coreAloCount": "2 Core targets",
+        "secondaryAloCount": "1 Secondary targets",
+        "peripheralAloCount": "0 Peripheral targets",
+        "reserveCoreCount": "1 Core reserves",
+        "lectureDepthScore": "100/100",
+        "teacherEmphasis": "Aligned",
+        "total": "100/100"
+      }
+    },
+    "quizEvaluation": {
+      "quizQualityStatus": "QUALITY_PASSED",
+      "isBalanced": true,
+      "totalQuestions": 3,
+      "requestedCount": 3,
+      "uniqueDimensionsCount": 3,
+      "cognitiveDistribution": {
+        "Application": 1,
+        "Foundational Prerequisite": 1,
+        "Cause / Effect": 1
+      },
+      "conceptDistribution": {
+        "Staging and Committing Changes": 1,
+        "Repository Initialization": 1,
+        "Inspecting History and Reverting": 1
+      },
+      "derivabilityTiers": {
+        "DIRECT_EVIDENCE": 2,
+        "EVIDENCE_DERIVED": 1,
+        "FOUNDATIONAL_PREREQUISITE": 0,
+        "RELATED_EXTENSION": 0,
+        "VERIFICATION_FALLBACK": 0
+      },
+      "redundancy": {
+        "totalRedundantPairs": 0,
+        "highSimilarityPairs": []
+      },
+      "concentrationWarning": null,
+      "suggestion": null,
+      "coverageScore": 100,
+      "recommendations": []
+    },
+    "telemetry": {
+      "totalDurationMs": 13125,
+      "deliveredCount": 3,
+      "totalAttempts": 4,
+      "acceptanceRatePercent": 75,
+      "avgGroundingScore": 0.953,
+      "stageDurations": {
+        "EVIDENCE_PACKAGE": 12,
+        "AGENT_1_PLANNING": 3597,
+        "AGENT_3_QUESTION_EVAL": 11518,
+        "AGENT_3_QUIZ_EVAL": 2,
+        "DETERMINISTIC_POSTCHECKS": 1,
+        "FINAL_GROUNDING_GATE": 1
+      },
+      "dimensionCounts": {
+        "Application": 1,
+        "Foundational Prerequisite": 1,
+        "Cause / Effect": 1
+      },
+      "tcScoreBreakdown": {
+        "plannedAloRatio": "3/3 subtopics (100%)",
+        "coreAloCount": "2 Core targets",
+        "secondaryAloCount": "1 Secondary targets",
+        "peripheralAloCount": "0 Peripheral targets",
+        "reserveCoreCount": "1 Core reserves",
+        "lectureDepthScore": "100/100",
+        "teacherEmphasis": "Aligned",
+        "total": "100/100"
+      }
+    },
+    "traceSummaryPath": "server/logs/debug/sessions/post_fix_bm03_voice_only_1791041105478/final_session_trace.json"
+  },
+  "hardHallucinations": 0,
+  "elapsedMs": 13128
+}
