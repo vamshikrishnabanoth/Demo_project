@@ -7,9 +7,11 @@ import {
     Hash, Sparkles, Loader2, Database, 
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
-    AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale
+    AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale, Activity
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
+import PipelineObservabilityModal from '../components/quiz/PipelineObservabilityModal';
+import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
 import toast from 'react-hot-toast';
 import { 
     createSessionRecord, 
@@ -113,6 +115,8 @@ export default function CreateQuizTopic() {
     const [keyTopics, setKeyTopics] = useState([]);
     const [lectureWordCount, setLectureWordCount] = useState(0);
     const [recommendedQuestions, setRecommendedQuestions] = useState('');
+    const [recommendedQuestionCount, setRecommendedQuestionCount] = useState(null);
+    const [showTeachingScoreModal, setShowTeachingScoreModal] = useState(false);
     const [depthLoading, setDepthLoading] = useState(false);
     const [depthError, setDepthError] = useState(false);
     const [depthRetryCount, setDepthRetryCount] = useState(0);
@@ -129,6 +133,9 @@ export default function CreateQuizTopic() {
     const isCancelledRef = useRef(false);
     const [recordingDuration, setRecordingDuration] = useState(0);
     const [transcribing, setTranscribing] = useState(false);
+    const [transcribeProgress, setTranscribeProgress] = useState(0);
+    const [transcribePhase, setTranscribePhase] = useState('');
+    const [showObservability, setShowObservability] = useState(false);
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
     const [pendingRecoverySessions, setPendingRecoverySessions] = useState([]);
 
@@ -240,36 +247,53 @@ export default function CreateQuizTopic() {
         checkRecovery();
     }, []);
 
-    // Fetch unified pedagogical lecture depth strictly for voice/audio inputs
+    // Fetch unified pedagogical lecture depth for any learning material (voices, documents, or text)
     useEffect(() => {
-        const hasVoice = inputs.some(inp => inp.type === 'voice' || inp.type === 'audio');
-        if (!hasVoice) {
+        const voiceInputs = inputs.filter(inp => (inp.type === 'voice' || inp.type === 'audio') && inp.status !== 'transcribing');
+        const docAndTextInputs = inputs.filter(inp => inp.type !== 'voice' && inp.type !== 'audio' && Boolean(inp.content));
+        
+        const hasInputs = voiceInputs.length > 0 || docAndTextInputs.length > 0;
+        if (!hasInputs) {
             setLectureDepth(null);
             setDetectedFocus([]);
             setWhatWasTaught('');
             setKeyTopics([]);
             setLectureWordCount(0);
             setRecommendedQuestions('');
+            setRecommendedQuestionCount(null);
             setDepthLoading(false);
             setDepthError(false);
             return;
         }
 
-        const voiceTexts = inputs
-            .filter(inp => inp.type === 'voice' || inp.type === 'audio')
-            .map(inp => inp.content || '')
-            .join(' ');
+        let textToAnalyze = '';
+        let primaryName = '';
+        let voiceSegs = [];
+        let modality = 'DOCUMENT_ONLY';
+
+        if (voiceInputs.length > 0) {
+            textToAnalyze = voiceInputs.map((v, i) => {
+                const title = v.source_name || `Lecture Part ${i + 1}`;
+                return voiceInputs.length > 1 ? `=== Lecture Part ${i + 1}: ${title} ===\n${(v.content || '').trim()}` : (v.content || '').trim();
+            }).join('\n\n');
+            primaryName = voiceInputs[0].source_name || '';
+            voiceSegs = voiceInputs.find(inp => Array.isArray(inp.segments) && inp.segments.length > 0)?.segments || [];
+            modality = docAndTextInputs.length > 0 ? 'HYBRID' : 'VOICE_ONLY';
+        } else {
+            textToAnalyze = docAndTextInputs.map(d => (d.content || '').trim()).join('\n\n');
+            primaryName = docAndTextInputs[0].source_name || '';
+            modality = 'DOCUMENT_ONLY';
+        }
         
-        if (voiceTexts.length > 25) {
+        if (textToAnalyze.length > 25) {
             setDepthLoading(true);
             setDepthError(false);
             const timer = setTimeout(async () => {
                 try {
-                    const primaryVoiceName = inputs.find(inp => inp.type === 'voice' || inp.type === 'audio')?.source_name || '';
-                    const voiceSegs = inputs.find(inp => (inp.type === 'voice' || inp.type === 'audio') && Array.isArray(inp.segments))?.segments || [];
                     const res = await api.post('/quiz/analyze-depth', {
-                        text: voiceTexts,
-                        title: primaryVoiceName,
+                        text: textToAnalyze,
+                        title: primaryName,
+                        modality,
                         segments: voiceSegs,
                         hasTimingData: voiceSegs.length > 0 && voiceSegs.some(s => s.start !== null && s.start !== undefined)
                     });
@@ -278,8 +302,9 @@ export default function CreateQuizTopic() {
                         setDetectedFocus(res.data.detectedFocus || []);
                         setWhatWasTaught(res.data.whatWasTaught || '');
                         setKeyTopics(res.data.keyTopics || []);
-                        setLectureWordCount(res.data.wordCount || voiceTexts.trim().split(/\s+/).length);
+                        setLectureWordCount(res.data.wordCount || textToAnalyze.trim().split(/\s+/).length);
                         setRecommendedQuestions(res.data.recommendedQuestions || '');
+                        setRecommendedQuestionCount(res.data.recommendedQuestionCount || res.data.lectureDepth?.breakdown?.recommendedQuestionCount || 5);
                         setLectureIntel(res.data.lecture_intelligence || null);
                         setDepthError(false);
                     } else if (res.data && !res.data.isAcademic) {
@@ -289,10 +314,10 @@ export default function CreateQuizTopic() {
                         setKeyTopics([]);
                         setLectureWordCount(0);
                         setRecommendedQuestions('');
+                        setRecommendedQuestionCount(null);
                         setLectureIntel(null);
                         setDepthError(false);
                     } else {
-                        // Empty or unexpected response: never manufacture a score
                         setLectureDepth(null);
                         setLectureIntel(null);
                         setDepthError(true);
@@ -315,7 +340,9 @@ export default function CreateQuizTopic() {
             setKeyTopics([]);
             setLectureWordCount(0);
             setRecommendedQuestions('');
+            setRecommendedQuestionCount(null);
             setDepthLoading(false);
+            setDepthError(false);
             setDepthError(false);
         }
     }, [inputs, depthRetryCount]);
@@ -373,7 +400,7 @@ export default function CreateQuizTopic() {
         const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
 
         if (!existingId) {
-            // Immediately after file selection: show in docket card
+            // Immediately after file selection: show in docket card with active progress
             const newInput = {
                 id,
                 type: 'voice',
@@ -383,15 +410,21 @@ export default function CreateQuizTopic() {
                 status: 'transcribing',
                 fetchingMetadata: true,
                 content: '',
+                progress: 15,
+                stepText: 'Uploading audio stream...',
+                phaseLabel: 'Network Ingestion',
                 errorMsg: null
             };
             setInputs(prev => [...prev, newInput]);
         } else {
-            // In-place retry: mark existing item as transcribing
+            // In-place retry: mark existing item as transcribing with active progress
             setInputs(prev => prev.map(item => item.id === id ? {
                 ...item,
                 status: 'transcribing',
                 fetchingMetadata: true,
+                progress: 15,
+                stepText: 'Uploading audio stream...',
+                phaseLabel: 'Network Ingestion',
                 errorMsg: null
             } : item));
         }
@@ -404,11 +437,30 @@ export default function CreateQuizTopic() {
                 ...item,
                 status: 'error',
                 fetchingMetadata: false,
+                progress: 0,
                 errorMsg: warningMsg
             } : item));
             toast.error(warningMsg, { duration: 8000 });
             return;
         }
+
+        let currentP = 15;
+        const progressTicker = setInterval(() => {
+            currentP = Math.min(94, currentP < 35 ? currentP + 4 : currentP < 75 ? currentP + 3 : currentP + 1);
+            setInputs(prev => prev.map(item => {
+                if (item.id !== id || item.status !== 'transcribing') return item;
+                let step = 'Uploading audio payload...';
+                let phase = 'Payload Transfer';
+                if (currentP >= 35 && currentP < 75) {
+                    step = 'Whisper Large-v3 speech decoding...';
+                    phase = 'Acoustic Model Inference';
+                } else if (currentP >= 75) {
+                    step = 'Indexing speech timestamps & curriculum depth...';
+                    phase = 'Pedagogical Parsing';
+                }
+                return { ...item, progress: currentP, stepText: step, phaseLabel: phase };
+            }));
+        }, 700);
 
         try {
             const formData = new FormData();
@@ -422,11 +474,21 @@ export default function CreateQuizTopic() {
                 timeout: uploadTimeoutMs
             });
 
+            clearInterval(progressTicker);
+
             if (transcribeRes.data && transcribeRes.data.text && transcribeRes.data.text.trim().length >= 5) {
+                const smartName = transcribeRes.data.sourceName || transcribeRes.data.smartTitle || file.name;
                 setInputs(prev => prev.map(item => item.id === id ? {
                     ...item,
                     status: 'ready',
                     fetchingMetadata: false,
+                    progress: 100,
+                    stepText: 'Ready',
+                    phaseLabel: 'Complete',
+                    source_name: smartName,
+                    originalFileName: file.name,
+                    smartTitle: transcribeRes.data.smartTitle || null,
+                    durationLabel: transcribeRes.data.durationLabel || null,
                     content: transcribeRes.data.text,
                     segments: transcribeRes.data.segments || [],
                     duration: transcribeRes.data.duration || null,
@@ -437,18 +499,20 @@ export default function CreateQuizTopic() {
                 if (transcribeRes.data.lectureDepth) {
                     setLectureDepth(transcribeRes.data.lectureDepth);
                 }
-                toast.success(`Lecture "${file.name}" transcribed and ready!`);
+                toast.success(`Lecture "${smartName}" ready!`);
             } else {
                 const failReason = transcribeRes.data?.msg || 'Could not extract intelligible speech from audio.';
                 setInputs(prev => prev.map(item => item.id === id ? {
                     ...item,
                     status: 'error',
                     fetchingMetadata: false,
+                    progress: 0,
                     errorMsg: failReason
                 } : item));
                 toast.error(failReason);
             }
         } catch (err) {
+            clearInterval(progressTicker);
             console.error('Lecture transcription failed:', err);
             const rawMsg = err.response?.data?.msg || err.response?.data?.error || err.message || '';
             const isFetchFail = err.message === 'Failed to fetch' || !err.response || rawMsg.includes('Failed to fetch');
@@ -459,6 +523,7 @@ export default function CreateQuizTopic() {
                 ...item,
                 status: 'error',
                 fetchingMetadata: false,
+                progress: 0,
                 errorMsg: errorMsg
             } : item));
             toast.error(errorMsg, { duration: 7000 });
@@ -746,7 +811,27 @@ export default function CreateQuizTopic() {
                 }
 
                 setTranscribing(true);
-                const toastId = toast.loading('Transcribing speech...');
+                setTranscribeProgress(20);
+                setTranscribePhase('Uploading lecture recording...');
+                const toastId = toast.loading('Transcribing speech with Whisper Large-v3...');
+
+                const micTicker = setInterval(() => {
+                    setTranscribeProgress(p => {
+                        if (p < 40) {
+                            setTranscribePhase('Uploading lecture audio...');
+                            return p + 6;
+                        }
+                        if (p < 75) {
+                            setTranscribePhase('Whisper Large-v3 acoustic decoding...');
+                            return p + 3;
+                        }
+                        if (p < 94) {
+                            setTranscribePhase('Verifying pedagogical depth & timestamps...');
+                            return p + 1;
+                        }
+                        return p;
+                    });
+                }, 600);
 
                 try {
                     const formData = new FormData();
@@ -756,6 +841,9 @@ export default function CreateQuizTopic() {
                     let transcriptSegments = [];
                     let transcriptDuration = null;
                     let transcriptDurationFormatted = null;
+                    let smartTitle = null;
+                    let durationLabel = null;
+                    let smartSourceName = null;
                     let isAcademic = true;
                     let academicFailureReason = null;
 
@@ -771,6 +859,9 @@ export default function CreateQuizTopic() {
                         const depthRes = await api.post('/quiz/analyze-depth', { text: transcriptText });
                         isAcademic = depthRes.data?.isAcademic !== false;
                         academicFailureReason = depthRes.data?.reason;
+                        if (depthRes.data?.keyTopics && depthRes.data.keyTopics.length > 0) {
+                            smartTitle = depthRes.data.keyTopics.slice(0, 3).join(' & ');
+                        }
                     } catch (_) {
                         const transcribeRes = await api.post('/quiz/transcribe', formData, {
                             headers: { 'Content-Type': 'multipart/form-data' }
@@ -779,6 +870,9 @@ export default function CreateQuizTopic() {
                         transcriptSegments = transcribeRes.data?.segments || [];
                         transcriptDuration = transcribeRes.data?.duration || null;
                         transcriptDurationFormatted = transcribeRes.data?.duration_formatted || null;
+                        smartTitle = transcribeRes.data?.smartTitle || null;
+                        durationLabel = transcribeRes.data?.durationLabel || null;
+                        smartSourceName = transcribeRes.data?.sourceName || null;
                         isAcademic = transcribeRes.data?.isAcademic !== false;
                         academicFailureReason = transcribeRes.data?.reason;
                     }
@@ -799,7 +893,12 @@ export default function CreateQuizTopic() {
                             mimeType: mimeType || audioBlob.type || 'audio/webm',
                             createdAt: recDate
                         });
-                        toast.success('Speech transcribed successfully!', { id: toastId });
+
+                        const finalTitle = smartTitle || 'Lecture Recording';
+                        const finalDuration = durationLabel || (transcriptDuration ? `${Math.round(transcriptDuration)}s` : '');
+                        const finalName = smartSourceName || (finalDuration ? `${finalTitle} (${finalDuration})` : `${finalTitle} (${timeStr})`);
+
+                        toast.success(`Speech transcribed: "${finalName}"`, { id: toastId });
                         setInputs(prev => [...prev, {
                             id: inputId,
                             type: 'voice',
@@ -807,7 +906,9 @@ export default function CreateQuizTopic() {
                             segments: transcriptSegments,
                             duration: transcriptDuration,
                             duration_formatted: transcriptDurationFormatted,
-                            source_name: `Recording (${timeStr})`,
+                            durationLabel: finalDuration,
+                            smartTitle: finalTitle,
+                            source_name: finalName,
                             hasRecordedBlob: true,
                             recordedAt: recDate.toISOString()
                         }]);
@@ -820,7 +921,10 @@ export default function CreateQuizTopic() {
                     console.error('Transcription failed:', err);
                     toast.error('Failed to transcribe voice. Recording saved in IndexedDB.', { id: toastId });
                 } finally {
+                    clearInterval(micTicker);
                     setTranscribing(false);
+                    setTranscribeProgress(0);
+                    setTranscribePhase('');
                 }
             };
 
@@ -1150,24 +1254,48 @@ export default function CreateQuizTopic() {
                         </p>
                     </div>
 
-                    {/* Lecture Depth Rating Badge (Voice input only) */}
-                    {inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') && lectureDepth && (
-                        <div className="bg-purple-50 border-2 border-purple-200 rounded-2xl px-5 py-3 flex items-center gap-4 shadow-sm">
-                            <Award className="text-purple-600 shrink-0" size={24} />
-                            <div>
-                                <p className="text-[10px] font-black text-purple-900 uppercase tracking-widest">Lecture Depth Rating</p>
-                                <p className="text-sm font-black text-purple-700">
-                                    {lectureDepth.band} ({lectureDepth.score}/100)
-                                </p>
-                            </div>
-                            <div className="w-20 bg-purple-200 h-2.5 rounded-full overflow-hidden shrink-0">
-                                <div 
-                                    className="bg-purple-600 h-full rounded-full transition-all duration-500" 
-                                    style={{ width: `${lectureDepth.score}%` }} 
-                                />
-                            </div>
-                        </div>
-                    )}
+                    <div className="flex items-center gap-3 flex-wrap">
+                        <button
+                            type="button"
+                            onClick={() => setShowObservability(true)}
+                            className="px-4 py-2.5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-200 text-indigo-700 font-black text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-xs transition-all active:scale-95"
+                            title="Inspect 6-Stage Neural Architecture & Live Telemetry"
+                        >
+                            <Activity size={16} className="text-indigo-600" />
+                            <span>AI Architecture & Observability</span>
+                        </button>
+
+                        {/* Interactive Teaching Depth Score Badge */}
+                        {lectureDepth && (
+                            <button
+                                type="button"
+                                onClick={() => setShowTeachingScoreModal(true)}
+                                className="bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 hover:border-purple-300 rounded-2xl px-4 py-2.5 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
+                                title="Click to view exact rubric explanation & point deductions breakdown"
+                            >
+                                <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-300/60 flex items-center justify-center text-purple-700 shrink-0 group-hover:scale-105 transition-transform">
+                                    <Award size={20} />
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-1.5">
+                                        <p className="text-[10px] font-black text-purple-900 uppercase tracking-widest">Teaching Depth Score</p>
+                                        <span className="text-[9px] font-bold text-purple-700 bg-purple-200/70 px-1.5 py-0.2 rounded-full group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                                            Why not 100? ℹ️
+                                        </span>
+                                    </div>
+                                    <p className="text-sm font-black text-purple-800">
+                                        {lectureDepth.rating || 'Comprehensive'} ({lectureDepth.score}/100)
+                                    </p>
+                                </div>
+                                <div className="w-16 bg-purple-200 h-2 rounded-full overflow-hidden shrink-0 hidden sm:block">
+                                    <div 
+                                        className="bg-purple-600 h-full rounded-full transition-all duration-500" 
+                                        style={{ width: `${lectureDepth.score}%` }} 
+                                    />
+                                </div>
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {pollError && (
@@ -1288,9 +1416,23 @@ export default function CreateQuizTopic() {
                             </div>
 
                             {transcribing ? (
-                                <div className="py-4 flex flex-col items-center gap-2">
-                                    <Loader2 size={26} className="animate-spin text-purple-600" />
-                                    <p className="text-xs font-black text-slate-800 uppercase tracking-wider">Transcribing Speech...</p>
+                                <div className="py-3 px-4 w-full max-w-md mx-auto bg-purple-50/90 border border-purple-200 rounded-2xl shadow-xs space-y-2.5">
+                                    <div className="flex items-center justify-between text-xs font-black text-purple-950">
+                                        <span className="flex items-center gap-2">
+                                            <Loader2 size={15} className="animate-spin text-purple-600" />
+                                            <span>{transcribePhase || 'Transcribing Lecture Speech...'}</span>
+                                        </span>
+                                        <span className="font-mono text-purple-700 font-extrabold">{transcribeProgress}%</span>
+                                    </div>
+                                    <div className="w-full h-2 bg-purple-200/70 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-gradient-to-r from-purple-600 via-indigo-600 to-amber-500 rounded-full transition-all duration-300"
+                                            style={{ width: `${transcribeProgress}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-purple-700 font-bold uppercase tracking-wider text-center">
+                                        Whisper Large-v3 · Real-Time Acoustic Decoding & Pedagogy Analysis
+                                    </p>
                                 </div>
                             ) : recording ? (
                                 <div className="flex flex-col items-center gap-3 py-1">
@@ -1497,11 +1639,24 @@ export default function CreateQuizTopic() {
                                             {(inp.type === 'voice' || inp.type === 'audio') && (
                                                 <div className="pt-2 border-t border-[var(--border-color)]/60">
                                                     {inp.status === 'transcribing' ? (
-                                                        <div className="flex items-center gap-2 text-amber-700 bg-amber-50/80 p-2.5 rounded-xl border border-amber-200">
-                                                            <Loader2 size={14} className="animate-spin shrink-0 text-amber-600" />
-                                                            <span className="text-[10px] font-black uppercase tracking-wider animate-pulse">
-                                                                <><Zap size={14} className="inline mr-1" aria-hidden="true" /> Transcribing with Whisper Large-v3... {inp.fileSizeMB ? `(${inp.fileSizeMB} MB)` : ''}</>
-                                                            </span>
+                                                        <div className="bg-amber-50/90 p-3 rounded-xl border border-amber-200/80 space-y-2">
+                                                            <div className="flex items-center justify-between text-[11px] font-black text-amber-900">
+                                                                <span className="flex items-center gap-1.5">
+                                                                    <Loader2 size={13} className="animate-spin text-amber-600" />
+                                                                    <span>{inp.stepText || 'Transcribing with Whisper Large-v3...'}</span>
+                                                                </span>
+                                                                <span className="font-mono text-amber-700 font-extrabold">{inp.progress || 20}%</span>
+                                                            </div>
+                                                            <div className="w-full h-1.5 bg-amber-200/60 rounded-full overflow-hidden">
+                                                                <div 
+                                                                    className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600 transition-all duration-300 rounded-full"
+                                                                    style={{ width: `${inp.progress || 20}%` }}
+                                                                />
+                                                            </div>
+                                                            <div className="flex items-center justify-between text-[9px] text-amber-700/80 font-bold uppercase tracking-wider">
+                                                                <span>{inp.phaseLabel || 'Whisper Speech Decoding'}</span>
+                                                                <span>{inp.fileSizeMB ? `${inp.fileSizeMB} MB` : 'Audio'}</span>
+                                                            </div>
                                                         </div>
                                                     ) : inp.status === 'error' ? (
                                                         <div className="flex items-center justify-between gap-2 bg-red-50/80 p-2.5 rounded-xl border border-red-200 text-red-700">
@@ -1581,13 +1736,13 @@ export default function CreateQuizTopic() {
                             )}
                         </div>
 
-                        {/* 4. LECTURE CONTENT & ASSESSMENT SCOPE CARD (Voice input only) */}
-                        {inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') && (
+                        {/* 4. LECTURE CONTENT & ASSESSMENT SCOPE CARD (Any learning materials) */}
+                        {inputs.length > 0 && (
                             <>
                                 {depthLoading && (
                                     <div className="p-4 bg-orange-50/60 border border-orange-200/70 rounded-3xl flex items-center justify-center gap-3 text-xs text-orange-800 font-medium animate-pulse">
                                         <Loader2 size={16} className="animate-spin text-[#ea580c]" />
-                                        <span>Analyzing lecture pedagogy and assessment scope...</span>
+                                        <span>Analyzing pedagogical depth and assessment scope...</span>
                                     </div>
                                 )}
 
@@ -1595,7 +1750,7 @@ export default function CreateQuizTopic() {
                                     <div className="p-4 bg-amber-50/90 border border-amber-200 rounded-3xl flex items-center justify-between gap-3 text-xs text-amber-800 shadow-2xs">
                                         <div className="flex items-center gap-2">
                                             <AlertCircle size={16} className="text-amber-600 shrink-0" />
-                                            <span>Pedagogical depth analysis is temporarily unavailable. Question generation will still operate normally using your lecture transcript.</span>
+                                            <span>Pedagogical depth analysis is temporarily unavailable. Question generation will still operate normally using your materials.</span>
                                         </div>
                                         <button
                                             type="button"
@@ -1610,21 +1765,31 @@ export default function CreateQuizTopic() {
 
                                 {!depthLoading && !depthError && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
                                     <div className="p-4.5 bg-[#fff8f3] border-2 border-[#f5d0b5] rounded-3xl space-y-3.5 shadow-xs transition-all animate-in fade-in duration-200">
-                                        <div className="flex items-center justify-between pb-1 border-b border-[#f5d0b5]/70">
-                                            <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider flex items-center gap-2">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#f5d0b5]/70">
+                                            <div className="flex items-center gap-2">
                                                 <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
-                                                Lecture Profile: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
-                                            </span>
-                                            <span className="text-[10px] font-mono font-black text-[#9a3412] bg-[#fbf0e8] px-2.5 py-0.5 rounded-full border border-[#f5d0b5]">
-                                                Depth: {lectureDepth.score}/100
-                                            </span>
+                                                <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider">
+                                                    Teaching Depth: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
+                                                </span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowTeachingScoreModal(true)}
+                                                className="self-start sm:self-auto text-xs font-mono font-black text-[#9a3412] bg-white hover:bg-orange-100/80 px-3 py-1 rounded-full border border-[#f5d0b5] flex items-center gap-2 shadow-2xs transition-all cursor-pointer hover:scale-105 active:scale-95"
+                                                title="Click to view exact rubric explanation & point deductions breakdown"
+                                            >
+                                                <span>Score: {lectureDepth.score}/100</span>
+                                                <span className="text-[10px] text-orange-700 font-bold bg-orange-100 px-1.5 py-0.2 rounded-full flex items-center gap-1">
+                                                    Why not 100? ℹ️
+                                                </span>
+                                            </button>
                                         </div>
 
                                         {/* 0. Intelligent Evidence-Grounded Lecture Title */}
                                         {lectureIntel?.title && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <span>🏷️</span> Academic Lecture Topic
+                                                    <span>🏷️</span> Academic Subject Topic
                                                 </p>
                                                 <p className="text-xs font-bold text-slate-900 leading-snug">
                                                     {lectureIntel.title}
@@ -1728,14 +1893,33 @@ export default function CreateQuizTopic() {
                                              </div>
                                         )}
 
-                                        {/* 5. Assessment Scope & Content Volume */}
-                                        <div className="bg-white/90 px-3.5 py-2.5 rounded-2xl border border-orange-200/70 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600 shadow-2xs">
-                                            <span className="flex items-center gap-1.5 text-slate-700">
-                                                <span>📊</span> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</span>
-                                            </span>
-                                            <span className="flex items-center gap-1.5 text-slate-700">
-                                                <span>🎯</span> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions || '5 to 25 Questions (Strong Evidence Base)'}</span>
-                                            </span>
+                                        {/* 5. Assessment Scope & Content Volume with 1-Click Apply */}
+                                        <div className="bg-white/95 px-4 py-3 rounded-2xl border border-orange-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
+                                            <div className="flex items-center gap-2 text-slate-700">
+                                                <span>📊</span>
+                                                <span>Content Volume: <strong className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</strong></span>
+                                            </div>
+                                            
+                                            <div className="flex items-center justify-between sm:justify-end gap-3 flex-wrap">
+                                                <span className="flex items-center gap-1.5 text-slate-700 font-medium">
+                                                    <span>🎯</span> Recommended: <strong className="font-black text-[#c2410c]">{recommendedQuestions || `${recommendedQuestionCount || 5} Questions`}</strong>
+                                                </span>
+                                                
+                                                {recommendedQuestionCount && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setQuestionCount(recommendedQuestionCount);
+                                                            toast.success(`Applied recommended ${recommendedQuestionCount} questions!`, { icon: '🎯' });
+                                                        }}
+                                                        className="px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-[11px] uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
+                                                        title="Apply recommended question count into Question Count configuration"
+                                                    >
+                                                        <Zap size={13} />
+                                                        <span>Apply {recommendedQuestionCount} Qs</span>
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
 
                                         {/* 6. Pedagogical Depth Characteristics */}
@@ -1913,6 +2097,29 @@ export default function CreateQuizTopic() {
                     </div>
                 </div>
             )}
+
+            <PipelineObservabilityModal
+                isOpen={showObservability}
+                onClose={() => setShowObservability(false)}
+                questions={[]}
+                title="Assessment Pipeline Architecture & Telemetry"
+                isVoice={inputs.some(inp => inp.type === 'voice' || inp.type === 'audio')}
+                duration={10}
+            />
+
+            <TeachingScoreModal
+                isOpen={showTeachingScoreModal}
+                onClose={() => setShowTeachingScoreModal(false)}
+                lectureDepth={lectureDepth}
+                detectedFocus={detectedFocus}
+                whatWasTaught={whatWasTaught}
+                recommendedQuestions={recommendedQuestions}
+                recommendedQuestionCount={recommendedQuestionCount}
+                onApplyQuestionCount={(cnt) => {
+                    setQuestionCount(cnt);
+                    toast.success(`Applied recommended ${cnt} questions!`);
+                }}
+            />
         </DashboardLayout>
     );
 }

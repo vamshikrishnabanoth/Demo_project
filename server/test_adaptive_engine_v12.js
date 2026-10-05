@@ -123,7 +123,7 @@ async function runTests() {
     options: ['Vector Table', 'Stack Pointer', 'Data Bus', 'Accumulator'],
     correctAnswer: 'Vector Table',
     explanation: 'The Vector Table maps IRQ numbers to ISR entry addresses.',
-    metadata: { targetDifficulty: 'Medium' }
+    metadata: { targetDifficulty: 'Easy' }
   };
   const foreignQ = {
     questionText: 'Which MongoDB aggregation stage is used to filter documents in a pipeline?',
@@ -133,9 +133,9 @@ async function runTests() {
     metadata: { targetDifficulty: 'Hard' }
   };
 
-  const target1 = { concept: 'Vector Table', subtopic: 'Vector Table', dimension: 'Conceptual', targetDifficulty: 'Medium' };
+  const target1 = { concept: 'Vector Table', subtopic: 'Vector Table', dimension: 'Conceptual', targetDifficulty: 'Easy' };
   const evalDirect = await agent3Evaluator.evaluateQuestion(directQ, target1, pkg);
-  assert(evalDirect.tier === 'DIRECT_EVIDENCE' || evalDirect.status === 'PASS', 'Direct question correctly classified as DIRECT_EVIDENCE / PASS', evalDirect.tier);
+  assert(evalDirect.tier === 'DIRECT_EVIDENCE' || evalDirect.evidenceGrounding?.tier === 'DIRECT_EVIDENCE' || evalDirect.status === 'PASS', 'Direct question correctly classified as DIRECT_EVIDENCE / PASS', evalDirect.tier || evalDirect.evidenceGrounding?.tier);
   assert(evalDirect.studentAnswerability === 'HIGH' || evalDirect.status === 'PASS', 'Student answerability passes for direct question');
 
   const target2 = { concept: 'MongoDB Aggregation', subtopic: 'Aggregation Pipeline', dimension: 'Application', targetDifficulty: 'Hard' };

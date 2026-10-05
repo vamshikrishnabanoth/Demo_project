@@ -114,19 +114,23 @@ class DepthAnalyzer {
     // Feature G: Socratic Instructional Questions
     const hasSocraticCurricular = /\b(what happens (?:to|if|when)|why does|why do we|how does|can the|what is the effect of)\b/i.test(lower);
 
+    // Feature H: Procedural / Sequencing / State Execution relations
+    const hasProcRelation = /\b(first(?:ly)?,|second(?:ly)?,|third(?:ly)?,|finally,|next,|step \d+|in the (?:first|next|final) step|pauses?|saves?|transfers?|restor(?:es|ed|ing)?|resum(?:es|ed|ing)?|fetch(?:es|ed|ing)?)\b/i.test(lower);
+
     // Check sentence length and substance (avoid 1-2 word conversational fillers)
     const words = seg.split(/\s+/).filter(Boolean);
     const hasSubstantiveLength = words.length >= 4;
 
-    const hasInstructionalSignal = hasDefRelation || hasMechRelation || hasRuleRelation || hasComparisonRelation || hasDemonstrative || hasTraceExample || hasSocraticCurricular;
+    const hasInstructionalSignal = hasDefRelation || hasMechRelation || hasRuleRelation || hasComparisonRelation || hasDemonstrative || hasTraceExample || hasSocraticCurricular || hasProcRelation;
 
     if (hasInstructionalSignal && hasSubstantiveLength) {
       const substanceType = hasDefRelation ? 'DEFINITION_OR_FACT'
         : (hasMechRelation ? 'MECHANISM'
         : (hasRuleRelation ? 'RULE_OR_CONDITION'
         : (hasComparisonRelation ? 'COMPARISON'
+        : (hasProcRelation ? 'PROCEDURAL_STEP'
         : (hasDemonstrative ? 'OBSERVATION_DEMONSTRATION'
-        : (hasTraceExample ? 'WORKED_EXAMPLE' : 'SOCRATIC_INSTRUCTION')))));
+        : (hasTraceExample ? 'WORKED_EXAMPLE' : 'SOCRATIC_INSTRUCTION'))))));
 
       const extractedConcepts = this._extractConceptsFromSegment(seg);
 
@@ -350,7 +354,32 @@ class DepthAnalyzer {
         lectureDepth: {
           rating: 'Non-Academic',
           score: 10,
-          characteristics: { conceptExplanation: 'None', reasoning: 'None', examples: 'None', procedures: 'None' }
+          characteristics: { conceptExplanation: 'None', reasoning: 'None', examples: 'None', procedures: 'None' },
+          breakdown: {
+            earnedRubric: [
+              { category: 'Baseline Curricular Substance', earned: 10, max: 40, status: 'Failed', description: 'No assessable instructional curriculum detected.' },
+              { category: 'Concept Definition & Explanation', earned: 0, max: 15, status: 'None', description: 'No concepts defined.' },
+              { category: 'Causal Reasoning & Invariants', earned: 0, max: 15, status: 'None', description: 'No reasoning detected.' },
+              { category: 'Concrete Examples & Traces', earned: 0, max: 15, status: 'None', description: 'No examples detected.' },
+              { category: 'Procedural Sequencing', earned: 0, max: 15, status: 'None', description: 'No procedures detected.' }
+            ],
+            deductions: [
+              {
+                factor: 'Non-Curricular Content',
+                lostPoints: 90,
+                maxPoints: 100,
+                earnedPoints: 10,
+                reason: reason,
+                actionableTip: 'Ensure the speech or document contains assessable engineering curriculum, definitions, or algorithms.'
+              }
+            ],
+            totalLostPoints: 90,
+            coveredAspects: [],
+            missingAspects: ['Assessable subject matter curriculum', 'Definitions', 'Reasoning', 'Examples'],
+            actionableTips: ['Teach specific academic subject matter rather than classroom administration or general conversation.'],
+            recommendedQuestionCount: 0,
+            recommendedQuestionsRationale: 'Cannot generate questions: No curricular substance detected.'
+          }
         },
         detectedFocus: [],
         curricularSegments: [],
@@ -402,19 +431,141 @@ class DepthAnalyzer {
     const procCount = procMarkers.filter(m => lowerCurricular.includes(m)).length;
     const procedures = procCount >= 3 ? 'Strong' : (procCount >= 1 ? 'Moderate' : 'Light');
 
-    let depthScore = 45;
-    if (conceptExp === 'Strong') depthScore += 12;
-    if (reasoning === 'Strong') depthScore += 12;
-    else if (reasoning === 'Moderate') depthScore += 6;
-    if (examples === 'Present') depthScore += 12;
-    if (procedures === 'Strong') depthScore += 15;
-    else if (procedures === 'Moderate') depthScore += 8;
-    if (curricularSegments.length >= 4) depthScore += 10;
+    const basePoints = 40;
+    const conceptPoints = conceptExp === 'Strong' ? 15 : (conceptExp === 'Moderate' ? 8 : 0);
+    const reasoningPoints = reasoning === 'Strong' ? 15 : (reasoning === 'Moderate' ? 8 : 0);
+    const examplePoints = examples === 'Present' ? 15 : 0;
+    const procedurePoints = procedures === 'Strong' ? 15 : (procedures === 'Moderate' ? 8 : 0);
 
+    let depthScore = basePoints + conceptPoints + reasoningPoints + examplePoints + procedurePoints;
     depthScore = Math.min(100, Math.max(40, depthScore));
+
+    const deductions = [];
+
+    if (conceptPoints < 15) {
+      deductions.push({
+        factor: 'Concept Definition & Mechanistic Depth',
+        lostPoints: 15 - conceptPoints,
+        maxPoints: 15,
+        earnedPoints: conceptPoints,
+        reason: conceptExp === 'Moderate'
+          ? 'Foundational definitions were introduced, but deeper operational mechanics and transformations were not elaborated.'
+          : 'Explicit ontological definitions (e.g. "X is a...", "X refers to...") or operational verbs were minimal.',
+        actionableTip: 'Provide formal textbook definitions for all key terms and describe the exact mechanistic operations they perform.'
+      });
+    }
+
+    if (reasoningPoints < 15) {
+      deductions.push({
+        factor: 'Causal Reasoning & Invariants',
+        lostPoints: 15 - reasoningPoints,
+        maxPoints: 15,
+        earnedPoints: reasoningPoints,
+        reason: reasoning === 'Moderate'
+          ? 'Causal justification was brief. Only 1 causal connector ("because", "so that", "in order to") was detected.'
+          : 'Zero causal reasoning links were detected. Explanations described what happens rather than why it happens or what invariants are maintained.',
+        actionableTip: 'Use explicit causal connectors ("because", "therefore", "so that", "prevents") to explain why algorithms or design choices exist.'
+      });
+    }
+
+    if (examplePoints < 15) {
+      deductions.push({
+        factor: 'Concrete Examples & Worked Traces',
+        lostPoints: 15 - examplePoints,
+        maxPoints: 15,
+        earnedPoints: examplePoints,
+        reason: 'Concrete examples, sample inputs/outputs, worked traces, or illustrative demonstrations were missing.',
+        actionableTip: 'Include at least one concrete worked example, sample dataset walkthrough, or code trace to ground abstract principles.'
+      });
+    }
+
+    if (procedurePoints < 15) {
+      deductions.push({
+        factor: 'Procedural Execution & Algorithmic Sequencing',
+        lostPoints: 15 - procedurePoints,
+        maxPoints: 15,
+        earnedPoints: procedurePoints,
+        reason: procedures === 'Moderate'
+          ? 'Procedural progression was partial. Only limited chronological execution markers were found.'
+          : 'Sequential execution stages or algorithmic transitions were not explicitly sequenced.',
+        actionableTip: 'Structure procedures with clear chronological steps (e.g., "First, ..., Then, ..., Next, ..., Finally, ...").'
+      });
+    }
+
+    const totalLostPoints = deductions.reduce((sum, d) => sum + d.lostPoints, 0);
+
+    const coveredAspects = [];
+    if (detectedFocus.length > 0) {
+      coveredAspects.push(`Core topics covered: ${detectedFocus.join(', ')}`);
+    }
+    if (hasDef) {
+      coveredAspects.push('Explicit concept definitions and ontological characterizations');
+    }
+    if (hasMech) {
+      coveredAspects.push('Operational mechanisms and functional transformation processes');
+    }
+    if (hasRule) {
+      coveredAspects.push('Invariants, conditional boundaries, and operational rules');
+    }
+    if (hasComp) {
+      coveredAspects.push('Comparative contrasts and structural distinctions');
+    }
+    if (examples === 'Present') {
+      coveredAspects.push('Concrete examples, observational walkthroughs, or worked traces');
+    }
+    if (procedures === 'Strong') {
+      coveredAspects.push('Step-by-step procedural workflow and algorithmic sequencing');
+    } else if (procedures === 'Moderate') {
+      coveredAspects.push('Introductory procedural progression');
+    }
+    if (reasoning === 'Strong') {
+      coveredAspects.push('Deep causal reasoning with explicit explanations of why rules apply');
+    } else if (reasoning === 'Moderate') {
+      coveredAspects.push('Foundational causal explanations');
+    }
+
+    const missingAspects = [];
+    if (reasoningPoints < 15) {
+      missingAspects.push('Causal depth: deeper explanation of why mechanisms behave as they do');
+    }
+    if (examplePoints < 15) {
+      missingAspects.push('Concrete worked traces, sample code, or practical illustrative examples');
+    }
+    if (procedurePoints < 15) {
+      missingAspects.push('Explicit multi-step procedural progression (first, then, step-by-step lifecycle)');
+    }
+    if (conceptPoints < 15) {
+      missingAspects.push('Formal textbook definitions and complete operational mechanisms');
+    }
+
+    const actionableTips = deductions.map(d => d.actionableTip);
+    if (actionableTips.length === 0) {
+      actionableTips.push('Outstanding pedagogical delivery! All core rubric dimensions (definitions, causal reasoning, worked examples, procedural sequencing) are thoroughly demonstrated.');
+    }
+
+    // Recommended Question Count calculation
+    const wordCount = curricularText.split(/\s+/).filter(Boolean).length;
+    let recCount = 5;
+    let rationale = '';
+
+    if (curricularSegments.length <= 2 || wordCount < 150) {
+      recCount = 3;
+      rationale = '3 Questions: Compact curricular substance. Best for a quick conceptual check without redundant targets.';
+    } else if (curricularSegments.length <= 5 || wordCount < 500) {
+      recCount = 5;
+      rationale = '5 Questions: Covers core definitions and primary mechanisms with balanced cognitive depth.';
+    } else if (curricularSegments.length <= 9 || wordCount < 1200) {
+      recCount = 8;
+      rationale = '8 Questions: Optimal for this substantive lecture. Thoroughly assesses concepts, procedural traces, and causal reasoning.';
+    } else {
+      recCount = 10;
+      rationale = '10 Questions: Rich multi-topic lecture. Enables broad coverage across foundational concepts, application, and edge cases.';
+    }
+
     let rating = 'Developing';
-    if (depthScore < 50) rating = 'Introductory';
+    if (depthScore < 60 || curricularSegments.length <= 2) rating = 'Introductory';
     else if (depthScore >= 75) rating = 'Comprehensive';
+    else rating = 'Developing';
 
     return {
       isAcademic: true,
@@ -428,6 +579,22 @@ class DepthAnalyzer {
           reasoning,
           examples,
           procedures
+        },
+        breakdown: {
+          earnedRubric: [
+            { category: 'Baseline Curricular Substance', earned: basePoints, max: 40, status: 'Earned', description: 'Verified assessable curriculum concepts with substantive instructional predicate.' },
+            { category: 'Concept Definition & Explanation', earned: conceptPoints, max: 15, status: conceptExp, description: conceptExp === 'Strong' ? 'Comprehensive conceptual definitions and operational mechanisms.' : (conceptExp === 'Moderate' ? 'Introductory definitions present; could use deeper formal elaboration.' : 'Limited or missing definitions.') },
+            { category: 'Causal Reasoning & Invariants', earned: reasoningPoints, max: 15, status: reasoning, description: reasoning === 'Strong' ? 'Explicit causal justifications and operational rationale (answering why).' : (reasoning === 'Moderate' ? 'Basic causal reasoning detected.' : 'No causal links detected.') },
+            { category: 'Concrete Examples & Traces', earned: examplePoints, max: 15, status: examples, description: examples === 'Present' ? 'Practical examples, worked traces, or demonstrations.' : 'Missing concrete sample traces or demonstrations.' },
+            { category: 'Procedural Sequencing', earned: procedurePoints, max: 15, status: procedures, description: procedures === 'Strong' ? 'Detailed multi-step algorithmic or procedural progression.' : (procedures === 'Moderate' ? 'Basic procedural steps present.' : 'Sequential procedural steps missing.') }
+          ],
+          deductions,
+          totalLostPoints,
+          coveredAspects,
+          missingAspects,
+          actionableTips,
+          recommendedQuestionCount: recCount,
+          recommendedQuestionsRationale: rationale
         }
       },
       detectedFocus,

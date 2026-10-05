@@ -1,3 +1,11 @@
+// Polyfill globalThis.File for Groq/OpenAI multipart uploads across all Node runtimes
+if (typeof globalThis.File === 'undefined') {
+    try {
+        const { File } = require('node:buffer');
+        if (File) globalThis.File = File;
+    } catch (_) {}
+}
+
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 

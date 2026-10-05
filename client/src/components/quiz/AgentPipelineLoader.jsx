@@ -4,6 +4,7 @@ import {
     Clock, Inbox, Network, Ruler, Scale, Search, ShieldCheck, Zap, Rocket,
     CheckCircle2, Loader2, Sparkles, Activity, Cpu, Shield, ArrowRight, Terminal
 } from "lucide-react";
+import PipelineObservabilityModal from "./PipelineObservabilityModal";
 
 const PIPELINE_STAGES = [
     { label: "Ingesting & Analyzing Material",             sub: "Verifying inputs, removing noise, and validating content structure...",     icon: Inbox,       shortLabel: "Input Analysis" },
@@ -121,6 +122,8 @@ export default function AgentPipelineLoader({
         return typeof stage === "number" ? Math.min(Math.max(0, stage), stageList.length - 1) : 0;
     });
 
+    const [showObservabilityModal, setShowObservabilityModal] = useState(false);
+
     useEffect(() => {
         let resolvedStage = stage;
         if (stageLabel && STAGE_MAP[stageLabel] !== undefined) {
@@ -168,6 +171,15 @@ export default function AgentPipelineLoader({
                     </div>
 
                     <div className="flex items-center gap-3 text-[11px] font-bold text-slate-500">
+                        <button
+                            type="button"
+                            onClick={() => setShowObservabilityModal(true)}
+                            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 font-black uppercase tracking-wider text-[10px] transition-all cursor-pointer shadow-xs active:scale-95"
+                            title="Inspect Stage-by-Stage Architecture Decisions & Telemetry"
+                        >
+                            <Activity size={12} className="text-indigo-600" />
+                            Inspect AI Pipeline
+                        </button>
                         <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-black uppercase tracking-wider text-[10px]">
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             Live
@@ -462,15 +474,33 @@ export default function AgentPipelineLoader({
 
                         {/* Bottom Informational Bar */}
                         <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-400">
-                            <span className="flex items-center gap-1.5 text-slate-600">
-                                <Shield size={13} className="text-emerald-500" />
-                                Zero-Hallucination Verified
-                            </span>
+                            <div className="flex items-center gap-3">
+                                <span className="flex items-center gap-1.5 text-slate-600">
+                                    <Shield size={13} className="text-emerald-500" />
+                                    Zero-Hallucination Verified
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowObservabilityModal(true)}
+                                    className="text-indigo-600 hover:text-indigo-800 underline flex items-center gap-1 cursor-pointer font-bold transition-colors"
+                                >
+                                    <Activity size={12} /> View Stage-by-Stage Architecture Report
+                                </button>
+                            </div>
                             <span>Do not refresh or close</span>
                         </div>
                     </div>
                 </div>
             </motion.div>
+
+            <PipelineObservabilityModal
+                isOpen={showObservabilityModal}
+                onClose={() => setShowObservabilityModal(false)}
+                questions={[]}
+                title="Live Assessment Pipeline Telemetry"
+                isVoice={isVoice}
+                duration={10}
+            />
         </div>
     );
 }

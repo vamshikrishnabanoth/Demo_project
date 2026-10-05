@@ -8,7 +8,14 @@ const axios = require('axios');
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const officeParser = require('officeparser');
+if (typeof globalThis.File === 'undefined') {
+    try {
+        const { File } = require('node:buffer');
+        if (File) globalThis.File = File;
+    } catch (_) {}
+}
 const Groq = require('groq-sdk');
+const { toFile } = require('groq-sdk');
 const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
 const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
 const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
@@ -218,8 +225,9 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         if (effectiveFileSize <= GROQ_MAX_BYTES) {
             try {
                 console.log(`🎙️ Transcribing with Whisper Large-v3 directly (size: ${(effectiveFileSize / (1024 * 1024)).toFixed(2)} MB)...`);
+                const groqUploadFile = await toFile(fs.createReadStream(effectiveFilePath), path.basename(effectiveFilePath));
                 const data = await callGroqWithRetry(() => ({
-                    file: fs.createReadStream(effectiveFilePath),
+                    file: groqUploadFile,
                     model: 'whisper-large-v3',
                     response_format: 'verbose_json'
                 }), 2);
@@ -310,8 +318,9 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                     const chunkNum = currentIndex + 1;
                     console.log(`🎙️ [Whisper Large-v3][Worker ${workerId + 1}] Transcribing Chunk ${chunkNum}/${chunks.length} (${(chunk.sizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
 
+                    const chunkUploadFile = await toFile(fs.createReadStream(chunk.filePath), path.basename(chunk.filePath));
                     const chunkData = await callGroqWithRetry(() => ({
-                        file: fs.createReadStream(chunk.filePath),
+                        file: chunkUploadFile,
                         model: 'whisper-large-v3',
                         response_format: 'verbose_json'
                     }), 2);
@@ -698,17 +707,34 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         let commonDocModel = null;
 
         if (Array.isArray(inputs) && inputs.length > 0) {
-            inputs.forEach((inp, idx) => {
+            const voiceInputs = inputs.filter(inp => inp.type === 'voice' || inp.type === 'audio' || inp.type === 'transcript');
+            const codeInputs = inputs.filter(inp => inp.type === 'code');
+            const docInputs = inputs.filter(inp => !['voice', 'audio', 'transcript', 'code'].includes(inp.type));
+
+            // 1. Multi-Voice Consolidation: Multiple voices/recordings are unified into ONE single continuous lecture narrative
+            if (voiceInputs.length === 1) {
+                voiceText = (voiceInputs[0].content || '').trim();
+            } else if (voiceInputs.length > 1) {
+                console.log(`🎙️ [Dual-Authority] Consolidating ${voiceInputs.length} voice recordings into a single continuous lecture narrative.`);
+                voiceText = voiceInputs.map((v, i) => {
+                    const title = v.source_name || v.name || `Lecture Part ${i + 1}`;
+                    return `=== Lecture Part ${i + 1}: ${title} ===\n${(v.content || '').trim()}`;
+                }).join('\n\n');
+            }
+
+            // 2. Code Snippets
+            codeInputs.forEach(c => {
+                if (c.content) codeSnippets += (c.content + '\n\n');
+            });
+
+            // 3. Multi-Document Consolidation: All companion materials are bundled as supporting materials
+            docInputs.forEach((inp, idx) => {
                 if (inp.commonDocumentModel) {
                     commonDocModel = inp.commonDocumentModel;
                 }
-                if (inp.type === 'voice' || inp.type === 'audio' || inp.type === 'transcript') {
-                    voiceText += (inp.content || '') + '\n';
-                } else if (inp.type === 'code') {
-                    codeSnippets += (inp.content || '') + '\n';
-                } else if (inp.content) {
-                    docTexts.push(inp.content);
-                    docNames.push(inp.name || inp.filename || inp.source_name || inp.title || `Document ${idx + 1}`);
+                if (inp.content && inp.content.trim()) {
+                    docTexts.push(inp.content.trim());
+                    docNames.push(inp.name || inp.filename || inp.source_name || inp.title || `Supporting Material ${idx + 1}`);
                 }
             });
         } else if (typeof content === 'string') {
@@ -4274,8 +4300,13 @@ exports.analyzeDepth = async (req, res) => {
 
             if (lectureIntel?.evidenceCapacity?.recommendedQuestionCount) {
                 recommendedQuestions = `${lectureIntel.evidenceCapacity.recommendedQuestionCount} Questions (${lectureIntel.evidenceCapacity.advisoryRationale || 'Advisory Base'})`;
+            } else if (analysis.lectureDepth?.breakdown?.recommendedQuestionCount) {
+                const rec = analysis.lectureDepth.breakdown.recommendedQuestionCount;
+                recommendedQuestions = `${rec} Questions (${analysis.lectureDepth.breakdown.recommendedQuestionsRationale || 'Optimal Pedagogical Scope'})`;
             }
         }
+
+        const recommendedQuestionCount = lectureIntel?.evidenceCapacity?.recommendedQuestionCount || analysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5;
 
         return res.json({
             success: true,
@@ -4287,6 +4318,7 @@ exports.analyzeDepth = async (req, res) => {
             keyTopics,
             wordCount,
             recommendedQuestions,
+            recommendedQuestionCount,
             lecture_intelligence: lectureIntel
         });
     } catch (err) {
@@ -4294,6 +4326,71 @@ exports.analyzeDepth = async (req, res) => {
         res.status(500).json({ error: 'Depth analysis failed', details: err.message });
     }
 };
+
+/**
+ * Format raw seconds into human-readable duration like ChatGPT ("14 mins", "1h 12m", "45s")
+ */
+function formatDurationLabel(seconds) {
+    if (!seconds || seconds <= 0) return '';
+    const s = Math.round(seconds);
+    if (s < 60) return `${s}s`;
+    const mins = Math.round(s / 60);
+    if (mins < 60) return `${mins} min${mins === 1 ? '' : 's'}`;
+    const hrs = Math.floor(mins / 60);
+    const remMins = mins % 60;
+    return remMins > 0 ? `${hrs}h ${remMins}m` : `${hrs} hr${hrs === 1 ? '' : 's'}`;
+}
+exports.formatDurationLabel = formatDurationLabel;
+
+/**
+ * Generate a smart concise academic topic title (3-6 words) like ChatGPT
+ */
+async function generateSmartAudioTitle(transcriptText, fallbackConcepts = [], groqClient = null) {
+    const defaultFallback = (fallbackConcepts && fallbackConcepts.length > 0)
+        ? fallbackConcepts.slice(0, 3).join(' & ')
+        : 'Lecture Presentation';
+
+    if (!transcriptText || transcriptText.trim().length < 15) {
+        return defaultFallback;
+    }
+
+    try {
+        const client = groqClient || (process.env.GROQ_API_KEY ? (groq || new Groq({ apiKey: process.env.GROQ_API_KEY })) : null);
+        if (client) {
+            const prompt = `You are a university academic titling assistant. Read this lecture transcript excerpt and output ONLY a concise, professional 3 to 6 word title describing the core academic subject (e.g., "Virtual DOM & Lifecycle Hooks", "CPU Process Scheduling & Deadlocks", "Database Normalization & BCNF", "Convolutional Autoencoders in PyTorch").
+Rules:
+- 3 to 6 words only
+- No trailing punctuation
+- No introductory phrases like "Lecture on", "Introduction to", "A discussion of", or "Topic:"
+- Output ONLY the title itself, nothing else.
+
+Transcript Excerpt:
+${transcriptText.slice(0, 1200)}`;
+
+            const titlingModel = process.env.TITLING_MODEL || 'openai/gpt-oss-20b';
+            const completion = await client.chat.completions.create({
+                model: titlingModel,
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.1,
+                max_tokens: 150
+            });
+
+            const candidate = completion.choices?.[0]?.message?.content?.trim()
+                .replace(/^["'`]|["'`]$/g, '')
+                .replace(/[.,:;]+$/, '')
+                .trim();
+
+            if (candidate && candidate.length >= 3 && candidate.length <= 60 && !candidate.toLowerCase().includes('transcript')) {
+                return candidate;
+            }
+        }
+    } catch (err) {
+        console.warn('ℹ️ [generateSmartAudioTitle] LLM titling skipped, falling back to heuristics:', err.message);
+    }
+
+    return defaultFallback;
+}
+exports.generateSmartAudioTitle = generateSmartAudioTitle;
 
 exports.transcribe = async (req, res) => {
     if (!req.file) {
@@ -4329,8 +4426,17 @@ exports.transcribe = async (req, res) => {
 
         const depthAnalysis = depthAnalyzer.analyzeLecture(transcript);
 
+        // Compute smart concise title (3-6 words, like ChatGPT) + human duration
+        const audioDuration = result ? (result.duration || 0) : 0;
+        const durationLabel = formatDurationLabel(audioDuration);
+        const smartTitle = await generateSmartAudioTitle(transcript, depthAnalysis.detectedFocus, groq);
+        const sourceName = durationLabel ? `${smartTitle} (${durationLabel})` : smartTitle;
+
         res.json({
             text: transcript,
+            smartTitle,
+            durationLabel,
+            sourceName,
             isAcademic: depthAnalysis.isAcademic,
             isCurricular: depthAnalysis.isCurricular,
             reason: depthAnalysis.reason,

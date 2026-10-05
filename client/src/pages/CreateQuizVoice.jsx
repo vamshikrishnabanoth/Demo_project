@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import LiveRecordPanel from '../components/LiveRecordPanel';
-import { Mic, UploadCloud, FileAudio, FileText, CheckCircle, AlertCircle, X } from 'lucide-react';
+import { Mic, UploadCloud, FileAudio, FileText, CheckCircle, AlertCircle, X, Activity } from 'lucide-react';
 import { uiTerminology } from '../utils/uiTerminology';
 import api from '../utils/api';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
+import PipelineObservabilityModal from '../components/quiz/PipelineObservabilityModal';
 
 export default function CreateQuizVoice() {
     const navigate = useNavigate();
     const [mode, setMode] = useState('record'); // 'record' | 'upload'
+    const [showObservability, setShowObservability] = useState(false);
     
     // File upload state
     const [audioFile, setAudioFile] = useState(null);
@@ -188,30 +190,41 @@ export default function CreateQuizVoice() {
                         </p>
                     </div>
 
-                    {/* Mode Toggle Tabs */}
-                    <div className="flex bg-white/5 border border-white/10 rounded-2xl p-1.5 self-start">
+                    <div className="flex items-center gap-3 flex-wrap self-start">
                         <button
                             type="button"
-                            onClick={() => { setMode('record'); setError(null); }}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                                mode === 'record'
-                                    ? 'bg-[var(--bg-accent)] text-white shadow-lg shadow-[var(--bg-accent)]/30'
-                                    : 'text-slate-400 hover:text-white'
-                            }`}
+                            onClick={() => setShowObservability(true)}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl font-black text-xs uppercase tracking-wider bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 transition-all cursor-pointer shadow-xs active:scale-95"
+                            title="Inspect 6-Stage Neural Architecture & Live Telemetry"
                         >
-                            <Mic size={16} /> Live Record
+                            <Activity size={15} /> AI Observability
                         </button>
-                        <button
-                            type="button"
-                            onClick={() => { setMode('upload'); setError(null); }}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                                mode === 'upload'
-                                    ? 'bg-[var(--bg-accent)] text-white shadow-lg shadow-[var(--bg-accent)]/30'
-                                    : 'text-slate-400 hover:text-white'
-                            }`}
-                        >
-                            <UploadCloud size={16} /> Upload Audio File
-                        </button>
+
+                        {/* Mode Toggle Tabs */}
+                        <div className="flex bg-white/5 border border-white/10 rounded-2xl p-1.5">
+                            <button
+                                type="button"
+                                onClick={() => { setMode('record'); setError(null); }}
+                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
+                                    mode === 'record'
+                                        ? 'bg-[var(--bg-accent)] text-white shadow-lg shadow-[var(--bg-accent)]/30'
+                                        : 'text-slate-400 hover:text-white'
+                                }`}
+                            >
+                                <Mic size={16} /> Live Record
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => { setMode('upload'); setError(null); }}
+                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
+                                    mode === 'upload'
+                                        ? 'bg-[var(--bg-accent)] text-white shadow-lg shadow-[var(--bg-accent)]/30'
+                                        : 'text-slate-400 hover:text-white'
+                                }`}
+                            >
+                                <UploadCloud size={16} /> Upload Audio File
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -384,6 +397,15 @@ export default function CreateQuizVoice() {
                     )}
                 </div>
             </div>
+
+            <PipelineObservabilityModal
+                isOpen={showObservability}
+                onClose={() => setShowObservability(false)}
+                questions={[]}
+                title="Voice Assessment Pipeline Architecture"
+                isVoice={true}
+                duration={10}
+            />
         </DashboardLayout>
     );
 }
