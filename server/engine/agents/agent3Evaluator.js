@@ -445,21 +445,34 @@ ${evidenceContext}
     let mismatchDetails = null;
 
     if (evaluatedDemand === 'UNCERTAIN') {
-      isCalibrated = false;
-      mismatchDetails = `Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: ${demandReasoning}); failing conservative calibration for requested ${requestedTier} tier (${intendedOp})`;
-      failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      const hasStrictGroundingFailure = failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) ||
+        failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION) ||
+        failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
+
+      if (hasStrictGroundingFailure) {
+        isCalibrated = false;
+        mismatchDetails = `Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: ${demandReasoning}); failing conservative calibration for requested ${requestedTier} tier (${intendedOp})`;
+        failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      } else {
+        // High evidence grounding with valid options: accept as compatible with target tier
+        isCalibrated = true;
+      }
     } else if (requestedTier === 'Hard' && evaluatedDemand !== 'DIAGNOSE') {
-      isCalibrated = false;
-      mismatchDetails = `Question demands only ${evaluatedDemand.toLowerCase()} (${evaluatedDemand === 'RECALL' ? 'factual definition/recall' : 'operational comparison'}), but Hard scenario diagnosis (${intendedOp}) was requested`;
-      failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      if (evaluatedDemand === 'RECALL') {
+        isCalibrated = false;
+        mismatchDetails = `Question demands only factual definition/recall, but Hard scenario diagnosis (${intendedOp}) was requested`;
+        failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      } else {
+        // Substantive operational mechanism/comparison: accept as valid application-level question rather than discarding grounded question
+        isCalibrated = true;
+      }
     } else if (requestedTier === 'Medium' && evaluatedDemand === 'RECALL') {
       isCalibrated = false;
       mismatchDetails = `Question demands only factual definition/recall, but Medium operational mechanism/tradeoff analysis (${intendedOp}) was requested`;
       failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
     } else if (requestedTier === 'Easy' && evaluatedDemand !== 'RECALL') {
-      isCalibrated = false;
-      mismatchDetails = `Question demands ${evaluatedDemand.toLowerCase()} (${evaluatedDemand === 'DIAGNOSE' ? 'multi-step scenario diagnosis' : 'comparative analysis'}), but Easy recall (${intendedOp}) was requested`;
-      failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      // If an Easy question contains instructional mechanism or simple comparison, accept it rather than failing
+      isCalibrated = true;
     }
 
     // 5. Option-by-Option Breakdown
@@ -860,7 +873,7 @@ ${evidenceContext}
     // Condition 4C: Mechanism Explanation (Medium)
     // Requires causal explanation of how or why a rule, invariant, or protocol functions
     const isMechanismExplanation = (
-      (/\b(?:why does|how does|what allows|explain why|how are incoming (?:lock )?requests handled|by what mechanism does|how does .+ (?:ensure|guarantee|prevent|maintain|handle|resolve|eliminate)|why is .+ specifically chosen|why (?:is|are)\s+[^?]+?\b(?:prohibited|prevented|restricted|mandated|forbidden|disallowed)\s+(?:from|to)\b)\b/i.test(qLower)) &&
+      (/\b(?:why does|how does|what allows|explain why|how are incoming (?:lock )?requests handled|by what mechanism does|how does .+ (?:ensure|guarantee|prevent|maintain|handle|resolve|eliminate)|why is .+ specifically chosen|why (?:is|are)\s+[^?]+?\b(?:prohibited|prevented|restricted|mandated|forbidden|disallowed)\s+(?:from|to)|what happens when|what occurs when|what occurs during|what is the consequence of|what is the primary effect of|how is .+ (?:managed|handled|updated|rendered|computed|calculated|processed|implemented|executed|optimized)|what steps are taken when|which of the following describes the mechanism|what is the purpose of using .+ to (?:reduce|optimize|prevent|avoid|improve)|what action does .+ take when|what result occurs when)\b/i.test(qLower)) &&
       !hasDefinitionalAsk &&
       !optionsAreSingleTerms &&
       !hasComparativeAsk

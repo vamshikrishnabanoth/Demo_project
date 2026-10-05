@@ -259,10 +259,18 @@ class PipelineOrchestrator {
         }
       });
 
-      for (let i = 0; i < primaryTargets.length; i++) {
-        const currentTarget = primaryTargets[i];
+      const candidateQueue = [...primaryTargets];
+      const activeReservePool = [...reservePool];
+      const seenConcepts = new Set(primaryTargets.map(t => (t.concept || '').toLowerCase().trim()));
+      let iterationCount = 0;
+      const MAX_TOTAL_ITERATIONS = Math.max(20, requestedCount * 3);
+
+      while (candidateQueue.length > 0 && passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
+        iterationCount++;
+        const currentTarget = candidateQueue.shift();
         const tier = currentTarget.targetDifficulty || 'Medium';
         const targetStartTime = Date.now();
+        const currentQNum = passingQuestions.length + 1;
 
         // 1. Check for Pre-Identified Capacity Deficits (e.g. definition-only concept requested as Hard)
         const isPreIdentifiedDeficit = currentTarget.capacityLimitation && 
@@ -304,6 +312,34 @@ class PipelineOrchestrator {
             validation: { status: 'PASS', checks: ['Capacity deficit preserved honestly'] },
             durationMs: Date.now() - targetStartTime
           });
+
+          // Auto-promote reserve target to fulfill question count!
+          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
+            const nextReserve = activeReservePool.shift();
+            nextReserve.targetDifficulty = tier;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
+            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
+            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
+            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+            candidateQueue.push(nextReserve);
+            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} to substitute for capacity-limited target ${currentTarget.targetId}`);
+          } else if (passingQuestions.length < requestedCount) {
+            // No reserve targets left: adaptively calibrate this concept to Medium so a valid grounded question is produced
+            const calibratedTarget = {
+              ...currentTarget,
+              targetId: `${currentTarget.targetId}_cal`,
+              targetDifficulty: 'Medium'
+            };
+            delete calibratedTarget.capacityLimitation;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint('Medium', calibratedTarget.dimension || 'Conceptual');
+            calibratedTarget.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+            calibratedTarget.bloomLevel = cognitiveBp.bloomLevel;
+            calibratedTarget.operationalGuidance = cognitiveBp.operationalGuidance;
+            calibratedTarget.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${calibratedTarget.concept}.`;
+            candidateQueue.unshift(calibratedTarget);
+            console.log(`ℹ️ [Orchestrator] Adaptively calibrated target ${currentTarget.targetId} to Medium to ensure question fulfillment.`);
+          }
           continue;
         }
 
@@ -316,7 +352,7 @@ class PipelineOrchestrator {
           stageName: 'QUESTION_GENERATION',
           input: { targetId: currentTarget.targetId, concept: currentTarget.concept, difficulty: tier },
           processing: { operations: ['Prompt formulation', 'Adaptive distractor selection', 'Single-key exclusivity verification'] },
-          decisions: [`Generating candidate MCQ for Question ${i + 1}/${requestedCount} ("${currentTarget.concept}") at tier ${tier}`],
+          decisions: [`Generating candidate MCQ for Question ${currentQNum}/${requestedCount} ("${currentTarget.concept}") at tier ${tier}`],
           rulesApplied: ['Difficulty Scaffolding & Tiered Distractor Invariant'],
           evidenceUsed: [currentTarget.targetId],
           output: { targetId: currentTarget.targetId },
@@ -349,6 +385,18 @@ class PipelineOrchestrator {
           };
           unfulfilledTargets.push(unfulfilledRecord);
           targetResults.push(unfulfilledRecord);
+
+          // Auto-promote reserve target to fulfill question count
+          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
+            const nextReserve = activeReservePool.shift();
+            nextReserve.targetDifficulty = tier;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
+            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
+            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
+            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+            candidateQueue.push(nextReserve);
+          }
           continue;
         }
 
@@ -494,6 +542,12 @@ class PipelineOrchestrator {
             };
             rejectedTargets.push(rejectedRecord);
             targetResults.push(rejectedRecord);
+
+            // Auto-promote reserve target to fulfill question count
+            if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
+              const nextReserve = activeReservePool.shift();
+              candidateQueue.push(nextReserve);
+            }
           }
         } else {
           // Failed evaluation (even after bounded repair)
@@ -533,6 +587,49 @@ class PipelineOrchestrator {
             validation: { status: 'FAIL', errors: [reason] },
             durationMs: Date.now() - targetStartTime
           });
+
+          // Auto-promote reserve target to fulfill question count!
+          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
+            const nextReserve = activeReservePool.shift();
+            // Determine tier to maintain balance:
+            const easyDelivered = passingQuestions.filter(q => (q.metadata?.targetDifficulty || q.metadata?.tier) === 'Easy').length;
+            const hardDelivered = passingQuestions.filter(q => (q.metadata?.targetDifficulty || q.metadata?.tier) === 'Hard').length;
+            const neededTier = (hardDelivered < Math.floor(requestedCount / 3)) ? 'Hard' 
+              : ((easyDelivered < Math.floor(requestedCount / 3)) ? 'Easy' : 'Medium');
+
+            nextReserve.targetDifficulty = neededTier;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint(neededTier, nextReserve.dimension || 'Conceptual');
+            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
+            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
+            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+            candidateQueue.push(nextReserve);
+            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} ("${nextReserve.concept}") at tier ${neededTier} to replace rejected target ${currentTarget.targetId}`);
+          }
+        }
+
+        // Replenish from curriculum if candidateQueue and reservePool are empty but target count still unmet
+        if (candidateQueue.length === 0 && activeReservePool.length === 0 && passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
+          const neededMore = requestedCount - passingQuestions.length;
+          console.log(`🔄 [Orchestrator] Replenishing ${neededMore} targets from curriculum segments to fulfill requested count ${requestedCount}...`);
+          const fallback = agent1Planner._buildFallbackPlan(
+            sessionInputs.voiceTranscript || evidencePackage.unifiedRawContent || '',
+            requestedDifficulty,
+            neededMore + 3,
+            evidencePackage.categoryWeights || {},
+            evidencePackage.lectureDepth || {},
+            evidencePackage.detectedFocus || [],
+            evidencePackage
+          );
+          for (const ft of fallback.assessmentTargets) {
+            const cLower = (ft.concept || '').toLowerCase().trim();
+            if (!seenConcepts.has(cLower)) {
+              seenConcepts.add(cLower);
+              ft.targetId = `T_REP_0${candidateQueue.length + 1}`;
+              candidateQueue.push(ft);
+              if (candidateQueue.length >= neededMore) break;
+            }
+          }
         }
       }
 
