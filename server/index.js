@@ -251,22 +251,32 @@ process.on('uncaughtException', (err) => {
 });
 
 
-// Socket.io Setup - Secure CORS
+// Socket.io Setup - Secure CORS with Extended Timeouts for Heavy Tasks
 const io = new Server(server, {
-    pingTimeout: 60000,
+    pingTimeout: 180000, // 3 minutes timeout to survive heavy CPU/transcription load
     pingInterval: 25000,
+    connectTimeout: 45000,
+    maxHttpBufferSize: 1e8, // 100 MB max payload for socket events
     cors: {
         origin: (origin, callback) => {
             if (!origin) return callback(null, true);
-            const allowed = ['https://kmit-khaoot.vercel.app', 'http://localhost:5173'];
-            const isVercelPreview = /^https:\/\/kmit-khaoot(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
+            const allowed = [
+                'https://kmit-khaoot.vercel.app',
+                'https://kmit-kahoot.vercel.app',
+                'http://localhost:5173',
+                'http://127.0.0.1:5173',
+                'http://localhost:3000',
+                'http://127.0.0.1:3000'
+            ];
+            const isVercelPreview = /^https:\/\/kmit-(khaoot|kahoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin) || origin.endsWith('.vercel.app');
             if (allowed.includes(origin) || isVercelPreview) {
                 callback(null, true);
             } else {
                 callback(new Error('Not allowed by CORS'));
             }
         },
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
