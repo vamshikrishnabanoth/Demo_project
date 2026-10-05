@@ -101,9 +101,12 @@ export default function CreateQuizVoice() {
             formData.append('questionCount', questionCount.toString());
             formData.append('difficulty', difficulty);
 
+            // Scale timeout with file size: 10 min base + 1 min per 10 MB (supports up to 4-hour / 500 MB lectures)
+            const uploadTimeoutMs = Math.max(600000, 600000 + Math.floor(((audioFile ? audioFile.size : 0) / (10 * 1024 * 1024)) * 60000));
+
             const res = await api.post('/quiz/generate-voice', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 300000,
+                timeout: uploadTimeoutMs,
             });
 
             const { taskId } = res.data;
@@ -159,7 +162,7 @@ export default function CreateQuizVoice() {
             const sizeMB = audioFile ? (audioFile.size / (1024 * 1024)).toFixed(1) : '';
             const isFetchFail = err.message === 'Failed to fetch' || !err.response || rawMsg.includes('Failed to fetch');
             const errorMsg = isFetchFail
-                ? `Upload interrupted (${sizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or use a file under 50 MB.`
+                ? `Upload interrupted (${sizeMB} MB). The connection was terminated before the server could receive the file. Please check your connection or ensure the file is under 500 MB.`
                 : (rawMsg || 'Failed to upload audio file.');
             setError(errorMsg);
         }

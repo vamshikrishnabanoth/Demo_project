@@ -1865,11 +1865,11 @@ prisma.user.updateMany({
     console.error('[Startup Error] Failed to reset user online statuses:', err.message);
 });
 
-// Extend HTTP server timeouts to survive large audio file uploads (up to 500 MB)
-// Render's proxy can drop connections after ~30s — bumping these keeps the socket alive
-server.headersTimeout = 600000;  // 10 minutes (must be > requestTimeout)
-server.requestTimeout = 600000;  // 10 minutes (time to receive full request body)
-server.keepAliveTimeout = 620000; // slightly above headersTimeout
+// Extend HTTP server timeouts to survive large audio file uploads (up to 500 MB / 4-hour lectures)
+// Render/cloud proxies can drop connections — bumping these keeps sockets and multi-chunk streaming alive
+server.headersTimeout = 900000;  // 15 minutes (must be > requestTimeout)
+server.requestTimeout = 900000;  // 15 minutes (time to receive full request body & transcribe)
+server.keepAliveTimeout = 920000; // slightly above headersTimeout
 
 if (process.env.NODE_ENV !== 'test') {
     server.listen(PORT, '0.0.0.0', () => {

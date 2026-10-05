@@ -1,11 +1,12 @@
 /**
  * server/engine/evidence/lectureAnalyzer.js
  *
- * Two-Task Lecture Understanding & Pedagogical Sequence Reconstruction.
- * Reuses depthAnalyzer for semantic segment classification and curricular extraction.
+ * Pedagogy-Aware Lecture Understanding & Semantic Sequence Reconstruction (v4.0).
+ * Reuses depthAnalyzer for multi-label segment classification, partial evidence extraction, and curricular linking.
  *
- * Task 1: Content Cleaning & Segment Classification (Filter non-academic chatter, retain student Q&A)
- * Task 2: Pedagogical Lecture Reconstruction (Topic, Motivation, Definitions, Analogies, Source Attribution)
+ * Task 1: Pedagogy-Aware Content Cleaning & Segment Classification
+ *         (Extracts evidence from KEEP_WHOLE & KEEP_PARTIAL, discards administrative/fictional noise)
+ * Task 2: Pedagogical Lecture Reconstruction (Topic, Motivation, Definitions, Analogies, Teacher Experiences)
  */
 
 'use strict';
@@ -16,9 +17,9 @@ const lectureIntelligence = require('../intelligence/lectureIntelligence');
 class LectureAnalyzer {
   /**
    * Split raw transcript text into segments for processing.
-   * Explicitly leaves timestamps as null for text-only inputs (does not invent timestamps).
+   * Explicitly leaves timestamps as null for text-only inputs.
    *
-   * @param {string} rawText
+   * @param {string|Array} rawInput
    * @returns {Array<Object>}
    */
   parseTranscriptIntoSegments(rawInput) {
@@ -44,8 +45,13 @@ class LectureAnalyzer {
           timestamp: tsFormatted,
           timestamp_end: endSec !== null ? this.formatTimestamp(endSec) : null,
           speaker: seg.speaker || 'Teacher',
-          type: classification.type || 'curricular',
-          confidence: classification.confidence || 0.8,
+          type: classification.type || 'CORE_EXPLANATION',
+          teaching_value: classification.teaching_value !== undefined ? classification.teaching_value : 0.8,
+          concept_links: classification.concept_links || [],
+          evidence_text: classification.evidence_text || segText,
+          action: classification.action || 'KEEP_WHOLE',
+          substanceType: classification.substanceType || 'DEFINITION_OR_FACT',
+          confidence: classification.confidence || 'HIGH',
           reason: classification.reason || 'Segment analysis'
         };
       });
@@ -64,8 +70,13 @@ class LectureAnalyzer {
         timestamp: null,
         timestamp_end: null,
         speaker: 'Teacher',
-        type: classification.type || 'curricular',
-        confidence: classification.confidence || 0.8,
+        type: classification.type || 'CORE_EXPLANATION',
+        teaching_value: classification.teaching_value !== undefined ? classification.teaching_value : 0.8,
+        concept_links: classification.concept_links || [],
+        evidence_text: classification.evidence_text || segText,
+        action: classification.action || 'KEEP_WHOLE',
+        substanceType: classification.substanceType || 'DEFINITION_OR_FACT',
+        confidence: classification.confidence || 'HIGH',
         reason: classification.reason || 'Segment analysis'
       };
     });
@@ -92,10 +103,9 @@ class LectureAnalyzer {
   }
 
   /**
-   * Analyze lecture recording or transcript.
-   * Reuses depthAnalyzer under the hood to ensure consistency across the application.
+   * Analyze lecture recording or transcript with Pedagogy-Aware Ingestion.
    *
-   * @param {Object} params - { rawText, segments, audioMetadata }
+   * @param {Object} params - { rawText, segments, audioMetadata, fileName, requestedCount, requestedDifficulty }
    * @returns {Object} analysisResult
    */
   async analyzeLecture({ rawText, segments = [], audioMetadata = null, fileName = null, requestedCount = null, requestedDifficulty = null }) {
@@ -105,6 +115,7 @@ class LectureAnalyzer {
         isAcademic: false,
         isCurricular: false,
         reason: 'INSUFFICIENT_CONTENT: The lecture recording or transcript does not contain enough speech content to analyze.',
+        teachingValueScore: 0,
         cleanedTranscript: '',
         rawTranscript: text,
         concepts: [],
@@ -120,7 +131,7 @@ class LectureAnalyzer {
       };
     }
 
-    // 1. Run depthAnalyzer on the transcript text
+    // 1. Run Pedagogy-Aware depthAnalyzer on the transcript text
     const depthResult = depthAnalyzer.analyzeLecture(text);
 
     // 2. Classify and map segments
@@ -140,44 +151,51 @@ class LectureAnalyzer {
           timestamp_end: seg.timestamp_end || (seg.end !== null && seg.end !== undefined ? this.formatTimestamp(seg.end) : null),
           speaker: seg.speaker || 'Teacher',
           type: classification.type,
+          teaching_value: classification.teaching_value,
+          concept_links: classification.concept_links || [],
+          evidence_text: classification.evidence_text || segText,
+          action: classification.action || 'KEEP_WHOLE',
+          substanceType: classification.substanceType,
           confidence: classification.confidence,
           reason: classification.reason
         };
       });
     } else {
-      // Map from depthResult classified segments (text-only: start/end are strictly null)
-      classifiedSegments = this.parseTranscriptIntoSegments(text).map(seg => {
-        const classification = depthAnalyzer.classifySegment(seg.text);
-        return {
-          ...seg,
-          type: classification.type,
-          confidence: classification.confidence,
-          reason: classification.reason
-        };
-      });
+      classifiedSegments = this.parseTranscriptIntoSegments(text);
     }
 
-    // 3. Task 1: Content Cleaning - Retain Curricular and Pedagogical instructional content, strip Administrative chatter
-    const cleanedSegments = classifiedSegments.filter(s => s.type !== 'ADMINISTRATIVE');
-    const cleanedTranscript = cleanedSegments.map(s => s.text).join(' ').trim();
+    // 3. Task 1: Content Cleaning - Retain KEEP_WHOLE & KEEP_PARTIAL, discard DISCARD
+    const retainedSegments = classifiedSegments.filter(s => s.action !== 'DISCARD' && s.type !== 'ADMINISTRATIVE' && s.type !== 'OFF_TOPIC');
+    const cleanedTranscript = retainedSegments.map(s => s.evidence_text || s.text).join(' ').trim();
 
-    // 4. Task 2: Pedagogical Reconstruction & Concept Extraction
+    // 4. Task 2: Pedagogical Reconstruction & Concept Linking
     const mainTopic = (depthResult.detectedFocus && depthResult.detectedFocus.length > 0)
       ? depthResult.detectedFocus[0]
       : 'Core Instructional Topic';
 
     const concepts = (depthResult.detectedFocus || []).map((focusTerm, idx) => {
-      const matchingSeg = depthResult.curricularSegments.find(s => 
+      const matchingSeg = (depthResult.curricularSegments || []).find(s => 
         (s.text || '').toLowerCase().includes(focusTerm.toLowerCase()) ||
+        (s.classification?.concept_links || []).some(t => t.toLowerCase() === focusTerm.toLowerCase()) ||
         (s.classification?.matchedTerms || []).some(t => t.toLowerCase() === focusTerm.toLowerCase())
+      );
+
+      const expOrAnalogy = (depthResult.pedagogicalSegments || []).find(s => 
+        (s.classification?.concept_links || []).some(t => t.toLowerCase() === focusTerm.toLowerCase()) &&
+        (s.classification?.type === 'TEACHER_EXPERIENCE' || s.classification?.type === 'ANALOGY')
       );
 
       return {
         concept_id: `C${String(idx + 1).padStart(2, '0')}`,
         concept_name: focusTerm,
-        definition: matchingSeg ? matchingSeg.text : `Instructional concept covered during the lecture regarding ${focusTerm}.`,
+        definition: matchingSeg ? (matchingSeg.classification?.evidence_text || matchingSeg.text) : `Instructional concept covered during the lecture regarding ${focusTerm}.`,
         why_needed: matchingSeg?.classification?.substanceType || 'Core Mechanism',
-        substanceType: matchingSeg?.classification?.substanceType || 'DEFINITION_OR_FACT'
+        substanceType: matchingSeg?.classification?.substanceType || 'DEFINITION_OR_FACT',
+        teaching_evidence: expOrAnalogy ? {
+          type: expOrAnalogy.classification.type,
+          evidence: expOrAnalogy.classification.evidence_text || expOrAnalogy.text,
+          reason: expOrAnalogy.classification.reason
+        } : null
       };
     });
 
@@ -210,12 +228,14 @@ class LectureAnalyzer {
       isAcademic: depthResult.isAcademic,
       isCurricular: depthResult.isCurricular,
       reason: depthResult.reason,
+      teachingValueScore: depthResult.teachingValueScore,
       lectureDepth: depthResult.lectureDepth,
       detectedFocus: depthResult.detectedFocus,
       cleanedTranscript: cleanedTranscript || text,
       rawTranscript: text,
       concepts,
       segments: classifiedSegments,
+      retainedSegments: retainedSegments,
       pedagogical_reconstruction: {
         main_topic: intelligentTitle,
         subtopics: depthResult.detectedFocus,

@@ -18,14 +18,14 @@
 'use strict';
 
 const DOCKET_LIMITS = {
-  MAX_AUDIO_FILES: 4,
-  MAX_TOTAL_AUDIO_DURATION_SEC: 14400, // 240 minutes (4 hours)
-  MAX_SINGLE_AUDIO_DURATION_SEC: 10800, // 180 minutes (3 hours)
+  MAX_AUDIO_FILES: 10,
+  MAX_TOTAL_AUDIO_DURATION_SEC: 28800, // 480 minutes (8 hours)
+  MAX_SINGLE_AUDIO_DURATION_SEC: 18000, // 300 minutes (5 hours)
   MAX_AUDIO_FILE_BYTES: 1024 * 1024 * 1024, // 1 GB technical infrastructure protection
-  MIN_INFORMATIVE_AUDIO_SEC: 120, // 2 minutes
-  MAX_DOCUMENTS: 5,
-  MAX_TOTAL_PAGES: 100,
-  MAX_TOTAL_DOC_SIZE_BYTES: 50 * 1024 * 1024, // 50 MB
+  MIN_INFORMATIVE_AUDIO_SEC: 60, // 1 minute
+  MAX_DOCUMENTS: 25,
+  MAX_TOTAL_PAGES: 5000, // Up to 5000 pages cumulative for large textbooks & slide decks
+  MAX_TOTAL_DOC_SIZE_BYTES: 500 * 1024 * 1024, // 500 MB total documents size
   MIN_REQUESTED_QUESTIONS: 1,
   MAX_REQUESTED_QUESTIONS: 30
 };
@@ -102,7 +102,7 @@ class DocketPolicy {
       if (durationSec > DOCKET_LIMITS.MAX_SINGLE_AUDIO_DURATION_SEC) {
         return {
           isValid: false,
-          error: "Individual recording limit exceeded: Recording '" + name + "' duration is " + Math.round(durationSec / 60) + " minutes. Maximum allowed is 180 minutes (3 hours) per recording session.",
+          error: "Individual recording limit exceeded: Recording '" + name + "' duration is " + Math.round(durationSec / 60) + " minutes. Maximum allowed is " + Math.round(DOCKET_LIMITS.MAX_SINGLE_AUDIO_DURATION_SEC / 60) + " minutes per recording session.",
           warnings,
           metrics: { offendingFile: name, durationSec }
         };
@@ -119,14 +119,14 @@ class DocketPolicy {
     if (totalAudioSec > DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
       return {
         isValid: false,
-        error: "Cumulative audio limit exceeded: Total audio duration across accumulated docket is " + Math.round(totalAudioSec / 60) + " minutes. Maximum allowed is 240 minutes (4 hours). Please remove or trim one recording.",
+        error: "Cumulative audio limit exceeded: Total audio duration across accumulated docket is " + Math.round(totalAudioSec / 60) + " minutes. Maximum allowed is " + Math.round(DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC / 60) + " minutes. Please remove or trim one recording.",
         warnings,
         metrics: { totalAudioDurationSec: totalAudioSec }
       };
     }
 
-    // Real-time approaching limit warning (within 15 minutes of 4 hours)
-    if (totalAudioSec >= 13500 && totalAudioSec <= DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
+    // Real-time approaching limit warning (within 15 minutes of max limit)
+    if (totalAudioSec >= (DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC - 900) && totalAudioSec <= DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC) {
       const remainingMin = Math.round((DOCKET_LIMITS.MAX_TOTAL_AUDIO_DURATION_SEC - totalAudioSec) / 60);
       warnings.push("Approaching cumulative audio limit: " + remainingMin + " minute(s) of recording time remaining in this assessment docket.");
     }
@@ -156,7 +156,7 @@ class DocketPolicy {
     if (totalPages > DOCKET_LIMITS.MAX_TOTAL_PAGES) {
       return {
         isValid: false,
-        error: "Document page limit exceeded: Combined documents contain " + totalPages + " pages. Maximum allowed is " + DOCKET_LIMITS.MAX_TOTAL_PAGES + " pages. Please select specific page ranges for large documents.",
+        error: "Document page limit exceeded: Combined documents contain " + totalPages + " pages. Maximum allowed is " + DOCKET_LIMITS.MAX_TOTAL_PAGES + " pages.",
         warnings,
         metrics: { totalPages }
       };
@@ -164,9 +164,10 @@ class DocketPolicy {
 
     if (totalSizeBytes > DOCKET_LIMITS.MAX_TOTAL_DOC_SIZE_BYTES) {
       const sizeMB = (totalSizeBytes / (1024 * 1024)).toFixed(1);
+      const maxMB = (DOCKET_LIMITS.MAX_TOTAL_DOC_SIZE_BYTES / (1024 * 1024)).toFixed(0);
       return {
         isValid: false,
-        error: "Document size limit exceeded: Combined documents are " + sizeMB + " MB. Maximum allowed is 50 MB.",
+        error: "Document size limit exceeded: Combined documents are " + sizeMB + " MB. Maximum allowed is " + maxMB + " MB.",
         warnings,
         metrics: { totalSizeBytes }
       };

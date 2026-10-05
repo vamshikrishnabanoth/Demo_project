@@ -2,10 +2,10 @@
  * server/engine/evidence/evidencePackager.js
  *
  * Assembles the Teaching Evidence Package from Session Content & RAG.
- * Applies Dual-Source Authority Division:
+ * Applies Pedagogy-Aware Ingestion & Dual-Source Authority Division:
  * - Voice Authority -> Teaching Intent, Verbal Emphasis, Cognitive Expectations, Explicit Instructions.
  * - Material Authority -> Exact Factual Artifacts, Syntax Definitions, Formulas.
- * - Integrates DepthAnalyzer for Lecture Depth & Academic Verification.
+ * - Integrates DepthAnalyzer for Pedagogy-Aware Classification & Evidence Extraction.
  * - Strict Hard Zero Category Enforcement.
  */
 
@@ -42,8 +42,6 @@ class EvidencePackager {
     const imageText = (sessionInputs.imageTexts || []).join('\n');
 
     // Policy C + B: Cross-Material Alignment Check
-    // When Voice Authority is present, any uploaded materials (PDFs/docs/code) must semantically align with what was spoken.
-    // If an uploaded document is unrelated, exclude it to protect assessment scope and issue an explicit warning notice.
     let effectiveDocTexts = [];
     let unalignedDocs = [];
     let alignmentWarning = null;
@@ -55,7 +53,6 @@ class EvidencePackager {
 
         const evalResult = CrossMaterialAligner.evaluateDocumentAlignment(voiceText, dText);
         if (evalResult.isAligned) {
-          // If partially aligned document (Case 6), retain aligned sections for high priority
           if (evalResult.relationship === 'PARTIALLY_ALIGNED_SECTION' && evalResult.sections && evalResult.sections.length > 1) {
             const alignedText = evalResult.sections
               .filter(s => s.priority <= 3)
@@ -78,7 +75,6 @@ class EvidencePackager {
             });
           }
         } else {
-          // Priority 5: Unrelated material remains registered in docket for traceability, but suppressed from question targets
           unalignedDocs.push({
             text: dText,
             name: dName,
@@ -109,7 +105,7 @@ class EvidencePackager {
 
     const rawContent = `[VOICE TRANSCRIPT]\n${voiceText}\n\n[DOCUMENT CONTENT]\n${cleanDocsText}\n\n[CODE SNIPPETS]\n${codeText}\n\n[BOARD OCR]\n${imageText}`;
 
-    // 1. Pedagogical Lecture Depth & Academic Content Analysis
+    // 1. Pedagogy-Aware Lecture Depth & Teaching Value Analysis
     const depthAnalysis = depthAnalyzer.analyzeLecture(rawContent);
 
     // Extract verbal emphasis cues from Voice and Pedagogical segments
@@ -118,10 +114,24 @@ class EvidencePackager {
     // 2. Evidence-driven category weights with strict Hard Zero enforcement
     const categoryWeights = this._computeCategoryWeights(exactArtifacts, voiceEmphasisSignals, rawContent);
 
-    // Filtered curricular content for downstream question planning
-    // Instructional evidence is strictly isolated from motivational/pedagogical and administrative speech
-    const curricularContent = (depthAnalysis.isAcademic && depthAnalysis.curricularSegments && depthAnalysis.curricularSegments.length > 0)
-      ? depthAnalysis.curricularSegments.map(s => s.text).join('\n')
+    // Build formatted curricular content with explicit pedagogy-aware evidence annotations
+    const curricularLines = (depthAnalysis.curricularSegments || []).map(s => {
+      const cType = s.classification?.type;
+      const evText = s.classification?.evidence_text || s.text;
+      if (cType === 'TEACHER_EXPERIENCE') {
+        return `[TEACHER EXPERIENCE / PRODUCTION CASE]: ${evText} (${s.classification?.reason || ''})`;
+      } else if (cType === 'ANALOGY') {
+        return `[CONCEPTUAL ANALOGY]: ${evText} (${s.classification?.reason || ''})`;
+      } else if (cType === 'TECHNICAL_HUMOR') {
+        return `[TECHNICAL HUMOR / CONCEPTUAL VIGNETTE]: ${evText}`;
+      } else if (cType === 'REAL_WORLD_APPLICATION') {
+        return `[REAL-WORLD APPLICATION]: ${evText}`;
+      }
+      return evText;
+    });
+
+    const curricularContent = (depthAnalysis.isAcademic && curricularLines.length > 0)
+      ? curricularLines.join('\n')
       : (depthAnalysis.isAcademic ? rawContent : '');
 
     // Build structured Evidence Package
@@ -136,11 +146,14 @@ class EvidencePackager {
       isAcademic: depthAnalysis.isAcademic,
       isCurricular: depthAnalysis.isCurricular,
       academicFailureReason: depthAnalysis.reason,
+      teachingValueScore: depthAnalysis.teachingValueScore,
       lectureDepth: depthAnalysis.lectureDepth,
       detectedFocus: depthAnalysis.detectedFocus,
+      retainedSegments: depthAnalysis.retainedSegments || [],
       curricularSegments: depthAnalysis.curricularSegments || [],
       pedagogicalSegments: depthAnalysis.pedagogicalSegments || [],
       adminSegments: depthAnalysis.adminSegments || [],
+      discardedSegments: depthAnalysis.discardedSegments || [],
       curricularContent,
       categoryWeights: categoryWeights,
       hasExcludedMaterials: unalignedDocs.length > 0,
@@ -159,7 +172,6 @@ class EvidencePackager {
     };
 
     // 3. Construct Dual-Level Hierarchical Evidence Store & Cross-Material Alignment Graph
-    // Using effective session inputs where unaligned materials have been excluded
     try {
       const sanitizedInputs = {
         ...sessionInputs,
@@ -188,7 +200,6 @@ class EvidencePackager {
         }
       }
       packageData.multimodalStore = packageData.hierarchicalStore;
-
       packageData.alignmentGraph = CrossMaterialAligner.buildAlignmentGraph(packageData.hierarchicalStore);
     } catch (storeErr) {
       console.warn(`⚠️ [EvidencePackager] Notice building hierarchical/alignment store: ${storeErr.message}`);
@@ -202,9 +213,6 @@ class EvidencePackager {
 
   /**
    * Partition assessable curricular content according to the router's representation decision.
-   * - SUMMARY: Focuses on factual concepts, definitions, and exact artifacts (WHAT was taught).
-   * - BLUEPRINT: Focuses on instructional acts, demonstrative observations, rules, mechanisms, and comparisons (HOW & WHY it was taught).
-   * - UNIFIED: Synthesizes both factual definitions and instructional blueprints together.
    */
   applyRepresentationPackaging(packageData, representationMode = 'UNIFIED') {
     if (!packageData || !packageData.curricularSegments) return packageData;
@@ -221,9 +229,10 @@ class EvidencePackager {
     if (mode === 'SUMMARY') {
       const summarySegs = segments.filter(s => {
         const st = s.classification?.substanceType;
-        return ['DEFINITION_OR_FACT', 'MECHANISM', 'RULE_OR_CONDITION', 'COMPARISON'].includes(st);
+        const ct = s.classification?.type;
+        return ['DEFINITION_OR_FACT', 'MECHANISM', 'RULE_OR_CONDITION', 'COMPARISON'].includes(st) || ct === 'CORE_EXPLANATION';
       });
-      const textSegs = (summarySegs.length >= 3 ? summarySegs : segments).map(s => s.text).join('\n');
+      const textSegs = (summarySegs.length >= 3 ? summarySegs : segments).map(s => s.classification?.evidence_text || s.text).join('\n');
       selectedText = `--- TECHNICAL SUMMARY: CONCEPTS, DEFINITIONS, MECHANISMS & PRINCIPLES (WHAT WAS TAUGHT) ---\n${textSegs}`;
       if (artifactBlock) {
         selectedText += `\n\n--- EXACT ARTIFACTS ---\n${artifactBlock}`;
@@ -231,12 +240,27 @@ class EvidencePackager {
     } else if (mode === 'BLUEPRINT') {
       const blueprintSegs = segments.filter(s => {
         const st = s.classification?.substanceType;
-        return ['OBSERVATION_DEMONSTRATION', 'RULE_OR_CONDITION', 'COMPARISON', 'WORKED_EXAMPLE', 'SOCRATIC_INSTRUCTION', 'MECHANISM'].includes(st);
+        const ct = s.classification?.type;
+        return ['OBSERVATION_DEMONSTRATION', 'RULE_OR_CONDITION', 'COMPARISON', 'WORKED_EXAMPLE', 'SOCRATIC_INSTRUCTION', 'MECHANISM', 'REAL_WORLD_CASE', 'CONCEPTUAL_ANALOGY'].includes(st) ||
+          ['TEACHER_EXPERIENCE', 'ANALOGY', 'TECHNICAL_HUMOR', 'REAL_WORLD_APPLICATION', 'DEMONSTRATION'].includes(ct);
       });
-      const textSegs = (blueprintSegs.length >= 3 ? blueprintSegs : segments).map(s => s.text).join('\n');
-      selectedText = `--- INSTRUCTIONAL BLUEPRINT: PEDAGOGICAL INTENT & TEACHER EMPHASIS (HOW & WHY IT WAS TAUGHT) ---\n${textSegs}`;
+      const textSegs = (blueprintSegs.length >= 3 ? blueprintSegs : segments).map(s => {
+        const ct = s.classification?.type;
+        const ev = s.classification?.evidence_text || s.text;
+        if (ct === 'TEACHER_EXPERIENCE') return `[TEACHER EXPERIENCE]: ${ev}`;
+        if (ct === 'ANALOGY') return `[ANALOGY]: ${ev}`;
+        return ev;
+      }).join('\n');
+      selectedText = `--- INSTRUCTIONAL BLUEPRINT: PEDAGOGICAL INTENT, ANALOGIES & TEACHER EMPHASIS (HOW & WHY IT WAS TAUGHT) ---\n${textSegs}`;
     } else { // UNIFIED
-      const allText = segments.map(s => s.text).join('\n');
+      const allText = segments.map(s => {
+        const ct = s.classification?.type;
+        const ev = s.classification?.evidence_text || s.text;
+        if (ct === 'TEACHER_EXPERIENCE') return `[TEACHER EXPERIENCE]: ${ev}`;
+        if (ct === 'ANALOGY') return `[ANALOGY]: ${ev}`;
+        if (ct === 'TECHNICAL_HUMOR') return `[TECHNICAL HUMOR]: ${ev}`;
+        return ev;
+      }).join('\n');
       selectedText = `--- UNIFIED REPRESENTATION: CURRICULAR CONTENT + PEDAGOGICAL BLUEPRINT ---\n${allText}`;
       if (artifactBlock) {
         selectedText += `\n\n--- EXACT ARTIFACTS ---\n${artifactBlock}`;

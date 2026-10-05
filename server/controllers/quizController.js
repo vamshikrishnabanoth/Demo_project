@@ -24,11 +24,9 @@ const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
 const { resolveCorrectOptionText } = require('../utils/grading');
 const documentStore = require('../storage/documentStore');
-const { expandShortTopicDescription } = require('../engine/documentAnalyzer/topicExpander');
 const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
-const { chunkMp3, chunkM4a, compressForWhisper } = require('../utils/audioChunker');
+const { chunkMp3, chunkM4a, segmentAudioUniversal, compressForWhisper, getAudioDuration, transcribeChunkWithGemini } = require('../utils/audioChunker');
 const DocumentRouter = require('../engine/documentRouter/documentRouter');
-const DocketPolicy = require('../engine/docketPolicy');
 const llmRouter = require('../engine/adapter/llmRouter');
 
 // Initialize Groq for Whisper (Transcription)
@@ -109,7 +107,8 @@ function isStudentTargeted(student, assignedGroups, assignedStudents) {
 }
 
 /**
- * Transcribes audio file locally using Python faster-whisper with cloud fallback to Groq Whisper
+ * Transcribes audio files (including 3-4 hour / 300MB-500MB lectures) locally or via Cloud STT
+ * with automatic model failovers (Groq Whisper Turbo -> Groq Whisper Large-v3 -> Google Gemini Multimodal AI).
  */
 const transcribeAudioWithTimestamps = async (filePath) => {
     // 1. Try local Python faster-whisper service only if AI_SERVICE_URL is local or responsive
@@ -148,20 +147,21 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             }
         }
     } catch (err) {
-        console.log('ℹ️ Local timestamp transcription unavailable. Falling back to Groq Cloud Whisper...');
+        console.log('ℹ️ Local timestamp transcription unavailable. Falling back to Cloud STT...');
     }
 
-    // 2. Production STT: Whisper Large-v3 (Sole Research & Production Model)
+    // 2. Production STT: Groq Whisper Turbo / Large-v3 with Gemini Multimodal Fallback
     const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) {
-        console.error('❌ GROQ_API_KEY is missing in environment variables. Whisper Large-v3 cannot run.');
+    const geminiKey = process.env.GEMINI_API_KEY;
+
+    if (!groqKey && !geminiKey) {
+        console.error('❌ Neither GROQ_API_KEY nor GEMINI_API_KEY is configured in environment variables.');
         return null;
     }
 
-    const groqClient = groq || new Groq({ apiKey: groqKey });
+    const groqClient = groqKey ? (groq || new Groq({ apiKey: groqKey })) : null;
     const stats = fs.existsSync(filePath) ? fs.statSync(filePath) : null;
     const fileSizeBytes = stats ? stats.size : 0;
-    const GROQ_MAX_BYTES = 20 * 1024 * 1024; // 20 MB safe threshold (safely under Groq's 25 MB ceiling)
     const ext = path.extname(filePath).toLowerCase();
 
     const formatTs = (s) => {
@@ -172,195 +172,250 @@ const transcribeAudioWithTimestamps = async (filePath) => {
         return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
     };
 
-    // Bounded retry policy for Groq Whisper (maximum 2 retries on 429 rate limits, respecting Retry-After)
-    const callGroqWithRetry = async (createPayloadFn, maxRetries = 2) => {
+    // Helper: Call Groq with model fallback (whisper-large-v3-turbo -> whisper-large-v3) & retry on 429
+    const callGroqWhisper = async (uploadFile, preferredModel = 'whisper-large-v3-turbo') => {
+        if (!groqClient) throw new Error('Groq client not configured');
+        const modelsToTry = [preferredModel, 'whisper-large-v3-turbo', 'whisper-large-v3'].filter((v, i, a) => a.indexOf(v) === i);
         let lastError = null;
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-                const payload = createPayloadFn();
-                return await groqClient.audio.transcriptions.create(payload);
-            } catch (err) {
-                lastError = err;
-                const status = err.status || err.statusCode || (err.response && err.response.status);
-                const is429 = status === 429 || (err.message && err.message.includes('429'));
-                if (is429 && attempt < maxRetries) {
-                    const retryAfterHeader = err.headers?.['retry-after'] || err.response?.headers?.['retry-after'];
-                    let delayMs = 1500 * Math.pow(2, attempt); // 1.5s, 3.0s
-                    if (retryAfterHeader) {
-                        const parsed = parseFloat(retryAfterHeader);
-                        if (!isNaN(parsed) && parsed > 0 && parsed <= 10) {
-                            delayMs = Math.ceil(parsed * 1000);
-                        }
+
+        for (const modelName of modelsToTry) {
+            for (let attempt = 0; attempt <= 2; attempt++) {
+                try {
+                    return await groqClient.audio.transcriptions.create({
+                        file: uploadFile,
+                        model: modelName,
+                        response_format: 'verbose_json'
+                    });
+                } catch (err) {
+                    lastError = err;
+                    const status = err.status || err.statusCode || (err.response && err.response.status);
+                    const is429 = status === 429 || (err.message && err.message.includes('429'));
+                    const is413 = status === 413 || (err.message && (err.message.includes('413') || err.message.includes('Request too large')));
+                    const is404 = status === 404 || (err.message && (err.message.includes('model_not_found') || err.message.includes('does not exist')));
+
+                    if (is404) {
+                        console.warn(`⚠️ Model "${modelName}" not found on Groq. Trying next fallback model...`);
+                        break;
                     }
-                    console.warn(`⏳ Groq Whisper rate limit (429). Bounded retry ${attempt + 1}/${maxRetries} after ${delayMs}ms...`);
-                    await new Promise(res => setTimeout(res, delayMs));
-                    continue;
+
+                    if (is413) {
+                        console.warn(`⚠️ Groq model "${modelName}" duration/rate limit exceeded (413 ASPH). Trying fallback...`);
+                        break;
+                    }
+
+                    if (is429 && attempt < 2) {
+                        const retryAfterHeader = err.headers?.['retry-after'] || err.response?.headers?.['retry-after'];
+                        let delayMs = 1500 * Math.pow(2, attempt);
+                        if (retryAfterHeader) {
+                            const parsed = parseFloat(retryAfterHeader);
+                            if (!isNaN(parsed) && parsed > 0 && parsed <= 10) {
+                                delayMs = Math.ceil(parsed * 1000);
+                            }
+                        }
+                        console.warn(`⏳ Groq Whisper rate limit (429). Bounded retry ${attempt + 1}/2 after ${delayMs}ms...`);
+                        await new Promise(res => setTimeout(res, delayMs));
+                        continue;
+                    }
+                    break;
                 }
-                throw err;
             }
         }
         throw lastError;
     };
 
-    // ── Tier A: Single Direct Pass (Files <= 20 MB, or pre-compressed <= 20 MB) ──
-    let effectiveFilePath = filePath;
-    let effectiveFileSize = fileSizeBytes;
+    // Determine actual or probed audio duration
+    const probedDuration = getAudioDuration(filePath);
+    const isDurationShort = probedDuration !== null ? probedDuration <= 600 : false;
+    const isSizeSmall = fileSizeBytes <= 18 * 1024 * 1024;
+    const canDoSinglePass = isDurationShort && isSizeSmall;
+
     let tempCompressedPath = null;
 
-    if (fileSizeBytes > GROQ_MAX_BYTES && (ext === '.m4a' || ext === '.mp3' || ext === '.wav')) {
-        console.log(`🎙️ Oversized audio (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Running fast 16kHz mono voice compression pass...`);
-        const comp = compressForWhisper(filePath);
-        if (comp && comp.sizeBytes <= GROQ_MAX_BYTES) {
-            effectiveFilePath = comp.compressedPath;
-            effectiveFileSize = comp.sizeBytes;
-            tempCompressedPath = comp.compressedPath;
-            console.log(`✅ Pre-compression succeeded: ${(effectiveFileSize / (1024 * 1024)).toFixed(2)} MB is within safe single-call ceiling.`);
-        } else if (comp) {
-            console.log(`ℹ️ Compressed size (${(comp.sizeBytes / (1024 * 1024)).toFixed(2)} MB) still exceeds 20 MB. Proceeding to multi-chunk segmentation.`);
-            try { fs.unlinkSync(comp.compressedPath); } catch (_) {}
-        }
-    }
-
     try {
-        if (effectiveFileSize <= GROQ_MAX_BYTES) {
+        // ── Tier A: Single Direct Pass (Files strictly <= 10 mins AND <= 18 MB) ──
+        if (canDoSinglePass) {
             try {
-                console.log(`🎙️ Transcribing with Whisper Large-v3 directly (size: ${(effectiveFileSize / (1024 * 1024)).toFixed(2)} MB)...`);
-                const groqUploadFile = await toFile(fs.createReadStream(effectiveFilePath), path.basename(effectiveFilePath));
-                const data = await callGroqWithRetry(() => ({
-                    file: groqUploadFile,
-                    model: 'whisper-large-v3',
-                    response_format: 'verbose_json'
-                }), 2);
+                console.log(`🎙️ Transcribing short audio directly (${probedDuration ? probedDuration.toFixed(1) + 's' : (fileSizeBytes / (1024 * 1024)).toFixed(2) + ' MB'})...`);
+                const groqUploadFile = await toFile(fs.createReadStream(filePath), path.basename(filePath));
+                let data = null;
+                try {
+                    data = await callGroqWhisper(groqUploadFile, 'whisper-large-v3-turbo');
+                } catch (groqErr) {
+                    console.warn(`⚠️ Groq direct transcription failed: ${groqErr.message}. Checking Gemini fallback...`);
+                    if (geminiKey) {
+                        data = await transcribeChunkWithGemini(filePath);
+                    } else {
+                        throw groqErr;
+                    }
+                }
 
-            let fullText = sanitizeTranscriptEchoes((data.text || '').trim());
-            const rawSegs = Array.isArray(data.segments) ? data.segments : [];
-            const duration = data.duration || (rawSegs.length > 0 ? rawSegs[rawSegs.length - 1].end : 0);
+                if (data && (data.text || (typeof data === 'string' && data.length > 0))) {
+                    const fullText = sanitizeTranscriptEchoes((data.text || data || '').trim());
+                    const rawSegs = Array.isArray(data.segments) ? data.segments : [];
+                    const duration = data.duration || probedDuration || (rawSegs.length > 0 ? rawSegs[rawSegs.length - 1].end : 0);
 
-            const segments = rawSegs.map((seg, idx) => ({
-                id: `seg_${idx + 1}`,
-                start: seg.start,
-                end: seg.end,
-                timestamp: formatTs(seg.start),
-                timestamp_end: formatTs(seg.end),
-                text: (seg.text || '').trim(),
-                speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher'
-            }));
+                    const segments = rawSegs.length > 0 ? rawSegs.map((seg, idx) => ({
+                        id: `seg_${idx + 1}`,
+                        start: seg.start,
+                        end: seg.end,
+                        timestamp: formatTs(seg.start),
+                        timestamp_end: formatTs(seg.end),
+                        text: (seg.text || '').trim(),
+                        speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher'
+                    })) : [
+                        {
+                            id: 'seg_1',
+                            start: 0,
+                            end: duration,
+                            timestamp: formatTs(0),
+                            timestamp_end: formatTs(duration),
+                            text: fullText,
+                            speaker: 'Teacher'
+                        }
+                    ];
 
-            if (fullText.length >= 5) {
-                console.log(`✅ Whisper Large-v3 direct transcription successful (${fullText.length} chars, ${duration.toFixed(1)}s, 1 chunk)!`);
-                return {
-                    text: fullText,
-                    rawText: fullText,
-                    segments: segments,
-                    duration: duration,
-                    duration_formatted: formatTs(duration),
-                    language: data.language || 'en',
-                    model: 'whisper-large-v3',
-                    chunks_count: 1
-                };
+                    if (fullText.length >= 5) {
+                        console.log(`✅ Direct transcription successful (${fullText.length} chars, ${duration.toFixed(1)}s, 1 chunk)!`);
+                        return {
+                            text: fullText,
+                            rawText: fullText,
+                            segments: segments,
+                            duration: duration,
+                            duration_formatted: formatTs(duration),
+                            language: data.language || 'en',
+                            model: 'whisper-large-v3-turbo',
+                            chunks_count: 1
+                        };
+                    }
+                }
+            } catch (singlePassErr) {
+                console.warn('⚠️ Direct transcription failed, escalating to universal chunking pass:', singlePassErr.message);
             }
-        } catch (groqErr) {
-            console.error('❌ Whisper Large-v3 Direct Transcription Error:', groqErr.message || groqErr);
-            throw groqErr;
         }
-    }
 
-    // ── Tier B: Frame Chunking Pass for Oversized Files (> 20 MB) ────────────
-    if (ext === '.mp3' || ext === '.m4a') {
+        // ── Tier B: Universal Multi-Hour Chunking Pass (Files > 10 mins or > 18 MB, up to 4 Hours) ──
+        console.log(`🎙️ Multi-Hour / Oversized Audio (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB, duration: ${probedDuration ? probedDuration.toFixed(1) + 's' : 'probing...'}). Slicing into clean 10-minute 16kHz mono chunks...`);
+
         let chunks = [];
         try {
+            chunks = segmentAudioUniversal(filePath, {
+                segmentTimeSeconds: 600, // 10 minutes per chunk (~3.6 MB at 48k mono AAC)
+                outputDir: path.dirname(filePath)
+            });
+        } catch (segmentErr) {
+            console.error('❌ SegmentAudioUniversal error:', segmentErr.message);
+            // Fallback for MP3
             if (ext === '.mp3') {
-                // Preserved pure-JS MP3 chunker intact
-                console.log(`🎙️ Oversized MP3 lecture (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Slicing into clean MPEG-frame chunks...`);
                 chunks = chunkMp3(filePath, {
-                    targetChunkBytes: 18 * 1024 * 1024,
+                    targetChunkBytes: 10 * 1024 * 1024,
                     overlapSeconds: 2.0,
                     outputDir: path.dirname(filePath)
                 });
-            } else if (ext === '.m4a') {
-                // Stream-copy segmentation for M4A without re-encoding quality loss
-                console.log(`🎙️ Oversized M4A lecture (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Slicing with stream-copy segmentation...`);
-                chunks = chunkM4a(filePath, {
-                    segmentTimeSeconds: 600, // 10-minute segments (~9-12 MB)
-                    outputDir: path.dirname(filePath)
+            } else {
+                throw segmentErr;
+            }
+        }
+
+        if (!chunks || chunks.length === 0) {
+            throw new Error('Audio segmentation produced 0 valid chunks.');
+        }
+
+        console.log(`📦 Sliced lecture into ${chunks.length} clean chunks for bounded STT processing.`);
+
+        const allSegments = [];
+        const textParts = [];
+        let cumulativeDuration = 0;
+
+        const maxConcurrency = Math.max(1, parseInt(process.env.WHISPER_CONCURRENCY, 10) || 2);
+        const poolSize = Math.min(maxConcurrency, chunks.length);
+        console.log(`🎙️ [Multi-Hour STT] Launching bounded transcription for ${chunks.length} chunks (concurrency: ${poolSize}, max: ${maxConcurrency})...`);
+
+        const chunkResults = new Array(chunks.length);
+        let nextChunkIndex = 0;
+
+        const workers = Array.from({ length: poolSize }, async (_, workerId) => {
+            while (true) {
+                const currentIndex = nextChunkIndex++;
+                if (currentIndex >= chunks.length) break;
+
+                const chunk = chunks[currentIndex];
+                const chunkNum = currentIndex + 1;
+                console.log(`🎙️ [Worker ${workerId + 1}] Transcribing Chunk ${chunkNum}/${chunks.length} (${(chunk.sizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
+
+                let chunkText = '';
+                let chunkSegs = [];
+                let chunkDuration = chunk.durationEstimate || 600;
+                let transcribed = false;
+
+                // 1. Try Groq Whisper Large-v3-turbo / Large-v3
+                if (groqKey) {
+                    try {
+                        const chunkUploadFile = await toFile(fs.createReadStream(chunk.filePath), path.basename(chunk.filePath));
+                        const chunkData = await callGroqWhisper(chunkUploadFile, 'whisper-large-v3-turbo');
+                        chunkText = sanitizeTranscriptEchoes((chunkData.text || '').trim());
+                        chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
+                        chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : chunkDuration);
+                        transcribed = true;
+                        console.log(`✅ [Groq Whisper][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} transcribed (${chunkText.length} chars, ${chunkDuration.toFixed(1)}s)`);
+                    } catch (groqErr) {
+                        console.warn(`⚠️ [Groq Whisper][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} Groq error (${groqErr.message}). Escalating to Gemini fallback...`);
+                    }
+                }
+
+                // 2. Gemini Multi-modal Audio Fallback if Groq failed or quota exhausted
+                if (!transcribed && geminiKey) {
+                    try {
+                        console.log(`✨ [Gemini STT][Worker ${workerId + 1}] Transcribing Chunk ${chunkNum}/${chunks.length} with Gemini Multimodal AI...`);
+                        const geminiRes = await transcribeChunkWithGemini(chunk.filePath);
+                        if (geminiRes && geminiRes.text) {
+                            chunkText = sanitizeTranscriptEchoes(geminiRes.text.trim());
+                            chunkSegs = [];
+                            transcribed = true;
+                            console.log(`✅ [Gemini STT][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} transcribed (${chunkText.length} chars)`);
+                        }
+                    } catch (geminiErr) {
+                        console.error(`❌ [Gemini STT][Worker ${workerId + 1}] Chunk ${chunkNum} failed with Gemini:`, geminiErr.message);
+                    }
+                }
+
+                if (!transcribed) {
+                    console.warn(`⚠️ Could not transcribe chunk ${chunkNum}. Continuing with remaining chunks.`);
+                }
+
+                chunkResults[currentIndex] = { chunk, chunkText, chunkSegs, chunkDuration, i: currentIndex };
+            }
+        });
+
+        await Promise.all(workers);
+
+        // Assemble chunks in exact chronological order with boundary deduplication & monotonic timestamps
+        for (let i = 0; i < chunkResults.length; i++) {
+            if (!chunkResults[i]) continue;
+            const { chunk, chunkText, chunkSegs, chunkDuration } = chunkResults[i];
+            const chunkNum = i + 1;
+            const chunkStartTimeOffset = chunk.startTimeOffset !== undefined ? chunk.startTimeOffset : cumulativeDuration;
+
+            // Boundary deduplication
+            let filteredSegs = chunkSegs;
+            if (i > 0 && textParts.length > 0 && chunkSegs.length > 0) {
+                const prevChunkEndText = textParts[textParts.length - 1].slice(-150).toLowerCase();
+                filteredSegs = chunkSegs.filter((seg, segIdx) => {
+                    if (segIdx < 3 && seg.start < 3.0) {
+                        const cleanSeg = (seg.text || '').trim().toLowerCase();
+                        if (cleanSeg.length > 8 && prevChunkEndText.includes(cleanSeg)) {
+                            console.log(`🔄 Deduplicated overlapping boundary segment in Chunk ${chunkNum}: "${seg.text}"`);
+                            return false;
+                        }
+                    }
+                    return true;
                 });
             }
 
-            console.log(`📦 Sliced into ${chunks.length} clean chunks for Whisper Large-v3 processing.`);
-
-            // Hard safety check: verify every single generated chunk is strictly < 20 MB before calling Whisper
-            for (const c of chunks) {
-                if (c.sizeBytes > 20 * 1024 * 1024) {
-                    throw new Error(`Chunk ${path.basename(c.filePath)} (${(c.sizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds the 20 MB safety ceiling.`);
-                }
-            }
-
-            const allSegments = [];
-            const textParts = [];
-            let cumulativeDuration = 0;
-
-            // Bounded concurrency worker pool (WHISPER_CONCURRENCY || 2)
-            // Caps simultaneous Groq in-flight requests to prevent 429 rate limit storms
-            // and allocates results at chunkResults[currentIndex] to preserve exact original chronological order.
-            const maxConcurrency = Math.max(1, parseInt(process.env.WHISPER_CONCURRENCY, 10) || 2);
-            const poolSize = Math.min(maxConcurrency, chunks.length);
-            console.log(`🎙️ [Whisper Large-v3] Launching bounded transcription for ${chunks.length} chunks (concurrency: ${poolSize}, max: ${maxConcurrency})...`);
-
-            const chunkResults = new Array(chunks.length);
-            let nextChunkIndex = 0;
-
-            const workers = Array.from({ length: poolSize }, async (_, workerId) => {
-                while (true) {
-                    const currentIndex = nextChunkIndex++;
-                    if (currentIndex >= chunks.length) break;
-
-                    const chunk = chunks[currentIndex];
-                    const chunkNum = currentIndex + 1;
-                    console.log(`🎙️ [Whisper Large-v3][Worker ${workerId + 1}] Transcribing Chunk ${chunkNum}/${chunks.length} (${(chunk.sizeBytes / (1024 * 1024)).toFixed(2)} MB)...`);
-
-                    const chunkUploadFile = await toFile(fs.createReadStream(chunk.filePath), path.basename(chunk.filePath));
-                    const chunkData = await callGroqWithRetry(() => ({
-                        file: chunkUploadFile,
-                        model: 'whisper-large-v3',
-                        response_format: 'verbose_json'
-                    }), 2);
-
-                    const chunkText = sanitizeTranscriptEchoes((chunkData.text || '').trim());
-                    const chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
-                    const chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : 0);
-
-                    console.log(`✅ [Whisper Large-v3][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} transcribed: ${chunkText.length} chars, ${chunkDuration.toFixed(1)}s, ${chunkSegs.length} segments`);
-                    chunkResults[currentIndex] = { chunk, chunkText, chunkSegs, chunkDuration, i: currentIndex };
-                }
-            });
-
-            await Promise.all(workers);
-
-            // Assemble chunks in original chronological order with boundary deduplication
-            for (let i = 0; i < chunkResults.length; i++) {
-                const { chunk, chunkText, chunkSegs, chunkDuration } = chunkResults[i];
-                const chunkNum = i + 1;
-
-                // Deduplicate boundary overlap text with previous chunk
-                let filteredSegs = chunkSegs;
-                if (i > 0 && textParts.length > 0) {
-                    const prevChunkEndText = textParts[textParts.length - 1].slice(-150).toLowerCase();
-                    filteredSegs = chunkSegs.filter((seg, segIdx) => {
-                        if (segIdx < 3 && seg.start < 3.0) {
-                            const cleanSeg = (seg.text || '').trim().toLowerCase();
-                            if (cleanSeg.length > 8 && prevChunkEndText.includes(cleanSeg)) {
-                                console.log(`🔄 Deduplicated overlapping boundary segment in Chunk ${chunkNum}: "${seg.text}"`);
-                                return false;
-                            }
-                        }
-                        return true;
-                    });
-                }
-
-                // Offset timestamps monotonically by actual previous cumulative audio duration
+            // Offset timestamps monotonically by actual previous cumulative audio duration or chunk offset
+            if (filteredSegs.length > 0) {
                 const offsetSegs = filteredSegs.map((seg) => {
-                    const adjustedStart = Math.max(0, seg.start + cumulativeDuration);
-                    const adjustedEnd = Math.max(adjustedStart, seg.end + cumulativeDuration);
+                    const adjustedStart = Math.max(0, seg.start + chunkStartTimeOffset);
+                    const adjustedEnd = Math.max(adjustedStart, seg.end + chunkStartTimeOffset);
                     return {
                         id: `seg_${allSegments.length + 1}`,
                         start: adjustedStart,
@@ -371,46 +426,51 @@ const transcribeAudioWithTimestamps = async (filePath) => {
                         speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher'
                     };
                 });
-
                 allSegments.push(...offsetSegs);
-                if (chunkText.length > 0) {
-                    textParts.push(chunkText);
-                }
-
-                cumulativeDuration += chunkDuration;
-
-                // Immediate cleanup of chunk file
-                try { fs.unlinkSync(chunk.filePath); } catch (_) {}
+            } else if (chunkText.length > 0) {
+                allSegments.push({
+                    id: `seg_${allSegments.length + 1}`,
+                    start: chunkStartTimeOffset,
+                    end: chunkStartTimeOffset + chunkDuration,
+                    timestamp: formatTs(chunkStartTimeOffset),
+                    timestamp_end: formatTs(chunkStartTimeOffset + chunkDuration),
+                    text: chunkText,
+                    speaker: 'Teacher'
+                });
             }
 
-            const fullText = textParts.join(' ').trim();
-            if (fullText.length >= 5) {
-                console.log(`🎉 [Whisper Large-v3] Complete lecture reassembled: ${fullText.length} characters across ${chunks.length} chunks, total duration: ${cumulativeDuration.toFixed(1)}s (${formatTs(cumulativeDuration)})`);
-                return {
-                    text: fullText,
-                    rawText: fullText,
-                    segments: allSegments,
-                    duration: cumulativeDuration,
-                    duration_formatted: formatTs(cumulativeDuration),
-                    language: 'en',
-                    model: 'whisper-large-v3',
-                    chunks_count: chunks.length
-                };
+            if (chunkText.length > 0) {
+                textParts.push(chunkText);
             }
-        } catch (chunkErr) {
-            console.error('❌ Whisper Large-v3 Chunked Transcription Error:', chunkErr.message || chunkErr);
-            // Cleanup any remaining chunk files
-            for (const c of chunks) {
-                try { if (fs.existsSync(c.filePath)) fs.unlinkSync(c.filePath); } catch (_) {}
-            }
-            throw chunkErr;
+
+            cumulativeDuration = Math.max(cumulativeDuration + chunkDuration, chunkStartTimeOffset + chunkDuration);
+
+            // Immediate cleanup of chunk file
+            try { if (fs.existsSync(chunk.filePath)) fs.unlinkSync(chunk.filePath); } catch (_) {}
         }
-    }
 
-    // For unsupported audio formats that exceed 20MB
-    const overLimitMsg = `File ${path.basename(filePath)} (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds Whisper limit (20 MB). Oversized chunking is supported for .mp3 and .m4a.`;
-    console.error(`❌ ${overLimitMsg}`);
-    throw new Error(overLimitMsg);
+        const fullText = textParts.join(' ').trim();
+        const finalDuration = probedDuration || cumulativeDuration;
+
+        if (fullText.length >= 5) {
+            console.log(`🎉 [Multi-Hour STT] Complete lecture reassembled: ${fullText.length} characters across ${chunks.length} chunks, total duration: ${finalDuration.toFixed(1)}s (${formatTs(finalDuration)})`);
+            return {
+                text: fullText,
+                rawText: fullText,
+                segments: allSegments,
+                duration: finalDuration,
+                duration_formatted: formatTs(finalDuration),
+                language: 'en',
+                model: 'whisper-large-v3-turbo',
+                chunks_count: chunks.length
+            };
+        } else {
+            throw new Error('Transcription yielded insufficient text from audio recording.');
+        }
+
+    } catch (err) {
+        console.error('❌ Audio Transcription Error:', err.message || err);
+        throw err;
     } finally {
         if (tempCompressedPath) {
             try { if (fs.existsSync(tempCompressedPath)) fs.unlinkSync(tempCompressedPath); } catch (_) {}

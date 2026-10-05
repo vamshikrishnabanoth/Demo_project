@@ -42,7 +42,7 @@ const DEFAULT_CONFIG = {
 };
 
 /**
- * 1. ACADEMIC RELEVANCE GUARDRAIL (Per-Input Noise Filtering)
+ * 1. ACADEMIC RELEVANCE GUARDRAIL (Per-Input Noise & Non-Academic Filtering)
  * Evaluates academic and technical density of individual source inputs (0.00 to 1.00)
  */
 function computeAcademicDensityScore(text, sourceName = '') {
@@ -53,9 +53,25 @@ function computeAcademicDensityScore(text, sourceName = '') {
   const cleaned = text.trim();
   const noiseRegex = /\b(office hours|zoom link|late submission policy|contact phone)\b/gi;
   const noiseMatches = (cleaned.match(noiseRegex) || []).length;
+  if (noiseMatches >= 3) {
+    return { score: 0.20, isAcademic: false, reason: 'Administrative noise or contact details' };
+  }
 
-  const isAcademic = noiseMatches < 3;
-  return { score: 0.95, isAcademic };
+  // Use DepthAnalyzer to verify genuine academic/curricular substance and filter movie/fiction dialogue
+  try {
+    const depthAnalyzer = require('./evidence/depthAnalyzer');
+    const analysis = depthAnalyzer.analyzeLecture(cleaned);
+    if (!analysis.isAcademic) {
+      return {
+        score: 0.10,
+        isAcademic: false,
+        reason: analysis.reason || 'Non-academic or fictional narrative content detected.'
+      };
+    }
+    return { score: (analysis.lectureDepth?.score || 95) / 100, isAcademic: true };
+  } catch (err) {
+    return { score: 0.90, isAcademic: true };
+  }
 }
 
 class LightweightConceptGraph {
@@ -331,9 +347,7 @@ async function generateMCQPipeline(reqPayload, config = DEFAULT_CONFIG) {
     }
   });
 
-  if (validAcademicInputs.length === 0 && content && typeof content === 'string' && content.trim().length > 0) {
-    validAcademicInputs.push({ name: 'Provided Source Content', content: content.trim(), densityScore: 0.95 });
-  }
+
 
   if (validAcademicInputs.length === 0 && excludedInputs.length > 0) {
     const excludedNames = excludedInputs.map(i => i.name).join(', ');

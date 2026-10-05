@@ -161,6 +161,41 @@ function copyChunkSlice(inFd, outPath, startOffset, endOffset) {
 }
 
 /**
+ * Accurately extracts audio duration in seconds using FFmpeg probe.
+ * Returns duration in seconds (e.g. 7956.4) or null if unable to determine.
+ * 
+ * @param {string} filePath - Absolute path to audio file
+ * @returns {number|null} Duration in seconds
+ */
+function getAudioDuration(filePath) {
+    if (!fs.existsSync(filePath)) return null;
+    try {
+        const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+        const { execSync } = require('child_process');
+        let output = '';
+        try {
+            output = execSync(`"${ffmpeg.path}" -i "${filePath}" 2>&1`, {
+                encoding: 'utf8',
+                timeout: 10000
+            });
+        } catch (err) {
+            output = (err.stdout ? err.stdout.toString() : '') + (err.stderr ? err.stderr.toString() : '') + (err.message || '');
+        }
+
+        const match = output.match(/Duration:\s*(\d+):(\d+):(\d+(\.\d+)?)/);
+        if (match) {
+            const hours = parseInt(match[1], 10);
+            const minutes = parseInt(match[2], 10);
+            const seconds = parseFloat(match[3]);
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+    } catch (e) {
+        console.warn('⚠️ [AudioDuration] FFmpeg probe error:', e.message);
+    }
+    return null;
+}
+
+/**
  * Chunks an MP3 file into valid MP3 sub-files with configurable target size and temporal overlap.
  * Uses streaming file descriptor operations with 64KB buffers to avoid loading large files into memory.
  * 
@@ -282,14 +317,6 @@ function chunkMp3(inputPath, options = {}) {
 
 /**
  * Fast stream-copy segmentation for M4A (AAC) audio files using ffmpeg.
- * Slices directly on AAC frame boundaries without re-encoding, ensuring no re-encoding quality loss.
- * Enforces that every chunk is strictly verified to be < 20 MB before returning.
- * 
- * @param {string} inputPath - Absolute path to the original M4A file
- * @param {Object} options
- * @param {number} options.segmentTimeSeconds - Duration per segment (default 600s = 10 mins, typically ~9-12 MB for speech)
- * @param {string} options.outputDir - Directory to save generated chunk files
- * @returns {Array<{ chunkIndex: number, filePath: string, sizeBytes: number, isFinal: boolean }>}
  */
 function chunkM4a(inputPath, options = {}) {
     const ffmpeg = require('@ffmpeg-installer/ffmpeg');
@@ -325,11 +352,8 @@ function chunkM4a(inputPath, options = {}) {
     for (let i = 0; i < files.length; i++) {
         const fullPath = path.join(outputDir, files[i]);
         const stats = fs.statSync(fullPath);
-        // Ignore tiny trailing silence fragments (< 2KB)
         if (stats.size > 2048) {
-            // HARD SAFETY CEILING: verify every chunk is strictly < 20 MB before returning
             if (stats.size > 20 * 1024 * 1024) {
-                // Clean up any generated chunks
                 for (const c of files) {
                     try { fs.unlinkSync(path.join(outputDir, c)); } catch (_) {}
                 }
@@ -354,11 +378,108 @@ function chunkM4a(inputPath, options = {}) {
 }
 
 /**
- * Fast mono voice pre-compression pass for Whisper Large-v3.
+ * Universal Multi-Hour Audio Segmenter for Whisper & Gemini STT.
+ * Segments ANY audio format (.mp3, .m4a, .wav, .webm, .ogg, .aac, .flac) up to 4+ hours
+ * into clean 10-minute (600s) 16kHz mono 48kbps chunks (~3.6 MB each).
+ * 
+ * Guarantees:
+ *  - Every chunk duration <= 600s (far under Groq's 7,200s ASPH limit)
+ *  - Every chunk file size <= 4 MB (far under Groq's 25 MB file limit)
+ *  - 16kHz mono audio (native Whisper optimal acoustic format)
+ *  - Exact monotonic timestamp offsets calculated per chunk
+ * 
+ * @param {string} inputPath - Absolute path to audio file
+ * @param {Object} options
+ * @param {number} [options.segmentTimeSeconds=600] - Duration in seconds per segment
+ * @param {string} [options.outputDir] - Output directory for chunk files
+ * @returns {Array<{ chunkIndex: number, filePath: string, sizeBytes: number, startTimeOffset: number, durationEstimate: number, isFinal: boolean }>}
+ */
+function segmentAudioUniversal(inputPath, options = {}) {
+    const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+    const { execSync } = require('child_process');
+
+    const segmentSeconds = options.segmentTimeSeconds || 600; // 10 minutes per chunk
+    const outputDir = options.outputDir || path.dirname(inputPath);
+    const baseName = `speech_seg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+    const pattern = path.join(outputDir, `${baseName}_%03d.m4a`);
+
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const startTime = Date.now();
+    console.log(`🎙️ [UniversalAudioChunker] Slicing ${path.basename(inputPath)} into ${segmentSeconds}s 16kHz mono voice chunks...`);
+
+    let sliceSucceeded = false;
+    try {
+        execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -vn -ar 16000 -ac 1 -c:a aac -b:a 48k -f segment -segment_time ${segmentSeconds} -reset_timestamps 1 "${pattern}"`, {
+            stdio: ['ignore', 'pipe', 'pipe'],
+            timeout: 300000 // 5 minutes max for slicing 4-hour audio
+        });
+        sliceSucceeded = true;
+    } catch (err) {
+        console.warn(`⚠️ [UniversalAudioChunker] AAC segment failed (${err.message}). Trying MP3 segment fallback...`);
+        const mp3Pattern = path.join(outputDir, `${baseName}_%03d.mp3`);
+        try {
+            execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -vn -ar 16000 -ac 1 -c:a libmp3lame -b:a 48k -f segment -segment_time ${segmentSeconds} -reset_timestamps 1 "${mp3Pattern}"`, {
+                stdio: ['ignore', 'pipe', 'pipe'],
+                timeout: 300000
+            });
+            sliceSucceeded = true;
+        } catch (mp3Err) {
+            console.error('❌ [UniversalAudioChunker] MP3 segment fallback also failed:', mp3Err.message);
+        }
+    }
+
+    const files = fs.readdirSync(outputDir)
+        .filter(f => f.startsWith(baseName) && (f.endsWith('.m4a') || f.endsWith('.mp3')))
+        .sort();
+
+    if (!sliceSucceeded || files.length === 0) {
+        // Fallback to pure-JS chunkMp3 if input is MP3
+        const ext = path.extname(inputPath).toLowerCase();
+        if (ext === '.mp3') {
+            console.log('ℹ️ Falling back to streaming pure-JS MP3 chunker...');
+            return chunkMp3(inputPath, {
+                targetChunkBytes: 10 * 1024 * 1024,
+                overlapSeconds: 1.5,
+                outputDir
+            });
+        }
+        throw new Error(`Audio segmentation produced 0 chunk files for ${path.basename(inputPath)}.`);
+    }
+
+    const chunks = [];
+    for (let i = 0; i < files.length; i++) {
+        const fullPath = path.join(outputDir, files[i]);
+        const stats = fs.statSync(fullPath);
+        if (stats.size > 2048) { // Ignore tiny empty silence fragments
+            chunks.push({
+                chunkIndex: chunks.length + 1,
+                filePath: fullPath,
+                sizeBytes: stats.size,
+                startTimeOffset: i * segmentSeconds,
+                durationEstimate: segmentSeconds,
+                isFinal: false
+            });
+        } else {
+            try { fs.unlinkSync(fullPath); } catch (_) {}
+        }
+    }
+
+    if (chunks.length > 0) {
+        chunks[chunks.length - 1].isFinal = true;
+    }
+
+    const totalChunksMB = (chunks.reduce((acc, c) => acc + c.sizeBytes, 0) / (1024 * 1024)).toFixed(2);
+    console.log(`📦 [UniversalAudioChunker] Sliced into ${chunks.length} clean chunks in ${((Date.now() - startTime) / 1000).toFixed(1)}s (Total chunks size: ${totalChunksMB} MB).`);
+
+    return chunks;
+}
+
+/**
+ * Fast mono voice pre-compression pass for Whisper models.
  * Downsamples audio to 16kHz mono 48kbps AAC.
- * Whisper internally processes 16kHz mono log-Mel spectrograms, so this downsampling
- * preserves full acoustic speech fidelity while reducing file size by 60-70%,
- * allowing lectures up to ~55 minutes to be transcribed in a single API call (< 20MB).
  *
  * @param {string} inputPath
  * @param {Object} options
@@ -374,7 +495,7 @@ function compressForWhisper(inputPath, options = {}) {
         const startTime = Date.now();
         execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -vn -ar 16000 -ac 1 -c:a aac -b:a 48k "${targetPath}"`, {
             stdio: ['ignore', 'pipe', 'pipe'],
-            timeout: 120000
+            timeout: 180000
         });
         const stats = fs.statSync(targetPath);
         console.log(`⚡ [AudioOptimizer] Compressed ${path.basename(inputPath)} in ${((Date.now() - startTime) / 1000).toFixed(1)}s -> ${(stats.size / (1024 * 1024)).toFixed(2)} MB`);
@@ -389,13 +510,66 @@ function compressForWhisper(inputPath, options = {}) {
     }
 }
 
+/**
+ * Transcribes an audio chunk using Google Gemini (gemini-1.5-flash / gemini-2.0-flash)
+ * as a robust fallback when Groq hits ASPH limits or 429 rate limits.
+ *
+ * @param {string} filePath - Path to audio chunk
+ * @returns {Promise<{ text: string, segments: Array } | null>}
+ */
+async function transcribeChunkWithGemini(filePath) {
+    const geminiKey = process.env.GEMINI_API_KEY;
+    if (!geminiKey) return null;
+
+    try {
+        const { GoogleGenerativeAI } = require('@google/generative-ai');
+        const genAI = new GoogleGenerativeAI(geminiKey.trim());
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+        const buffer = fs.readFileSync(filePath);
+        const base64Audio = buffer.toString('base64');
+        const ext = path.extname(filePath).toLowerCase();
+        let mimeType = 'audio/mp4';
+        if (ext === '.mp3') mimeType = 'audio/mp3';
+        else if (ext === '.wav') mimeType = 'audio/wav';
+        else if (ext === '.ogg') mimeType = 'audio/ogg';
+        else if (ext === '.webm') mimeType = 'audio/webm';
+        else if (ext === '.aac' || ext === '.m4a') mimeType = 'audio/mp4';
+
+        const prompt = `You are an expert speech recognition and lecture transcription engine.
+Transcribe every word spoken in this audio lecture verbatim with highest precision.
+Do not summarize. Do not skip any sentences or technical details. Do not output anything other than the exact transcribed speech text.`;
+
+        const response = await model.generateContent([
+            prompt,
+            {
+                inlineData: {
+                    mimeType: mimeType,
+                    data: base64Audio
+                }
+            }
+        ]);
+
+        const text = response?.response?.text() || '';
+        return {
+            text: text.trim(),
+            segments: []
+        };
+    } catch (geminiErr) {
+        console.warn('⚠️ [Gemini STT Fallback] Failed:', geminiErr.message);
+        return null;
+    }
+}
+
 module.exports = {
     chunkMp3,
     chunkM4a,
+    segmentAudioUniversal,
     compressForWhisper,
+    getAudioDuration,
+    transcribeChunkWithGemini,
     parseFrameHeader,
     findNextFrameSync,
     findFrameSyncInFd,
     copyChunkSlice
 };
-
