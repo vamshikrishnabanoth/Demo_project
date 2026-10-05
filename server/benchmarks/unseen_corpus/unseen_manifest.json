@@ -1,0 +1,47 @@
+{
+  "experiment": "MODULE_3_GENERALIZATION_UNSEEN_LECTURE_BENCHMARK",
+  "status": "FROZEN_PRE_RUN",
+  "frozen_timestamp": "2026-10-04T16:49:03.232Z",
+  "pipeline_version": "Module 2 Frozen v4 Prototype (agent2Generator v4 + agent3Evaluator v4)",
+  "target_spec": {
+    "total_requested": 15,
+    "per_lecture_requested": 5,
+    "distribution": {
+      "Easy": 1,
+      "Medium": 3,
+      "Hard": 1
+    }
+  },
+  "packages": [
+    {
+      "id": "UNSEEN_01",
+      "name": "Computer Networks: TCP Congestion Control & Avoidance",
+      "domain": "Computer Networks",
+      "modality": "VOICE_PLUS_MATERIAL",
+      "file": "UNSEEN_01_networks.json",
+      "sha256": "3bffc467fb1041c40f41d795bd8b25404bdcb25117bea386df0921a1c042f2d9",
+      "voice_length_words": 342,
+      "material_length_words": 284
+    },
+    {
+      "id": "UNSEEN_02",
+      "name": "Database Systems: Concurrency Control & Two-Phase Locking",
+      "domain": "Database Systems",
+      "modality": "VOICE_PLUS_MATERIAL",
+      "file": "UNSEEN_02_databases.json",
+      "sha256": "278b6439f32da60e212fbad808426e950b3673b2f6444223800aca31f8578f38",
+      "voice_length_words": 346,
+      "material_length_words": 234
+    },
+    {
+      "id": "UNSEEN_03",
+      "name": "Distributed Systems: Consensus & Raft Leader Election",
+      "domain": "Distributed Systems",
+      "modality": "VOICE_ONLY",
+      "file": "UNSEEN_03_distributed.json",
+      "sha256": "70660c7fab0bf12bdc4facd1596162eb0fd4c170b2afae771577ed84c6ce0555",
+      "voice_length_words": 531,
+      "material_length_words": 0
+    }
+  ]
+}

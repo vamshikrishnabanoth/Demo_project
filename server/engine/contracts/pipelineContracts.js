@@ -78,6 +78,31 @@ const STAGE_CONTRACTS = {
   }
 };
 
+/**
+ * Module 2: MCQ Option Set Contract (v3.2.0)
+ * Formal thresholds and error/warning codes for deterministic option validation.
+ */
+const OPTION_SET_CONTRACT = {
+  contractVersion: "3.2.0",
+  name: 'MCQ Option Set Contract',
+  requiredCount: 4,
+  minOptionLength: 2,
+  lengthDisparityRatioThreshold: 2.5,
+  lengthDisparityAbsoluteCharMin: 20,
+  similarityWarningThreshold: 0.80,
+  hardRejectionCodes: {
+    INVALID_OPTION_COUNT: 'INVALID_OPTION_COUNT',
+    EMPTY_OR_SHORT_OPTION: 'EMPTY_OR_SHORT_OPTION',
+    EXACT_DUPLICATE_OPTION: 'EXACT_DUPLICATE_OPTION',
+    SUPERFICIAL_VARIANT_OPTION: 'SUPERFICIAL_VARIANT_OPTION',
+    SUBSET_COMMAND_CHAIN: 'SUBSET_COMMAND_CHAIN',
+    EXTREME_LENGTH_IMBALANCE: 'EXTREME_LENGTH_IMBALANCE'
+  },
+  warningCodes: {
+    HIGH_SEMANTIC_SIMILARITY: 'HIGH_SEMANTIC_SIMILARITY'
+  }
+};
+
 function validateStageContract(stageKey, contextData) {
   const contract = STAGE_CONTRACTS[stageKey];
   if (!contract) return true;
@@ -102,5 +127,6 @@ function validateStageContract(stageKey, contextData) {
 module.exports = {
   PIPELINE_CONTRACT_VERSION,
   STAGE_CONTRACTS,
+  OPTION_SET_CONTRACT,
   validateStageContract
 };

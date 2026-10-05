@@ -1,0 +1,2155 @@
+{
+  "timestamp": "2026-10-05T14:27:02.301Z",
+  "totalRequested": 50,
+  "perDomainCount": 10,
+  "systemA": {
+    "totalAttempted": 50,
+    "totalDelivered": 50,
+    "optionViolationsCount": 4,
+    "groundingDeficitCount": 0,
+    "recallCount": 31,
+    "operationalCount": 4,
+    "uncertainCount": 15,
+    "usableCount": 4,
+    "cognitiveBreakdown": {
+      "RECALL": 31,
+      "COMPARE": 1,
+      "TRACE": 0,
+      "EXPLAIN_MECHANISM": 3,
+      "DIAGNOSE": 0,
+      "UNCERTAIN": 15
+    },
+    "perDomain": {
+      "OS": {
+        "attempted": 10,
+        "optionViolations": 2,
+        "groundingDeficit": 0,
+        "recall": 7,
+        "operational": 0,
+        "uncertain": 3,
+        "usable": 0,
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "Which hardware component translates virtual addresses to physical memory frames?",
+            "options": [
+              "CPU",
+              "Memory Management Unit (MMU)",
+              "Operating System Kernel",
+              "Translation Lookaside Buffer (TLB)"
+            ],
+            "correctAnswer": "Memory Management Unit (MMU)",
+            "explanation": "The lecture states that the MMU performs the translation of virtual addresses to physical frames.",
+            "audit": {
+              "violations": [
+                "EXTREME_LENGTH_IMBALANCE_RATIO_11.33_DIFF_31"
+              ],
+              "hasContractViolation": true,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Interrogative ask targets factual definition, naming, or property/format specification, without operational execution state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "During page fault handling, which step occurs immediately after the page is swapped into RAM?",
+            "options": [
+              "Update the page table entry",
+              "Restart the faulting instruction",
+              "Transfer control to the kernel",
+              "Find a free physical frame"
+            ],
+            "correctAnswer": "Update the page table entry",
+            "explanation": "The source describes the sequence: swap page from backing store into RAM, update the page table entry, then restart the instruction.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "Which page replacement algorithm suffers from Belady's anomaly?",
+            "options": [
+              "Least Recently Used (LRU)",
+              "First-In-First-Out (FIFO)",
+              "Optimal (OPT)",
+              "Clock (Second Chance)"
+            ],
+            "correctAnswer": "First-In-First-Out (FIFO)",
+            "explanation": "The lecture notes that FIFO suffers from Belady's anomaly, while LRU approximates optimal replacement.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "Which IPC mechanism allows communication between unrelated processes and appears as a file in the filesystem?",
+            "options": [
+              "Ordinary pipe",
+              "Named pipe (FIFO)",
+              "Shared memory",
+              "Message queue"
+            ],
+            "correctAnswer": "Named pipe (FIFO)",
+            "explanation": "The document explains that named pipes (FIFOs) are created as files in the filesystem and can be used by unrelated processes.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "In message‑passing IPC, which type of communication requires both processes to know each other’s names?",
+            "options": [
+              "Direct communication",
+              "Indirect communication",
+              "Synchronous communication",
+              "Asynchronous communication"
+            ],
+            "correctAnswer": "Direct communication",
+            "explanation": "Direct communication uses names (IDs) of the processes; indirect communication uses mailboxes.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "Which buffering type has no queue and requires the sender to wait until the receiver is ready?",
+            "options": [
+              "Zero capacity buffering",
+              "Bounded capacity buffering",
+              "Unbounded capacity buffering",
+              "Circular buffering"
+            ],
+            "correctAnswer": "Zero capacity buffering",
+            "explanation": "Zero capacity buffering means no queue; the sender must wait until the receiver is ready.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 7,
+            "questionText": "In a UNIX ordinary pipe, which file descriptor corresponds to the read end?",
+            "options": [
+              "fd[0]",
+              "fd[1]",
+              "fd[2]",
+              "fd[3]"
+            ],
+            "correctAnswer": "fd[0]",
+            "explanation": "The pipe() system call creates two descriptors: fd[0] for reading and fd[1] for writing.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 8,
+            "questionText": "Which IPC mechanism is fastest but requires careful synchronization to avoid data races?",
+            "options": [
+              "Message passing",
+              "Shared memory",
+              "Named pipes",
+              "Semaphores"
+            ],
+            "correctAnswer": "Shared memory",
+            "explanation": "Shared memory provides the fastest communication, but processes must coordinate to avoid concurrent writes.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 9,
+            "questionText": "Which of the following is NOT a type of cooperating process?",
+            "options": [
+              "Independent process",
+              "Cooperating process",
+              "Both A and B",
+              "None of the above"
+            ],
+            "correctAnswer": "Independent process",
+            "explanation": "Independent processes do not share data and are not cooperating; cooperating processes are the ones that communicate.",
+            "audit": {
+              "violations": [
+                "GIVEAWAY_OPTION"
+              ],
+              "hasContractViolation": true,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 10,
+            "questionText": "In a bidirectional pipe implementation using two pipes, which statement is true?",
+            "options": [
+              "One pipe is used for both directions",
+              "Two pipes are required, one for each direction",
+              "Pipes cannot be used for bidirectional communication",
+              "Bidirectional pipes are built‑in"
+            ],
+            "correctAnswer": "Two pipes are required, one for each direction",
+            "explanation": "The lecture explains that normal pipes are unidirectional; to achieve two‑way communication, two separate pipes are used.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          }
+        ]
+      },
+      "DBMS": {
+        "attempted": 10,
+        "optionViolations": 0,
+        "groundingDeficit": 0,
+        "recall": 7,
+        "operational": 0,
+        "uncertain": 3,
+        "usable": 0,
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "What is the primary purpose of concurrency control in database systems?",
+            "options": [
+              "Increase storage capacity",
+              "Prevent anomalies like dirty reads",
+              "Speed up queries",
+              "Simplify transaction syntax"
+            ],
+            "correctAnswer": "Prevent anomalies like dirty reads",
+            "explanation": "Concurrency control prevents anomalies such as dirty reads, non-repeatable reads, and lost updates that arise when transactions interleave.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "Which lock type is used for reading data?",
+            "options": [
+              "Exclusive X",
+              "Shared S",
+              "Read-only R",
+              "None"
+            ],
+            "correctAnswer": "Shared S",
+            "explanation": "Shared locks (S) are acquired before a read operation and are compatible with other shared locks.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "In the lock compatibility matrix, which statement is true?",
+            "options": [
+              "Multiple X locks can coexist on the same data item",
+              "S lock is incompatible with X lock",
+              "S lock is incompatible with S lock",
+              "X lock is compatible with all locks"
+            ],
+            "correctAnswer": "S lock is incompatible with X lock",
+            "explanation": "Shared locks can coexist, but an exclusive lock cannot be granted if any other transaction holds any lock on that item.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "What defines the Growing Phase in 2PL?",
+            "options": [
+              "Acquire locks, may release any lock",
+              "Acquire locks, may not release any lock",
+              "Release locks, may acquire new locks",
+              "Release locks, may not acquire new locks"
+            ],
+            "correctAnswer": "Acquire locks, may not release any lock",
+            "explanation": "In the Growing Phase, a transaction may obtain new locks but is forbidden from releasing any lock.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "What is the consequence of a transaction releasing an exclusive lock before committing in basic 2PL?",
+            "options": [
+              "No effect",
+              "Cascading aborts",
+              "Faster commit",
+              "Automatic rollback"
+            ],
+            "correctAnswer": "Cascading aborts",
+            "explanation": "If a transaction releases an exclusive lock and another transaction reads the updated data, a subsequent abort of the first transaction forces the second to abort as well, causing cascading aborts.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "Strict 2PL requires that exclusive locks be held until:",
+            "options": [
+              "The first lock release",
+              "Transaction termination",
+              "Commit only",
+              "Abort only"
+            ],
+            "correctAnswer": "Transaction termination",
+            "explanation": "Strict 2PL mandates that all exclusive locks be retained until the transaction commits or aborts, preventing other transactions from reading uncommitted data.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 7,
+            "questionText": "Which property does Strict 2PL guarantee?",
+            "options": [
+              "Faster execution",
+              "No cascading aborts",
+              "Unlimited concurrency",
+              "No need for locks"
+            ],
+            "correctAnswer": "No cascading aborts",
+            "explanation": "Strict 2PL eliminates cascading aborts by ensuring no other transaction can read uncommitted data, guaranteeing recoverable, cascade-free schedules.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 8,
+            "questionText": "Rigorous 2PL retains all locks until commit. What is a direct consequence?",
+            "options": [
+              "No serializability",
+              "Commit order equals serializability order",
+              "Cascading aborts increase",
+              "Only shared locks retained"
+            ],
+            "correctAnswer": "Commit order equals serializability order",
+            "explanation": "Because all shared and exclusive locks are held until commit, the serializability order of transactions directly matches their commit order.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 9,
+            "questionText": "Which of the following is NOT a conflicting operation pair?",
+            "options": [
+              "Read-Write",
+              "Write-Read",
+              "Write-Write",
+              "Read-Read"
+            ],
+            "correctAnswer": "Read-Read",
+            "explanation": "Conflicting operations involve different transactions accessing the same data item with at least one write; Read-Read does not conflict.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 10,
+            "questionText": "In 2PL, when does the Shrinking Phase begin?",
+            "options": [
+              "Before any lock acquisition",
+              "At transaction start",
+              "When first lock is released",
+              "After all locks are acquired"
+            ],
+            "correctAnswer": "When first lock is released",
+            "explanation": "The Shrinking Phase starts the moment the first lock is released; thereafter, no new locks can be acquired.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          }
+        ]
+      },
+      "NETWORKS": {
+        "attempted": 10,
+        "optionViolations": 1,
+        "groundingDeficit": 0,
+        "recall": 5,
+        "operational": 1,
+        "uncertain": 4,
+        "usable": 1,
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "What is the initial value of the congestion window (cwnd) when a TCP connection enters Slow Start?",
+            "options": [
+              "1 MSS",
+              "2 MSS",
+              "0 MSS",
+              "10 MSS"
+            ],
+            "correctAnswer": "1 MSS",
+            "explanation": "The lecture states that during Slow Start, cwnd starts at one Maximum Segment Size (1 MSS).",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "During Slow Start, how does cwnd change over each round‑trip time (RTT)?",
+            "options": [
+              "It doubles",
+              "It increases by one MSS",
+              "It halves",
+              "It stays constant"
+            ],
+            "correctAnswer": "It doubles",
+            "explanation": "The source explains that for every ACK received cwnd increases by one MSS, which results in cwnd doubling each RTT during Slow Start.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "When cwnd reaches or exceeds the slow‑start threshold (ssthresh), what transition occurs?",
+            "options": [
+              "TCP switches to Congestion Avoidance",
+              "TCP switches back to Slow Start",
+              "TCP enters Fast Recovery",
+              "TCP initiates a retransmission timeout"
+            ],
+            "correctAnswer": "TCP switches to Congestion Avoidance",
+            "explanation": "The transcript notes that once cwnd ≥ ssthresh, TCP switches from Slow Start into Congestion Avoidance.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "In Congestion Avoidance, how does cwnd increase per RTT?",
+            "options": [
+              "Add one MSS",
+              "Double cwnd",
+              "Halve cwnd",
+              "Add two MSS"
+            ],
+            "correctAnswer": "Add one MSS",
+            "explanation": "The document states that in Congestion Avoidance, cwnd increases by one MSS per RTT (additive increase).",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "What event triggers Fast Retransmit in TCP?",
+            "options": [
+              "Retransmission timeout (RTO)",
+              "Three duplicate ACKs",
+              "Four duplicate ACKs",
+              "Packet loss detected by sequence number"
+            ],
+            "correctAnswer": "Three duplicate ACKs",
+            "explanation": "The lecture explains that upon receiving three duplicate ACKs, the sender triggers Fast Retransmit.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "In TCP Tahoe, after receiving three duplicate ACKs, what happens to cwnd?",
+            "options": [
+              "cwnd is reset to 1 MSS",
+              "cwnd is set to ssthresh + 3 MSS",
+              "cwnd is halved",
+              "cwnd remains unchanged"
+            ],
+            "correctAnswer": "cwnd is reset to 1 MSS",
+            "explanation": "The source contrasts Tahoe and Reno, noting that Tahoe always cuts cwnd back to 1 MSS after three duplicate ACKs.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 7,
+            "questionText": "In TCP Reno, after three duplicate ACKs, cwnd is set to ssthresh + 3 MSS. What is the purpose of this adjustment?",
+            "options": [
+              "To empty the pipeline",
+              "To maintain the pipeline and avoid unnecessary emptying",
+              "To reduce throughput",
+              "To double the window size"
+            ],
+            "correctAnswer": "To maintain the pipeline and avoid unnecessary emptying",
+            "explanation": "The document explains that Reno’s Fast Recovery keeps the pipeline from emptying by setting cwnd to ssthresh + 3 MSS.",
+            "audit": {
+              "violations": [
+                "EXTREME_LENGTH_IMBALANCE_RATIO_2.75_DIFF_35"
+              ],
+              "hasContractViolation": true,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 8,
+            "questionText": "When a retransmission timeout (RTO) occurs, what happens to ssthresh?",
+            "options": [
+              "It is set to cwnd / 2",
+              "It is set to cwnd",
+              "It is set to 1 MSS",
+              "It remains unchanged"
+            ],
+            "correctAnswer": "It is set to cwnd / 2",
+            "explanation": "Both Tahoe and Reno set ssthresh to max(cwnd / 2, 2 MSS) upon an RTO, effectively halving it.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 9,
+            "questionText": "During Fast Recovery, how does cwnd change with each additional duplicate ACK?",
+            "options": [
+              "It increases by 1 MSS",
+              "It decreases by 1 MSS",
+              "It stays the same",
+              "It doubles"
+            ],
+            "correctAnswer": "It increases by 1 MSS",
+            "explanation": "The slide material states that in Fast Recovery, each additional duplicate ACK inflates cwnd by 1 MSS.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 10,
+            "questionText": "Which of the following is NOT a manifestation of congestion according to the lecture?",
+            "options": [
+              "Long queuing delays in router buffers",
+              "Packet loss due to buffer overflow",
+              "High throughput",
+              "Router buffer overflow"
+            ],
+            "correctAnswer": "High throughput",
+            "explanation": "The document lists long queuing delays and packet loss due to buffer overflow as manifestations of congestion; high throughput is not a manifestation.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          }
+        ]
+      },
+      "DISTRIBUTED": {
+        "attempted": 10,
+        "optionViolations": 1,
+        "groundingDeficit": 0,
+        "recall": 5,
+        "operational": 1,
+        "uncertain": 4,
+        "usable": 1,
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "Which three subproblems does Raft decompose distributed consensus into?",
+            "options": [
+              "Leader election, log replication, and safety",
+              "Leader election, fault tolerance, and load balancing",
+              "Log replication, state machine replication, and sharding",
+              "Safety, liveness, and scalability"
+            ],
+            "correctAnswer": "Leader election, log replication, and safety",
+            "explanation": "The lecture states that Raft decomposes consensus into three distinct subproblems: leader election, log replication, and safety.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "What RPC does the Raft leader use as a heartbeat to followers?",
+            "options": [
+              "AppendEntries",
+              "RequestVote",
+              "InstallSnapshot",
+              "Ping"
+            ],
+            "correctAnswer": "AppendEntries",
+            "explanation": "Heartbeats are described as empty AppendEntries Remote Procedure Calls sent periodically by the leader.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "In Raft, a candidate becomes leader only after receiving votes from:",
+            "options": [
+              "A strict majority of nodes",
+              "All nodes in the cluster",
+              "At least half of the nodes (rounded down)",
+              "Any single node"
+            ],
+            "correctAnswer": "A strict majority of nodes",
+            "explanation": "The candidate must win votes from a strict majority—more than N/2, i.e., floor(N/2)+1—to become leader.",
+            "audit": {
+              "violations": [
+                "EXTREME_LENGTH_IMBALANCE_RATIO_2.73_DIFF_26"
+              ],
+              "hasContractViolation": true,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "In a five‑node Raft cluster, what is the minimum number of votes required for a majority?",
+            "options": [
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "correctAnswer": "3",
+            "explanation": "For N=5, floor(N/2)+1 = floor(2.5)+1 = 2+1 = 3 votes constitute a strict majority.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "If all Raft nodes used identical fixed election timeouts, what failure mode is most likely to occur?",
+            "options": [
+              "Split‑vote deadlock",
+              "Increased network latency",
+              "Higher throughput",
+              "Reduced data consistency"
+            ],
+            "correctAnswer": "Split‑vote deadlock",
+            "explanation": "Identical fixed timeouts cause nodes to time out simultaneously, leading to split votes and an infinite election loop.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "How does Raft prevent the split‑vote deadlock described above?",
+            "options": [
+              "By using randomized election timeouts",
+              "By forcing nodes to wait a fixed back‑off period",
+              "By electing multiple leaders simultaneously",
+              "By disabling elections after a timeout"
+            ],
+            "correctAnswer": "By using randomized election timeouts",
+            "explanation": "Raft randomizes each node's election timeout (typically 150‑300 ms) so one node times out first and can collect a majority before others.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 7,
+            "questionText": "What is the typical range for Raft's randomized election timeout?",
+            "options": [
+              "150 to 300 milliseconds",
+              "10 to 20 milliseconds",
+              "500 to 1000 milliseconds",
+              "1 to 5 seconds"
+            ],
+            "correctAnswer": "150 to 300 milliseconds",
+            "explanation": "The lecture notes that nodes randomly choose a timeout from a predefined interval, typically 150‑300 ms.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 8,
+            "questionText": "According to the Leader Completeness property, when must a voter deny its vote to a candidate?",
+            "options": [
+              "If the candidate's last log term is lower than the voter's, or terms are equal but the candidate's log is shorter",
+              "If the candidate's term number is higher than the voter's",
+              "If the candidate's log length is longer than the voter's",
+              "If the candidate's node ID is numerically smaller"
+            ],
+            "correctAnswer": "If the candidate's last log term is lower than the voter's, or terms are equal but the candidate's log is shorter",
+            "explanation": "The safety rule requires a voter to reject a candidate whose log is less up‑to‑date, i.e., lower term or equal term with shorter length.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 9,
+            "questionText": "What does a follower do when it stops receiving heartbeats from the leader?",
+            "options": [
+              "It times out and transitions to the candidate state",
+              "It immediately becomes the new leader",
+              "It shuts down permanently",
+              "It ignores the missing heartbeats and remains a follower"
+            ],
+            "correctAnswer": "It times out and transitions to the candidate state",
+            "explanation": "When heartbeats stop, the follower's election timer expires, causing it to become a candidate.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 10,
+            "questionText": "Which RPC does a Raft candidate broadcast to request votes from other nodes?",
+            "options": [
+              "RequestVote",
+              "AppendEntries",
+              "InstallSnapshot",
+              "Heartbeat"
+            ],
+            "correctAnswer": "RequestVote",
+            "explanation": "Candidates broadcast RequestVote RPCs to solicit votes from every other node in the cluster.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          }
+        ]
+      },
+      "SWE": {
+        "attempted": 10,
+        "optionViolations": 0,
+        "groundingDeficit": 0,
+        "recall": 7,
+        "operational": 2,
+        "uncertain": 1,
+        "usable": 2,
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "According to the source material, what is the primary function of the `git config --global user.name` command?",
+            "options": [
+              "To initialize a new local repository in the current directory",
+              "To provide Git with the username associated with commits for tracking purposes",
+              "To check the installed version of Git on the system",
+              "To stage all modified files in the working directory"
+            ],
+            "correctAnswer": "To provide Git with the username associated with commits for tracking purposes",
+            "explanation": "The lecture states that `git config` is used to give details to the Git tool so it knows who made specific changes. The specific command `git config --global user.name` is used to set the username.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "In the Git workflow described, which command is used to move changes from the Working Directory to the Staging Area?",
+            "options": [
+              "git commit",
+              "git status",
+              "git add",
+              "git init"
+            ],
+            "correctAnswer": "git add",
+            "explanation": "The lecture explicitly states that `git add` is used to move project changes from the working directory into the staging area, where you decide which changes to save. The document confirms this as moving modified files into the index/staging area.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "Direct terminology recognition or factual component identification.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "What is the result of executing the `git init` command in a directory?",
+            "options": [
+              "It creates a remote repository on GitHub",
+              "It converts the directory into a local Git repository by creating a hidden `.git` folder",
+              "It commits all existing files in the directory to the repository",
+              "It initializes the user's global Git configuration"
+            ],
+            "correctAnswer": "It converts the directory into a local Git repository by creating a hidden `.git` folder",
+            "explanation": "The lecture demonstrates that `git init` creates an empty repository and results in a hidden `.git` folder appearing in the directory, indicating it is now a Git repository. The document confirms `git init` initializes a new `.git` directory structure.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "According to the document, how does Git store commit data?",
+            "options": [
+              "As delta differences between consecutive versions",
+              "As full tree snapshots addressed by 40-character SHA-1 hashes",
+              "As binary files stored in the working directory",
+              "As text logs appended to a central history file"
+            ],
+            "correctAnswer": "As full tree snapshots addressed by 40-character SHA-1 hashes",
+            "explanation": "The document explicitly states under 'Git Architecture' that commits store full tree snapshots addressed by 40-character SHA-1 hashes, not delta differences.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "What is the difference between `git fetch` and `git pull` as described in the source evidence?",
+            "options": [
+              "`git fetch` merges remote changes into the local branch, while `git pull` only downloads them",
+              "`git fetch` downloads remote commits without altering local files, while `git pull` executes fetch followed by merge",
+              "`git pull` is used to push local commits to the remote, while `git fetch` is used to pull them",
+              "There is no difference; both commands perform identical operations"
+            ],
+            "correctAnswer": "`git fetch` downloads remote commits without altering local files, while `git pull` executes fetch followed by merge",
+            "explanation": "The document defines `git fetch` as downloading remote commits and branches without altering local working files. It defines `git pull` as automatically executing `git fetch` followed by `git merge FETCH_HEAD`.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "In the context of Git branching, what is a 'Fast-Forward Merge'?",
+            "options": [
+              "A merge that creates a synthetic commit with two parents",
+              "A merge that occurs when there is a conflict in identical lines",
+              "A merge that moves the branch pointer forward linearly when no divergence exists",
+              "A merge that resets the HEAD pointer to the previous commit"
+            ],
+            "correctAnswer": "A merge that moves the branch pointer forward linearly when no divergence exists",
+            "explanation": "The document lists 'Fast-Forward Merge' as moving the branch pointer forward linearly when no divergence exists, distinguishing it from a 3-Way Merge which creates a synthetic commit.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 7,
+            "questionText": "Which command is used to inspect the differences between the working tree, staging area, and HEAD?",
+            "options": [
+              "git diff",
+              "git status",
+              "git log",
+              "git show"
+            ],
+            "correctAnswer": "git status",
+            "explanation": "The document states that `git status` inspects differences between the working tree, staging area, and HEAD. The lecture also confirms `git status` tells you what changes have been made and which have not been saved.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "UNCERTAIN",
+              "demandReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.",
+              "isOperational": false,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 8,
+            "questionText": "What is the effect of the `git reset --hard HEAD~1` command?",
+            "options": [
+              "It moves the HEAD pointer back but leaves the index and working directory untouched",
+              "It moves HEAD and un-stages files but leaves the working tree intact",
+              "It creates a new forward-moving commit that inverts the targeted changes",
+              "It destructively resets HEAD, index, and working tree to the previous state"
+            ],
+            "correctAnswer": "It destructively resets HEAD, index, and working tree to the previous state",
+            "explanation": "The document explicitly defines `git reset --hard HEAD~1` as destructively resetting HEAD, index, and working tree to the previous state.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 9,
+            "questionText": "What is the purpose of the `git help <command>` command?",
+            "options": [
+              "To initialize a new repository with the specified name",
+              "To open the manual page providing syntax, options, and examples for the specified command",
+              "To check if the specified command is installed on the system",
+              "To revert the last commit associated with the specified command"
+            ],
+            "correctAnswer": "To open the manual page providing syntax, options, and examples for the specified command",
+            "explanation": "The lecture states that `git help` opens the manual page of Git and gives complete details including syntax, examples, and various options for the specific command.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          },
+          {
+            "index": 10,
+            "questionText": "According to the document, what is a 'Detached HEAD' state?",
+            "options": [
+              "A state where the HEAD pointer is deleted from the repository",
+              "A state where HEAD points directly to a commit hash rather than a named branch",
+              "A state where the working directory is separated from the staging area",
+              "A state where the remote origin is disconnected from the local repository"
+            ],
+            "correctAnswer": "A state where HEAD points directly to a commit hash rather than a named branch",
+            "explanation": "The document defines 'Detached HEAD' as the state where HEAD points directly to a commit hash rather than a named branch.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "RECALL",
+              "demandReasoning": "General descriptive concept query without operational comparison or concrete state.",
+              "isOperational": false,
+              "isRecall": true,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": false,
+              "isUsable": false
+            }
+          }
+        ]
+      }
+    }
+  },
+  "systemB": {
+    "totalAttempted": 50,
+    "totalDelivered": 30,
+    "optionViolationsCount": 0,
+    "groundingDeficitCount": 0,
+    "recallCount": 0,
+    "operationalCount": 30,
+    "uncertainCount": 0,
+    "usableCount": 30,
+    "cognitiveBreakdown": {
+      "RECALL": 0,
+      "COMPARE": 17,
+      "TRACE": 0,
+      "EXPLAIN_MECHANISM": 11,
+      "DIAGNOSE": 2,
+      "UNCERTAIN": 0
+    },
+    "perDomain": {
+      "OS": {
+        "attempted": 10,
+        "delivered": 6,
+        "optionViolations": 0,
+        "groundingDeficit": 0,
+        "recall": 0,
+        "operational": 6,
+        "uncertain": 0,
+        "usable": 6,
+        "pipelineStatus": "COMPLETED_WITH_PARTIAL_FULFILLMENT",
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "A process accesses virtual page 5, which is not currently loaded in physical memory. The MMU raises a page fault, the OS allocates free physical frame 12, updates the page‑table entry for page 5, and then restarts the instruction. After this sequence, what is the state of the page‑table entry for virtual page 5?",
+            "options": [
+              "The entry is marked valid but still contains the old frame number from before the fault.",
+              "The entry remains invalid, indicating the page is still not present in memory.",
+              "The entry is updated in the TLB only, while the page‑table entry stays unchanged.",
+              "The entry is marked valid and contains the physical frame number assigned during the fault handling."
+            ],
+            "correctAnswer": "The entry is marked valid and contains the physical frame number assigned during the fault handling.",
+            "explanation": "During page‑fault handling the OS selects a free physical frame, writes the mapping into the process's page table, and marks the entry as valid. Therefore the page‑table entry for virtual page 5 becomes valid and points to the newly allocated frame (frame 12).",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "DIAGNOSE",
+              "demandReasoning": "Requires causal diagnosis of concrete fault, hazard, degradation, or structural constraint.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "Given an identical page reference string and an initial allocation of three frames, both FIFO and LRU are evaluated. If the number of frames is increased to four, which statement correctly describes the expected change in page-fault behavior for the two algorithms?",
+            "options": [
+              "When the number of frames is increased, FIFO may incur more page faults, whereas LRU’s fault count cannot increase.",
+              "Only the optimal replacement algorithm can exhibit Belady’s anomaly, not FIFO or LRU.",
+              "Both FIFO and LRU always experience the same number of page faults regardless of frame count.",
+              "When the number of frames is increased, LRU may incur more page faults, whereas FIFO’s fault count cannot increase."
+            ],
+            "correctAnswer": "When the number of frames is increased, FIFO may incur more page faults, whereas LRU’s fault count cannot increase.",
+            "explanation": "FIFO suffers from Belady’s anomaly, meaning that adding more frames can paradoxically increase the number of page faults. LRU approximates the optimal algorithm and does not exhibit this anomaly, so its fault count will not increase when frames are added. Therefore, the correct statement is that FIFO may see more faults while LRU’s fault count cannot increase.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "Given two processes that must exchange a large array of data starting from the same initial state, which statement correctly compares the operational trade‑offs of using message passing versus shared memory?",
+            "options": [
+              "Shared memory lets the processes read/write the array directly, giving lower communication latency but requiring explicit synchronization to avoid race conditions.",
+              "Message passing automatically ensures data consistency without programmer intervention, making it faster than shared memory for large data transfers.",
+              "Message passing provides lower latency because messages bypass the kernel, and no synchronization is needed between the processes.",
+              "Shared memory eliminates the need for any synchronization because each process accesses its own private copy of the array."
+            ],
+            "correctAnswer": "Shared memory lets the processes read/write the array directly, giving lower communication latency but requiring explicit synchronization to avoid race conditions.",
+            "explanation": "Shared memory allows direct access to a common memory region, which reduces the overhead of copying data compared to message passing. However, because multiple processes can modify the same region, they must coordinate (e.g., using locks or semaphores) to prevent race conditions. Message passing incurs higher latency due to kernel mediation and still requires synchronization at the application level.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "Given two processes P and Q that both know each other's names and also share a mailbox M, which communication method will result in a dedicated link being automatically created between P and Q, and what is the consequence for message delivery latency compared to using the mailbox?",
+            "options": [
+              "Direct communication via names creates a dedicated link between P and Q, resulting in lower latency than indirect communication through a mailbox.",
+              "Direct communication via names uses a shared mailbox, increasing latency.",
+              "Indirect communication via mailbox allows only one process to send, preventing multiple senders.",
+              "Indirect communication via mailbox creates a dedicated link between P and Q, reducing latency."
+            ],
+            "correctAnswer": "Direct communication via names creates a dedicated link between P and Q, resulting in lower latency than indirect communication through a mailbox.",
+            "explanation": "In direct communication, processes use each other's names to establish a link that is created automatically, providing a direct path and lower latency. Indirect communication routes messages through a mailbox, which can introduce additional routing steps and higher latency.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "When a parent process creates an ordinary pipe and then forks a child, what happens to the pipe and how does the child use it to receive data written by the parent?",
+            "options": [
+              "The pipe is bidirectional, so the parent can read data from the child without a second pipe.",
+              "The pipe appears as a file in the file system, so unrelated processes can open it and communicate.",
+              "The child process inherits the pipe from the parent, allowing it to read data written by the parent.",
+              "The child process inherits the write‑end of the pipe, enabling it to write data back to the parent."
+            ],
+            "correctAnswer": "The child process inherits the pipe from the parent, allowing it to read data written by the parent.",
+            "explanation": "Ordinary pipes are unidirectional and are created before a fork. The child inherits the file descriptors for the pipe, so it can read from the read‑end while the parent writes to the write‑end. The pipe does not appear as a file on disk and cannot be used by unrelated processes.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "Given two unrelated processes that require bidirectional data exchange, compare the operational viability of using an ordinary pipe versus a named pipe (FIFO). Which statement correctly identifies the divergence in their capabilities under this shared requirement?",
+            "options": [
+              "Ordinary pipes support bidirectional flow between unrelated processes, while named pipes are restricted to unidirectional parent-child communication.",
+              "Ordinary pipes are limited to unidirectional communication between related processes, whereas named pipes enable controlled two-way communication between unrelated processes.",
+              "Both ordinary and named pipes require a parent-child relationship to establish a connection, but named pipes persist in the file system after creation.",
+              "Named pipes are confined to in-memory storage and cannot be accessed by multiple processes simultaneously, unlike ordinary pipes which appear as file system entries."
+            ],
+            "correctAnswer": "Ordinary pipes are limited to unidirectional communication between related processes, whereas named pipes enable controlled two-way communication between unrelated processes.",
+            "explanation": "The evidence states that ordinary pipes are for one-way communication between related processes (parent-child) and cannot be used by unrelated processes. In contrast, named pipes (FIFOs) are used for communication between unrelated processes and allow two-way communication in a controlled manner. Therefore, the correct comparison highlights the unidirectional/related constraint of ordinary pipes versus the bidirectional/unrelated capability of named pipes.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          }
+        ]
+      },
+      "DBMS": {
+        "attempted": 10,
+        "delivered": 6,
+        "optionViolations": 0,
+        "groundingDeficit": 0,
+        "recall": 0,
+        "operational": 6,
+        "uncertain": 0,
+        "usable": 6,
+        "pipelineStatus": "COMPLETED_WITH_PARTIAL_FULFILLMENT",
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "Given the schedule S: T1 reads A, T2 writes A, T1 writes B, T2 reads B, which statement correctly compares the conflict‑serializability of S with the idea that any schedule containing a write operation is automatically non‑serializable?",
+            "options": [
+              "Conflict‑serializability depends only on the number of transactions in the schedule, not on the order of their operations.",
+              "Any schedule that includes at least one write operation cannot be conflict‑serializable.",
+              "Schedule S is conflict‑serializable because its precedence graph is acyclic, allowing it to be transformed into the serial order T1 followed by T2.",
+              "Schedule S is not conflict‑serializable because the write‑read pair on item A can be swapped, which would break conflict equivalence."
+            ],
+            "correctAnswer": "Schedule S is conflict‑serializable because its precedence graph is acyclic, allowing it to be transformed into the serial order T1 followed by T2.",
+            "explanation": "The two conflicting pairs (T1:R(A) vs T2:W(A) and T1:W(B) vs T2:R(B)) produce an acyclic precedence graph (T1 → T2). Because the graph has no cycles, the schedule can be reordered by swapping only non‑conflicting adjacent operations into the serial order T1 then T2, satisfying the definition of conflict serializability. The other options misstate the rules: swapping conflicting operations is not allowed, the presence of a write does not by itself prevent serializability, and the order of operations—not just the transaction count—determines conflict serializability.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "Given a transaction T1 holds a shared lock on data item A, how does the system handle an incoming lock request from transaction T2 for the same data item?",
+            "options": [
+              "In Strict 2PL, exclusive locks are held until commit, so an exclusive lock request can be granted immediately even if shared locks exist.",
+              "An incoming shared lock request can be granted immediately, while an exclusive lock request must wait until all existing locks are released.",
+              "An incoming shared lock request must wait until all existing locks are released, whereas an exclusive lock request can be granted immediately.",
+              "An incoming exclusive lock request can be granted if any shared lock exists, while a shared lock request must wait."
+            ],
+            "correctAnswer": "An incoming shared lock request can be granted immediately, while an exclusive lock request must wait until all existing locks are released.",
+            "explanation": "When a transaction holds a shared lock, other transactions can acquire shared locks on the same data item concurrently. However, an exclusive lock request must wait until all existing locks (shared or exclusive) on that item are released, ensuring serializability under the lock compatibility matrix.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "In the context of the Two-Phase Locking (2PL) protocol, why does the restriction that a transaction cannot acquire new locks after it has released its first lock (the shrinking phase) ensure that the resulting schedule is conflict serializable?",
+            "options": [
+              "It prevents the formation of cycles in the precedence graph by ensuring that if transaction T1 waits for T2, T2 cannot subsequently wait for T1.",
+              "It forces transactions to execute in the exact order they were initiated, eliminating the need for any lock compatibility checks.",
+              "It guarantees that no two transactions can access the same data item simultaneously, regardless of whether the operations are reads or writes.",
+              "It ensures that all shared locks are converted to exclusive locks before any transaction commits, thereby preventing dirty reads."
+            ],
+            "correctAnswer": "It prevents the formation of cycles in the precedence graph by ensuring that if transaction T1 waits for T2, T2 cannot subsequently wait for T1.",
+            "explanation": "The 2PL protocol guarantees conflict serializability because the two-phase nature (growing then shrinking) prevents circular wait conditions. If T1 holds a lock that T2 needs, T1 is in the shrinking phase (or has finished growing) and cannot request new locks. Therefore, T2 cannot be waiting for a lock held by T1 while T1 is waiting for a lock held by T2, as T1 would have had to request that lock before releasing the one T2 needs. This structural constraint ensures the precedence graph remains acyclic.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "DIAGNOSE",
+              "demandReasoning": "Requires causal diagnosis of concrete fault, hazard, degradation, or structural constraint.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "In a basic 2PL schedule, if transaction T1 releases an exclusive lock on data item A during its shrinking phase and transaction T2 subsequently reads A, why does T1's eventual abort necessitate the abort of T2?",
+            "options": [
+              "T2 violated the growing phase rule by acquiring a lock on A after T1 had already released it.",
+              "T2's read operation caused a deadlock that forces the system to abort the transaction holding the most locks.",
+              "T2 read uncommitted data from T1, so T2's state is invalid and must be rolled back to maintain consistency.",
+              "T2 failed to acquire a shared lock before reading A, which is a mandatory prerequisite for any read operation in 2PL."
+            ],
+            "correctAnswer": "T2 read uncommitted data from T1, so T2's state is invalid and must be rolled back to maintain consistency.",
+            "explanation": "The evidence states that in basic 2PL, releasing an exclusive lock in the shrinking phase allows other transactions to read uncommitted data. If the original transaction (T1) aborts, the data it modified is rolled back, rendering any transaction (T2) that read that uncommitted data invalid. Therefore, T2 must also abort to prevent cascading inconsistencies. The other options incorrectly attribute the abort to phase violations, deadlocks, or missing shared locks, which are not the causal mechanism for cascading aborts described in the text.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "When a transaction releases an exclusive lock before it commits, why can cascading aborts occur under basic 2PL, and how does Strict 2PL prevent this situation?",
+            "options": [
+              "Strict 2PL prevents cascading aborts by allowing transactions to read uncommitted data but requiring a validation step before commit to detect conflicts.",
+              "Since Strict 2PL releases exclusive locks as soon as a transaction finishes its growing phase, other transactions may read the data early, which stops cascading aborts.",
+              "Because Strict 2PL forces a transaction to keep its exclusive locks until it commits or aborts, no other transaction can read its uncommitted writes, so a later abort cannot force another transaction to abort.",
+              "By converting all exclusive locks to shared locks during the shrinking phase, Strict 2PL ensures that any abort only affects the transaction that holds the lock."
+            ],
+            "correctAnswer": "Because Strict 2PL forces a transaction to keep its exclusive locks until it commits or aborts, no other transaction can read its uncommitted writes, so a later abort cannot force another transaction to abort.",
+            "explanation": "Strict 2PL requires a transaction to retain all exclusive (write) locks until it terminates (commit or abort). Consequently, no other transaction can read those uncommitted writes, eliminating the possibility that an abort of the first transaction forces a second transaction to abort—a cascading abort. The other options describe actions that do not occur in Strict 2PL: releasing locks early (option 2) is the opposite of the protocol, using a validation step (option 3) describes a different concurrency control method, and converting exclusive locks to shared locks (option 4) is not part of Strict 2PL.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "Given a transaction T1 that holds an exclusive lock on data item A and releases it during its shrinking phase, another transaction T2 reads A after the release. If T1 subsequently aborts, how do basic Two‑Phase Locking (2PL) and Strict 2PL differ in the required action for T2?",
+            "options": [
+              "In basic 2PL, T2 can safely commit, but in Strict 2PL, T2 must abort.",
+              "Both protocols force T2 to abort when T1 aborts.",
+              "In basic 2PL, T2 must abort, but in Strict 2PL, T2 can safely commit.",
+              "Both protocols allow T2 to commit regardless of T1’s outcome."
+            ],
+            "correctAnswer": "In basic 2PL, T2 must abort, but in Strict 2PL, T2 can safely commit.",
+            "explanation": "Basic 2PL permits a transaction to release an exclusive lock before committing, allowing other transactions to read the updated data. If the releasing transaction later aborts, the reading transaction has read uncommitted data and must also abort to preserve serializability. Strict 2PL delays releasing exclusive locks until the transaction terminates, preventing any other transaction from reading the updated data until the original transaction commits or aborts, thereby avoiding cascading aborts.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          }
+        ]
+      },
+      "NETWORKS": {
+        "attempted": 10,
+        "delivered": 6,
+        "optionViolations": 0,
+        "groundingDeficit": 0,
+        "recall": 0,
+        "operational": 6,
+        "uncertain": 0,
+        "usable": 6,
+        "pipelineStatus": "COMPLETED_WITH_PARTIAL_FULFILLMENT",
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "If the sender's congestion window (cwnd) is 4 MSS and it receives four ACKs during one round‑trip time, how does cwnd change after processing these ACKs in Slow Start versus Congestion Avoidance?",
+            "options": [
+              "In Slow Start cwnd grows to 5 MSS, while in Congestion Avoidance it grows to 8 MSS.",
+              "Both Slow Start and Congestion Avoidance increase cwnd by one MSS per ACK, so cwnd becomes 8 MSS in either case.",
+              "In Slow Start cwnd grows by one MSS per round‑trip, so it becomes 5 MSS, and in Congestion Avoidance it grows by one MSS per ACK, becoming 8 MSS.",
+              "In Slow Start cwnd grows to 8 MSS, while in Congestion Avoidance it grows only to 5 MSS."
+            ],
+            "correctAnswer": "In Slow Start cwnd grows to 8 MSS, while in Congestion Avoidance it grows only to 5 MSS.",
+            "explanation": "During Slow Start the sender adds one MSS for each ACK, so four ACKs increase cwnd from 4 MSS to 8 MSS (doubling). In Congestion Avoidance the increase is additive per round‑trip, i.e., one MSS per RTT, so after the same RTT cwnd becomes 5 MSS. The other options invert the mechanisms or misattribute the per‑ACK increase to Congestion Avoidance.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "When TCP has entered congestion avoidance (cwnd ≥ ssthresh) and no loss occurs during a round‑trip, how does the sender adjust cwnd and why?",
+            "options": [
+              "It adds one MSS for every ACK received, even during congestion avoidance, independent of round‑trip time.",
+              "It keeps cwnd unchanged until a loss is detected, then reduces it by half.",
+              "It adds one MSS to cwnd each round‑trip time, because congestion avoidance uses additive increase.",
+              "It doubles cwnd each round‑trip time, following the exponential growth of slow start."
+            ],
+            "correctAnswer": "It adds one MSS to cwnd each round‑trip time, because congestion avoidance uses additive increase.",
+            "explanation": "In congestion avoidance TCP follows AIMD. The additive increase part means that for each round‑trip time the congestion window is increased by exactly one Maximum Segment Size, regardless of how many packets were sent in that RTT. This behavior is stated in the lecture evidence: “the sender increases cwnd by only one MSS per round‑trip time, regardless of how many packets were sent.”",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "Assume a TCP sender is operating in Congestion Avoidance with a current cwnd of 10 MSS and ssthresh of 12 MSS. If the sender detects congestion via a Retransmission Timeout (RTO) rather than three duplicate ACKs, how does the resulting state transition and window adjustment differ from the response to three duplicate ACKs?",
+            "options": [
+              "RTO and 3 Dup ACKs both set ssthresh to 5 MSS, but RTO keeps cwnd at 10 MSS while 3 Dup ACKs resets cwnd to 1 MSS.",
+              "RTO sets cwnd to 5 MSS and ssthresh to 5 MSS, whereas 3 Dup ACKs resets cwnd to 1 MSS and ssthresh to 5 MSS.",
+              "RTO sets ssthresh to 12 MSS and cwnd to 1 MSS, whereas 3 Dup ACKs sets ssthresh to 5 MSS and cwnd to 10 MSS.",
+              "RTO resets cwnd to 1 MSS and ssthresh to 5 MSS, whereas 3 Dup ACKs maintains cwnd at 10 MSS and sets ssthresh to 5 MSS."
+            ],
+            "correctAnswer": "RTO resets cwnd to 1 MSS and ssthresh to 5 MSS, whereas 3 Dup ACKs maintains cwnd at 10 MSS and sets ssthresh to 5 MSS.",
+            "explanation": "Under the shared initial condition (cwnd=10, ssthresh=12), an RTO indicates severe congestion, triggering a reset to Slow Start: cwnd becomes 1 MSS and ssthresh becomes max(10/2, 2) = 5 MSS. In contrast, 3 Duplicate ACKs indicate isolated loss; for TCP Tahoe (implied by the standard comparison context in the evidence), ssthresh is halved to 5 MSS, but cwnd is not reset to 1 MSS (it typically moves to Fast Recovery, maintaining a window size related to the current cwnd, specifically cwnd = ssthresh + 3*MSS in Tahoe, or simply not resetting to 1 MSS as in RTO). The key operational divergence is that RTO forces a return to Slow Start (cwnd=1), while 3 Dup ACKs avoids this drastic reset, allowing for faster recovery.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "In a network scenario where multiple data sources transmit simultaneously, how does the operational cause of congestion differ from the operational cause of flow control limitations?",
+            "options": [
+              "Congestion is caused by packet loss in the transmission medium, while flow control is caused by the sender failing to acknowledge received data.",
+              "Congestion occurs when the round-trip time increases beyond the retransmission timeout, while flow control occurs when the sequence number wraps around.",
+              "Congestion is triggered by the sender's congestion window exceeding the slow start threshold, while flow control is triggered by the receiver's advertised window.",
+              "Congestion results from router buffer overflow due to aggregate input exceeding processing capacity, while flow control limits arise from receiver buffer saturation."
+            ],
+            "correctAnswer": "Congestion results from router buffer overflow due to aggregate input exceeding processing capacity, while flow control limits arise from receiver buffer saturation.",
+            "explanation": "The evidence explicitly defines congestion as occurring when data sources send faster than routers can process or queue, leading to buffer overflow. It also distinguishes this from flow control, which is described as being about the receiver buffer. The correct option accurately contrasts the network-side cause (router capacity) with the endpoint-side cause (receiver capacity).",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "When a retransmission timeout occurs while TCP is in Slow Start, why does TCP set ssthresh to half of the current cwnd and reset cwnd to 1 MSS?",
+            "options": [
+              "Because an RTO indicates a minor loss, TCP doubles the current cwnd to compute ssthresh and keeps cwnd unchanged.",
+              "Because the receiver's advertised window is full, TCP sets ssthresh equal to the receiver window and reduces cwnd to zero.",
+              "Because an RTO signals severe congestion, TCP halves the current cwnd to compute ssthresh and then resets cwnd to 1 MSS to restart Slow Start.",
+              "Because a triple duplicate ACK indicates congestion, TCP halves cwnd to set ssthresh but leaves cwnd at its previous value."
+            ],
+            "correctAnswer": "Because an RTO signals severe congestion, TCP halves the current cwnd to compute ssthresh and then resets cwnd to 1 MSS to restart Slow Start.",
+            "explanation": "An RTO means the sender received no ACKs, indicating severe congestion. TCP responds by cutting the sending rate: it sets ssthresh to half of the cwnd that existed at the timeout and resets cwnd to the minimum 1 MSS, thereby restarting Slow Start to probe the network capacity safely.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "Given an initial congestion window cwnd = 8 MSS while the sender is in Slow Start, after receiving three duplicate ACKs, which statement correctly compares the resulting ssthresh value and cwnd handling in TCP Reno versus TCP Tahoe?",
+            "options": [
+              "Tahoe sets ssthresh to max(cwnd/2, 2 MSS) = 4 MSS and leaves cwnd unchanged, while Reno resets cwnd to 1 MSS after fast retransmit.",
+              "Reno sets ssthresh to max(cwnd/2, 2 MSS) = 4 MSS and keeps cwnd at that value, while Tahoe also sets ssthresh to 4 MSS but then reduces cwnd to 1 MSS.",
+              "Reno sets ssthresh to cwnd + 3 MSS, resulting in 11 MSS, whereas Tahoe halves cwnd to obtain ssthresh of 4 MSS.",
+              "Both Reno and Tahoe compute ssthresh as max(cwnd/2, 2 MSS) = 4 MSS, but Reno additionally adds 2 MSS to ssthresh, giving 6 MSS."
+            ],
+            "correctAnswer": "Reno sets ssthresh to max(cwnd/2, 2 MSS) = 4 MSS and keeps cwnd at that value, while Tahoe also sets ssthresh to 4 MSS but then reduces cwnd to 1 MSS.",
+            "explanation": "Both TCP Reno and TCP Tahoe compute ssthresh as max(cwnd/2, 2 MSS). With cwnd = 8 MSS, ssthresh becomes 4 MSS for both. The key difference is that Tahoe resets cwnd to 1 MSS after fast retransmit, while Reno retains cwnd at the new ssthresh (4 MSS) and proceeds with Fast Recovery. Therefore the first option accurately captures the comparative behavior.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          }
+        ]
+      },
+      "DISTRIBUTED": {
+        "attempted": 10,
+        "delivered": 6,
+        "optionViolations": 0,
+        "groundingDeficit": 0,
+        "recall": 0,
+        "operational": 6,
+        "uncertain": 0,
+        "usable": 6,
+        "pipelineStatus": "COMPLETED_WITH_PARTIAL_FULFILLMENT",
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "Given a distributed system experiencing a network partition that isolates a subset of nodes from the majority, how does the operational behavior of a system prioritizing consistency differ from one prioritizing availability?",
+            "options": [
+              "The consistent system halts writes to prevent divergence, while the available system continues processing requests on isolated nodes.",
+              "The consistent system allows stale reads to maintain uptime, while the available system rejects all incoming requests during the partition.",
+              "The consistent system synchronizes all nodes via heartbeats, while the available system relies on leader election to resolve the split.",
+              "The consistent system drops messages to save bandwidth, while the available system reorders packets to ensure eventual delivery."
+            ],
+            "correctAnswer": "The consistent system halts writes to prevent divergence, while the available system continues processing requests on isolated nodes.",
+            "explanation": "According to the CAP Theorem, during a network partition, a system must choose between consistency and availability. A system choosing consistency (like a replicated state machine requiring consensus) must stop accepting writes to ensure all nodes agree on the state, effectively sacrificing availability for that partition. Conversely, a system choosing availability must continue to respond to requests, even if it means serving potentially stale or divergent data, thereby sacrificing strict consistency.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "In a Raft cluster where a follower has been receiving regular empty AppendEntries RPCs, contrast the operational state transition and subsequent action if the leader crashes versus if the leader remains active but sends a non-empty AppendEntries RPC containing new log entries.",
+            "options": [
+              "If the leader crashes, the follower deletes its local log to reset state; if the leader sends new entries, the follower forwards them to other nodes for consensus.",
+              "If the leader crashes, the follower immediately assumes the leader role without voting; if the leader sends new entries, the follower rejects them due to term mismatch.",
+              "In both cases, the follower remains passive and waits for the next heartbeat, as only explicit client requests trigger state changes.",
+              "If the leader crashes, the follower times out, increments its term, and broadcasts RequestVote RPCs; if the leader sends new entries, the follower appends them to its log and remains a follower."
+            ],
+            "correctAnswer": "If the leader crashes, the follower times out, increments its term, and broadcasts RequestVote RPCs; if the leader sends new entries, the follower appends them to its log and remains a follower.",
+            "explanation": "The evidence states that followers remain passive as long as they receive regular heartbeats (which are empty AppendEntries). If the leader crashes, heartbeats stop, causing the follower to time out, transition to candidate state, increment its term, and broadcast RequestVote RPCs. If the leader is active and sends non-empty AppendEntries (log entries), the follower processes them and remains in the follower state, as it is still receiving communication from the leader.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "In a Raft cluster of five servers, an election starts with all servers using the same election timeout, resulting in a split vote where no candidate obtains a majority. Compare the behavior when the cluster uses fixed election timeouts versus randomized election timeouts. Which statement correctly describes the effect of using randomized election timeouts in this situation?",
+            "options": [
+              "With randomized timeouts, one server is likely to time out first, become candidate, and can obtain a majority before the others time out, breaking the deadlock.",
+              "With fixed timeouts, the servers will wait longer before retrying, eventually allowing a majority to form without any randomness.",
+              "Raft relies on Paxos’s leader election mechanism, so changing the timeout strategy has no impact on split‑vote resolution.",
+              "Randomized timeouts cause all servers to wait the same maximum interval, ensuring they all start a new election simultaneously and resolve the split vote."
+            ],
+            "correctAnswer": "With randomized timeouts, one server is likely to time out first, become candidate, and can obtain a majority before the others time out, breaking the deadlock.",
+            "explanation": "Raft solves split‑vote deadlocks by assigning each server a random election timeout within a range (e.g., 150‑300 ms). This makes it highly probable that one server times out earlier, transitions to candidate, and gathers votes from the remaining followers before their timers expire, thus achieving a majority and ending the election loop. Fixed, identical timeouts would cause all servers to start new elections together, perpetuating the split vote. The other options either incorrectly claim fixed timeouts resolve the issue, misunderstand the effect of randomness, or mistakenly attribute the mechanism to Paxos.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "When a candidate wakes up after being disconnected and requests votes, why does a follower deny its vote?",
+            "options": [
+              "The follower denies the vote because the candidate’s log is less up-to-date—its last log term is lower, or if equal, its log length is shorter.",
+              "The follower grants the vote as long as the candidate has a majority of followers, regardless of log state.",
+              "The follower denies the vote because it has not received a heartbeat from the current leader, not because of log up-to-dateness.",
+              "The follower grants the vote because the candidate’s log is less up-to-date, assuming the follower prefers newer logs."
+            ],
+            "correctAnswer": "The follower denies the vote because the candidate’s log is less up-to-date—its last log term is lower, or if equal, its log length is shorter.",
+            "explanation": "Raft’s Leader Completeness property requires that a candidate’s log be at least as up‑to‑date as the voter’s. If the candidate’s last log term is lower, or the terms are equal but its log is shorter, the follower rejects the vote. This guarantees that any node that becomes leader contains all committed entries from previous terms.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "When a node in Raft receives a RequestVote RPC from a candidate, why does it deny the vote if the candidate’s log is less up-to-date than its own?",
+            "options": [
+              "Because the follower has not received a heartbeat from any leader, so it cannot vote.",
+              "Because the candidate has a higher term number, which automatically grants it the vote.",
+              "Because the candidate’s log is less up-to-date than the follower’s log, violating the Leader Completeness rule.",
+              "Because the follower is currently the leader and must refuse to vote for another leader."
+            ],
+            "correctAnswer": "Because the candidate’s log is less up-to-date than the follower’s log, violating the Leader Completeness rule.",
+            "explanation": "Raft’s Leader Completeness property requires that a candidate can only win a vote if its log is at least as up-to-date as the voter’s log. If the candidate’s log is behind, the voter denies the vote to prevent a stale leader from being elected, thereby preserving safety.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "In a five-node Raft cluster, if two followers time out simultaneously and initiate leader election, how does the vote distribution mechanism affect the system's ability to establish a unique leader compared to a scenario where only one follower times out?",
+            "options": [
+              "Simultaneous timeouts cause the cluster to elect the node with the lowest ID as leader, whereas a single timeout allows the first node to time out to become leader regardless of vote count.",
+              "Simultaneous timeouts cause a split vote that prevents any candidate from reaching the strict majority required for election, whereas a single timeout allows the candidate to secure the necessary votes.",
+              "Simultaneous timeouts result in both candidates receiving equal votes, forcing the system to randomly select a leader, while a single timeout guarantees immediate consensus without voting.",
+              "Simultaneous timeouts allow both candidates to become leaders temporarily, creating a dual-leader state, whereas a single timeout ensures only one node can ever hold the leader role."
+            ],
+            "correctAnswer": "Simultaneous timeouts cause a split vote that prevents any candidate from reaching the strict majority required for election, whereas a single timeout allows the candidate to secure the necessary votes.",
+            "explanation": "The evidence states that a candidate needs a strict majority (more than N/2, i.e., at least 3 votes in a 5-node cluster) to become leader. In the simultaneous timeout scenario described, votes are split (e.g., 2-2-1), meaning no candidate reaches the threshold of 3, thus preventing a unique leader from being established. In contrast, if only one follower times out, that candidate can solicit votes from the other four nodes, easily securing the required majority. This highlights the operational tradeoff and failure mode of split votes in Raft's leader election mechanism.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          }
+        ]
+      },
+      "SWE": {
+        "attempted": 10,
+        "delivered": 6,
+        "optionViolations": 0,
+        "groundingDeficit": 0,
+        "recall": 0,
+        "operational": 6,
+        "uncertain": 0,
+        "usable": 6,
+        "pipelineStatus": "COMPLETED_WITH_PARTIAL_FULFILLMENT",
+        "questions": [
+          {
+            "index": 1,
+            "questionText": "Given an initialized repository (S0) where a developer makes a commit, how does running `git config` to set a user name and email before the commit affect the commit metadata compared to not setting these details?",
+            "options": [
+              "The commit records the configured user name and email as the author information.",
+              "The commit records no author information, leaving the author fields empty.",
+              "The commit fails because Git requires user details before creating any commit.",
+              "The commit records the system’s current username and hostname as the author information."
+            ],
+            "correctAnswer": "The commit records the configured user name and email as the author information.",
+            "explanation": "According to the lecture, `git config` is used to provide the developer’s name and email so that Git can record who made each change. When these details are set before a commit, the commit’s author fields contain that information. If they are not set, Git may fall back to defaults or prompt, but the commit does not fail and author fields are not left empty.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 2,
+            "questionText": "After executing `git init` in a directory containing existing project files, running `ls` reveals a new hidden directory. What is the operational mechanism by which this command transforms the directory into a Git repository, and why does the repository start in an 'empty' state despite the presence of existing files?",
+            "options": [
+              "It converts the directory into a binary archive format, which prevents any further file modifications until the archive is explicitly unpacked.",
+              "It creates a remote connection to a central server, which synchronizes the local file system state to establish the initial repository configuration.",
+              "It initializes the version control metadata structure, but leaves existing files untracked because they have not yet been staged or committed to the history.",
+              "It immediately indexes all existing files into the commit history, establishing a baseline snapshot that marks the repository as fully populated."
+            ],
+            "correctAnswer": "It initializes the version control metadata structure, but leaves existing files untracked because they have not yet been staged or committed to the history.",
+            "explanation": "The lecture states that `git init` creates an 'empty repository' and results in a hidden folder (`.git`). The mechanism involves initializing the metadata structure required for version control. The repository is considered 'empty' in terms of version history because existing files are not automatically tracked or committed; they remain untracked until explicitly added. This distinguishes the initialization of the control structure from the population of the version history.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 3,
+            "questionText": "After a file appears in red in the output of `git status` and you run `git add <file>`, the next `git status` shows the same file in green. Explain why the color changes from red to green.",
+            "options": [
+              "Because `git status` moves the file into the repository history, meaning it has already been committed.",
+              "Because `git status` now reports the file as staged for commit, indicating it is in the index.",
+              "Because `git status` only shows files that have been modified in the working directory, and the color change reflects a change in file permissions.",
+              "Because `git status` displays files in green when they are ignored by .gitignore, indicating they will not be tracked."
+            ],
+            "correctAnswer": "Because `git status` now reports the file as staged for commit, indicating it is in the index.",
+            "explanation": "When `git add` is executed, the file is moved from the working directory into the staging area (index). `git status` then marks staged files in green, while unstaged changes appear in red. The color change reflects this transition from unstaged to staged, not a commit or ignore status.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 4,
+            "questionText": "Given a repository state where the working directory contains uncommitted modifications to a tracked file, how does the operational scope of `git diff` differ from `git status` when inspecting the current changes?",
+            "options": [
+              "`git diff` shows the differences between the staging area and the last commit, whereas `git status` displays the raw text changes of all tracked files in the working directory.",
+              "`git diff` displays the specific line-by-line content changes between the working directory and the index, whereas `git status` lists which files are modified without showing the content differences.",
+              "`git diff` compares the current commit against the previous commit in the history, whereas `git status` compares the working directory against the staging area.",
+              "`git diff` inspects the differences between the working tree and HEAD, whereas `git status` provides a summary of the commit graph structure and parent pointers."
+            ],
+            "correctAnswer": "`git diff` displays the specific line-by-line content changes between the working directory and the index, whereas `git status` lists which files are modified without showing the content differences.",
+            "explanation": "The evidence states that `git diff` compares the changes of the current file with the previous version (implying content difference in the working tree vs index/HEAD context for uncommitted changes) and `git status` inspects differences between the working tree, staging area, and HEAD (typically as a status list). The correct option accurately contrasts the content-level detail of `git diff` with the file-level status summary of `git status`. Option 2 is a misconception inversion regarding `git diff`'s default behavior on uncommitted changes. Option 3 incorrectly attributes raw text display to `git status`. Option 4 confuses `git status` with graph inspection tools.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 5,
+            "questionText": "When you run git commit after staging changes, why does Git store a full snapshot of the repository state addressed by a SHA‑1 hash instead of just the changes?",
+            "options": [
+              "Git stores a full snapshot of the tree, but the underlying objects are compressed using delta encoding to save space.",
+              "Git stores a full snapshot of the tree, and the commit object itself contains all file contents directly.",
+              "Git stores only the changed files as deltas, so each commit contains just the differences from its parent.",
+              "Git stores a full tree snapshot addressed by a 40‑character SHA‑1 hash, so each commit is an immutable snapshot of the repository state."
+            ],
+            "correctAnswer": "Git stores a full tree snapshot addressed by a 40‑character SHA‑1 hash, so each commit is an immutable snapshot of the repository state.",
+            "explanation": "During a commit, Git records the current state of the index as a tree object. The tree object contains SHA‑1 hashes of all blobs and sub‑trees, representing a complete snapshot of the repository. The commit object then points to this tree hash, ensuring that the commit is an immutable snapshot of the entire repository state rather than just the differences from its parent.",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "EXPLAIN_MECHANISM",
+              "demandReasoning": "Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          },
+          {
+            "index": 6,
+            "questionText": "Given two branches that have diverged from a common ancestor, how does the operational mechanism of a 3-way merge differ from a fast-forward merge in terms of the resulting repository state?",
+            "options": [
+              "A 3-way merge creates a new synthetic commit with two parents, whereas a fast-forward merge simply moves the branch pointer linearly to the target commit.",
+              "A 3-way merge deletes the common ancestor commit to save space, whereas a fast-forward merge retains the full history including the common ancestor commit.",
+              "A 3-way merge moves the branch pointer linearly to the latest commit, whereas a fast-forward merge creates a new synthetic commit with two parents.",
+              "A 3-way merge requires manual resolution of all conflicts before any pointer movement, whereas a fast-forward merge automatically resolves conflicts by discarding local changes."
+            ],
+            "correctAnswer": "A 3-way merge creates a new synthetic commit with two parents, whereas a fast-forward merge simply moves the branch pointer linearly to the target commit.",
+            "explanation": "The evidence states that a fast-forward merge moves the branch pointer forward linearly when no divergence exists, while a 3-way merge creates a synthetic merge commit with two parents when divergent histories exist. The correct option accurately contrasts these two distinct operational outcomes: pointer movement versus new commit creation. The second option inverts these mechanisms (Misconception Inversion). The third option introduces untaught behavior regarding automatic conflict resolution and discarding changes (Scope Precondition Error). The fourth option invents a mechanism of deleting ancestors which is not supported by the evidence (Distinct Alternative/Invention).",
+            "audit": {
+              "violations": [],
+              "hasContractViolation": false,
+              "cognitiveCategory": "COMPARE",
+              "demandReasoning": "Requires comparative evaluation of strategies, architectural tradeoffs, or behavioral differentiation between alternatives.",
+              "isOperational": true,
+              "isRecall": false,
+              "hasGroundingDeficit": false,
+              "groundingDeficitReason": null,
+              "isTierMatched": true,
+              "isUsable": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  "finalSummary": {
+    "metrics": {
+      "groundingDeficitRate": {
+        "systemA_baseline": "0.0%",
+        "systemB_3agent": "0.0%"
+      },
+      "optionContractViolationRate": {
+        "systemA_baseline": "8.0%",
+        "systemB_3agent": "0.0%"
+      },
+      "cognitiveDistribution": {
+        "recallPct": {
+          "systemA_baseline": "62.0%",
+          "systemB_3agent": "0.0%"
+        },
+        "operationalPct": {
+          "systemA_baseline": "8.0%",
+          "systemB_3agent": "100.0%"
+        },
+        "uncertainPct": {
+          "systemA_baseline": "30.0%",
+          "systemB_3agent": "0.0%"
+        }
+      },
+      "finalUsableYield": {
+        "systemA_baseline": "8.0%",
+        "systemB_3agent": "60.0%"
+      }
+    },
+    "rawTotals": {
+      "requested": 50,
+      "systemA_delivered": 50,
+      "systemA_usable": 4,
+      "systemA_violations": 4,
+      "systemA_groundingDeficits": 0,
+      "systemA_recall": 31,
+      "systemA_operational": 4,
+      "systemA_breakdown": {
+        "RECALL": 31,
+        "COMPARE": 1,
+        "TRACE": 0,
+        "EXPLAIN_MECHANISM": 3,
+        "DIAGNOSE": 0,
+        "UNCERTAIN": 15
+      },
+      "systemB_requested": 50,
+      "systemB_delivered": 30,
+      "systemB_usable": 30,
+      "systemB_violations": 0,
+      "systemB_groundingDeficits": 0,
+      "systemB_recall": 0,
+      "systemB_operational": 30,
+      "systemB_breakdown": {
+        "RECALL": 0,
+        "COMPARE": 17,
+        "TRACE": 0,
+        "EXPLAIN_MECHANISM": 11,
+        "DIAGNOSE": 2,
+        "UNCERTAIN": 0
+      }
+    }
+  }
+}

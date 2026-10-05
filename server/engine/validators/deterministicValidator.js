@@ -11,8 +11,43 @@
 'use strict';
 
 const crypto = require('crypto');
+const { OPTION_SET_CONTRACT } = require('../contracts/pipelineContracts');
 
 class DeterministicValidator {
+  constructor() {
+    this.OPTION_SET_CONTRACT = OPTION_SET_CONTRACT;
+  }
+
+  /**
+   * Exact case and whitespace normalized option string.
+   */
+  normalizeExactOption(str) {
+    if (typeof str !== 'string') return '';
+    return str.trim().toLowerCase().replace(/\s+/g, ' ');
+  }
+
+  /**
+   * Superficial formatting strip: removes trailing punctuation, wrapping quotes/backticks,
+   * markdown formatting, and option label prefixes ("A.", "A)", "Option A:").
+   */
+  stripSuperficialFormatting(str) {
+    if (typeof str !== 'string') return '';
+    return str
+      .trim()
+      .toLowerCase()
+      // Remove option label prefixes: "Option A:", "A.", "A)", "(A)", "1.", "1)"
+      .replace(/^(?:option\s+[a-d1-4]|(?:\(?[a-d1-4]\)?[\.\:\s\-]+))\s*/i, '')
+      // Remove enclosing quotes, backticks, asterisks/markdown formatting
+      .replace(/^[`'"*]+|[`'"*]+$/g, '')
+      // Strip trailing punctuation (. , ; : ! ? -)
+      .replace(/[\.\,\;\:\!\?\-\s]+$/g, '')
+      // Strip leading punctuation
+      .replace(/^[\.\,\;\:\!\?\-\s]+/g, '')
+      // Collapse multiple whitespace
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   normalizeCorrectAnswer(mcq) {
     if (!mcq || !Array.isArray(mcq.options) || mcq.options.length === 0 || !mcq.correctAnswer) {
       return;
@@ -57,15 +92,149 @@ class DeterministicValidator {
   }
 
   /**
+   * Module 2 Option Set Validator (Deterministic Option Contract).
+   * Validates options array according to OPTION_SET_CONTRACT:
+   * - Count must be exactly 4 (INVALID_OPTION_COUNT)
+   * - Options must not be empty or shorter than 2 chars (EMPTY_OR_SHORT_OPTION)
+   * - Options must not be exact duplicates after whitespace/case normalization (EXACT_DUPLICATE_OPTION)
+   * - Options must not be superficial/punctuation/formatting variants (SUPERFICIAL_VARIANT_OPTION)
+   * - Options must not form unconstrained subset command/parameter chains (SUBSET_COMMAND_CHAIN)
+   * - Options must not exhibit extreme length disparity (>2.5x and diff >= 20 chars) (EXTREME_LENGTH_IMBALANCE)
+   * - Pairwise token similarity > 0.80 flags an advisory warning (HIGH_SEMANTIC_SIMILARITY)
+   *
+   * @param {Array<String>} options - Array of option strings
+   * @param {String} [stem=''] - Optional question stem
+   * @param {String} [correctAnswer=''] - Optional correct answer
+   * @returns {Object} { isValid, errors, warnings, metrics }
+   */
+  validateOptionSet(options, stem = '', correctAnswer = '') {
+    const errors = [];
+    const warnings = [];
+
+    // 1. Array and count validation
+    if (!Array.isArray(options) || options.length !== this.OPTION_SET_CONTRACT.requiredCount) {
+      const err = {
+        code: this.OPTION_SET_CONTRACT.hardRejectionCodes.INVALID_OPTION_COUNT,
+        message: `Options must be an array of exactly ${this.OPTION_SET_CONTRACT.requiredCount} strings, found ${Array.isArray(options) ? options.length : 0}`
+      };
+      return {
+        isValid: false,
+        errors: [err],
+        warnings: [],
+        metrics: null
+      };
+    }
+
+    // 2. Empty / Short options check
+    options.forEach((opt, idx) => {
+      if (typeof opt !== 'string' || opt.trim().length < this.OPTION_SET_CONTRACT.minOptionLength) {
+        errors.push({
+          code: this.OPTION_SET_CONTRACT.hardRejectionCodes.EMPTY_OR_SHORT_OPTION,
+          message: `Option at index ${idx} is empty or shorter than ${this.OPTION_SET_CONTRACT.minOptionLength} characters: "${opt}"`,
+          details: { index: idx, value: opt }
+        });
+      }
+    });
+
+    // 3. Exact duplicates and superficial variants
+    const exactNormalized = options.map(o => this.normalizeExactOption(o));
+    const superficialNormalized = options.map(o => this.stripSuperficialFormatting(o));
+
+    for (let i = 0; i < options.length; i++) {
+      for (let j = i + 1; j < options.length; j++) {
+        // Exact duplicate
+        if (exactNormalized[i] && exactNormalized[i] === exactNormalized[j]) {
+          errors.push({
+            code: this.OPTION_SET_CONTRACT.hardRejectionCodes.EXACT_DUPLICATE_OPTION,
+            message: `Duplicate option choices detected: "${options[i]}" and "${options[j]}" are identical after normalization`,
+            details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j] }
+          });
+        }
+        // Superficial variant (only if not already an exact duplicate)
+        else if (superficialNormalized[i] && superficialNormalized[i] === superficialNormalized[j]) {
+          errors.push({
+            code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SUPERFICIAL_VARIANT_OPTION,
+            message: `Superficial variant detected: "${options[i]}" and "${options[j]}" differ only by punctuation, formatting, or labels`,
+            details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j] }
+          });
+        }
+      }
+    }
+
+    // 4. Subset command / parameter chains (unconstrained nesting)
+    const ambiguityCheck = this.detectOptionAmbiguity(stem, options, correctAnswer);
+    if (ambiguityCheck.classification === 'POTENTIAL_MULTI_KEY') {
+      errors.push({
+        code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SUBSET_COMMAND_CHAIN,
+        message: `SUBSET_COMMAND_CHAIN: ${ambiguityCheck.reason}`,
+        details: { offendingPair: ambiguityCheck.offendingPair }
+      });
+    }
+
+    // 5. Extreme length imbalance
+    const lengths = options.map(o => (typeof o === 'string' ? o.trim().length : 0));
+    const minLen = Math.min(...lengths);
+    const maxLen = Math.max(...lengths);
+    const charDiff = maxLen - minLen;
+    const ratio = minLen > 0 ? Number((maxLen / minLen).toFixed(2)) : Infinity;
+
+    if (charDiff >= this.OPTION_SET_CONTRACT.lengthDisparityAbsoluteCharMin && ratio > this.OPTION_SET_CONTRACT.lengthDisparityRatioThreshold) {
+      errors.push({
+        code: this.OPTION_SET_CONTRACT.hardRejectionCodes.EXTREME_LENGTH_IMBALANCE,
+        message: `Extreme option length imbalance: longest option (${maxLen} chars) is ${ratio}x shortest option (${minLen} chars, diff: ${charDiff} chars >= ${this.OPTION_SET_CONTRACT.lengthDisparityAbsoluteCharMin})`,
+        details: { minLen, maxLen, ratio, charDiff }
+      });
+    }
+
+    // 6. Semantic similarity warning signal (> 0.80)
+    let maxSimilarity = 0;
+    for (let i = 0; i < options.length; i++) {
+      for (let j = i + 1; j < options.length; j++) {
+        if (typeof options[i] !== 'string' || typeof options[j] !== 'string') continue;
+        const sim = this.calculateSimilarity(options[i], options[j]);
+        if (sim > maxSimilarity) maxSimilarity = sim;
+        if (sim > this.OPTION_SET_CONTRACT.similarityWarningThreshold) {
+          warnings.push({
+            code: this.OPTION_SET_CONTRACT.warningCodes.HIGH_SEMANTIC_SIMILARITY,
+            message: `Options at indices ${i} and ${j} exhibit high token similarity (${sim.toFixed(2)} > ${this.OPTION_SET_CONTRACT.similarityWarningThreshold})`,
+            details: {
+              indexA: i,
+              indexB: j,
+              optionA: options[i],
+              optionB: options[j],
+              similarity: sim
+            }
+          });
+        }
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+      metrics: {
+        lengths,
+        minLen,
+        maxLen,
+        ratio: isFinite(ratio) ? ratio : null,
+        charDiff,
+        maxSimilarity
+      }
+    };
+  }
+
+  /**
    * Run Deterministic Pre-Checks on candidate MCQ.
    * @param {Object} mcq - Candidate MCQ object
-   * @returns {Object} { isValid, errors }
+   * @returns {Object} { isValid, errors, warnings, optionMetrics, detailedErrors }
    */
   runPreChecks(mcq) {
     const errors = [];
+    const warnings = [];
 
     if (!mcq || typeof mcq !== 'object') {
-      return { isValid: false, errors: ['MCQ payload is null or not an object'] };
+      return { isValid: false, errors: ['MCQ payload is null or not an object'], warnings: [] };
     }
 
     // Normalize correctAnswer before validating
@@ -75,20 +244,20 @@ class DeterministicValidator {
       errors.push('questionText must be a string with at least 10 characters');
     }
 
-    if (!Array.isArray(mcq.options) || mcq.options.length !== 4) {
-      errors.push(`options must be an array of exactly 4 strings, found ${Array.isArray(mcq.options) ? mcq.options.length : 0}`);
-    } else {
-      // Check option string duplicates
-      const uniqueOptions = new Set(mcq.options.map(o => (o || '').trim().toLowerCase()));
-      if (uniqueOptions.size < 4) {
-        errors.push('Duplicate option choices detected');
-      }
+    // Validate options set using formal contract & deterministic checks
+    const optionSetResult = this.validateOptionSet(
+      mcq.options,
+      mcq.questionText || mcq.stem || '',
+      mcq.correctAnswer || ''
+    );
 
-      // Check option exclusivity and ambiguous nesting (Phase 3.3 Gate)
-      const ambiguityCheck = this.detectOptionAmbiguity(mcq.questionText || mcq.stem, mcq.options, mcq.correctAnswer);
-      if (ambiguityCheck.classification === 'POTENTIAL_MULTI_KEY') {
-        errors.push(`POTENTIAL_MULTI_KEY: ${ambiguityCheck.reason}`);
+    if (!optionSetResult.isValid) {
+      for (const err of optionSetResult.errors) {
+        errors.push(err.message || `${err.code}: Option validation failed`);
       }
+    }
+    if (optionSetResult.warnings && optionSetResult.warnings.length > 0) {
+      warnings.push(...optionSetResult.warnings);
     }
 
     if (!mcq.correctAnswer || typeof mcq.correctAnswer !== 'string') {
@@ -99,7 +268,10 @@ class DeterministicValidator {
 
     return {
       isValid: errors.length === 0,
-      errors: errors
+      errors: errors,
+      warnings: warnings,
+      optionMetrics: optionSetResult.metrics,
+      detailedErrors: optionSetResult.errors
     };
   }
 
@@ -177,22 +349,31 @@ class DeterministicValidator {
           }
         }
 
-        // 2. Whitespace-separated prefix flag/parameter extension (e.g. 'git init' -> 'git init --bare')
+        // 2. Whitespace-separated prefix flag/parameter extension (e.g. 'git init' -> 'git init --bare', 'git add' -> 'git add .')
         if (o2Lower.startsWith(o1Lower) && /\s/.test(o2Lower[o1Lower.length])) {
           const remainder = o2.substring(o1Lower.length).trim();
           // Exclude arithmetic operator chains like '+ z' or '- z'
           const isArithmeticChain = /^[\+\*\/\%\^]/.test(remainder) || /^\-\s/.test(remainder);
 
-          // Additive parameter extension requires remainder to be a flag or structured parameter
-          const isFlagExtension = remainder.startsWith('--') || /^\-[a-zA-Z]/.test(remainder);
+          // Additive parameter extension requires remainder to be a flag, structured parameter, dot/path, or quoted argument
+          const isFlagExtension = remainder.startsWith('--') || /^\-[a-zA-Z0-9]/.test(remainder);
+          const isSyntaxSymbol = remainder === '.' || remainder.startsWith('./') || remainder === '*' || remainder.startsWith('..') || /^["'`]/.test(remainder);
+          const isStructuredParameter = isFlagExtension || isSyntaxSymbol;
 
-          if (!isArithmeticChain && isFlagExtension) {
-            const rawTokens = remainder
+          if (!isArithmeticChain && isStructuredParameter) {
+            let rawTokens = remainder
               .replace(/([a-z])([A-Z])/g, '$1 $2')
               .toLowerCase()
               .replace(/[^a-z0-9]/g, ' ')
               .split(/\s+/)
               .filter(w => w.length >= 3);
+
+            // For symbolic parameters like '.' or '*' that yield no length>=3 word tokens,
+            // provide semantic anchor tokens so discrimination check can evaluate stem
+            if (rawTokens.length === 0 && (remainder === '.' || remainder.startsWith('./') || remainder === '*')) {
+              rawTokens = ['dot', 'period', 'all', 'current', 'directory', 'working'];
+            }
+
             const o1Tokens = new Set(o1Lower.replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(w => w.length >= 3));
             const distinctDiffTokens = [...new Set(rawTokens)].filter(t => !o1Tokens.has(t));
             const diffTokens = distinctDiffTokens.length > 0 ? distinctDiffTokens : [...new Set(rawTokens)];
@@ -201,7 +382,7 @@ class DeterministicValidator {
               shortOpt: o1,
               longOpt: o2,
               diffTokens: diffTokens.length > 0 ? diffTokens : [...new Set(rawTokens)],
-              type: 'PREFIX_ADDITIVE_EXTENSION'
+              type: isFlagExtension ? 'PREFIX_ADDITIVE_EXTENSION' : 'PREFIX_PARAMETER_EXTENSION'
             });
           }
         }
@@ -265,7 +446,7 @@ class DeterministicValidator {
     ]);
 
     return new Set(
-      text
+      String(text || '')
         .toLowerCase()
         .replace(/[^a-z0-9\s]/g, ' ')
         .split(/\s+/)
