@@ -10,7 +10,6 @@ import {
     AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale, Activity
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
-import PipelineObservabilityModal from '../components/quiz/PipelineObservabilityModal';
 import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
 import toast from 'react-hot-toast';
 import { 
@@ -33,74 +32,26 @@ export default function CreateQuizTopic() {
     const [inputs, setInputs] = useState([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
-    // Load inputs on mount / user change with backend sync
+    // Fresh session: Do NOT restore stale inputs from previous sessions.
+    // Inputs must only be displayed when the user explicitly adds them in the current session.
     useEffect(() => {
-        if (authLoading) return; // Wait until AuthContext finishes hydration
         try {
-            let loadedInputs = [];
-            const saved = localStorage.getItem(storageKey);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    loadedInputs = parsed;
+            localStorage.removeItem(storageKey);
+            localStorage.removeItem('quiz_docket_inputs_guest');
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith('quiz_docket_inputs_')) {
+                    keysToRemove.push(k);
                 }
             }
-
-            // If logged in and local storage for user is empty, check if guest storage had items to migrate
-            if (loadedInputs.length === 0 && user && userId !== 'guest') {
-                const guestSaved = localStorage.getItem('quiz_docket_inputs_guest');
-                if (guestSaved) {
-                    try {
-                        const guestParsed = JSON.parse(guestSaved);
-                        if (Array.isArray(guestParsed) && guestParsed.length > 0) {
-                            loadedInputs = guestParsed;
-                            localStorage.removeItem('quiz_docket_inputs_guest');
-                        }
-                    } catch (_) {}
-                }
-            }
-
-            if (loadedInputs.length > 0) {
-                setInputs(loadedInputs);
-            } else if (user) {
-                // Fetch from server if authenticated and nothing locally
-                api.get('/quiz/docket').then(res => {
-                    if (res.data?.success && Array.isArray(res.data.inputs) && res.data.inputs.length > 0) {
-                        setInputs(res.data.inputs);
-                    }
-                }).catch(() => {});
-            }
+            keysToRemove.forEach(k => localStorage.removeItem(k));
         } catch (e) {
-            console.error('Failed to load docket inputs:', e);
+            console.warn('Could not clean docket storage:', e);
         }
+        setInputs([]);
         setIsHydrated(true);
-    }, [storageKey, authLoading, user, userId]);
-
-    // Persist inputs to localStorage and server whenever they change
-    useEffect(() => {
-        if (!isHydrated || authLoading) return;
-        try {
-            const serializable = inputs.map(inp => {
-                const { file, ...rest } = inp;
-                // Preserve extracted text and metadata across reloads!
-                return {
-                    ...rest,
-                    schemaVersion: 2
-                };
-            });
-            localStorage.setItem(storageKey, JSON.stringify(serializable));
-
-            // Sync with backend if authenticated
-            if (user) {
-                const timer = setTimeout(() => {
-                    api.post('/quiz/docket', { inputs: serializable }).catch(() => {});
-                }, 600);
-                return () => clearTimeout(timer);
-            }
-        } catch (e) {
-            console.error('Failed to save docket inputs:', e);
-        }
-    }, [inputs, storageKey, user, isHydrated, authLoading]);
+    }, [storageKey]);
 
     // 2. Difficulty Focus ("Balanced", "Easy", "Medium", "Hard")
     const [difficulty, setDifficulty] = useState('Balanced');
@@ -135,7 +86,6 @@ export default function CreateQuizTopic() {
     const [transcribing, setTranscribing] = useState(false);
     const [transcribeProgress, setTranscribeProgress] = useState(0);
     const [transcribePhase, setTranscribePhase] = useState('');
-    const [showObservability, setShowObservability] = useState(false);
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
     const [pendingRecoverySessions, setPendingRecoverySessions] = useState([]);
 
@@ -1156,71 +1106,42 @@ export default function CreateQuizTopic() {
             if (!taskId) throw new Error('No taskId returned from server');
             setSubmitting(false);
 
-            startPolling(taskId, {
-                onComplete: (result) => {
-                    const hasVoice = inputs.some(inp => inp.type === 'voice' || inp.type === 'audio') || Boolean(result.isVoice);
-                    if (hasVoice && result.lectureDepth) {
-                        setLectureDepth(result.lectureDepth);
-                    }
-                    if (result.lecture_intelligence) {
-                        setLectureIntel(result.lecture_intelligence);
-                    }
+            // Clean up docket cache for fresh subsequent runs
+            try {
+                localStorage.removeItem(storageKey);
+                localStorage.removeItem('quiz_docket_inputs_guest');
+            } catch (_) {}
 
-                    if (result.alignmentWarning) {
-                        toast(result.alignmentWarning, {
-                            icon: <AlertCircle size={16} aria-hidden="true" />,
-                            duration: 9000,
-                            style: {
-                                border: '1px solid rgba(234, 179, 8, 0.4)',
-                                padding: '16px',
-                                color: '#fef08a',
-                                background: '#1e1b4b',
-                            }
-                        });
-                    } else if (result.notice || result.isPartial || (result.questions && result.questions.length < questionCount)) {
-                        const count = result.questions ? result.questions.length : 0;
-                        const missing = questionCount - count;
-                        toast(result.notice || `${count} evidence-grounded questions generated. ${missing === 1 ? 'One additional question' : `${missing} additional questions`} could not be validated against available evidence.`, {
-                            icon: <Shield size={16} aria-hidden="true" />,
-                            duration: 7000,
-                            style: {
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                padding: '16px',
-                                color: '#fff',
-                                background: '#0f172a',
-                            }
-                        });
-                    }
+            const serializedInputs = inputs.map(inp => ({
+                id: inp.id,
+                source_name: inp.source_name,
+                type: inp.type,
+                size: inp.size,
+                startPage: inp.startPage || 1,
+                endPage: inp.endPage || inp.maxPages || 1,
+                snippet: (inp.content || '').slice(0, 300),
+                wordCount: (inp.content || '').split(/\s+/).filter(Boolean).length
+            }));
 
-                    navigate('/create-quiz/text', {
-                        state: {
-                            taskId: taskId,
-                            questions: result.questions,
-                            title: result.title || `Quiz: ${inputs[0]?.source_name}`,
-                            duration: result.duration || 10,
-                            source: 'generated',
-                            isVoice: hasVoice,
-                            agentReport: result.agentReport || null,
-                            lectureDepth: hasVoice ? (result.lectureDepth || lectureDepth) : null,
-                            lectureIntelligence: result.lecture_intelligence || lectureIntel || null,
-                            whatWasTaught: whatWasTaught || result.whatWasTaught || null,
-                            keyTopics: (keyTopics && keyTopics.length > 0) ? keyTopics : (result.keyTopics || []),
-                            recommendedQuestions: recommendedQuestions || result.recommendedQuestions || null,
-                            wordCount: lectureWordCount || result.wordCount || 0,
-                            notice: result.notice || (result.questions && result.questions.length < questionCount ? `${result.questions.length} grounded questions were generated from the available learning material. Additional questions were withheld to prevent hallucination without supporting evidence.` : null),
-                            alignmentWarning: result.alignmentWarning || null,
-                            unalignedDocuments: result.unalignedDocuments || [],
-                            isPartial: Boolean(result.isPartial || (result.questions && result.questions.length < questionCount)),
-                            requestedCount: result.requestedCount || questionCount,
-                            deliveredCount: result.questions ? result.questions.length : 0,
-                            representationMode: result.representation_mode || representationMode || null
-                        },
-                    });
-                },
-                onError: (msg) => {
-                    toast.error(msg || 'Generation failed. Please try again.');
-                },
+            // Navigate to dedicated Pipeline Output page during content processing
+            navigate('/pipeline-output', {
+                state: {
+                    hasPipelineData: true,
+                    status: 'PROCESSING',
+                    taskId,
+                    inputs: serializedInputs,
+                    sourceNames: inputs.map(i => i.source_name),
+                    isVoice: inputs.some(inp => inp.type === 'voice' || inp.type === 'audio'),
+                    difficulty,
+                    questionCount,
+                    title: `Quiz: ${inputs[0]?.source_name || 'AI Generated Assessment'}`,
+                    whatWasTaught,
+                    keyTopics,
+                    lectureWordCount
+                }
             });
+
+            setInputs([]);
         } catch (err) {
             console.error(err);
             const serverMsg = err.response?.data?.msg || err.response?.data?.error || (err.response?.data?.errors && err.response.data.errors.map(e => e.msg).join(', ')) || err.message;
@@ -1255,15 +1176,6 @@ export default function CreateQuizTopic() {
                     </div>
 
                     <div className="flex items-center gap-3 flex-wrap">
-                        <button
-                            type="button"
-                            onClick={() => setShowObservability(true)}
-                            className="px-4 py-2.5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-200 text-indigo-700 font-black text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-xs transition-all active:scale-95"
-                            title="Inspect 6-Stage Neural Architecture & Live Telemetry"
-                        >
-                            <Activity size={16} className="text-indigo-600" />
-                            <span>AI Architecture & Observability</span>
-                        </button>
 
                         {/* Interactive Teaching Depth Score Badge */}
                         {lectureDepth && (
@@ -2098,14 +2010,7 @@ export default function CreateQuizTopic() {
                 </div>
             )}
 
-            <PipelineObservabilityModal
-                isOpen={showObservability}
-                onClose={() => setShowObservability(false)}
-                questions={[]}
-                title="Assessment Pipeline Architecture & Telemetry"
-                isVoice={inputs.some(inp => inp.type === 'voice' || inp.type === 'audio')}
-                duration={10}
-            />
+            {/* TEACHING SCORE MODAL */}
 
             <TeachingScoreModal
                 isOpen={showTeachingScoreModal}

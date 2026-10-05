@@ -2,14 +2,28 @@
  * server/routes/developer.js
  *
  * Developer Observability & Debug Routes:
- * Allows ANY team member to inspect live/recorded session traces and logs directly
- * from the deployed website without needing Railway account credentials.
+ * Restricted to authenticated admin users only.
  */
 
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const auth = require('../middleware/authMiddleware');
+const prisma = require('../lib/prisma');
+
+// ─── Admin-only guard ─────────────────────────────────────────────────────────
+const adminOnly = async (req, res, next) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (!user || user.role !== 'admin') {
+            return res.status(403).json({ msg: 'Admin access required' });
+        }
+        next();
+    } catch {
+        res.status(500).json({ msg: 'Server error' });
+    }
+};
 
 const DEBUG_SESSIONS_DIR = path.resolve(__dirname, '../logs/debug/sessions');
 
@@ -23,7 +37,8 @@ function getDebugDir() {
 
 // @route   GET /api/developer/sessions
 // @desc    List all recorded debug sessions with summary metadata
-router.get('/sessions', async (req, res) => {
+// @access  Private/Admin
+router.get('/sessions', auth, adminOnly, async (req, res) => {
   try {
     const dir = getDebugDir();
     const sessionDirs = await fs.promises.readdir(dir);
@@ -62,15 +77,24 @@ router.get('/sessions', async (req, res) => {
     const validSummaries = summaries.filter(Boolean).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     res.json({ success: true, count: validSummaries.length, sessions: validSummaries });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Failed to list sessions' });
   }
 });
 
 // @route   GET /api/developer/sessions/:sessionId
 // @desc    Get full session trace or list of stage files
-router.get('/sessions/:sessionId', async (req, res) => {
+// @access  Private/Admin
+router.get('/sessions/:sessionId', auth, adminOnly, async (req, res) => {
   try {
-    const sessPath = path.join(getDebugDir(), req.params.sessionId);
+    // SECURITY: Sanitize sessionId to prevent path traversal
+    const safeSessId = path.basename(req.params.sessionId);
+    const sessPath = path.join(getDebugDir(), safeSessId);
+
+    // Verify the resolved path is strictly inside the allowed directory
+    if (!sessPath.startsWith(getDebugDir())) {
+      return res.status(403).json({ success: false, msg: 'Forbidden' });
+    }
+
     if (!fs.existsSync(sessPath)) {
       return res.status(404).json({ success: false, msg: 'Session not found' });
     }
@@ -85,15 +109,25 @@ router.get('/sessions/:sessionId', async (req, res) => {
 
     res.json({ success: true, files, msg: 'Session in progress or partial' });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Failed to load session' });
   }
 });
 
 // @route   GET /api/developer/sessions/:sessionId/:filename
 // @desc    Get specific stage debug snapshot JSON (e.g. 03_agent_1_planning.json)
-router.get('/sessions/:sessionId/:filename', async (req, res) => {
+// @access  Private/Admin
+router.get('/sessions/:sessionId/:filename', auth, adminOnly, async (req, res) => {
   try {
-    const filePath = path.join(getDebugDir(), req.params.sessionId, req.params.filename);
+    // SECURITY: Use path.basename() on both params to strip any traversal sequences (../ etc.)
+    const safeSessId  = path.basename(req.params.sessionId);
+    const safeFile    = path.basename(req.params.filename);
+    const filePath    = path.join(getDebugDir(), safeSessId, safeFile);
+
+    // Verify the resolved path is strictly inside the allowed directory
+    if (!filePath.startsWith(getDebugDir())) {
+      return res.status(403).json({ success: false, msg: 'Forbidden' });
+    }
+
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ success: false, msg: 'Stage log file not found' });
     }
@@ -102,13 +136,15 @@ router.get('/sessions/:sessionId/:filename', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(raw);
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Failed to load stage file' });
   }
 });
 
+
 // @route   GET /api/developer/ui
-// @desc    Lightweight interactive Developer Debug Dashboard UI (accessible to any teammate!)
-router.get('/ui', (req, res) => {
+// @desc    Lightweight interactive Developer Debug Dashboard UI
+// @access  Private/Admin
+router.get('/ui', auth, adminOnly, (req, res) => {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
