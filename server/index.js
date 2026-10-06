@@ -280,6 +280,31 @@ const io = new Server(server, {
     }
 });
 
+// ── REDIS PUB/SUB ADAPTER FOR MULTI-SERVER LOAD BALANCING ─────────────────
+const redisUrl = process.env.REDIS_URL || process.env.UPSTASH_REDIS_URL;
+if (redisUrl) {
+    try {
+        const { createAdapter } = require('@socket.io/redis-adapter');
+        const Redis = require('ioredis');
+        const pubClient = new Redis(redisUrl, { maxRetriesPerRequest: 3, enableOfflineQueue: false });
+        const subClient = pubClient.duplicate();
+
+        pubClient.on('error', (err) => console.warn('[Redis Adapter Pub Error]:', err.message));
+        subClient.on('error', (err) => console.warn('[Redis Adapter Sub Error]:', err.message));
+
+        Promise.all([pubClient.ping(), subClient.ping()])
+            .then(() => {
+                io.adapter(createAdapter(pubClient, subClient));
+                console.log('📡 [Multi-Server Scaling] Socket.IO Redis Adapter connected & active!');
+            })
+            .catch(err => console.warn('⚠️ [Redis Adapter Warning] Ping failed, operating in single-node mode:', err.message));
+    } catch (redisErr) {
+        console.warn('⚠️ [Redis Adapter] Failed to initialize Redis Adapter:', redisErr.message);
+    }
+} else {
+    console.log('ℹ️ [Single-Instance Mode] Running default in-memory Socket.IO adapter.');
+}
+
 // Expose io and userSockets to routes
 app.set('io', io);
 const userSockets = new Map(); // Keep this globally declared and track sockets below
