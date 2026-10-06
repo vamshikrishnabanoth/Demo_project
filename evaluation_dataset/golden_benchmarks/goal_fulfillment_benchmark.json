@@ -1,0 +1,239 @@
+[
+  {
+    "testId": "GOAL_001",
+    "name": "Stated Goal Fully Achieved - BFS Queue Traversal",
+    "scenarioType": "STATED_GOAL_ACHIEVED",
+    "statedGoal": "By the end of this lecture, students will understand Breadth-First Search queue operations and be able to trace node visits on a graph.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain FIFO queue role in level-order traversal", "importance": "Core" },
+      { "id": "ELO_2", "description": "Track visited state to prevent cyclic re-visitation", "importance": "Core" },
+      { "id": "ELO_3", "description": "Trace step-by-step queue enqueue/dequeue states on a graph", "importance": "Core" }
+    ],
+    "voiceTranscript": "Today our clear goal is that by the end of this lecture, you will understand Breadth-First Search queue operations and be able to trace node visits on a graph. BFS visits nodes level by level. We initialize a FIFO queue and a visited set. First, we enqueue the starting node A and mark it visited. While the queue is not empty, we dequeue the front node. When we dequeue A, we inspect its unvisited neighbors B and C, enqueue both, and mark them visited. Next, we dequeue B, discover neighbor D, enqueue D, and mark D visited. Finally we dequeue C and D. Because the queue is FIFO, nodes at distance 1 are processed strictly before nodes at distance 2. Notice that without the visited set, an undirected edge would cause infinite cycling.",
+    "documentText": "Breadth-First Search (BFS) explores vertices in order of increasing distance from source s. Queue Q enforces First-In-First-Out processing.",
+    "expectedGoalFulfillment": "HIGH_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1", "ELO_2", "ELO_3"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_002",
+    "name": "Stated Goal Partially Achieved - Quicksort Partition Without Recursion",
+    "scenarioType": "STATED_GOAL_PARTIALLY_ACHIEVED",
+    "statedGoal": "Our objective today is to master the Quicksort partitioning mechanism and analyze its recursive call tree complexity.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain pivot selection and swap invariant", "importance": "Core" },
+      { "id": "ELO_2", "description": "Execute Lomuto or Hoare two-pointer partition step", "importance": "Core" },
+      { "id": "ELO_3", "description": "Derive recursive call stack recurrence T(n) = 2T(n/2) + O(n)", "importance": "Core" }
+    ],
+    "voiceTranscript": "Our objective today is to master the Quicksort partitioning mechanism and analyze its recursive call tree complexity. Let us start with partitioning. We select the last element as our pivot. We maintain two pointers, i and j. Pointer j scans the array from index 0 to n-2. Whenever array of j is less than the pivot, we increment i and swap array of i with array of j. At the end, we swap the pivot into position i+1. This guarantees that all elements to the left are strictly smaller and elements to the right are larger. Oh, look at the clock, our 15 minutes are up! We will have to analyze the recursive recurrence tree and stack depth next week.",
+    "documentText": "Quicksort divides an array using partition(A, p, r). Worst-case runtime is O(n^2), average is O(n log n).",
+    "expectedGoalFulfillment": "PARTIALLY_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1", "ELO_2"],
+    "expectedMissingELOs": ["ELO_3"],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_003",
+    "name": "Stated Goal Not Achieved - Dijkstra Algorithm Without Trace (Classic Deficit)",
+    "scenarioType": "STATED_GOAL_NOT_ACHIEVED",
+    "statedGoal": "By the end of this lecture, students will be able to trace Dijkstra's shortest path algorithm on a weighted graph and update the distance array.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain greedy selection of minimum tentative distance vertex", "importance": "Core" },
+      { "id": "ELO_2", "description": "Apply relaxation condition if dist[u] + weight(u,v) < dist[v]", "importance": "Core" },
+      { "id": "ELO_3", "description": "Trace step-by-step distance array updates on a weighted graph", "importance": "Core" }
+    ],
+    "voiceTranscript": "Welcome class! By the end of this lecture, you will be able to trace Dijkstra's shortest path algorithm on a weighted graph and update the distance array. Graphs are everywhere, from Google Maps to airline networks. Edsger Dijkstra was an absolute genius in computer science who conceptualized this algorithm in 1956 while sitting at a café. Imagine planning a road trip from Delhi to Mumbai; you want the fastest route, not just the fewest intersections. Therefore, understanding paths is critical because optimization saves bandwidth and fuel. We see networks all around us, and that is why graph theory is so fascinating. Next time we meet, we will open up the compiler and write the code.",
+    "documentText": "Dijkstra's Algorithm maintains a set S of vertices whose final shortest-path weights from source s have been determined. Relaxation step: if d[u] + w(u,v) < d[v] then d[v] = d[u] + w(u,v).",
+    "expectedGoalFulfillment": "NOT_ACHIEVED",
+    "expectedAchievedELOs": [],
+    "expectedMissingELOs": ["ELO_1", "ELO_2", "ELO_3"],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_004",
+    "name": "Implicit Goal - Cache Coherence MESI Protocol",
+    "scenarioType": "IMPLICIT_GOAL",
+    "statedGoal": null,
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain purpose of cache coherence across multicore CPUs", "importance": "Core" },
+      { "id": "ELO_2", "description": "Differentiate Modified, Exclusive, Shared, Invalid (MESI) states", "importance": "Core" },
+      { "id": "ELO_3", "description": "Explain bus snooping and write-invalidate transitions", "importance": "Secondary" }
+    ],
+    "voiceTranscript": "In a modern multicore processor, each core has its own private L1 cache. If Core 1 writes value 42 to address X while Core 2 reads address X, we have a consistency crisis. To solve this, CPUs implement the MESI protocol. A cache line can be in one of four states: Modified, meaning dirty and private; Exclusive, meaning clean and private; Shared, meaning clean and present in other caches; or Invalid, meaning outdated. When Core 1 wants to write to a Shared line, it broadcasts a bus invalidation request. Core 2 snoops the bus, sees the invalidation signal, and transitions its own copy to the Invalid state.",
+    "documentText": "The MESI protocol is an invalidate-based cache coherence protocol widely implemented in multicore architectures.",
+    "expectedGoalFulfillment": "HIGH_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1", "ELO_2", "ELO_3"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_005",
+    "name": "Multiple Goals - ACID Explained, 2PL Completely Omitted",
+    "scenarioType": "MULTIPLE_GOALS",
+    "statedGoal": "Today we have two distinct goals: 1. Explain the ACID transaction properties in relational databases; 2. Demonstrate the Two-Phase Locking protocol.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Define Atomicity, Consistency, Isolation, and Durability (ACID)", "importance": "Core" },
+      { "id": "ELO_2", "description": "Explain 2-Phase Locking growing and shrinking phase rules", "importance": "Core" }
+    ],
+    "voiceTranscript": "Today we have two distinct goals: 1. Explain the ACID transaction properties in relational databases; 2. Demonstrate the Two-Phase Locking protocol. Let's begin with ACID. Atomicity guarantees that either all operations of a transaction execute or none do: all-or-nothing rollback. Consistency ensures the database moves from one valid invariant state to another. Isolation means concurrent transactions execute as if they were running serially without intermediate interference. Durability guarantees that once committed, data survives system crashes. That completely covers our first goal on transaction guarantees.",
+    "documentText": "Transactions must satisfy ACID properties. Concurrency is enforced via Two-Phase Locking (2PL), comprising a Growing Phase and Shrinking Phase.",
+    "expectedGoalFulfillment": "PARTIALLY_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1"],
+    "expectedMissingELOs": ["ELO_2"],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_006",
+    "name": "Goal Changes Mid-Lecture Due to Student Inquiry",
+    "scenarioType": "GOAL_CHANGES_MID_LECTURE",
+    "statedGoal": "We originally planned to cover Red-Black tree deletion cases, but we will pivot to Binary Heap Priority Queues based on your questions.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Define max-heap and min-heap structural invariants", "importance": "Core" },
+      { "id": "ELO_2", "description": "Explain heapify-up and heapify-down element restoration", "importance": "Core" }
+    ],
+    "voiceTranscript": "I originally planned to cover Red-Black tree deletion cases today, but seeing the confusion on priority queues from yesterday's lab, we will pivot to Binary Heap Priority Queues. A binary heap is a complete binary tree stored compactly in an array where parent at index i has children at 2i and 2i+1. In a max-heap, the parent key is always greater than or equal to its children. When you insert a new key at the end of the array, you restore the heap property using heapify-up: compare the new key with its parent and swap if it is larger. To extract the maximum, you take root index 0, replace it with the last leaf, and run heapify-down by swapping with the larger child.",
+    "documentText": "Binary heaps support insert in O(log n) and extract-min in O(log n).",
+    "expectedGoalFulfillment": "HIGH_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1", "ELO_2"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_007",
+    "name": "Teacher Teaches Extra Unstated Material - TCP Handshake Plus SYN Cookies",
+    "scenarioType": "TEACHER_TEACHES_EXTRA_MATERIAL",
+    "statedGoal": "Today's goal is to learn the 3-Way TCP Connection Handshake.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain SYN, SYN-ACK, and ACK message sequence", "importance": "Core" },
+      { "id": "ELO_2", "description": "Explain Sequence Number synchronization between client and server", "importance": "Core" }
+    ],
+    "voiceTranscript": "Today's goal is to learn the 3-Way TCP Connection Handshake. When client wants to connect, it sends a SYN packet with initial sequence number X. Server responds with SYN-ACK, acknowledging X+1 and sending its own initial sequence number Y. Client finishes the handshake with an ACK packet acknowledging Y+1. Now as a bonus, let me show you how attackers exploit this with SYN floods: sending thousands of SYNs without ever sending the ACK, exhausting server connection memory. To defeat this in production, modern operating systems use SYN cookies, encoding the connection parameters inside the server's initial sequence number Y so zero state is allocated until the final ACK arrives.",
+    "documentText": "TCP connection establishment requires a three-way handshake: SYN, SYN-ACK, ACK.",
+    "expectedGoalFulfillment": "HIGH_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1", "ELO_2"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_008",
+    "name": "PDF Inflation Vulnerability - 2-Minute Voice with 60-Page PDF",
+    "scenarioType": "PDF_CONTAINS_MATERIAL_NOT_TAUGHT",
+    "statedGoal": "Today I will give a brief 2-minute overview of why database indexes exist.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain index role in avoiding full table scans", "importance": "Core" }
+    ],
+    "voiceTranscript": "Welcome everyone. In today's quick 2-minute overview, we just want to understand why database indexes exist. Without an index, finding an employee named Sharma requires a sequential full table scan through all one million rows. With an index, the database jumps directly to the record like an index at the back of a textbook.",
+    "documentText": "CHAPTER 14: ADVANCED INDEXING ARCHITECTURES.\n14.1 B+ Tree Fanout and Height Calculations: Depth h <= log_d((N+1)/2).\n14.2 Linear Hashing and Extendible Directory Splitting.\n14.3 Bitmap Indices for Low-Cardinality Attributes with SIMD bitwise AND acceleration.\n14.4 R-Tree Spatial Indexing with Minimum Bounding Boxes (MBR) and quadratic splitting heuristic.\n14.5 GiST and GIN Inverted Indices for Full-Text Search in PostgreSQL.",
+    "expectedGoalFulfillment": "HIGH_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": true
+  },
+  {
+    "testId": "GOAL_009",
+    "name": "Analogy Without Mechanism - Restaurant Analogy for Client-Server",
+    "scenarioType": "ANALOGY_WITHOUT_MECHANISM",
+    "statedGoal": "By the end of this lecture, students will understand socket networking and client-server architecture.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain socket endpoints, IP addresses, and TCP port binding", "importance": "Core" },
+      { "id": "ELO_2", "description": "Explain client-server socket lifecycle: socket, bind, listen, accept", "importance": "Core" }
+    ],
+    "voiceTranscript": "By the end of this lecture, you will understand socket networking and client-server architecture. Think of it like going to an Italian restaurant! You, the client, sit down at the table and look at the menu. The waiter comes over, which is like the network connection. You tell the waiter you want lasagna. The waiter walks over to the kitchen, which is the server. The chef cooks the lasagna, gives it to the waiter, and the waiter brings it back to you. If the kitchen is closed, you get no food! It really is just like dining out with friends.",
+    "documentText": "Socket programming uses Berkeley socket APIs: socket() creates descriptor, bind() attaches IP and port, listen() sets backlog queue, and accept() blocks awaiting incoming TCP connections.",
+    "expectedGoalFulfillment": "NOT_ACHIEVED",
+    "expectedAchievedELOs": [],
+    "expectedMissingELOs": ["ELO_1", "ELO_2"],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_010",
+    "name": "Concise but Highly Effective - HTTP 404 vs 500 Distinction",
+    "scenarioType": "CONCISE_BUT_EFFECTIVE",
+    "statedGoal": "In 3 minutes, understand the fundamental distinction between HTTP 404 Not Found and HTTP 500 Internal Server Error.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Differentiate client-side resource fault (4xx) from server runtime exception (5xx)", "importance": "Core" }
+    ],
+    "voiceTranscript": "In this 3-minute video, our goal is to understand the fundamental difference between HTTP 404 and HTTP 500. HTTP 404 is a 4xx Client Error: the server processed the request correctly, but the requested URI path does not match any existing resource. The fault is on the client for requesting a nonexistent route. In contrast, HTTP 500 is a 5xx Server Error: the route exists, but unhandled code, such as a null pointer exception or database timeout, crashed the server process during execution. The fault is entirely on the server backend.",
+    "documentText": "RFC 9110 HTTP Semantics: 4xx denotes Client Error class (e.g. 404 Not Found). 5xx denotes Server Error class (e.g. 500 Internal Server Error).",
+    "expectedGoalFulfillment": "HIGH_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_011",
+    "name": "Long but Ineffective - 40-Minute Rambling Without Reaching DP Goal",
+    "scenarioType": "LONG_BUT_INEFFECTIVE",
+    "statedGoal": "Today we will derive the 0/1 Knapsack Dynamic Programming recurrence relation.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Formulate 0/1 Knapsack recurrence DP[i][w] = max(include, exclude)", "importance": "Core" },
+      { "id": "ELO_2", "description": "Explain optimal substructure and overlapping subproblems", "importance": "Core" }
+    ],
+    "voiceTranscript": "Today we will derive the 0/1 Knapsack Dynamic Programming recurrence relation. Okay, before we begin, please silence your phones. The weather outside is terrible today, I got stuck in traffic near the metro for 45 minutes. Did anyone see the football match yesterday? Incredible goal in the 90th minute. Now back in 2012 when I was doing my PhD, my advisor told me that algorithms require deep meditation. Remember to submit assignment 2 by Friday midnight; the portal will not accept late submissions. Let me take attendance now: Roll 1? Roll 2? Roll 3? Alright, class is almost over. We will derive the Knapsack DP formula next time.",
+    "documentText": "0/1 Knapsack recurrence: DP[i][w] = max(DP[i-1][w], DP[i-1][w - wt[i]] + val[i]).",
+    "expectedGoalFulfillment": "NOT_ACHIEVED",
+    "expectedAchievedELOs": [],
+    "expectedMissingELOs": ["ELO_1", "ELO_2"],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_012",
+    "name": "Conflicting Goal Signals - Slide States AVL Rotations, Teacher Overrides to BST Deletion",
+    "scenarioType": "CONFLICTING_GOAL_SIGNALS",
+    "statedGoal": "Ignore the slide on AVL Tree rotations; our goal today is exclusively Binary Search Tree deletion.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain BST deletion with zero, one, and two children", "importance": "Core" },
+      { "id": "ELO_2", "description": "Identify in-order successor substitution for two-child deletion", "importance": "Core" }
+    ],
+    "voiceTranscript": "Good morning. I know Slide 1 says 'Learning Objective: Master AVL Tree Rotations', but ignore that slide because we have not finished BST deletion yet. Our goal today is strictly Binary Search Tree node deletion. When deleting a node with zero children, you simply remove the leaf. With one child, you bypass the node and link parent directly to child. When deleting a node with two children, you find its in-order successor—the smallest node in the right subtree—copy that value into the target node, and recursively delete the in-order successor leaf.",
+    "documentText": "LEARNING OBJECTIVE: Master AVL Tree Rotations (Left-Left, Right-Right, Left-Right, Right-Left) to maintain height balance.",
+    "expectedGoalFulfillment": "HIGH_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1", "ELO_2"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_013",
+    "name": "Ambiguous Vague Goal - Cool Stuff with Data Structures",
+    "scenarioType": "AMBIGUOUS_GOAL",
+    "statedGoal": "Today let's look at some cool stuff with data structures.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Define Hash Table collisions and chaining resolution", "importance": "Core" }
+    ],
+    "voiceTranscript": "Today let's look at some cool stuff with data structures. What happens when two different keys hash to the exact same array index in a hash map? That is a hash collision. One standard way to handle this is separate chaining: each array bucket holds a linked list of key-value pairs that mapped to that index. During lookup, we hash the key, jump to the bucket, and linearly traverse the short chain.",
+    "documentText": "Hash tables resolve collisions via separate chaining or open addressing (linear probing, quadratic probing, double hashing).",
+    "expectedGoalFulfillment": "PARTIALLY_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_014",
+    "name": "No Detectable Goal - Disjointed Casual Monologue",
+    "scenarioType": "NO_DETECTABLE_GOAL",
+    "statedGoal": null,
+    "expectedELOs": [],
+    "voiceTranscript": "Hey everyone, so yeah, yesterday I was trying this new coffee brew. Also make sure you check your email for the departmental cricket tournament schedule. Python 3.12 has some new syntax features, pretty neat. Don't forget to park your bikes in lot C.",
+    "documentText": "Academic course syllabus guidelines and examination policy.",
+    "expectedGoalFulfillment": "NOT_ACHIEVED",
+    "expectedAchievedELOs": [],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  },
+  {
+    "testId": "GOAL_015",
+    "name": "Goal with Different Terminology - Stated Coordination vs Taught Mutex",
+    "scenarioType": "GOAL_WITH_DIFFERENT_TERMINOLOGY",
+    "statedGoal": "Our goal is to understand thread coordination in shared memory systems.",
+    "expectedELOs": [
+      { "id": "ELO_1", "description": "Explain mutual exclusion lock acquisition and critical section protection", "importance": "Core" }
+    ],
+    "voiceTranscript": "Our goal is to understand thread coordination in shared memory systems. In operating systems, when multiple threads access a shared counter, we protect the critical section with a mutex lock. Thread A calls pthread_mutex_lock before updating the counter, and calls pthread_mutex_unlock after. If Thread B attempts to enter while Thread A holds the lock, Thread B transitions to a blocked sleep state until the lock is released.",
+    "documentText": "Thread synchronization primitives: Mutex locks enforce mutual exclusion across shared resources.",
+    "expectedGoalFulfillment": "HIGH_ACHIEVED",
+    "expectedAchievedELOs": ["ELO_1"],
+    "expectedMissingELOs": [],
+    "antiInflationCheck": false
+  }
+]
