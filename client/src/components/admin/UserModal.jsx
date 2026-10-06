@@ -236,10 +236,10 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="modal-overlay">
                 {/* Backdrop */}
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                    className="modal-backdrop"
                     onClick={onClose} />
 
                 {/* Modal */}
@@ -248,7 +248,7 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.94, y: 16 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[24px] bg-white border border-slate-200 shadow-[0_24px_80px_rgba(0,0,0,0.15)]"
+                    className="modal-card w-full max-w-lg max-h-[90vh] overflow-y-auto"
                     style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.1) transparent' }}>
 
                     {/* Header */}

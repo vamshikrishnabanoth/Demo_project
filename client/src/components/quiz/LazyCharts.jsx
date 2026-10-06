@@ -5,9 +5,9 @@ import {
 } from 'recharts';
 import { BIN_COLORS } from '../../utils/binColors';
 
-export function ScoreDistributionChart({ data, tooltip, name = "Students" }) {
+export function ScoreDistributionChart({ data, tooltip, name = "Students", height = 280 }) {
     return (
-        <ResponsiveContainer width="100%" height={280}>
+        <ResponsiveContainer width="100%" height={height}>
             <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" opacity={0.5} />
                 <XAxis dataKey="range" stroke="var(--text-secondary)" tick={{ fontSize: 12, fontWeight: 700 }} />
@@ -114,9 +114,16 @@ export function TimeSpentChart({ data, onQuestionClick }) {
     const renderDot = (props) => {
         const { cx, cy, payload } = props;
         if (!cx || !cy || !payload) return null;
-        let fillColor = '#10b981';
-        if (payload.isCorrect === false) fillColor = '#ef4444';
-        if (payload.isCorrect === null || payload.status === 'Skipped') fillColor = '#64748b';
+        let fillColor = '#0284c7';
+        if (payload.isCorrect === true) {
+            fillColor = '#10b981';
+        } else if (payload.isCorrect === false) {
+            fillColor = '#ef4444';
+        } else if (payload.accuracy !== undefined) {
+            fillColor = payload.accuracy >= 70 ? '#10b981' : payload.accuracy >= 40 ? '#f59e0b' : '#ef4444';
+        } else if (payload.status === 'Skipped') {
+            fillColor = '#64748b';
+        }
 
         return (
             <circle
@@ -143,19 +150,39 @@ export function TimeSpentChart({ data, onQuestionClick }) {
         if (active && payload && payload.length) {
             const dataPoint = payload[0].payload;
             return (
-                <div className="bg-slate-900/90 text-white border border-purple-500/30 p-3.5 rounded-2xl shadow-2xl backdrop-blur-xl space-y-1">
-                    <p className="font-black text-sm text-purple-300 italic">{dataPoint.name}</p>
-                    <p className="text-xs font-bold text-slate-200">
-                        Time Spent (Seconds) : <span className="font-black text-amber-400">{dataPoint.timeSpent}s</span>
+                <div className="bg-slate-900 text-white border border-slate-700/80 p-3.5 rounded-2xl shadow-2xl backdrop-blur-xl space-y-1.5 min-w-[190px]">
+                    <div className="flex items-center justify-between gap-2 border-b border-slate-800 pb-1.5">
+                        <p className="font-black text-sm text-sky-400">{dataPoint.name}</p>
+                        {dataPoint.accuracy !== undefined && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
+                                {dataPoint.accuracy}% accuracy
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-xs font-bold text-slate-200 flex items-center justify-between">
+                        <span>{dataPoint.label || 'Time Spent'}:</span>
+                        <span className="font-black text-amber-400">{dataPoint.timeSpent ?? 0}s</span>
                     </p>
-                    {dataPoint.status && (
-                        <p className={`text-[11px] font-black uppercase tracking-wider ${
-                            dataPoint.isCorrect ? 'text-emerald-400' : dataPoint.isCorrect === false ? 'text-rose-400' : 'text-slate-400'
-                        }`}>
-                            {dataPoint.status} {dataPoint.isCorrect ? 'Correct' : dataPoint.isCorrect === false ? 'Incorrect' : 'Skipped'}
+                    {dataPoint.avgTimeSpent !== undefined && dataPoint.avgTimeSpent !== dataPoint.timeSpent && (
+                        <p className="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+                            <span>Class Avg:</span>
+                            <span className="font-bold text-slate-300">{dataPoint.avgTimeSpent}s</span>
                         </p>
                     )}
-                    <p className="text-[9px] font-bold text-purple-400/80 italic mt-1">Click to analyze question</p>
+                    {dataPoint.status && (
+                        <div className="pt-1">
+                            <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                                dataPoint.isCorrect === true ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                                dataPoint.isCorrect === false ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                                'bg-slate-800 text-slate-300'
+                            }`}>
+                                {dataPoint.status}
+                            </span>
+                        </div>
+                    )}
+                    <p className="text-[9px] font-bold text-slate-400 italic pt-1 border-t border-slate-800/80">
+                        Click to analyze question →
+                    </p>
                 </div>
             );
         }
@@ -177,15 +204,15 @@ export function TimeSpentChart({ data, onQuestionClick }) {
                 <defs>
                     <linearGradient id="timeSpentGradient" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#0284c7" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="#0284c7" stopOpacity={0.0} />
+                        <stop offset="95%" stopColor="#0284c7" stopOpacity={0.02} />
                     </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.7} vertical={false} />
                 <XAxis
                     dataKey="name"
-                    stroke="#94a3b8"
+                    stroke="#64748b"
                     tickLine={false}
-                    axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                    axisLine={{ stroke: '#cbd5e1' }}
                     tick={(props) => {
                         const { x, y, payload } = props;
                         if (!payload) return null;
@@ -202,7 +229,7 @@ export function TimeSpentChart({ data, onQuestionClick }) {
                                     x={x}
                                     y={y + 15}
                                     textAnchor="middle"
-                                    fill="#94a3b8"
+                                    fill="#64748b"
                                     className="font-bold hover:fill-[var(--text-accent)] transition-colors hover:underline"
                                     style={{ fontSize: '12px', fontWeight: 700 }}
                                 >
@@ -213,11 +240,11 @@ export function TimeSpentChart({ data, onQuestionClick }) {
                     }}
                 />
                 <YAxis
-                    stroke="#94a3b8"
+                    stroke="#64748b"
                     unit="s"
-                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
+                    tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }}
                     tickLine={false}
-                    axisLine={false}
+                    axisLine={{ stroke: '#cbd5e1' }}
                 />
                 <Tooltip content={<TimeTooltip />} />
                 <Area

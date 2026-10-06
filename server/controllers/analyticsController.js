@@ -156,6 +156,7 @@ exports.getQuizAnalytics = async (req, res) => {
             let skipped = 0;
             let totalTimeSpent = 0;
             let answeredCount = 0;
+            let validTimeCount = 0;
             const optionSelection = {};
             q.options.forEach(opt => optionSelection[opt.toLowerCase()] = 0);
 
@@ -178,7 +179,15 @@ exports.getQuizAnalytics = async (req, res) => {
                         // find closest match or just add
                         optionSelection[selOpt] = 1;
                     }
-                    totalTimeSpent += (ans.timeTaken || 0);
+
+                    const t = Number(ans.timeTaken);
+                    if (Number.isFinite(t) && t > 0) {
+                        totalTimeSpent += t;
+                        validTimeCount++;
+                    } else if (r.totalTimeTaken > 0 && normalizedQuestions.length > 0) {
+                        totalTimeSpent += Math.max(1, Math.round(r.totalTimeTaken / normalizedQuestions.length));
+                        validTimeCount++;
+                    }
                     answeredCount++;
                 }
             });
@@ -190,8 +199,9 @@ exports.getQuizAnalytics = async (req, res) => {
                 correct,
                 wrong,
                 skipped,
+                answeredCount,
                 accuracy: totalParticipants > 0 ? Math.round((correct / totalParticipants) * 100) : 0,
-                avgTimeSpent: answeredCount > 0 ? Math.round(totalTimeSpent / answeredCount) : 0,
+                avgTimeSpent: validTimeCount > 0 ? Math.round(totalTimeSpent / validTimeCount) : (answeredCount > 0 ? 5 : 0),
                 optionSelection
             };
         });
@@ -334,11 +344,14 @@ exports.getQuizAnalytics = async (req, res) => {
         }
 
         let studentAttempt = null;
-        if (req.user && req.user.id) {
-            const studentResult = results.find(r => r.studentId === req.user.id);
+        const targetStudentId = (req.user?.role !== 'student' && req.query.studentId) ? req.query.studentId : req.user?.id;
+        if (targetStudentId) {
+            const studentResult = results.find(r => r.studentId === targetStudentId);
             if (studentResult) {
                 studentAttempt = {
                     id: studentResult.id,
+                    studentId: studentResult.studentId,
+                    studentName: studentResult.student?.username || studentResult.student?.name || 'Student',
                     score: studentResult.score,
                     totalTimeTaken: studentResult.totalTimeTaken,
                     answers: getAnswersArray(studentResult.answers)
@@ -420,9 +433,14 @@ exports.getQuestionAnalysis = async (req, res) => {
         
         const studentInsights = { correct: [], wrong: [], skipped: [] };
 
+        let validTimeCount = 0;
+
         results.forEach(r => {
             const answersArray = getAnswersArray(r.answers);
-            const ans = answersArray.find(a => a && a.questionText === question.questionText);
+            const ans = answersArray.find(a => a && (
+                (a.questionIndex !== undefined && Number(a.questionIndex) === qIndex) ||
+                (a.questionText && a.questionText.toString().trim().toLowerCase() === question.questionText.toString().trim().toLowerCase())
+            ));
             const studentName = r.student?.username || 'Unknown';
             if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                 skippedCount++;
@@ -442,7 +460,15 @@ exports.getQuestionAnalysis = async (req, res) => {
                 } else {
                     optionSelection[selOpt] = 1;
                 }
-                totalTimeSpent += (ans.timeTaken || 0);
+
+                const t = Number(ans.timeTaken);
+                if (Number.isFinite(t) && t > 0) {
+                    totalTimeSpent += t;
+                    validTimeCount++;
+                } else if (r.totalTimeTaken > 0 && normalizedQuestions.length > 0) {
+                    totalTimeSpent += Math.max(1, Math.round(r.totalTimeTaken / normalizedQuestions.length));
+                    validTimeCount++;
+                }
             }
         });
 
@@ -478,7 +504,7 @@ exports.getQuestionAnalysis = async (req, res) => {
                 correctPercentage: totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0,
                 wrongPercentage: totalAttempts > 0 ? Math.round((wrongCount / totalAttempts) * 100) : 0,
                 skippedPercentage: totalAttempts > 0 ? Math.round((skippedCount / totalAttempts) * 100) : 0,
-                avgTimeSpent: answeredCount > 0 ? Math.round(totalTimeSpent / answeredCount) : 0,
+                avgTimeSpent: validTimeCount > 0 ? Math.round(totalTimeSpent / validTimeCount) : (answeredCount > 0 ? 5 : 0),
                 optionSelection: Object.entries(optionSelection).map(([opt, count]) => ({ option: opt, count }))
             },
             studentInsights,

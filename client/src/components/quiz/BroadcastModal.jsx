@@ -117,15 +117,15 @@ export default function BroadcastModal({ quiz, isOpen, onClose, onBroadcastSucce
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="modal-overlay">
             {/* Backdrop */}
             <div 
-                className="absolute inset-0 bg-[#020617]/90 backdrop-blur-md transition-opacity" 
+                className="modal-backdrop" 
                 onClick={onClose}
             />
 
             {/* Modal Box */}
-            <div className="relative w-full max-w-4xl bg-[#0b0f19] border border-white/10 rounded-[2rem] sm:rounded-[3rem] p-5 sm:p-6 md:p-10 shadow-2xl flex flex-col md:flex-row gap-6 md:gap-10 overflow-y-auto max-h-[95dvh] custom-scrollbar">
+            <div className="modal-card-dark w-full max-w-4xl p-5 sm:p-6 md:p-10 flex flex-col md:flex-row gap-6 md:gap-10 overflow-y-auto max-h-[95dvh] custom-scrollbar relative">
                 
                 {/* Visual Accent Glow */}
                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-amber-400/5 rounded-full blur-[100px] pointer-events-none -z-10 animate-pulse"></div>

@@ -1969,46 +1969,50 @@ export default function CreateQuizTopic() {
 
             {/* TEXT PROMPT MODAL */}
             {showTextModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md">
-                    <div className="bg-white border-2 border-[var(--border-color)] rounded-[2.5rem] p-6 sm:p-8 w-full max-w-lg space-y-6 shadow-2xl relative">
-                        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+                <div className="modal-overlay">
+                    <div className="modal-backdrop" onClick={() => setShowTextModal(false)} />
+                    <div className="modal-card w-full max-w-lg animate-in zoom-in-95 duration-200">
+                        <div className="modal-header bg-slate-50/80">
                             <h3 className="text-base sm:text-lg font-black text-[#0f172a] uppercase italic">
                                 Add Topic Description / Text
                             </h3>
                             <button 
                                 type="button" 
                                 onClick={() => setShowTextModal(false)}
-                                className="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-800"
+                                className="modal-close-btn"
+                                aria-label="Close dialog"
                             >
                                 <XIcon size={18} />
                             </button>
                         </div>
 
-                        <textarea
-                            value={textInputContent}
-                            onChange={(e) => setTextInputContent(e.target.value)}
-                            placeholder="Paste textbook content, syllabus notes, code snippets, or formula definitions..."
-                            rows={6}
-                            className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-[var(--bg-accent)] rounded-2xl text-xs sm:text-sm font-bold text-slate-900 outline-none"
-                            autoFocus
-                        />
+                        <div className="p-6 space-y-5">
+                            <textarea
+                                value={textInputContent}
+                                onChange={(e) => setTextInputContent(e.target.value)}
+                                placeholder="Paste textbook content, syllabus notes, code snippets, or formula definitions..."
+                                rows={6}
+                                className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-[var(--bg-accent)] rounded-2xl text-xs sm:text-sm font-bold text-slate-900 outline-none"
+                                autoFocus
+                            />
 
-                        <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-200">
-                            <button
-                                type="button"
-                                onClick={() => setShowTextModal(false)}
-                                className="px-6 py-3 bg-slate-100 text-slate-600 font-black uppercase text-xs rounded-2xl"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleAddTextInput}
-                                disabled={!textInputContent.trim()}
-                                className="px-8 py-3 bg-[var(--bg-accent)] text-white font-black uppercase text-xs rounded-2xl shadow-md cursor-pointer"
-                            >
-                                Add Input
-                            </button>
+                            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-200">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowTextModal(false)}
+                                    className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black uppercase text-xs rounded-2xl transition-all cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleAddTextInput}
+                                    disabled={!textInputContent.trim()}
+                                    className="px-8 py-3 bg-[var(--bg-accent)] hover:opacity-90 disabled:opacity-50 text-white font-black uppercase text-xs rounded-2xl shadow-md cursor-pointer transition-all"
+                                >
+                                    Add Input
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -698,11 +698,11 @@ export default function MyQuizzes() {
 
             {/* Section-Specific Broadcast Modal */}
             {broadcastModal.isOpen && broadcastModal.template && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} />
+                <div className="modal-overlay">
+                    <div className="modal-backdrop" onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} />
                     
-                    <div className="relative bg-white border-2 border-slate-200 rounded-[2.5rem] w-full max-w-lg shadow-2xl p-8 space-y-6 animate-in zoom-in-95">
-                        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div className="modal-card w-full max-w-lg animate-in zoom-in-95">
+                        <div className="modal-header bg-slate-50/80">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-amber-100 text-amber-700 rounded-2xl">
                                     <Megaphone size={24} />
@@ -716,12 +716,12 @@ export default function MyQuizzes() {
                                     </p>
                                 </div>
                             </div>
-                            <button onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} className="p-2 hover:bg-slate-100 rounded-xl cursor-pointer">
-                                <XCircle size={18} className="text-slate-400" aria-hidden="true" />
+                            <button onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} className="modal-close-btn">
+                                <XCircle size={18} aria-hidden="true" />
                             </button>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="p-6 space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-slate-600 mb-1">Target Branch</label>
                                 <div className="relative">

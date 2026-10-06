@@ -162,10 +162,34 @@ a:focus-visible,
 
 select,
 input,
-textarea,
-button {
+textarea {
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
 }
+
+/* ─── APPLICATION-WIDE BUTTON COLOR & HOVER CONSISTENCY ───────────────────── */
+button,
+[role="button"] {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:disabled,
+button[disabled] {
+  cursor: not-allowed !important;
+}
+
+button:disabled:hover,
+button[disabled]:hover {
+  transform: none !important;
+  filter: none !important;
+}
+
 
 
 /* ─── MOBILE SIDEBAR SCROLL LOCK & OVERSCROLL CONTAINMENT ──────────────── */
@@ -754,6 +778,170 @@ input:-webkit-autofill:active {
 .no-scrollbar {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+/* ─── PREMIUM MODAL OVERLAY & CONTAINER ──────────────────────────────────
+   Provides a unified, polished backdrop and modal-card system.
+   Use .modal-overlay on the fixed wrapper and .modal-card on the dialog box.
+   ────────────────────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  transition: opacity 300ms var(--ease-premium);
+}
+
+.modal-card {
+  position: relative;
+  z-index: 10;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.75rem;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 4px 6px -1px rgba(0, 0, 0, 0.04),
+    0 24px 64px -12px rgba(0, 0, 0, 0.18),
+    0 0 80px -20px rgba(234, 88, 12, 0.06);
+  overflow: hidden;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-card-dark {
+  position: relative;
+  z-index: 10;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.75rem;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 24px 64px -12px rgba(0, 0, 0, 0.5),
+    0 0 100px -30px rgba(56, 189, 248, 0.05);
+  overflow: hidden;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal header with sticky top */
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: inherit;
+}
+
+.modal-header-dark {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: inherit;
+}
+
+/* Modal body with premium scrollbar */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+}
+
+.modal-body::-webkit-scrollbar { width: 5px; }
+.modal-body::-webkit-scrollbar-track { background: transparent; }
+.modal-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 9999px;
+}
+.modal-body::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.22); }
+
+/* Close button for modals */
+.modal-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms var(--ease-smooth);
+  background: rgba(0, 0, 0, 0.04);
+  color: #64748b;
+}
+
+.modal-close-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+  transform: scale(1.05);
+}
+
+.modal-close-btn-dark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms var(--ease-smooth);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.modal-close-btn-dark:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* ─── MODAL ANIMATION KEYFRAMES ──────────────────────────────────────── */
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-backdrop-animate {
+  animation: modal-backdrop-in 250ms var(--ease-premium) forwards;
+}
+
+.modal-card-animate {
+  animation: modal-card-in 350ms var(--ease-premium) forwards;
 }
 
 /* Sticky Header for Dashboard Layout */

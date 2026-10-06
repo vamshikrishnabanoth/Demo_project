@@ -81,13 +81,13 @@ export default function TeacherDashboard() {
 
             <AnimatePresence>
                 {showModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="modal-overlay">
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowModal(false)}
-                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+                            className="modal-backdrop"
                         />
 
                         <motion.div
@@ -95,26 +95,25 @@ export default function TeacherDashboard() {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 15 }}
                             transition={{ type: 'spring', duration: 0.4 }}
-                            className="bg-white border-2 border-slate-200 w-full max-w-md rounded-[2rem] shadow-2xl relative overflow-hidden z-10 flex flex-col p-5 sm:p-6 gap-4"
+                            className="modal-card w-full max-w-md"
                             role="dialog"
                             aria-modal="true"
                             aria-labelledby="creation-mode-title"
                         >
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="absolute top-4 right-4 p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 transition-all cursor-pointer border-none outline-none"
-                                aria-label="Close dialog"
-                            >
-                                <XIcon size={15} />
-                            </button>
-
-                            <div>
+                            <div className="modal-header bg-gradient-to-r from-white to-slate-50/80">
                                 <h3 id="creation-mode-title" className="text-lg font-black text-slate-900 tracking-tight">
                                     Choose Creation Mode
                                 </h3>
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="modal-close-btn"
+                                    aria-label="Close dialog"
+                                >
+                                    <XIcon size={16} />
+                                </button>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-2.5">
+                            <div className="p-5 sm:p-6 grid grid-cols-1 gap-2.5">
                                 <div
                                     onClick={() => {
                                         setShowModal(false);
