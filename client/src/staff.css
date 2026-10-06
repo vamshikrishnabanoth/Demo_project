@@ -4,12 +4,12 @@
 */
 
 .workspace-staff {
-  --ws-surface: var(--bg-primary);
-  --ws-muted: var(--bg-secondary);
+  --ws-surface: #ffffff;
+  --ws-muted: #ffffff;
   --ws-ink: var(--text-primary);
   --ws-ink-soft: var(--text-secondary);
   --ws-line: var(--border-color);
-  --ws-line-strong: #cfcfcf;
+  --ws-line-strong: #e2e8f0;
   --ws-radius: var(--radius-xl);
   --ws-radius-sm: 0.75rem;
   --ws-shadow: var(--card-shadow-sm);
@@ -24,7 +24,7 @@
 }
 
 .workspace-staff header.dashboard-header {
-  background: var(--glass-bg);
+  background: #ffffff;
   border-bottom: 1px solid var(--ws-line);
   box-shadow: none;
 }
@@ -53,7 +53,7 @@
 .workspace-staff .admin-toolbar,
 .workspace-staff .ws-card,
 .workspace-staff .ws-surface {
-  background: linear-gradient(180deg, #ffffff, var(--ws-muted));
+  background: #ffffff;
   border: 1px solid var(--ws-line);
   box-shadow: var(--ws-shadow);
 }

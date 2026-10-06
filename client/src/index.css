@@ -5,7 +5,7 @@
 :root {
   /* ─── KMIT ORANGE THEME ──────────────────────────────────────────────── */
   --bg-primary: #ffffff;
-  --bg-secondary: #f8f8f8;
+  --bg-secondary: #ffffff;
   --bg-accent: #ea580c;
   --bg-accent-hover: #c2410c;
   --bg-accent-gradient: linear-gradient(110deg, #ea580c 0%, #f97316 52%, #2f855a 100%);
@@ -15,30 +15,30 @@
   --bg-saffron-hover: #ea580c;
 
   --student-surface: #ffffff;
-  --student-surface-alt: #f5f5f5;
-  --student-surface-subtle: #f3f4f6;
-  --student-border: #e5e7eb;
-  --student-shadow-soft: 0 1px 4px rgba(15, 23, 42, 0.06);
-  --student-shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --student-surface-alt: #ffffff;
+  --student-surface-subtle: #ffffff;
+  --student-border: #e2e8f0;
+  --student-shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.04);
+  --student-shadow-md: 0 6px 20px rgba(15, 23, 42, 0.06);
 
-  --text-primary: #111111;
-  --text-secondary: #444444;
-  --text-accent: #111111;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-accent: #0f172a;
   --text-on-accent: #ffffff;
 
-  --border-color: #dddddd;
-  --glass-bg: rgba(255, 255, 255, 0.97);
+  --border-color: #e2e8f0;
+  --glass-bg: #ffffff;
   --glass-blur: blur(8px);
-  --glass-border: #dddddd;
-  --glass-border-hover: #aaaaaa;
-  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+  --glass-border: #e2e8f0;
+  --glass-border-hover: #cbd5e1;
+  --glass-inner-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 1);
 
-  --accent-sand: #f0f0f0;
-  --accent-sand-hover: #e0e0e0;
+  --accent-sand: #ffffff;
+  --accent-sand-hover: #f8fafc;
 
-  --aurora-glow-1: rgba(0, 0, 0, 0.05);
-  --aurora-glow-2: rgba(0, 0, 0, 0.03);
-  --aurora-glow-3: rgba(0, 0, 0, 0.05);
+  --aurora-glow-1: transparent;
+  --aurora-glow-2: transparent;
+  --aurora-glow-3: transparent;
 
   --neural-prime: #111111;
   --neural-sub: #444444;
