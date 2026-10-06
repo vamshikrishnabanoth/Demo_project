@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../utils/api';
@@ -915,7 +915,7 @@ export default function PipelineOutput() {
                                             </div>
                                         </div>
                                         {/* Panel Body */}
-                                        <div className="p-5 overflow-y-auto max-h-[65vh]">
+                                        <div className="p-5 overflow-y-auto max-h-[65vh] scrollbar-thin">
                                             {renderStageContent(selectedStage)}
                                         </div>
                                     </div>
@@ -947,7 +947,7 @@ export default function PipelineOutput() {
                                             const isExp = expandedQ === qIdx;
                                             const correctAns = (q.correctAnswer || '').trim();
                                             return (
-                                                <div key={qIdx} className="rounded-2xl border-2 bg-white hover:border-orange-200 transition-all" style={{ borderColor: 'var(--border-color)' }}>
+                                                <div key={qIdx} className="cv-auto rounded-2xl border-2 bg-white hover:border-orange-200 transition-all" style={{ borderColor: 'var(--border-color)' }}>
                                                     <button onClick={() => setExpandedQ(isExp ? null : qIdx)} className="w-full text-left px-5 py-4 flex items-center gap-3 cursor-pointer">
                                                         <span className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black text-white shrink-0" style={{ background: 'var(--bg-accent)' }}>{qIdx + 1}</span>
                                                         <p className="text-sm font-bold text-slate-900 flex-1 text-left leading-snug">{(q.questionText || q.question || q.prompt_text || '').slice(0, 120)}{(q.questionText || q.question || '').length > 120 ? '...' : ''}</p>

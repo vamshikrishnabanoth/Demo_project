@@ -249,6 +249,60 @@ body.sidebar-open {
   transform-style: preserve-3d;
 }
 
+/* ─── ANIMATION COMPOSITOR HINTS ─────────────────────────────────────────
+   Only applied to elements that are ALREADY animating — this tells the
+   browser compositor thread to handle them without touching the main thread.
+   Does NOT pre-promote idle elements (which wastes GPU VRAM).
+──────────────────────────────────────────────────────────────────────────── */
+.animate-spin  { will-change: transform; }
+.animate-pulse { will-change: opacity; }
+.animate-ping  { will-change: transform, opacity; }
+
+/* ─── THIN SCROLLBAR (Chrome / Edge / Safari) ────────────────────────────
+   Pure CSS paint — no layout cost, no JS, no reflow.
+──────────────────────────────────────────────────────────────────────────── */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+}
+.scrollbar-thin::-webkit-scrollbar { width: 4px; height: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+/* ─── CONTENT-VISIBILITY: AUTO ──────────────────────────────────────────
+   Skips rendering of off-screen question cards entirely.
+   The browser re-renders them only when they scroll into view.
+   Net saving: significant CPU reduction on 20+ question lists.
+──────────────────────────────────────────────────────────────────────────── */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 130px; /* estimated collapsed card height */
+}
+
+/* ─── PREFERS-REDUCED-MOTION ────────────────────────────────────────────
+   Respects the OS accessibility setting. For users with that flag set,
+   all transitions/animations are cut to near-zero — reducing CPU/GPU load
+   for them. Has ZERO effect on users without the flag set.
+──────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Keep loaders visible (just static) so users know content is loading */
+  .animate-spin  { animation: none !important; will-change: auto; }
+  .animate-pulse { animation: none !important; opacity: 0.7; will-change: auto; }
+  .animate-ping  { animation: none !important; will-change: auto; }
+}
+
 html {
   scroll-behavior: smooth;
   overflow-y: scroll;
