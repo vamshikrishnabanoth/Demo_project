@@ -335,15 +335,54 @@ export default function QuizAnalytics() {
         : [{ subject: 'General', A: analytics?.averageScore || 0, fullMark: 100 }];
 
     const sectionStats = (() => {
-        if (!radarData || radarData.length === 0) return { bestSection: null, avgScore: 0, totalSections: 0 };
-        const validSections = radarData.filter(s => typeof s.A === 'number' && !isNaN(s.A));
-        if (validSections.length === 0) return { bestSection: null, avgScore: 0, totalSections: 0 };
+        if (!radarData || !Array.isArray(radarData) || radarData.length === 0) {
+            return {
+                hasData: false,
+                topSectionLabel: '—',
+                topSectionScore: null,
+                isTied: false,
+                tiedCount: 0,
+                avgScore: 0
+            };
+        }
+
+        const validSections = radarData.filter(s => s && typeof s.A === 'number' && !isNaN(s.A) && isFinite(s.A));
+        if (validSections.length === 0) {
+            return {
+                hasData: false,
+                topSectionLabel: '—',
+                topSectionScore: null,
+                isTied: false,
+                tiedCount: 0,
+                avgScore: 0
+            };
+        }
+
+        // Sort descending by score
         const sorted = [...validSections].sort((a, b) => b.A - a.A);
+        const highestScore = sorted[0].A;
+
+        // Check for ties at the top
+        const topTiedSections = sorted.filter(s => Math.abs(s.A - highestScore) < 0.001);
+        let topSectionLabel = '';
+        if (topTiedSections.length === 1) {
+            topSectionLabel = topTiedSections[0].subject || 'General';
+        } else if (topTiedSections.length === 2) {
+            topSectionLabel = `${topTiedSections[0].subject} & ${topTiedSections[1].subject}`;
+        } else {
+            topSectionLabel = `${topTiedSections[0].subject} (+${topTiedSections.length - 1} tied)`;
+        }
+
         const sum = validSections.reduce((acc, curr) => acc + curr.A, 0);
+        const avg = Math.round((sum / validSections.length) * 10) / 10;
+
         return {
-            bestSection: sorted[0],
-            avgScore: Math.round(sum / validSections.length),
-            totalSections: validSections.length
+            hasData: true,
+            topSectionLabel,
+            topSectionScore: highestScore,
+            isTied: topTiedSections.length > 1,
+            tiedCount: topTiedSections.length,
+            avgScore: avg
         };
     })();
 
@@ -530,9 +569,6 @@ export default function QuizAnalytics() {
                                             <p className="text-xs text-[#475569] font-bold uppercase tracking-wider">Average marks across class sections</p>
                                         </div>
                                     </div>
-                                    <span className="text-xs font-black text-slate-700 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">
-                                        {sectionStats.totalSections} Sections Evaluated
-                                    </span>
                                 </div>
                                 <div className="w-full overflow-x-auto premium-scrollbar pb-2">
                                     <div style={{ minWidth: `${Math.max(360, radarData.length * 75)}px`, height: '340px' }}>
@@ -553,35 +589,38 @@ export default function QuizAnalytics() {
                                 </div>
                             </div>
 
-                            {/* Section Performance Insights Footer — Fills void space with high-value cohort metrics */}
-                            <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Top Section</p>
-                                        <p className="text-sm font-black text-[#0f172a] tracking-tight">{sectionStats.bestSection?.subject || 'N/A'}</p>
+                            {/* Section Performance Insights Footer — Exactly 2 Core Metrics */}
+                            <div className="mt-5 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* Metric 1: Top Performed Section */}
+                                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
+                                    <div className="min-w-0">
+                                        <div className="flex items-center gap-1.5">
+                                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Top Performed Section</p>
+                                            {sectionStats.isTied && (
+                                                <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                                                    Tied
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-base sm:text-lg font-black text-[#0f172a] tracking-tight truncate mt-0.5" title={sectionStats.topSectionLabel}>
+                                            {sectionStats.topSectionLabel}
+                                        </p>
                                     </div>
-                                    <span className="text-xs font-black text-emerald-700 bg-emerald-100/90 border border-emerald-200 px-2.5 py-1 rounded-xl">
-                                        {sectionStats.bestSection ? `${sectionStats.bestSection.A} pts` : '--'}
+                                    <span className="text-xs sm:text-sm font-black text-emerald-700 bg-emerald-100/90 border border-emerald-200 px-3 py-1.5 rounded-xl shrink-0">
+                                        {sectionStats.topSectionScore !== null ? `${sectionStats.topSectionScore} pts` : '—'}
                                     </span>
                                 </div>
 
-                                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Cohort Mean</p>
-                                        <p className="text-sm font-black text-[#0f172a] tracking-tight">{sectionStats.avgScore} pts</p>
+                                {/* Metric 2: Average of Sections */}
+                                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3 shadow-2xs">
+                                    <div className="min-w-0">
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Average of Sections</p>
+                                        <p className="text-base sm:text-lg font-black text-[#0f172a] tracking-tight mt-0.5">
+                                            {sectionStats.hasData ? `${sectionStats.avgScore} pts` : '—'}
+                                        </p>
                                     </div>
-                                    <span className="text-[11px] font-bold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-xl shadow-2xs">
-                                        Overall Avg
-                                    </span>
-                                </div>
-
-                                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                                    <div>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Active Sections</p>
-                                        <p className="text-sm font-black text-[#0f172a] tracking-tight">{sectionStats.totalSections} Sections</p>
-                                    </div>
-                                    <span className="text-xs font-black text-blue-700 bg-blue-100/90 border border-blue-200 px-2.5 py-1 rounded-xl">
-                                        Evaluated
+                                    <span className="text-xs sm:text-sm font-black text-blue-700 bg-blue-100/90 border border-blue-200 px-3 py-1.5 rounded-xl shadow-2xs shrink-0">
+                                        Overall Mean
                                     </span>
                                 </div>
                             </div>
