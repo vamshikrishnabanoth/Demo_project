@@ -57,6 +57,11 @@ model User {
   broadcastsSent   Broadcast[]
   cheatingLogs     CheatingLog[]
   pointTransactions PointTransaction[]
+
+  @@index([role])
+  @@index([isOnline])
+  @@index([role, studentBranch, section])
+  @@index([lastLogin])
 }
 
 model Quiz {
@@ -113,6 +118,9 @@ model Quiz {
   @@index([startTime])                   // scheduler start filter
   @@index([isActive])                    // scheduler end filter
   @@index([isLive, status])              // live quiz queries
+  @@index([templateId])                  // instantiated template lookup
+  @@index([isTemplate, isActive, createdAt]) // repository templates sorting
+  @@index([isAssessment, status])        // assessment arena filter
 }
 
 model Result {
@@ -132,9 +140,13 @@ model Result {
   lastAnsweredAt DateTime  @default(now())
 
   @@unique([quizId, studentId])
-  @@index([quizId])      // analytics queries filter by quizId
-  @@index([studentId])   // student history queries filter by studentId
-  @@index([status])      // filter completed vs in-progress
+  @@index([quizId])             // analytics queries filter by quizId
+  @@index([studentId])          // student history queries filter by studentId
+  @@index([status])             // filter completed vs in-progress
+  @@index([quizId, status])     // analytics completed results filter
+  @@index([studentId, status])  // student completed results filter
+  @@index([studentId, completedAt]) // student quiz history chronological sort
+  @@index([quizId, score])      // leaderboard rank calculation
 }
 
 model PointTransaction {

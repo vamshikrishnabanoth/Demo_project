@@ -1446,27 +1446,45 @@ exports.getMyQuizzes = async (req, res) => {
             orderBy: { createdAt: 'desc' }
         });
 
-        const enriched = await Promise.all(quizzes.map(async (quiz) => {
-            const results = await prisma.result.findMany({
-                where: { quizId: quiz.id }
-            });
-            const completionCount = results.length;
+        if (!quizzes.length) {
+            return res.json([]);
+        }
+
+        const quizIds = quizzes.map(q => q.id);
+        const results = await prisma.result.findMany({
+            where: { quizId: { in: quizIds } },
+            select: {
+                quizId: true,
+                score: true,
+                student: { select: { username: true } }
+            }
+        });
+
+        const resultsByQuiz = {};
+        for (const r of results) {
+            if (!resultsByQuiz[r.quizId]) resultsByQuiz[r.quizId] = [];
+            resultsByQuiz[r.quizId].push(r);
+        }
+
+        const enriched = quizzes.map((quiz) => {
+            const quizResults = resultsByQuiz[quiz.id] || [];
+            const completionCount = quizResults.length;
             const averageScore = completionCount > 0
-                ? results.reduce((sum, r) => sum + r.score, 0) / completionCount
+                ? Math.round(quizResults.reduce((sum, r) => sum + r.score, 0) / completionCount)
                 : 0;
             return {
                 ...quiz,
                 completionCount,
                 averageScore,
-                results: results
+                results: quizResults
                     .sort((a, b) => b.score - a.score)
                     .slice(0, 3)
                     .map(r => ({
-                        studentName: r.studentName || 'Student',
+                        studentName: r.student?.username || 'Student',
                         score: r.score
                     }))
             };
-        }));
+        });
 
         res.json(enriched);
     } catch (err) {
@@ -2434,21 +2452,36 @@ exports.getTeacherStats = async (req, res) => {
             orderBy: { createdAt: 'desc' }
         });
 
-        const stats = await Promise.all(quizzes.map(async (quiz) => {
-            const dbResults = await prisma.result.findMany({
-                where: { quizId: quiz.id },
-                include: { student: { select: { username: true, email: true } } },
-                orderBy: [{ score: 'desc' }, { completedAt: 'asc' }]
-            });
+        if (!quizzes.length) {
+            return res.json([]);
+        }
 
-            const results = dbResults.map(r => ({
+        const quizIds = quizzes.map(q => q.id);
+        const dbResults = await prisma.result.findMany({
+            where: { quizId: { in: quizIds } },
+            select: {
+                quizId: true,
+                score: true,
+                totalQuestions: true,
+                completedAt: true,
+                student: { select: { username: true, email: true } }
+            },
+            orderBy: [{ score: 'desc' }, { completedAt: 'asc' }]
+        });
+
+        const resultsByQuiz = {};
+        for (const r of dbResults) {
+            if (!resultsByQuiz[r.quizId]) resultsByQuiz[r.quizId] = [];
+            resultsByQuiz[r.quizId].push({
                 studentName: r.student?.username || 'Unknown',
                 score: r.score,
                 totalQuestions: r.totalQuestions,
-                completedAt: r.completedAt,
-                answers: r.answers
-            }));
+                completedAt: r.completedAt
+            });
+        }
 
+        const stats = quizzes.map((quiz) => {
+            const results = resultsByQuiz[quiz.id] || [];
             const completionCount = results.length;
             const averageScore = completionCount > 0
                 ? (results.reduce((sum, r) => sum + r.score, 0) / completionCount)
@@ -2463,7 +2496,7 @@ exports.getTeacherStats = async (req, res) => {
                 averageScore,
                 results
             };
-        }));
+        });
 
         res.json(stats);
     } catch (err) {
@@ -3451,13 +3484,33 @@ exports.getLiveQuizzes = async (req, res) => {
         }
 
         const now = new Date();
+        const isTeacherOrAdmin = req.user && ['teacher', 'admin'].includes(req.user.role);
+        const quizIds = studentFilteredQuizzes.map(q => q.id);
 
-        const quizzesWithAttempts = await Promise.all(studentFilteredQuizzes.map(async (quiz) => {
-            // Get the student's LATEST result for this quiz (for resultId link)
-            const result = await prisma.result.findFirst({
-                where: { quizId: quiz.id, studentId: req.user.id },
-                orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
-            });
+        const studentResults = quizIds.length > 0 ? await prisma.result.findMany({
+            where: {
+                quizId: { in: quizIds },
+                studentId: req.user.id
+            },
+            select: {
+                id: true,
+                quizId: true,
+                score: true,
+                completedAt: true,
+                lastAnsweredAt: true
+            },
+            orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
+        }) : [];
+
+        const latestResultByQuiz = {};
+        for (const resItem of studentResults) {
+            if (!latestResultByQuiz[resItem.quizId]) {
+                latestResultByQuiz[resItem.quizId] = resItem;
+            }
+        }
+
+        const quizzesWithAttempts = studentFilteredQuizzes.map((quiz) => {
+            const result = latestResultByQuiz[quiz.id] || null;
 
             // Determine timing status for assessments
             let isLocked = false;
@@ -3484,11 +3537,9 @@ exports.getLiveQuizzes = async (req, res) => {
             }
 
             // Strip raw questions column for students (security against sniffing), but keep for teachers/admins
-            const isTeacherOrAdmin = req.user && ['teacher', 'admin'].includes(req.user.role);
             const { questions, ...quizData } = quiz;
 
             // wasLiveCompleted: true when this quiz was a live session that has now finished.
-            // The Assessments tab uses this flag to show START (async practice) + RESULT buttons.
             const wasLiveCompleted = quiz.isLive && quiz.status === 'finished';
 
             let questionsArr = Array.isArray(quiz.questions) ? quiz.questions : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions) : []);
@@ -3507,7 +3558,7 @@ exports.getLiveQuizzes = async (req, res) => {
                 wasLiveCompleted,
                 resultId: result ? result.id : null
             };
-        }));
+        });
 
         res.json(quizzesWithAttempts);
     } catch (err) {

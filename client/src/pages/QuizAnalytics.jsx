@@ -83,7 +83,6 @@ export default function QuizAnalytics() {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
     const [expandedQuestionIdx, setExpandedQuestionIdx] = useState(null);
-    const [selectedStudentId, setSelectedStudentId] = useState('ALL');
 
 
     const fetchAnalytics = async () => {
@@ -723,55 +722,19 @@ export default function QuizAnalytics() {
                     </div>
                 )}
 
-                {/* Time Spent per Question Graph — Available for Teachers & Students */}
+                {/* Time Spent per Question Graph — Cohort Average */}
                 {(() => {
-                    const isViewingClassAvg = !isStudent && selectedStudentId === 'ALL';
-                    const activeStudent = !isStudent && selectedStudentId !== 'ALL'
-                        ? (analytics?.leaderboard || []).find(s => s.id === selectedStudentId)
-                        : null;
-                    const studentAnswers = isStudent 
-                        ? (analytics?.studentAttempt?.answers || [])
-                        : (activeStudent?.answers || []);
-
                     const timeSpentData = (analytics?.questionPerformance || []).map((q, idx) => {
-                        const studentAns = studentAnswers.find(a => 
-                            (a.questionIndex !== undefined && Number(a.questionIndex) === idx) ||
-                            (a.questionText && a.questionText.trim().toLowerCase() === (q.questionText || '').trim().toLowerCase())
-                        );
-
-                        if (isViewingClassAvg) {
-                            const timeVal = Number.isFinite(Number(q.avgTimeSpent)) ? Math.max(0, Number(q.avgTimeSpent)) : 0;
-                            return {
-                                name: `Q${idx + 1}`,
-                                index: idx,
-                                timeSpent: timeVal,
-                                avgTimeSpent: timeVal,
-                                accuracy: q.accuracy,
-                                isCorrect: null,
-                                status: `Accuracy: ${q.accuracy}%`,
-                                label: 'Class Avg Time'
-                            };
-                        }
-
-                        // Specific student or current student view:
-                        const hasStudentTime = studentAns && Number.isFinite(Number(studentAns.timeTaken));
-                        const timeVal = hasStudentTime 
-                            ? Math.max(0, Number(studentAns.timeTaken)) 
-                            : (Number(q.avgTimeSpent) || 0);
-                        const isCorrect = studentAns ? Boolean(studentAns.isCorrect) : null;
-                        const status = studentAns 
-                            ? (studentAns.selectedOption ? (studentAns.isCorrect ? 'Correct' : 'Incorrect') : 'Skipped') 
-                            : 'Unattempted';
-
+                        const timeVal = Number.isFinite(Number(q.avgTimeSpent)) ? Math.max(0, Number(q.avgTimeSpent)) : 0;
                         return {
                             name: `Q${idx + 1}`,
                             index: idx,
                             timeSpent: timeVal,
-                            avgTimeSpent: Number(q.avgTimeSpent) || 0,
+                            avgTimeSpent: timeVal,
                             accuracy: q.accuracy,
-                            isCorrect,
-                            status,
-                            label: activeStudent ? `${activeStudent.username}'s Time` : 'Your Time'
+                            isCorrect: null,
+                            status: `Accuracy: ${q.accuracy}%`,
+                            label: 'Avg Time Spent'
                         };
                     });
 
@@ -796,61 +759,23 @@ export default function QuizAnalytics() {
                                             )}
                                         </div>
                                         <p className="text-xs text-[#334155] font-bold" style={{ color: '#334155' }}>
-                                            {isViewingClassAvg 
-                                                ? 'Average seconds students spent answering each question' 
-                                                : 'Individual seconds taken per question compared against class average'}
+                                            Average seconds students spent answering each question
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-3">
-                                    {/* Student Filter Selector for Teachers */}
-                                    {!isStudent && (analytics?.leaderboard || []).length > 0 && (
-                                        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-2xs">
-                                            <Users size={14} className="text-slate-500" />
-                                            <select
-                                                value={selectedStudentId}
-                                                onChange={(e) => setSelectedStudentId(e.target.value)}
-                                                className="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer"
-                                                aria-label="Filter time spent by student"
-                                            >
-                                                <option value="ALL">Class Average (All Students)</option>
-                                                {(analytics.leaderboard || []).map((s) => (
-                                                    <option key={s.id} value={s.id}>
-                                                        #{s.rank} {s.username} ({s.score} pts · {s.accuracy}%)
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    )}
-
                                     {/* Legend */}
                                     <div className="flex flex-wrap items-center gap-3 bg-slate-50 border-2 border-slate-200 rounded-2xl px-3 py-1.5 text-xs">
-                                        {isViewingClassAvg ? (
-                                            <>
-                                                <div className="flex items-center gap-1.5 font-black text-emerald-700">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> High Acc (≥70%)
-                                                </div>
-                                                <div className="flex items-center gap-1.5 font-black text-amber-700">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" /> Mid Acc (40-69%)
-                                                </div>
-                                                <div className="flex items-center gap-1.5 font-black text-rose-700">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" /> Low Acc (&lt;40%)
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className="flex items-center gap-1.5 font-black text-emerald-700">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Correct
-                                                </div>
-                                                <div className="flex items-center gap-1.5 font-black text-rose-700">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" /> Incorrect
-                                                </div>
-                                                <div className="flex items-center gap-1.5 font-black text-slate-600">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-slate-500 inline-block" /> Skipped / Avg
-                                                </div>
-                                            </>
-                                        )}
+                                        <div className="flex items-center gap-1.5 font-black text-emerald-700">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> High Acc (≥70%)
+                                        </div>
+                                        <div className="flex items-center gap-1.5 font-black text-amber-700">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" /> Mid Acc (40-69%)
+                                        </div>
+                                        <div className="flex items-center gap-1.5 font-black text-rose-700">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" /> Low Acc (&lt;40%)
+                                        </div>
                                     </div>
                                 </div>
                             </div>
