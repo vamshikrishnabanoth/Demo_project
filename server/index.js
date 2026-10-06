@@ -286,18 +286,26 @@ if (redisUrl) {
     try {
         const { createAdapter } = require('@socket.io/redis-adapter');
         const Redis = require('ioredis');
-        const pubClient = new Redis(redisUrl, { maxRetriesPerRequest: 3, enableOfflineQueue: false });
+
+        const isTls = redisUrl.startsWith('rediss://');
+        const redisOptions = {
+            maxRetriesPerRequest: null,
+            enableReadyCheck: true,
+            connectTimeout: 10000,
+            ...(isTls ? { tls: { rejectUnauthorized: false } } : {})
+        };
+
+        const pubClient = new Redis(redisUrl, redisOptions);
         const subClient = pubClient.duplicate();
 
         pubClient.on('error', (err) => console.warn('[Redis Adapter Pub Error]:', err.message));
         subClient.on('error', (err) => console.warn('[Redis Adapter Sub Error]:', err.message));
 
-        Promise.all([pubClient.ping(), subClient.ping()])
-            .then(() => {
-                io.adapter(createAdapter(pubClient, subClient));
-                console.log('📡 [Multi-Server Scaling] Socket.IO Redis Adapter connected & active!');
-            })
-            .catch(err => console.warn('⚠️ [Redis Adapter Warning] Ping failed, operating in single-node mode:', err.message));
+        pubClient.on('ready', () => {
+            console.log('📡 [Multi-Server Scaling] Socket.IO Redis Adapter connected & active!');
+        });
+
+        io.adapter(createAdapter(pubClient, subClient));
     } catch (redisErr) {
         console.warn('⚠️ [Redis Adapter] Failed to initialize Redis Adapter:', redisErr.message);
     }
