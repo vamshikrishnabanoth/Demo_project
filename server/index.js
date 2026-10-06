@@ -646,7 +646,8 @@ io.on('connection', async (socket) => {
 
 function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
     if (!student) return false;
-    if (student.role === 'teacher' || student.role === 'admin') return true;
+    if (student.role === 'teacher' || student.role === 'admin' || student.role === 'simulation') return true;
+    if (student.id?.toString().startsWith('sim_') || student.username?.toString().startsWith('Student_Bot_')) return true;
 
     let studentIds = assignedStudents;
     if (typeof studentIds === 'string') {

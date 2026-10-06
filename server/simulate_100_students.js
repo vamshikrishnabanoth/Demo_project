@@ -89,7 +89,7 @@ async function runSimulation() {
         const dbUser = dbStudents[i - 1];
         const studentId = dbUser ? dbUser.id : `sim_student_${i}_${Date.now()}`;
         const username = dbUser ? dbUser.username : `Student_Bot_${i}`;
-        const role = dbUser ? dbUser.role : 'student';
+        const role = 'simulation';
 
         // Sign simulation token using unified fallback secret
         const token = jwt.sign(
