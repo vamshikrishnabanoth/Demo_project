@@ -11,6 +11,7 @@ import {
     Wifi, Info, Tag, BookOpen, ListOrdered, Target, GraduationCap, BarChart3
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
+import PipelineObservabilityModal from '../components/quiz/PipelineObservabilityModal';
 import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
 import toast from 'react-hot-toast';
 import { 
@@ -143,6 +144,7 @@ export default function CreateQuizTopic() {
     const [showTextModal, setShowTextModal] = useState(false);
     const [textModalType, setTextModalType] = useState('context');
     const [textInputContent, setTextInputContent] = useState('');
+    const [showObservabilityModal, setShowObservabilityModal] = useState(false);
 
     // Polling states
     const [polling, setPolling] = useState(false);
@@ -1113,32 +1115,24 @@ export default function CreateQuizTopic() {
                 localStorage.removeItem('quiz_docket_inputs_guest');
             } catch (_) {}
 
-            const serializedInputs = inputs.map(inp => ({
-                id: inp.id,
-                source_name: inp.source_name,
-                type: inp.type,
-                size: inp.size,
-                startPage: inp.startPage || 1,
-                endPage: inp.endPage || inp.maxPages || 1,
-                snippet: (inp.content || '').slice(0, 300),
-                wordCount: (inp.content || '').split(/\s+/).filter(Boolean).length
-            }));
-
-            // Navigate to dedicated Pipeline Output page during content processing
-            navigate('/pipeline-output', {
-                state: {
-                    hasPipelineData: true,
-                    status: 'PROCESSING',
-                    taskId,
-                    inputs: serializedInputs,
-                    sourceNames: inputs.map(i => i.source_name),
-                    isVoice: inputs.some(inp => inp.type === 'voice' || inp.type === 'audio'),
-                    difficulty,
-                    questionCount,
-                    title: `Quiz: ${inputs[0]?.source_name || 'AI Generated Assessment'}`,
-                    whatWasTaught,
-                    keyTopics,
-                    lectureWordCount
+            startPolling(taskId, {
+                onComplete: (result) => {
+                    navigate('/create-quiz/text', {
+                        state: {
+                            questions:          result.questions,
+                            title:              result.title || (inputs[0]?.source_name ? `Quiz: ${inputs[0].source_name}` : 'AI Generated Assessment'),
+                            duration:           result.duration || 10,
+                            source:             'generated',
+                            agentReport:        result.agentReport || null,
+                            finalValidation:    result.finalValidation || null,
+                            representationMode: result.representation_mode || representationMode || 'BLUEPRINT',
+                            executionMessages:  result.metadata?.executionMessages || []
+                        }
+                    });
+                },
+                onError: (msg) => {
+                    toast.error(msg || 'Generation failed. Please try again.');
+                    setSubmitting(false);
                 }
             });
 
@@ -1158,7 +1152,7 @@ export default function CreateQuizTopic() {
                     stage={stage}
                     stageLabel={stageLabel}
                     elapsed={elapsed}
-                    isVoice={false}
+                    isVoice={inputs.some(inp => inp.type === 'voice' || inp.type === 'audio')}
                     representationMode={representationMode}
                 />
             )}
@@ -1177,6 +1171,17 @@ export default function CreateQuizTopic() {
                     </div>
 
                     <div className="flex items-center gap-3 flex-wrap">
+
+                        {/* Interactive AI Architecture & Observability Button (Demo / Inspection) */}
+                        <button
+                            type="button"
+                            onClick={() => setShowObservabilityModal(true)}
+                            className="bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-200 hover:border-indigo-300 text-indigo-700 rounded-2xl px-4 py-2.5 flex items-center gap-2.5 shadow-xs transition-all cursor-pointer active:scale-95 text-xs font-black uppercase tracking-wider"
+                            title="Inspect 8-stage AI pipeline architecture and live data flow"
+                        >
+                            <Activity size={18} className="text-indigo-600 animate-pulse" />
+                            <span>AI Architecture & Observability</span>
+                        </button>
 
                         {/* Interactive Teaching Depth Score Badge */}
                         {lectureDepth && (
@@ -2032,6 +2037,16 @@ export default function CreateQuizTopic() {
                     setQuestionCount(cnt);
                     toast.success(`Applied recommended ${cnt} questions!`);
                 }}
+            />
+
+            {/* PIPELINE ARCHITECTURE & OBSERVABILITY MODAL */}
+            <PipelineObservabilityModal
+                isOpen={showObservabilityModal}
+                onClose={() => setShowObservabilityModal(false)}
+                questions={[]}
+                title="AI Pipeline Architecture & Stage-by-Stage Data Flow"
+                isVoice={inputs.some(inp => inp.type === 'voice' || inp.type === 'audio')}
+                duration={10}
             />
         </DashboardLayout>
     );
