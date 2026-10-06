@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useContext, lazy, Suspense } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
@@ -314,7 +314,7 @@ export default function QuizAnalytics() {
         ? analytics.sectionPerformance.map(s => ({ subject: s.section, A: s.averageScore !== undefined ? s.averageScore : s.averagePercentage, fullMark: 100 }))
         : [{ subject: 'General', A: analytics?.averageScore || 0, fullMark: 100 }];
 
-    const sectionStats = useMemo(() => {
+    const sectionStats = (() => {
         if (!radarData || radarData.length === 0) return { bestSection: null, avgScore: 0, totalSections: 0 };
         const validSections = radarData.filter(s => typeof s.A === 'number' && !isNaN(s.A));
         if (validSections.length === 0) return { bestSection: null, avgScore: 0, totalSections: 0 };
@@ -325,7 +325,7 @@ export default function QuizAnalytics() {
             avgScore: Math.round(sum / validSections.length),
             totalSections: validSections.length
         };
-    }, [radarData]);
+    })();
 
     return (
         <DashboardLayout role={userRole}>

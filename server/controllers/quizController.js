@@ -1566,7 +1566,7 @@ exports.getSavedTemplates = async (req, res) => {
                 createdById: req.user.id,
                 isTemplate: true
             },
-            orderBy: { updatedAt: 'desc' }
+            orderBy: { createdAt: 'desc' }
         });
         res.json(templates);
     } catch (err) {
