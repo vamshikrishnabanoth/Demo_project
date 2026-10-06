@@ -17,7 +17,7 @@ if (typeof globalThis.File === 'undefined') {
 const Groq = require('groq-sdk');
 const { toFile } = require('groq-sdk');
 const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
-const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
+const { createTask, updateTaskStage, recordTaskStage, updateTaskArtifact, completeTask, failTask, getTask } = require('../services/taskManager');
 const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
@@ -835,30 +835,35 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         };
 
         const progressCallback = (event) => {
-            if (taskId && event && event.stage) {
-                const mapped = stageLabelMap[event.stage];
-                if (mapped) {
-                    let label = mapped.label;
-                    if (event.decisions && Array.isArray(event.decisions) && event.decisions.length > 0) {
-                        const firstDec = event.decisions[0];
-                        if (firstDec) {
-                            const qMatch = firstDec.match(/(?:Question\s+(\d+)\/(\d+)|Target\s+T(\d+))/i);
-                            const qNum = qMatch ? (qMatch[1] || qMatch[3]) : null;
-                            const qTotal = qMatch && qMatch[2] ? qMatch[2] : count;
-                            if (firstDec.includes('Generating candidate MCQ') || event.stage === 'QUESTION_GENERATION') {
-                                label = qNum ? `Agent 2: Formulating Question ${qNum} of ${qTotal}` : `Agent 2: Generating Question Candidates`;
-                            } else if (firstDec.includes('Auditing Question') || firstDec.includes('PASSED') || event.stage === 'AGENT_3_QUESTION_EVAL') {
-                                label = qNum ? `Agent 3: Auditing Grounding for Question ${qNum} of ${qTotal}` : `Agent 3: Auditing Pedagogical Grounding`;
-                            } else if (firstDec.includes('Assessment Plan') || event.stage === 'AGENT_1_PLANNING') {
-                                label = `Agent 1: Planning ${count} Pedagogical Targets across Curriculum`;
-                            } else if (event.stage === 'FINAL_GROUNDING_GATE') {
-                                label = `Grounding Gate: Assembling Ground-Truth Assessment`;
-                            } else {
-                                label = `${mapped.label}: ${firstDec.substring(0, 60)}`;
+            if (taskId && event) {
+                if (typeof recordTaskStage === 'function') {
+                    recordTaskStage(taskId, event);
+                }
+                if (event.stage) {
+                    const mapped = stageLabelMap[event.stage];
+                    if (mapped) {
+                        let label = mapped.label;
+                        if (event.decisions && Array.isArray(event.decisions) && event.decisions.length > 0) {
+                            const firstDec = event.decisions[0];
+                            if (firstDec) {
+                                const qMatch = firstDec.match(/(?:Question\s+(\d+)\/(\d+)|Target\s+T(\d+))/i);
+                                const qNum = qMatch ? (qMatch[1] || qMatch[3]) : null;
+                                const qTotal = qMatch && qMatch[2] ? qMatch[2] : count;
+                                if (firstDec.includes('Generating candidate MCQ') || event.stage === 'QUESTION_GENERATION') {
+                                    label = qNum ? `Agent 2: Formulating Question ${qNum} of ${qTotal}` : `Agent 2: Generating Question Candidates`;
+                                } else if (firstDec.includes('Auditing Question') || firstDec.includes('PASSED') || event.stage === 'AGENT_3_QUESTION_EVAL') {
+                                    label = qNum ? `Agent 3: Auditing Grounding for Question ${qNum} of ${qTotal}` : `Agent 3: Auditing Pedagogical Grounding`;
+                                } else if (firstDec.includes('Assessment Plan') || event.stage === 'AGENT_1_PLANNING') {
+                                    label = `Agent 1: Planning ${count} Pedagogical Targets across Curriculum`;
+                                } else if (event.stage === 'FINAL_GROUNDING_GATE') {
+                                    label = `Grounding Gate: Assembling Ground-Truth Assessment`;
+                                } else {
+                                    label = `${mapped.label}: ${firstDec.substring(0, 60)}`;
+                                }
                             }
                         }
+                        updateTaskStage(taskId, mapped.stage, label, event.representation_mode);
                     }
-                    updateTaskStage(taskId, mapped.stage, label, event.representation_mode);
                 }
             }
         };
@@ -868,8 +873,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             console.log(`✅ [Baseline v1.0] 3-Agent Pipeline delivered ${result.questions.length} questions.`);
             if (taskId) {
                 updateTaskStage(taskId, 7, 'Grounding Gate & Final Audit');
-                const { getTask: getTaskForMeta } = require('../services/taskManager');
-                const tObj = getTaskForMeta(taskId);
+                const tObj = getTask(taskId);
                 if (tObj) {
                     tObj.pipelineNotice = result.notice || null;
                     tObj.alignmentWarning = result.alignmentWarning || null;
@@ -878,6 +882,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     tObj.requestedCount = sessionInputs.count;
                     tObj.deliveredCount = result.questions.length;
                     tObj.representation_mode = tObj.representation_mode || result.representationMode || null;
+                    tObj.pipelineResult = result;
+                    if (result.stages) tObj.stages = result.stages;
                 }
             }
             return result.questions;
@@ -2892,6 +2898,22 @@ exports.generateQuizQuestions = async (req, res) => {
                 }
             }
 
+            if (taskId && parsedInputs && parsedInputs.length > 0) {
+                updateTaskArtifact(taskId, 'ingestion', {
+                    sources: parsedInputs.map(p => ({
+                        name: p.source_name || 'Uploaded Source',
+                        type: p.type || 'text',
+                        startPage: p.startPage || 1,
+                        endPage: p.endPage || 1,
+                        snippet: (p.content || '').slice(0, 1000),
+                        wordCount: (p.content || '').split(/\s+/).filter(Boolean).length,
+                        charCount: (p.content || '').length
+                    })),
+                    totalWords: parsedInputs.reduce((s, p) => s + (p.content || '').split(/\s+/).filter(Boolean).length, 0),
+                    totalChars: parsedInputs.reduce((s, p) => s + (p.content || '').length, 0)
+                });
+            }
+
             let isSparse = false;
             if (parsedInputs && parsedInputs.length > 0) {
                 parsedInputs.forEach(inp => {
@@ -3327,6 +3349,17 @@ exports.generateQuizQuestions = async (req, res) => {
                 alignmentWarning: (finalTaskObj && finalTaskObj.alignmentWarning) || null,
                 unalignedDocuments: (finalTaskObj && finalTaskObj.unalignedDocuments) || [],
                 representation_mode: (finalTaskObj && finalTaskObj.representation_mode) || (isVoiceSource ? 'SUMMARY' : 'BLUEPRINT'),
+                stages:          (finalTaskObj && finalTaskObj.stages) || [],
+                stageMap:        (finalTaskObj && finalTaskObj.stageMap) || {},
+                liveArtifacts:   (finalTaskObj && finalTaskObj.liveArtifacts) || {},
+                pipelineResult:  (finalTaskObj && finalTaskObj.pipelineResult) || null,
+                plan:            (finalTaskObj && finalTaskObj.pipelineResult?.plan) || null,
+                evidencePackage: (finalTaskObj && finalTaskObj.pipelineResult?.evidencePackage) || null,
+                tcScore:         (finalTaskObj && finalTaskObj.pipelineResult?.tcScore) || null,
+                quizEvaluation:  (finalTaskObj && finalTaskObj.pipelineResult?.quizEvaluation) || null,
+                targetResults:   (finalTaskObj && finalTaskObj.pipelineResult?.targetResults) || [],
+                difficultyReport: (finalTaskObj && finalTaskObj.pipelineResult?.difficultyReport) || null,
+                telemetry:       (finalTaskObj && finalTaskObj.pipelineResult?.telemetry) || null,
                 metadata: {
                     executionMessages: (finalTaskObj && finalTaskObj.executionMessages) || []
                 }

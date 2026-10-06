@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const quizController = require('../controllers/quizController');
-const { getTask } = require('../services/taskManager');
+const { getTask, onTaskEvent, removeTaskListener } = require('../services/taskManager');
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
@@ -349,6 +349,9 @@ router.get('/generate/status/:taskId', auth, (req, res) => {
             stage: task.stage,
             stageLabel: task.stageLabel,
             representation_mode: task.representation_mode || (task.result && task.result.representation_mode) || null,
+            stages: task.stages || (task.result && task.result.stages) || [],
+            stageMap: task.stageMap || (task.result && task.result.stageMap) || {},
+            liveArtifacts: task.liveArtifacts || (task.result && task.result.liveArtifacts) || {},
             result: task.result,
         });
     }
@@ -360,9 +363,73 @@ router.get('/generate/status/:taskId', auth, (req, res) => {
         stage: task.stage,
         stageLabel: task.stageLabel,
         representation_mode: task.representation_mode || null,
+        stages: task.stages || [],
+        stageMap: task.stageMap || {},
+        liveArtifacts: task.liveArtifacts || {},
         error: task.error || null,
         errorCode: task.errorCode || null,
     });
+});
+
+// @route   GET api/quiz/generate/events/:taskId
+// @desc    Real-time Server-Sent Events stream for pipeline stage observability
+router.get('/generate/events/:taskId', auth, (req, res) => {
+    let task;
+    try {
+        task = getTask(req.params.taskId, req.user?.id);
+    } catch (authErr) {
+        return res.status(authErr.statusCode || 403).json({ status: 'FORBIDDEN', msg: authErr.message });
+    }
+    if (!task) {
+        return res.status(404).json({ status: 'NOT_FOUND', msg: 'Task not found or expired' });
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    if (typeof res.flushHeaders === 'function') res.flushHeaders();
+
+    // Send initial snapshot
+    const initialPayload = {
+        type: 'snapshot',
+        taskId: task.id,
+        status: task.status,
+        stage: task.stage,
+        stageLabel: task.stageLabel,
+        progressPct: task.progressPct,
+        representation_mode: task.representation_mode,
+        stages: task.stages || (task.result && task.result.stages) || [],
+        stageMap: task.stageMap || (task.result && task.result.stageMap) || {},
+        liveArtifacts: task.liveArtifacts || (task.result && task.result.liveArtifacts) || {},
+        result: task.result || null
+    };
+    res.write(`data: ${JSON.stringify(initialPayload)}\n\n`);
+
+    if (task.status === 'COMPLETED' || task.status === 'FAILED' || task.status === 'EXPIRED') {
+        res.write(`event: done\ndata: ${JSON.stringify({ status: task.status })}\n\n`);
+        return res.end();
+    }
+
+    const handleEvent = (evt) => {
+        try {
+            res.write(`data: ${JSON.stringify(evt)}\n\n`);
+            if (evt.type === 'completed' || evt.type === 'failed') {
+                res.write(`event: done\ndata: ${JSON.stringify({ status: evt.type })}\n\n`);
+                cleanup();
+                res.end();
+            }
+        } catch (_) {
+            cleanup();
+        }
+    };
+
+    const cleanup = () => {
+        removeTaskListener(req.params.taskId, handleEvent);
+    };
+
+    onTaskEvent(req.params.taskId, handleEvent);
+
+    req.on('close', cleanup);
 });
 
 // @route   POST api/quiz/save-template

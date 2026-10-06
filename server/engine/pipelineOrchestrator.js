@@ -895,6 +895,25 @@ class PipelineOrchestrator {
         tcScore: plan?.tcScore,
         quizEvaluation: quizEval,
         telemetry: finalTraceData.metrics,
+        stages: trace.stages || [],
+        plan: plan ? {
+          subject: plan.subject,
+          mainTopic: plan.mainTopic,
+          assessmentTargets: plan.assessmentTargets,
+          reserveTargets: plan.reserveTargets,
+          tcScore: plan.tcScore
+        } : null,
+        evidencePackage: evidencePackage ? {
+          representationMode: evidencePackage.representationMode,
+          routerReason: evidencePackage.routerReason,
+          isAcademic: evidencePackage.isAcademic,
+          hierarchicalStore: evidencePackage.hierarchicalStore,
+          alignmentGraph: evidencePackage.alignmentGraph,
+          voiceEmphasis: evidencePackage.voiceEmphasis,
+          artifacts: evidencePackage.artifacts,
+          unalignedDocuments: evidencePackage.unalignedDocuments,
+          alignmentWarning: evidencePackage.alignmentWarning
+        } : null,
         traceSummaryPath: `server/logs/debug/sessions/${sessionId}/final_session_trace.json`
       };
     } catch (err) {
