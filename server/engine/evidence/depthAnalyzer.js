@@ -46,13 +46,19 @@ const ACADEMIC_DOMAIN_TERMS = new Set([
   'query', 'index', 'schema', 'table', 'normalization', 'bcnf', 'acid', 'transaction', 'compiler', 'interpreter',
   'operating system', 'kernel', 'process', 'thread', 'deadlock', 'semaphore', 'mutex', 'paging', 'virtual memory',
   'cache', 'latency', 'bandwidth', 'throughput', 'protocol', 'tcp', 'udp', 'ip', 'http', 'https', 'dns', 'socket',
+  'syn', 'ack', 'syn-ack', 'handshake', 'packet', 'packets', 'frame', 'frames', 'datagram', 'payload', 'syn cookies',
+  'syn flood', 'flow control', 'congestion control', 'sliding window', 'mtu', 'rtt', 'checksum', 'header', 'headers',
   'object-oriented', 'polymorphism', 'inheritance', 'encapsulation', 'abstraction', 'interface', 'class', 'struct',
   'pointer', 'memory allocation', 'garbage collection', 'complexity', 'big-o', 'time complexity', 'space complexity',
   'neural network', 'deep learning', 'machine learning', 'autoencoder', 'convolutional', 'recurrent', 'transformer',
+  'token', 'tokens', 'tokenizer', 'tokenizers', 'tokenization', 'tokenizing', 'embedding', 'embeddings', 'vocab',
+  'vocabulary', 'parsing', 'parser', 'lexer', 'lexeme', 'ast', 'syntax tree', 'attention', 'self-attention',
   'gradient descent', 'backpropagation', 'activation function', 'loss function', 'overfitting', 'regularization',
-  'supervised', 'unsupervised', 'reinforcement learning', 'embedding', 'vector', 'tensor', 'gpu', 'cpu', 'architecture',
+  'supervised', 'unsupervised', 'reinforcement learning', 'vector', 'vectors', 'tensor', 'gpu', 'cpu', 'architecture',
   'race condition', 'critical section', 'concurrency', 'multithreading', 'lock', 'locks', 'locking', 'starvation',
   'livelock', 'socket', 'client-server', 'microservice', 'api', 'rest api', 'serialization', 'deserialization',
+  'interrupt', 'interrupts', 'isr', 'interrupt service routine', 'vector table', 'program counter', 'register',
+  'registers', 'instruction cycle', 'polling', 'device driver',
 
   // Mathematics, Statistics & Logic
   'calculus', 'derivative', 'integral', 'differential', 'linear algebra', 'eigenvalue', 'eigenvector', 'determinant',
@@ -629,14 +635,14 @@ class DepthAnalyzer {
     });
 
     // 2. Definitional Subject: "A binary search tree is..."
-    const defMatch = seg.match(/(?:^|\b(?:a|an|the)\s+)([A-Za-z0-9\s\-]+?)\s+(?:is an?|are(?: words)?|means|refers to|stands for|provides|applies|consists of|differs from)/i);
+    const defMatch = seg.match(/(?:^|\b(?:a|an|the)\s+)([A-Za-z0-9\s\-]+?)\s+(?:is an?|are(?: words)?|means|refers to|stands for|provides|applies|consists of|differs from|converts?|transforms?|encodes?|maps?|represents)/i);
     if (defMatch && defMatch[1]) {
       const cleaned = this._cleanConceptPhrase(defMatch[1]);
       if (cleaned) concepts.push(cleaned);
     }
 
     // 3. Technical / Subject compound noun phrases
-    const nounPhraseRegex = /\b([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(?:algorithm|layers?|filters?|protocols?|numbers?|words?|spaces?|functions?|methods?|structures?|models?|elements?|inputs?|outputs?|vectors?|graphs?|nodes?|trees?|complexity|matrices|arrays?)/gi;
+    const nounPhraseRegex = /\b([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(?:algorithm|layers?|filters?|protocols?|numbers?|words?|spaces?|functions?|methods?|structures?|models?|elements?|inputs?|outputs?|vectors?|graphs?|nodes?|trees?|complexity|matrices|arrays?|tokens?|packets?|frames?|cookies?)/gi;
     let npMatch;
     while ((npMatch = nounPhraseRegex.exec(seg)) !== null) {
       if (npMatch[0] && npMatch[0].length > 3 && npMatch[0].length < 40) {
@@ -699,10 +705,12 @@ class DepthAnalyzer {
    * @param {String} text - Raw transcript or combined document text
    * @returns {Object} Pedagogy-aware analysis result
    */
-  analyzeLecture(text = '') {
+  analyzeLecture(text = '', options = {}) {
     const raw = (text || '').trim();
+    const sourceModality = options.sourceModality || options.modality || 'UNIFIED';
     if (raw.length < 15) {
       return {
+        sourceModality,
         isAcademic: false,
         isCurricular: false,
         reason: 'INSUFFICIENT_CONTENT: The provided material is too short to evaluate.',
@@ -745,7 +753,9 @@ class DepthAnalyzer {
     );
 
     const adminSegments = classifiedSegments.filter(s => s.classification.type === 'ADMINISTRATIVE');
-    const offTopicSegments = classifiedSegments.filter(s => s.classification.type === 'OFF_TOPIC' || s.classification.type === 'UNRELATED_STORY');
+    const fictionalSegments = classifiedSegments.filter(s => s.classification.type === 'OFF_TOPIC');
+    const unrelatedSegments = classifiedSegments.filter(s => s.classification.type === 'UNRELATED_STORY');
+    const offTopicSegments = [...fictionalSegments, ...unrelatedSegments];
 
     // Aggregate Teaching Value Score (0.0 to 100.0)
     let totalTeachingValue = 0;
@@ -776,18 +786,24 @@ class DepthAnalyzer {
     // 1. At least 1 substantive retained teaching segment (CORE, EXAMPLE, ANALOGY, TEACHER_EXPERIENCE, etc.)
     // 2. Verified grounded concept link(s)
     // 3. Must not be predominantly off-topic fictional cartoon / entertainment drama
-    const isPredominantlyOffTopic = offTopicSegments.length > 0 && (offTopicSegments.length >= curricularSegments.length);
+    const isPredominantlyOffTopic = (fictionalSegments.length > 0 && fictionalSegments.length >= curricularSegments.length) ||
+      (curricularSegments.length === 0 && (fictionalSegments.length > 0 || unrelatedSegments.length > 0)) ||
+      (curricularSegments.length > 0 && curricularSegments.length < 3 && unrelatedSegments.length > curricularSegments.length * 2) ||
+      (curricularSegments.length > 0 && unrelatedSegments.length >= curricularSegments.length * 3);
     const hasCurricularSubstance = (curricularSegments.length >= 1) && (detectedFocus.length >= 1) && !isPredominantlyOffTopic;
 
     if (!hasCurricularSubstance) {
       let reason = 'NON_ACADEMIC_CONTENT: The provided material does not contain assessable educational subject matter or curriculum concepts.';
-      if (isPredominantlyOffTopic || offTopicSegments.length > 0) {
+      if (fictionalSegments.length > 0 && fictionalSegments.length >= curricularSegments.length) {
         reason = 'NON_ACADEMIC_CONTENT: The uploaded audio/video appears to be an animated cartoon, fictional entertainment narrative, or personal conversation. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.';
-      } else if (adminSegments.length > 0) {
+      } else if (adminSegments.length > 0 && curricularSegments.length === 0) {
         reason = 'INSUFFICIENT_CURRICULAR_CONTENT: Material contains administrative logistics or casual chatter without assessable teaching concepts.';
+      } else if (unrelatedSegments.length > 0 && curricularSegments.length === 0) {
+        reason = 'NON_ACADEMIC_CONTENT: Casual conversational dialogue without educational curriculum concepts.';
       }
 
       return {
+        sourceModality,
         isAcademic: false,
         isCurricular: false,
         reason,
@@ -998,6 +1014,7 @@ class DepthAnalyzer {
     else rating = 'Developing';
 
     return {
+      sourceModality,
       isAcademic: true,
       isCurricular: true,
       reason: null,

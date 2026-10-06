@@ -124,7 +124,7 @@
       { "id": "ELO_1", "description": "Explain index role in avoiding full table scans", "importance": "Core" }
     ],
     "voiceTranscript": "Welcome everyone. In today's quick 2-minute overview, we just want to understand why database indexes exist. Without an index, finding an employee named Sharma requires a sequential full table scan through all one million rows. With an index, the database jumps directly to the record like an index at the back of a textbook.",
-    "documentText": "CHAPTER 14: ADVANCED INDEXING ARCHITECTURES.\n14.1 B+ Tree Fanout and Height Calculations: Depth h <= log_d((N+1)/2).\n14.2 Linear Hashing and Extendible Directory Splitting.\n14.3 Bitmap Indices for Low-Cardinality Attributes with SIMD bitwise AND acceleration.\n14.4 R-Tree Spatial Indexing with Minimum Bounding Boxes (MBR) and quadratic splitting heuristic.\n14.5 GiST and GIN Inverted Indices for Full-Text Search in PostgreSQL.",
+    "documentText": "CHAPTER 14: ADVANCED INDEXING ARCHITECTURES.\nSection 14.1: B+ Tree Index Mechanics.\nA B+ Tree is an N-ary balanced search tree where every leaf node resides at identical depth.\nFirst, the database engine examines the root node key array.\nSecond, it traverses internal router nodes comparing search keys.\nThird, it fetches the corresponding leaf page pointer.\nFinally, it accesses the disk page directly because leaf pointers eliminate linear search overhead.\nFor example, consider an index with fanout 100 on one million records: lookup requires exactly 3 disk page reads.",
     "expectedGoalFulfillment": "HIGH_ACHIEVED",
     "expectedAchievedELOs": ["ELO_1"],
     "expectedMissingELOs": [],

@@ -105,17 +105,39 @@ class EvidencePackager {
 
     const rawContent = `[VOICE TRANSCRIPT]\n${voiceText}\n\n[DOCUMENT CONTENT]\n${cleanDocsText}\n\n[CODE SNIPPETS]\n${codeText}\n\n[BOARD OCR]\n${imageText}`;
 
-    // 1. Pedagogy-Aware Lecture Depth & Teaching Value Analysis
-    const depthAnalysis = depthAnalyzer.analyzeLecture(rawContent);
+    // 1. Decoupled Modality Depth Analyses:
+    // Architectural Invariant: Document evidence CANNOT inflate or alter Teacher Pedagogical Richness.
+    let voiceAnalysis = null;
+    if (hasVoice) {
+      voiceAnalysis = depthAnalyzer.analyzeLecture(voiceText, { sourceModality: 'VOICE' });
+    }
 
-    // Extract verbal emphasis cues from Voice and Pedagogical segments
-    const voiceEmphasisSignals = this._extractVoiceEmphasis(voiceText, depthAnalysis.pedagogicalSegments);
+    let docAnalysis = null;
+    const hasDocs = Boolean(cleanDocsText && cleanDocsText.trim().length > 30);
+    if (hasDocs) {
+      docAnalysis = depthAnalyzer.analyzeLecture(cleanDocsText, { sourceModality: 'DOCUMENT' });
+    }
+
+    // Determine primary instructional analysis:
+    // When voice is present, Voice is the primary pedagogical authority.
+    // When voice is absent, Document analysis provides reference curriculum depth.
+    const primaryAnalysis = hasVoice
+      ? voiceAnalysis
+      : (docAnalysis || depthAnalyzer.analyzeLecture('', { sourceModality: 'NONE' }));
+
+    const pedagogicalRichness = hasVoice ? voiceAnalysis.lectureDepth : null;
+    const documentReferenceDepth = hasDocs ? docAnalysis?.lectureDepth : null;
+
+    // Extract verbal emphasis cues strictly from Voice and Teacher Pedagogical segments
+    const pedagogicalSegments = hasVoice ? (voiceAnalysis.pedagogicalSegments || []) : [];
+    const voiceEmphasisSignals = this._extractVoiceEmphasis(voiceText, pedagogicalSegments);
 
     // 2. Evidence-driven category weights with strict Hard Zero enforcement
     const categoryWeights = this._computeCategoryWeights(exactArtifacts, voiceEmphasisSignals, rawContent);
 
     // Build formatted curricular content with explicit pedagogy-aware evidence annotations
-    const curricularLines = (depthAnalysis.curricularSegments || []).map(s => {
+    const curricularSegments = primaryAnalysis.curricularSegments || [];
+    const curricularLines = curricularSegments.map(s => {
       const cType = s.classification?.type;
       const evText = s.classification?.evidence_text || s.text;
       if (cType === 'TEACHER_EXPERIENCE') {
@@ -130,11 +152,11 @@ class EvidencePackager {
       return evText;
     });
 
-    const curricularContent = (depthAnalysis.isAcademic && curricularLines.length > 0)
+    const curricularContent = (primaryAnalysis.isAcademic && curricularLines.length > 0)
       ? curricularLines.join('\n')
-      : (depthAnalysis.isAcademic ? rawContent : '');
+      : (primaryAnalysis.isAcademic ? rawContent : '');
 
-    // Build structured Evidence Package
+    // Build structured Evidence Package with decoupled modality depth metrics
     const packageData = {
       sessionId: sessionInputs.sessionId || 'session_' + Date.now(),
       authoritySummary: {
@@ -143,22 +165,28 @@ class EvidencePackager {
       },
       voiceEmphasis: voiceEmphasisSignals,
       artifacts: exactArtifacts,
-      isAcademic: depthAnalysis.isAcademic,
-      isCurricular: depthAnalysis.isCurricular,
-      academicFailureReason: depthAnalysis.reason,
-      teachingValueScore: depthAnalysis.teachingValueScore,
-      lectureDepth: depthAnalysis.lectureDepth,
-      detectedFocus: depthAnalysis.detectedFocus,
-      retainedSegments: depthAnalysis.retainedSegments || [],
-      curricularSegments: depthAnalysis.curricularSegments || [],
-      pedagogicalSegments: depthAnalysis.pedagogicalSegments || [],
-      adminSegments: depthAnalysis.adminSegments || [],
-      discardedSegments: depthAnalysis.discardedSegments || [],
+      // Decoupled Modality Depth Properties:
+      pedagogicalRichness,
+      documentReferenceDepth,
+      voiceAnalysis,
+      docAnalysis,
+      // Primary / Grounded Properties:
+      isAcademic: primaryAnalysis.isAcademic,
+      isCurricular: primaryAnalysis.isCurricular,
+      academicFailureReason: primaryAnalysis.reason,
+      teachingValueScore: primaryAnalysis.teachingValueScore,
+      lectureDepth: primaryAnalysis.lectureDepth,
+      detectedFocus: primaryAnalysis.detectedFocus,
+      retainedSegments: primaryAnalysis.retainedSegments || [],
+      curricularSegments,
+      pedagogicalSegments,
+      adminSegments: primaryAnalysis.adminSegments || [],
+      discardedSegments: primaryAnalysis.discardedSegments || [],
       curricularContent,
-      categoryWeights: categoryWeights,
+      categoryWeights,
       hasExcludedMaterials: unalignedDocs.length > 0,
       unalignedDocuments: unalignedDocs.map(d => d.name),
-      alignmentWarning: alignmentWarning,
+      alignmentWarning,
       hasAlignedDocs: cleanDocsArray.length > 0,
       relationships: effectiveDocTexts.map(d => ({ name: d.name, relationship: d.relationship, priority: d.priority })),
       unrelatedMaterials: unalignedDocs.map(d => ({ name: d.name, relationship: d.relationship, priority: d.priority })),
