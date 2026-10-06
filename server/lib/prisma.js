@@ -26,7 +26,7 @@ const { PrismaClient } = require('@prisma/client');
 // divided by the number of server instances.
 
 const rawPoolSize = parseInt(process.env.DATABASE_POOL_SIZE, 10);
-const poolSize = (!isNaN(rawPoolSize) && rawPoolSize > 0) ? rawPoolSize : 10;
+const poolSize = (!isNaN(rawPoolSize) && rawPoolSize > 0) ? rawPoolSize : 5;
 const poolTimeout = parseInt(process.env.DATABASE_POOL_TIMEOUT, 10) || 15; // seconds
 
 const prisma = new PrismaClient({
