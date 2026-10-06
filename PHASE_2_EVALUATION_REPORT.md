@@ -1,6 +1,6 @@
 # Phase 2 Evaluation Report: Decoupled Pedagogical & Material Scoring
 
-> **Execution Date**: 2026-10-06T09:12:53.038Z  
+> **Execution Date**: 2026-10-06T10:16:28.033Z  
 > **Evaluated Branch**: `feature/decoupled-pedagogical-scoring`  
 > **Evaluated Snapshot**: Decoupled Modality Scorer (`evidencePackager.js` + `depthAnalyzer.js`)  
 > **Phase 1 Baseline Reference**: Commit `00e9f8b` (`BASELINE_BENCHMARK_RESULTS.md`)  
@@ -59,20 +59,20 @@ Session Inputs ──┤
 | Test ID | Scenario Name | Expected Fulfillment | Voice Score | Old Merged Score | Phase 2 Decoupled Teacher Score | Phase 2 Doc Depth | Decoupled Inflation Delta | Status |
 | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | `GOAL_001` | Stated Goal Fully Achieved - BFS Queue Traversal | `HIGH_ACHIEVED` | 93 | 93 | **93** | 56 | +0 pts | ✅ PROTECTED |
-| `GOAL_002` | Stated Goal Partially Achieved - Quicksort Partition Without Recursion | `PARTIALLY_ACHIEVED` | 78 | 78 | **78** | 48 | +0 pts | ✅ PROTECTED |
-| `GOAL_003` | Stated Goal Not Achieved - Dijkstra Algorithm Without Trace (Classic Deficit) | `NOT_ACHIEVED` | 93 | 93 | **93** | 40 | +0 pts | ✅ PROTECTED |
-| `GOAL_004` | Implicit Goal - Cache Coherence MESI Protocol | `HIGH_ACHIEVED` | 55 | 55 | **55** | 48 | +0 pts | ✅ PROTECTED |
-| `GOAL_005` | Multiple Goals - ACID Explained, 2PL Completely Omitted | `PARTIALLY_ACHIEVED` | 63 | 63 | **63** | 40 | +0 pts | ✅ PROTECTED |
-| `GOAL_006` | Goal Changes Mid-Lecture Due to Student Inquiry | `HIGH_ACHIEVED` | 70 | 70 | **70** | 48 | +0 pts | ✅ PROTECTED |
+| `GOAL_002` | Stated Goal Partially Achieved - Quicksort Partition Without Recursion | `PARTIALLY_ACHIEVED` | 93 | 93 | **93** | 48 | +0 pts | ✅ PROTECTED |
+| `GOAL_003` | Stated Goal Not Achieved - Dijkstra Algorithm Without Trace (Classic Deficit) | `NOT_ACHIEVED` | 100 | 100 | **100** | 40 | +0 pts | ✅ PROTECTED |
+| `GOAL_004` | Implicit Goal - Cache Coherence MESI Protocol | `HIGH_ACHIEVED` | 85 | 85 | **85** | 48 | +0 pts | ✅ PROTECTED |
+| `GOAL_005` | Multiple Goals - ACID Explained, 2PL Completely Omitted | `PARTIALLY_ACHIEVED` | 71 | 71 | **71** | 40 | +0 pts | ✅ PROTECTED |
+| `GOAL_006` | Goal Changes Mid-Lecture Due to Student Inquiry | `HIGH_ACHIEVED` | 85 | 85 | **85** | 78 | +0 pts | ✅ PROTECTED |
 | `GOAL_007` | Teacher Teaches Extra Unstated Material - TCP Handshake Plus SYN Cookies | `HIGH_ACHIEVED` | 70 | 70 | **70** | 40 | +0 pts | ✅ PROTECTED |
-| `GOAL_008` | PDF Inflation Vulnerability - 2-Minute Voice with 60-Page PDF | `HIGH_ACHIEVED` | 48 | 100 | **48** | 93 | +0 pts | ✅ PROTECTED |
+| `GOAL_008` | PDF Inflation Vulnerability - 2-Minute Voice with 60-Page PDF | `HIGH_ACHIEVED` | 48 | 93 | **48** | 93 | +0 pts | ✅ PROTECTED |
 | `GOAL_009` | Analogy Without Mechanism - Restaurant Analogy for Client-Server | `NOT_ACHIEVED` | 10 | 40 | **10** | 40 | +0 pts | ✅ PROTECTED |
-| `GOAL_010` | Concise but Highly Effective - HTTP 404 vs 500 Distinction | `HIGH_ACHIEVED` | 55 | 55 | **55** | 40 | +0 pts | ✅ PROTECTED |
+| `GOAL_010` | Concise but Highly Effective - HTTP 404 vs 500 Distinction | `HIGH_ACHIEVED` | 63 | 63 | **63** | 40 | +0 pts | ✅ PROTECTED |
 | `GOAL_011` | Long but Ineffective - 40-Minute Rambling Without Reaching DP Goal | `NOT_ACHIEVED` | 48 | 48 | **48** | 40 | +0 pts | ✅ PROTECTED |
-| `GOAL_012` | Conflicting Goal Signals - Slide States AVL Rotations, Teacher Overrides to BST Deletion | `HIGH_ACHIEVED` | 48 | 48 | **48** | 40 | +0 pts | ✅ PROTECTED |
-| `GOAL_013` | Ambiguous Vague Goal - Cool Stuff with Data Structures | `PARTIALLY_ACHIEVED` | 70 | 70 | **70** | 40 | +0 pts | ✅ PROTECTED |
+| `GOAL_012` | Conflicting Goal Signals - Slide States AVL Rotations, Teacher Overrides to BST Deletion | `HIGH_ACHIEVED` | 93 | 93 | **93** | 40 | +0 pts | ✅ PROTECTED |
+| `GOAL_013` | Ambiguous Vague Goal - Cool Stuff with Data Structures | `PARTIALLY_ACHIEVED` | 93 | 93 | **93** | 40 | +0 pts | ✅ PROTECTED |
 | `GOAL_014` | No Detectable Goal - Disjointed Casual Monologue | `NOT_ACHIEVED` | 40 | 40 | **40** | 10 | +0 pts | ✅ PROTECTED |
-| `GOAL_015` | Goal with Different Terminology - Stated Coordination vs Taught Mutex | `HIGH_ACHIEVED` | 48 | 48 | **48** | 40 | +0 pts | ✅ PROTECTED |
+| `GOAL_015` | Goal with Different Terminology - Stated Coordination vs Taught Mutex | `HIGH_ACHIEVED` | 85 | 85 | **85** | 48 | +0 pts | ✅ PROTECTED |
 
 ---
 
