@@ -9,7 +9,7 @@ window.onerror = function (message, source, lineno, colno, error) {
 };
 
 window.addEventListener('unhandledrejection', function (event) {
-    console.error("🌊 GLOBAL UNHANDLED REJECTION:", event.reason);
+    console.error("GLOBAL UNHANDLED REJECTION:", event.reason);
 });
 
 createRoot(document.getElementById('root')).render(

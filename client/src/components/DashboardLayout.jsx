@@ -15,7 +15,8 @@ import {
     GraduationCap,
     UserCheck,
     Shield,
-    Cpu
+    Cpu,
+    Bell
 } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
@@ -68,7 +69,7 @@ export default function DashboardLayout({ children, role }) {
 
         const handleNewBroadcast = (broadcast) => {
             if (role !== 'student') return;
-            toast.success(`📢 New Announcement: ${broadcast.title}`, {
+            toast.success(`New Announcement: ${broadcast.title}`, {
                 style: {
                     background: '#161618',
                     color: '#f97316',
@@ -77,7 +78,7 @@ export default function DashboardLayout({ children, role }) {
                     fontFamily: 'Inter',
                     fontWeight: 'bold'
                 },
-                icon: '📢'
+                icon: <Bell size={18} className="text-orange-500" />
             });
             fetchBroadcasts();
         };

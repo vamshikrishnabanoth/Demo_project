@@ -234,7 +234,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                         <option value="2">Year 2 (2nd Year)</option>
                                         <option value="3">Year 3 (3rd Year)</option>
                                         <option value="4">Year 4 (4th Year)</option>
-                                        <option value="graduated">🎓 Graduated (Alumni)</option>
+                                        <option value="graduated">Graduated (Alumni)</option>
                                     </select>
                                 </div>
 
@@ -323,7 +323,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                                 <td className="p-2.5 font-medium">{s.name || s.username}</td>
                                                 <td className="p-2.5 text-slate-500">Y{s.year} / Sem{s.semester} / {s.section || 'A'}</td>
                                                 <td className="p-2.5 font-bold text-amber-700">
-                                                    {targetYear === 'graduated' ? '🎓 Graduated' : `Y${targetYear} / Sem${targetSem} / ${targetSec !== 'keep' ? targetSec : (s.section || 'A')}`}
+                                                    {targetYear === 'graduated' ? 'Graduated (Alumni)' : `Y${targetYear} / Sem${targetSem} / ${targetSec !== 'keep' ? targetSec : (s.section || 'A')}`}
                                                 </td>
                                             </tr>
                                         ))}

@@ -1,5 +1,4 @@
-import React from 'react';
-import { X, Award, AlertTriangle, CheckCircle, Lightbulb, Zap, BookOpen } from 'lucide-react';
+import { X, Award, AlertTriangle, CheckCircle, Lightbulb, Zap, BookOpen, Check, Tag } from 'lucide-react';
 
 export default function TeachingScoreModal({
     isOpen,
@@ -233,7 +232,7 @@ export default function TeachingScoreModal({
                                 {coveredAspects.length > 0 ? (
                                     coveredAspects.map((aspect, i) => (
                                         <li key={i} className="flex items-start gap-1.5">
-                                            <span className="text-emerald-600 font-bold shrink-0">✓</span>
+                                            <Check size={14} className="text-emerald-600 font-bold shrink-0 stroke-[2.5] mt-0.5" />
                                             <span>{aspect}</span>
                                         </li>
                                     ))
@@ -279,8 +278,9 @@ export default function TeachingScoreModal({
                             {detectedFocus && detectedFocus.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 pt-1">
                                     {detectedFocus.map((concept, i) => (
-                                        <span key={i} className="text-[11px] font-bold bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-full shadow-2xs">
-                                            🏷️ {concept}
+                                        <span key={i} className="text-[11px] font-bold bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-full shadow-2xs inline-flex items-center gap-1.5">
+                                            <Tag size={12} className="text-orange-600 shrink-0" />
+                                            <span>{concept}</span>
                                         </span>
                                     ))}
                                 </div>

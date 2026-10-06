@@ -243,7 +243,7 @@ export default function BulkImportModal({ onClose, onSuccess }) {
                                         <CheckCircle2 size={20} className={validStudents.length > 0 ? 'text-emerald-600' : 'text-rose-600'} />
                                         <div>
                                             <h4 className="text-sm font-extrabold text-slate-900">
-                                                ✔ {validStudents.length} student(s) ready to import
+                                                {validStudents.length} student(s) ready to import
                                             </h4>
                                             {validationErrors.length > 0 && (
                                                 <p className="text-xs text-rose-700 font-semibold mt-0.5">

@@ -4,7 +4,7 @@ import api from '../utils/api';
 import AttemptQuiz from './AttemptQuiz';
 import AssessmentAttempt from './AssessmentAttempt';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
-import { Check } from 'lucide-react';
+import { Check, Trophy, Zap, Puzzle } from 'lucide-react';
 
 export default function QuizAttemptSelector() {
     const { id } = useParams();
@@ -122,8 +122,8 @@ export default function QuizAttemptSelector() {
                         onClick={() => navigate('/cyber-quest', { replace: true, state: statePayload })}
                         className="bg-white/5 border border-white/10 p-6 rounded-3xl hover:border-amber-500 hover:bg-amber-500/10 cursor-pointer transition-all text-center flex flex-col items-center gap-4 group"
                     >
-                        <div className="w-16 h-16 bg-amber-500/20 text-amber-500 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                            🏆
+                        <div className="w-16 h-16 bg-amber-500/20 text-amber-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xs">
+                            <Trophy size={32} />
                         </div>
                         <div>
                             <h3 className="font-black text-xl italic uppercase tracking-tight text-white mb-1">Cyber Quest</h3>
@@ -136,8 +136,8 @@ export default function QuizAttemptSelector() {
                         onClick={() => navigate('/sprint-arena', { replace: true, state: statePayload })}
                         className="bg-white/5 border border-white/10 p-6 rounded-3xl hover:border-cyan-500 hover:bg-cyan-500/10 cursor-pointer transition-all text-center flex flex-col items-center gap-4 group"
                     >
-                        <div className="w-16 h-16 bg-cyan-500/20 text-cyan-500 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                            ⚡
+                        <div className="w-16 h-16 bg-cyan-500/20 text-cyan-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xs">
+                            <Zap size={32} />
                         </div>
                         <div>
                             <h3 className="font-black text-xl italic uppercase tracking-tight text-white mb-1">Sprint Arena</h3>
@@ -150,8 +150,8 @@ export default function QuizAttemptSelector() {
                         onClick={() => navigate('/match-up-arena', { replace: true, state: statePayload })}
                         className="bg-white/5 border border-white/10 p-6 rounded-3xl hover:border-emerald-500 hover:bg-emerald-500/10 cursor-pointer transition-all text-center flex flex-col items-center gap-4 group"
                     >
-                        <div className="w-16 h-16 bg-emerald-500/20 text-emerald-500 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                            🧩
+                        <div className="w-16 h-16 bg-emerald-500/20 text-emerald-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xs">
+                            <Puzzle size={32} />
                         </div>
                         <div>
                             <h3 className="font-black text-xl italic uppercase tracking-tight text-white mb-1">Match-Up</h3>

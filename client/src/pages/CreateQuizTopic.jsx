@@ -7,7 +7,8 @@ import {
     Hash, Sparkles, Loader2, Database, 
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
-    AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale, Activity
+    AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale, Activity,
+    Wifi, Info, Tag, BookOpen, ListOrdered, Target, GraduationCap, BarChart3
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
@@ -171,7 +172,7 @@ export default function CreateQuizTopic() {
     useEffect(() => {
         const handleOnline = () => {
             setIsOffline(false);
-            toast.success('🌐 Connection restored. Ready to sync voice recordings.');
+            toast.success('Connection restored. Ready to sync voice recordings.');
         };
         const handleOffline = () => {
             setIsOffline(true);
@@ -1191,8 +1192,9 @@ export default function CreateQuizTopic() {
                                 <div>
                                     <div className="flex items-center gap-1.5">
                                         <p className="text-[10px] font-black text-purple-900 uppercase tracking-widest">Teaching Depth Score</p>
-                                        <span className="text-[9px] font-bold text-purple-700 bg-purple-200/70 px-1.5 py-0.2 rounded-full group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                                            Why not 100? ℹ️
+                                        <span className="text-[9px] font-bold text-purple-700 bg-purple-200/70 px-1.5 py-0.2 rounded-full group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center gap-1">
+                                            <span>Why not 100?</span>
+                                            <Info size={10} className="shrink-0" />
                                         </span>
                                     </div>
                                     <p className="text-sm font-black text-purple-800">
@@ -1692,7 +1694,8 @@ export default function CreateQuizTopic() {
                                             >
                                                 <span>Score: {lectureDepth.score}/100</span>
                                                 <span className="text-[10px] text-orange-700 font-bold bg-orange-100 px-1.5 py-0.2 rounded-full flex items-center gap-1">
-                                                    Why not 100? ℹ️
+                                                    <span>Why not 100?</span>
+                                                    <Info size={10} className="shrink-0" />
                                                 </span>
                                             </button>
                                         </div>
@@ -1701,7 +1704,7 @@ export default function CreateQuizTopic() {
                                         {lectureIntel?.title && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <span>🏷️</span> Academic Subject Topic
+                                                    <Tag size={13} className="text-[#c2410c] shrink-0" /> Academic Subject Topic
                                                 </p>
                                                 <p className="text-xs font-bold text-slate-900 leading-snug">
                                                     {lectureIntel.title}
@@ -1712,7 +1715,7 @@ export default function CreateQuizTopic() {
                                         {/* 1. What Was Taught (1-Line Pedagogical Overview) */}
                                         <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                             <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                <span>📖</span> What Was Taught
+                                                <BookOpen size={13} className="text-[#c2410c] shrink-0" /> What Was Taught
                                             </p>
                                             <p className="text-xs font-semibold text-slate-800 leading-relaxed">
                                                 {lectureIntel?.summary || whatWasTaught || `A comprehensive lecture exploring ${inputs.map(i => i.source_name).filter(Boolean)[0] || 'core concepts'} with detailed conceptual foundations, operational mechanisms, and step-by-step traces.`}
@@ -1723,7 +1726,7 @@ export default function CreateQuizTopic() {
                                         {lectureIntel?.chapters && lectureIntel.chapters.length > 0 && (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <span>📑</span> Sequential Chapters & Topics
+                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Sequential Chapters & Topics
                                                 </p>
                                                 <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                                                     {lectureIntel.chapters.map((ch, idx) => (
@@ -1756,7 +1759,7 @@ export default function CreateQuizTopic() {
                                         {((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <span>🎯</span> Key Concepts to be Assessed
+                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Key Concepts to be Assessed
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus).map((topic, i) => (
@@ -1773,7 +1776,7 @@ export default function CreateQuizTopic() {
                                         {lectureIntel?.pedagogicalCritique && (
                                              <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                  <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                     <span>🎓</span> Observable Teaching Traits
+                                                     <GraduationCap size={13} className="text-[#c2410c] shrink-0" /> Observable Teaching Traits
                                                  </p>
                                                  <div className="flex flex-wrap gap-1.5">
                                                      {(lectureIntel.pedagogicalCritique.explanatoryDepth || []).map((tag, i) => (
@@ -1798,8 +1801,9 @@ export default function CreateQuizTopic() {
                                                      ))}
                                                  </div>
                                                  {lectureIntel.pedagogicalCritique.limitationsOfExcerpt && (
-                                                     <p className="text-[10px] text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-200">
-                                                         ℹ️ {lectureIntel.pedagogicalCritique.limitationsOfExcerpt}
+                                                     <p className="text-[10px] text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-start gap-1.5">
+                                                         <Info size={12} className="text-slate-500 shrink-0 mt-0.5" />
+                                                         <span>{lectureIntel.pedagogicalCritique.limitationsOfExcerpt}</span>
                                                      </p>
                                                  )}
                                              </div>
@@ -1808,13 +1812,13 @@ export default function CreateQuizTopic() {
                                         {/* 5. Assessment Scope & Content Volume with 1-Click Apply */}
                                         <div className="bg-white/95 px-4 py-3 rounded-2xl border border-orange-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
                                             <div className="flex items-center gap-2 text-slate-700">
-                                                <span>📊</span>
+                                                <BarChart3 size={14} className="text-[#c2410c] shrink-0" />
                                                 <span>Content Volume: <strong className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</strong></span>
                                             </div>
                                             
                                             <div className="flex items-center justify-between sm:justify-end gap-3 flex-wrap">
                                                 <span className="flex items-center gap-1.5 text-slate-700 font-medium">
-                                                    <span>🎯</span> Recommended: <strong className="font-black text-[#c2410c]">{recommendedQuestions || `${recommendedQuestionCount || 5} Questions`}</strong>
+                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Recommended: <strong className="font-black text-[#c2410c]">{recommendedQuestions || `${recommendedQuestionCount || 5} Questions`}</strong>
                                                 </span>
                                                 
                                                 {recommendedQuestionCount && (
@@ -1822,7 +1826,7 @@ export default function CreateQuizTopic() {
                                                         type="button"
                                                         onClick={() => {
                                                             setQuestionCount(recommendedQuestionCount);
-                                                            toast.success(`Applied recommended ${recommendedQuestionCount} questions!`, { icon: '🎯' });
+                                                            toast.success(`Applied recommended ${recommendedQuestionCount} questions!`);
                                                         }}
                                                         className="px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-[11px] uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
                                                         title="Apply recommended question count into Question Count configuration"

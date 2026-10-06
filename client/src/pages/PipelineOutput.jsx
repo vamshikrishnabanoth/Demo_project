@@ -580,8 +580,9 @@ export default function PipelineOutput() {
                         </p>
                         <div className="flex flex-wrap gap-2 pt-1">
                             {output.distractorTypes.map((dt, i) => (
-                                <span key={i} className="px-3 py-1 rounded-full text-xs font-black text-amber-900 bg-amber-100 border border-amber-300/80 shadow-2xs">
-                                    ✓ {dt}
+                                <span key={i} className="px-3 py-1 rounded-full text-xs font-black text-amber-900 bg-amber-100 border border-amber-300/80 shadow-2xs flex items-center gap-1.5">
+                                    <Check size={12} className="stroke-[3] text-amber-700 shrink-0" />
+                                    <span>{dt}</span>
                                 </span>
                             ))}
                         </div>
@@ -672,7 +673,7 @@ export default function PipelineOutput() {
                     <div className="rounded-2xl p-4 font-mono text-xs leading-relaxed bg-slate-950 text-emerald-400 border border-emerald-900/50 shadow-md">
                         <p>[DeterministicPreCheck] Execution latency: {output.executionTime} (In-Memory Node.js engine)</p>
                         <p>[DeterministicPreCheck] LLM Token Overhead: 0 tokens ($0.00)</p>
-                        <p>[DeterministicPreCheck] Verdict: ALL {output.passed}/{output.scanned} CANDIDATES CLEARED VALIDATION ✓</p>
+                        <p>[DeterministicPreCheck] Verdict: ALL {output.passed}/{output.scanned} CANDIDATES CLEARED VALIDATION [PASSED]</p>
                     </div>
 
                     <PassBadge text={`All ${output.passed} questions verified by 6 deterministic gatekeepers — 0 LLM cost incurred`} />
@@ -918,7 +919,7 @@ export default function PipelineOutput() {
                                             <span className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-black ${
                                                 isSel ? 'bg-orange-500 text-white' : stStatus === 'done' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
                                             }`}>
-                                                {stStatus === 'done' ? '✓' : i + 1}
+                                                {stStatus === 'done' ? <Check size={11} className="stroke-[3]" /> : i + 1}
                                             </span>
                                             <span>{st.short}</span>
                                         </button>

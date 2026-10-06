@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, Activity } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, Activity, FileText, Target, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -1023,7 +1023,7 @@ export default function CreateQuizText() {
                                                 className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${gameType === 'standard' ? 'border-indigo-500 bg-indigo-500/10 text-slate-900 shadow-md ring-2 ring-indigo-500/30' : 'border-slate-200 bg-white hover:border-indigo-400 text-slate-700'}`}
                                             >
                                                 <div className="flex items-center justify-between mb-1">
-                                                    <span className="text-xl">📝</span>
+                                                    <FileText size={20} className="text-indigo-600" />
                                                     {gameType === 'standard' && <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-500 text-white">Selected</span>}
                                                 </div>
                                                 <div>
@@ -1113,7 +1113,7 @@ export default function CreateQuizText() {
                                         {whatWasTaught && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <span>📖</span> What Was Taught
+                                                    <BookOpen size={13} className="text-[#c2410c] shrink-0" /> What Was Taught
                                                 </p>
                                                 <p className="text-xs font-semibold text-slate-800 leading-relaxed">
                                                     {whatWasTaught}
@@ -1125,7 +1125,7 @@ export default function CreateQuizText() {
                                         {keyTopics && keyTopics.length > 0 && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <span>🎯</span> Key Topics Assessed
+                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Key Topics Assessed
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {keyTopics.map((topic, i) => (
@@ -1143,12 +1143,12 @@ export default function CreateQuizText() {
                                             <div className="bg-white/90 px-3 py-2 rounded-2xl border border-orange-200/70 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600 shadow-2xs">
                                                 {lectureWordCount > 0 && (
                                                     <span className="flex items-center gap-1.5 text-slate-700">
-                                                        <span>📊</span> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount.toLocaleString()} words</span>
+                                                        <BarChart3 size={13} className="text-[#c2410c] shrink-0" /> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount.toLocaleString()} words</span>
                                                     </span>
                                                 )}
                                                 {recommendedQuestions && (
                                                     <span className="flex items-center gap-1.5 text-slate-700">
-                                                        <span>🎯</span> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions}</span>
+                                                        <Target size={13} className="text-[#c2410c] shrink-0" /> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions}</span>
                                                     </span>
                                                 )}
                                             </div>

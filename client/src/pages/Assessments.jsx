@@ -218,7 +218,7 @@ export default function Assessments() {
         if (endTime && now > endTime) {
             return royalAlert.fire({
                 icon: 'error',
-                title: '⏰ Assessment Expired',
+                title: 'Assessment Expired',
                 text: `The window for this assessment closed at ${endStr}. This assessment is no longer available for attempt.`,
                 confirmButtonText: 'CLOSE'
             });
