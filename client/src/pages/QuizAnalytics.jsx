@@ -44,9 +44,15 @@ const PIE_COLORS = ['#10b981', '#ef4444'];
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+        const studentCount = payload[0]?.payload?.studentCount;
         return (
             <div className="bg-white border-2 border-[var(--border-color)] p-4 rounded-2xl shadow-xl backdrop-blur-md" style={{ color: '#0f172a' }}>
                 <p className="font-black text-[#0f172a] text-sm tracking-wide mb-1" style={{ color: '#0f172a' }}>{label || 'Metric'}</p>
+                {studentCount !== undefined && studentCount !== null && (
+                    <p className="text-[11px] font-bold text-slate-500 mb-1">
+                        {studentCount} student{studentCount === 1 ? '' : 's'} evaluated
+                    </p>
+                )}
                 <div className="border-t border-slate-200 my-2"></div>
                 {payload.map((entry, index) => {
                     // Resolve exact bin fill color for tooltip bullet & value indicator
@@ -311,7 +317,21 @@ export default function QuizAnalytics() {
     ];
 
     const radarData = (analytics?.sectionPerformance && analytics.sectionPerformance.length > 0) 
-        ? analytics.sectionPerformance.map(s => ({ subject: s.section, A: s.averageScore !== undefined ? s.averageScore : s.averagePercentage, fullMark: 100 }))
+        ? analytics.sectionPerformance.map(s => {
+            let label = s.section || 'General';
+            // Ensure branch prefix is applied if branch and rawSection are present
+            if (s.branch && s.rawSection && !label.toUpperCase().includes(s.branch.toUpperCase())) {
+                label = `${s.branch.toUpperCase()}-${s.rawSection.toUpperCase()}`;
+            }
+            return {
+                subject: label,
+                branch: s.branch,
+                rawSection: s.rawSection,
+                studentCount: s.studentCount,
+                A: s.averageScore !== undefined ? s.averageScore : s.averagePercentage,
+                fullMark: 100
+            };
+        })
         : [{ subject: 'General', A: analytics?.averageScore || 0, fullMark: 100 }];
 
     const sectionStats = (() => {
@@ -515,7 +535,7 @@ export default function QuizAnalytics() {
                                     </span>
                                 </div>
                                 <div className="w-full overflow-x-auto premium-scrollbar pb-2">
-                                    <div style={{ minWidth: `${Math.max(300, radarData.length * 60)}px`, height: '340px' }}>
+                                    <div style={{ minWidth: `${Math.max(360, radarData.length * 75)}px`, height: '340px' }}>
                                         <Suspense fallback={<ChartFallback />}>
                                             <ScoreDistributionChart 
                                                 data={(radarData || []).map((entry, idx) => ({ 

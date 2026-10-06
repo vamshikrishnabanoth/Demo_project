@@ -8,9 +8,9 @@ import { BIN_COLORS } from '../../utils/binColors';
 export function ScoreDistributionChart({ data, tooltip, name = "Students", height = 280 }) {
     return (
         <ResponsiveContainer width="100%" height={height}>
-            <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <BarChart data={data} margin={{ top: 10, right: 15, left: -15, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" opacity={0.5} />
-                <XAxis dataKey="range" stroke="var(--text-secondary)" tick={{ fontSize: 12, fontWeight: 700 }} />
+                <XAxis dataKey="range" stroke="var(--text-secondary)" tick={{ fontSize: 11, fontWeight: 800 }} interval={0} />
                 <YAxis stroke="var(--text-secondary)" tick={{ fontSize: 12, fontWeight: 700 }} />
                 <Tooltip content={tooltip} />
                 <Bar dataKey="count" name={name} radius={[8, 8, 0, 0]}>
