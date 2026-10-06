@@ -427,15 +427,22 @@ function broadcastParticipantsDebounced(quizId, forceImmediate = false) {
 
     const existing = participantBroadcastDebouncers.get(realQuizId);
 
-    const doBroadcast = () => {
+    const doBroadcast = async () => {
         const entry = participantBroadcastDebouncers.get(realQuizId);
         if (entry?.timer) {
             clearTimeout(entry.timer);
         }
         participantBroadcastDebouncers.delete(realQuizId);
 
-        // Always read the absolute latest state at broadcast time (prevents stale lists)
-        const currentParticipants = roomParticipants.get(realQuizId) || [];
+        // Read absolute latest state (multi-node aware via Redis cache)
+        let currentParticipants = roomParticipants.get(realQuizId) || [];
+        try {
+            const shared = await getCache(`room_participants:${realQuizId}`);
+            if (Array.isArray(shared) && shared.length >= currentParticipants.length) {
+                currentParticipants = shared;
+                roomParticipants.set(realQuizId, shared);
+            }
+        } catch (_) {}
         io.to(realQuizId).emit('participants_update', currentParticipants);
     };
 
@@ -845,11 +852,10 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             // Track this socket's association for disconnect cleanup
             socketToUser.set(socket.id, { quizId: realQuizId, username: verifiedUsername });
 
-            if (!roomParticipants.has(realQuizId)) {
-                roomParticipants.set(realQuizId, []);
-            }
+            // Multi-node aware participant list initialization via Redis cache
+            let sharedParticipants = await getCache(`room_participants:${realQuizId}`);
+            let participants = Array.isArray(sharedParticipants) ? sharedParticipants : (roomParticipants.get(realQuizId) || []);
 
-            const participants = roomParticipants.get(realQuizId);
             const existingIdx = participants.findIndex(p => (p.username || '').toLowerCase() === verifiedUsername.toLowerCase());
 
             // Reconstruct secure user properties from JWT context
@@ -874,6 +880,9 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             } else {
                 participants.push(userData);
             }
+
+            roomParticipants.set(realQuizId, participants);
+            setCache(`room_participants:${realQuizId}`, participants, 3600000).catch(() => {});
 
             console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${realQuizId}. Total participants: ${participants.length}`);
             // Always send the full current participant list directly to the socket that just joined,
