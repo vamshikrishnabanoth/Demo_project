@@ -12,7 +12,15 @@
 'use strict';
 
 const depthAnalyzer = require('./depthAnalyzer');
-const lectureIntelligence = require('../intelligence/lectureIntelligence');
+let lectureIntelligence = null;
+function getLectureIntelligence() {
+  if (!lectureIntelligence) {
+    try {
+      lectureIntelligence = require('../intelligence/lectureIntelligence');
+    } catch (_) {}
+  }
+  return lectureIntelligence;
+}
 
 class LectureAnalyzer {
   /**
@@ -201,25 +209,29 @@ class LectureAnalyzer {
 
     // 5. Task 3: Invoke Lecture Intelligence Engine (Module 1)
     const hasAudioTimestamps = Array.isArray(classifiedSegments) && classifiedSegments.some(s => s.start !== null && s.start !== undefined);
-    let lectureIntel = null;
-    try {
-      lectureIntel = await lectureIntelligence.analyze({
-        evidenceText: cleanedTranscript || text,
-        segments: classifiedSegments,
-        modality: hasAudioTimestamps ? 'VOICE_ONLY' : 'DOCUMENT_ONLY',
-        hasTimingData: hasAudioTimestamps,
-        fileName: fileName || audioMetadata?.originalName || null,
-        requestedCount,
-        requestedDifficulty
-      });
-    } catch (intelErr) {
-      console.warn('[LectureAnalyzer] Lecture intelligence analysis failed, using fallback:', intelErr.message);
-      lectureIntel = lectureIntelligence.buildPartialFallback({
-        evidenceText: cleanedTranscript || text,
-        modality: hasAudioTimestamps ? 'VOICE_ONLY' : 'DOCUMENT_ONLY',
-        hasTimingData: hasAudioTimestamps,
-        errorReason: intelErr.message
-      });
+    const intelModule = getLectureIntelligence();
+    if (intelModule) {
+      try {
+        lectureIntel = await intelModule.analyze({
+          evidenceText: cleanedTranscript || text,
+          segments: classifiedSegments,
+          modality: hasAudioTimestamps ? 'VOICE_ONLY' : 'DOCUMENT_ONLY',
+          hasTimingData: hasAudioTimestamps,
+          fileName: fileName || audioMetadata?.originalName || null,
+          requestedCount,
+          requestedDifficulty
+        });
+      } catch (intelErr) {
+        console.warn('[LectureAnalyzer] Lecture intelligence analysis failed, using fallback:', intelErr.message);
+        if (typeof intelModule.buildPartialFallback === 'function') {
+          lectureIntel = intelModule.buildPartialFallback({
+            evidenceText: cleanedTranscript || text,
+            modality: hasAudioTimestamps ? 'VOICE_ONLY' : 'DOCUMENT_ONLY',
+            hasTimingData: hasAudioTimestamps,
+            errorReason: intelErr.message
+          });
+        }
+      }
     }
 
     const intelligentTitle = lectureIntel?.title || mainTopic;
