@@ -268,7 +268,7 @@ const normalizeVoiceUploads = (req, res, next) => {
 router.get('/health', (req, res) => {
     res.json({
         status: 'OK',
-        version: 'v2.1-plumbing-hardened',
+        version: 'v2.2-key-pool-fast',
         timestamp: new Date().toISOString(),
         watchdogFloorSec: 360,
         watchdogCeilingSec: 600

@@ -103,20 +103,22 @@ class LLMRouter {
   }
 
   _getGroqKeys() {
-    const raw = [
-      process.env.GROQ_API_KEY,
-      process.env.GROQ_API_KEY_BACKUP,
-      process.env.GROQ_API_KEY_2,
-      process.env.GROQ_API_KEY_3,
-      this.groqApiKey
-    ];
+    const foundKeys = [];
+    // Dynamically collect all available keys configured across environments
+    for (const [name, val] of Object.entries(process.env)) {
+      if (name.startsWith('GROQ_API_KEY') && typeof val === 'string' && val.trim().length > 10) {
+        if (val.includes(',')) {
+          foundKeys.push(...val.split(',').map(k => k.trim()));
+        } else {
+          foundKeys.push(val.trim());
+        }
+      }
+    }
+    if (this.groqApiKey) foundKeys.push(this.groqApiKey);
     if (process.env.GROQ_API_KEYS) {
-      raw.push(...process.env.GROQ_API_KEYS.split(',').map(k => k.trim()));
+      foundKeys.push(...process.env.GROQ_API_KEYS.split(',').map(k => k.trim()));
     }
-    if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY.includes(',')) {
-      raw.push(...process.env.GROQ_API_KEY.split(',').map(k => k.trim()));
-    }
-    return Array.from(new Set(raw.filter(Boolean)));
+    return Array.from(new Set(foundKeys.filter(Boolean)));
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
@@ -275,9 +277,9 @@ class LLMRouter {
                   console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' throttled (${isTPD ? 'daily TPD' : 'rate limit'}). Backing off ${cooldownMs}ms...`);
                 } else {
                   // Mark this specific model as temporarily throttled on this key so next requests skip immediately to fallback
-                  const modelCooldownMs = parsedWaitMs || 25000;
+                  const modelCooldownMs = parsedWaitMs || 5000;
                   this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + modelCooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Failing over to fallback '${modelsToTry[mIdx + 1]}'...`);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Failing over to next key or fallback '${modelsToTry[mIdx + 1]}'...`);
                 }
                 break; // Break inner loop to try fallback model or next key
               } else if (status === 401 || status === 403) {

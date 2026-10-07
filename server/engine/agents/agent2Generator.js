@@ -813,7 +813,7 @@ TASK:
 Generate a single grounded multiple-choice question testing the assessment target strictly using facts within the evidence above, adhering to the requested difficulty (${tier}) and cognitive operation (${op}).
 `;
 
-    const fastModel = process.env.AGENT2_MODEL || 'openai/gpt-oss-120b';
+    const fastModel = process.env.AGENT2_MODEL || 'openai/gpt-oss-20b';
 
     let responseText;
     try {

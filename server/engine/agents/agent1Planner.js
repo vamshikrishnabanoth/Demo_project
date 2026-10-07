@@ -98,8 +98,11 @@ JSON SCHEMA:
     { "targetId": "R01", "subtopic": "...", "concept": "Distinct fallback concept", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual", "cognitiveLevel": "Understand", "targetDifficulty": "Medium", "intendedCognitiveOperation": "COMPARE", "operationalGuidance": "Guidance", "evidenceType": "VOICE", "supportingEvidence": "Verbatim quote", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_02"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ]
 }`;
-
-    const assessableContent = evidencePackage.curricularContent || rawContent;
+    const rawAssessable = evidencePackage.curricularContent || rawContent;
+    const MAX_PLANNER_CHARS = 16000;
+    const assessableContent = (rawAssessable && rawAssessable.length > MAX_PLANNER_CHARS)
+      ? rawAssessable.slice(0, MAX_PLANNER_CHARS) + '\n...[Evidence continuation summarized for assessment planning]...'
+      : (rawAssessable || '');
 
     const coverageProfile = evidencePackage.curricularCoverage || null;
     let coveragePromptBlock = '';
