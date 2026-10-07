@@ -15,6 +15,7 @@
 
 const llmRouter = require('../adapter/llmRouter');
 const deterministicValidator = require('../validators/deterministicValidator');
+const DifficultyAwareDistractorValidator = require('../validators/difficultyAwareDistractorValidator');
 const { safeParseJson } = require('../utils/jsonParser');
 const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelector');
 
@@ -136,7 +137,7 @@ class Agent3Evaluator {
     // 4. Deterministic Option & Cognitive Pre-Audit Gate
     // If any deterministic contract, ambiguity, foreign contamination, or cognitive mismatch is detected,
     // reject IMMEDIATELY without wasting LLM tokens or risking LLM hallucination.
-    const deterministicResult = this._runDeterministicAudit(candidateMCQ, target, evidenceContext);
+    const deterministicResult = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
     if (deterministicResult.status === 'FAIL') {
       return deterministicResult;
     }
@@ -406,7 +407,7 @@ ${evidenceContext}
    * Performs rigorous offline validation against contracts, ambiguity,
    * foreign domains, key truthfulness, and cognitive level alignment.
    */
-  _runDeterministicAudit(candidateMCQ, target = {}, evidenceText = '', errorReason = '') {
+  _runDeterministicAudit(candidateMCQ, target = {}, evidenceText = '', errorReason = '', evidencePackage = null) {
     const failureReasons = [];
     const cleanEvidence = (evidenceText || '').toLowerCase();
     const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
@@ -433,6 +434,23 @@ ${evidenceContext}
     const hasAmbiguity = ambiguityCheck && ambiguityCheck.classification === 'POTENTIAL_MULTI_KEY';
     if (hasAmbiguity) {
       failureReasons.push(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
+    }
+
+    // 3b. Step 6 Difficulty-Aware Distractor Fitness Gate
+    const pkg = (evidencePackage && typeof evidencePackage === 'object') ? evidencePackage : { unifiedRawContent: evidenceText, curricularContent: evidenceText };
+    const distractorFitness = DifficultyAwareDistractorValidator.validate(candidateMCQ, target, pkg);
+    if (distractorFitness.verdict === 'REJECT') {
+      for (const flaw of distractorFitness.flaws) {
+        if (flaw.code === 'ABSURD_DISTRACTOR' && !failureReasons.includes('IMPLAUSIBLE_DISTRACTOR')) {
+          failureReasons.push('IMPLAUSIBLE_DISTRACTOR');
+        }
+        if (flaw.code === 'FOREIGN_DOMAIN_CONTAMINATION' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION);
+        }
+        if (flaw.code === 'POTENTIAL_MULTI_KEY' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
+        }
+      }
     }
 
     // 4. Cognitive Demand Calibration Heuristic (Multi-Feature Analysis)

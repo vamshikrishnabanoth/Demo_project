@@ -1,0 +1,200 @@
+[
+  {
+    "testId": "HOLD_001",
+    "name": "Graphics - Shading Normal Interpolation vs Pixel Illumination",
+    "category": "SAME_CONCEPT_DIFFERENT_WORDING",
+    "voiceSnippet": "Instead of computing color only at the vertex corners and blending across the triangle surface, we interpolate the surface normal vectors across the polygon and compute lighting at every individual pixel.",
+    "documentSnippet": "Phong shading interpolates normal vectors across rasterized polygons and calculates the illumination equation at each pixel fragment, yielding superior specular highlights compared to Gouraud interpolation.",
+    "expectedRelationship": "SAME_CONCEPT",
+    "expectedConceptAnchor": "Phong Shading",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_002",
+    "name": "Compilers - SSA Form / Phi Nodes",
+    "category": "SAME_CONCEPT_DIFFERENT_WORDING",
+    "voiceSnippet": "In modern compiler backends, every single variable is assigned exactly once. When control flow branches come back together, we drop in a special phi node to select the right version.",
+    "documentSnippet": "Static Single Assignment (SSA) intermediate representation mandates that every variable possesses a unique static definition site, employing phi-functions at basic block control-flow convergence points.",
+    "expectedRelationship": "SAME_CONCEPT",
+    "expectedConceptAnchor": "Static Single Assignment",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_003",
+    "name": "Machine Learning - L1 Regularization Sparsity",
+    "category": "SAME_CONCEPT_DIFFERENT_WORDING",
+    "voiceSnippet": "By adding the absolute sum of the weights to our loss penalty, the optimization naturally crushes less important feature coefficients down to clean zeros, performing automatic feature selection.",
+    "documentSnippet": "L1 regularization, or Lasso, introduces an absolute magnitude penalty parameter to the cost objective, promoting parameter sparsity by driving non-critical feature weights strictly to zero.",
+    "expectedRelationship": "SAME_CONCEPT",
+    "expectedConceptAnchor": "L1 Regularization",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_004",
+    "name": "Architecture - Instruction Pipelining Assembly Line Analogy",
+    "category": "PEDAGOGICAL_ANALOGY",
+    "voiceSnippet": "Think of an instruction pipeline like an assembly line in an automobile plant: one station installs the chassis, the next adds the engine, and the next attaches the doors, so multiple cars are being assembled at the same time.",
+    "documentSnippet": "Pipelining overlaps the execution of multiple machine instructions across sequential hardware execution stages, increasing processor instruction throughput per unit time.",
+    "expectedRelationship": "SAME_CONCEPT",
+    "expectedConceptAnchor": "Instruction Pipelining",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_005",
+    "name": "Distributed Systems - Raft Quorum Log Replication",
+    "category": "SAME_CONCEPT_DIFFERENT_WORDING",
+    "voiceSnippet": "The leader broadcasts the log entry to every server, and as soon as a strict majority confirms they have written it to disk, the entry is committed and cannot be lost.",
+    "documentSnippet": "In the Raft consensus algorithm, log entries become committed and durable once replicated across a quorum consisting of a strict majority of cluster nodes.",
+    "expectedRelationship": "SAME_CONCEPT",
+    "expectedConceptAnchor": "Raft Consensus",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_006",
+    "name": "Cryptography - RSA Key Length Numerical Conflict",
+    "category": "CONFLICT_FACTUAL_NUMERICAL",
+    "voiceSnippet": "For standard secure enterprise encryption, a 1024-bit RSA key provides robust military-grade protection against factoring attacks.",
+    "documentSnippet": "NIST guidelines and cryptographic standards mandate a minimum RSA key size of 2048 bits for secure transmission, declaring 1024-bit RSA deprecated and computationally vulnerable.",
+    "expectedRelationship": "CONFLICTS_WITH",
+    "expectedConceptAnchor": "RSA Key Size",
+    "hasConflict": true,
+    "conflictType": "factual"
+  },
+  {
+    "testId": "HOLD_007",
+    "name": "Distributed Systems - Raft Election Timeout Discrepancy",
+    "category": "CONFLICT_FACTUAL_NUMERICAL",
+    "voiceSnippet": "To ensure fast failover in our datacenters, we configure the Raft follower election timeout to 50 milliseconds.",
+    "documentSnippet": "The Raft protocol specifies follower election timeouts randomized between 150 milliseconds and 300 milliseconds to prevent split votes across candidate servers.",
+    "expectedRelationship": "CONFLICTS_WITH",
+    "expectedConceptAnchor": "Raft Election Timeout",
+    "hasConflict": true,
+    "conflictType": "factual"
+  },
+  {
+    "testId": "HOLD_008",
+    "name": "Networking - HTTP/2 Head-of-Line Blocking Polarity Conflict",
+    "category": "CONFLICT_DEFINITIONAL_POLARITY",
+    "voiceSnippet": "With HTTP/2 multiplexing, head-of-line blocking is completely solved and eradicated because requests share a single connection.",
+    "documentSnippet": "While HTTP/2 eliminates application-level HOL blocking through stream multiplexing, transport-layer TCP head-of-line blocking still persists when packet drops occur on the underlying stream.",
+    "expectedRelationship": "CONFLICTS_WITH",
+    "expectedConceptAnchor": "Head-of-Line Blocking",
+    "hasConflict": true,
+    "conflictType": "definitional"
+  },
+  {
+    "testId": "HOLD_009",
+    "name": "Algorithms - Graph Representation Syllabus Override",
+    "category": "CONFLICT_COURSE_OVERRIDE",
+    "voiceSnippet": "In this class for all assignment problems, we define the standard graph representation exclusively as an adjacency matrix to simplify indexing.",
+    "documentSnippet": "Standard graph algorithms textbooks define adjacency lists as the standard default representation, categorizing adjacency matrices as space-inefficient for sparse graphs.",
+    "expectedRelationship": "CONFLICTS_WITH",
+    "expectedConceptAnchor": "Graph Representation",
+    "hasConflict": true,
+    "conflictType": "pedagogical_override"
+  },
+  {
+    "testId": "HOLD_010",
+    "name": "Polysemy - Linux Kernel vs SVM Kernel",
+    "category": "POLYSEMOUS_FALSE_MATCH",
+    "voiceSnippet": "The Linux monolithic kernel executes in ring 0 privileged supervisor mode, handling interrupt dispatch and direct virtual memory paging.",
+    "documentSnippet": "Support Vector Machines utilize a radial basis function kernel to project non-linearly separable training vectors into higher-dimensional feature spaces.",
+    "expectedRelationship": "UNRELATED",
+    "expectedConceptAnchor": "Kernel",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_011",
+    "name": "Polysemy - CPU Pipeline vs CI/CD Pipeline",
+    "category": "POLYSEMOUS_FALSE_MATCH",
+    "voiceSnippet": "Our CPU pipeline experienced massive stalls because a conditional branch misprediction flushed all instruction decode stages.",
+    "documentSnippet": "The CI/CD deployment pipeline executes automated linting, unit test suites, and Docker container builds upon every merged GitHub pull request.",
+    "expectedRelationship": "UNRELATED",
+    "expectedConceptAnchor": "Pipeline",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_012",
+    "name": "Polysemy - Unix Epoch vs ML Training Epoch",
+    "category": "POLYSEMOUS_FALSE_MATCH",
+    "voiceSnippet": "The system stores all file modification metadata as an integer offset representing elapsed seconds since the 1970 Unix epoch timestamp.",
+    "documentSnippet": "A single training epoch terminates once the backpropagation optimizer has processed every mini-batch in the training dataset.",
+    "expectedRelationship": "UNRELATED",
+    "expectedConceptAnchor": "Epoch",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_013",
+    "name": "DevOps - Kubernetes CrashLoopBackOff Troubleshooting",
+    "category": "VOICE_ONLY",
+    "voiceSnippet": "When debugging a CrashLoopBackOff in production, run kubectl describe pod to inspect the termination exit code, and then check previous logs using kubectl logs with the previous flag.",
+    "documentSnippet": "Container orchestrators schedule microservices across worker nodes based on declared CPU limits and declarative deployment manifests.",
+    "expectedRelationship": "VOICE_ONLY",
+    "expectedConceptAnchor": "Kubernetes Debugging",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_014",
+    "name": "Systems Programming - GDB Core Dump Analysis",
+    "category": "VOICE_ONLY",
+    "voiceSnippet": "If your C++ server hits a SIGSEGV in production, load the core dump into gdb using core-file, and run bt full to inspect the exact call stack and register state at crash time.",
+    "documentSnippet": "Virtual memory protection mechanisms generate hardware exceptions when an application process references an unmapped page table entry.",
+    "expectedRelationship": "VOICE_ONLY",
+    "expectedConceptAnchor": "GDB Debugging",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_015",
+    "name": "Complexity Theory - Cook-Levin 3-SAT Reduction Lemma",
+    "category": "DOCUMENT_ONLY",
+    "voiceSnippet": "NP-complete problems are the hardest problems in NP; if you can solve any one of them in polynomial time, you can solve all of them.",
+    "documentSnippet": "Lemma 7.12: The Cook-Levin theorem establishes polynomial reduction from arbitrary non-deterministic Turing machine tableau configurations to 3-CNF Boolean satisfiability formulas.",
+    "expectedRelationship": "DOCUMENT_ONLY",
+    "expectedConceptAnchor": "Cook-Levin Theorem",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_016",
+    "name": "Hardware Architecture - DDR4 SDRAM Timing Equations",
+    "category": "DOCUMENT_ONLY",
+    "voiceSnippet": "DDR4 memory transfers data on both the rising and falling edges of the clock signal, doubling data rate over single data rate memory.",
+    "documentSnippet": "Equation 4.3: Memory bus latency is parameterized by row-to-column delay tRCD, row precharge time tRP, and CAS latency tCL, satisfying minimum cycle constraint tRAS >= tRCD + tCL.",
+    "expectedRelationship": "DOCUMENT_ONLY",
+    "expectedConceptAnchor": "DDR4 Timings",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_017",
+    "name": "Big Data - MapReduce Shuffle & Sort Scoping",
+    "category": "PARTIAL_OVERLAP",
+    "voiceSnippet": "Today we are looking strictly at the shuffle and sort phase of MapReduce, where intermediate key-value pairs are partitioned and routed across worker nodes.",
+    "documentSnippet": "The Apache Hadoop ecosystem encompasses the Hadoop Distributed File System (HDFS), YARN resource negotiation, and the MapReduce computational execution framework.",
+    "expectedRelationship": "PARTIAL_OVERLAP",
+    "expectedConceptAnchor": "MapReduce",
+    "hasConflict": false,
+    "conflictType": null
+  },
+  {
+    "testId": "HOLD_018",
+    "name": "Cryptography - Symmetric Ciphers Taxonomy",
+    "category": "ONE_TO_MANY",
+    "voiceSnippet": "Symmetric key cryptography uses the exact same shared secret key for both encrypting the plaintext and decrypting the ciphertext.",
+    "documentSnippet": "Section 3: Symmetric Ciphers. Subsection 3.1: Advanced Encryption Standard (AES). Subsection 3.2: Data Encryption Standard (DES). Subsection 3.3: ChaCha20 stream cipher.",
+    "expectedRelationship": "ONE_TO_MANY",
+    "expectedConceptAnchor": "Symmetric Ciphers",
+    "hasConflict": false,
+    "conflictType": null
+  }
+]

@@ -15,6 +15,8 @@ const depthAnalyzer = require('./depthAnalyzer');
 const { HierarchicalChunker } = require('./hierarchicalChunker');
 const { CrossMaterialAligner } = require('./crossMaterialAligner');
 const evidenceCache = require('./evidenceCache');
+const IntentRelativeReasoner = require('../agents/intentRelativeReasoner');
+const CurricularCoverageAnalyzer = require('./curricularCoverageAnalyzer');
 
 class EvidencePackager {
   /**
@@ -156,6 +158,9 @@ class EvidencePackager {
       ? curricularLines.join('\n')
       : (primaryAnalysis.isAcademic ? rawContent : '');
 
+    // 2b. Teacher Instructional Intent, Negative Boundaries & Relative Hard Feasibility
+    const instructionalProfile = IntentRelativeReasoner.analyzeInstructionalProfile(voiceText, cleanDocsText);
+
     // Build structured Evidence Package with decoupled modality depth metrics
     const packageData = {
       sessionId: sessionInputs.sessionId || 'session_' + Date.now(),
@@ -170,6 +175,13 @@ class EvidencePackager {
       documentReferenceDepth,
       voiceAnalysis,
       docAnalysis,
+      // Phase 4 / 4.5 Pedagogical Intent & Boundary Properties:
+      instructionalIntent: instructionalProfile.instructionalIntent,
+      negativeBoundaries: instructionalProfile.negativeBoundaries,
+      supportedReasoningModes: instructionalProfile.supportedReasoningModes,
+      hardFeasibility: instructionalProfile.hardFeasibility,
+      hardOperationalGuidance: instructionalProfile.operationalGuidance,
+      instructionalProfile: instructionalProfile,
       // Primary / Grounded Properties:
       isAcademic: primaryAnalysis.isAcademic,
       isCurricular: primaryAnalysis.isCurricular,
@@ -229,10 +241,21 @@ class EvidencePackager {
       }
       packageData.multimodalStore = packageData.hierarchicalStore;
       packageData.alignmentGraph = CrossMaterialAligner.buildAlignmentGraph(packageData.hierarchicalStore);
+      // Step 2: Build Lightweight In-Memory Concept-Evidence Graph (preserving all provenance and evidence fields)
+      packageData.conceptEvidenceGraph = this._buildConceptEvidenceGraph(voiceText, effectiveDocTexts, unalignedDocs, primaryAnalysis, exactArtifacts);
     } catch (storeErr) {
       console.warn(`⚠️ [EvidencePackager] Notice building hierarchical/alignment store: ${storeErr.message}`);
       packageData.hierarchicalStore = null;
       packageData.alignmentGraph = {};
+      packageData.conceptEvidenceGraph = this._buildConceptEvidenceGraph(voiceText, effectiveDocTexts, unalignedDocs, primaryAnalysis, exactArtifacts);
+    }
+
+    // Step 5: Pre-Generation Curricular Coverage Analysis (assessability pre-check)
+    try {
+      packageData.curricularCoverage = CurricularCoverageAnalyzer.analyzeCoverage(packageData);
+    } catch (covErr) {
+      console.warn(`⚠️ [EvidencePackager] Notice analyzing curricular coverage: ${covErr.message}`);
+      packageData.curricularCoverage = CurricularCoverageAnalyzer._createEmptyProfile();
     }
 
     evidenceCache.set(sessionInputs, packageData);
@@ -395,6 +418,135 @@ class EvidencePackager {
     }
 
     return artifacts;
+  }
+
+  /**
+   * Build Lightweight In-Memory Concept-Evidence Graph.
+   * Connects spoken instructional segments to supporting material with explicit
+   * typed edges, conflict metadata, and modality boundaries.
+   */
+  _buildConceptEvidenceGraph(voiceText = '', effectiveDocTexts = [], unalignedDocs = [], primaryAnalysis = {}, exactArtifacts = {}) {
+    const nodes = [];
+    const edges = [];
+    const conflicts = [];
+    const voiceOnlyConcepts = [];
+    const documentOnlyConcepts = [];
+
+    // 1. Spoken Concept Nodes
+    const curricularSegments = primaryAnalysis.curricularSegments || [];
+    curricularSegments.forEach((seg, idx) => {
+      const nodeId = `v_node_${String(idx + 1).padStart(2, '0')}`;
+      const cType = seg.classification?.type || 'CORE_CONCEPT';
+      const anchor = seg.classification?.conceptAnchor ||
+        seg.classification?.anchor ||
+        (CrossMaterialAligner._extractGenericAnchors ? CrossMaterialAligner._extractGenericAnchors(seg.text || '')[0] : null) ||
+        `Spoken Concept ${idx + 1}`;
+
+      nodes.push({
+        id: nodeId,
+        modality: 'VOICE',
+        conceptAnchor: anchor,
+        text: (seg.text || '').substring(0, 300),
+        category: cType,
+        provenance: {
+          source: 'voiceTranscript',
+          segmentIndex: idx,
+          timestamp: seg.timestamp || null
+        }
+      });
+    });
+
+    // 2. Document Nodes & Alignment Edges
+    effectiveDocTexts.forEach((doc, dIdx) => {
+      const docNodeId = `d_node_${String(dIdx + 1).padStart(2, '0')}`;
+      const evalRes = doc.evalResult || {};
+      const anchor = evalRes.primaryAnchor || doc.name;
+      nodes.push({
+        id: docNodeId,
+        modality: 'DOCUMENT',
+        conceptAnchor: anchor,
+        documentName: doc.name,
+        text: (doc.text || '').substring(0, 300),
+        priority: doc.priority,
+        provenance: {
+          source: 'documentTexts',
+          documentName: doc.name,
+          priority: doc.priority
+        }
+      });
+
+      // Edge from Voice to Document
+      const edge = {
+        sourceNodeId: nodes.length > 0 && nodes[0].modality === 'VOICE' ? nodes[0].id : null,
+        targetNodeId: docNodeId,
+        relationship: doc.relationship || evalRes.relationship || 'SAME_CONCEPT',
+        priority: doc.priority,
+        semanticSimilarity: evalRes.semanticSimilarity || null,
+        conflictStatus: evalRes.conflictStatus || { hasConflict: false },
+        reason: evalRes.reason || null
+      };
+      edges.push(edge);
+
+      if (evalRes.conflictStatus?.hasConflict) {
+        conflicts.push({
+          targetDocNodeId: docNodeId,
+          documentName: doc.name,
+          conflictType: evalRes.conflictStatus.conflictType,
+          resolutionPolicy: evalRes.conflictStatus.resolutionPolicy,
+          reason: evalRes.conflictStatus.reason,
+          voiceClaim: evalRes.conflictStatus.voiceClaim || null,
+          docClaim: evalRes.conflictStatus.docClaim || null
+        });
+      }
+
+      if (evalRes.relationship === 'DOCUMENT_ONLY') {
+        documentOnlyConcepts.push({ documentName: doc.name, anchor });
+      }
+    });
+
+    // 3. Unaligned Documents
+    unalignedDocs.forEach((doc, uIdx) => {
+      const docNodeId = `u_node_${String(uIdx + 1).padStart(2, '0')}`;
+      nodes.push({
+        id: docNodeId,
+        modality: 'DOCUMENT',
+        conceptAnchor: doc.name,
+        documentName: doc.name,
+        text: (doc.text || '').substring(0, 300),
+        priority: 5,
+        provenance: {
+          source: 'unalignedDocuments',
+          documentName: doc.name,
+          status: 'SUPPRESSED_LOW_PRIORITY'
+        }
+      });
+      edges.push({
+        sourceNodeId: null,
+        targetNodeId: docNodeId,
+        relationship: 'COMPLETELY_UNRELATED',
+        priority: 5,
+        reason: 'Unaligned with spoken curriculum'
+      });
+    });
+
+    // 4. Voice-Only Concepts
+    if (curricularSegments.length > 0 && effectiveDocTexts.length === 0) {
+      nodes.filter(n => n.modality === 'VOICE').forEach(vn => {
+        voiceOnlyConcepts.push({ nodeId: vn.id, anchor: vn.conceptAnchor });
+      });
+    }
+
+    return {
+      version: '1.0',
+      linkerMode: process.env.CROSS_SOURCE_LINKER || 'v1_lexical',
+      nodeCount: nodes.length,
+      edgeCount: edges.length,
+      nodes,
+      edges,
+      conflicts,
+      voiceOnlyConcepts,
+      documentOnlyConcepts
+    };
   }
 }
 

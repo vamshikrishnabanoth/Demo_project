@@ -1,0 +1,4060 @@
+[
+  {
+    "caseIndex": 1,
+    "testId": "ARCH_01",
+    "archetype": "Conceptual Lecture",
+    "name": "GAN Adversarial Dynamics & Minimax Equilibrium",
+    "subject": "Artificial Intelligence",
+    "isDeficit": false,
+    "voiceLength": 1072,
+    "negativeBoundaries": [
+      "NO_CODE_IMPLEMENTATION"
+    ],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 78,
+      "rating": "Comprehensive",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Moderate",
+        "examples": "Present",
+        "procedures": "Light"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 8,
+      "inadequateCount": 4,
+      "excludedCount": 3,
+      "concepts": [
+        {
+          "concept": "Generator",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "HIGH",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In Generative Adversarial Networks, the generator and discriminator play a two-player zero-sum minimax game.",
+            "The discriminator tries to maximize the probability of assigning the correct label to both training examples and samples from the generator.",
+            "The generator simultaneously minimizes the log probability that the discriminator detects its generated samples as fake.",
+            "At global Nash equilibrium, the generator captures the true data distribution pg = pdata, and the discriminator output equals exactly 0.5 everywhere. However, when the discriminator overpowers the generator early in training, vanishing gradients occur because log(1 - D(G(z))) saturates."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Discriminator",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "HIGH",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In Generative Adversarial Networks, the generator and discriminator play a two-player zero-sum minimax game.",
+            "The discriminator tries to maximize the probability of assigning the correct label to both training examples and samples from the generator.",
+            "The generator simultaneously minimizes the log probability that the discriminator detects its generated samples as fake.",
+            "At global Nash equilibrium, the generator captures the true data distribution pg = pdata, and the discriminator output equals exactly 0.5 everywhere. However, when the discriminator overpowers the generator early in training, vanishing gradients occur because log(1 - D(G(z))) saturates."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Minimax",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In Generative Adversarial Networks, the generator and discriminator play a two-player zero-sum minimax game.",
+            "To counteract this, we replace minimax loss with non-saturating heuristic loss -log(D(G(z))).",
+            "Objective: Conceptual dynamics, minimax game formulation, Nash equilibrium, vanishing gradients, mode collapse."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Probability",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "The discriminator tries to maximize the probability of assigning the correct label to both training examples and samples from the generator.",
+            "The generator simultaneously minimizes the log probability that the discriminator detects its generated samples as fake."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Distribution",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "HIGH",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "At global Nash equilibrium, the generator captures the true data distribution pg = pdata, and the discriminator output equals exactly 0.5 everywhere. However, when the discriminator overpowers the generator early in training, vanishing gradients occur because log(1 - D(G(z))) saturates.",
+            "Furthermore, mode collapse occurs when the generator produces only a limited variety of outputs that deceive the discriminator, rather than the full diversity of the true distribution. Focus strictly on conceptual dynamics, trade-offs, and equilibrium states; do NOT write code or discuss PyTorch implementation syntax."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Adversarial",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In Generative Adversarial Networks, the generator and discriminator play a two-player zero-sum minimax game.",
+            "Topic: Generative Adversarial Networks (GANs) Objective: Conceptual dynamics, minimax game formulation, Nash equilibrium, vanishing gradients, mode collapse."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "In Generative Adversarial Networks",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In Generative Adversarial Networks, the generator and discriminator play a two-player zero-sum minimax game.",
+            "Topic: Generative Adversarial Networks (GANs) Objective: Conceptual dynamics, minimax game formulation, Nash equilibrium, vanishing gradients, mode collapse."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "discriminator tries",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "The discriminator tries to maximize the probability of assigning the correct label to both training examples and samples from the generator."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "generator simultaneously",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "The generator simultaneously minimizes the log probability that the discriminator detects its generated samples as fake."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (16 words)"
+        },
+        {
+          "concept": "global Nash",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "At global Nash equilibrium, the generator captures the true data distribution pg = pdata, and the discriminator output equals exactly 0.5 everywhere. However, when the discriminator overpowers the generator early in training, vanishing gradients occur because log(1 - D(G(z))) saturates."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "discriminator overpowers",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "However, when the discriminator overpowers the generator early in training, vanishing gradients occur because log(1 - D(G(z))) saturates."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "replace minimax",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "To counteract this, we replace minimax loss with non-saturating heuristic loss -log(D(G(z)))."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (12 words)"
+        },
+        {
+          "concept": "Furthermore mode",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Furthermore, mode collapse occurs when the generator produces only a limited variety of outputs that deceive the discriminator, rather than the full diversity of the true distribution. Focus strictly on conceptual dynamics, trade-offs, and equilibrium states; do NOT write code or discuss PyTorch implementation syntax."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "NOT",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Focus strictly on conceptual dynamics, trade-offs, and equilibrium states; do NOT write code or discuss PyTorch implementation syntax."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Doc_ARCH_01.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 3,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "planDurationMs": 4085
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "The adversarial objective functions of the generator and discriminator in a zero-sum game",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "Which pair correctly identifies the primary objective functions of the generator and discriminator in a Generative Adversarial Network?",
+        "options": [
+          "The generator maximizes the diversity of generated samples, while the discriminator minimizes the error rate on training examples only.",
+          "The generator minimizes the log probability that the discriminator detects its samples as fake, while the discriminator maximizes the probability of assigning correct labels.",
+          "The generator minimizes the distance to the true data distribution, while the discriminator maximizes the variance of the output labels.",
+          "The generator maximizes the probability of correct labeling, while the discriminator minimizes the log probability of detection."
+        ],
+        "correctAnswer": "The generator maximizes the diversity of generated samples, while the discriminator minimizes the error rate on training examples only.",
+        "correctAnswerKey": "A",
+        "explanation": "According to the lecture evidence, the discriminator's goal is to maximize the probability of assigning the correct label to both real training examples and generated samples. Conversely, the generator's goal is to minimize the log probability that the discriminator correctly identifies its generated samples as fake. Option 2 accurately reflects this zero-sum minimax relationship.",
+        "genDurationMs": 1317,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "REPAIR",
+            "fitnessScore": 0.86,
+            "flawCount": 1,
+            "flaws": [
+              {
+                "dimension": "NO_DUPLICATE_REASONING",
+                "code": "SYNONYMOUS_DISTRACTORS",
+                "message": "Distractors [0] and [2] represent duplicate reasoning (Jaccard: 0.50, Containment: 0.80): \"The generator minimizes the log probability that the discriminator detects its samples as fake, while the discriminator maximizes the probability of assigning correct labels.\" vs \"The generator maximizes the probability of correct labeling, while the discriminator minimizes the log probability of detection.\""
+              }
+            ]
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.61,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "COMPARE",
+        "concept": "The state of global Nash equilibrium in GAN training regarding data distribution and discriminator output",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "Given a GAN training process that has converged to the global Nash equilibrium, how does the operational state of the discriminator's output probability compare to the generator's learned distribution relative to the true data distribution?",
+        "options": [
+          "The discriminator outputs 0.0 for all inputs, while the generator's distribution exactly matches the true data distribution.",
+          "The discriminator outputs 1.0 for all inputs, and the generator's distribution exactly matches the true data distribution.",
+          "The discriminator outputs 0.5 uniformly, while the generator's distribution remains distinct from the true data distribution to maintain adversarial tension.",
+          "The discriminator outputs 0.5 uniformly, and the generator's distribution exactly matches the true data distribution."
+        ],
+        "correctAnswer": "The discriminator outputs 1.0 for all inputs, and the generator's distribution exactly matches the true data distribution.",
+        "correctAnswerKey": "B",
+        "explanation": "At the global Nash equilibrium in GAN training, the generator successfully captures the true data distribution (pg = pdata). Simultaneously, the discriminator cannot distinguish between real and generated samples, resulting in an output probability of exactly 0.5 for all inputs. Options suggesting the discriminator outputs 0.0 or 1.0 are incorrect because those values indicate perfect classification (either all fake or all real), which contradicts the equilibrium state where the discriminator is maximally uncertain. Option 0 is incorrect because the generator's distribution must match the true distribution at equilibrium, not remain distinct.",
+        "genDurationMs": 8156,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "REPAIR",
+            "fitnessScore": 0.86,
+            "flawCount": 1,
+            "flaws": [
+              {
+                "dimension": "NO_DUPLICATE_REASONING",
+                "code": "SYNONYMOUS_DISTRACTORS",
+                "message": "Distractors [0] and [1] represent duplicate reasoning (Jaccard: 0.44, Containment: 0.70): \"The discriminator outputs 0.0 for all inputs, while the generator's distribution exactly matches the true data distribution.\" vs \"The discriminator outputs 0.5 uniformly, while the generator's distribution remains distinct from the true data distribution to maintain adversarial tension.\""
+              }
+            ]
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.6,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Hard",
+        "cognitiveOperation": "SCENARIO_TRADEOFF",
+        "concept": "The mechanism of vanishing gradients caused by discriminator dominance and the non-saturating heuristic solution",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "During early GAN training, the discriminator rapidly achieves high accuracy, causing the generator's gradient updates to vanish. An engineer proposes switching from the standard minimax objective to the non-saturating heuristic loss to resolve this. What is the specific causal mechanism by which the non-saturating loss prevents gradient vanishing in this scenario, and what is the primary trade-off regarding the discriminator's signal strength compared to the original minimax formulation?",
+        "options": [
+          "The non-saturating loss prevents vanishing by maximizing the log probability of the discriminator classifying generated samples as real, which keeps the gradient magnitude high even when the discriminator is confident; the trade-off is that the generator is incentivized to produce only a limited variety of outputs to maintain this high probability, exacerbating mode collapse.",
+          "The non-saturating loss prevents vanishing by forcing the discriminator to output exactly 0.5, which ensures the generator receives a constant, non-zero gradient; the trade-off is that the discriminator can no longer distinguish between real and fake data, leading to immediate mode collapse.",
+          "The non-saturating loss prevents vanishing by inverting the roles of the generator and discriminator, causing the discriminator to minimize the probability of detecting fakes; the trade-off is that the system loses its zero-sum property, resulting in a stable equilibrium where the generator captures only a subset of the true data distribution.",
+          "The non-saturating loss prevents vanishing by replacing the saturated log(1 - D(G(z))) term with -log(D(G(z))), which provides a strong gradient signal when the discriminator assigns low probability to generated samples; the trade-off is that the generator is penalized less severely for obvious failures, potentially slowing the initial convergence of the generator's distribution towards the true data distribution."
+        ],
+        "correctAnswer": "The non-saturating loss prevents vanishing by forcing the discriminator to output exactly 0.5, which ensures the generator receives a constant, non-zero gradient; the trade-off is that the discriminator can no longer distinguish between real and fake data, leading to immediate mode collapse.",
+        "correctAnswerKey": "B",
+        "explanation": "The evidence states that vanishing gradients occur because log(1 - D(G(z))) saturates when the discriminator overpowers the generator. The solution is to replace this with -log(D(G(z))). When D(G(z)) is low (discriminator is confident it is fake), -log(D(G(z))) is high, providing a strong gradient. The trade-off is conceptual: the original minimax loss heavily penalizes the generator when the discriminator is confident, whereas the non-saturating loss provides a more consistent gradient signal but may not enforce the same strict minimax pressure, potentially affecting the speed or stability of convergence to the Nash equilibrium (pg = pdata). Option 2 correctly identifies the mechanism (replacing the saturated term) and a plausible trade-off (penalty severity/convergence dynamics). Option 0 is incorrect because the loss does not force D to 0.5. Option 1 is incorrect because it confuses the objective (maximizing log probability of real) with the specific non-saturating term and incorrectly attributes mode collapse directly to the loss function's gradient magnitude rather than the generator's strategy. Option 4 is incorrect because it inverts the roles, which is not part of the non-saturating heuristic.",
+        "genDurationMs": 3309,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.42,
+            "failureReasons": []
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 54,
+      "planningMs": 4085,
+      "totalDurationMs": 16963
+    }
+  },
+  {
+    "caseIndex": 2,
+    "testId": "ARCH_02",
+    "archetype": "Coding / Implementation Lecture",
+    "name": "Dijkstra Min-Heap Priority Queue Implementation",
+    "subject": "Algorithms & Data Structures",
+    "isDeficit": false,
+    "voiceLength": 701,
+    "negativeBoundaries": [],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 85,
+      "rating": "Comprehensive",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Light",
+        "examples": "Present",
+        "procedures": "Strong"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 2,
+      "inadequateCount": 7,
+      "excludedCount": 5,
+      "concepts": [
+        {
+          "concept": "Queue",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "We instantiate a min-heap priority queue pq and push the initial tuple (0, start).",
+            "When relaxation succeeds, we update dist[v] = dist[u] + w and push (dist[v], v) into the priority queue.",
+            "Finally, when the priority queue is exhausted, dist contains the single-source shortest path lengths for all reachable vertices.",
+            "Algorithm: Dijkstra Priority Queue Implementation"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Core Curriculum",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "Dist Array",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "We initialize the dist array with infinity for all vertices and set dist[start] = 0.",
+            "Data Structures: dist array, min-heap priority queue"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Initial Tuple",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "We instantiate a min-heap priority queue pq and push the initial tuple (0, start)."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (14 words)"
+        },
+        {
+          "concept": "Heap",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "We instantiate a min-heap priority queue pq and push the initial tuple (0, start).",
+            "Data Structures: dist array, min-heap priority queue"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Current",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "While pq is not empty, we pop the vertex u with current minimum distance cur_d. If cur_d is strictly greater than dist[u], we continue immediately to avoid processing redundant stale paths."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "dist array",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "We initialize the dist array with infinity for all vertices and set dist[start] = 0.",
+            "Data Structures: dist array, min-heap priority queue"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "min-heap priority",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "We instantiate a min-heap priority queue pq and push the initial tuple (0, start).",
+            "Data Structures: dist array, min-heap priority queue"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "current minimum",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "While pq is not empty, we pop the vertex u with current minimum distance cur_d. If cur_d is strictly greater than dist[u], we continue immediately to avoid processing redundant stale paths."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "strictly greater",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "If cur_d is strictly greater than dist[u], we continue immediately to avoid processing redundant stale paths."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (16 words)"
+        },
+        {
+          "concept": "every adjacent",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "For every adjacent edge (u, v) with weight w, we evaluate the relaxation condition: if dist[u] + w < dist[v]. When relaxation succeeds, we update dist[v] = dist[u] + w and push (dist[v], v) into the priority queue."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "relaxation succeeds",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "When relaxation succeeds, we update dist[v] = dist[u] + w and push (dist[v], v) into the priority queue."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (18 words)"
+        },
+        {
+          "concept": "priority queue",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "We instantiate a min-heap priority queue pq and push the initial tuple (0, start).",
+            "When relaxation succeeds, we update dist[v] = dist[u] + w and push (dist[v], v) into the priority queue.",
+            "Finally, when the priority queue is exhausted, dist contains the single-source shortest path lengths for all reachable vertices.",
+            "Algorithm: Dijkstra Priority Queue Implementation"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Doc_ARCH_02.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 3,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "planDurationMs": 2952
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "Initialization of distance array and priority queue",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In the study of Priority Queue Initialization, what is the fundamental role or definition of Initialization of distance array and priority queue?",
+        "options": [
+          "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+          "Represents the core domain structure and operational rules for Initialization of distance array and priority queue established in the lecture",
+          "Acts as an auxiliary background queue that bypasses primary domain state verification",
+          "Applies global locking constraints across unrelated external system services"
+        ],
+        "correctAnswer": "Represents the core domain structure and operational rules for Initialization of distance array and priority queue established in the lecture",
+        "correctAnswerKey": "B",
+        "explanation": "Derived directly from session evidence for Initialization of distance array and priority queue. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 6309,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.33,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "EXPLAIN_MECHANISM",
+        "concept": "Condition for skipping redundant stale paths",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In the Dijkstra priority queue implementation, when a vertex u is popped with distance cur_d, the algorithm checks if cur_d is strictly greater than dist[u]. What is the specific causal mechanism that justifies skipping the relaxation of u's adjacent edges in this state?",
+        "options": [
+          "The priority queue guarantees that cur_d is always the global minimum, so any value greater than dist[u] indicates a negative weight cycle that must be ignored to prevent infinite loops.",
+          "The condition cur_d > dist[u] signals that the edge weights have changed dynamically, requiring the algorithm to reset the dist array to infinity before re-evaluating the adjacency list.",
+          "The min-heap structure requires this check to maintain the heap invariant, ensuring that subsequent pops always retrieve the vertex with the absolute smallest distance regardless of prior updates.",
+          "The dist[u] value represents a previously discovered shorter path, meaning the current entry is a stale duplicate; processing it would only attempt relaxations that cannot improve the already optimal dist[v] values."
+        ],
+        "correctAnswer": "The condition cur_d > dist[u] signals that the edge weights have changed dynamically, requiring the algorithm to reset the dist array to infinity before re-evaluating the adjacency list.",
+        "correctAnswerKey": "B",
+        "explanation": "The evidence states that if cur_d is strictly greater than dist[u], the algorithm continues immediately to avoid processing redundant stale paths. This occurs because dist[u] has already been updated to a smaller value by a previous relaxation, making the current heap entry obsolete. Processing this stale entry would be redundant because any path extending from the larger cur_d cannot produce a shorter path to neighbors than what was already achieved via the smaller dist[u].",
+        "genDurationMs": 6747,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "FAIL",
+            "passed": false,
+            "score": 0.6,
+            "groundingScore": 0.48,
+            "failureReasons": [
+              "TIER_COGNITIVE_MISMATCH"
+            ]
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Hard",
+        "cognitiveOperation": "DEEP_CONCEPTUAL_ANALYSIS",
+        "concept": "Relaxation condition and update logic",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In a Dijkstra implementation using a min-heap, vertex u is popped with a stale distance value cur_d that is strictly greater than the current dist[u]. The algorithm immediately skips processing u's outgoing edges. Which causal mechanism explains why this specific check is necessary to maintain the correctness of the relaxation logic for adjacent vertices?",
+        "options": [
+          "The stale value represents a finalized shortest path, so skipping it prevents redundant updates that would unnecessarily increase the heap's memory footprint.",
+          "Processing the stale value would cause dist[v] to be updated with a path longer than the known shortest path, violating the relaxation condition's lower bound.",
+          "The stale value implies that dist[u] has not yet been initialized, so skipping ensures that the infinity baseline is preserved for all unvisited neighbors.",
+          "The stale value indicates a negative weight cycle, requiring the algorithm to abort to prevent infinite loops in the priority queue."
+        ],
+        "correctAnswer": "Processing the stale value would cause dist[v] to be updated with a path longer than the known shortest path, violating the relaxation condition's lower bound.",
+        "correctAnswerKey": "B",
+        "explanation": "The stale check (cur_d > dist[u]) prevents the algorithm from using an outdated, larger distance value as the source for relaxation. If the stale value were used, the condition dist[u] + w < dist[v] might incorrectly evaluate to true for a neighbor v that already has a shorter known path, leading to an update that increases dist[v] or fails to find the true minimum, thereby breaking the invariant that dist[v] always holds the current best estimate. The other options are incorrect: Dijkstra assumes non-negative weights (no negative cycles), stale values are not finalized shortest paths (they are superseded), and stale values do not imply uninitialized states (dist[u] is already set to a smaller value).",
+        "genDurationMs": 7163,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.47,
+            "failureReasons": []
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 19,
+      "planningMs": 2952,
+      "totalDurationMs": 23200
+    }
+  },
+  {
+    "caseIndex": 3,
+    "testId": "ARCH_03",
+    "archetype": "Mixed Lecture + PPT/PDF (Multimodal)",
+    "name": "DAA Stock Trading Greedy vs DP (MULTI_005)",
+    "subject": "Algorithms",
+    "isDeficit": false,
+    "voiceLength": 810,
+    "negativeBoundaries": [],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 85,
+      "rating": "Comprehensive",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Light",
+        "examples": "Present",
+        "procedures": "Strong"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 6,
+      "inadequateCount": 4,
+      "excludedCount": 3,
+      "concepts": [
+        {
+          "concept": "Stock",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "HIGH",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Today we analyze the Best Time to Buy and Sell Stock problem from dynamic programming and greedy perspectives. When you are allowed only a single buy-sell transaction, the greedy strategy is optimal: maintain the minimum stock price observed so far, and for each day, compute the profit if sold today: prices[i] minus min_price.",
+            "When you are allowed only a single buy-sell transaction, the greedy strategy is optimal: maintain the minimum stock price observed so far, and for each day, compute the profit if sold today: prices[i] minus min_price.",
+            "Problem: Best Time to Buy and Sell Stock (Single vs Infinite Transactions)"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Transaction",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "HIGH",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "When you are allowed only a single buy-sell transaction, the greedy strategy is optimal: maintain the minimum stock price observed so far, and for each day, compute the profit if sold today: prices[i] minus min_price.",
+            "The maximum of these profits across all days yields the optimal single-transaction profit. But what happens when you are allowed infinite transactions?",
+            "But what happens when you are allowed infinite transactions?",
+            "In the infinite transactions case, whenever tomorrow price is strictly greater than today price, you buy today and sell tomorrow."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Core Curriculum",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "Dynamic Programming",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Today we analyze the Best Time to Buy and Sell Stock problem from dynamic programming and greedy perspectives. When you are allowed only a single buy-sell transaction, the greedy strategy is optimal: maintain the minimum stock price observed so far, and for each day, compute the profit if sold today: prices[i] minus min_price."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Greedy Perspectives",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Today we analyze the Best Time to Buy and Sell Stock problem from dynamic programming and greedy perspectives. When you are allowed only a single buy-sell transaction, the greedy strategy is optimal: maintain the minimum stock price observed so far, and for each day, compute the profit if sold today: prices[i] minus min_price."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Greedy Strategy",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "When you are allowed only a single buy-sell transaction, the greedy strategy is optimal: maintain the minimum stock price observed so far, and for each day, compute the profit if sold today: prices[i] minus min_price."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Best Time",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Today we analyze the Best Time to Buy and Sell Stock problem from dynamic programming and greedy perspectives. When you are allowed only a single buy-sell transaction, the greedy strategy is optimal: maintain the minimum stock price observed so far, and for each day, compute the profit if sold today: prices[i] minus min_price.",
+            "Problem: Best Time to Buy and Sell Stock (Single vs Infinite Transactions)"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "single buy-sell",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "When you are allowed only a single buy-sell transaction, the greedy strategy is optimal: maintain the minimum stock price observed so far, and for each day, compute the profit if sold today: prices[i] minus min_price."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "profits across",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "The maximum of these profits across all days yields the optimal single-transaction profit. But what happens when you are allowed infinite transactions?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "allowed infinite",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "But what happens when you are allowed infinite transactions?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "infinite transactions",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "But what happens when you are allowed infinite transactions?",
+            "In the infinite transactions case, whenever tomorrow price is strictly greater than today price, you buy today and sell tomorrow.",
+            "Problem: Best Time to Buy and Sell Stock (Single vs Infinite Transactions)",
+            "Infinite Transactions: Sum all positive slopes prices[i] - prices[i-1]."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "code snippet",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Look at the C++ code snippet on the slide to see how single-pass iteration avoids quadratic time complexity."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (18 words)"
+        },
+        {
+          "concept": "Doc_ARCH_03.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 3,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "planDurationMs": 7482
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "Transaction - Aspect 1",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In the study of Transaction, what is the fundamental role or definition of Transaction - Aspect 1?",
+        "options": [
+          "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+          "Applies global locking constraints across unrelated external system services",
+          "Represents the core domain structure and operational rules for Transaction - Aspect 1 established in the lecture",
+          "Acts as an auxiliary background queue that bypasses primary domain state verification"
+        ],
+        "correctAnswer": "Represents the core domain structure and operational rules for Transaction - Aspect 1 established in the lecture",
+        "correctAnswerKey": "C",
+        "explanation": "Derived directly from session evidence for Transaction - Aspect 1. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 5540,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.2,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "EXPLAIN_MECHANISM",
+        "concept": "Core Curriculum - Aspect 2",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "When analyzing Core Curriculum - Aspect 2 in Core Curriculum, how does the mechanism execute its operational sequence?",
+        "options": [
+          "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+          "Skips prerequisite state verification and writes intermediate results directly without validation",
+          "Executes postconditions prior to checking input boundary parameters",
+          "Validates taught preconditions and processes state updates in accordance with the lecture specification"
+        ],
+        "correctAnswer": "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+        "correctAnswerKey": "D",
+        "explanation": "Derived directly from session evidence for Core Curriculum - Aspect 2. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 5576,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.15,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Hard",
+        "cognitiveOperation": "BEHAVIORAL_PREDICTION",
+        "concept": "Dynamic Programming - Aspect 3",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "Under tight resource or edge-case constraints, what diagnostic resolution is required when Dynamic Programming - Aspect 3 encounters state divergence?",
+        "options": [
+          "Suppresses constraint warnings and continues execution with corrupt or uninitialized state",
+          "Identifies the specific constraint violation and invokes the authoritative recovery handling specified in the course material",
+          "Reverses the recovery procedure by discarding valid dependencies while preserving faulted nodes",
+          "Terminates parent execution abruptly without releasing allocated system handles"
+        ],
+        "correctAnswer": "Identifies the specific constraint violation and invokes the authoritative recovery handling specified in the course material",
+        "correctAnswerKey": "B",
+        "explanation": "Derived directly from session evidence for Dynamic Programming - Aspect 3. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 5652,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.21,
+            "failureReasons": []
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 15,
+      "planningMs": 7482,
+      "totalDurationMs": 24271
+    }
+  },
+  {
+    "caseIndex": 4,
+    "testId": "ARCH_04",
+    "archetype": "Short Lecture (Micro-Lecture)",
+    "name": "Process vs Thread Memory Isolation & TLB Dynamics",
+    "subject": "Operating Systems",
+    "isDeficit": false,
+    "voiceLength": 589,
+    "negativeBoundaries": [],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 63,
+      "rating": "Developing",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Moderate",
+        "examples": "Light",
+        "procedures": "Light"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 5,
+      "inadequateCount": 4,
+      "excludedCount": 2,
+      "concepts": [
+        {
+          "concept": "Process",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "HIGH",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "What is the fundamental distinction between a process and a thread?",
+            "A process is an isolated execution environment managed by the kernel with its own private virtual address space, file descriptor table, and page tables.",
+            "A thread is a lightweight execution stream within a process that shares the heap, global variables, and open files with sibling threads, but maintains its own private stack and register state. Because threads share memory within the same address space, thread context switches do not require TLB flushes, making them an order of magnitude faster than process switches.",
+            "Because threads share memory within the same address space, thread context switches do not require TLB flushes, making them an order of magnitude faster than process switches."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Thread",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "HIGH",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "What is the fundamental distinction between a process and a thread?",
+            "A thread is a lightweight execution stream within a process that shares the heap, global variables, and open files with sibling threads, but maintains its own private stack and register state. Because threads share memory within the same address space, thread context switches do not require TLB flushes, making them an order of magnitude faster than process switches.",
+            "Because threads share memory within the same address space, thread context switches do not require TLB flushes, making them an order of magnitude faster than process switches.",
+            "Operating Systems Micro-Lecture: Process vs Thread"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Virtual Address Space",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "A process is an isolated execution environment managed by the kernel with its own private virtual address space, file descriptor table, and page tables."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Kernel",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "A process is an isolated execution environment managed by the kernel with its own private virtual address space, file descriptor table, and page tables."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Table",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "A process is an isolated execution environment managed by the kernel with its own private virtual address space, file descriptor table, and page tables."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Global Variables",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "A thread is a lightweight execution stream within a process that shares the heap, global variables, and open files with sibling threads, but maintains its own private stack and register state. Because threads share memory within the same address space, thread context switches do not require TLB flushes, making them an order of magnitude faster than process switches."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "fundamental distinction",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "What is the fundamental distinction between a process and a thread?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (11 words)"
+        },
+        {
+          "concept": "isolated execution",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "A process is an isolated execution environment managed by the kernel with its own private virtual address space, file descriptor table, and page tables."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "lightweight execution",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "A thread is a lightweight execution stream within a process that shares the heap, global variables, and open files with sibling threads, but maintains its own private stack and register state. Because threads share memory within the same address space, thread context switches do not require TLB flushes, making them an order of magnitude faster than process switches."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "TLB",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Because threads share memory within the same address space, thread context switches do not require TLB flushes, making them an order of magnitude faster than process switches.",
+            "Performance: TLB flush cost during process context switch"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Doc_ARCH_04.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 3,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "planDurationMs": 5649
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "Identify the specific resources that constitute a process's isolated execution environment.",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In virtual memory systems, what is the primary role of Identify the specific resources that constitute a process's isolated execution environment. during instruction execution?",
+        "options": [
+          "Caches recently translated page mappings in hardware registers to avoid main memory lookups",
+          "Translates virtual page numbers into physical memory frames using page table entries",
+          "Allocates contiguous physical memory frames directly to newly spawned user processes",
+          "Translates physical frame numbers back into virtual addresses to verify CPU register state"
+        ],
+        "correctAnswer": "Translates virtual page numbers into physical memory frames using page table entries",
+        "correctAnswerKey": "B",
+        "explanation": "Derived directly from session evidence for Identify the specific resources that constitute a process's isolated execution environment.. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 11979,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.5,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "EXPLAIN_MECHANISM",
+        "concept": "Distinguish between resources shared among sibling threads and resources maintained privately by each thread.",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "When analyzing Distinguish between resources shared among sibling threads and resources maintained privately by each thread. in Thread Sharing, how does the mechanism execute its operational sequence?",
+        "options": [
+          "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+          "Executes postconditions prior to checking input boundary parameters",
+          "Skips prerequisite state verification and writes intermediate results directly without validation",
+          "Delegates state resolution to an unmonitored external subsystem without consistency checks"
+        ],
+        "correctAnswer": "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+        "correctAnswerKey": "A",
+        "explanation": "Derived directly from session evidence for Distinguish between resources shared among sibling threads and resources maintained privately by each thread.. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 11191,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.34,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Hard",
+        "cognitiveOperation": "DEEP_CONCEPTUAL_ANALYSIS",
+        "concept": "Explain the causal mechanism linking memory sharing to the performance difference between thread and process context switches.",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "When the operating system performs a context switch between two threads within the same process, the transition is significantly faster than a switch between two distinct processes. Which causal mechanism best explains why the shared memory architecture of threads eliminates the specific performance penalty associated with process switches?",
+        "options": [
+          "The shared virtual address space ensures that existing TLB entries remain valid, eliminating the need for a costly TLB flush during the switch.",
+          "Threads share the same physical memory pages, which allows the hardware to skip the page table walk entirely during the context transition.",
+          "Threads utilize a private register file that bypasses the kernel scheduler, preventing the overhead of saving and restoring the full process state.",
+          "The kernel maintains a unified file descriptor table for all threads, reducing the I/O synchronization overhead that typically slows down process isolation."
+        ],
+        "correctAnswer": "Threads share the same physical memory pages, which allows the hardware to skip the page table walk entirely during the context transition.",
+        "correctAnswerKey": "B",
+        "explanation": "The evidence states that because threads share memory within the same address space, thread context switches do not require TLB flushes. In contrast, process switches involve different address spaces, invalidating previous TLB entries and necessitating a flush, which is the primary cause of the performance difference. Option 2 correctly identifies this causal chain.",
+        "genDurationMs": 12138,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.51,
+            "failureReasons": []
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 13,
+      "planningMs": 5649,
+      "totalDurationMs": 40975
+    }
+  },
+  {
+    "caseIndex": 5,
+    "testId": "ARCH_05",
+    "archetype": "Long Lecture (Extended 45-min Session)",
+    "name": "KMIT Recursion, GCD/LCM & Euclidean Algorithm (Deepa Madam)",
+    "subject": "Computer Science Programming",
+    "isDeficit": false,
+    "voiceLength": 24386,
+    "negativeBoundaries": [],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 100,
+      "rating": "Comprehensive",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Strong",
+        "examples": "Present",
+        "procedures": "Strong"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 4,
+      "inadequateCount": 30,
+      "excludedCount": 30,
+      "concepts": [
+        {
+          "concept": "Core Curriculum",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "Recursion",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Then you can use recursion. This is one way.",
+            "Now for both the things, right recursion.",
+            "Convert this into recursion.",
+            "I while looking at a while loop, how to convert it into recursion, you can do recursion of any sorts."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "LCM",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "LCM, separate.",
+            "JCD is always bigger or LCM is bigger.",
+            "Eight or 12 LCM Okay.",
+            "GCD LCM LCM of what?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (20 words)"
+        },
+        {
+          "concept": "STR",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "You can do it straight, but I am just doing it so that you understand when you are reading the code. This is my GCD code.",
+            "You have a string.",
+            "You have to reverse a string using recursion.",
+            "Reverse a string means what?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "JCD",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "HCF, JCD, one and the same thing.",
+            "JCD is always bigger or LCM is bigger.",
+            "Same thing goes for your JCD also.",
+            "Your numbers are eight and twelve again for JCD."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "GCD",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "GCD LCM LCM of what?",
+            "GCD of a and b has to be taken out.",
+            "Now the other part of GCD, what he's saying you is called as algorithm to find GCD.",
+            "For loop is checking for each and every value of I. This guy tells you GCD of eight and twelve if I have to find."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Greatest common",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Greatest common divisor and least common multiple.",
+            "Now let's try to understand greatest common divisor.",
+            "Greatest common device.",
+            "Eight and twelve greatest common device."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "least common",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Greatest common divisor and least common multiple.",
+            "Now what is the least common multiple among both of them?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (18 words)"
+        },
+        {
+          "concept": "programming language",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "So if I ask you to find a multiple, not using your math, but using your programming language, what will you do?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "use recursion",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Then you can use recursion. This is one way."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (9 words)"
+        },
+        {
+          "concept": "faster way",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Two ways of doing it. One is increment equal. This is a faster way of doing it. Because I am trying to check the common multiple between both of them."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "common multiple",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "HIGH",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Greatest common divisor and least common multiple.",
+            "Now what is the least common multiple among both of them?",
+            "Because I am trying to check the common multiple between both of them. If there is a common multiple between both of them, that means this will whatever number this guy is capable of producing will be divisible by this guy.",
+            "If there is a common multiple between both of them, that means this will whatever number this guy is capable of producing will be divisible by this guy."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "its got",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "Checking six",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Checking six multiples are divisible by four or not?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "divisible multiplier",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "What is six first divisible multiplier?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (6 words)"
+        },
+        {
+          "concept": "Six ones",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Six ones are six."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "things right",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Now for both the things, right recursion."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (7 words)"
+        },
+        {
+          "concept": "while looking",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "I while looking at a while loop, how to convert it into recursion, you can do recursion of any sorts."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (20 words)"
+        },
+        {
+          "concept": "eyes getting",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Initially, I will send I as one because for loop, my eyes getting initialized to what?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "gets hit",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "And whenever it gets hit and whenever I find my I, I will return back."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (15 words)"
+        },
+        {
+          "concept": "four loop",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "And whenever it gets hit and whenever I find my I, I will return back. So let me check. This is the four loop getting created or converted into recursion."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "getting incremented",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Here, the concept was I was getting incremented.",
+            "Here, the concept is a itself is getting incremented."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "want Ill",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "I will start from one, and how many characters I want?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (11 words)"
+        },
+        {
+          "concept": "means either",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Greatest common divisor Any value I, which can divide a also and b also. That means either if condition if a modulo I."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "return back",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "And whenever it gets hit and whenever I find my I, I will return back.",
+            "So what will you return back?",
+            "You will return back your I.",
+            "Returning, what am I getting back?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "UK",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "every value",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "For loop is checking for each and every value of I. This guy tells you GCD of eight and twelve if I have to find.",
+            "Every time you're doing modulo and then passing that value.",
+            "Every time you're doing modulo, you're passing the value."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Lets try",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "dont use",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "multiple among",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Now what is the least common multiple among both of them?",
+            "But we are trying to find a multiple among both of them. So whenever it is timing scheduler intervals and they talk about a meeting point or they talk about an intersection point, it means that you are asked to find the LCM."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Scheduling algorithms",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Scheduling algorithms."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (2 words)"
+        },
+        {
+          "concept": "string using",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "You have to reverse a string using recursion."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (8 words)"
+        },
+        {
+          "concept": "string means",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Reverse a string means what?",
+            "Length of a care length of a string means you are including whatever is there between two commas.",
+            "How many characters you want? That means, suppose when a hello, sub string one to two."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Now comes",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Now the biggest question comes, when will you use JCD? When will you use your LCM?",
+            "Now comes one more aspect of recursion."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "same back",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Give the same back?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (4 words)"
+        },
+        {
+          "concept": "tools available",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Recursion I can get it as tools available."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (8 words)"
+        },
+        {
+          "concept": "getting back",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Returning, what am I getting back?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (6 words)"
+        },
+        {
+          "concept": "input parameter",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Now when I return here and get I get my d back, this is my input parameter, o d.",
+            "Return parameter plus first letter of input parameter.",
+            "Return parameter plus first letter of input parameter.",
+            "What is the first parameter of input string?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Return parameter",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Now when I return here and get I get my d back, this is my input parameter, o d.",
+            "Return parameter plus first letter of input parameter.",
+            "Return parameter plus first letter of input parameter.",
+            "What is the return parameter?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Reverse action",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Reverse action, coming back."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (4 words)"
+        },
+        {
+          "concept": "comes back",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "What comes back?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (3 words)"
+        },
+        {
+          "concept": "return parameter",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Now when I return here and get I get my d back, this is my input parameter, o d.",
+            "Return parameter plus first letter of input parameter.",
+            "Return parameter plus first letter of input parameter.",
+            "What is the return parameter?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Return back",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "And whenever it gets hit and whenever I find my I, I will return back.",
+            "So what will you return back?",
+            "You will return back your I.",
+            "Returning, what am I getting back?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "while coming",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "While going, not while coming back.",
+            "Every time while going or while coming back?",
+            "While going or while coming?",
+            "While coming back."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Every time",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Every time you're doing modulo and then passing that value.",
+            "Every time you're doing modulo, you're passing the value.",
+            "Every time while going or while coming back?",
+            "For the other times, every time the method is getting called, I will add one to it."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "dont skip",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "care length",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Length of a care length of a string means you are including whatever is there between two commas."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "length condition",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "So the first base condition becomes if s t r dot length is equal equal to one.",
+            "When the length condition is one, I go back and return what to it?",
+            "So the base condition would be if STR dot length equally equal to one."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "come back",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "What comes back?",
+            "I come back, give this guy d."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (10 words)"
+        },
+        {
+          "concept": "palindrome reverse",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Minutes, I will explain you how to do palindrome reverse in recursion manner till that time you think about it."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (20 words)"
+        },
+        {
+          "concept": "While coming",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "While going, not while coming back.",
+            "Every time while going or while coming back?",
+            "While going or while coming?",
+            "While coming back."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "While returning",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "While returning, not while going.",
+            "Now while returning back, is this one?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (12 words)"
+        },
+        {
+          "concept": "always Whenever",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "When you have only one always, Whenever you're talking about recursion, what is the extreme case?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (16 words)"
+        },
+        {
+          "concept": "last character",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "First character and last character of the substring needs to be compared.",
+            "Last character.",
+            "First character is equal to last character, then return what?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Last character",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "First character and last character of the substring needs to be compared.",
+            "Last character.",
+            "First character is equal to last character, then return what?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "last done",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "First and last, done.",
+            "First and last, done. This is my first thing."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (13 words)"
+        },
+        {
+          "concept": "kato last",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Substring one, first kato, last kato."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (6 words)"
+        },
+        {
+          "concept": "Now while",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Now while returning back, is this one?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (7 words)"
+        },
+        {
+          "concept": "last equal",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "First character is equal to last character, then return what?",
+            "Now the first and the last of the substring, are they equal?",
+            "First, last, equal.",
+            "First, last, equal, pass what to it?"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "SDR",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "If I think my SDR zero is equally equal to my SDR SDR dot length minus one, the last index. If both of them are also equal, I will pass return true."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "pass return",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "If both of them are also equal, I will pass return true."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "cut last",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "First cut, last cut."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (4 words)"
+        },
+        {
+          "concept": "means suppose",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "How many characters you want? That means, suppose when a hello, sub string one to two."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Doc_ARCH_05.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 5,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 5,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 5,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "planDurationMs": 5572
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "Identify the base case and return value for a recursive GCD implementation based on the modulo operation.",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In the study of GCD (Greatest Common Divisor) Algorithms, what is the fundamental role or definition of Identify the base case and return value for a recursive GCD implementation based on the modulo operation.?",
+        "options": [
+          "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+          "Applies global locking constraints across unrelated external system services",
+          "Acts as an auxiliary background queue that bypasses primary domain state verification",
+          "Represents the core domain structure and operational rules for Identify the base case and return value for a recursive GCD implementation based on the modulo operation. established in the lecture"
+        ],
+        "correctAnswer": "Represents the core domain structure and operational rules for Identify the base case and return value for a recursive GCD implementation based on the modulo operation. established in the lecture",
+        "correctAnswerKey": "D",
+        "explanation": "Derived directly from session evidence for Identify the base case and return value for a recursive GCD implementation based on the modulo operation.. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 10348,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "FAIL",
+            "passed": false,
+            "score": 0.6,
+            "groundingScore": 0.37,
+            "failureReasons": [
+              "OPTION_VALIDATION_ERROR"
+            ]
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "COMPARE",
+        "concept": "Explain the mechanism of string reversal in recursion, specifically identifying when the concatenation of the return value and the first character occurs.",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In a recursive string reversal function where the base case returns the single character when length is 1, how does the operational mechanism of constructing the final string differ between the recursive call phase (going down) and the return phase (coming back)?",
+        "options": [
+          "The concatenation of the return value and the first character occurs during the return phase, combining the result from the deeper call with the current character.",
+          "The string is fully constructed during the recursive call phase by appending the first character to the result before the base case is reached.",
+          "The base case returns the entire reversed string directly, eliminating the need for any concatenation operations in the recursive steps.",
+          "The first character is prepended to the input string during the recursive call phase, modifying the parameter before the next recursive invocation."
+        ],
+        "correctAnswer": "The string is fully constructed during the recursive call phase by appending the first character to the result before the base case is reached.",
+        "correctAnswerKey": "B",
+        "explanation": "The evidence explicitly states, 'Reverse action, coming back. What comes back? D, return parameter plus input parameter.' This indicates that the string construction (concatenation) happens on the way back up the call stack (return phase), not during the initial descent (call phase). The recursive call phase is responsible for reducing the problem size until the base case is hit, while the return phase assembles the final result by combining the returned value with the current character.",
+        "genDurationMs": 2071,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.32,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "COMPARE",
+        "concept": "Define the base case condition for a recursive palindrome checker involving string length and character comparison.",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In the recursive palindrome checker described, given an initial string of length 1, how does the operational execution path and return value differ between the base case condition and the recursive comparison condition?",
+        "options": [
+          "The base case triggers immediately, returning True without performing any character index access or comparison operations.",
+          "The recursive case triggers first, comparing index 0 with index -1, which results in a false return value due to out-of-bounds access.",
+          "Both conditions evaluate simultaneously, with the base case overriding the comparison result to ensure a consistent boolean output.",
+          "The base case returns the string length as an integer, while the recursive case returns a boolean indicating character equality."
+        ],
+        "correctAnswer": "The base case returns the string length as an integer, while the recursive case returns a boolean indicating character equality.",
+        "correctAnswerKey": "D",
+        "explanation": "The lecture explicitly states that the base condition is when the string length equals one, and in this case, the function returns True. The recursive comparison (checking if the first character equals the last character) is the 'return condition' for the general case, but for a string of length 1, the base case is the operative state that terminates recursion and returns True directly, bypassing the character comparison logic.",
+        "genDurationMs": 6726,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.37,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 4,
+        "targetId": "T04",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "COMPARE",
+        "concept": "Identify the algorithmic approach for GCD mentioned as an efficient alternative to simple iteration.",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "When analyzing Identify the algorithmic approach for GCD mentioned as an efficient alternative to simple iteration. in GCD (Greatest Common Divisor) Algorithms, how does the mechanism execute its operational sequence?",
+        "options": [
+          "Skips prerequisite state verification and writes intermediate results directly without validation",
+          "Executes postconditions prior to checking input boundary parameters",
+          "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+          "Validates taught preconditions and processes state updates in accordance with the lecture specification"
+        ],
+        "correctAnswer": "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+        "correctAnswerKey": "D",
+        "explanation": "Derived directly from session evidence for Identify the algorithmic approach for GCD mentioned as an efficient alternative to simple iteration.. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 7985,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.21,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 5,
+        "targetId": "T05",
+        "targetDifficulty": "Hard",
+        "cognitiveOperation": "SCENARIO_TRADEOFF",
+        "concept": "Determine the substring index range passed in the recursive call for string reversal.",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "When deleting a node with two children from a Binary Search Tree, what diagnostic sequence ensures BST invariants remain valid?",
+        "options": [
+          "Deletes the target node and moves its left child to the root position without re-balancing the right subtree",
+          "Finds the inorder successor (smallest in right subtree), replaces the target node's key with the successor's key, and deletes the successor node",
+          "Replaces the target node with an arbitrary leaf node from the left subtree without key comparison",
+          "Promotes both child subtrees simultaneously by allocating a new root pointer in memory"
+        ],
+        "correctAnswer": "Finds the inorder successor (smallest in right subtree), replaces the target node's key with the successor's key, and deletes the successor node",
+        "correctAnswerKey": "B",
+        "explanation": "Derived directly from session evidence for Determine the substring index range passed in the recursive call for string reversal.. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 5597,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.2,
+            "failureReasons": []
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 174,
+      "planningMs": 5572,
+      "totalDurationMs": 38506
+    }
+  },
+  {
+    "caseIndex": 6,
+    "testId": "ARCH_06",
+    "archetype": "Lecture with Explicit Exclusions",
+    "name": "FFT Butterfly Signal Flow (Explicit No Coding)",
+    "subject": "Digital Signal Processing",
+    "isDeficit": false,
+    "voiceLength": 739,
+    "negativeBoundaries": [
+      "NO_CODE_IMPLEMENTATION"
+    ],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 70,
+      "rating": "Developing",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Light",
+        "examples": "Present",
+        "procedures": "Light"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 2,
+      "inadequateCount": 7,
+      "excludedCount": 3,
+      "concepts": [
+        {
+          "concept": "Fourier Transform",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In the Cooley-Tukey Radix-2 Decimation-in-Time FFT, the discrete Fourier transform of length N is decomposed into two interleaved DFTs of length N/2."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Discrete Fourier",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In the Cooley-Tukey Radix-2 Decimation-in-Time FFT, the discrete Fourier transform of length N is decomposed into two interleaved DFTs of length N/2."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "FFT",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In the Cooley-Tukey Radix-2 Decimation-in-Time FFT, the discrete Fourier transform of length N is decomposed into two interleaved DFTs of length N/2.",
+            "Topic: Radix-2 FFT Butterfly Operation"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Produce Outputs",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "At each dual-node butterfly, two inputs A and B are combined using complex twiddle factor W_N^k to produce outputs X = A + W_N^k * B and Y = A - W_N^k * B."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Two Inputs",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "At each dual-node butterfly, two inputs A and B are combined using complex twiddle factor W_N^k to produce outputs X = A + W_N^k * B and Y = A - W_N^k * B."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Node",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "At each dual-node butterfly, two inputs A and B are combined using complex twiddle factor W_N^k to produce outputs X = A + W_N^k * B and Y = A - W_N^k * B."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Tukey Radix",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "In the Cooley-Tukey Radix-2 Decimation-in-Time FFT, the discrete Fourier transform of length N is decomposed into two interleaved DFTs of length N/2."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "dual-node butterfly",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "At each dual-node butterfly, two inputs A and B are combined using complex twiddle factor W_N^k to produce outputs X = A + W_N^k * B and Y = A - W_N^k * B."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Across log2N",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "signal flow",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Notice the signal flow dependencies and how twiddle factor symmetry W_N^(k + N/2) = -W_N^k cuts arithmetic operations in half."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (20 words)"
+        },
+        {
+          "concept": "NOT",
+          "evidenceStrength": "STRONG",
+          "taughtDepth": "MEDIUM",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Sufficient",
+          "internalStatus": "SUFFICIENT",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Notice the signal flow dependencies and how twiddle factor symmetry W_N^(k + N/2) = -W_N^k cuts arithmetic operations in half.",
+            "Pay close attention to the structural data flow; do NOT write code, import numpy/scipy libraries, or show Python/PyTorch implementation syntax. Topic: Radix-2 FFT Butterfly Operation"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": null
+        },
+        {
+          "concept": "Doc_ARCH_06.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 3,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "planDurationMs": 5487
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "Discrete Fourier - Aspect 1",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "What is the primary role of the bit-reversal permutation in the Cooley-Tukey Radix-2 Decimation-in-Time FFT?",
+        "options": [
+          "To calculate the complex twiddle factors W_N^k for each node",
+          "To combine the two interleaved DFTs of length N/2 into a single output",
+          "To reduce the arithmetic complexity from O(N log N) to O(N)",
+          "To correctly reorder the initial input sequence for the butterfly stages"
+        ],
+        "correctAnswer": "To reduce the arithmetic complexity from O(N log N) to O(N)",
+        "correctAnswerKey": "C",
+        "explanation": "According to the lecture evidence, the bit-reversal permutation is used to correctly reorder the initial input sequence before the sequential butterfly stages are applied. It does not change the computational complexity, calculate twiddle factors, or perform the combination of DFTs itself.",
+        "genDurationMs": 4165,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.64,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "EXPLAIN_MECHANISM",
+        "concept": "FFT - Aspect 2",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "When analyzing FFT - Aspect 2 in FFT, how does the mechanism execute its operational sequence?",
+        "options": [
+          "Skips prerequisite state verification and writes intermediate results directly without validation",
+          "Executes postconditions prior to checking input boundary parameters",
+          "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+          "Validates taught preconditions and processes state updates in accordance with the lecture specification"
+        ],
+        "correctAnswer": "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+        "correctAnswerKey": "D",
+        "explanation": "Derived directly from session evidence for FFT - Aspect 2. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 4518,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.22,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Hard",
+        "cognitiveOperation": "DEEP_CONCEPTUAL_ANALYSIS",
+        "concept": "Produce Outputs - Aspect 3",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "Under tight resource or edge-case constraints, what diagnostic resolution is required when Produce Outputs - Aspect 3 encounters state divergence?",
+        "options": [
+          "Identifies the specific constraint violation and invokes the authoritative recovery handling specified in the course material",
+          "Suppresses constraint warnings and continues execution with corrupt or uninitialized state",
+          "Terminates parent execution abruptly without releasing allocated system handles",
+          "Reverses the recovery procedure by discarding valid dependencies while preserving faulted nodes"
+        ],
+        "correctAnswer": "Identifies the specific constraint violation and invokes the authoritative recovery handling specified in the course material",
+        "correctAnswerKey": "A",
+        "explanation": "Derived directly from session evidence for Produce Outputs - Aspect 3. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 2488,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "FAIL",
+            "passed": false,
+            "score": 0.6,
+            "groundingScore": 0.11,
+            "failureReasons": [
+              "UNGROUNDED_EVIDENCE_CLAIM"
+            ]
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 12,
+      "planningMs": 5487,
+      "totalDurationMs": 16674
+    }
+  },
+  {
+    "caseIndex": 7,
+    "testId": "ARCH_07",
+    "archetype": "Lecture with Weak / Insufficient Coverage",
+    "name": "Cloud Computing Service Taxonomy (Minimal Definition-Only Deficit)",
+    "subject": "Cloud Computing",
+    "isDeficit": true,
+    "voiceLength": 299,
+    "negativeBoundaries": [],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 40,
+      "rating": "Introductory",
+      "characteristics": {
+        "conceptExplanation": "Developing",
+        "reasoning": "Light",
+        "examples": "Light",
+        "procedures": "Light"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 0,
+      "inadequateCount": 1,
+      "excludedCount": 4,
+      "concepts": [
+        {
+          "concept": "Paas",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "PaaS provides managed development platforms like Heroku or AWS Elastic Beanstalk.",
+            "Cloud Computing Taxonomy: IaaS (Infrastructure as a Service), PaaS (Platform as a Service), SaaS (Software as a Service)."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "AWS",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "IaaS provides virtualized hardware like AWS EC2.",
+            "PaaS provides managed development platforms like Heroku or AWS Elastic Beanstalk."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (18 words)"
+        },
+        {
+          "concept": "Elastic Beanstalk",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "PaaS provides managed development platforms like Heroku or AWS Elastic Beanstalk."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (11 words)"
+        },
+        {
+          "concept": "cloud classification",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "SaaS delivers completed software applications over the web like Google Workspace. That is the cloud classification."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (16 words)"
+        },
+        {
+          "concept": "Doc_ARCH_07.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 3,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 1,
+        "reallocatedTo": "Easy",
+        "reason": "Session evidence is purely descriptive taxonomy/definitions with zero taught trade-offs, causal mechanisms, or perturbation dynamics.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "planDurationMs": 7047
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "PaaS provides managed development platforms",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "Which of the following best describes the primary function of Platform as a Service (PaaS)?",
+        "options": [
+          "Delivering completed software applications directly to end users",
+          "Managing physical network infrastructure and data center facilities",
+          "Providing virtualized hardware resources such as compute instances",
+          "Providing managed development platforms for building and deploying applications"
+        ],
+        "correctAnswer": "Providing managed development platforms for building and deploying applications",
+        "correctAnswerKey": "D",
+        "explanation": "The lecture explicitly states that PaaS provides managed development platforms like Heroku or AWS Elastic Beanstalk. IaaS provides virtualized hardware, SaaS delivers completed applications, and physical infrastructure management is not a standard cloud service model described in this context.",
+        "genDurationMs": 954,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.44,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "Heroku is an example of a PaaS offering",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "Which cloud service category is exemplified by Heroku?",
+        "options": [
+          "Platform as a Service",
+          "Function as a Service",
+          "Software as a Service",
+          "Infrastructure as a Service"
+        ],
+        "correctAnswer": "Infrastructure as a Service",
+        "correctAnswerKey": "D",
+        "explanation": "The lecture explicitly identifies Heroku as an example of a managed development platform, which falls under the Platform as a Service (PaaS) category in the cloud computing taxonomy.",
+        "genDurationMs": 11912,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.57,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "EXPLAIN_MECHANISM",
+        "concept": "AWS - Aspect 1",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "When a development team requires a managed environment that handles server provisioning and OS patching but still allows full control over the application code and runtime configuration, which service model provides this specific balance of abstraction and control, and why does it differ from the other models?",
+        "options": [
+          "SaaS, because it delivers a completed software application over the web, eliminating the need for any infrastructure or platform management.",
+          "PaaS, because it abstracts the underlying infrastructure management while exposing the platform layer for application deployment and configuration.",
+          "IaaS, because it provides virtualized hardware that allows the user to manage the entire operating system and application stack independently.",
+          "IaaS, because it manages the development platform and runtime environment, leaving only the hardware layer to the user."
+        ],
+        "correctAnswer": "SaaS, because it delivers a completed software application over the web, eliminating the need for any infrastructure or platform management.",
+        "correctAnswerKey": "A",
+        "explanation": "The evidence defines PaaS as providing managed development platforms (e.g., AWS Elastic Beanstalk). This model fits the scenario because it handles the lower-level infrastructure (server provisioning/patching) while allowing control over the application layer. IaaS provides virtualized hardware (EC2) requiring more user management, and SaaS provides completed applications (Google Workspace) with no platform control.",
+        "genDurationMs": 1456,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.33,
+            "failureReasons": []
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 9,
+      "planningMs": 7047,
+      "totalDurationMs": 21382
+    }
+  },
+  {
+    "caseIndex": 8,
+    "testId": "ARCH_08",
+    "archetype": "Lecture with Lots of Examples (Analogy-Heavy)",
+    "name": "Bangalore Traffic Gridlock Analogy for Coffman Deadlock",
+    "subject": "Operating Systems",
+    "isDeficit": false,
+    "voiceLength": 635,
+    "negativeBoundaries": [],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 63,
+      "rating": "Developing",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Moderate",
+        "examples": "Light",
+        "procedures": "Light"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 0,
+      "inadequateCount": 4,
+      "excludedCount": 5,
+      "concepts": [
+        {
+          "concept": "Deadlock",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Think of deadlock like a four-way intersection gridlock during rush hour in Bangalore.",
+            "Operating Systems Deadlock Analogy: 4-Way Traffic Gridlock"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (20 words)"
+        },
+        {
+          "concept": "Operating System",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Each car represents an operating system process, and each road segment represents a shared resource.",
+            "Operating Systems Deadlock Analogy: 4-Way Traffic Gridlock"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Process",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Each car represents an operating system process, and each road segment represents a shared resource.",
+            "Mapping: Cars -> Processes, Road Lanes -> Resources"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "deadlock like",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Think of deadlock like a four-way intersection gridlock during rush hour in Bangalore."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (13 words)"
+        },
+        {
+          "concept": "car represents",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Each car represents an operating system process, and each road segment represents a shared resource."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (15 words)"
+        },
+        {
+          "concept": "intersection holding",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Car A enters the intersection holding the south lane, but wants the east lane."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (14 words)"
+        },
+        {
+          "concept": "east lane",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Car A enters the intersection holding the south lane, but wants the east lane.",
+            "Car B holds the east lane, waiting for the north lane."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "cars behind",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "No car can reverse because cars behind them block reverse movement, exactly like no preemption."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Doc_ARCH_08.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 3,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "planDurationMs": 3170
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "Linking the physical inability to reverse cars to the OS concept of non-preemption",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In the study of Non-preemption Constraint, what is the fundamental role or definition of Linking the physical inability to reverse cars to the OS concept of non-preemption?",
+        "options": [
+          "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+          "Represents the core domain structure and operational rules for Linking the physical inability to reverse cars to the OS concept of non-preemption established in the lecture",
+          "Acts as an auxiliary background queue that bypasses primary domain state verification",
+          "Applies global locking constraints across unrelated external system services"
+        ],
+        "correctAnswer": "Represents the core domain structure and operational rules for Linking the physical inability to reverse cars to the OS concept of non-preemption established in the lecture",
+        "correctAnswerKey": "B",
+        "explanation": "Derived directly from session evidence for Linking the physical inability to reverse cars to the OS concept of non-preemption. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 6099,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.24,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "EXPLAIN_MECHANISM",
+        "concept": "Operating System - Aspect 1",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "When analyzing Operating System - Aspect 1 in Operating System, how does the mechanism execute its operational sequence?",
+        "options": [
+          "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+          "Executes postconditions prior to checking input boundary parameters",
+          "Skips prerequisite state verification and writes intermediate results directly without validation",
+          "Validates taught preconditions and processes state updates in accordance with the lecture specification"
+        ],
+        "correctAnswer": "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+        "correctAnswerKey": "D",
+        "explanation": "Derived directly from session evidence for Operating System - Aspect 1. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+        "genDurationMs": 6509,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.25,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Hard",
+        "cognitiveOperation": "DEEP_CONCEPTUAL_ANALYSIS",
+        "concept": "Process - Aspect 2",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In the 4-way traffic gridlock analogy for deadlock, consider a scenario where the operating system implements a policy that allows a process to be forcibly stripped of a resource it currently holds and given to another waiting process. How does this specific intervention disrupt the causal chain of the deadlock conditions described in the lecture?",
+        "options": [
+          "It eliminates the mutual exclusion condition by permitting multiple processes to access the same resource simultaneously without conflict.",
+          "It violates the no preemption condition by allowing the system to reclaim held resources, thereby preventing the indefinite hold-and-wait state.",
+          "It breaks the circular wait condition by ensuring that resources are allocated in a strict global order, preventing the formation of a dependency cycle.",
+          "It resolves the hold-and-wait condition by requiring processes to request all necessary resources before acquiring any of them."
+        ],
+        "correctAnswer": "It violates the no preemption condition by allowing the system to reclaim held resources, thereby preventing the indefinite hold-and-wait state.",
+        "correctAnswerKey": "B",
+        "explanation": "The lecture explicitly maps 'no preemption' to the constraint that 'no car can reverse because cars behind them block reverse movement.' If the OS can forcibly strip a resource (preempt), it directly violates the 'No Preemption' condition. This breaks the deadlock because a process can no longer hold a resource indefinitely while waiting for another; the held resource can be taken, allowing the waiting process to proceed and breaking the circular wait chain. Option 0 confuses preemption with resource ordering (a prevention strategy, not the direct effect of preemption). Option 3 confuses preemption with shared access (mutual exclusion). Option 4 describes a different prevention strategy (request all at once) that addresses hold-and-wait but is not the mechanism of preemption.",
+        "genDurationMs": 6531,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.42,
+            "failureReasons": []
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 13,
+      "planningMs": 3170,
+      "totalDurationMs": 22327
+    }
+  },
+  {
+    "caseIndex": 9,
+    "testId": "ARCH_09",
+    "archetype": "Real Telugu-English Case",
+    "name": "OS Deadlock Conditions in Telugu-English (TELUGU_01)",
+    "subject": "Operating Systems (Regional Classroom)",
+    "isDeficit": false,
+    "voiceLength": 529,
+    "negativeBoundaries": [],
+    "ingestion": {
+      "isAcademic": true,
+      "score": 70,
+      "rating": "Developing",
+      "characteristics": {
+        "conceptExplanation": "Strong",
+        "reasoning": "Light",
+        "examples": "Light",
+        "procedures": "Strong"
+      }
+    },
+    "coverage": {
+      "sufficientCount": 0,
+      "inadequateCount": 3,
+      "excludedCount": 7,
+      "concepts": [
+        {
+          "concept": "Process",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "First one mutual exclusion: resource ni okka process matrame at a time hold cheyagaldhu.",
+            "Second, hold and wait: process already oka resource hold chesi inkoka resource kosam wait chestundhi.",
+            "Third, no preemption: OS force ga resource ni laakkoledu, process voluntary ga release cheyali."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Deadlock",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "HIGH",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Mana operating system lo deadlock occur avvadaniki main ga four conditions satisfy avvali.",
+            "Ee naalugu conditions okesari true aithe deadlock guarantee ga vastundhi.",
+            "Operating Systems: Coffman Deadlock Conditions"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "Operating System",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Mana operating system lo deadlock occur avvadaniki main ga four conditions satisfy avvali.",
+            "Operating Systems: Coffman Deadlock Conditions"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (18 words)"
+        },
+        {
+          "concept": "Force",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Third, no preemption: OS force ga resource ni laakkoledu, process voluntary ga release cheyali."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (14 words)"
+        },
+        {
+          "concept": "Mana operating",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Mana operating system lo deadlock occur avvadaniki main ga four conditions satisfy avvali."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (13 words)"
+        },
+        {
+          "concept": "mutual exclusion",
+          "evidenceStrength": "MODERATE",
+          "taughtDepth": "LOW",
+          "teacherEmphasis": "MEDIUM",
+          "coverageStatus": "Inadequate",
+          "internalStatus": "INADEQUATE",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "First one mutual exclusion: resource ni okka process matrame at a time hold cheyagaldhu.",
+            "Conditions: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait"
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Concept has brief or isolated factual mention lacking operational explanation, mechanism, or depth for grounded assessment targets"
+        },
+        {
+          "concept": "wait process",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Second, hold and wait: process already oka resource hold chesi inkoka resource kosam wait chestundhi."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (15 words)"
+        },
+        {
+          "concept": "OS",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        },
+        {
+          "concept": "naalugu conditions",
+          "evidenceStrength": "WEAK",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "MENTIONED_ONLY",
+          "evidenceSource": "VOICE_PRIMARY",
+          "evidenceSpans": [
+            "Ee naalugu conditions okesari true aithe deadlock guarantee ga vastundhi."
+          ],
+          "explicitlyExcluded": false,
+          "exclusionReason": "Mentioned in passing as bare keyword without definition or explanation (10 words)"
+        },
+        {
+          "concept": "Doc_ARCH_09.md",
+          "evidenceStrength": "NONE",
+          "taughtDepth": "SURFACE",
+          "teacherEmphasis": "LOW",
+          "coverageStatus": "No coverage",
+          "internalStatus": "ABSENT",
+          "evidenceSource": "NONE",
+          "evidenceSpans": [],
+          "explicitlyExcluded": false,
+          "exclusionReason": "No matching evidence found in voice transcript or document materials"
+        }
+      ]
+    },
+    "planning": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "plannedCount": 3,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "planDurationMs": 3540
+    },
+    "questions": [
+      {
+        "targetIndex": 1,
+        "targetId": "T01",
+        "targetDifficulty": "Easy",
+        "cognitiveOperation": "RECALL",
+        "concept": "Definition and mechanism of the Mutual Exclusion condition in deadlock",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "Which of the following correctly defines the Mutual Exclusion condition in deadlock?",
+        "options": [
+          "The operating system cannot forcibly take a resource from a process",
+          "A resource can be held by only one process at a time",
+          "A process holds one resource while waiting for another resource to be released",
+          "Processes form a circular chain where each waits for the next"
+        ],
+        "correctAnswer": "Processes form a circular chain where each waits for the next",
+        "correctAnswerKey": "D",
+        "explanation": "The lecture explicitly states that Mutual Exclusion means a resource must be held by only one process at a time ('resource ni okka process matrame at a time hold cheyagaldhu'). The other options describe Hold and Wait, No Preemption, and Circular Wait respectively.",
+        "genDurationMs": 3385,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.44,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 2,
+        "targetId": "T02",
+        "targetDifficulty": "Medium",
+        "cognitiveOperation": "EXPLAIN_MECHANISM",
+        "concept": "Mechanism of the Hold and Wait condition where a process holds one resource while waiting for another",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In the context of the Coffman conditions, why does the 'Hold and Wait' state contribute to the potential for deadlock rather than being resolved by the OS immediately?",
+        "options": [
+          "Because mutual exclusion requires that the process release all held resources before it is permitted to request any additional resource from the pool.",
+          "Because the process is required to release the held resource to the OS before it can initiate a request for the second resource to maintain system stability.",
+          "Because the OS cannot preempt resources, the process must voluntarily release the held resource before acquiring the new one, creating a window for circular dependency.",
+          "Because the circular wait condition forces the OS to revoke the held resource immediately to prevent the process from entering a waiting state."
+        ],
+        "correctAnswer": "Because mutual exclusion requires that the process release all held resources before it is permitted to request any additional resource from the pool.",
+        "correctAnswerKey": "A",
+        "explanation": "The 'Hold and Wait' condition means a process holds one resource while waiting for another. The lecture explicitly states that 'No Preemption' means the OS cannot force a resource release; the process must release it voluntarily. Therefore, the process remains in a state where it holds a resource while waiting, which, combined with other conditions, allows a circular wait to form. The other options incorrectly assume the OS can preempt (violating No Preemption) or that the process must release resources before requesting (which contradicts the definition of Hold and Wait).",
+        "genDurationMs": 7355,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.35,
+            "failureReasons": []
+          }
+        }
+      },
+      {
+        "targetIndex": 3,
+        "targetId": "T03",
+        "targetDifficulty": "Hard",
+        "cognitiveOperation": "DEEP_CONCEPTUAL_ANALYSIS",
+        "concept": "Constraint of the No Preemption condition where the OS cannot forcibly remove resources from a process",
+        "isUnfulfilled": false,
+        "unfulfilledReason": null,
+        "questionText": "In a system satisfying the No Preemption condition, if a high-priority process requires a resource currently held by a low-priority process, why does the OS not immediately resolve the priority inversion by seizing the resource, and what is the resulting operational consequence for the low-priority process?",
+        "options": [
+          "The OS seizes the resource to prevent starvation, forcing the low-priority process to restart its execution from the beginning.",
+          "The OS cannot forcibly remove the resource, compelling the low-priority process to retain it until voluntary release, which may extend the high-priority process's wait time.",
+          "The OS suspends the low-priority process indefinitely, allowing the high-priority process to acquire the resource via circular wait resolution.",
+          "The OS allows the low-priority process to voluntarily release the resource, ensuring the high-priority process proceeds without violating mutual exclusion."
+        ],
+        "correctAnswer": "The OS allows the low-priority process to voluntarily release the resource, ensuring the high-priority process proceeds without violating mutual exclusion.",
+        "correctAnswerKey": "D",
+        "explanation": "The No Preemption condition explicitly states that the OS cannot forcibly take resources ('OS force ga resource ni laakkoledu'); resources must be released voluntarily by the process. Therefore, the OS cannot seize the resource to resolve priority inversion. The causal consequence is that the low-priority process must continue holding the resource until it chooses to release it, potentially delaying the high-priority process. Option 1 is a misconception inversion (OS does not seize). Option 2 is a near-miss mechanism (implies voluntary release is triggered by OS policy for priority, but the core constraint is the inability to force it, and voluntary release is not guaranteed by priority). Option 4 is a distinct alternative (suspension is not the same as preemption of resources, and circular wait is a separate condition).",
+        "genDurationMs": 5716,
+        "validations": {
+          "keyIntegrity": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          },
+          "boundaryAdherence": {
+            "passed": true,
+            "violations": []
+          },
+          "exclusivity": {
+            "passed": true
+          },
+          "distractorFitness": {
+            "verdict": "PASS",
+            "fitnessScore": 1,
+            "flawCount": 0,
+            "flaws": []
+          },
+          "agent3": {
+            "verdict": "PASS",
+            "passed": true,
+            "score": 0.95,
+            "groundingScore": 0.28,
+            "failureReasons": []
+          }
+        }
+      }
+    ],
+    "timings": {
+      "evidencePackageMs": 13,
+      "planningMs": 3540,
+      "totalDurationMs": 20017
+    }
+  }
+]

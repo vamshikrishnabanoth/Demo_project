@@ -1,0 +1,3742 @@
+{
+  "metadata": {
+    "gitCommit": "e53e80a8fa081adfe6f901d9f14b843f898a82cc",
+    "gitBranch": "feature/decoupled-pedagogical-scoring",
+    "timestamp": "2026-10-07T14:05:09.086Z",
+    "nodeVersion": "v24.10.0",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "experiment": "Step 3 Stress Matrix & Behavioral Validation"
+  },
+  "matrixResults": [
+    {
+      "profileCode": "A",
+      "profileName": "Implementation-focused",
+      "testId": "INTENT_001",
+      "requestedCount": 1,
+      "allocatedEasy": 0,
+      "allocatedMedium": 1,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 1,
+        "requestedHardCount": 0,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 1,
+      "generatedSampleCount": 1,
+      "generationSuccess": true,
+      "planTimeMs": 4680,
+      "genTimeMs": 4918,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "During a GAN training iteration, after obtaining a batch of real images and a batch of generated images, the discriminator loss is computed. Explain why the binary cross‑entropy (BCE) loss is calculated separately for real and fake labels before being combined.",
+            "options": [
+              "The discriminator loss is obtained by concatenating real and fake batches, applying a single BCE step with a uniform target of 0.5 for all samples, and using the result as the total loss.",
+              "The generator loss is calculated by applying BCE with logits to the discriminator’s output on fake samples using target 1, and this loss is added to the discriminator’s loss.",
+              "Because the discriminator must learn to assign high scores to real inputs and low scores to generated inputs, the BCE loss is first computed with target 1 for real samples and separately with target 0 for fake samples; the two scalar losses are then summed to form the total discriminator loss.",
+              "Since the discriminator should give low scores to real data and high scores to generated data, the BCE loss is computed with target 0 for real samples and target 1 for fake samples before summing."
+            ],
+            "correctAnswer": "Because the discriminator must learn to assign high scores to real inputs and low scores to generated inputs, the BCE loss is first computed with target 1 for real samples and separately with target 0 for fake samples; the two scalar losses are then summed to form the total discriminator loss.",
+            "explanation": "The discriminator needs separate supervision: real samples are labeled 1 so it learns to output high probabilities for authentic data, while fake samples are labeled 0 so it learns to output low probabilities for generated data. Computing BCE loss for each set with its correct target yields two scalar losses that are summed, providing gradients that reflect both aspects of the discriminator’s task. Option B inverts the label assignment (MISCONCEPTION_INVERSION), option C confuses the generator’s loss with the discriminator’s (NEAR_MISS_MECHANISM), and option D incorrectly treats real and fake data as a single class with a uniform target (also a misconception).",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Explain the mechanism of computing BCE loss separately for the discriminator on real and fake labels",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Because the discriminator must learn to assign high scores to real inputs and low scores to generated inputs, the BCE loss is first computed with target 1 for real samples and separately with target 0 for fake samples; the two scalar losses are then summed to form the total discriminator loss.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "Because the discriminator must learn to assign high scores to real inputs and low scores to generated inputs, the BCE loss is first computed with target 1 for real samples and separately with target 0 for fake samples; the two scalar losses are then summed to form the total discriminator loss."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "A",
+      "profileName": "Implementation-focused",
+      "testId": "INTENT_001",
+      "requestedCount": 2,
+      "allocatedEasy": 1,
+      "allocatedMedium": 1,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 2,
+        "requestedHardCount": 0,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 2,
+      "generatedSampleCount": 2,
+      "generationSuccess": true,
+      "planTimeMs": 4558,
+      "genTimeMs": 9557,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which statement correctly describes how the binary cross‑entropy loss is computed for the discriminator in the GAN training loop?",
+            "options": [
+              "The discriminator computes a single BCE loss using both real and fake samples together.",
+              "The generator computes BCE loss on real samples while the discriminator uses MSE loss.",
+              "The discriminator uses cross‑entropy loss only on real samples, ignoring fake ones.",
+              "The discriminator computes BCE loss separately for real and fake samples and then adds them."
+            ],
+            "correctAnswer": "The discriminator computes BCE loss separately for real and fake samples and then adds them.",
+            "explanation": "According to the lecture, the discriminator's binary cross‑entropy loss is calculated separately for real‑labeled data and fake‑labeled data, and these two losses are then combined (added) before back‑propagation. This separate computation is essential for proper GAN training.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "DISTINCT_ALTERNATIVE",
+              "SCOPE_PRECONDITION_ERROR"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Compute binary cross‑entropy (BCE) loss separately for the discriminator on real and fake labels",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "DISTINCT_ALTERNATIVE",
+                "SCOPE_PRECONDITION_ERROR"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The discriminator computes BCE loss separately for real and fake samples and then adds them.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The discriminator computes BCE loss separately for real and fake samples and then adds them."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "In a PyTorch GAN training loop, after computing the discriminator loss the code calls optimizer_G.zero_grad() before generator_loss.backward(). Why must the generator gradients be zeroed at this point?",
+            "options": [
+              "Because the torch.autograd engine requires the gradients to be set to zero before any backward computation to avoid memory leaks.",
+              "Because zeroing the gradients prevents the discriminator from receiving gradient updates during the generator's backward pass.",
+              "Because the generator's parameters may still hold gradients from the previous discriminator backward pass, and clearing them ensures the new backward call accumulates only the current generator loss.",
+              "Because the optimizer automatically clears gradients after each backward call, so manually zeroing is redundant."
+            ],
+            "correctAnswer": "Because the generator's parameters may still hold gradients from the previous discriminator backward pass, and clearing them ensures the new backward call accumulates only the current generator loss.",
+            "explanation": "PyTorch accumulates gradients in each parameter's .grad attribute. After the discriminator backward pass, those gradients remain unless cleared. Zeroing the generator's gradients before its own backward ensures that only the gradients from the current generator loss are stored, preventing unintended mixing of gradient contributions from earlier steps and leading to correct parameter updates.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Application",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Zero the generator gradients before calling backward during GAN training",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Because the generator's parameters may still hold gradients from the previous discriminator backward pass, and clearing them ensures the new backward call accumulates only the current generator loss.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "Because the generator's parameters may still hold gradients from the previous discriminator backward pass, and clearing them ensures the new backward call accumulates only the current generator loss."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "A",
+      "profileName": "Implementation-focused",
+      "testId": "INTENT_001",
+      "requestedCount": 3,
+      "allocatedEasy": 1,
+      "allocatedMedium": 1,
+      "allocatedHard": 1,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 3,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 8753,
+      "genTimeMs": 8462,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which statement correctly describes how the discriminator loss is computed in a GAN using BCE?",
+            "options": [
+              "The discriminator loss is computed using MSE loss for real and fake labels.",
+              "The generator loss is computed using BCE on real and fake labels.",
+              "The BCE loss is computed jointly for real and fake labels.",
+              "The BCE loss is computed separately for real and fake labels."
+            ],
+            "correctAnswer": "The BCE loss is computed separately for real and fake labels.",
+            "explanation": "In GAN training, the discriminator's binary cross‑entropy (BCE) loss is evaluated independently for real samples and for fake samples, as stated in the lecture evidence.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Recall that the discriminator loss is computed with BCE separately for real and fake labels",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The BCE loss is computed separately for real and fake labels.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The BCE loss is computed separately for real and fake labels."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "In a PyTorch GAN training loop, after computing the discriminator loss and before calling backward() on the generator loss, the code zeroes the generator's gradients. Why is this step performed?",
+            "options": [
+              "Because the optimizer accumulates gradients from previous iterations, zeroing ensures that only the current batch’s gradients are used for the generator update.",
+              "Because the generator’s parameters must be frozen during discriminator training, zeroing prevents any gradient flow to the generator.",
+              "Because the backward call on the generator loss also computes gradients for the discriminator, zeroing the generator gradients avoids double‑counting them.",
+              "Because the optimizer’s step function requires the gradient buffers to be cleared before any forward pass, zeroing prepares the model for the next iteration."
+            ],
+            "correctAnswer": "Because the optimizer accumulates gradients from previous iterations, zeroing ensures that only the current batch’s gradients are used for the generator update.",
+            "explanation": "PyTorch stores gradients in each parameter's .grad attribute and accumulates them across backward calls. If the generator's gradients are not cleared before the new backward pass, gradients from the previous iteration would be added to the new ones, leading to incorrect parameter updates. Therefore, zeroing the generator's gradients ensures that only the gradients computed from the current batch affect the optimizer step.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Application",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Explain why generator gradients are zeroed before calling backward",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Because the optimizer accumulates gradients from previous iterations, zeroing ensures that only the current batch’s gradients are used for the generator update.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "Because the optimizer accumulates gradients from previous iterations, zeroing ensures that only the current batch’s gradients are used for the generator update."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T03",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "CODE_OR_TRACE",
+          "mcq": {
+            "targetId": "T03",
+            "questionText": "In a single training iteration of a GAN implemented with PyTorch, after the discriminator has been updated on real and fake batches, which of the following sequences correctly updates the generator parameters while preserving proper gradient flow?",
+            "options": [
+              "Zero the discriminator optimizer gradients, compute the generator loss using the discriminator’s output on real samples, call backward on the discriminator loss, and step the generator optimizer.",
+              "Call backward on the generator loss first, then zero the generator optimizer gradients, compute the loss, and step the generator optimizer.",
+              "Zero the generator optimizer gradients, compute the generator loss from the discriminator’s output on fake samples, call backward on that loss, and finally step the generator optimizer.",
+              "Compute the generator loss from the discriminator’s output on fake samples, step the generator optimizer, then call backward on the loss, and finally zero the generator optimizer gradients."
+            ],
+            "correctAnswer": "Zero the generator optimizer gradients, compute the generator loss from the discriminator’s output on fake samples, call backward on that loss, and finally step the generator optimizer.",
+            "explanation": "The correct update order is: (1) zero the generator optimizer’s gradients to clear any stale values, (2) compute the generator loss using the discriminator’s predictions on the newly generated fake data, (3) call backward() on this loss so gradients flow back through the generator, and (4) step the generator optimizer to apply the gradient update. Any other ordering either breaks gradient accumulation or updates the wrong parameters.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Application",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "CODE_OR_TRACE",
+              "concept": "Apply the steps to implement a basic GAN training loop in PyTorch",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Zero the generator optimizer gradients, compute the generator loss from the discriminator’s output on fake samples, call backward on that loss, and finally step the generator optimizer.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "Zero the generator optimizer gradients, compute the generator loss from the discriminator’s output on fake samples, call backward on that loss, and finally step the generator optimizer."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "A",
+      "profileName": "Implementation-focused",
+      "testId": "INTENT_001",
+      "requestedCount": 5,
+      "allocatedEasy": 1,
+      "allocatedMedium": 3,
+      "allocatedHard": 1,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 5,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 5,
+      "generatedSampleCount": 5,
+      "generationSuccess": true,
+      "planTimeMs": 4757,
+      "genTimeMs": 11674,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which pair correctly identifies the two primary components of a Generative Adversarial Network (GAN)?",
+            "options": [
+              "Generator and Loss Function",
+              "Discriminator and Generator",
+              "Encoder and Decoder",
+              "Generator and Discriminator"
+            ],
+            "correctAnswer": "Generator and Discriminator",
+            "explanation": "A GAN consists of two neural networks: the generator, which creates synthetic data, and the discriminator, which evaluates whether data is real or generated.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM",
+              "DISTINCT_ALTERNATIVE"
+            ],
+            "metadata": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Identify the two primary components of a GAN (generator and discriminator).",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM",
+                "DISTINCT_ALTERNATIVE"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Generator and Discriminator",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Generator and Discriminator"
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "When training the discriminator in a GAN, why is the binary cross‑entropy (BCE) loss computed separately for real and fake inputs?",
+            "options": [
+              "Compute a single BCE loss for all samples by treating the discriminator output as the generator loss and back‑propagating through the generator.",
+              "Use mean‑squared error instead of BCE, applying the same loss value to both real and fake samples.",
+              "Compute BCE loss on real samples with target 0, on fake samples with target 1, then sum the two losses.",
+              "Compute BCE loss on real samples with target 1, on fake samples with target 0, then sum the two losses."
+            ],
+            "correctAnswer": "Compute BCE loss on real samples with target 1, on fake samples with target 0, then sum the two losses.",
+            "explanation": "The discriminator must learn to assign high scores to real data and low scores to generated data. Therefore, BCE loss is calculated with a target label of 1 for real inputs and 0 for fake inputs. Computing the two losses separately reflects the two distinct label sets, and summing (or averaging) them yields the total discriminator loss used for back‑propagation.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Compare how BCE loss is computed for real labels versus fake labels in the discriminator.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Compute BCE loss on real samples with target 1, on fake samples with target 0, then sum the two losses.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Compute BCE loss on real samples with target 1, on fake samples with target 0, then sum the two losses."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T03",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T03",
+            "questionText": "In a PyTorch GAN training loop, why is it necessary to zero the generator gradients before calling backward on the generator loss?",
+            "options": [
+              "To prevent accumulation of gradients from previous iterations, ensuring that the backward pass computes gradients only for the current batch.",
+              "To allow the discriminator to update its gradients first, ensuring proper adversarial balance.",
+              "To avoid division by zero errors during loss computation by clearing gradient tensors.",
+              "To reset the generator's weights to their initial values before each training step."
+            ],
+            "correctAnswer": "To prevent accumulation of gradients from previous iterations, ensuring that the backward pass computes gradients only for the current batch.",
+            "explanation": "PyTorch accumulates gradients in the .grad attributes of parameters. If gradients from a previous batch are not cleared, the backward pass will add new gradients to the existing ones, leading to incorrect updates. Zeroing the gradients before each backward pass ensures that only the gradients computed for the current batch influence the optimizer step.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Flow / Trace",
+              "cognitiveLevel": "Analyze",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Trace the sequence of operations that zero the generator gradients before the backward pass.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "To prevent accumulation of gradients from previous iterations, ensuring that the backward pass computes gradients only for the current batch.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "To prevent accumulation of gradients from previous iterations, ensuring that the backward pass computes gradients only for the current batch."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T04",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T04",
+            "questionText": "During a GAN training loop in PyTorch, why is it necessary to zero the generator's gradients before invoking backward on the loss?",
+            "options": [
+              "The generator gradients are zeroed to reset the optimizer state, which is required for the Adam optimizer to compute the correct momentum terms.",
+              "Zeroing the generator gradients before calling backward ensures that only the gradients from the current loss are used to update the generator, preventing stale gradients from affecting the update.",
+              "Calling backward before zeroing the generator gradients causes the gradients to accumulate across batches, leading to incorrect updates.",
+              "Zeroing the generator gradients after calling backward prevents the optimizer from applying the computed gradients to the generator parameters."
+            ],
+            "correctAnswer": "Zeroing the generator gradients before calling backward ensures that only the gradients from the current loss are used to update the generator, preventing stale gradients from affecting the update.",
+            "explanation": "In PyTorch, gradients are accumulated by default. If the generator’s gradients are not cleared before computing the new gradients with backward, the optimizer would apply a sum of gradients from previous and current batches, corrupting the update. Clearing them first guarantees that the optimizer updates the generator parameters using only the gradients derived from the current loss.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Application",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Apply the backward operation to update model parameters after gradients have been cleared.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Zeroing the generator gradients before calling backward ensures that only the gradients from the current loss are used to update the generator, preventing stale gradients from affecting the update.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "Zeroing the generator gradients before calling backward ensures that only the gradients from the current loss are used to update the generator, preventing stale gradients from affecting the update."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T05",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "CODE_OR_TRACE",
+          "mcq": {
+            "targetId": "T05",
+            "questionText": "During a GAN training loop in PyTorch, the discriminator loss is computed separately for real and fake labels, and the generator gradients are zeroed before calling backward. Why does this sequence make PyTorch particularly suitable for implementing GAN training loops?",
+            "options": [
+              "Because PyTorch requires manual gradient accumulation, so zeroing gradients is unnecessary and the backward call will automatically reset them.",
+              "Because PyTorch's Adam optimizer internally clears gradients before each step, making the explicit zero_grad call redundant.",
+              "Because PyTorch's autograd automatically tracks operations and allows separate backward passes for generator and discriminator, and zeroing gradients ensures gradients are not accumulated across iterations.",
+              "Because PyTorch's BCEWithLogitsLoss function combines the sigmoid activation and binary cross-entropy, eliminating the need for separate loss computations for real and fake labels."
+            ],
+            "correctAnswer": "Because PyTorch's autograd automatically tracks operations and allows separate backward passes for generator and discriminator, and zeroing gradients ensures gradients are not accumulated across iterations.",
+            "explanation": "PyTorch’s autograd records the computation graph for each backward pass. By computing the BCE loss separately for real and fake samples and then calling zero_grad() on the generator before backward, we prevent gradients from accumulating across iterations and ensure that the generator receives only the gradients from its own loss. This explicit control over gradient flow is essential for stable GAN training.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Explanation / Mechanism",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "CODE_OR_TRACE",
+              "concept": "Explain why PyTorch is suitable for implementing GAN training loops.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Because PyTorch's autograd automatically tracks operations and allows separate backward passes for generator and discriminator, and zeroing gradients ensures gradients are not accumulated across iterations.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "Because PyTorch's autograd automatically tracks operations and allows separate backward passes for generator and discriminator, and zeroing gradients ensures gradients are not accumulated across iterations."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "A",
+      "profileName": "Implementation-focused",
+      "testId": "INTENT_001",
+      "requestedCount": 10,
+      "allocatedEasy": 3,
+      "allocatedMedium": 4,
+      "allocatedHard": 3,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 10,
+        "requestedHardCount": 3,
+        "allocatedHardCount": 3,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 10,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 5336,
+      "genTimeMs": 10988,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following defines the basic structure and purpose of a Generative Adversarial Network (GAN)?",
+            "options": [
+              "A GAN employs a reinforcement‑learning agent that selects actions to maximize a cumulative reward.",
+              "In a GAN, the discriminator generates data while the generator classifies inputs as real or fake.",
+              "A GAN comprises a generator network that creates synthetic data and a discriminator network that learns to distinguish real data from the synthetic data.",
+              "A GAN uses a single autoencoder trained with reconstruction loss to reproduce input samples."
+            ],
+            "correctAnswer": "A GAN comprises a generator network that creates synthetic data and a discriminator network that learns to distinguish real data from the synthetic data.",
+            "explanation": "The evidence describes separate Generator and Discriminator classes and a training loop where the discriminator is trained on real and fake labels, confirming that a GAN consists of a generator that produces data and a discriminator that distinguishes real from generated data.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM",
+              "DISTINCT_ALTERNATIVE"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Explain the basic structure and purpose of a Generative Adversarial Network",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM",
+                "DISTINCT_ALTERNATIVE"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "A GAN comprises a generator network that creates synthetic data and a discriminator network that learns to distinguish real data from the synthetic data.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "A GAN comprises a generator network that creates synthetic data and a discriminator network that learns to distinguish real data from the synthetic data."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T06",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T06",
+            "questionText": "In a PyTorch GAN training loop, after computing the BCE loss for the discriminator on real and fake samples, the code zeroes the generator gradients before calling backward on the discriminator loss. Why is this step performed?",
+            "options": [
+              "It clears any gradients stored in the generator so that the backward call on the discriminator loss updates only the discriminator’s parameters.",
+              "It transfers the discriminator’s loss value to the generator’s loss function, allowing both networks to be optimized simultaneously in a single backward call.",
+              "It zeroes the discriminator’s gradients before the generator’s backward pass, which mistakenly prevents the generator from receiving any updates.",
+              "It resets the discriminator’s internal buffers, ensuring that the next forward pass starts with no residual state from the previous iteration."
+            ],
+            "correctAnswer": "It clears any gradients stored in the generator so that the backward call on the discriminator loss updates only the discriminator’s parameters.",
+            "explanation": "Zeroing the generator’s gradients removes any gradient values accumulated from previous operations, so when backward() is invoked on the discriminator loss only the discriminator’s parameters receive gradient updates. This keeps the two networks’ updates independent within the same iteration.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Comparison / Tradeoff",
+              "cognitiveLevel": "Analyze",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Compare the roles of the discriminator and generator during GAN training",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "It clears any gradients stored in the generator so that the backward call on the discriminator loss updates only the discriminator’s parameters.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "It clears any gradients stored in the generator so that the backward call on the discriminator loss updates only the discriminator’s parameters."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T10",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "CODE_OR_TRACE",
+          "mcq": {
+            "targetId": "T10",
+            "questionText": "In a PyTorch GAN training loop, the code calls optimizerD.zero_grad() before computing lossD.backward() for the discriminator. Explain why this zero‑gradient step is required and what would happen if it were omitted.",
+            "options": [
+              "Calling optimizerD.step() prior to lossD.backward() would apply the previous iteration’s update, guaranteeing the discriminator uses the most recent parameters for loss computation.",
+              "Zeroing the generator’s gradients before the discriminator backward pass ensures the generator does not receive any gradient signal during discriminator training, preserving its parameters.",
+              "BCEWithLogitsLoss internally resets the gradient buffers, so an explicit call to optimizerD.zero_grad() is redundant and can be omitted.",
+              "Because PyTorch accumulates gradients, optimizerD.zero_grad() must be called before lossD.backward() to clear previous batch gradients; otherwise the discriminator would update with stale gradient contributions."
+            ],
+            "correctAnswer": "Because PyTorch accumulates gradients, optimizerD.zero_grad() must be called before lossD.backward() to clear previous batch gradients; otherwise the discriminator would update with stale gradient contributions.",
+            "explanation": "PyTorch does not automatically clear gradients after each backward call; they are accumulated in the .grad tensors. Calling optimizerD.zero_grad() clears these tensors so that lossD.backward() computes gradients only for the current batch. If omitted, gradients from earlier batches would be added, causing the discriminator to receive incorrect, inflated updates and destabilizing training.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "CODE_OR_TRACE",
+              "concept": "Discriminator - Aspect 2",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Because PyTorch accumulates gradients, optimizerD.zero_grad() must be called before lossD.backward() to clear previous batch gradients; otherwise the discriminator would update with stale gradient contributions.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Because PyTorch accumulates gradients, optimizerD.zero_grad() must be called before lossD.backward() to clear previous batch gradients; otherwise the discriminator would update with stale gradient contributions."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "A",
+      "profileName": "Implementation-focused",
+      "testId": "INTENT_001",
+      "requestedCount": 20,
+      "allocatedEasy": 6,
+      "allocatedMedium": 8,
+      "allocatedHard": 6,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 20,
+        "requestedHardCount": 6,
+        "allocatedHardCount": 6,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 20,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 6634,
+      "genTimeMs": 7115,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following defines Generative Adversarial Networks (GANs)?",
+            "options": [
+              "GANs are primarily used for image classification tasks.",
+              "GANs consist of a generator that creates fake data and a discriminator that distinguishes real from fake data.",
+              "GANs use reinforcement learning to produce realistic images.",
+              "GANs are a type of supervised learning algorithm that generates synthetic data."
+            ],
+            "correctAnswer": "GANs consist of a generator that creates fake data and a discriminator that distinguishes real from fake data.",
+            "explanation": "A GAN is composed of two neural networks that compete: the generator produces synthetic samples, while the discriminator learns to differentiate real samples from those generated.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Define Generative Adversarial Networks (GANs)",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "GANs consist of a generator that creates fake data and a discriminator that distinguishes real from fake data.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "GANs consist of a generator that creates fake data and a discriminator that distinguishes real from fake data."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T11",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T11",
+            "questionText": "In a PyTorch GAN training loop, after computing the binary cross‑entropy loss for the discriminator on real and fake samples, the code zeros the generator’s gradients before calling backward on the discriminator loss. Explain why the generator gradients are cleared at this point.",
+            "options": [
+              "Because the generator’s parameters must be updated right after the discriminator loss, so clearing its gradients forces the optimizer to apply the discriminator’s gradients to the generator.",
+              "Because the backward pass for the discriminator loss would otherwise add to the generator’s gradient buffers, and clearing them ensures the generator receives only its own gradients during its update.",
+              "Because BCEWithLogitsLoss internally zeroes all model gradients, making the explicit zero‑gradient call unnecessary but harmless.",
+              "Because the code mistakenly zeroes the generator’s gradients instead of the discriminator’s, thinking it prevents gradient mixing between the two networks."
+            ],
+            "correctAnswer": "Because the backward pass for the discriminator loss would otherwise add to the generator’s gradient buffers, and clearing them ensures the generator receives only its own gradients during its update.",
+            "explanation": "When the discriminator loss is back‑propagated, gradients are computed for any parameters that participated in the forward pass, including the generator if its output was used as input to the discriminator. If the generator’s gradient buffers are not cleared first, the new gradients would be added to any stale values, leading to incorrect updates when the generator’s own backward pass is later performed. Zero‑ing the generator’s gradients before the discriminator backward ensures that the generator only accumulates gradients from its own loss step.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Gans - Aspect 1",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Because the backward pass for the discriminator loss would otherwise add to the generator’s gradient buffers, and clearing them ensures the generator receives only its own gradients during its update.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "Because the backward pass for the discriminator loss would otherwise add to the generator’s gradient buffers, and clearing them ensures the generator receives only its own gradients during its update."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T20",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "CODE_OR_TRACE",
+          "mcq": {
+            "targetId": "T20",
+            "questionText": "During a PyTorch GAN training loop, why is the generator's gradient buffer zeroed before calling backward on the generator loss?",
+            "options": [
+              "To ensure that the discriminator's gradients are not updated during the generator's backward pass.",
+              "To avoid computing gradients for the generator until after the discriminator loss is backpropagated.",
+              "To prevent gradients from previous backward passes from accumulating and affecting the current generator update.",
+              "To reset the Adam optimizer's momentum terms for the generator before each update."
+            ],
+            "correctAnswer": "To prevent gradients from previous backward passes from accumulating and affecting the current generator update.",
+            "explanation": "In the GAN training loop, the generator loss is computed after the discriminator loss. If the generator's gradient buffer is not cleared, gradients from the previous backward pass (e.g., the discriminator backward) would remain and be added to the new generator gradients, corrupting the update. Zeroing the buffer ensures that only the gradients from the current generator loss are accumulated, so the optimizer updates the generator weights based solely on its own loss. This is why the code explicitly calls optimizer.zero_grad() for the generator before backward.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "CODE_OR_TRACE",
+              "concept": "Pytorch - Aspect 10",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "To prevent gradients from previous backward passes from accumulating and affecting the current generator update.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "To prevent gradients from previous backward passes from accumulating and affecting the current generator update."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "A",
+      "profileName": "Implementation-focused",
+      "testId": "INTENT_001",
+      "requestedCount": 50,
+      "allocatedEasy": 16,
+      "allocatedMedium": 18,
+      "allocatedHard": 16,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 50,
+        "requestedHardCount": 16,
+        "allocatedHardCount": 16,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 50,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 3581,
+      "genTimeMs": 7144,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following defines a Generative Adversarial Network?",
+            "options": [
+              "A neural network that uses a discriminator to classify real versus fake data but does not generate new data.",
+              "A neural network that generates data and a discriminator that classifies real versus fake, with both networks trained adversarially.",
+              "A neural network that generates data but relies on a separate classifier to evaluate realism.",
+              "A neural network that generates adversarial examples to fool a classifier during training."
+            ],
+            "correctAnswer": "A neural network that generates data and a discriminator that classifies real versus fake, with both networks trained adversarially.",
+            "explanation": "A GAN is composed of a generator that produces synthetic data and a discriminator that tries to distinguish real from fake; the two networks are trained adversarially.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Definition of a Generative Adversarial Network",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "A neural network that generates data and a discriminator that classifies real versus fake, with both networks trained adversarially.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "A neural network that generates data and a discriminator that classifies real versus fake, with both networks trained adversarially."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T26",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T26",
+            "questionText": "In a PyTorch GAN training loop, why is the generator's gradient buffer zeroed before calling backward on its loss?",
+            "options": [
+              "to prevent gradient accumulation from previous backward passes, ensuring the generator updates are based solely on the current loss",
+              "to reset the discriminator gradients before updating the generator",
+              "to avoid gradient accumulation in the discriminator during generator training",
+              "to ensure the generator loss is computed correctly before backpropagation"
+            ],
+            "correctAnswer": "to prevent gradient accumulation from previous backward passes, ensuring the generator updates are based solely on the current loss",
+            "explanation": "Zeroing the generator’s gradients clears any residual gradients from earlier backward passes. When backward is then called on the current generator loss, the resulting gradients reflect only that loss, ensuring the optimizer updates the generator weights based solely on the present training step.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "BCE - Aspect 19",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "to prevent gradient accumulation from previous backward passes, ensuring the generator updates are based solely on the current loss",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "to prevent gradient accumulation from previous backward passes, ensuring the generator updates are based solely on the current loss"
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T50",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "CODE_OR_TRACE",
+          "mcq": {
+            "targetId": "T50",
+            "questionText": "During the GAN training loop in PyTorch, after computing the discriminator loss on real and fake samples, the code calls optimizer_G.zero_grad() before invoking loss_G.backward(). Why is zeroing the generator's gradients at this point necessary?",
+            "options": [
+              "Because calling zero_grad on the generator clears any gradients accumulated from previous backward passes, ensuring that only the current batch’s gradients are used when loss_G.backward() updates the generator’s parameters.",
+              "Because zero_grad removes the computational graph, allowing the generator to be re‑initialized for the next iteration.",
+              "Because zero_grad triggers the optimizer to perform a parameter update for the generator immediately after the backward call.",
+              "Because zero_grad must be called on the discriminator to prevent its gradients from interfering with the generator’s backward pass."
+            ],
+            "correctAnswer": "Because calling zero_grad on the generator clears any gradients accumulated from previous backward passes, ensuring that only the current batch’s gradients are used when loss_G.backward() updates the generator’s parameters.",
+            "explanation": "In PyTorch, gradients are accumulated in the .grad attribute of each parameter. If optimizer_G.zero_grad() is not called, gradients from the previous iteration would be added to the new ones, corrupting the update. Zeroing the generator’s gradients right before loss_G.backward() guarantees that the backward pass computes gradients solely for the current batch, so the subsequent optimizer_G.step() applies the correct update.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Flow / Trace",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "CODE_OR_TRACE",
+              "concept": "Generator - Aspect 43",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Because calling zero_grad on the generator clears any gradients accumulated from previous backward passes, ensuring that only the current batch’s gradients are used when loss_G.backward() updates the generator’s parameters.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "Because calling zero_grad on the generator clears any gradients accumulated from previous backward passes, ensuring that only the current batch’s gradients are used when loss_G.backward() updates the generator’s parameters."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "B",
+      "profileName": "Conceptual exploration",
+      "testId": "INTENT_002",
+      "requestedCount": 1,
+      "allocatedEasy": 0,
+      "allocatedMedium": 1,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 1,
+        "requestedHardCount": 0,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 1,
+      "generatedSampleCount": 1,
+      "generationSuccess": true,
+      "planTimeMs": 3095,
+      "genTimeMs": 1588,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "In the GAN training dynamic, if the discriminator converges rapidly and correctly classifies all generated samples as fake, what is the primary causal consequence for the generator's update signal?",
+            "options": [
+              "The generator stops updating entirely because the discriminator's perfect classification invalidates the loss function calculation.",
+              "The generator receives a misleading signal that encourages it to produce samples that are indistinguishable from real data immediately.",
+              "The generator receives a strong, consistent gradient signal that directs it to produce more realistic samples.",
+              "The generator receives a weak or vanishing gradient signal because the discriminator's confidence leaves little room for error correction."
+            ],
+            "correctAnswer": "The generator receives a weak or vanishing gradient signal because the discriminator's confidence leaves little room for error correction.",
+            "explanation": "When the discriminator becomes too good too fast, it assigns a very low probability to generated samples being real. This results in a loss value that is already very high (or close to the maximum penalty), leading to small gradients. Consequently, the generator receives weak feedback, making it difficult to learn how to improve, which is a common mode of failure in GAN training known as mode collapse or vanishing gradients.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "The impact of a rapidly converging discriminator on generator feedback signals",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives a weak or vanishing gradient signal because the discriminator's confidence leaves little room for error correction.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The generator receives a weak or vanishing gradient signal because the discriminator's confidence leaves little room for error correction."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "B",
+      "profileName": "Conceptual exploration",
+      "testId": "INTENT_002",
+      "requestedCount": 2,
+      "allocatedEasy": 1,
+      "allocatedMedium": 1,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 2,
+        "requestedHardCount": 0,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 2,
+      "generatedSampleCount": 2,
+      "generationSuccess": true,
+      "planTimeMs": 2262,
+      "genTimeMs": 11161,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following statements correctly describes the role of the discriminator in the counterfeiter‑detective analogy used to explain GANs?",
+            "options": [
+              "The counterfeiter that creates fake items for the discriminator to evaluate.",
+              "The detective that tries to identify and reject counterfeit items produced by the generator.",
+              "A regulator that enforces rules but does not assess the quality of generated items.",
+              "A neutral observer that records the interactions without judging authenticity."
+            ],
+            "correctAnswer": "The detective that tries to identify and reject counterfeit items produced by the generator.",
+            "explanation": "In the analogy, the discriminator is likened to a detective whose job is to spot and reject the counterfeiter's (generator's) fake outputs, providing feedback that guides the generator to improve.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Understanding the adversarial relationship between the generator and discriminator using the counterfeiter-detective analogy",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The detective that tries to identify and reject counterfeit items produced by the generator.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "The detective that tries to identify and reject counterfeit items produced by the generator."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "If during GAN training the discriminator instantly classifies every generated sample as fake (i.e., it becomes too good too quickly), what feedback does the generator actually receive?",
+            "options": [
+              "The generator switches to a different objective function, such as reconstruction loss, when the discriminator becomes too accurate.",
+              "Because the discriminator is perfect, the generator gets a strong corrective gradient that tells it exactly how to improve its samples.",
+              "The generator receives essentially no learning signal because the discriminator always classifies its outputs as fake, yielding a near‑zero gradient for the generator.",
+              "The generator’s loss is computed directly from the discriminator’s confidence score, so a perfect discriminator gives the generator a high loss value to minimize."
+            ],
+            "correctAnswer": "The generator receives essentially no learning signal because the discriminator always classifies its outputs as fake, yielding a near‑zero gradient for the generator.",
+            "explanation": "When the discriminator becomes overly effective, it assigns near‑zero probability to generated data being real. The gradient of the discriminator’s output with respect to the generator’s parameters therefore vanishes, so the generator receives almost no informative learning signal and cannot improve its samples.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Analyze",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Analyzing the impact of a discriminator that becomes too effective too quickly on the generator's learning signal",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives essentially no learning signal because the discriminator always classifies its outputs as fake, yielding a near‑zero gradient for the generator.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "The generator receives essentially no learning signal because the discriminator always classifies its outputs as fake, yielding a near‑zero gradient for the generator."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "B",
+      "profileName": "Conceptual exploration",
+      "testId": "INTENT_002",
+      "requestedCount": 3,
+      "allocatedEasy": 1,
+      "allocatedMedium": 1,
+      "allocatedHard": 1,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 3,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 3062,
+      "genTimeMs": 7381,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following best describes the role of the discriminator in the generator‑discriminator analogy?",
+            "options": [
+              "The discriminator calculates the generator’s loss but does not judge authenticity of samples.",
+              "The discriminator works like a detective that tries to tell real data from fake.",
+              "The discriminator stores training images for the generator to copy later.",
+              "The discriminator works like a counterfeiter that creates fake data to fool the system."
+            ],
+            "correctAnswer": "The discriminator works like a detective that tries to tell real data from fake.",
+            "explanation": "In the analogy, the discriminator is compared to a detective whose job is to distinguish genuine data from counterfeit data generated by the generator.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Counterfeiter and detective analogy",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The discriminator works like a detective that tries to tell real data from fake.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "The discriminator works like a detective that tries to tell real data from fake."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "When the discriminator becomes too accurate too quickly, what happens to the generator’s learning process?",
+            "options": [
+              "The generator continues to learn but its updates are based on the discriminator's incorrect predictions.",
+              "The generator receives an exaggerated gradient that pushes it to produce more realistic samples immediately.",
+              "The generator's updates become random noise, causing it to diverge from realistic data.",
+              "The generator receives no useful feedback because the discriminator always classifies correctly, halting its learning."
+            ],
+            "correctAnswer": "The generator receives no useful feedback because the discriminator always classifies correctly, halting its learning.",
+            "explanation": "If the discriminator immediately identifies all fake samples as fake, its output for fake data is a constant (e.g., 0). The generator’s loss gradient with respect to its parameters becomes zero, so the generator receives no informative signal to improve. This stalls the generator’s learning, as described in the lecture when the detective catches everything immediately.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Conceptual game between generator and discriminator",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives no useful feedback because the discriminator always classifies correctly, halting its learning.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The generator receives no useful feedback because the discriminator always classifies correctly, halting its learning."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T03",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+          "mcq": {
+            "targetId": "T03",
+            "questionText": "In the GAN training dynamic, if the discriminator converges to perfect classification accuracy before the generator has learned to produce realistic samples, what is the specific causal consequence for the generator's optimization process?",
+            "options": [
+              "The generator begins to overfit to the discriminator's internal weights, leading to a collapse of the shared latent space representation.",
+              "The discriminator's loss function saturates, forcing the system to automatically increase the generator's learning rate to compensate.",
+              "The generator receives near-zero or constant gradient signals, causing its parameter updates to stall due to lack of discriminative feedback.",
+              "The generator receives consistent, high-magnitude gradient signals that accelerate its convergence toward realistic data distribution."
+            ],
+            "correctAnswer": "The generator receives near-zero or constant gradient signals, causing its parameter updates to stall due to lack of discriminative feedback.",
+            "explanation": "When the discriminator becomes too good too fast (perfectly distinguishing real from fake), the generator's outputs are always classified as fake. This results in a constant loss value for the generator, leading to vanishing or uninformative gradients. Consequently, the generator cannot learn how to improve because it receives no directional feedback on which aspects of its output are 'less fake,' effectively stalling its optimization.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Analyze",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+              "concept": "Feedback dynamics when discriminator becomes too good",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives near-zero or constant gradient signals, causing its parameter updates to stall due to lack of discriminative feedback.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "The generator receives near-zero or constant gradient signals, causing its parameter updates to stall due to lack of discriminative feedback."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "B",
+      "profileName": "Conceptual exploration",
+      "testId": "INTENT_002",
+      "requestedCount": 5,
+      "allocatedEasy": 1,
+      "allocatedMedium": 3,
+      "allocatedHard": 1,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 5,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 1,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 5,
+      "generatedSampleCount": 5,
+      "generationSuccess": true,
+      "planTimeMs": 3035,
+      "genTimeMs": 11160,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which statement correctly describes the counterfeiter and detective analogy used for the generator and discriminator?",
+            "options": [
+              "The generator acts like a counterfeiter, while the discriminator acts like a detective.",
+              "The discriminator acts like a counterfeiter, while the generator acts like a detective.",
+              "The generator is comparable to a teacher, and the discriminator is comparable to a student.",
+              "Both the generator and discriminator are analogous to artists creating and critiquing paintings."
+            ],
+            "correctAnswer": "The generator acts like a counterfeiter, while the discriminator acts like a detective.",
+            "explanation": "In the lecture the generator is likened to a counterfeiter producing fake data, and the discriminator is likened to a detective trying to detect the fakes. This mapping is the factual definition of the analogy.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "DISTINCT_ALTERNATIVE"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Explain the counterfeiter and detective analogy used to describe the generator and discriminator relationship.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "DISTINCT_ALTERNATIVE"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator acts like a counterfeiter, while the discriminator acts like a detective.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "The generator acts like a counterfeiter, while the discriminator acts like a detective."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "When the discriminator in a GAN becomes too accurate too quickly, what happens to the generator's learning process?",
+            "options": [
+              "The generator receives almost no useful gradient signal, causing it to produce poor or mode‑collapsed outputs.",
+              "The generator receives a strong, informative gradient that accelerates its convergence to realistic samples.",
+              "The discriminator's accuracy has no effect on the generator because they train independently.",
+              "The generator overfits to the discriminator's training data, leading to memorization of fake samples."
+            ],
+            "correctAnswer": "The generator receives almost no useful gradient signal, causing it to produce poor or mode‑collapsed outputs.",
+            "explanation": "If the discriminator becomes perfect early, it classifies all generator outputs as fake, providing a gradient of zero or near zero. The generator then receives no meaningful feedback, stalling its learning and often leading to poor or mode‑collapsed outputs.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Describe the conceptual game between the generator and discriminator in a GAN.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives almost no useful gradient signal, causing it to produce poor or mode‑collapsed outputs.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "The generator receives almost no useful gradient signal, causing it to produce poor or mode‑collapsed outputs."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T03",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T03",
+            "questionText": "If the discriminator instantly catches every fake sample generated (i.e., it becomes too good too fast), what feedback does the generator actually receive during training?",
+            "options": [
+              "The generator receives a strong positive reinforcement signal, encouraging it to continue producing the same outputs that the discriminator rejected.",
+              "The generator uses the discriminator’s internal feature map activations to directly adjust its weights, bypassing the loss gradient.",
+              "The generator’s training loop switches to a supervised classification mode, treating the discriminator’s binary decisions as ground‑truth labels.",
+              "The generator receives a near‑zero gradient because the discriminator’s loss is saturated, so it gets little useful learning signal."
+            ],
+            "correctAnswer": "The generator receives a near‑zero gradient because the discriminator’s loss is saturated, so it gets little useful learning signal.",
+            "explanation": "When the discriminator is perfect, its loss for fake samples is already at the extreme (e.g., near 1), leaving the gradient with respect to the generator’s parameters essentially zero. Consequently, the generator receives almost no informative gradient signal and cannot improve its output distribution.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Scenario Analysis",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Analyze the effect on the generator when the discriminator becomes too good too fast and the resulting feedback loop.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives a near‑zero gradient because the discriminator’s loss is saturated, so it gets little useful learning signal.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The generator receives a near‑zero gradient because the discriminator’s loss is saturated, so it gets little useful learning signal."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T04",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T04",
+            "questionText": "In the GAN training dynamic described as a game between a counterfeiter (generator) and a detective (discriminator), what is the primary operational consequence for the generator if the discriminator becomes effective too rapidly?",
+            "options": [
+              "The generator receives consistent positive feedback, allowing it to refine its output distribution steadily toward the real data.",
+              "The generator begins to overfit to the discriminator's specific biases, resulting in a collapse of the entire training process.",
+              "The generator receives minimal or misleading feedback, hindering its ability to learn how to improve the realism of its samples.",
+              "The discriminator's loss function saturates, causing the generator to automatically increase its learning rate to compensate."
+            ],
+            "correctAnswer": "The generator receives minimal or misleading feedback, hindering its ability to learn how to improve the realism of its samples.",
+            "explanation": "The lecture evidence explicitly frames the GAN training as a game where the discriminator acts as a detective and the generator as a counterfeiter. It specifically asks to explore what happens if the discriminator gets too good too fast, implying that if the 'detective' catches everything immediately, the 'counterfeiter' (generator) does not receive useful feedback signals to guide its updates. This lack of informative gradient or signal prevents the generator from learning to generate more realistic data, which is the core mechanism of the feedback loop.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Explain how the feedback loop between generator and discriminator functions in a GAN.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives minimal or misleading feedback, hindering its ability to learn how to improve the realism of its samples.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "The generator receives minimal or misleading feedback, hindering its ability to learn how to improve the realism of its samples."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T05",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+          "mcq": {
+            "targetId": "T05",
+            "questionText": "In the GAN analogy where the generator is the counterfeiter and the discriminator is the detective, if the detective becomes capable of instantly and perfectly identifying all counterfeit bills, what is the predicted consequence for the counterfeiter's learning process?",
+            "options": [
+              "The counterfeiter stops generating bills entirely because the detective's presence physically prevents the creation of new currency.",
+              "The counterfeiter switches to a different currency type to bypass the detective's specific expertise in the original bill design.",
+              "The counterfeiter receives no useful gradient signal to improve because the detective's perfect accuracy provides no distinction between good and bad attempts.",
+              "The counterfeiter improves faster because the detective's immediate feedback provides a clear and strong error signal for correction."
+            ],
+            "correctAnswer": "The counterfeiter receives no useful gradient signal to improve because the detective's perfect accuracy provides no distinction between good and bad attempts.",
+            "explanation": "The lecture explicitly poses the scenario: 'if the detective catches everything immediately, what feedback does the counterfeiter actually receive?' In GAN training, if the discriminator (detective) is too strong and classifies all generator (counterfeiter) outputs as fake with high confidence, the gradient signal for the generator becomes vanishingly small or uninformative, leading to mode collapse or training failure. The correct answer reflects this lack of useful feedback.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+              "concept": "Identify the roles of the counterfeiter and detective in the GAN analogy and explain their interaction.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The counterfeiter receives no useful gradient signal to improve because the detective's perfect accuracy provides no distinction between good and bad attempts.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "The counterfeiter receives no useful gradient signal to improve because the detective's perfect accuracy provides no distinction between good and bad attempts."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "B",
+      "profileName": "Conceptual exploration",
+      "testId": "INTENT_002",
+      "requestedCount": 10,
+      "allocatedEasy": 3,
+      "allocatedMedium": 4,
+      "allocatedHard": 3,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 10,
+        "requestedHardCount": 3,
+        "allocatedHardCount": 3,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 10,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 3008,
+      "genTimeMs": 10608,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following best defines the role of the generator in a Generative Adversarial Network (GAN)?",
+            "options": [
+              "Provides ground‑truth labels for training the discriminator",
+              "Attempts to produce data that can fool the discriminator",
+              "Attempts to correctly identify real data as genuine",
+              "Optimizes the discriminator’s loss directly without generating data"
+            ],
+            "correctAnswer": "Attempts to produce data that can fool the discriminator",
+            "explanation": "In a GAN the generator creates synthetic samples that resemble real data so that the discriminator cannot distinguish them, thereby receiving feedback to improve its output.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Explain the conceptual game between generator and discriminator in GANs",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Attempts to produce data that can fool the discriminator",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "Attempts to produce data that can fool the discriminator"
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T06",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T06",
+            "questionText": "If the discriminator in a GAN instantly classifies every generated sample as fake, what kind of feedback does the generator receive?",
+            "options": [
+              "The generator receives a reconstruction error based on pixel-wise differences, unrelated to the discriminator’s judgments.",
+              "The generator receives a strong gradient that penalizes its current outputs, encouraging it to produce more realistic samples.",
+              "The generator receives no gradient because the discriminator’s perfect accuracy saturates the loss, making the feedback zero.",
+              "The generator receives a reward signal that reinforces its current strategy, since the discriminator’s success confirms the generator’s quality."
+            ],
+            "correctAnswer": "The generator receives a strong gradient that penalizes its current outputs, encouraging it to produce more realistic samples.",
+            "explanation": "When the discriminator correctly identifies all generated samples as fake, the generator’s loss is high and its gradient points in the direction that reduces this loss, i.e., it receives a strong negative gradient that pushes it to generate more realistic data. The other options describe misconceptions: treating discriminator success as a reward for the generator, assuming the gradient vanishes, or confusing GAN feedback with a reconstruction loss.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Pytorch - Aspect 2",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives a strong gradient that penalizes its current outputs, encouraging it to produce more realistic samples.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "The generator receives a strong gradient that penalizes its current outputs, encouraging it to produce more realistic samples."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T10",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+          "mcq": {
+            "targetId": "T10",
+            "questionText": "In a GAN training scenario, if the discriminator becomes overly accurate very early—detecting all fake samples instantly—what is the most likely effect on the generator’s feedback signal?",
+            "options": [
+              "The generator receives amplified gradients as the discriminator’s confidence spikes, providing strong corrective feedback that accelerates the generator’s learning.",
+              "The discriminator’s overfitting produces noisy gradient estimates, causing the generator to receive erratic feedback that destabilizes its parameter updates.",
+              "The generator receives vanishing gradients because the discriminator’s loss quickly saturates, so the feedback signal becomes too weak to drive meaningful updates.",
+              "The training scheduler automatically lowers the learning rate of the generator, reducing its update magnitude regardless of the discriminator’s performance."
+            ],
+            "correctAnswer": "The generator receives vanishing gradients because the discriminator’s loss quickly saturates, so the feedback signal becomes too weak to drive meaningful updates.",
+            "explanation": "When the discriminator learns to classify every generated sample as fake early on, its loss approaches zero and gradients with respect to the generator’s output vanish. Consequently, the generator receives an extremely weak (near‑zero) gradient signal, preventing effective parameter updates and stalling learning. This causal chain explains why overly strong discriminator performance harms generator feedback.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Prediction",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+              "concept": "Pytorch - Aspect 6",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives vanishing gradients because the discriminator’s loss quickly saturates, so the feedback signal becomes too weak to drive meaningful updates.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "The generator receives vanishing gradients because the discriminator’s loss quickly saturates, so the feedback signal becomes too weak to drive meaningful updates."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "B",
+      "profileName": "Conceptual exploration",
+      "testId": "INTENT_002",
+      "requestedCount": 20,
+      "allocatedEasy": 6,
+      "allocatedMedium": 8,
+      "allocatedHard": 6,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 20,
+        "requestedHardCount": 6,
+        "allocatedHardCount": 6,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 20,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 3104,
+      "genTimeMs": 5129,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "What is the role of the generator in a Generative Adversarial Network (GAN)?",
+            "options": [
+              "To serve as the loss function that measures the distance between generated and real data distributions.",
+              "To produce synthetic data that attempts to fool the discriminator into classifying it as real.",
+              "To adjust the discriminator's weights based on its classification errors.",
+              "To evaluate the authenticity of real data and provide feedback to the generator."
+            ],
+            "correctAnswer": "To produce synthetic data that attempts to fool the discriminator into classifying it as real.",
+            "explanation": "In a GAN, the generator’s primary function is to create synthetic samples that are as realistic as possible so that the discriminator cannot distinguish them from real data, thereby driving the adversarial training process.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Role of the generator in GANs",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "To produce synthetic data that attempts to fool the discriminator into classifying it as real.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "To produce synthetic data that attempts to fool the discriminator into classifying it as real."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T11",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T11",
+            "questionText": "In the GAN training dynamic described as a counterfeiter and detective, what is the specific causal consequence for the generator's learning process if the discriminator becomes overly effective too quickly?",
+            "options": [
+              "The generator's output distribution becomes perfectly uniform, eliminating the need for further adversarial refinement in subsequent epochs.",
+              "The generator receives negligible or vanishing feedback signals, causing its parameter updates to stall and preventing effective learning.",
+              "The generator receives consistent, high-magnitude gradient signals that accelerate its convergence toward realistic data distribution.",
+              "The discriminator's loss function saturates at zero, forcing the generator to switch to a different optimization algorithm to continue training."
+            ],
+            "correctAnswer": "The generator receives negligible or vanishing feedback signals, causing its parameter updates to stall and preventing effective learning.",
+            "explanation": "The lecture emphasizes the 'conceptual game' where the discriminator acts as a detective. If the detective (discriminator) catches everything immediately (becomes too good too fast), the counterfeiter (generator) receives no useful error signal or feedback on how to improve. In GAN mechanics, this leads to vanishing gradients for the generator, effectively stalling its learning process because it cannot distinguish between good and bad attempts.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Application",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Generator - Aspect 5",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives negligible or vanishing feedback signals, causing its parameter updates to stall and preventing effective learning.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "The generator receives negligible or vanishing feedback signals, causing its parameter updates to stall and preventing effective learning."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T20",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+          "mcq": {
+            "targetId": "T20",
+            "questionText": "In the adversarial training dynamic between a generator and a discriminator, if the discriminator achieves near-perfect accuracy on real data samples too rapidly, what is the primary causal consequence for the generator's learning process?",
+            "options": [
+              "The discriminator's high confidence forces the generator to increase its learning rate to overcome the detection threshold.",
+              "The generator receives saturated gradient signals that provide no directional information for improving sample realism.",
+              "The training loop automatically pauses the generator updates until the discriminator's loss exceeds a predefined stability margin.",
+              "The generator begins to overfit to the discriminator's specific false positives, leading to a collapse in sample diversity."
+            ],
+            "correctAnswer": "The generator receives saturated gradient signals that provide no directional information for improving sample realism.",
+            "explanation": "The lecture frames the interaction as a counterfeiter (generator) and detective (discriminator). If the detective catches everything immediately (discriminator is too good too fast), the counterfeiter receives no useful feedback on how to improve. In technical terms, when the discriminator is highly confident that generated samples are fake, the gradients flowing back to the generator become saturated or uninformative, preventing the generator from learning how to produce more realistic outputs. This aligns with the behavioral prediction of a failure mode due to parameter imbalance (discriminator strength).",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Application",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+              "concept": "Pytorch - Aspect 14",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives saturated gradient signals that provide no directional information for improving sample realism.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "The generator receives saturated gradient signals that provide no directional information for improving sample realism."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "B",
+      "profileName": "Conceptual exploration",
+      "testId": "INTENT_002",
+      "requestedCount": 50,
+      "allocatedEasy": 16,
+      "allocatedMedium": 18,
+      "allocatedHard": 16,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 50,
+        "requestedHardCount": 16,
+        "allocatedHardCount": 16,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 50,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 12495,
+      "genTimeMs": 12353,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following defines the role of the generator in a generative adversarial network?",
+            "options": [
+              "It assesses whether input data are real or fake to guide training.",
+              "It supplies real training examples to the discriminator for comparison.",
+              "It updates the discriminator’s parameters based on loss gradients.",
+              "It generates synthetic data intended to fool the discriminator."
+            ],
+            "correctAnswer": "It generates synthetic data intended to fool the discriminator.",
+            "explanation": "In a GAN, the generator's purpose is to create synthetic (fake) data that attempts to deceive the discriminator, analogous to a counterfeiter producing counterfeit items.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM",
+              "DISTINCT_ALTERNATIVE"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Identify the generator as the component that creates synthetic data",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM",
+                "DISTINCT_ALTERNATIVE"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "It generates synthetic data intended to fool the discriminator.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "It generates synthetic data intended to fool the discriminator."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T26",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T26",
+            "questionText": "When the discriminator in a GAN becomes too accurate too quickly, what happens to the generator's learning process?",
+            "options": [
+              "The generator receives a strong, informative gradient that accelerates its learning.",
+              "The discriminator's accuracy causes the generator to overfit to the training data.",
+              "The generator's loss becomes negative, causing the training to diverge.",
+              "The generator receives no useful gradient because the discriminator outputs near 0 or 1, leading to vanishing gradients."
+            ],
+            "correctAnswer": "The generator receives no useful gradient because the discriminator outputs near 0 or 1, leading to vanishing gradients.",
+            "explanation": "If the discriminator becomes perfect, it classifies all fake samples as fake with probability 1, so the gradient of the generator's loss with respect to its parameters becomes zero or very small, preventing learning.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Prediction",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Conceptual Mechanism - Aspect 15",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives no useful gradient because the discriminator outputs near 0 or 1, leading to vanishing gradients.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The generator receives no useful gradient because the discriminator outputs near 0 or 1, leading to vanishing gradients."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T50",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+          "mcq": {
+            "targetId": "T50",
+            "questionText": "During GAN training, if the discriminator becomes overly accurate early and classifies every generated sample as fake, what is the most direct effect on the generator's learning signal?",
+            "options": [
+              "The generator receives no gradient because the discriminator's loss saturates, leaving the generator without useful feedback to improve.",
+              "The generator receives a reversed gradient that encourages it to produce even less realistic samples, reinforcing the discriminator's dominance.",
+              "The generator receives a strong gradient indicating that all its outputs are far from the data distribution, prompting it to adjust its parameters toward producing more realistic samples.",
+              "The generator receives a constant low‑magnitude gradient that slowly nudges its outputs, but the training proceeds without destabilization."
+            ],
+            "correctAnswer": "The generator receives no gradient because the discriminator's loss saturates, leaving the generator without useful feedback to improve.",
+            "explanation": "When the discriminator is too good, its predictions are near‑perfect, causing the sigmoid cross‑entropy loss to saturate. In this regime the gradient with respect to the generator's parameters approaches zero, so the generator gets essentially no learning signal and cannot improve its outputs.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Comparison / Tradeoff",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+              "concept": "Conceptual Mechanism - Aspect 39",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "The generator receives no gradient because the discriminator's loss saturates, leaving the generator without useful feedback to improve.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "The generator receives no gradient because the discriminator's loss saturates, leaving the generator without useful feedback to improve."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "C",
+      "profileName": "Taxonomic / descriptive",
+      "testId": "INTENT_015",
+      "requestedCount": 1,
+      "allocatedEasy": 0,
+      "allocatedMedium": 1,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 1,
+        "requestedHardCount": 0,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 1,
+      "generatedSampleCount": 1,
+      "generationSuccess": true,
+      "planTimeMs": 2479,
+      "genTimeMs": 4394,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "When a user attempts to launch a new virtual server in the AWS console, which service evaluates the request and how does it enable the server to be created?",
+            "options": [
+              "A security group inspects the request and grants launch permission based on network rules.",
+              "IAM evaluates the user's permissions and, if allowed, authorizes EC2 to create the virtual server.",
+              "EC2 checks the user's credentials directly and creates the server if the credentials are valid.",
+              "S3 verifies the user's access policy before EC2 can launch the server."
+            ],
+            "correctAnswer": "IAM evaluates the user's permissions and, if allowed, authorizes EC2 to create the virtual server.",
+            "explanation": "IAM (Identity and Access Management) is responsible for managing users and their permissions. When a launch request is made, IAM evaluates the user's policies; if the policy permits the ec2:RunInstances action, IAM authorizes the request, after which EC2 proceeds to provision the virtual server. The other options misattribute the permission check to EC2, S3, or a security group, which do not handle identity verification.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM",
+              "DISTINCT_ALTERNATIVE"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Define the acronyms EC2 and IAM and describe their primary functions.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM",
+                "DISTINCT_ALTERNATIVE"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "IAM evaluates the user's permissions and, if allowed, authorizes EC2 to create the virtual server.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "IAM evaluates the user's permissions and, if allowed, authorizes EC2 to create the virtual server."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "C",
+      "profileName": "Taxonomic / descriptive",
+      "testId": "INTENT_015",
+      "requestedCount": 2,
+      "allocatedEasy": 1,
+      "allocatedMedium": 1,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 2,
+        "requestedHardCount": 0,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 0,
+        "deficitStatus": null
+      },
+      "unfulfilledStatus": "CAPACITY_FULFILLED",
+      "targetsCount": 2,
+      "generatedSampleCount": 2,
+      "generationSuccess": true,
+      "planTimeMs": 7743,
+      "genTimeMs": 12613,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following correctly defines Amazon EC2?",
+            "options": [
+              "Elastic Compute Cloud; it stores files as objects.",
+              "Elastic Cloud Compute; it provides virtual servers.",
+              "Elastic Compute Cloud; it provides virtual servers.",
+              "Elastic Compute Cloud; it manages user identities and passwords."
+            ],
+            "correctAnswer": "Elastic Compute Cloud; it provides virtual servers.",
+            "explanation": "Amazon EC2 stands for Elastic Compute Cloud and its primary function is to provide virtual servers.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "DISTINCT_ALTERNATIVE",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Recall the full form and primary function of EC2",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "DISTINCT_ALTERNATIVE",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Elastic Compute Cloud; it provides virtual servers.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "Elastic Compute Cloud; it provides virtual servers."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "When a user attempts to start a new virtual server, which sequence correctly describes how IAM and EC2 interact to enforce access control?",
+            "options": [
+              "EC2 checks the user's password and, if correct, IAM creates a new virtual server.",
+              "IAM checks the user's permissions and, if allowed, EC2 proceeds to launch the virtual server.",
+              "IAM stores the virtual machine image and directly runs it without involving EC2.",
+              "EC2 manages user credentials and grants access to other AWS services based on those credentials."
+            ],
+            "correctAnswer": "IAM checks the user's permissions and, if allowed, EC2 proceeds to launch the virtual server.",
+            "explanation": "IAM is the service that controls identity and access in AWS. When a user initiates an EC2 launch, IAM evaluates the user's policies; only if the permission is granted does EC2 actually provision the virtual server. The other options invert the responsibilities of IAM and EC2 or attribute unrelated functions to them.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Comparison / Tradeoff",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Compare the role of IAM to that of EC2 in AWS architecture",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "IAM checks the user's permissions and, if allowed, EC2 proceeds to launch the virtual server.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "IAM checks the user's permissions and, if allowed, EC2 proceeds to launch the virtual server."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "C",
+      "profileName": "Taxonomic / descriptive",
+      "testId": "INTENT_015",
+      "requestedCount": 3,
+      "allocatedEasy": 2,
+      "allocatedMedium": 1,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 3,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 1,
+        "reallocatedTo": "Easy",
+        "reason": "Session evidence is purely descriptive taxonomy/definitions with zero taught trade-offs, causal mechanisms, or perturbation dynamics.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "unfulfilledStatus": "DEFICIT_RECORDED",
+      "targetsCount": 3,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 7251,
+      "genTimeMs": 14125,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following defines what EC2 stands for and its primary function?",
+            "options": [
+              "Elastic Compute Cloud; it manages user identities.",
+              "Simple Storage Service; it provides virtual servers.",
+              "Elastic Compute Cloud; it stores files as objects.",
+              "Elastic Compute Cloud; it provides virtual servers."
+            ],
+            "correctAnswer": "Elastic Compute Cloud; it provides virtual servers.",
+            "explanation": "Amazon EC2 stands for Elastic Compute Cloud, and its primary function is to give you virtual servers.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Define what EC2 stands for and its primary function",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Elastic Compute Cloud; it provides virtual servers.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Elastic Compute Cloud; it provides virtual servers."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "What is the primary role of IAM in cloud services?",
+            "options": [
+              "It stores files as objects in the cloud.",
+              "It manages users and passwords.",
+              "It provides virtual servers for compute workloads.",
+              "It handles network routing and load balancing."
+            ],
+            "correctAnswer": "It manages users and passwords.",
+            "explanation": "IAM (Identity and Access Management) is responsible for managing user identities and their passwords, as stated in the lecture evidence.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Explain the role of IAM in managing users and passwords",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "It manages users and passwords.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "It manages users and passwords."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T03",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T03",
+            "questionText": "When a user attempts to start an EC2 instance, which AWS service determines whether the action is allowed and why?",
+            "options": [
+              "IAM logs the request but the decision is made by the EC2 service itself.",
+              "IAM evaluates the user’s permissions and allows or denies the start action based on attached policies.",
+              "EC2 checks the instance’s security group rules to decide if the start action is permitted.",
+              "EC2 automatically grants the request to any authenticated user because it manages both compute and access control."
+            ],
+            "correctAnswer": "IAM evaluates the user’s permissions and allows or denies the start action based on attached policies.",
+            "explanation": "IAM is the service responsible for identity and access management. When a start‑instance request is made, IAM evaluates the caller’s attached policies to allow or deny the operation before EC2 carries it out. EC2 provides the virtual server but does not enforce user permissions; security groups control network traffic, not start permissions. IAM does more than just log requests, and EC2 never grants access solely based on authentication.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Comparison / Tradeoff",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Differentiate between EC2 and IAM services",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "IAM evaluates the user’s permissions and allows or denies the start action based on attached policies.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "IAM evaluates the user’s permissions and allows or denies the start action based on attached policies."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "C",
+      "profileName": "Taxonomic / descriptive",
+      "testId": "INTENT_015",
+      "requestedCount": 5,
+      "allocatedEasy": 2,
+      "allocatedMedium": 3,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 5,
+        "requestedHardCount": 1,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 1,
+        "reallocatedTo": "Easy",
+        "reason": "Session evidence is purely descriptive taxonomy/definitions with zero taught trade-offs, causal mechanisms, or perturbation dynamics.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "unfulfilledStatus": "DEFICIT_RECORDED",
+      "targetsCount": 5,
+      "generatedSampleCount": 5,
+      "generationSuccess": true,
+      "planTimeMs": 4177,
+      "genTimeMs": 14845,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following correctly defines Amazon EC2 and its primary function?",
+            "options": [
+              "Elastic Compute Cloud, which provides virtual servers.",
+              "Simple Storage Service, which provides virtual servers.",
+              "Elastic Compute Cloud, which provides object storage.",
+              "Elastic Block Store, which provides virtual servers."
+            ],
+            "correctAnswer": "Elastic Compute Cloud, which provides virtual servers.",
+            "explanation": "Amazon EC2 stands for Elastic Compute Cloud and its main role is to give you virtual servers. The other options either misattribute the service name or the function, reflecting common misconceptions.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Definition of EC2 and its primary function",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Elastic Compute Cloud, which provides virtual servers.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "Elastic Compute Cloud, which provides virtual servers."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T02",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T02",
+            "questionText": "Which of the following correctly defines IAM and its primary responsibility?",
+            "options": [
+              "IAM stands for Identity and Access Management; it stores files as objects.",
+              "IAM stands for Identity and Access Management; it manages virtual servers.",
+              "IAM stands for Identity and Access Management; it manages users and passwords.",
+              "IAM stands for Access and Identity Management; it manages users and passwords."
+            ],
+            "correctAnswer": "IAM stands for Identity and Access Management; it manages users and passwords.",
+            "explanation": "IAM (Identity and Access Management) is defined as the service that manages users and passwords. The other options either invert the expansion of the acronym or confuse IAM with other services such as EC2 (virtual servers) or S3 (object storage).",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Definition of IAM and its primary responsibilities",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "IAM stands for Identity and Access Management; it manages users and passwords.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "IAM stands for Identity and Access Management; it manages users and passwords."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T03",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T03",
+            "questionText": "When an administrator creates a new IAM user and sets a password, which statement correctly explains how IAM enforces the account's password policy?",
+            "options": [
+              "IAM encrypts the password with the user’s public key, stores the ciphertext, and lets the user decrypt it when needed.",
+              "IAM saves the password in plain text in the user record, assuming that VPC firewalls will keep it confidential.",
+              "IAM checks the password against the account’s password policy, hashes it, and stores the hash in the IAM user directory.",
+              "IAM sends the password to AWS Secrets Manager, which applies the password policy and returns a stored secret identifier."
+            ],
+            "correctAnswer": "IAM checks the password against the account’s password policy, hashes it, and stores the hash in the IAM user directory.",
+            "explanation": "IAM validates the password against the defined password policy, then hashes the password (using a secure one‑way function) and stores only the hash in its internal user directory; it never stores plaintext passwords or delegates policy enforcement to other services.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Management of users and passwords within IAM",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "IAM checks the password against the account’s password policy, hashes it, and stores the hash in the IAM user directory.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "IAM checks the password against the account’s password policy, hashes it, and stores the hash in the IAM user directory."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T04",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T04",
+            "questionText": "When an IAM user attempts to log in, explain which component performs the password verification and why the other services are not involved.",
+            "options": [
+              "EC2 runs a script that checks the password against a local database.",
+              "A network firewall intercepts the login request and approves it based on IP address.",
+              "IAM validates the entered password against the stored hash for that user.",
+              "S3 retrieves the user's password file and compares it to the entered value."
+            ],
+            "correctAnswer": "IAM validates the entered password against the stored hash for that user.",
+            "explanation": "IAM's purpose is to manage users and passwords; during authentication it hashes the supplied password and compares it to the stored hash for that user. S3 only stores objects, EC2 provides compute resources, and a firewall filters network traffic, none of which perform password verification.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "IAM - Aspect 1",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "IAM validates the entered password against the stored hash for that user.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "IAM validates the entered password against the stored hash for that user."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T05",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T05",
+            "questionText": "When a user requests a new Amazon EC2 instance, which component is directly responsible for creating the virtual server and why?",
+            "options": [
+              "S3's object storage layer creates virtual servers by storing server images as objects.",
+              "EC2's virtualization layer creates virtual servers by allocating compute resources on physical hosts.",
+              "IAM's user management layer creates virtual servers by assigning permissions to launch instances.",
+              "EC2's networking layer creates virtual servers by routing traffic to existing physical machines."
+            ],
+            "correctAnswer": "EC2's virtualization layer creates virtual servers by allocating compute resources on physical hosts.",
+            "explanation": "Amazon EC2 (Elastic Compute Cloud) provides virtual servers through its virtualization infrastructure, which abstracts and allocates compute resources from physical hosts. S3 stores objects, IAM manages users and permissions, and EC2 networking handles traffic routing, none of which provision compute instances.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Cause / Effect",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Amazon Ec2 - Aspect 2",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "EC2's virtualization layer creates virtual servers by allocating compute resources on physical hosts.",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "EC2's virtualization layer creates virtual servers by allocating compute resources on physical hosts."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "C",
+      "profileName": "Taxonomic / descriptive",
+      "testId": "INTENT_015",
+      "requestedCount": 10,
+      "allocatedEasy": 6,
+      "allocatedMedium": 4,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 10,
+        "requestedHardCount": 3,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 3,
+        "reallocatedTo": "Easy",
+        "reason": "Session evidence is purely descriptive taxonomy/definitions with zero taught trade-offs, causal mechanisms, or perturbation dynamics.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "unfulfilledStatus": "DEFICIT_RECORDED",
+      "targetsCount": 10,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 4102,
+      "genTimeMs": 7091,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following defines Amazon EC2?",
+            "options": [
+              "Elastic Compute Cloud, which provides physical servers.",
+              "Elastic Compute Cloud, which gives you storage buckets.",
+              "Elastic Compute Cloud, which manages user identities.",
+              "Elastic Compute Cloud, which gives you virtual servers."
+            ],
+            "correctAnswer": "Elastic Compute Cloud, which gives you virtual servers.",
+            "explanation": "Amazon EC2 stands for Elastic Compute Cloud and provides virtual servers, as stated in the lecture.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Amazon EC2 stands for Elastic Compute Cloud; it gives you virtual servers.",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Elastic Compute Cloud, which gives you virtual servers.",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Elastic Compute Cloud, which gives you virtual servers."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T06",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T06",
+            "questionText": "What does IAM stand for?",
+            "options": [
+              "Identity and Access Monitoring",
+              "Identity and Access Management",
+              "Access and Identity Management",
+              "Infrastructure Access Management"
+            ],
+            "correctAnswer": "Identity and Access Management",
+            "explanation": "IAM stands for Identity and Access Management, as stated in the lecture, and it is responsible for managing users and passwords.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Comparison / Tradeoff",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "IAM - Aspect 3",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Identity and Access Management",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "Identity and Access Management"
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T10",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T10",
+            "questionText": "When a new user is added to an AWS account, which of the following best describes the role of IAM?",
+            "options": [
+              "IAM manages users and passwords",
+              "IAM manages storage buckets",
+              "IAM manages user permissions",
+              "IAM manages passwords and users"
+            ],
+            "correctAnswer": "IAM manages users and passwords",
+            "explanation": "IAM is responsible for managing user identities and their authentication credentials, such as passwords.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Flow / Trace",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "IAM - Aspect 7",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "IAM manages users and passwords",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "IAM manages users and passwords"
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "C",
+      "profileName": "Taxonomic / descriptive",
+      "testId": "INTENT_015",
+      "requestedCount": 20,
+      "allocatedEasy": 12,
+      "allocatedMedium": 8,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 20,
+        "requestedHardCount": 6,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 6,
+        "reallocatedTo": "Easy",
+        "reason": "Session evidence is purely descriptive taxonomy/definitions with zero taught trade-offs, causal mechanisms, or perturbation dynamics.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "unfulfilledStatus": "DEFICIT_RECORDED",
+      "targetsCount": 20,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 8574,
+      "genTimeMs": 6392,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "What is the primary function of Amazon EC2?",
+            "options": [
+              "Elastic Compute Cloud; it stores files as objects.",
+              "Elastic Compute Cloud; it gives you physical servers.",
+              "Elastic Compute Cloud; it gives you virtual servers.",
+              "Elastic Compute Cloud; it manages users and passwords."
+            ],
+            "correctAnswer": "Elastic Compute Cloud; it gives you virtual servers.",
+            "explanation": "Amazon EC2, or Elastic Compute Cloud, provides users with virtual servers that can be launched, configured, and managed in the cloud.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Recall the definition and primary function of Amazon EC2",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Elastic Compute Cloud; it gives you virtual servers.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "Elastic Compute Cloud; it gives you virtual servers."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T11",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T11",
+            "questionText": "Which of the following correctly defines the abbreviation EC2 as used in Amazon Web Services?",
+            "options": [
+              "Elastic Compute Service",
+              "Elastic Compute Cloud",
+              "Elastic Cloud Compute",
+              "Elastic Container Service"
+            ],
+            "correctAnswer": "Elastic Compute Cloud",
+            "explanation": "In AWS, EC2 stands for Elastic Compute Cloud, providing scalable virtual servers. The other options mix or invert terms from related services.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Amazon Ec2 - Aspect 8",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Elastic Compute Cloud",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "Elastic Compute Cloud"
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T20",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T20",
+            "questionText": "When an IAM user attempts to sign in with a password, which mechanism does IAM use to verify the user's identity?",
+            "options": [
+              "IAM stores the user’s credentials in S3 objects and verifies them by reading the S3 bucket.",
+              "IAM forwards the login request to the EC2 service, which validates the password on the virtual server.",
+              "IAM checks the entered password against the user’s stored password hash to confirm identity.",
+              "IAM relies solely on access keys, ignoring passwords, to authenticate the user."
+            ],
+            "correctAnswer": "IAM checks the entered password against the user’s stored password hash to confirm identity.",
+            "explanation": "IAM manages user accounts and their passwords. During login, IAM hashes the supplied password and compares it to the stored password hash for that user; a match authenticates the user. It does not delegate authentication to EC2, use only access keys, or retrieve credentials from S3.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "IAM - Aspect 17",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "IAM checks the entered password against the user’s stored password hash to confirm identity.",
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "IAM checks the entered password against the user’s stored password hash to confirm identity."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    },
+    {
+      "profileCode": "C",
+      "profileName": "Taxonomic / descriptive",
+      "testId": "INTENT_015",
+      "requestedCount": 50,
+      "allocatedEasy": 32,
+      "allocatedMedium": 18,
+      "allocatedHard": 0,
+      "sumMatchesN": true,
+      "capacityAudit": {
+        "mode": "v2_intent_relative",
+        "requestedDifficulty": "Balanced",
+        "requestedCount": 50,
+        "requestedHardCount": 16,
+        "allocatedHardCount": 0,
+        "reallocatedCount": 16,
+        "reallocatedTo": "Easy",
+        "reason": "Session evidence is purely descriptive taxonomy/definitions with zero taught trade-offs, causal mechanisms, or perturbation dynamics.",
+        "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+      },
+      "unfulfilledStatus": "DEFICIT_RECORDED",
+      "targetsCount": 50,
+      "generatedSampleCount": 3,
+      "generationSuccess": true,
+      "planTimeMs": 2503,
+      "genTimeMs": 6403,
+      "sampleMCQs": [
+        {
+          "targetId": "T01",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T01",
+            "questionText": "Which of the following correctly defines Amazon EC2?",
+            "options": [
+              "Simple Compute Cloud",
+              "Elastic Compute Service",
+              "Elastic Cloud Compute",
+              "Elastic Compute Cloud"
+            ],
+            "correctAnswer": "Elastic Compute Cloud",
+            "explanation": "Amazon EC2 stands for Elastic Compute Cloud, and it provides virtual servers.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Foundational Prerequisite",
+              "cognitiveLevel": "Remember",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Elastic Compute Cloud (EC2) provides virtual servers",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Elastic Compute Cloud",
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Elastic Compute Cloud"
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T26",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "mcq": {
+            "targetId": "T26",
+            "questionText": "What does the acronym EC2 stand for in the context of Amazon Web Services?",
+            "options": [
+              "Enterprise Cloud Control",
+              "Elastic Compute Cloud",
+              "Enhanced Cloud Computing",
+              "Extended Compute Container"
+            ],
+            "correctAnswer": "Elastic Compute Cloud",
+            "explanation": "According to the lecture, Amazon EC2 stands for Elastic Compute Cloud, which provides virtual servers.",
+            "usedArchetypes": [
+              "DISTINCT_ALTERNATIVE"
+            ],
+            "metadata": {
+              "dimension": "Scenario Analysis",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "concept": "Amazon Ec2 - Aspect 22",
+              "usedArchetypes": [
+                "DISTINCT_ALTERNATIVE"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Elastic Compute Cloud",
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "Elastic Compute Cloud"
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        },
+        {
+          "targetId": "T50",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "mcq": {
+            "targetId": "T50",
+            "questionText": "An EC2 instance generates log files that must remain available after the instance is terminated. Which AWS service should be used to store these files, and why?",
+            "options": [
+              "Store the logs in Amazon S3 because it stores files as objects that persist independently of the EC2 instance.",
+              "Store the logs in Amazon EC2 because it provides virtual servers that can keep data after termination.",
+              "Store the logs in a local disk attached to the instance because the disk remains after termination.",
+              "Store the logs in IAM because it manages user credentials and can secure the log files."
+            ],
+            "correctAnswer": "Store the logs in Amazon S3 because it stores files as objects that persist independently of the EC2 instance.",
+            "explanation": "Amazon S3 is designed for object storage; files stored in S3 exist independently of any EC2 instance lifecycle, ensuring the logs remain accessible after the instance is terminated. EC2 provides compute, not persistent storage, IAM manages identities, and local instance storage is lost when the instance stops or terminates.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Apply",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "concept": "Amazon Ec2 - Aspect 46",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "correctAnswerText": "Store the logs in Amazon S3 because it stores files as objects that persist independently of the EC2 instance.",
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "Store the logs in Amazon S3 because it stores files as objects that persist independently of the EC2 instance."
+          },
+          "boundaryCheck": {
+            "passed": true,
+            "violations": []
+          },
+          "keyCheck": {
+            "passed": true,
+            "match": true,
+            "unique": true
+          }
+        }
+      ]
+    }
+  ],
+  "comparativeQuestions": [
+    {
+      "profileCode": "A",
+      "profileName": "Implementation-focused",
+      "testId": "INTENT_001",
+      "v1": {
+        "blueprintCounts": {
+          "Easy": 1,
+          "Medium": 1,
+          "Hard": 1
+        },
+        "target": {
+          "concept": "The strategy of computing Binary Cross-Entropy (BCE) loss separately for the discriminator on real and fake labels.",
+          "difficulty": "Hard",
+          "operation": "PREDICT_CONSTRAINT",
+          "instruction": "Describe how the BCE loss is handled for the discriminator regarding real and fake labels."
+        },
+        "mcq": {
+          "targetId": "T03",
+          "questionText": "During a GAN training step in PyTorch, the discriminator loss is computed separately for real and fake labels and then summed. Which of the following best explains the causal chain that ensures correct gradient propagation for both real and fake samples?",
+          "options": [
+            "Compute the BCE loss once using a combined target that mixes real and fake labels, then backpropagate the result.",
+            "Compute the BCE loss separately for real and fake labels, but only backpropagate the loss from the real labels.",
+            "Compute the BCE loss separately for real and fake labels, sum the two losses, and backpropagate the total.",
+            "Use a different loss function, such as MSE, for the discriminator instead of BCE."
+          ],
+          "correctAnswer": "Compute the BCE loss separately for real and fake labels, sum the two losses, and backpropagate the total.",
+          "explanation": "Separating the BCE loss for real and fake samples allows the discriminator to receive distinct gradients for each class. The loss for real samples encourages the network to output high probabilities for real data, while the loss for fake samples encourages low probabilities for generated data. Summing the two losses yields a combined objective that correctly updates the discriminator weights for both classes. If the losses were combined into a single target, the gradients would be ambiguous and could lead to unstable training.",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Hard",
+            "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+            "concept": "The strategy of computing Binary Cross-Entropy (BCE) loss separately for the discriminator on real and fake labels.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "correctAnswerText": "Compute the BCE loss separately for real and fake labels, sum the two losses, and backpropagate the total.",
+          "correctAnswerKey": "C",
+          "correct_answer": "C",
+          "correct_answer_text": "Compute the BCE loss separately for real and fake labels, sum the two losses, and backpropagate the total."
+        }
+      },
+      "v2": {
+        "blueprintCounts": {
+          "Easy": 1,
+          "Medium": 1,
+          "Hard": 1
+        },
+        "capacityAudit": {
+          "mode": "v2_intent_relative",
+          "requestedDifficulty": "Balanced",
+          "requestedCount": 3,
+          "requestedHardCount": 1,
+          "allocatedHardCount": 1,
+          "reallocatedCount": 0,
+          "deficitStatus": null
+        },
+        "target": {
+          "concept": "Zeroing generator gradients before backward pass",
+          "difficulty": "Hard",
+          "operation": "CODE_OR_TRACE",
+          "instruction": "CODE_OR_TRACE: Formulate an implementation / parameter analysis: Evaluate code sequencing, API usage, or hyperparameter impact. Test concept: Zeroing generator gradients before backward pass."
+        },
+        "mcq": {
+          "targetId": "T03",
+          "questionText": "In a PyTorch GAN training loop, after computing the generator loss and before calling loss.backward(), which action must be taken to ensure the generator’s gradients are correctly prepared for the backward pass?",
+          "options": [
+            "Zero the discriminator optimizer’s gradients before invoking loss.backward()",
+            "Call optimizer.step() on the generator before invoking loss.backward()",
+            "Zero the generator optimizer’s gradients before invoking loss.backward()",
+            "Accumulate the generator gradients without zeroing any optimizer parameters"
+          ],
+          "correctAnswer": "Zero the generator optimizer’s gradients before invoking loss.backward()",
+          "explanation": "The lecture explicitly states that the generator gradients must be zeroed before calling backward. Zeroing clears any stale gradients from previous iterations, allowing loss.backward() to compute fresh gradients for the current step. Zeroing the discriminator’s gradients, stepping the optimizer before backward, or accumulating without zeroing would either affect the wrong model or lead to incorrect gradient accumulation.",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Procedure",
+            "cognitiveLevel": "Apply",
+            "targetDifficulty": "Hard",
+            "intendedCognitiveOperation": "CODE_OR_TRACE",
+            "concept": "Zeroing generator gradients before backward pass",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "correctAnswerText": "Zero the generator optimizer’s gradients before invoking loss.backward()",
+          "correctAnswerKey": "C",
+          "correct_answer": "C",
+          "correct_answer_text": "Zero the generator optimizer’s gradients before invoking loss.backward()"
+        }
+      }
+    },
+    {
+      "profileCode": "B",
+      "profileName": "Conceptual exploration",
+      "testId": "INTENT_002",
+      "v1": {
+        "blueprintCounts": {
+          "Easy": 1,
+          "Medium": 1,
+          "Hard": 1
+        },
+        "target": {
+          "concept": "Analyzing the impact of a discriminator that converges too quickly on the generator's learning signal.",
+          "difficulty": "Hard",
+          "operation": "PREDICT_CONSTRAINT",
+          "instruction": "Based on the 'detective catches everything immediately' scenario, explain what happens to the feedback signal received by the generator."
+        },
+        "mcq": {
+          "targetId": "T03",
+          "questionText": "In a GAN training scenario where the discriminator becomes perfect almost immediately—detecting every counterfeit sample with high confidence—what is the effect on the generator's learning signal?",
+          "options": [
+            "The generator receives the discriminator’s loss value directly as its own loss.",
+            "The generator receives random noise as feedback, unrelated to the discriminator’s output.",
+            "The generator receives a near‑zero gradient, providing almost no learning signal.",
+            "The generator receives a large gradient that pushes it to produce more realistic samples."
+          ],
+          "correctAnswer": "The generator receives a near‑zero gradient, providing almost no learning signal.",
+          "explanation": "When the discriminator quickly reaches near‑perfect accuracy, its output for fake inputs saturates (e.g., predicts \"fake\" with probability close to 1). The generator's loss gradient, which depends on the discriminator's confidence, therefore vanishes, leaving the generator with almost no informative gradient to update its parameters.",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Cause / Effect",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Hard",
+            "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+            "concept": "Analyzing the impact of a discriminator that converges too quickly on the generator's learning signal.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "correctAnswerText": "The generator receives a near‑zero gradient, providing almost no learning signal.",
+          "correctAnswerKey": "C",
+          "correct_answer": "C",
+          "correct_answer_text": "The generator receives a near‑zero gradient, providing almost no learning signal."
+        }
+      },
+      "v2": {
+        "blueprintCounts": {
+          "Easy": 1,
+          "Medium": 1,
+          "Hard": 1
+        },
+        "capacityAudit": {
+          "mode": "v2_intent_relative",
+          "requestedDifficulty": "Balanced",
+          "requestedCount": 3,
+          "requestedHardCount": 1,
+          "allocatedHardCount": 1,
+          "reallocatedCount": 0,
+          "deficitStatus": null
+        },
+        "target": {
+          "concept": "Discuss the tradeoff when discriminator becomes too strong too quickly.",
+          "difficulty": "Hard",
+          "operation": "BEHAVIORAL_PREDICTION",
+          "instruction": "BEHAVIORAL_PREDICTION: Formulate a perturbation analysis: Predict system behavior or failure consequence under parameter change. [CRITICAL CONSTRAINT: ZERO CODE/SYNTAX. Do NOT ask for code, language syntax, or function APIs.] Test concept: Discuss the tradeoff when discriminator becomes too strong too quickly.."
+        },
+        "mcq": {
+          "targetId": "T03",
+          "questionText": "If the discriminator instantly classifies every generated sample as fake, what is the most likely effect on the generator’s learning signal?",
+          "options": [
+            "The generator receives a reconstruction‑error signal from the auto‑encoder, guiding it to match the discriminator’s internal representations.",
+            "The generator receives a large negative gradient, forcing it to immediately produce more realistic samples.",
+            "The generator receives random noise as feedback, causing it to explore diverse outputs without direction.",
+            "The generator receives a near‑zero gradient, so it gets essentially no learning signal and its parameters stop updating."
+          ],
+          "correctAnswer": "The generator receives a near‑zero gradient, so it gets essentially no learning signal and its parameters stop updating.",
+          "explanation": "When the discriminator becomes overly strong and flags every generated instance as fake, the adversarial loss for the generator collapses to its minimum value, yielding a gradient that is effectively zero. Without a meaningful gradient, the generator cannot adjust its parameters, leading to stalled learning or mode collapse. The other options describe feedback mechanisms that do not occur in this scenario.",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Analyze",
+            "targetDifficulty": "Hard",
+            "intendedCognitiveOperation": "BEHAVIORAL_PREDICTION",
+            "concept": "Discuss the tradeoff when discriminator becomes too strong too quickly.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "correctAnswerText": "The generator receives a near‑zero gradient, so it gets essentially no learning signal and its parameters stop updating.",
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "The generator receives a near‑zero gradient, so it gets essentially no learning signal and its parameters stop updating."
+        }
+      }
+    },
+    {
+      "profileCode": "C",
+      "profileName": "Taxonomic / descriptive",
+      "testId": "INTENT_015",
+      "v1": {
+        "blueprintCounts": {
+          "Easy": 1,
+          "Medium": 1,
+          "Hard": 1
+        },
+        "target": {
+          "concept": "Compare EC2's role as a virtual server provider to other AWS compute offerings.",
+          "difficulty": "Hard",
+          "operation": "PREDICT_CONSTRAINT",
+          "instruction": "Perform a direct comparison using the evidence."
+        },
+        "mcq": {
+          "targetId": "T03",
+          "questionText": "When a user wants to run a virtual server that also needs to store files persistently across reboots, which combination of AWS services should they use?",
+          "options": [
+            "Use EC2 for compute and S3 for persistent storage.",
+            "Use EC2 for storage and S3 for compute.",
+            "Use IAM to manage virtual servers and store files.",
+            "Use S3 to run virtual servers and store files."
+          ],
+          "correctAnswer": "Use EC2 for compute and S3 for persistent storage.",
+          "explanation": "EC2 provides virtual servers for compute workloads, while S3 offers object storage that persists across instance restarts. Combining EC2 for compute and S3 for storage satisfies the requirement for a virtual server that needs persistent file storage.",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Comparison / Tradeoff",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Hard",
+            "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+            "concept": "Compare EC2's role as a virtual server provider to other AWS compute offerings.",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "correctAnswerText": "Use EC2 for compute and S3 for persistent storage.",
+          "correctAnswerKey": "A",
+          "correct_answer": "A",
+          "correct_answer_text": "Use EC2 for compute and S3 for persistent storage."
+        }
+      },
+      "v2": {
+        "blueprintCounts": {
+          "Easy": 2,
+          "Medium": 1,
+          "Hard": 0
+        },
+        "capacityAudit": {
+          "mode": "v2_intent_relative",
+          "requestedDifficulty": "Balanced",
+          "requestedCount": 3,
+          "requestedHardCount": 1,
+          "allocatedHardCount": 0,
+          "reallocatedCount": 1,
+          "reallocatedTo": "Easy",
+          "reason": "Session evidence is purely descriptive taxonomy/definitions with zero taught trade-offs, causal mechanisms, or perturbation dynamics.",
+          "deficitStatus": "INSUFFICIENT_EVIDENCE_FOR_HARD"
+        },
+        "target": {
+          "concept": "Virtual servers provided by Amazon EC2",
+          "difficulty": "Medium",
+          "operation": "EXPLAIN_MECHANISM",
+          "instruction": "Assess operational understanding of Virtual servers provided by Amazon EC2."
+        },
+        "mcq": {
+          "targetId": "T03",
+          "questionText": "When you request an EC2 instance, which of the following best explains how EC2 provides the requested resource?",
+          "options": [
+            "It gives you a storage bucket",
+            "It gives you a database instance",
+            "It gives you a physical server",
+            "It gives you a virtual server"
+          ],
+          "correctAnswer": "It gives you a virtual server",
+          "explanation": "Amazon EC2 provides virtual servers; it does not allocate physical servers, storage buckets, or database instances for this service.",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+            "concept": "Virtual servers provided by Amazon EC2",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "correctAnswerText": "It gives you a virtual server",
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "It gives you a virtual server"
+        }
+      }
+    }
+  ]
+}

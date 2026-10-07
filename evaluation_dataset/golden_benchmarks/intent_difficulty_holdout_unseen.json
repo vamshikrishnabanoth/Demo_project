@@ -1,0 +1,229 @@
+[
+  {
+    "testId": "HOLD_INT_001",
+    "name": "Transformer Attention - Lecturer A: PyTorch Matrix & Code",
+    "category": "PAIRED_CONTRASTING_STYLE",
+    "pairId": "PAIR_TRANSFORMER",
+    "voiceSnippet": "Let's build the multi-head self-attention module in PyTorch. Look at the forward pass: we project queries, keys, and values using linear layers, reshape with view for num_heads, and compute torch.bmm of Q and K transposed before applying softmax.",
+    "documentSnippet": "Attention(Q, K, V) = softmax(Q K^T / sqrt(d_k)) V. PyTorch nn.Module forward implementation.",
+    "expectedIntent": "IMPLEMENTATION_PRACTICE",
+    "negativeBoundaries": [],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Tests multi-head tensor reshaping (batch_size, num_heads, seq_len, head_dim)",
+      "Tests batched matrix multiplication QK^T dimensions or masking mechanics",
+      "Tests PyTorch forward pass implementation decisions"
+    ],
+    "prohibitedQuestionElements": []
+  },
+  {
+    "testId": "HOLD_INT_002",
+    "name": "Transformer Attention - Lecturer B: Routing Dynamics & Entropy",
+    "category": "PAIRED_CONTRASTING_STYLE",
+    "pairId": "PAIR_TRANSFORMER",
+    "voiceSnippet": "Focus purely on the architectural behavior today; implementation and code syntax are strictly outside today's scope. Consider what happens if the query-key dot products become very large in magnitude: the softmax function gets pushed into regions with infinitesimally small gradients, causing the attention distribution to collapse into a one-hot distribution and halting learning.",
+    "documentSnippet": "Dot-product scale sensitivity: large values push softmax into vanishing gradient regions.",
+    "expectedIntent": "EXPLORATION",
+    "negativeBoundaries": ["NO_CODE_IMPLEMENTATION"],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Predicts vanishing gradient behavior when dot-product magnitudes grow large",
+      "Explains why softmax temperature scaling sqrt(d_k) prevents attention collapse",
+      "Evaluates attention entropy shifts under magnitude perturbations without code"
+    ],
+    "prohibitedQuestionElements": ["pytorch_syntax", "torch_functions", "python_code"]
+  },
+  {
+    "testId": "HOLD_INT_003",
+    "name": "Linux CFS Scheduler - Lecturer A: C Struct & vruntime Math",
+    "category": "PAIRED_CONTRASTING_STYLE",
+    "pairId": "PAIR_CFS",
+    "voiceSnippet": "Examine the Linux kernel sched_entity struct on line 42. Notice how vruntime is calculated as delta_exec scaled by the process weight from the sched_prio_to_weight array. Practice tracing the exact vruntime increment in the update_curr function.",
+    "documentSnippet": "CFS implementation: struct sched_entity, vruntime += delta_exec * (NICE_0_LOAD / se->load.weight).",
+    "expectedIntent": "IMPLEMENTATION_PRACTICE",
+    "negativeBoundaries": [],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Traces exact vruntime calculation formula across different nice priority weights",
+      "Evaluates C struct member tracking during kernel update_curr execution",
+      "Diagnoses red-black tree key ordering based on vruntime values"
+    ],
+    "prohibitedQuestionElements": []
+  },
+  {
+    "testId": "HOLD_INT_004",
+    "name": "Linux CFS Scheduler - Lecturer B: Fairness Intuition & Trade-offs",
+    "category": "PAIRED_CONTRASTING_STYLE",
+    "pairId": "PAIR_CFS",
+    "voiceSnippet": "Leave low-level C structs and kernel code for the lab section; here we only reason about scheduling fairness. Think about what happens when an I/O-bound process sleeps for a long time and then wakes up: if it retained its old vruntime, it would monopolize the CPU and starve interactive tasks. Explore why CFS must clamp sleeping tasks to the minimum vruntime of the runqueue.",
+    "documentSnippet": "Completely Fair Scheduling principles: proportional fairness, latency sensitivity, sleeper fairness trade-off.",
+    "expectedIntent": "EXPLORATION",
+    "negativeBoundaries": ["NO_CODE_IMPLEMENTATION"],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Predicts system starvation anomaly if waking sleeper processes retained stale runtime",
+      "Evaluates fairness vs latency trade-off when clamping vruntime for waking tasks",
+      "Explains why completely fair scheduling prevents CPU monopolization without C structs"
+    ],
+    "prohibitedQuestionElements": ["c_structs", "kernel_syntax", "code_variables"]
+  },
+  {
+    "testId": "HOLD_INT_005",
+    "name": "Negative Boundary: Discrete Logarithm Proof Exclusion",
+    "category": "NEGATIVE_BOUNDARY_ADHERENCE",
+    "pairId": null,
+    "voiceSnippet": "In Diffie-Hellman key exchange, Alice and Bob establish a shared secret over an insecure channel. The formal number theory proof of discrete logarithm hardness is omitted from our exam syllabus; understand the exchange mechanics and why an eavesdropper cannot derive the shared secret, rather than the calculus or ring theory.",
+    "documentSnippet": "Diffie-Hellman Key Exchange: g^a mod p, g^b mod p, shared secret g^(ab) mod p. Discrete Logarithm Problem assumption.",
+    "expectedIntent": "FOUNDATIONAL_UNDERSTANDING",
+    "negativeBoundaries": ["NO_MATHEMATICAL_DERIVATION"],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Evaluates what information an eavesdropper possesses (g^a, g^b, g, p) vs cannot compute",
+      "Diagnoses vulnerability if prime p is selected insecurely without formal ring proofs",
+      "Explains exchange protocol flow"
+    ],
+    "prohibitedQuestionElements": ["ring_theory_proof", "formal_calculus_derivation", "group_homomorphism"]
+  },
+  {
+    "testId": "HOLD_INT_006",
+    "name": "Negative Boundary: Compiler Loop Invariant Optimization",
+    "category": "NEGATIVE_BOUNDARY_ADHERENCE",
+    "pairId": null,
+    "voiceSnippet": "We are studying Loop-Invariant Code Motion. We will not be writing any compiler backend software or LLVM pass scripts in our lecture. Focus strictly on identifying which computations inside a loop produce identical values across all iterations and can safely be hoisted to the pre-header.",
+    "documentSnippet": "Loop-Invariant Code Motion (LICM): Loop pre-headers, dominance frontier, landing pads.",
+    "expectedIntent": "FOUNDATIONAL_UNDERSTANDING",
+    "negativeBoundaries": ["NO_CODE_IMPLEMENTATION"],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Identifies safety conditions required before hoisting an expression (must dominate all loop exits)",
+      "Diagnoses invalid hoisting where an expression might throw an exception on zero-iteration loops",
+      "Evaluates loop invariance without LLVM pass code"
+    ],
+    "prohibitedQuestionElements": ["llvm_pass_code", "c_plus_plus_syntax", "compiler_ir_methods"]
+  },
+  {
+    "testId": "HOLD_INT_007",
+    "name": "Negative Boundary: BGP Autonomous System Path Routing",
+    "category": "NEGATIVE_BOUNDARY_ADHERENCE",
+    "pairId": null,
+    "voiceSnippet": "Focus strictly on inter-domain AS-path policies today. We are not discussing internal router CLI commands or Cisco configuration scripts. Understand why BGP uses path-vector routing rather than link-state to prevent routing loops across global internet service providers.",
+    "documentSnippet": "Border Gateway Protocol (BGP): Autonomous Systems, AS-Path attribute, loop prevention.",
+    "expectedIntent": "COMPARATIVE_TRADEOFF",
+    "negativeBoundaries": ["NO_VENDOR_SPECIFIC_CLI"],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Explains loop detection mechanism when an AS observes its own AS number in the path list",
+      "Contrasts policy-based business routing against shortest-path metric routing",
+      "Evaluates inter-domain route selection without router CLI syntax"
+    ],
+    "prohibitedQuestionElements": ["cisco_ios_commands", "router_cli_flags", "config_scripts"]
+  },
+  {
+    "testId": "HOLD_INT_008",
+    "name": "Conceptual-Hard: Mutation Testing Fault Detection Dynamics",
+    "category": "CONCEPTUAL_HARD_FEASIBILITY",
+    "pairId": null,
+    "voiceSnippet": "Why does a test suite with 100% line and branch coverage frequently fail to catch critical production defects? Investigate the difference between executing a statement and verifying its outcome. In mutation testing, we inject artificial faults into the program; if your tests still pass, your tests executed the code without asserting correctness.",
+    "documentSnippet": "Software Testing Metrics: Statement coverage, branch coverage, mutation score, equivalent mutants.",
+    "expectedIntent": "CAUSAL_ANALYSIS",
+    "negativeBoundaries": [],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Explains the difference between code reachability and assertion effectiveness (Oracle problem)",
+      "Predicts why equivalent mutants artificially deflate the calculated mutation kill score",
+      "Evaluates test suite diagnostic power without language-specific testing code"
+    ],
+    "prohibitedQuestionElements": ["code_syntax"]
+  },
+  {
+    "testId": "HOLD_INT_009",
+    "name": "Conceptual-Hard: Byzantine Fault Tolerance Node Quorum Dynamics",
+    "category": "CONCEPTUAL_HARD_FEASIBILITY",
+    "pairId": null,
+    "voiceSnippet": "Why do crash fault tolerant systems like Raft only require 2f+1 nodes to survive f failures, while Byzantine fault tolerant systems strictly require 3f+1 nodes? Think through what breaks: a crashed node simply goes silent, but a Byzantine traitor can tell half the cluster yes and the other half no, actively constructing conflicting majorities.",
+    "documentSnippet": "Byzantine Agreement: Oral messages algorithm, Lamport-Shostak-Pease bound N >= 3f + 1.",
+    "expectedIntent": "COMPARATIVE_TRADEOFF",
+    "negativeBoundaries": [],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Evaluates why equivocation (two-faced messaging) requires overlapping quorums of 2f+1 honest nodes",
+      "Contrasts crash omission failure model with malicious arbitrary failure model",
+      "Predicts consensus breakdown if total nodes N <= 3f under adversarial split"
+    ],
+    "prohibitedQuestionElements": ["code_syntax"]
+  },
+  {
+    "testId": "HOLD_INT_010",
+    "name": "True Deficit: Version Control Systems Taxonomy",
+    "category": "GENUINE_HARD_INFEASIBILITY",
+    "pairId": null,
+    "voiceSnippet": "Version control systems allow software teams to track changes over time. Centralized systems like Subversion and CVS store all project history on a single central server. Distributed systems like Git and Mercurial give every developer a full copy of the repository history.",
+    "documentSnippet": "VCS Classification: Centralized VCS vs Distributed VCS.",
+    "expectedIntent": "FOUNDATIONAL_UNDERSTANDING",
+    "negativeBoundaries": [],
+    "hardFeasible": false,
+    "acceptableHardReasoningProperties": [],
+    "prohibitedQuestionElements": ["git_rebase_interactive_math", "internals_packfile_delta_compression"]
+  },
+  {
+    "testId": "HOLD_INT_011",
+    "name": "True Deficit: Web Architecture Tier Overview",
+    "category": "GENUINE_HARD_INFEASIBILITY",
+    "pairId": null,
+    "voiceSnippet": "In standard multi-tier web applications, the client tier runs in the user's web browser, the application tier runs the business logic on a backend server, and the database tier persists data to disk.",
+    "documentSnippet": "Three-Tier Architecture: Presentation Tier, Application Tier, Data Tier.",
+    "expectedIntent": "FOUNDATIONAL_UNDERSTANDING",
+    "negativeBoundaries": [],
+    "hardFeasible": false,
+    "acceptableHardReasoningProperties": [],
+    "prohibitedQuestionElements": ["distributed_transaction_2pc", "load_balancer_algorithms"]
+  },
+  {
+    "testId": "HOLD_INT_012",
+    "name": "Intent Marker: Consider the hypothetical consequence when...",
+    "category": "META_DISCOURSE_MARKERS",
+    "pairId": null,
+    "voiceSnippet": "Consider the hypothetical consequence when the write buffer on an SSD fills up faster than the underlying NAND flash blocks can be erased. How does write amplification degrade sequential write throughput?",
+    "documentSnippet": "Solid State Storage: Flash translation layer, block erase cycles, write amplification.",
+    "expectedIntent": "EXPLORATION",
+    "negativeBoundaries": [],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Predicts write latency spike during garbage collection erase cycles",
+      "Explains write amplification consequence under buffer exhaustion"
+    ],
+    "prohibitedQuestionElements": []
+  },
+  {
+    "testId": "HOLD_INT_013",
+    "name": "Intent Marker: Investigate what causes...",
+    "category": "META_DISCOURSE_MARKERS",
+    "pairId": null,
+    "voiceSnippet": "Investigate what causes thread pool starvation in microservice backends when synchronous HTTP calls cascade across downstream dependencies.",
+    "documentSnippet": "Cascading failures: Thread pool exhaustion, timeout propagation, circuit breakers.",
+    "expectedIntent": "CAUSAL_ANALYSIS",
+    "negativeBoundaries": [],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Traces root cause of thread pool exhaustion to blocked I/O waiting on slow dependencies",
+      "Explains why synchronous call chains amplify latency"
+    ],
+    "prohibitedQuestionElements": []
+  },
+  {
+    "testId": "HOLD_INT_014",
+    "name": "Intent Marker: Contrast the engineering trade-off...",
+    "category": "META_DISCOURSE_MARKERS",
+    "pairId": null,
+    "voiceSnippet": "Contrast the engineering trade-off between optimistic locking using version numbers and pessimistic locking using SELECT FOR UPDATE in high-contention inventory checkout systems.",
+    "documentSnippet": "Concurrency control trade-offs: Retry overhead in optimistic locking vs lock wait latency in pessimistic locking.",
+    "expectedIntent": "COMPARATIVE_TRADEOFF",
+    "negativeBoundaries": [],
+    "hardFeasible": true,
+    "acceptableHardReasoningProperties": [
+      "Evaluates why high contention causes optimistic locking abort cascades",
+      "Contrasts retry overhead with thread blocking latency"
+    ],
+    "prohibitedQuestionElements": []
+  }
+]

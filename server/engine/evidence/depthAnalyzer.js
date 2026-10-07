@@ -51,12 +51,15 @@ const ACADEMIC_DOMAIN_TERMS = new Set([
   'object-oriented', 'polymorphism', 'inheritance', 'encapsulation', 'abstraction', 'interface', 'class', 'struct',
   'pointer', 'memory allocation', 'garbage collection', 'complexity', 'big-o', 'time complexity', 'space complexity',
   'neural network', 'deep learning', 'machine learning', 'autoencoder', 'convolutional', 'recurrent', 'transformer',
+  'gan', 'gans', 'generator', 'generators', 'discriminator', 'discriminators', 'adversarial', 'minimax', 'pytorch',
   'token', 'tokens', 'tokenizer', 'tokenizers', 'tokenization', 'tokenizing', 'embedding', 'embeddings', 'vocab',
   'vocabulary', 'parsing', 'parser', 'lexer', 'lexeme', 'ast', 'syntax tree', 'attention', 'self-attention',
   'gradient descent', 'backpropagation', 'activation function', 'loss function', 'overfitting', 'regularization',
   'supervised', 'unsupervised', 'reinforcement learning', 'vector', 'vectors', 'tensor', 'gpu', 'cpu', 'architecture',
   'race condition', 'critical section', 'concurrency', 'multithreading', 'lock', 'locks', 'locking', 'starvation',
   'livelock', 'socket', 'client-server', 'microservice', 'api', 'rest api', 'serialization', 'deserialization',
+  'consistency', 'linearizable', 'linearizability', 'availability', 'partition', 'partitions', 'distributed storage', 'replication', 'replica', 'replicas', 'quorum', 'consensus', 'raft', 'paxos', 'byzantine', 'fault tolerance',
+  'cable', 'cables', 'coaxial', 'fiber', 'fiber optic', 'optical', 'ethernet', 'twisted pair',
   'interrupt', 'interrupts', 'isr', 'interrupt service routine', 'vector table', 'program counter', 'register',
   'registers', 'instruction cycle', 'polling', 'device driver',
 
@@ -161,7 +164,7 @@ class DepthAnalyzer {
       /\b(boyfriend|girlfriend|ex-boyfriend|ex-girlfriend|dating him|dating her|fell in love|broke my heart)\b/i,
       /\b(kiss me|kissed (?:him|her)|hugged (?:him|her)|sleeping with|cheated on)\b/i,
       /\b(honey|darling|sweetheart|babe|shut up|get out of here|what the hell)\b/i,
-      /\b(police officer|detective|drop the gun|put your hands up|gunshot|hostage|murderer|serial killer)\b/i,
+      /\b(police officer|police detective|homicide detective|detective on the case|drop the gun|put your hands up|gunshot|hostage|murderer|serial killer)\b/i,
       /\b(went to the party|drinking beer|at the club|hangover|getting drunk|shots of tequila)\b/i,
       /\b(shopping at the mall|bought a dress|delicious dinner|cooked dinner|washed the dishes|laundry)\b/i,
       /\b(movie was (?:awesome|terrible)|favorite actor|hollywood|pop star|celebrity gossip)\b/i,
@@ -210,7 +213,7 @@ class DepthAnalyzer {
    * Detect Conceptual Analogy / Metaphor.
    * e.g. "Imagine a traffic jam where four cars block the intersection..."
    */
-  _matchAnalogy(seg, lower) {
+  _matchAnalogy(seg, lower, prevSeg = null) {
     const analogyMarkers = [
       /\b(?:imagine\s+(?:a|an|that|if)|think\s+of\s+(?:it|this)\s+(?:like|as)|analogous\s+to|similar\s+to\s+how|like\s+a\s+(?:traffic|restaurant|library|conveyor|post\s+office|queue|bucket|pipe|highway))\b/i,
       /\b(?:to\s+give\s+you\s+an\s+analogy|take\s+an\s+analogy|metaphorically\s+speaking|mental\s+model)\b/i
@@ -220,9 +223,10 @@ class DepthAnalyzer {
     if (!hasAnalogyMarker) return null;
 
     const concepts = this._extractConceptsFromSegment(seg);
-    const hasAcademic = concepts.length > 0 || this._hasAcademicDomainWord(lower);
+    const prevLower = prevSeg ? prevSeg.toLowerCase() : '';
+    const hasAcademic = concepts.length > 0 || this._hasAcademicDomainWord(lower) || (prevSeg && this._hasAcademicDomainWord(prevLower));
 
-    if (hasAcademic || lower.includes('deadlock') || lower.includes('process') || lower.includes('memory') || lower.includes('thread') || lower.includes('queue') || lower.includes('buffer') || lower.includes('lock')) {
+    if (hasAcademic || lower.includes('deadlock') || lower.includes('process') || lower.includes('memory') || lower.includes('thread') || lower.includes('queue') || lower.includes('buffer') || lower.includes('lock') || lower.includes('generator') || lower.includes('discriminator') || lower.includes('counterfeiter') || lower.includes('detective')) {
       return {
         type: 'ANALOGY',
         teaching_value: 0.88,
@@ -406,7 +410,7 @@ class DepthAnalyzer {
     }
 
     // 3B. Analogy & Conceptual Metaphors
-    const analogyResult = this._matchAnalogy(cleanSeg, lower);
+    const analogyResult = this._matchAnalogy(cleanSeg, lower, prevSeg);
     if (analogyResult) {
       return {
         ...analogyResult,
@@ -467,9 +471,9 @@ class DepthAnalyzer {
     // ──────────────────────────────────────────────────────────────────────────
     const hasDefRelation = /\b(is an?|are(?: words)?|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|known as|named as|classified into|provides an?|acts as|serves as|used (?:to|as|in)|is (?:formally |strictly |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?)\b/i.test(lower);
     const hasMechRelation = /\b(works by|applies|extract(?:s|ed|ing)?|transform(?:s|ed|ing)?|comput(?:es|ed|ing)?|divid(?:es|ed|ing)?|multiplie(?:s|d)?|calculat(?:es|ed|ing)?|connect(?:s|ed|ing)?|execut(?:es|ed|ing)?|process(?:es|ed|ing)?|generat(?:es|ed|ing)?|allocat(?:es|ed|ing)?|modifie(?:s|d|ying)?|conduc(?:ts|ted|ting)?|converts?|eliminat(?:es|ed|ing)?|reduc(?:es|ed|ing)?|increas(?:es|ed|ing)?|decreas(?:es|ed|ing)?|stores?|retrieves?|passes?|takes?|outputs?|returns?|handles?|implements?|travers(?:es|ed|ing)?|select(?:s|ed|ing)?|partition(?:s|ed|ing)?|discard(?:s|ed|ing)?|project(?:s|ed|ing)?|encod(?:es|ed|ing)?|decod(?:es|ed|ing)?|superpos(?:es|ed|ing)?|entangl(?:es|ed|ing)?|borrow(?:s|ed|ing)?)\b/i.test(lower);
-    const hasRuleRelation = /\b(whenever|therefore|in order to|leads to|results in|prevents|causes|so that|guarantees?|ensures?|requires?|depends on|condition|conditions|properties|invariants?|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes)\b/i.test(lower);
-    const hasComparisonRelation = /\b(in contrast|compared to|difference between|neither .* nor|whereas|while|faster than|slower than|preferred over|differs? from|unlike|similar to)\b/i.test(lower);
-    const hasDemonstrative = /\b(look at|notice (?:what happens|that|how)|observe (?:that|how)|see (?:what happens|that|how)|here we (?:see|have|notice)|consider (?:this|the|an?)|suppose (?:we|that)|let us (?:see|examine|trace|look)|trace (?:through|the)|given (?:an?|the)|for example|for instance)\b/i.test(lower);
+    const hasRuleRelation = /\b(whenever|therefore|in order to|leads to|results in|prevents|causes|so that|guarantees?|ensures?|requires?|depends on|condition|conditions|properties|invariants?|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes|cannot have both|trade-offs?|trade off|choice between)\b/i.test(lower);
+    const hasComparisonRelation = /\b(in contrast|compared to|difference between|between .* and|neither .* nor|whereas|while|faster than|slower than|preferred over|differs? from|unlike|similar to)\b/i.test(lower);
+    const hasDemonstrative = /\b(look at|notice (?:what happens|that|how)|observe (?:that|how)|see (?:what happens|that|how)|here we (?:see|have|notice)|consider (?:this|the|an?)|suppose (?:we|that)|let us (?:see|examine|trace|look)|trace (?:through|the)|given (?:an?|the)|explore (?:the|how|what|whether)?|think about why|think carefully about|for example|for instance)\b/i.test(lower);
     const hasTraceExample = /\[[0-9,\s]+\]|\b(pivot|example|trace|step|produces)\b/i.test(lower);
     const hasSocraticCurricular = /\b(what happens (?:to|if|when)|why does|why do we|how does|can the|what is the effect of|will the|why would)\b/i.test(lower);
     const hasProcRelation = /\b(first(?:ly)?,|second(?:ly)?,|third(?:ly)?,|fourth(?:ly)?,|fifth(?:ly)?,|finally,|next,|step \d+|in the (?:first|next|final) step|pauses?|saves?|transfers?|restor(?:es|ed|ing)?|resum(?:es|ed|ing)?|fetch(?:es|ed|ing)?)\b/i.test(lower);
@@ -846,7 +850,7 @@ class DepthAnalyzer {
     const isPredominantlyOffTopic = (fictionalSegments.length > 0 && fictionalSegments.length >= curricularSegments.length) ||
       (curricularSegments.length === 0 && (fictionalSegments.length > 0 || unrelatedSegments.length > 0)) ||
       (curricularSegments.length > 0 && curricularSegments.length < 3 && unrelatedSegments.length > curricularSegments.length * 2) ||
-      (curricularSegments.length > 0 && unrelatedSegments.length >= curricularSegments.length * 3);
+      (curricularSegments.length > 0 && curricularSegments.length < 5 && unrelatedSegments.length >= curricularSegments.length * 3);
     const hasCurricularSubstance = (curricularSegments.length >= 1) && (detectedFocus.length >= 1) && !isPredominantlyOffTopic;
 
     if (!hasCurricularSubstance) {

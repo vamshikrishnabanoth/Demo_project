@@ -42,6 +42,8 @@ class Agent1Planner {
     const categoryWeights = evidencePackage.categoryWeights || {};
     const lectureDepth = evidencePackage.lectureDepth || { score: 65, rating: 'Developing' };
     const detectedFocus = evidencePackage.detectedFocus || [];
+    // Step 3: Make conceptEvidenceGraph available alongside existing curricularContent
+    const conceptEvidenceGraph = evidencePackage.conceptEvidenceGraph || null;
 
     // 1. Calculate TC (Teaching Coverage) Score
     const tcScoreReport = this._computeTCScore(rawContent, voiceEmphasis, lectureDepth);
@@ -99,11 +101,22 @@ JSON SCHEMA:
 
     const assessableContent = evidencePackage.curricularContent || rawContent;
 
+    const coverageProfile = evidencePackage.curricularCoverage || null;
+    let coveragePromptBlock = '';
+    if (coverageProfile && coverageProfile.summary && coverageProfile.summary.totalConcepts > 0) {
+      const suff = (coverageProfile.sufficientConcepts || []).slice(0, 10).join(', ');
+      const excl = (coverageProfile.excludedOrUncoveredConcepts || []).map(c => `${c.concept} [${c.status}]`).slice(0, 10).join(', ');
+      coveragePromptBlock = `
+Curricular Coverage Audit (Assessability Pre-Check):
+- Sufficient Concepts (Eligible for Targets): ${suff || 'All taught concepts with adequate evidence'}
+- Excluded or Insufficient Concepts (DO NOT Target): ${excl || 'None'}`;
+    }
+
     const userPrompt = `
 [TEACHING EVIDENCE PACKAGE]
 Lecture Depth: ${lectureDepth.rating} (${lectureDepth.score}/100)
 Voice Emphasis: Syntax=${voiceEmphasis.syntaxEmphasis}, Conceptual=${voiceEmphasis.conceptualEmphasis}
-Explicit Instructions: ${(voiceEmphasis.explicitInstructions || []).join('; ')}
+Explicit Instructions: ${(voiceEmphasis.explicitInstructions || []).join('; ')}${coveragePromptBlock}
 Requested Difficulty: ${requestedDifficulty}
 Requested Question Count: Up to ${requestedCount} (Bound by genuine evidence: ${targetIdList})
 
@@ -169,8 +182,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const initialTargets = filterGrounded(rawTargets, 'T');
       const initialReserve = filterGrounded(rawReserve, 'R');
 
-      // Layer 4: Audit targets against pedagogical / administrative contamination
-      const { auditedTargets, auditedReserve, auditLog } = this._auditAssessmentTargets(initialTargets, initialReserve, requestedCount);
+      // Layer 4: Audit targets against pedagogical / administrative contamination and curricular coverage exclusions
+      const { auditedTargets, auditedReserve, auditLog } = this._auditAssessmentTargets(initialTargets, initialReserve, requestedCount, evidencePackage);
 
       // If LLM returned fewer targets than requested, replenish from grounded fallback plan up to requestedCount
       if (auditedTargets.length < requestedCount) {
@@ -211,10 +224,12 @@ Generate the curricular assessment plan strictly covering educational concepts w
       auditedReserve: planData.reserveTargets,
       subtopics: planData.subtopics
     });
+    planData.conceptEvidenceGraph = conceptEvidenceGraph;
+    planData.curricularCoverage = evidencePackage?.curricularCoverage || null;
     return planData;
   }
 
-  _auditAssessmentTargets(targets, reserve, requestedCount) {
+  _auditAssessmentTargets(targets, reserve, requestedCount, evidencePackage = null) {
     const pedagogicalOrAdminPatterns = [
       /\b(teaching (?:pace|gear)|medium gear|top gear|pace of (?:teaching|instruction))\b/i,
       /\b(student (?:comfort|feelings|anxiety|confidence|mood)|comfort level|comfortable with (?:pace|teaching))\b/i,
@@ -237,9 +252,25 @@ Generate the curricular assessment plan strictly covering educational concepts w
       return pedagogicalOrAdminPatterns.some(pat => pat.test(text));
     };
 
+    const excludedConcepts = (evidencePackage?.curricularCoverage?.excludedOrUncoveredConcepts || []).map(c => ({
+      name: (c.concept || '').toLowerCase(),
+      status: c.status,
+      reason: c.reason
+    }));
+
+    const isExcludedByCoverage = (target) => {
+      if (excludedConcepts.length === 0) return null;
+      const cLower = `${target.concept || ''} ${target.subtopic || ''}`.toLowerCase();
+      return excludedConcepts.find(e => e.name && e.name.length > 2 && cLower.includes(e.name));
+    };
+
     const cleanTargets = [];
     for (const t of targets) {
-      if (isContaminated(t)) {
+      const covExcl = isExcludedByCoverage(t);
+      if (covExcl) {
+        auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Curricular Coverage Exclusion: ${covExcl.status} (${covExcl.reason})` });
+        auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'CURRICULAR_COVERAGE_EXCLUSION', status: 'REJECTED', reason: `Target concept "${t.concept}" is ruled out by curricular coverage (${covExcl.status}: ${covExcl.reason}).` });
+      } else if (isContaminated(t)) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: 'Administrative or pedagogical process contamination' });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_OR_ADMINISTRATIVE', status: 'REJECTED', reason: 'Target assesses teaching process, student comfort, or classroom management instead of curricular subject matter.' });
       } else {
@@ -250,7 +281,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
 
     const cleanReserve = [];
     for (const r of reserve) {
-      if (isContaminated(r)) {
+      const covExcl = isExcludedByCoverage(r);
+      if (covExcl) {
+        auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: `Curricular Coverage Exclusion: ${covExcl.status} (${covExcl.reason})` });
+        auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'CURRICULAR_COVERAGE_EXCLUSION', status: 'REJECTED', reason: `Reserve target concept "${r.concept}" is ruled out by curricular coverage.` });
+      } else if (isContaminated(r)) {
         auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: 'Administrative or pedagogical process contamination' });
         auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'PEDAGOGICAL_OR_ADMINISTRATIVE', status: 'REJECTED', reason: 'Reserve target assesses teaching process or classroom management.' });
       } else {
@@ -547,12 +582,30 @@ Generate the curricular assessment plan strictly covering educational concepts w
   }
 
   /**
-   * Module 2: Difficulty Blueprinting & Capacity Limitation Engine.
+   * Difficulty Blueprinting Entry Point.
+   * Branches cleanly based on DIFFICULTY_CALIBRATION_MODE:
+   * - 'v1_bloom_quota' (default): Existing legacy Bloom N/3 formula.
+   * - 'v2_intent_relative': Intent-relative dynamic difficulty calibration and auditable quota rebalancing.
+   */
+  _applyDifficultyBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}) {
+    const providerConfig = require('../../config/providerConfig');
+    const mode = process.env.DIFFICULTY_CALIBRATION_MODE || providerConfig?.difficulty?.calibrationMode || 'v1_bloom_quota';
+
+    if (mode === 'v2_intent_relative') {
+      return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage);
+    }
+
+    // Default: v1_bloom_quota (Existing exact code, completely untouched)
+    return this._applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage);
+  }
+
+  /**
+   * Module 2 (v1 Legacy): Difficulty Blueprinting & Capacity Limitation Engine.
    * Applies deterministic difficulty distribution, cognitive blueprinting, and capacity auditing.
    * Invariant: Never silently downgrades a requested Hard tier to Easy/Medium.
    * If evidence is definition-only, records transparent capacity limitations.
    */
-  _applyDifficultyBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}) {
+  _applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}) {
     const blueprint = this.computeDifficultyDistribution(requestedDifficulty, requestedCount);
     const capacityLimitations = [];
     let supportedHardCount = 0;
@@ -648,6 +701,203 @@ Generate the curricular assessment plan strictly covering educational concepts w
         r.intendedCognitiveOperation = resBp.intendedCognitiveOperation;
         r.bloomLevel = resBp.bloomLevel;
         r.operationalGuidance = resBp.operationalGuidance;
+      });
+    }
+
+    return planData;
+  }
+
+  /**
+   * Module 2 (v2 Intent-Relative): Difficulty Blueprinting & Scope Calibration Engine.
+   * 
+   * Strict Invariants:
+   * 1. Hard feasibility is relative to the teacher's demonstrated instructional intent and evidence.
+   * 2. NEVER invents Hard questions merely to satisfy an N/3 quota when evidence is purely taxonomic.
+   * 3. Explicit capacityAudit records requested vs allocated difficulty and reason for reallocation.
+   * 4. Enforces negative boundaries (NO_CODE, NO_MATH, NO_CLI, NO_TRIVIA) across all generated targets.
+   */
+  _applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}) {
+    const profile = evidencePackage.instructionalProfile || {
+      instructionalIntent: evidencePackage.instructionalIntent || 'FOUNDATIONAL_UNDERSTANDING',
+      negativeBoundaries: evidencePackage.negativeBoundaries || [],
+      supportedReasoningModes: evidencePackage.supportedReasoningModes || ['DEEP_CONCEPTUAL_ANALYSIS'],
+      hardFeasibility: evidencePackage.hardFeasibility || { hardFeasible: true, deficitReason: null },
+      operationalGuidance: evidencePackage.hardOperationalGuidance || ''
+    };
+
+    const isHardFeasible = Boolean(profile.hardFeasibility && profile.hardFeasibility.hardFeasible);
+    const negativeBoundaries = profile.negativeBoundaries || [];
+    const intent = profile.instructionalIntent || 'FOUNDATIONAL_UNDERSTANDING';
+
+    // 1. Calculate requested quota
+    let requestedHard = 0;
+    let requestedEasy = 0;
+    let requestedMedium = 0;
+
+    const diffLower = String(requestedDifficulty || 'Balanced').toLowerCase();
+    if (diffLower === 'hard') {
+      requestedHard = requestedCount;
+    } else if (diffLower === 'easy') {
+      requestedEasy = requestedCount;
+    } else if (diffLower === 'medium') {
+      requestedMedium = requestedCount;
+    } else {
+      // Balanced
+      if (requestedCount === 1) {
+        requestedMedium = 1;
+      } else if (requestedCount === 2) {
+        requestedEasy = 1;
+        requestedMedium = 1;
+      } else {
+        requestedEasy = Math.floor(requestedCount / 3);
+        requestedHard = Math.floor(requestedCount / 3);
+        requestedMedium = requestedCount - requestedEasy - requestedHard;
+      }
+    }
+
+    // 2. Calibrate allocation according to genuine teacher evidence
+    let allocatedHard = requestedHard;
+    let allocatedMedium = requestedMedium;
+    let allocatedEasy = requestedEasy;
+    let capacityAudit = null;
+
+    if (requestedHard > 0 && !isHardFeasible) {
+      // REFUSE to fabricate Hard questions when evidence cannot support them
+      allocatedHard = 0;
+      const reallocatedCount = requestedHard;
+      // Reallocate to Medium if mechanism aspects exist, else Easy
+      const reallocatedTo = intent !== 'FOUNDATIONAL_UNDERSTANDING' ? 'Medium' : (allocatedEasy > 0 ? 'Easy' : 'Medium');
+      if (reallocatedTo === 'Medium') {
+        allocatedMedium += reallocatedCount;
+      } else {
+        allocatedEasy += reallocatedCount;
+      }
+
+      capacityAudit = {
+        mode: 'v2_intent_relative',
+        requestedDifficulty,
+        requestedCount,
+        requestedHardCount: requestedHard,
+        allocatedHardCount: 0,
+        reallocatedCount,
+        reallocatedTo,
+        reason: profile.hardFeasibility?.message || 'Lecture evidence is purely taxonomic/descriptive with zero taught trade-offs or perturbation dynamics.',
+        deficitStatus: 'INSUFFICIENT_EVIDENCE_FOR_HARD'
+      };
+    } else {
+      capacityAudit = {
+        mode: 'v2_intent_relative',
+        requestedDifficulty,
+        requestedCount,
+        requestedHardCount: requestedHard,
+        allocatedHardCount: allocatedHard,
+        reallocatedCount: 0,
+        deficitStatus: null
+      };
+    }
+
+    // 3. Build target distribution array
+    const distribution = [];
+    for (let i = 0; i < allocatedEasy; i++) distribution.push('Easy');
+    for (let i = 0; i < allocatedMedium; i++) distribution.push('Medium');
+    for (let i = 0; i < allocatedHard; i++) distribution.push('Hard');
+
+    // 4. Map targets to calibrated difficulty and intent-relative operations
+    const targets = planData.assessmentTargets || [];
+    const capacityLimitations = [];
+
+    const finalTargets = targets.map((target, idx) => {
+      const assignedTier = distribution[idx] || (isHardFeasible ? 'Medium' : 'Easy');
+      target.targetDifficulty = assignedTier;
+      target.negativeBoundaries = negativeBoundaries;
+
+      if (assignedTier === 'Hard') {
+        if (!isHardFeasible) {
+          target.capacityLimitation = {
+            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+            reason: capacityAudit.reason
+          };
+          capacityLimitations.push({
+            targetId: target.targetId,
+            concept: target.concept,
+            requestedDifficulty: 'Hard',
+            limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+            message: capacityAudit.reason
+          });
+        }
+
+        // Assign intent-relative cognitive operation
+        let hardOp = 'DEEP_CONCEPTUAL_ANALYSIS';
+        if (intent === 'EXPLORATION') hardOp = 'BEHAVIORAL_PREDICTION';
+        else if (intent === 'COMPARATIVE_TRADEOFF') hardOp = 'SCENARIO_TRADEOFF';
+        else if (intent === 'IMPLEMENTATION_PRACTICE') hardOp = 'CODE_OR_TRACE';
+        else if (intent === 'PROCEDURAL_TRACE') hardOp = 'STEP_TRACE';
+        else if (intent === 'CAUSAL_ANALYSIS') hardOp = 'CAUSAL_EXPLANATION';
+
+        target.intendedCognitiveOperation = hardOp;
+        target.bloomLevel = 'Evaluate / Synthesize';
+        target.operationalGuidance = profile.operationalGuidance;
+        target.instruction = `${profile.operationalGuidance} Test concept: ${target.concept}.`;
+      } else if (assignedTier === 'Medium') {
+        target.intendedCognitiveOperation = intent === 'COMPARATIVE_TRADEOFF' ? 'COMPARE' : (intent === 'PROCEDURAL_TRACE' ? 'TRACE' : 'EXPLAIN_MECHANISM');
+        target.bloomLevel = 'Understand / Apply';
+        let negConstraint = '';
+        if (negativeBoundaries.includes('NO_CODE_IMPLEMENTATION')) negConstraint += ' [Do NOT ask for code syntax.]';
+        if (negativeBoundaries.includes('NO_VENDOR_SPECIFIC_CLI')) negConstraint += ' [Do NOT ask for vendor CLI flags.]';
+        target.operationalGuidance = `Require operational reasoning about mechanisms and state transitions.${negConstraint}`;
+        target.instruction = `Assess operational understanding of ${target.concept}.${negConstraint}`;
+      } else {
+        // Easy
+        target.intendedCognitiveOperation = 'RECALL';
+        target.bloomLevel = 'Remember';
+        let negConstraint = '';
+        if (negativeBoundaries.includes('NO_CODE_IMPLEMENTATION')) negConstraint += ' [Do NOT ask for code syntax.]';
+        target.operationalGuidance = `Directly assess concept recognition or definition.${negConstraint}`;
+        target.instruction = `Assess basic recall of ${target.concept}.${negConstraint}`;
+      }
+
+      return target;
+    });
+
+    finalTargets.forEach((t, idx) => {
+      t.targetId = `T${String(idx + 1).padStart(2, '0')}`;
+    });
+
+    planData.assessmentTargets = finalTargets;
+    planData.targetCount = finalTargets.length;
+    planData.requestedDifficulty = requestedDifficulty;
+    planData.difficultyBlueprint = {
+      mode: 'v2_intent_relative',
+      requestedDifficulty,
+      isBalanced: diffLower === 'balanced',
+      counts: { Easy: allocatedEasy, Medium: allocatedMedium, Hard: allocatedHard },
+      distribution
+    };
+    planData.capacityLimitations = capacityLimitations;
+    planData.capacityAudit = capacityAudit;
+    planData.depthCapacity = {
+      requestedHardCount: requestedHard,
+      supportedHardCount: allocatedHard,
+      deficit: requestedHard - allocatedHard,
+      hasDeficit: requestedHard > allocatedHard
+    };
+    planData.metadata = {
+      ...(planData.metadata || {}),
+      capacityAudit,
+      calibrationMode: 'v2_intent_relative',
+      instructionalIntent: intent,
+      negativeBoundaries
+    };
+
+    // Blueprint reserve targets with boundary constraints
+    if (Array.isArray(planData.reserveTargets)) {
+      const reserveTiers = ['Medium', isHardFeasible ? 'Hard' : 'Medium', 'Easy'];
+      planData.reserveTargets.forEach((r, idx) => {
+        const resTier = reserveTiers[idx % reserveTiers.length];
+        r.targetDifficulty = resTier;
+        r.negativeBoundaries = negativeBoundaries;
+        r.intendedCognitiveOperation = resTier === 'Hard' ? (intent === 'EXPLORATION' ? 'BEHAVIORAL_PREDICTION' : 'SCENARIO_TRADEOFF') : (resTier === 'Medium' ? 'COMPARE' : 'RECALL');
+        r.operationalGuidance = resTier === 'Hard' ? profile.operationalGuidance : 'Assess grounded curricular concepts without introducing un-taught trivia.';
       });
     }
 

@@ -1,6 +1,6 @@
 # Phase 2 Evaluation Report: Decoupled Pedagogical & Material Scoring
 
-> **Execution Date**: 2026-10-06T10:16:28.033Z  
+> **Execution Date**: 2026-10-07T07:40:13.208Z  
 > **Evaluated Branch**: `feature/decoupled-pedagogical-scoring`  
 > **Evaluated Snapshot**: Decoupled Modality Scorer (`evidencePackager.js` + `depthAnalyzer.js`)  
 > **Phase 1 Baseline Reference**: Commit `00e9f8b` (`BASELINE_BENCHMARK_RESULTS.md`)  
@@ -79,9 +79,9 @@ Session Inputs ──┤
 ## 4. Unmodified Capabilities Summary (Preserved for Future Phases)
 
 ### Cross-Source Linkage (25 Cases - Phase 3 Scope)
-- **Strict Relationship Accuracy**: **20.0%** (5/25)
-- **Same Concept / Different Wording Recall**: **40.0%** (2/5)
-- **Conflict Detection Precision/Recall**: **0.0%** (0/4)
+- **Strict Relationship Accuracy**: **56.0%** (14/25)
+- **Same Concept / Different Wording Recall**: **20.0%** (1/5)
+- **Conflict Detection Precision/Recall**: **75.0%** (3/4)
 - **Polysemy False Match Rejection**: **100.0%** (3/3)
 
 ### Cognitive Difficulty Calibration (10 Cases - Phase 5 Scope)

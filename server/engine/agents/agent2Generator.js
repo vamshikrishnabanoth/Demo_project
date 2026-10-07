@@ -89,20 +89,44 @@ class Agent2Generator {
 
   /**
    * Deterministically normalize correctAnswer to match one of the 4 options.
+   * Architectural Principle: The selected option index is authoritative over
+   * minor surface token discrepancies from the LLM.
    */
   normalizeCorrectAnswer(mcq) {
-    if (!mcq || mcq.isUnfulfilled || !Array.isArray(mcq.options) || mcq.options.length === 0 || !mcq.correctAnswer) {
+    if (!mcq || mcq.isUnfulfilled || !Array.isArray(mcq.options) || mcq.options.length === 0) {
       return;
     }
+
+    // 1. Authoritative option index: if correctAnswerIndex is explicitly provided (0..options.length-1)
+    if (typeof mcq.correctAnswerIndex === 'number' && mcq.correctAnswerIndex >= 0 && mcq.correctAnswerIndex < mcq.options.length) {
+      mcq.correctAnswer = mcq.options[mcq.correctAnswerIndex];
+      return;
+    }
+
+    // If correctAnswer is missing entirely, check if a letter key or index field was provided
+    if (!mcq.correctAnswer) {
+      const altKey = mcq.correctAnswerKey || mcq.correct_answer || mcq.key;
+      if (altKey && typeof altKey === 'string') {
+        const char = altKey.trim().toUpperCase();
+        const map = { 'A': 0, '1': 0, 'B': 1, '2': 1, 'C': 2, '3': 2, 'D': 3, '4': 3 };
+        const idx = map[char];
+        if (idx !== undefined && mcq.options[idx]) {
+          mcq.correctAnswer = mcq.options[idx];
+          return;
+        }
+      }
+      return;
+    }
+
     const ans = String(mcq.correctAnswer).trim();
 
-    // 1. Exact match
+    // 2. Exact match
     if (mcq.options.includes(ans)) {
       mcq.correctAnswer = ans;
       return;
     }
 
-    // 2. Letter / Index prefix: "Option A", "A", "A)", "(A)", "Option 1", "1", "A - "
+    // 3. Letter / Index prefix: "Option A", "A", "A)", "(A)", "Option 1", "1", "A - "
     const letterMatch = ans.match(/^(?:option\s+)?\(?([a-d1-4])\)?(?:\.|\:|\s|\-|\)|$)/i);
     if (letterMatch) {
       const char = letterMatch[1].toUpperCase();
@@ -114,7 +138,7 @@ class Agent2Generator {
       }
     }
 
-    // 3. Case-insensitive or trimmed match
+    // 4. Case-insensitive or trimmed match
     const lowerAns = ans.toLowerCase();
     const matchedOpt = mcq.options.find(o => (o || '').trim().toLowerCase() === lowerAns);
     if (matchedOpt) {
@@ -122,12 +146,58 @@ class Agent2Generator {
       return;
     }
 
-    // 4. Substring without letter prefix (e.g. "(B) Translates virtual page numbers...")
+    // 5. Punctuation & unicode normalized match
+    const cleanNorm = s => (s || '').trim().toLowerCase()
+      .replace(/[\u2010\u2011\u2012\u2013\u2014\u2015]/g, '-')
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/[.,;:]+$/, '')
+      .replace(/\s+/g, ' ');
+    const normAns = cleanNorm(ans);
+    const matchedNorm = mcq.options.find(o => cleanNorm(o) === normAns);
+    if (matchedNorm) {
+      mcq.correctAnswer = matchedNorm;
+      return;
+    }
+
+    // 6. Substring without letter prefix (e.g. "(B) Translates virtual page numbers...")
     const strippedAns = ans.replace(/^(?:option\s+[a-d1-4]|(?:\(?[a-d1-4]\)?[\)\.\:\s\-]+))\s*/i, '').trim().toLowerCase();
     if (strippedAns) {
       const subMatch = mcq.options.find(o => (o || '').trim().toLowerCase() === strippedAns);
       if (subMatch) {
         mcq.correctAnswer = subMatch;
+        return;
+      }
+    }
+
+    // 7. Conservative token-level correction:
+    // Only applied if token overlap is near-identical (>= 85% Jaccard) AND clear margin over runner-up (>= 0.30).
+    // Prevents unrestricted fuzzy matching while forgiving 1-token LLM echo slips.
+    const tokenize = s => cleanNorm(s).split(/\s+/).filter(w => w.length > 0);
+    const ansTokens = new Set(tokenize(ans));
+    if (ansTokens.size >= 3) {
+      let bestIdx = -1;
+      let highestJaccard = 0;
+      let runnerUpJaccard = 0;
+      for (let i = 0; i < mcq.options.length; i++) {
+        const optTokens = new Set(tokenize(mcq.options[i]));
+        if (optTokens.size === 0) continue;
+        let intersection = 0;
+        for (const t of ansTokens) {
+          if (optTokens.has(t)) intersection++;
+        }
+        const union = new Set([...ansTokens, ...optTokens]).size;
+        const jaccard = union > 0 ? (intersection / union) : 0;
+        if (jaccard > highestJaccard) {
+          runnerUpJaccard = highestJaccard;
+          highestJaccard = jaccard;
+          bestIdx = i;
+        } else if (jaccard > runnerUpJaccard) {
+          runnerUpJaccard = jaccard;
+        }
+      }
+      if (bestIdx !== -1 && highestJaccard >= 0.85 && (highestJaccard - runnerUpJaccard) >= 0.30) {
+        mcq.correctAnswer = mcq.options[bestIdx];
         return;
       }
     }
@@ -669,6 +739,7 @@ JSON SCHEMA:
     "Valid factual formulation",
     "Common conceptual misconception"
   ],
+  "correctAnswerIndex": 2,
   "correctAnswer": "Valid factual formulation",
   "explanation": "...",
   "usedArchetypes": ["MISCONCEPTION_INVERSION", "NEAR_MISS_MECHANISM"],
@@ -704,7 +775,9 @@ STRICT CONSTRAINTS:
    - Do NOT create distractors by merely appending or omitting optional flags, parameters, quotes, or arguments (e.g., do NOT pair 'git commit' with 'git commit -m "msg"').
    - Do NOT create prefix/subset command chains as distractors.
    - For syntax, command, or API questions, distractors MUST vary distinct orthogonal operations or verbs (e.g., 'git add', 'git push', 'git status', 'git checkout'), or distinct concepts.
-7. "correctAnswer" MUST be the exact verbatim string of one of the 4 items in the "options" array. The correct answer identifies the semantically correct choice regardless of its initial position. Downstream shuffling assigns the final presentation slot.
+7. AUTHORITATIVE OPTION SELECTION & CORRECT ANSWER:
+   - "correctAnswerIndex": Integer index (0, 1, 2, or 3) indicating which element of the "options" array is the correct choice. The option index is authoritative.
+   - "correctAnswer": Exact verbatim string corresponding to options[correctAnswerIndex]. Downstream shuffling assigns the final presentation slot.
 8. HONEST CAPACITY HANDLING:
    - If the concept lacks evidence for the requested difficulty, do not invent un-taught complexity.
 9. DUAL-SOURCE AUTHORITY & CONTRADICTION RESOLUTION:
