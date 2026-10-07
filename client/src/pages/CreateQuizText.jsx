@@ -15,7 +15,6 @@ import AikenPastePanel from '../components/quiz/AikenPastePanel';
 import JsonPastePanel from '../components/quiz/JsonPastePanel';
 import QuizQuestionEditor from '../components/quiz/QuizQuestionEditor';
 import AgentQualityBadge from '../components/quiz/AgentQualityBadge';
-import PipelineObservabilityModal from '../components/quiz/PipelineObservabilityModal';
 import { uiTerminology } from '../utils/uiTerminology';
 
 const targetYearOptions = [
@@ -180,7 +179,6 @@ export default function CreateQuizText() {
     const [isPartialYield, setIsPartialYield] = useState(false);
     const [requestedCount, setRequestedCount] = useState(null);
     const [representationMode, setRepresentationMode] = useState(null);
-    const [showObservability, setShowObservability] = useState(false);
 
     const computedAssignedGroups = useCallback(() => {
         if (assignedGroups && assignedGroups.length > 0) return assignedGroups;
@@ -246,7 +244,6 @@ export default function CreateQuizText() {
             if (location.state.isAssessment !== undefined) setIsAssessment(location.state.isAssessment);
             if (location.state.gameType)         setGameType(location.state.gameType);
             if (location.state.agentReport)     setAgentReport(location.state.agentReport);
-            if (location.state.finalValidation) setFinalValidation(location.state.finalValidation);
             if (location.state.isVoice || location.state.isAudio || location.state.source === 'voice') {
                 setIsVoice(true);
             }
@@ -531,15 +528,6 @@ export default function CreateQuizText() {
                         </h1>
                     </div>
                     <div className="flex items-center gap-3 z-10">
-                        <button
-                            type="button"
-                            onClick={() => setShowObservability(true)}
-                            className="px-4 py-2.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-[10px] uppercase tracking-[0.16em] border border-emerald-500/40 shadow-md shadow-emerald-500/10 flex items-center gap-2 cursor-pointer transition-all active:scale-[0.98] shrink-0"
-                            title="Inspect 8-Stage Architecture Flow & Live Telemetry"
-                        >
-                            <Activity size={14} className="text-emerald-500 dark:text-emerald-400 animate-pulse" />
-                            <span>Pipeline Flow</span>
-                        </button>
                         {(aikenLoaded || isGeneratedSource) && (
                             <button
                                 type="button"
@@ -1247,16 +1235,6 @@ export default function CreateQuizText() {
                 }}
                 initialGroups={computedAssignedGroups()}
                 initialStudents={assignedStudents}
-            />
-
-            <PipelineObservabilityModal
-                isOpen={showObservability}
-                onClose={() => setShowObservability(false)}
-                questions={questions}
-                title={title}
-                agentReport={agentReport}
-                isVoice={isVoice}
-                duration={duration}
             />
         </DashboardLayout>
     );
