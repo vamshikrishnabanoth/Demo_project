@@ -263,6 +263,18 @@ const normalizeVoiceUploads = (req, res, next) => {
     next();
 };
 
+// @route   GET api/quiz/health
+// @desc    Deployment health & version telemetry
+router.get('/health', (req, res) => {
+    res.json({
+        status: 'OK',
+        version: 'v2.1-plumbing-hardened',
+        timestamp: new Date().toISOString(),
+        watchdogFloorSec: 360,
+        watchdogCeilingSec: 600
+    });
+});
+
 // @route   POST api/quiz/analyze-sources
 // @desc    Analyze multiple mixed input sources (PDFs, texts)
 router.post('/analyze-sources', auth, upload.array('files', 10), verifyUploadedFiles, quizController.analyzeSources);
@@ -507,17 +519,6 @@ router.delete('/:id', auth, teacherOrAdmin, quizController.deleteQuiz);
 // @desc    Update a quiz
 router.put('/:id', auth, teacherOrAdmin, quizController.updateQuiz);
 
-// @route   GET api/quiz/health
-// @desc    Deployment health & version telemetry
-router.get('/health', (req, res) => {
-    res.json({
-        status: 'OK',
-        version: 'v2.1-plumbing-hardened',
-        timestamp: new Date().toISOString(),
-        watchdogFloorSec: 360,
-        watchdogCeilingSec: 600
-    });
-});
-
 module.exports = router;
+
 
