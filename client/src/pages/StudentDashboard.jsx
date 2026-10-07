@@ -128,7 +128,7 @@ export default function StudentDashboard() {
                     if (action.includes('saved')) {
                         toast.success(action, { duration: 5000 });
                     } else if (action.includes('reset')) {
-                        toast.error(`💔 ${action}`, { duration: 5000 });
+                        toast.error(action, { duration: 5000 });
                     }
                 });
             }
@@ -166,7 +166,7 @@ export default function StudentDashboard() {
             const newPerk = res.data.perk;
             setUnlockedPerks(prev => [...prev, newPerk]);
             setShowTicket(newPerk);
-            toast.success(`🎉 Redeemed: ${perkName}`);
+            toast.success(`Successfully redeemed: ${perkName}`);
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Redemption failed');
         } finally {
@@ -831,19 +831,25 @@ export default function StudentDashboard() {
                                                 iconBg: 'bg-violet-100',
                                                 icon: 'text-violet-700',
                                                 border: 'border-violet-200 hover:border-violet-400',
-                                                badge: 'bg-violet-50 text-violet-700 border-violet-200'
+                                                costBadge: 'bg-violet-100 text-violet-700 border border-violet-300/80',
+                                                btnLocked: 'bg-violet-100/90 hover:bg-violet-200/80 text-violet-700 border border-violet-200/90 font-black cursor-not-allowed',
+                                                btnActive: 'bg-violet-600 hover:bg-violet-700 text-white border border-violet-600 shadow-md shadow-violet-500/20 cursor-pointer active:scale-95'
                                             },
                                             perk_half: {
-                                                iconBg: 'bg-blue-100',
-                                                icon: 'text-blue-700',
-                                                border: 'border-blue-200 hover:border-blue-400',
-                                                badge: 'bg-blue-50 text-blue-700 border-blue-200'
+                                                iconBg: 'bg-pink-100',
+                                                icon: 'text-pink-700',
+                                                border: 'border-pink-200 hover:border-pink-400',
+                                                costBadge: 'bg-pink-100 text-pink-700 border border-pink-300/80',
+                                                btnLocked: 'bg-pink-100/90 hover:bg-pink-200/80 text-pink-700 border border-pink-200/90 font-black cursor-not-allowed',
+                                                btnActive: 'bg-pink-600 hover:bg-pink-700 text-white border border-pink-600 shadow-md shadow-pink-500/20 cursor-pointer active:scale-95'
                                             },
                                             perk_att: {
                                                 iconBg: 'bg-emerald-100',
                                                 icon: 'text-emerald-700',
                                                 border: 'border-emerald-200 hover:border-emerald-400',
-                                                badge: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                costBadge: 'bg-emerald-100 text-emerald-800 border border-emerald-300/80',
+                                                btnLocked: 'bg-emerald-100/90 hover:bg-emerald-200/80 text-emerald-800 border border-emerald-200/90 font-black cursor-not-allowed',
+                                                btnActive: 'bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-600 shadow-md shadow-emerald-500/20 cursor-pointer active:scale-95'
                                             }
                                         };
 
@@ -883,14 +889,14 @@ export default function StudentDashboard() {
                                                     return (
                                                         <div 
                                                             key={perk.id} 
-                                                            className={`p-5 rounded-3xl border bg-white flex flex-col justify-between transition-all duration-300 shadow-sm ${theme.border} bg-[var(--bg-primary)]`}
+                                                            className={`p-5 rounded-3xl border flex flex-col justify-between transition-all duration-300 shadow-sm ${theme.border} bg-[var(--bg-primary)]`}
                                                         >
                                                             <div className="space-y-4">
                                                                 <div className="flex items-center justify-between">
-                                                                    <div className={`p-3.5 rounded-2xl border ${theme.iconBg} ${theme.badge} ${theme.icon} shadow-xs`}>
+                                                                    <div className={`p-3.5 rounded-2xl border ${theme.iconBg} ${theme.icon} ${theme.border.split(' ')[0]} shadow-2xs`}>
                                                                         <IconComponent size={24} />
                                                                     </div>
-                                                                    <span className="text-xs font-black text-amber-600 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full uppercase tracking-wider">
+                                                                    <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${theme.costBadge}`}>
                                                                         {perk.cost} PTS
                                                                     </span>
                                                                 </div>
@@ -911,10 +917,8 @@ export default function StudentDashboard() {
                                                                 <button
                                                                     onClick={() => canAfford && handleRedeemPerk(perk.id, perk.name, perk.cost)}
                                                                     disabled={!canAfford || redeeming}
-                                                                    className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                                                                        canAfford
-                                                                            ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md hover:shadow-amber-500/20 active:scale-95'
-                                                                            : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-70'
+                                                                    className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
+                                                                        canAfford ? theme.btnActive : theme.btnLocked
                                                                     }`}
                                                                 >
                                                                     {redeeming ? 'Redeeming...' : canAfford ? 'Redeem Pass' : 'Locked'}

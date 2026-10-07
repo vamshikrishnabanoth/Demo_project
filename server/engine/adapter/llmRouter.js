@@ -11,8 +11,9 @@
 
 'use strict';
 
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+try {
+  require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+} catch (_) {}
 
 const axios = require('axios');
 const providerConfig = require('../../config/providerConfig');

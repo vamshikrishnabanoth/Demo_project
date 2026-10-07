@@ -98,8 +98,14 @@ class SessionTrace {
         model,
         decisions,
         calculations,
+        input,
+        processing,
+        output,
+        validation: stageRecord.validation,
+        evidenceCitations: stageRecord.evidenceCitations,
         outputSummary: typeof output === 'object' ? Object.keys(output) : 'done',
-        representation_mode: this.representationMode || (output && output.representationMode) || null
+        representation_mode: this.representationMode || (output && output.representationMode) || null,
+        stageRecord
       });
     }
 

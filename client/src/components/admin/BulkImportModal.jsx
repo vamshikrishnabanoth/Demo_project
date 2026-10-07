@@ -134,15 +134,15 @@ export default function BulkImportModal({ onClose, onSuccess }) {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="modal-overlay">
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+                    className="modal-backdrop" onClick={onClose} />
 
                 <motion.div initial={{ opacity: 0, scale: 0.95, y: 15 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
-                    className="relative z-10 w-full max-w-3xl max-h-[92vh] bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col">
+                    className="modal-card w-full max-w-3xl">
 
                     {/* Header */}
-                    <div className="px-6 py-4 border-b border-slate-200 bg-sky-50/70 flex items-center justify-between shrink-0">
+                    <div className="modal-header bg-sky-50/70">
                         <div className="flex items-center gap-3">
                             <div className="p-2.5 rounded-xl bg-sky-100 border border-sky-200 text-sky-700">
                                 <Upload size={22} />
@@ -152,12 +152,12 @@ export default function BulkImportModal({ onClose, onSuccess }) {
                                 <p className="text-xs text-slate-500 font-medium">Enterprise University Data Ingestion — Mandatory Field Validation Enabled</p>
                             </div>
                         </div>
-                        <button onClick={onClose} className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
+                        <button onClick={onClose} className="modal-close-btn">
                             <XIcon size={18} />
                         </button>
                     </div>
 
-                    <div className="overflow-y-auto flex-1 p-6 space-y-5">
+                    <div className="modal-body space-y-5">
                         {step === 1 ? (
                             <>
                                 {/* Required & Optional Columns Schema Display */}
@@ -243,7 +243,7 @@ export default function BulkImportModal({ onClose, onSuccess }) {
                                         <CheckCircle2 size={20} className={validStudents.length > 0 ? 'text-emerald-600' : 'text-rose-600'} />
                                         <div>
                                             <h4 className="text-sm font-extrabold text-slate-900">
-                                                ✔ {validStudents.length} student(s) ready to import
+                                                {validStudents.length} student(s) ready to import
                                             </h4>
                                             {validationErrors.length > 0 && (
                                                 <p className="text-xs text-rose-700 font-semibold mt-0.5">

@@ -156,6 +156,7 @@ exports.getQuizAnalytics = async (req, res) => {
             let skipped = 0;
             let totalTimeSpent = 0;
             let answeredCount = 0;
+            let validTimeCount = 0;
             const optionSelection = {};
             q.options.forEach(opt => optionSelection[opt.toLowerCase()] = 0);
 
@@ -178,7 +179,15 @@ exports.getQuizAnalytics = async (req, res) => {
                         // find closest match or just add
                         optionSelection[selOpt] = 1;
                     }
-                    totalTimeSpent += (ans.timeTaken || 0);
+
+                    const t = Number(ans.timeTaken);
+                    if (Number.isFinite(t) && t > 0) {
+                        totalTimeSpent += t;
+                        validTimeCount++;
+                    } else if (r.totalTimeTaken > 0 && normalizedQuestions.length > 0) {
+                        totalTimeSpent += Math.max(1, Math.round(r.totalTimeTaken / normalizedQuestions.length));
+                        validTimeCount++;
+                    }
                     answeredCount++;
                 }
             });
@@ -190,24 +199,66 @@ exports.getQuizAnalytics = async (req, res) => {
                 correct,
                 wrong,
                 skipped,
+                answeredCount,
                 accuracy: totalParticipants > 0 ? Math.round((correct / totalParticipants) * 100) : 0,
-                avgTimeSpent: answeredCount > 0 ? Math.round(totalTimeSpent / answeredCount) : 0,
+                avgTimeSpent: validTimeCount > 0 ? Math.round(totalTimeSpent / validTimeCount) : (answeredCount > 0 ? 5 : 0),
                 optionSelection
             };
         });
 
-        // 3. Section/Topic Performance (if applicable, using student branch/section)
+        // 3. Section/Topic Performance (differentiating sections across branches, e.g., CSE-C vs CSM-C)
         const sectionMap = {};
         results.forEach(r => {
-            const section = r.student?.section || r.student?.studentBranch || 'General';
-            if (!sectionMap[section]) sectionMap[section] = { totalScore: 0, count: 0, maxScore: 0 };
-            sectionMap[section].totalScore += r.score;
-            sectionMap[section].count++;
-            sectionMap[section].maxScore += maxScore;
+            const rawBranch = (r.student?.studentBranch || '').trim();
+            const rawSec = (r.student?.section || '').trim();
+
+            let sectionKey = 'General';
+            let branch = null;
+            let section = null;
+
+            if (rawBranch && rawSec) {
+                const cleanBranch = rawBranch.toUpperCase();
+                let cleanSec = rawSec.toUpperCase();
+                // If section string already contains branch prefix (e.g. "CSE-C", "CSE C", "CSE_C")
+                if (cleanSec.startsWith(cleanBranch)) {
+                    cleanSec = cleanSec.slice(cleanBranch.length).replace(/^[-_\s]+/, '') || cleanSec;
+                }
+                sectionKey = `${cleanBranch}-${cleanSec}`;
+                branch = cleanBranch;
+                section = cleanSec;
+            } else if (rawBranch) {
+                sectionKey = rawBranch.toUpperCase();
+                branch = rawBranch.toUpperCase();
+            } else if (rawSec) {
+                sectionKey = rawSec.toUpperCase();
+                section = rawSec.toUpperCase();
+            }
+
+            if (!sectionMap[sectionKey]) {
+                sectionMap[sectionKey] = { totalScore: 0, count: 0, maxScore: 0, branch, section };
+            }
+            sectionMap[sectionKey].totalScore += r.score;
+            sectionMap[sectionKey].count++;
+            sectionMap[sectionKey].maxScore += maxScore;
         });
 
-        const sectionPerformance = Object.keys(sectionMap).map(sec => ({
+        // Sort sections naturally by branch then section (e.g., CSE-A..CSE-I, then CSM-A..CSM-E, General last)
+        const sortedSectionKeys = Object.keys(sectionMap).sort((a, b) => {
+            if (a === 'General') return 1;
+            if (b === 'General') return -1;
+            const [branchA, ...secPartsA] = a.split('-');
+            const [branchB, ...secPartsB] = b.split('-');
+            if (branchA !== branchB) {
+                return branchA.localeCompare(branchB);
+            }
+            return secPartsA.join('-').localeCompare(secPartsB.join('-'), undefined, { numeric: true, sensitivity: 'base' });
+        });
+
+        const sectionPerformance = sortedSectionKeys.map(sec => ({
             section: sec,
+            branch: sectionMap[sec].branch,
+            rawSection: sectionMap[sec].section,
+            studentCount: sectionMap[sec].count,
             averagePercentage: Math.round((sectionMap[sec].totalScore / sectionMap[sec].maxScore) * 100),
             averageScore: Math.round((sectionMap[sec].totalScore / sectionMap[sec].count) * 10) / 10
         }));
@@ -334,11 +385,14 @@ exports.getQuizAnalytics = async (req, res) => {
         }
 
         let studentAttempt = null;
-        if (req.user && req.user.id) {
-            const studentResult = results.find(r => r.studentId === req.user.id);
+        const targetStudentId = (req.user?.role !== 'student' && req.query.studentId) ? req.query.studentId : req.user?.id;
+        if (targetStudentId) {
+            const studentResult = results.find(r => r.studentId === targetStudentId);
             if (studentResult) {
                 studentAttempt = {
                     id: studentResult.id,
+                    studentId: studentResult.studentId,
+                    studentName: studentResult.student?.username || studentResult.student?.name || 'Student',
                     score: studentResult.score,
                     totalTimeTaken: studentResult.totalTimeTaken,
                     answers: getAnswersArray(studentResult.answers)
@@ -420,9 +474,14 @@ exports.getQuestionAnalysis = async (req, res) => {
         
         const studentInsights = { correct: [], wrong: [], skipped: [] };
 
+        let validTimeCount = 0;
+
         results.forEach(r => {
             const answersArray = getAnswersArray(r.answers);
-            const ans = answersArray.find(a => a && a.questionText === question.questionText);
+            const ans = answersArray.find(a => a && (
+                (a.questionIndex !== undefined && Number(a.questionIndex) === qIndex) ||
+                (a.questionText && a.questionText.toString().trim().toLowerCase() === question.questionText.toString().trim().toLowerCase())
+            ));
             const studentName = r.student?.username || 'Unknown';
             if (!ans || !ans.selectedOption || ans.selectedOption === '') {
                 skippedCount++;
@@ -442,7 +501,15 @@ exports.getQuestionAnalysis = async (req, res) => {
                 } else {
                     optionSelection[selOpt] = 1;
                 }
-                totalTimeSpent += (ans.timeTaken || 0);
+
+                const t = Number(ans.timeTaken);
+                if (Number.isFinite(t) && t > 0) {
+                    totalTimeSpent += t;
+                    validTimeCount++;
+                } else if (r.totalTimeTaken > 0 && normalizedQuestions.length > 0) {
+                    totalTimeSpent += Math.max(1, Math.round(r.totalTimeTaken / normalizedQuestions.length));
+                    validTimeCount++;
+                }
             }
         });
 
@@ -478,7 +545,7 @@ exports.getQuestionAnalysis = async (req, res) => {
                 correctPercentage: totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0,
                 wrongPercentage: totalAttempts > 0 ? Math.round((wrongCount / totalAttempts) * 100) : 0,
                 skippedPercentage: totalAttempts > 0 ? Math.round((skippedCount / totalAttempts) * 100) : 0,
-                avgTimeSpent: answeredCount > 0 ? Math.round(totalTimeSpent / answeredCount) : 0,
+                avgTimeSpent: validTimeCount > 0 ? Math.round(totalTimeSpent / validTimeCount) : (answeredCount > 0 ? 5 : 0),
                 optionSelection: Object.entries(optionSelection).map(([opt, count]) => ({ option: opt, count }))
             },
             studentInsights,

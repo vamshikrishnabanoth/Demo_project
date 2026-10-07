@@ -195,18 +195,22 @@ export default function PipelineObservabilityModal({
     const CurrentStageIcon = currentStageData.icon;
 
     return (
-        <div className="fixed inset-0 z-[250] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div className="modal-overlay !z-[300]">
+            {/* Solid Deep Backdrop that blocks underlying dashboard bleed */}
+            <div className="modal-backdrop !bg-slate-950/88 !backdrop-blur-2xl" onClick={onClose} />
+
             {/* Modal Container */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                initial={{ opacity: 0, scale: 0.96, y: 12 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 15 }}
-                className="w-full max-w-6xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-[0_25px_80px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col my-auto max-h-[92vh]"
+                exit={{ opacity: 0, scale: 0.96, y: 12 }}
+                className="modal-card-dark w-full max-w-6xl !bg-[#0b1120] border !border-slate-800/90 shadow-[0_25px_80px_rgba(0,0,0,0.8)] relative z-10"
+                onClick={(e) => e.stopPropagation()}
             >
                 {/* Modal Header */}
-                <div className="bg-slate-950 px-6 py-4 border-b border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                <div className="modal-header-dark bg-[#070c18] px-6 py-4 border-b border-slate-800/90 flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                        <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-xs">
                             <Activity size={20} className="animate-pulse" />
                         </div>
                         <div>
@@ -226,7 +230,7 @@ export default function PipelineObservabilityModal({
 
                     {/* Top Navigation Tabs */}
                     <div className="flex items-center gap-2">
-                        <div className="bg-slate-900 border border-slate-800 rounded-xl p-1 flex items-center gap-1">
+                        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-1 flex items-center gap-1">
                             <button
                                 onClick={() => setActiveTab('pipeline')}
                                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
@@ -261,7 +265,8 @@ export default function PipelineObservabilityModal({
 
                         <button
                             onClick={onClose}
-                            className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-all ml-2"
+                            className="modal-close-btn-dark hover:text-white hover:bg-slate-800/80 transition-all ml-2"
+                            title="Close Observability Modal"
                         >
                             <X size={18} />
                         </button>
@@ -269,7 +274,7 @@ export default function PipelineObservabilityModal({
                 </div>
 
                 {/* Main Body */}
-                <div className="flex-1 overflow-y-auto p-6">
+                <div className="modal-body p-6 bg-[#0b1120] text-slate-100">
                     {/* TAB 1: 8-STAGE INTERACTIVE PIPELINE FLOW */}
                     {activeTab === 'pipeline' && (
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

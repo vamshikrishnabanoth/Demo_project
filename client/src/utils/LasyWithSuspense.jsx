@@ -23,7 +23,7 @@ export const lazyWithSuspense = (componentImport, fallback = <NavigationSkeleton
             // Check if we retried in the last 10 seconds to prevent infinite reload loops
             if (!lastRetry || now - parseInt(lastRetry) > 10000) {
                 localStorage.setItem(lastRetryKey, now.toString());
-                console.log("🔄 [lazyWithSuspense] Retrying dynamic import in 1.5 seconds...");
+                console.log("[lazyWithSuspense] Retrying dynamic import in 1.5 seconds...");
                 await new Promise(resolve => setTimeout(resolve, 1500));
                 try {
                     return await componentImport();

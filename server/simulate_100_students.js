@@ -10,7 +10,7 @@
  * 
  * Examples:
  *   node server/simulate_100_students.js 349722
- *   node server/simulate_100_students.js 349722 100 https://demo-project-3izc.onrender.com
+ *   node server/simulate_100_students.js 349722 100 https://quiz-backend-qgro.onrender.com
  */
 
 'use strict';
@@ -35,7 +35,7 @@ if (!QUIZ_TARGET) {
     console.error('\nUsage:');
     console.error('  node server/simulate_100_students.js <QUIZ_ID_OR_PIN> [STUDENT_COUNT] [BASE_URL]\n');
     console.error('Example:');
-    console.error('  node server/simulate_100_students.js 349722 100 https://demo-project-3izc.onrender.com\n');
+    console.error('  node server/simulate_100_students.js 349722 100 https://quiz-backend-qgro.onrender.com\n');
     process.exit(1);
 }
 
@@ -89,7 +89,7 @@ async function runSimulation() {
         const dbUser = dbStudents[i - 1];
         const studentId = dbUser ? dbUser.id : `sim_student_${i}_${Date.now()}`;
         const username = dbUser ? dbUser.username : `Student_Bot_${i}`;
-        const role = dbUser ? dbUser.role : 'student';
+        const role = 'simulation';
 
         // Sign simulation token using unified fallback secret
         const token = jwt.sign(

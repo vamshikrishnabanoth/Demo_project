@@ -89,12 +89,12 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="modal-overlay">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                    className="modal-backdrop"
                     onClick={onClose}
                 />
                 
@@ -102,7 +102,7 @@ export default function ScheduleEditModal({ isOpen, onClose, quizId, onSuccess }
                     initial={{ scale: 0.95, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                    className="relative w-full max-w-xl bg-[#0f172a] rounded-[2.5rem] border border-white/10 shadow-2xl overflow-hidden glass-panel"
+                    className="modal-card-dark w-full max-w-xl"
                 >
                     {/* Header */}
                     <div className="p-8 border-b border-white/5 flex items-center justify-between">

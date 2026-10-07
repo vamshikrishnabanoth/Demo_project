@@ -241,7 +241,7 @@ export default function QuestionAnalysis() {
                             {question.points || 10} Points
                         </span>
                         <span className="text-xs font-black px-4 py-2 rounded-xl uppercase tracking-widest border inline-flex items-center gap-1.5" style={{ backgroundColor: '#f1f5f9', color: '#0f172a', borderColor: '#cbd5e1' }}>
-                            <Clock size={13} aria-hidden="true" /> {formatDuration(userAnswer?.timeTaken)}
+                            <Clock size={13} aria-hidden="true" /> {isStudent && userAnswer?.timeTaken !== null && userAnswer?.timeTaken !== undefined ? `Time: ${formatDuration(userAnswer.timeTaken)}` : `Avg: ${formatDuration(analytics?.avgTimeSpent || 0)}`}
                         </span>
                     </div>
 

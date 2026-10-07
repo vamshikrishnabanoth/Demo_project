@@ -1,5 +1,4 @@
-import React from 'react';
-import { X, Award, AlertTriangle, CheckCircle, Lightbulb, Zap, BookOpen } from 'lucide-react';
+import { X, Award, AlertTriangle, CheckCircle, Lightbulb, Zap, BookOpen, Check, Tag } from 'lucide-react';
 
 export default function TeachingScoreModal({
     isOpen,
@@ -64,13 +63,14 @@ export default function TeachingScoreModal({
     const ratingInfo = getRatingBadge(rating, score);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="modal-overlay">
+            <div className="modal-backdrop" onClick={onClose} />
             <div 
-                className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+                className="modal-card w-full max-w-3xl animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="px-6 py-5 bg-gradient-to-r from-orange-50 via-amber-50 to-white border-b border-orange-200/70 flex items-center justify-between">
+                <div className="modal-header bg-gradient-to-r from-orange-50 via-amber-50 to-white border-b border-orange-200/70">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-600 shadow-xs">
                             <Award size={22} />
@@ -87,15 +87,15 @@ export default function TeachingScoreModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                        className="modal-close-btn"
                         title="Close Modal"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                 </div>
 
                 {/* Body Content */}
-                <div className="p-6 overflow-y-auto space-y-6 text-slate-800">
+                <div className="modal-body space-y-6 text-slate-800">
                     
                     {/* Hero Score Gauge */}
                     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white rounded-2xl p-5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-5">
@@ -233,7 +233,7 @@ export default function TeachingScoreModal({
                                 {coveredAspects.length > 0 ? (
                                     coveredAspects.map((aspect, i) => (
                                         <li key={i} className="flex items-start gap-1.5">
-                                            <span className="text-emerald-600 font-bold shrink-0">✓</span>
+                                            <Check size={14} className="text-emerald-600 font-bold shrink-0 stroke-[2.5] mt-0.5" />
                                             <span>{aspect}</span>
                                         </li>
                                     ))
@@ -279,8 +279,9 @@ export default function TeachingScoreModal({
                             {detectedFocus && detectedFocus.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 pt-1">
                                     {detectedFocus.map((concept, i) => (
-                                        <span key={i} className="text-[11px] font-bold bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-full shadow-2xs">
-                                            🏷️ {concept}
+                                        <span key={i} className="text-[11px] font-bold bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-full shadow-2xs inline-flex items-center gap-1.5">
+                                            <Tag size={12} className="text-orange-600 shrink-0" />
+                                            <span>{concept}</span>
                                         </span>
                                     ))}
                                 </div>

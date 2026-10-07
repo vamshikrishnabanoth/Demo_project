@@ -1512,7 +1512,7 @@ export default function AdminDashboard() {
                             System Operational
                         </div>
                         <h1 className="text-3xl sm:text-4xl font-black text-[#0f172a] uppercase italic tracking-tight">
-                            {getGreeting()}, <span className="text-[var(--text-accent)]">{user?.name || user?.username || 'Administrator'}</span> 👋
+                            {getGreeting()}, <span className="text-[var(--text-accent)]">{user?.name || user?.username || 'Administrator'}</span>
                         </h1>
                         <p className="text-slate-700 font-bold text-xs sm:text-sm">
                             Admin Command Center — Real-Time Directory & Enterprise Controls

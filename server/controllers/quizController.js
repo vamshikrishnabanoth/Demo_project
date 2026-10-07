@@ -17,7 +17,7 @@ if (typeof globalThis.File === 'undefined') {
 const Groq = require('groq-sdk');
 const { toFile } = require('groq-sdk');
 const { runAgentPipeline, finalQuizValidator } = require('../services/agentPipeline');
-const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
+const { createTask, updateTaskStage, recordTaskStage, updateTaskArtifact, completeTask, failTask, getTask } = require('../services/taskManager');
 const { hashQuiz, verifyQuizIntegrity } = require('../lib/quizintegrity');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
@@ -835,30 +835,35 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         };
 
         const progressCallback = (event) => {
-            if (taskId && event && event.stage) {
-                const mapped = stageLabelMap[event.stage];
-                if (mapped) {
-                    let label = mapped.label;
-                    if (event.decisions && Array.isArray(event.decisions) && event.decisions.length > 0) {
-                        const firstDec = event.decisions[0];
-                        if (firstDec) {
-                            const qMatch = firstDec.match(/(?:Question\s+(\d+)\/(\d+)|Target\s+T(\d+))/i);
-                            const qNum = qMatch ? (qMatch[1] || qMatch[3]) : null;
-                            const qTotal = qMatch && qMatch[2] ? qMatch[2] : count;
-                            if (firstDec.includes('Generating candidate MCQ') || event.stage === 'QUESTION_GENERATION') {
-                                label = qNum ? `Agent 2: Formulating Question ${qNum} of ${qTotal}` : `Agent 2: Generating Question Candidates`;
-                            } else if (firstDec.includes('Auditing Question') || firstDec.includes('PASSED') || event.stage === 'AGENT_3_QUESTION_EVAL') {
-                                label = qNum ? `Agent 3: Auditing Grounding for Question ${qNum} of ${qTotal}` : `Agent 3: Auditing Pedagogical Grounding`;
-                            } else if (firstDec.includes('Assessment Plan') || event.stage === 'AGENT_1_PLANNING') {
-                                label = `Agent 1: Planning ${count} Pedagogical Targets across Curriculum`;
-                            } else if (event.stage === 'FINAL_GROUNDING_GATE') {
-                                label = `Grounding Gate: Assembling Ground-Truth Assessment`;
-                            } else {
-                                label = `${mapped.label}: ${firstDec.substring(0, 60)}`;
+            if (taskId && event) {
+                if (typeof recordTaskStage === 'function') {
+                    recordTaskStage(taskId, event);
+                }
+                if (event.stage) {
+                    const mapped = stageLabelMap[event.stage];
+                    if (mapped) {
+                        let label = mapped.label;
+                        if (event.decisions && Array.isArray(event.decisions) && event.decisions.length > 0) {
+                            const firstDec = event.decisions[0];
+                            if (firstDec) {
+                                const qMatch = firstDec.match(/(?:Question\s+(\d+)\/(\d+)|Target\s+T(\d+))/i);
+                                const qNum = qMatch ? (qMatch[1] || qMatch[3]) : null;
+                                const qTotal = qMatch && qMatch[2] ? qMatch[2] : count;
+                                if (firstDec.includes('Generating candidate MCQ') || event.stage === 'QUESTION_GENERATION') {
+                                    label = qNum ? `Agent 2: Formulating Question ${qNum} of ${qTotal}` : `Agent 2: Generating Question Candidates`;
+                                } else if (firstDec.includes('Auditing Question') || firstDec.includes('PASSED') || event.stage === 'AGENT_3_QUESTION_EVAL') {
+                                    label = qNum ? `Agent 3: Auditing Grounding for Question ${qNum} of ${qTotal}` : `Agent 3: Auditing Pedagogical Grounding`;
+                                } else if (firstDec.includes('Assessment Plan') || event.stage === 'AGENT_1_PLANNING') {
+                                    label = `Agent 1: Planning ${count} Pedagogical Targets across Curriculum`;
+                                } else if (event.stage === 'FINAL_GROUNDING_GATE') {
+                                    label = `Grounding Gate: Assembling Ground-Truth Assessment`;
+                                } else {
+                                    label = `${mapped.label}: ${firstDec.substring(0, 60)}`;
+                                }
                             }
                         }
+                        updateTaskStage(taskId, mapped.stage, label, event.representation_mode);
                     }
-                    updateTaskStage(taskId, mapped.stage, label, event.representation_mode);
                 }
             }
         };
@@ -868,8 +873,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             console.log(`✅ [Baseline v1.0] 3-Agent Pipeline delivered ${result.questions.length} questions.`);
             if (taskId) {
                 updateTaskStage(taskId, 7, 'Grounding Gate & Final Audit');
-                const { getTask: getTaskForMeta } = require('../services/taskManager');
-                const tObj = getTaskForMeta(taskId);
+                const tObj = getTask(taskId);
                 if (tObj) {
                     tObj.pipelineNotice = result.notice || null;
                     tObj.alignmentWarning = result.alignmentWarning || null;
@@ -878,6 +882,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     tObj.requestedCount = sessionInputs.count;
                     tObj.deliveredCount = result.questions.length;
                     tObj.representation_mode = tObj.representation_mode || result.representationMode || null;
+                    tObj.pipelineResult = result;
+                    if (result.stages) tObj.stages = result.stages;
                 }
             }
             return result.questions;
@@ -1446,27 +1452,45 @@ exports.getMyQuizzes = async (req, res) => {
             orderBy: { createdAt: 'desc' }
         });
 
-        const enriched = await Promise.all(quizzes.map(async (quiz) => {
-            const results = await prisma.result.findMany({
-                where: { quizId: quiz.id }
-            });
-            const completionCount = results.length;
+        if (!quizzes.length) {
+            return res.json([]);
+        }
+
+        const quizIds = quizzes.map(q => q.id);
+        const results = await prisma.result.findMany({
+            where: { quizId: { in: quizIds } },
+            select: {
+                quizId: true,
+                score: true,
+                student: { select: { username: true } }
+            }
+        });
+
+        const resultsByQuiz = {};
+        for (const r of results) {
+            if (!resultsByQuiz[r.quizId]) resultsByQuiz[r.quizId] = [];
+            resultsByQuiz[r.quizId].push(r);
+        }
+
+        const enriched = quizzes.map((quiz) => {
+            const quizResults = resultsByQuiz[quiz.id] || [];
+            const completionCount = quizResults.length;
             const averageScore = completionCount > 0
-                ? results.reduce((sum, r) => sum + r.score, 0) / completionCount
+                ? Math.round(quizResults.reduce((sum, r) => sum + r.score, 0) / completionCount)
                 : 0;
             return {
                 ...quiz,
                 completionCount,
                 averageScore,
-                results: results
+                results: quizResults
                     .sort((a, b) => b.score - a.score)
                     .slice(0, 3)
                     .map(r => ({
-                        studentName: r.studentName || 'Student',
+                        studentName: r.student?.username || 'Student',
                         score: r.score
                     }))
             };
-        }));
+        });
 
         res.json(enriched);
     } catch (err) {
@@ -1566,7 +1590,7 @@ exports.getSavedTemplates = async (req, res) => {
                 createdById: req.user.id,
                 isTemplate: true
             },
-            orderBy: { updatedAt: 'desc' }
+            orderBy: { createdAt: 'desc' }
         });
         res.json(templates);
     } catch (err) {
@@ -2434,21 +2458,36 @@ exports.getTeacherStats = async (req, res) => {
             orderBy: { createdAt: 'desc' }
         });
 
-        const stats = await Promise.all(quizzes.map(async (quiz) => {
-            const dbResults = await prisma.result.findMany({
-                where: { quizId: quiz.id },
-                include: { student: { select: { username: true, email: true } } },
-                orderBy: [{ score: 'desc' }, { completedAt: 'asc' }]
-            });
+        if (!quizzes.length) {
+            return res.json([]);
+        }
 
-            const results = dbResults.map(r => ({
+        const quizIds = quizzes.map(q => q.id);
+        const dbResults = await prisma.result.findMany({
+            where: { quizId: { in: quizIds } },
+            select: {
+                quizId: true,
+                score: true,
+                totalQuestions: true,
+                completedAt: true,
+                student: { select: { username: true, email: true } }
+            },
+            orderBy: [{ score: 'desc' }, { completedAt: 'asc' }]
+        });
+
+        const resultsByQuiz = {};
+        for (const r of dbResults) {
+            if (!resultsByQuiz[r.quizId]) resultsByQuiz[r.quizId] = [];
+            resultsByQuiz[r.quizId].push({
                 studentName: r.student?.username || 'Unknown',
                 score: r.score,
                 totalQuestions: r.totalQuestions,
-                completedAt: r.completedAt,
-                answers: r.answers
-            }));
+                completedAt: r.completedAt
+            });
+        }
 
+        const stats = quizzes.map((quiz) => {
+            const results = resultsByQuiz[quiz.id] || [];
             const completionCount = results.length;
             const averageScore = completionCount > 0
                 ? (results.reduce((sum, r) => sum + r.score, 0) / completionCount)
@@ -2463,7 +2502,7 @@ exports.getTeacherStats = async (req, res) => {
                 averageScore,
                 results
             };
-        }));
+        });
 
         res.json(stats);
     } catch (err) {
@@ -2857,6 +2896,22 @@ exports.generateQuizQuestions = async (req, res) => {
                         source_name: 'Topic Input'
                     });
                 }
+            }
+
+            if (taskId && parsedInputs && parsedInputs.length > 0) {
+                updateTaskArtifact(taskId, 'ingestion', {
+                    sources: parsedInputs.map(p => ({
+                        name: p.source_name || 'Uploaded Source',
+                        type: p.type || 'text',
+                        startPage: p.startPage || 1,
+                        endPage: p.endPage || 1,
+                        snippet: (p.content || '').slice(0, 1000),
+                        wordCount: (p.content || '').split(/\s+/).filter(Boolean).length,
+                        charCount: (p.content || '').length
+                    })),
+                    totalWords: parsedInputs.reduce((s, p) => s + (p.content || '').split(/\s+/).filter(Boolean).length, 0),
+                    totalChars: parsedInputs.reduce((s, p) => s + (p.content || '').length, 0)
+                });
             }
 
             let isSparse = false;
@@ -3294,6 +3349,17 @@ exports.generateQuizQuestions = async (req, res) => {
                 alignmentWarning: (finalTaskObj && finalTaskObj.alignmentWarning) || null,
                 unalignedDocuments: (finalTaskObj && finalTaskObj.unalignedDocuments) || [],
                 representation_mode: (finalTaskObj && finalTaskObj.representation_mode) || (isVoiceSource ? 'SUMMARY' : 'BLUEPRINT'),
+                stages:          (finalTaskObj && finalTaskObj.stages) || [],
+                stageMap:        (finalTaskObj && finalTaskObj.stageMap) || {},
+                liveArtifacts:   (finalTaskObj && finalTaskObj.liveArtifacts) || {},
+                pipelineResult:  (finalTaskObj && finalTaskObj.pipelineResult) || null,
+                plan:            (finalTaskObj && finalTaskObj.pipelineResult?.plan) || null,
+                evidencePackage: (finalTaskObj && finalTaskObj.pipelineResult?.evidencePackage) || null,
+                tcScore:         (finalTaskObj && finalTaskObj.pipelineResult?.tcScore) || null,
+                quizEvaluation:  (finalTaskObj && finalTaskObj.pipelineResult?.quizEvaluation) || null,
+                targetResults:   (finalTaskObj && finalTaskObj.pipelineResult?.targetResults) || [],
+                difficultyReport: (finalTaskObj && finalTaskObj.pipelineResult?.difficultyReport) || null,
+                telemetry:       (finalTaskObj && finalTaskObj.pipelineResult?.telemetry) || null,
                 metadata: {
                     executionMessages: (finalTaskObj && finalTaskObj.executionMessages) || []
                 }
@@ -3451,13 +3517,33 @@ exports.getLiveQuizzes = async (req, res) => {
         }
 
         const now = new Date();
+        const isTeacherOrAdmin = req.user && ['teacher', 'admin'].includes(req.user.role);
+        const quizIds = studentFilteredQuizzes.map(q => q.id);
 
-        const quizzesWithAttempts = await Promise.all(studentFilteredQuizzes.map(async (quiz) => {
-            // Get the student's LATEST result for this quiz (for resultId link)
-            const result = await prisma.result.findFirst({
-                where: { quizId: quiz.id, studentId: req.user.id },
-                orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
-            });
+        const studentResults = quizIds.length > 0 ? await prisma.result.findMany({
+            where: {
+                quizId: { in: quizIds },
+                studentId: req.user.id
+            },
+            select: {
+                id: true,
+                quizId: true,
+                score: true,
+                completedAt: true,
+                lastAnsweredAt: true
+            },
+            orderBy: [{ completedAt: 'desc' }, { lastAnsweredAt: 'desc' }]
+        }) : [];
+
+        const latestResultByQuiz = {};
+        for (const resItem of studentResults) {
+            if (!latestResultByQuiz[resItem.quizId]) {
+                latestResultByQuiz[resItem.quizId] = resItem;
+            }
+        }
+
+        const quizzesWithAttempts = studentFilteredQuizzes.map((quiz) => {
+            const result = latestResultByQuiz[quiz.id] || null;
 
             // Determine timing status for assessments
             let isLocked = false;
@@ -3484,11 +3570,9 @@ exports.getLiveQuizzes = async (req, res) => {
             }
 
             // Strip raw questions column for students (security against sniffing), but keep for teachers/admins
-            const isTeacherOrAdmin = req.user && ['teacher', 'admin'].includes(req.user.role);
             const { questions, ...quizData } = quiz;
 
             // wasLiveCompleted: true when this quiz was a live session that has now finished.
-            // The Assessments tab uses this flag to show START (async practice) + RESULT buttons.
             const wasLiveCompleted = quiz.isLive && quiz.status === 'finished';
 
             let questionsArr = Array.isArray(quiz.questions) ? quiz.questions : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions) : []);
@@ -3507,7 +3591,7 @@ exports.getLiveQuizzes = async (req, res) => {
                 wasLiveCompleted,
                 resultId: result ? result.id : null
             };
-        }));
+        });
 
         res.json(quizzesWithAttempts);
     } catch (err) {

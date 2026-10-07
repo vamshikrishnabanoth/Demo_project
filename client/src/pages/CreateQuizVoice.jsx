@@ -6,12 +6,10 @@ import { Mic, UploadCloud, FileAudio, FileText, CheckCircle, AlertCircle, X, Act
 import { uiTerminology } from '../utils/uiTerminology';
 import api from '../utils/api';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
-import PipelineObservabilityModal from '../components/quiz/PipelineObservabilityModal';
 
 export default function CreateQuizVoice() {
     const navigate = useNavigate();
     const [mode, setMode] = useState('record'); // 'record' | 'upload'
-    const [showObservability, setShowObservability] = useState(false);
     
     // File upload state
     const [audioFile, setAudioFile] = useState(null);
@@ -400,15 +398,6 @@ export default function CreateQuizVoice() {
                     )}
                 </div>
             </div>
-
-            <PipelineObservabilityModal
-                isOpen={showObservability}
-                onClose={() => setShowObservability(false)}
-                questions={[]}
-                title="Voice Assessment Pipeline Architecture"
-                isVoice={true}
-                duration={10}
-            />
         </DashboardLayout>
     );
 }

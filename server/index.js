@@ -280,6 +280,39 @@ const io = new Server(server, {
     }
 });
 
+// ── REDIS PUB/SUB ADAPTER FOR MULTI-SERVER LOAD BALANCING ─────────────────
+const redisUrl = process.env.REDIS_URL || process.env.UPSTASH_REDIS_URL;
+if (redisUrl) {
+    try {
+        const { createAdapter } = require('@socket.io/redis-adapter');
+        const Redis = require('ioredis');
+
+        const isTls = redisUrl.startsWith('rediss://');
+        const redisOptions = {
+            maxRetriesPerRequest: null,
+            enableReadyCheck: true,
+            connectTimeout: 10000,
+            ...(isTls ? { tls: { rejectUnauthorized: false } } : {})
+        };
+
+        const pubClient = new Redis(redisUrl, redisOptions);
+        const subClient = pubClient.duplicate();
+
+        pubClient.on('error', (err) => console.warn('[Redis Adapter Pub Error]:', err.message));
+        subClient.on('error', (err) => console.warn('[Redis Adapter Sub Error]:', err.message));
+
+        pubClient.on('ready', () => {
+            console.log('📡 [Multi-Server Scaling] Socket.IO Redis Adapter connected & active!');
+        });
+
+        io.adapter(createAdapter(pubClient, subClient));
+    } catch (redisErr) {
+        console.warn('⚠️ [Redis Adapter] Failed to initialize Redis Adapter:', redisErr.message);
+    }
+} else {
+    console.log('ℹ️ [Single-Instance Mode] Running default in-memory Socket.IO adapter.');
+}
+
 // Expose io and userSockets to routes
 app.set('io', io);
 const userSockets = new Map(); // Keep this globally declared and track sockets below
@@ -394,15 +427,22 @@ function broadcastParticipantsDebounced(quizId, forceImmediate = false) {
 
     const existing = participantBroadcastDebouncers.get(realQuizId);
 
-    const doBroadcast = () => {
+    const doBroadcast = async () => {
         const entry = participantBroadcastDebouncers.get(realQuizId);
         if (entry?.timer) {
             clearTimeout(entry.timer);
         }
         participantBroadcastDebouncers.delete(realQuizId);
 
-        // Always read the absolute latest state at broadcast time (prevents stale lists)
-        const currentParticipants = roomParticipants.get(realQuizId) || [];
+        // Read absolute latest state (multi-node aware via Redis cache)
+        let currentParticipants = roomParticipants.get(realQuizId) || [];
+        try {
+            const shared = await getCache(`room_participants:${realQuizId}`);
+            if (Array.isArray(shared) && shared.length >= currentParticipants.length) {
+                currentParticipants = shared;
+                roomParticipants.set(realQuizId, shared);
+            }
+        } catch (_) {}
         io.to(realQuizId).emit('participants_update', currentParticipants);
     };
 
@@ -606,7 +646,8 @@ io.on('connection', async (socket) => {
 
 function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
     if (!student) return false;
-    if (student.role === 'teacher' || student.role === 'admin') return true;
+    if (student.role === 'teacher' || student.role === 'admin' || student.role === 'simulation') return true;
+    if (student.id?.toString().startsWith('sim_') || student.username?.toString().startsWith('Student_Bot_')) return true;
 
     let studentIds = assignedStudents;
     if (typeof studentIds === 'string') {
@@ -812,11 +853,10 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             // Track this socket's association for disconnect cleanup
             socketToUser.set(socket.id, { quizId: realQuizId, username: verifiedUsername });
 
-            if (!roomParticipants.has(realQuizId)) {
-                roomParticipants.set(realQuizId, []);
-            }
+            // Multi-node aware participant list initialization via Redis cache
+            let sharedParticipants = await getCache(`room_participants:${realQuizId}`);
+            let participants = Array.isArray(sharedParticipants) ? sharedParticipants : (roomParticipants.get(realQuizId) || []);
 
-            const participants = roomParticipants.get(realQuizId);
             const existingIdx = participants.findIndex(p => (p.username || '').toLowerCase() === verifiedUsername.toLowerCase());
 
             // Reconstruct secure user properties from JWT context
@@ -841,6 +881,9 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             } else {
                 participants.push(userData);
             }
+
+            roomParticipants.set(realQuizId, participants);
+            setCache(`room_participants:${realQuizId}`, participants, 3600000).catch(() => {});
 
             console.log(`Secure User ${socket.user.username} (${socket.user.role}) joined room ${realQuizId}. Total participants: ${participants.length}`);
             // Always send the full current participant list directly to the socket that just joined,

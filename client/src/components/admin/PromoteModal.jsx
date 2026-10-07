@@ -109,13 +109,13 @@ export default function PromoteModal({ onClose, onSuccess }) {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="modal-overlay">
                 {/* Backdrop */}
                 <motion.div 
                     initial={{ opacity: 0 }} 
                     animate={{ opacity: 1 }} 
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
+                    className="modal-backdrop" 
                     onClick={onClose} 
                 />
 
@@ -124,7 +124,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                     initial={{ opacity: 0, scale: 0.95, y: 15 }} 
                     animate={{ opacity: 1, scale: 1, y: 0 }} 
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="relative z-10 w-full max-w-2xl bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+                    className="modal-card w-full max-w-2xl overflow-hidden flex flex-col max-h-[92vh]"
                 >
 
                     {/* Header */}
@@ -234,7 +234,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                         <option value="2">Year 2 (2nd Year)</option>
                                         <option value="3">Year 3 (3rd Year)</option>
                                         <option value="4">Year 4 (4th Year)</option>
-                                        <option value="graduated">🎓 Graduated (Alumni)</option>
+                                        <option value="graduated">Graduated (Alumni)</option>
                                     </select>
                                 </div>
 
@@ -323,7 +323,7 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                                 <td className="p-2.5 font-medium">{s.name || s.username}</td>
                                                 <td className="p-2.5 text-slate-500">Y{s.year} / Sem{s.semester} / {s.section || 'A'}</td>
                                                 <td className="p-2.5 font-bold text-amber-700">
-                                                    {targetYear === 'graduated' ? '🎓 Graduated' : `Y${targetYear} / Sem${targetSem} / ${targetSec !== 'keep' ? targetSec : (s.section || 'A')}`}
+                                                    {targetYear === 'graduated' ? 'Graduated (Alumni)' : `Y${targetYear} / Sem${targetSem} / ${targetSec !== 'keep' ? targetSec : (s.section || 'A')}`}
                                                 </td>
                                             </tr>
                                         ))}

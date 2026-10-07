@@ -15,8 +15,12 @@
 'use strict';
 
 const { randomUUID } = require('crypto');
+const EventEmitter = require('events');
 const providerConfig = require('../config/providerConfig');
 const productionMetrics = require('../utils/productionMetrics');
+
+const taskEmitter = new EventEmitter();
+taskEmitter.setMaxListeners(500);
 
 const TASK_RESULT_TTL_MS = parseInt(process.env.TASK_RESULT_TTL_MS, 10) || 900000; // 15 min
 const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // 5 min
@@ -143,6 +147,9 @@ function createTask(options = {}) {
     representation_mode: null,
     createdAt,
     timeoutTimer: timer,
+    stages: [],
+    stageMap: {},
+    liveArtifacts: {},
     result: null,
     error: null,
     errorCode: null
@@ -156,6 +163,78 @@ function createTask(options = {}) {
 
   productionMetrics.inc('documents_uploaded_total');
   return id;
+}
+
+/**
+ * Record a full structured stage event in real-time.
+ *
+ * @param {string} taskId
+ * @param {Object} event - Structured stage record from SessionTrace
+ */
+function recordTaskStage(taskId, event) {
+  const task = tasks.get(taskId);
+  if (!task || !event) return;
+
+  if (!task.stages) task.stages = [];
+  if (!task.stageMap) task.stageMap = {};
+  if (!task.liveArtifacts) task.liveArtifacts = {};
+
+  const stageKey = event.stage || 'STAGE';
+  task.stageMap[stageKey] = event;
+
+  // Insert or update in stages array preserving timeline order
+  const existingIdx = task.stages.findIndex(s => s.stage === stageKey && (s.stageOrder === event.stageOrder || !s.stageOrder));
+  if (existingIdx >= 0) {
+    task.stages[existingIdx] = { ...task.stages[existingIdx], ...event };
+  } else {
+    task.stages.push(event);
+  }
+
+  // Live artifact captures for fine-grained frontend display:
+  if (event.output) {
+    if (stageKey === 'INGESTION') {
+      task.liveArtifacts.ingestion = { ...task.liveArtifacts.ingestion, ...event.output, input: event.input };
+    } else if (stageKey === 'EVIDENCE_PACKAGE') {
+      task.liveArtifacts.evidencePackage = { ...event.output, calculations: event.calculations, decisions: event.decisions };
+      if (event.output.representationMode) task.representation_mode = event.output.representationMode;
+    } else if (stageKey === 'AGENT_1_PLANNING') {
+      task.liveArtifacts.plan = { ...event.output, tcScore: event.calculations, decisions: event.decisions };
+    } else if (stageKey === 'QUESTION_GENERATION') {
+      task.liveArtifacts.activeGeneration = { targetId: event.input?.targetId, concept: event.input?.concept, tier: event.input?.difficulty, decisions: event.decisions };
+    } else if (stageKey === 'AGENT_3_QUESTION_EVAL') {
+      if (!task.liveArtifacts.evaluations) task.liveArtifacts.evaluations = [];
+      task.liveArtifacts.evaluations.push({ stageOrder: event.stageOrder, decisions: event.decisions, validation: event.validation, timestamp: event.timestamp || Date.now() });
+    } else if (stageKey === 'AGENT_3_QUIZ_EVAL') {
+      task.liveArtifacts.quizEval = event.output;
+    } else if (stageKey === 'FINAL_GROUNDING_GATE') {
+      task.liveArtifacts.grounding = event.output;
+    }
+  }
+
+  taskEmitter.emit(`task:${taskId}`, { type: 'stage', taskId, event });
+}
+
+/**
+ * Update arbitrary live artifact for a task.
+ *
+ * @param {string} taskId
+ * @param {string} key
+ * @param {any} data
+ */
+function updateTaskArtifact(taskId, key, data) {
+  const task = tasks.get(taskId);
+  if (!task) return;
+  if (!task.liveArtifacts) task.liveArtifacts = {};
+  task.liveArtifacts[key] = data;
+  taskEmitter.emit(`task:${taskId}`, { type: 'artifact', taskId, key, data });
+}
+
+function onTaskEvent(taskId, callback) {
+  taskEmitter.on(`task:${taskId}`, callback);
+}
+
+function removeTaskListener(taskId, callback) {
+  taskEmitter.off(`task:${taskId}`, callback);
 }
 
 /**
@@ -184,6 +263,15 @@ function updateTaskStage(taskId, stage, label, representationMode) {
   if (representationMode) {
     task.representation_mode = representationMode;
   }
+
+  taskEmitter.emit(`task:${taskId}`, {
+    type: 'progress',
+    taskId,
+    stage: task.stage,
+    stageLabel: task.stageLabel,
+    progressPct: task.progressPct,
+    representation_mode: task.representation_mode
+  });
 }
 
 /**
@@ -216,6 +304,8 @@ function completeTask(taskId, result) {
   if (result?.questions && Array.isArray(result.questions)) {
     productionMetrics.inc('mcqs_generated_total', result.questions.length);
   }
+
+  taskEmitter.emit(`task:${taskId}`, { type: 'completed', taskId, result });
 }
 
 /**
@@ -244,6 +334,8 @@ function failTask(taskId, error, errorCode = 'FAILED_INTERNAL') {
   if (errorCode === 'INSUFFICIENT_READABLE_EVIDENCE') {
     productionMetrics.inc('insufficient_evidence_count');
   }
+
+  taskEmitter.emit(`task:${taskId}`, { type: 'failed', taskId, error, errorCode });
 }
 
 /**
@@ -297,6 +389,10 @@ module.exports = {
   TaskStates,
   createTask,
   updateTaskStage,
+  recordTaskStage,
+  updateTaskArtifact,
+  onTaskEvent,
+  removeTaskListener,
   completeTask,
   failTask,
   getTask,

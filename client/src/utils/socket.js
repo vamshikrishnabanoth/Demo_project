@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const PRODUCTION_SOCKET_URL = 'https://demo-project-3izc.onrender.com';
+const PRODUCTION_SOCKET_URL = 'https://quiz-backend-qgro.onrender.com';
 
 const isProductionDomain = typeof window !== 'undefined' && (
     window.location.hostname.includes('vercel.app') ||
