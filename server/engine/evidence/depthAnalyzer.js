@@ -1053,13 +1053,13 @@ class DepthAnalyzer {
     }
 
     const basePoints = 40;
-    const conceptPoints = conceptExp === 'Strong' ? 15 : (conceptExp === 'Moderate' ? 10 : 5);
-    const reasoningPoints = reasoning === 'Strong' ? 15 : (reasoning === 'Moderate' ? 10 : 5);
-    const examplePoints = examples === 'Present' ? 15 : 5;
-    const procedurePoints = procedures === 'Strong' ? 15 : (procedures === 'Moderate' ? 10 : 5);
+    const conceptPoints = conceptExp === 'Strong' ? 15 : (conceptExp === 'Moderate' ? 8 : 0);
+    const reasoningPoints = reasoning === 'Strong' ? 15 : (reasoning === 'Moderate' ? 8 : 0);
+    const examplePoints = examples === 'Present' ? 15 : 0;
+    const procedurePoints = procedures === 'Strong' ? 15 : (procedures === 'Moderate' ? 8 : 0);
 
     let depthScore = basePoints + conceptPoints + reasoningPoints + examplePoints + procedurePoints;
-    depthScore = Math.min(100, Math.max(50, depthScore));
+    depthScore = Math.min(100, Math.max(40, depthScore));
 
     const deductions = [];
     if (conceptPoints < 15) {
@@ -1203,7 +1203,7 @@ class DepthAnalyzer {
       isAcademic: true,
       isCurricular: true,
       reason: null,
-      teachingValueScore: Math.max(50, Math.round(totalTeachingValue * 100)),
+      teachingValueScore: Math.round(totalTeachingValue * 100),
       lectureDepth: {
         rating,
         score: depthScore,
