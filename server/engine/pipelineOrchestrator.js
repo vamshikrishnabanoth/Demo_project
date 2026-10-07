@@ -265,9 +265,12 @@ class PipelineOrchestrator {
       let iterationCount = 0;
       const MAX_TOTAL_ITERATIONS = Math.max(20, requestedCount * 3);
 
-      while (candidateQueue.length > 0 && passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
-        iterationCount++;
-        const currentTarget = candidateQueue.shift();
+      // Bounded Concurrency Worker Pool:
+      // Controlled concurrency (default 2, bounded [1, 3]) balances throughput and Groq rate-limits
+      const concurrencyLimit = Math.max(1, Math.min(3, parseInt(process.env.GENERATION_CONCURRENCY, 10) || 2));
+      let activeWorkers = 0;
+
+      async function processSingleTarget(currentTarget, workerId) {
         const tier = currentTarget.targetDifficulty || 'Medium';
         const targetStartTime = Date.now();
         const currentQNum = passingQuestions.length + 1;
@@ -299,9 +302,6 @@ class PipelineOrchestrator {
             evalDecision
           };
 
-          unfulfilledTargets.push(deficitRecord);
-          targetResults.push(deficitRecord);
-
           await trace.recordStage({
             stageOrder: `04_T${currentTarget.targetId}`,
             stageName: 'CAPACITY_DEFICIT_RECORDED',
@@ -313,34 +313,7 @@ class PipelineOrchestrator {
             durationMs: Date.now() - targetStartTime
           });
 
-          // Auto-promote reserve target to fulfill question count!
-          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
-            const nextReserve = activeReservePool.shift();
-            nextReserve.targetDifficulty = tier;
-            const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
-            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
-            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
-            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
-            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
-            candidateQueue.push(nextReserve);
-            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} to substitute for capacity-limited target ${currentTarget.targetId}`);
-          } else if (passingQuestions.length < requestedCount) {
-            // No reserve targets left: adaptively calibrate this concept to Medium so a valid grounded question is produced
-            const calibratedTarget = {
-              ...currentTarget,
-              targetId: `${currentTarget.targetId}_cal`,
-              targetDifficulty: 'Medium'
-            };
-            delete calibratedTarget.capacityLimitation;
-            const cognitiveBp = agent1Planner.getCognitiveBlueprint('Medium', calibratedTarget.dimension || 'Conceptual');
-            calibratedTarget.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
-            calibratedTarget.bloomLevel = cognitiveBp.bloomLevel;
-            calibratedTarget.operationalGuidance = cognitiveBp.operationalGuidance;
-            calibratedTarget.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${calibratedTarget.concept}.`;
-            candidateQueue.unshift(calibratedTarget);
-            console.log(`ℹ️ [Orchestrator] Adaptively calibrated target ${currentTarget.targetId} to Medium to ensure question fulfillment.`);
-          }
-          continue;
+          return { status: 'DEFICIT', deficitRecord, currentTarget, tier, targetStartTime };
         }
 
         // 2. Generation Step (Agent 2)
@@ -383,21 +356,7 @@ class PipelineOrchestrator {
             repairSuccessful: false,
             mcq: candidateMCQ
           };
-          unfulfilledTargets.push(unfulfilledRecord);
-          targetResults.push(unfulfilledRecord);
-
-          // Auto-promote reserve target to fulfill question count
-          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
-            const nextReserve = activeReservePool.shift();
-            nextReserve.targetDifficulty = tier;
-            const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
-            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
-            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
-            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
-            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
-            candidateQueue.push(nextReserve);
-          }
-          continue;
+          return { status: 'UNFULFILLED', unfulfilledRecord, currentTarget, tier, targetStartTime };
         }
 
         // 4. Evaluator Audit & Bounded 1-Attempt Repair (Agent 3)
@@ -416,111 +375,181 @@ class PipelineOrchestrator {
           }
         }
 
+        return {
+          status: evalResult.status,
+          evalResult,
+          currentTarget,
+          tier,
+          repairAttempted,
+          repairSuccessful,
+          targetStartTime
+        };
+      }
+
+      async function handleTargetOutcome(outcome) {
+        const { currentTarget, tier, targetStartTime } = outcome;
+
+        if (outcome.status === 'DEFICIT') {
+          unfulfilledTargets.push(outcome.deficitRecord);
+          targetResults.push(outcome.deficitRecord);
+
+          // Auto-promote reserve target to fulfill question count!
+          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
+            const nextReserve = activeReservePool.shift();
+            nextReserve.targetDifficulty = tier;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
+            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
+            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
+            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+            candidateQueue.push(nextReserve);
+            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} to substitute for capacity-limited target ${currentTarget.targetId}`);
+          } else if (passingQuestions.length < requestedCount) {
+            // No reserve targets left: adaptively calibrate this concept to Medium so a valid grounded question is produced
+            const calibratedTarget = {
+              ...currentTarget,
+              targetId: `${currentTarget.targetId}_cal`,
+              targetDifficulty: 'Medium'
+            };
+            delete calibratedTarget.capacityLimitation;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint('Medium', calibratedTarget.dimension || 'Conceptual');
+            calibratedTarget.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+            calibratedTarget.bloomLevel = cognitiveBp.bloomLevel;
+            calibratedTarget.operationalGuidance = cognitiveBp.operationalGuidance;
+            calibratedTarget.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${calibratedTarget.concept}.`;
+            candidateQueue.unshift(calibratedTarget);
+            console.log(`ℹ️ [Orchestrator] Adaptively calibrated target ${currentTarget.targetId} to Medium to ensure question fulfillment.`);
+          }
+          return;
+        }
+
+        if (outcome.status === 'UNFULFILLED') {
+          unfulfilledTargets.push(outcome.unfulfilledRecord);
+          targetResults.push(outcome.unfulfilledRecord);
+
+          // Auto-promote reserve target to fulfill question count
+          if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
+            const nextReserve = activeReservePool.shift();
+            nextReserve.targetDifficulty = tier;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
+            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
+            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
+            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+            candidateQueue.push(nextReserve);
+          }
+          return;
+        }
+
+        const { evalResult, repairAttempted, repairSuccessful } = outcome;
+
         // 5. Evaluation Verdict Branching
         if (evalResult.status === 'PASS') {
           // Check deterministic duplicate question against passing pool
           const dupCheck = deterministicValidator.checkDuplicateQuestion(evalResult.mcq, passingQuestions, currentTarget);
 
           if (!dupCheck.isDuplicate) {
-            const qNum = passingQuestions.length + 1;
-            const decisionLedger = {
-              questionId: `Q${qNum}`,
-              source: {
-                tier: evalResult.evidenceGrounding?.tier || 'EVIDENCE_DERIVED',
-                supportingChunks: currentTarget.sourceChunks || ['chunk_01']
-              },
-              concept: currentTarget.concept,
-              subtopic: currentTarget.subtopic || 'Core Mechanism',
-              cognitiveDimension: currentTarget.dimension,
-              difficulty: currentTarget.targetDifficulty,
-              intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
-              studentAnswerability: evalResult.studentAnswerability || 'HIGH',
-              redundancy: {
-                similarQuestion: null,
-                similarity: dupCheck.similarity || 0,
-                decision: 'KEEP'
-              },
-              agent3: {
-                verdict: 'PASS',
+            if (passingQuestions.length < requestedCount) {
+              const qNum = passingQuestions.length + 1;
+              const decisionLedger = {
+                questionId: `Q${qNum}`,
+                source: {
+                  tier: evalResult.evidenceGrounding?.tier || 'EVIDENCE_DERIVED',
+                  supportingChunks: currentTarget.sourceChunks || ['chunk_01']
+                },
+                concept: currentTarget.concept,
+                subtopic: currentTarget.subtopic || 'Core Mechanism',
+                cognitiveDimension: currentTarget.dimension,
+                difficulty: currentTarget.targetDifficulty,
+                intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
+                studentAnswerability: evalResult.studentAnswerability || 'HIGH',
+                redundancy: {
+                  similarQuestion: null,
+                  similarity: dupCheck.similarity || 0,
+                  decision: 'KEEP'
+                },
+                agent3: {
+                  verdict: 'PASS',
+                  groundingScore: evalResult.evidenceGrounding?.groundingScore || 0.95,
+                  repaired: Boolean(evalResult.repaired)
+                },
+                grounding: { status: 'GROUNDED' }
+              };
+
+              const traceabilityAudit = {
+                "1_sourceOrigin": currentTarget.evidenceType || "VOICE + DOCUMENT",
+                "2_supportingSessionChunks": currentTarget.sourceChunks || ["chunk_01"],
+                "3_agent1AssessmentReasoning": {
+                  "whyAssessed": `Teacher emphasized ${currentTarget.concept} as a key learning outcome.`,
+                  "targetDifficulty": currentTarget.targetDifficulty,
+                  "intendedCognitiveOperation": currentTarget.intendedCognitiveOperation
+                },
+                "4_agent2FormulationReasoning": {
+                  "dimension": currentTarget.dimension,
+                  "cognitiveLevel": currentTarget.cognitiveLevel,
+                  "usedArchetypes": evalResult.mcq.usedArchetypes || []
+                },
+                "5_agent3EvaluationReasoning": {
+                  "groundingScore": evalResult.evidenceGrounding?.groundingScore || 0.95,
+                  "cognitiveAudit": evalResult.cognitiveAudit,
+                  "repaired": Boolean(evalResult.repaired),
+                  "verdict": "PASS"
+                },
+                "6_deterministicCalculations": {
+                  "preChecksPassed": true,
+                  "optionCount": 4,
+                  "optionsMutuallyExclusive": true
+                },
+                "7_finalGroundingGateReasoning": {
+                  "status": "PASSED",
+                  "justification": `Question and options are directly justified by session evidence for ${currentTarget.concept}.`
+                }
+              };
+
+              evalResult.mcq.metadata = {
+                ...evalResult.mcq.metadata,
+                subtopic: currentTarget.subtopic || 'Core Mechanism',
+                concept: currentTarget.concept,
+                dimension: currentTarget.dimension,
+                cognitiveLevel: currentTarget.cognitiveLevel,
+                targetDifficulty: currentTarget.targetDifficulty,
+                intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
                 groundingScore: evalResult.evidenceGrounding?.groundingScore || 0.95,
-                repaired: Boolean(evalResult.repaired)
-              },
-              grounding: { status: 'GROUNDED' }
-            };
+                targetId: currentTarget.targetId,
+                repairAttempted,
+                repairSuccessful,
+                decisionLedger,
+                traceabilityAudit
+              };
 
-            const traceabilityAudit = {
-              "1_sourceOrigin": currentTarget.evidenceType || "VOICE + DOCUMENT",
-              "2_supportingSessionChunks": currentTarget.sourceChunks || ["chunk_01"],
-              "3_agent1AssessmentReasoning": {
-                "whyAssessed": `Teacher emphasized ${currentTarget.concept} as a key learning outcome.`,
-                "targetDifficulty": currentTarget.targetDifficulty,
-                "intendedCognitiveOperation": currentTarget.intendedCognitiveOperation
-              },
-              "4_agent2FormulationReasoning": {
-                "dimension": currentTarget.dimension,
-                "cognitiveLevel": currentTarget.cognitiveLevel,
-                "usedArchetypes": evalResult.mcq.usedArchetypes || []
-              },
-              "5_agent3EvaluationReasoning": {
-                "groundingScore": evalResult.evidenceGrounding?.groundingScore || 0.95,
-                "cognitiveAudit": evalResult.cognitiveAudit,
-                "repaired": Boolean(evalResult.repaired),
-                "verdict": "PASS"
-              },
-              "6_deterministicCalculations": {
-                "preChecksPassed": true,
-                "optionCount": 4,
-                "optionsMutuallyExclusive": true
-              },
-              "7_finalGroundingGateReasoning": {
-                "status": "PASSED",
-                "justification": `Question and options are directly justified by session evidence for ${currentTarget.concept}.`
-              }
-            };
+              passingQuestions.push(evalResult.mcq);
+              if (byTier[tier]) byTier[tier].accepted++;
 
-            evalResult.mcq.metadata = {
-              ...evalResult.mcq.metadata,
-              subtopic: currentTarget.subtopic || 'Core Mechanism',
-              concept: currentTarget.concept,
-              dimension: currentTarget.dimension,
-              cognitiveLevel: currentTarget.cognitiveLevel,
-              targetDifficulty: currentTarget.targetDifficulty,
-              intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
-              groundingScore: evalResult.evidenceGrounding?.groundingScore || 0.95,
-              targetId: currentTarget.targetId,
-              repairAttempted,
-              repairSuccessful,
-              decisionLedger,
-              traceabilityAudit
-            };
+              targetResults.push({
+                targetId: currentTarget.targetId,
+                concept: currentTarget.concept,
+                subtopic: currentTarget.subtopic || 'Core Mechanism',
+                targetDifficulty: currentTarget.targetDifficulty,
+                intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
+                status: 'ACCEPTED',
+                attempts: 1 + (repairAttempted ? 1 : 0),
+                repairAttempted,
+                repairSuccessful,
+                mcq: evalResult.mcq
+              });
 
-            passingQuestions.push(evalResult.mcq);
-            if (byTier[tier]) byTier[tier].accepted++;
-
-            targetResults.push({
-              targetId: currentTarget.targetId,
-              concept: currentTarget.concept,
-              subtopic: currentTarget.subtopic || 'Core Mechanism',
-              targetDifficulty: currentTarget.targetDifficulty,
-              intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
-              status: 'ACCEPTED',
-              attempts: 1 + (repairAttempted ? 1 : 0),
-              repairAttempted,
-              repairSuccessful,
-              mcq: evalResult.mcq
-            });
-
-            await trace.recordStage({
-              stageOrder: `04_T${currentTarget.targetId}_pass`,
-              stageName: 'AGENT_3_QUESTION_EVAL',
-              decisions: [
-                `Target ${currentTarget.targetId} PASSED${repairAttempted ? ' after 1 repair' : ''}`,
-                `Concept: "${currentTarget.concept}" | Tier: ${tier}`,
-                `Option audit verified 4 distinct options with valid key and plausible distractors`
-              ],
-              validation: { status: 'PASS', checks: ['Target approved by Agent 3 Evaluator'] },
-              durationMs: Date.now() - targetStartTime
-            });
+              await trace.recordStage({
+                stageOrder: `04_T${currentTarget.targetId}_pass`,
+                stageName: 'AGENT_3_QUESTION_EVAL',
+                decisions: [
+                  `Target ${currentTarget.targetId} PASSED${repairAttempted ? ' after 1 repair' : ''}`,
+                  `Concept: "${currentTarget.concept}" | Tier: ${tier}`,
+                  `Option audit verified 4 distinct options with valid key and plausible distractors`
+                ],
+                validation: { status: 'PASS', checks: ['Target approved by Agent 3 Evaluator'] },
+                durationMs: Date.now() - targetStartTime
+              });
+            }
           } else {
             // Duplicate rejected
             const reason = `DUPLICATE_QUESTION: ${dupCheck.reason}`;
@@ -632,6 +661,34 @@ class PipelineOrchestrator {
           }
         }
       }
+
+      async function executeWorker(workerId) {
+        while (passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
+          if (candidateQueue.length === 0) {
+            if (activeWorkers > 0) {
+              await new Promise(r => setTimeout(r, 150));
+              continue;
+            } else {
+              break;
+            }
+          }
+
+          const currentTarget = candidateQueue.shift();
+          if (!currentTarget) continue;
+
+          iterationCount++;
+          activeWorkers++;
+          try {
+            const outcome = await processSingleTarget(currentTarget, workerId);
+            await handleTargetOutcome(outcome);
+          } finally {
+            activeWorkers--;
+          }
+        }
+      }
+
+      const workers = Array.from({ length: concurrencyLimit }, (_, i) => executeWorker(i + 1));
+      await Promise.all(workers);
 
       trace.totalAttempts = totalGenerationAttempts;
 

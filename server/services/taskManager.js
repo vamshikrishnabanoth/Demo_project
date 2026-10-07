@@ -90,16 +90,33 @@ function getActiveRunningJobCount() {
 }
 
 /**
+ * Calculate a bounded adaptive watchdog timeout based on workload.
+ * Base preparation time (ingestion, evidence packaging, planning) + estimated question generation work.
+ * Bounded between min (180s = 3m) and max (360s = 6m).
+ */
+function calculateAdaptiveTimeoutMs(questionCount = 5) {
+  const count = parseInt(questionCount, 10) || 5;
+  const basePrepMs = 60000; // 60s for ingestion, audio handling, Agent 1 planning
+  const perQuestionMs = 8000; // 8s per question safety allowance with concurrency
+  const computed = basePrepMs + (count * perQuestionMs);
+  const minTimeoutMs = 180000; // 3 minutes floor
+  const maxTimeoutMs = 360000; // 6 minutes hard ceiling to prevent runaway jobs
+  return Math.min(maxTimeoutMs, Math.max(minTimeoutMs, computed));
+}
+
+/**
  * Create a new task and return its id.
  * Supports backpressure limits, idempotency, and user ownership.
  *
- * @param {Object} options - { userId, idempotencyKey, timeoutMs }
+ * @param {Object} options - { userId, idempotencyKey, timeoutMs, questionCount }
  * @returns {string} taskId
  */
 function createTask(options = {}) {
   const userId = typeof options === 'string' ? options : (options?.userId || null);
   const idempotencyKey = typeof options === 'object' ? options?.idempotencyKey : null;
-  const timeoutMs = (typeof options === 'object' && options?.timeoutMs) ? options.timeoutMs : TOTAL_JOB_TIMEOUT_MS;
+  const timeoutMs = (typeof options === 'object' && options?.timeoutMs)
+    ? options.timeoutMs
+    : (options?.questionCount ? calculateAdaptiveTimeoutMs(options.questionCount) : TOTAL_JOB_TIMEOUT_MS);
 
   // 1. Idempotency Check: if identical request is currently active or fresh, reuse taskId
   if (idempotencyKey && idempotencyIndex.has(idempotencyKey)) {
@@ -396,5 +413,6 @@ module.exports = {
   completeTask,
   failTask,
   getTask,
-  getActiveRunningJobCount
+  getActiveRunningJobCount,
+  calculateAdaptiveTimeoutMs
 };

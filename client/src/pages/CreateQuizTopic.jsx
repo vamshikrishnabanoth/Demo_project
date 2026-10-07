@@ -397,19 +397,24 @@ export default function CreateQuizTopic() {
 
         let currentP = 15;
         const progressTicker = setInterval(() => {
-            currentP = Math.min(94, currentP < 35 ? currentP + 4 : currentP < 75 ? currentP + 3 : currentP + 1);
+            // Smooth dynamic progress without artificial 94% dead-end lock
+            currentP = Math.min(98, currentP < 35 ? currentP + 4 : currentP < 75 ? currentP + 2 : currentP < 90 ? currentP + 1 : currentP + 0.3);
+            const roundedP = Math.floor(currentP);
             setInputs(prev => prev.map(item => {
                 if (item.id !== id || item.status !== 'transcribing') return item;
                 let step = 'Uploading audio payload...';
                 let phase = 'Payload Transfer';
-                if (currentP >= 35 && currentP < 75) {
-                    step = 'Whisper Large-v3 speech decoding...';
+                if (roundedP >= 35 && roundedP < 75) {
+                    step = 'Whisper speech decoding in progress...';
                     phase = 'Acoustic Model Inference';
-                } else if (currentP >= 75) {
+                } else if (roundedP >= 75 && roundedP < 92) {
                     step = 'Indexing speech timestamps & curriculum depth...';
                     phase = 'Pedagogical Parsing';
+                } else if (roundedP >= 92) {
+                    step = 'Finalizing lecture transcript...';
+                    phase = 'Finalizing';
                 }
-                return { ...item, progress: currentP, stepText: step, phaseLabel: phase };
+                return { ...item, progress: roundedP, stepText: step, phaseLabel: phase };
             }));
         }, 700);
 

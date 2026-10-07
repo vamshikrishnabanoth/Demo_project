@@ -226,14 +226,15 @@ const transcribeAudioWithTimestamps = async (filePath) => {
 
     // Determine actual or probed audio duration
     const probedDuration = getAudioDuration(filePath);
-    const isDurationShort = probedDuration !== null ? probedDuration <= 600 : false;
-    const isSizeSmall = fileSizeBytes <= 18 * 1024 * 1024;
-    const canDoSinglePass = isDurationShort && isSizeSmall;
+    // Groq Whisper supports payloads up to 25 MB directly without ffmpeg slicing overhead.
+    // Allow up to 24.5 MB for direct fast single-pass. If direct pass fails/times out, catch cleanly escalates to Tier B.
+    const isSizeSmall = fileSizeBytes <= 24.5 * 1024 * 1024;
+    const canDoSinglePass = isSizeSmall;
 
     let tempCompressedPath = null;
 
     try {
-        // ── Tier A: Single Direct Pass (Files strictly <= 10 mins AND <= 18 MB) ──
+        // ── Tier A: Single Direct Pass (Files <= 24.5 MB) ──
         if (canDoSinglePass) {
             try {
                 console.log(`🎙️ Transcribing short audio directly (${probedDuration ? probedDuration.toFixed(1) + 's' : (fileSizeBytes / (1024 * 1024)).toFixed(2) + ' MB'})...`);
@@ -2667,9 +2668,10 @@ exports.generateQuizQuestions = async (req, res) => {
         const idempotencyRaw = `${req.user?.id || 'anon'}_${req.body.topic || ''}_${req.body.type || ''}_${req.body.questionCount || ''}_${filesStr}`;
         const idempotencyKey = crypto.createHash('sha256').update(idempotencyRaw).digest('hex');
 
+        const reqQuestionCount = parseInt(req.body.questionCount || req.body.question_count, 10) || 5;
         let taskId;
         try {
-            taskId = createTask({ userId: req.user?.id, idempotencyKey });
+            taskId = createTask({ userId: req.user?.id, idempotencyKey, questionCount: reqQuestionCount });
         } catch (bpErr) {
             return res.status(bpErr.statusCode || 429).json({ msg: bpErr.message, code: bpErr.code || 'SYSTEM_BUSY' });
         }

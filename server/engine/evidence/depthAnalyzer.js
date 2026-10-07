@@ -818,7 +818,7 @@ class DepthAnalyzer {
       }
     }
 
-    return deduped.slice(0, 8);
+    return deduped.slice(0, 30);
   }
 
   /**
@@ -1179,18 +1179,24 @@ class DepthAnalyzer {
     let recCount = 5;
     let rationale = '';
 
-    if (curricularSegments.length <= 2 || wordCount < 150) {
+    if (wordCount < 150) {
       recCount = 3;
       rationale = '3 Questions: Compact curricular substance. Best for a quick conceptual check without redundant targets.';
-    } else if (curricularSegments.length <= 5 || wordCount < 500) {
+    } else if (wordCount < 500 && curricularSegments.length <= 6) {
       recCount = 5;
       rationale = '5 Questions: Covers core definitions and primary mechanisms with balanced cognitive depth.';
-    } else if (curricularSegments.length <= 9 || wordCount < 1200) {
+    } else if (wordCount < 1200 && curricularSegments.length <= 15) {
       recCount = 8;
       rationale = '8 Questions: Optimal for this substantive lecture. Thoroughly assesses concepts, procedural traces, and causal reasoning.';
+    } else if (wordCount < 2500 && curricularSegments.length <= 30) {
+      recCount = 12;
+      rationale = '12 Questions: Substantive lecture covering multiple instructional topics and mechanisms.';
+    } else if (wordCount < 4500 && curricularSegments.length <= 50) {
+      recCount = 18;
+      rationale = '18 Questions: Comprehensive lecture with extensive coverage across multiple concepts and practical traces.';
     } else {
-      recCount = 10;
-      rationale = '10 Questions: Rich multi-topic lecture. Enables broad coverage across foundational concepts, application, and edge cases.';
+      recCount = 25;
+      rationale = '25 Questions: Full-length lecture with broad coverage across foundational concepts, application, and edge cases.';
     }
 
     let rating = 'Developing';

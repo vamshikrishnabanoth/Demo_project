@@ -252,7 +252,7 @@ class LectureIntelligence {
       conceptMap: concepts,
       evidenceCapacity: {
         distinctConceptCount: concepts.length,
-        recommendedQuestionCount: Math.max(1, Math.min(concepts.length, 10)),
+        recommendedQuestionCount: Math.max(1, Math.min(concepts.length, 30)),
         advisoryRationale: `Evidence contains ${concepts.length} distinct assessable concepts. Recommended count is advisory; user request will be honored.`
       },
       auditTrail: {
@@ -319,7 +319,7 @@ EVIDENCE-GROUNDING RULES:
    - evidenceQuotes: Array of EXACT verbatim substring quotes copied directly from the lecture evidence (DO NOT paraphrase or modify words).
    - limitationsOfExcerpt: ${isBriefExcerpt ? '"Submitted evidence is a brief excerpt. Absence of examples or student interaction reflects excerpt scope, not instructional deficiency."' : 'null'}
 4. CONCEPT MAP:
-   - Extract up to 8 assessable concepts actually taught in the lecture.
+   - Extract all distinct, assessable concepts actually taught in the lecture (up to a safety maximum of 30 if present; do not invent concepts not taught).
    - id: "C01", "C02", etc.
    - name: Exact academic term used.
    - definition: As explained in the lecture.
