@@ -3607,8 +3607,8 @@ exports.generateQuizFromVoice = async (req, res) => {
         return res.status(400).json({ msg: 'No audio file uploaded' });
     }
 
-    // Create a task immediately and return taskId — client polls /generate/status/:taskId
-    const taskId = createTask();
+    const reqQuestionCount = parseInt(req.body.questionCount || req.body.question_count, 10) || 5;
+    const taskId = createTask({ userId: req.user?.id, questionCount: reqQuestionCount });
     res.json({ taskId, isVoice: true });
 
     // Run voice pipeline in background
@@ -4797,7 +4797,7 @@ exports.analyzeLectureRecording = async (req, res) => {
 
     const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
     const lectureAnalyzer = require('../engine/evidence/lectureAnalyzer');
-    const taskId = createTask();
+    const taskId = createTask({ userId: req.user?.id, timeoutMs: 360000 });
 
     res.json({ taskId, status: 'PROCESSING', message: 'Lecture analysis started successfully.' });
 
@@ -4908,7 +4908,8 @@ exports.generateQuizFromCleanedLecture = async (req, res) => {
         }
 
         const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
-        const taskId = createTask();
+        const reqQuestionCount = parseInt(questionCount, 10) || 5;
+        const taskId = createTask({ userId: req.user?.id, questionCount: reqQuestionCount });
         res.json({ taskId });
 
         setImmediate(async () => {

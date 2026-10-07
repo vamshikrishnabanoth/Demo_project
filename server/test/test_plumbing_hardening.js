@@ -48,24 +48,24 @@ async function runPlumbingTests() {
   // ──────────────────────────────────────────────────────────────────────────
   // Test 1: Adaptive Watchdog Timeout Floor & Ceiling
   // ──────────────────────────────────────────────────────────────────────────
-  runCheck('1.1 calculateAdaptiveTimeoutMs floors at 180s for small counts (5 Qs)', () => {
+  runCheck('1.1 calculateAdaptiveTimeoutMs floors at 360s for small counts (5 Qs)', () => {
     const timeout = calculateAdaptiveTimeoutMs(5);
-    assert.strictEqual(timeout, 180000, `Expected 180000 ms, got ${timeout}`);
+    assert.strictEqual(timeout, 360000, `Expected 360000 ms (6m floor), got ${timeout}`);
   });
 
-  runCheck('1.2 calculateAdaptiveTimeoutMs floors at 180s for 10 Qs', () => {
+  runCheck('1.2 calculateAdaptiveTimeoutMs floors at 360s for 10 Qs', () => {
     const timeout = calculateAdaptiveTimeoutMs(10);
-    assert.strictEqual(timeout, 180000, `Expected 180000 ms, got ${timeout}`);
+    assert.strictEqual(timeout, 360000, `Expected 360000 ms (6m floor), got ${timeout}`);
   });
 
-  runCheck('1.3 calculateAdaptiveTimeoutMs scales appropriately for 25 Qs (260s)', () => {
+  runCheck('1.3 calculateAdaptiveTimeoutMs scales appropriately for 25 Qs (420s)', () => {
     const timeout = calculateAdaptiveTimeoutMs(25);
-    assert.strictEqual(timeout, 260000, `Expected 260000 ms (260s), got ${timeout}`);
+    assert.strictEqual(timeout, 420000, `Expected 420000 ms (420s / 7m), got ${timeout}`);
   });
 
-  runCheck('1.4 calculateAdaptiveTimeoutMs enforces hard ceiling of 360s for 100 Qs', () => {
+  runCheck('1.4 calculateAdaptiveTimeoutMs enforces hard ceiling of 600s for 100 Qs', () => {
     const timeout = calculateAdaptiveTimeoutMs(100);
-    assert.strictEqual(timeout, 360000, `Expected 360000 ms (360s max), got ${timeout}`);
+    assert.strictEqual(timeout, 600000, `Expected 600000 ms (600s / 10m max), got ${timeout}`);
   });
 
   // ──────────────────────────────────────────────────────────────────────────

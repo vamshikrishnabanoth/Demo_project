@@ -1105,7 +1105,7 @@ export default function CreateQuizTopic() {
         try {
             const res = await api.post('/quiz/generate', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 180000 
+                timeout: 600000 
             });
 
             const { taskId } = res.data;

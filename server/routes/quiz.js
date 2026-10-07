@@ -507,8 +507,17 @@ router.delete('/:id', auth, teacherOrAdmin, quizController.deleteQuiz);
 // @desc    Update a quiz
 router.put('/:id', auth, teacherOrAdmin, quizController.updateQuiz);
 
-// @route   POST api/quiz/assign/:id
-// @desc    Assign a quiz to student groups and manually targeted student list
-router.post('/assign/:id', auth, teacherOrAdmin, quizController.assignQuiz);
+// @route   GET api/quiz/health
+// @desc    Deployment health & version telemetry
+router.get('/health', (req, res) => {
+    res.json({
+        status: 'OK',
+        version: 'v2.1-plumbing-hardened',
+        timestamp: new Date().toISOString(),
+        watchdogFloorSec: 360,
+        watchdogCeilingSec: 600
+    });
+});
 
 module.exports = router;
+

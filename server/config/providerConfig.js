@@ -51,7 +51,7 @@ const providerConfig = {
   queue: {
     maxConcurrentJobs: parseInt(process.env.MAX_CONCURRENT_JOBS, 10) || 10,
     maxQueueSize: parseInt(process.env.MAX_QUEUE_SIZE, 10) || 25,
-    jobTimeoutMs: parseInt(process.env.TOTAL_JOB_TIMEOUT_MS, 10) || 180000 // 3 minutes total
+    jobTimeoutMs: parseInt(process.env.TOTAL_JOB_TIMEOUT_MS, 10) || 480000 // 8 minutes total safe watchdog
   },
 
   // Difficulty & Cognitive Calibration Mode (Phase 4 / 4.2 Production Default)
