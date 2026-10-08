@@ -911,13 +911,14 @@ class DepthAnalyzer {
       });
     }
 
-    let detectedFocus = sortedTerms.slice(0, 6);
+    const SAFETY_MAX_DETECTED_CONCEPTS = 30;
+    let detectedFocus = sortedTerms.slice(0, SAFETY_MAX_DETECTED_CONCEPTS);
 
     // Fallback focus for formal structures where dictionary had 0 exact matches (e.g. DFA, Quantum)
     if (detectedFocus.length === 0 && curricularSegments.length >= 1) {
       const formalFallback = curricularSegments.flatMap(s => s.classification.concept_links || []).filter(Boolean);
       if (formalFallback.length > 0) {
-        detectedFocus = Array.from(new Set(formalFallback)).slice(0, 5);
+        detectedFocus = Array.from(new Set(formalFallback)).slice(0, SAFETY_MAX_DETECTED_CONCEPTS);
       } else {
         detectedFocus = ['Core Subject Matter'];
       }

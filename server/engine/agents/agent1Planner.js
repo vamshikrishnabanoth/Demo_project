@@ -21,16 +21,22 @@ class Agent1Planner {
    * @param {Number} requestedCount - Number of questions requested
    * @returns {Object} AssessmentPlan JSON payload
    */
-  async planAssessment(evidencePackage, difficultyOrOptions = 'Medium', maybeCount = 5) {
+  async planAssessment(evidencePackage, difficultyOrOptions = 'Medium', maybeCount = 5, maybePolicy = null) {
     let requestedDifficulty = 'Medium';
     let requestedCount = 5;
+    let deficitPolicy = null;
 
     if (typeof difficultyOrOptions === 'object' && difficultyOrOptions !== null) {
       requestedDifficulty = difficultyOrOptions.requestedDifficulty || difficultyOrOptions.difficulty || 'Medium';
       requestedCount = difficultyOrOptions.requestedCount || difficultyOrOptions.count || 5;
+      deficitPolicy = difficultyOrOptions.deficitPolicy || maybePolicy || null;
     } else {
       requestedDifficulty = difficultyOrOptions || 'Medium';
       requestedCount = typeof maybeCount === 'number' ? maybeCount : (parseInt(maybeCount) || 5);
+      deficitPolicy = maybePolicy || null;
+    }
+    if (!deficitPolicy && evidencePackage?.deficitPolicy) {
+      deficitPolicy = evidencePackage.deficitPolicy;
     }
 
     if (evidencePackage && evidencePackage.isAcademic === false) {
@@ -220,7 +226,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     }
 
     // Apply deterministic difficulty blueprint, cognitive operations, and capacity audit
-    this._applyDifficultyBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage);
+    this._applyDifficultyBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
 
     planData.tcScore = this._computeTCScore(rawContent, voiceEmphasis, lectureDepth, {
       auditedTargets: planData.assessmentTargets,
@@ -545,76 +551,251 @@ Generate the curricular assessment plan strictly covering educational concepts w
   /**
    * Concept Depth & Mechanism Detector.
    * Evaluates whether a concept possesses observed mechanisms, operational rules,
-   * or comparative tradeoffs capable of supporting Hard-tier cognitive demands.
+   * invariants, or comparative tradeoffs capable of supporting Hard-tier cognitive demands.
    */
   _detectConceptDepth(concept = '', supportingEvidence = '', evidencePackage = {}) {
     const conceptLower = String(concept || '').toLowerCase();
     const evidenceLower = String(supportingEvidence || '').toLowerCase();
 
     // 1. Check lectureIntelligence if available (Module 1 source of truth)
-    if (evidencePackage?.lectureIntelligence?.concept_inventory) {
-      const inventory = evidencePackage.lectureIntelligence.concept_inventory;
+    const li = evidencePackage?.lectureIntelligence;
+    const inventory = li?.concept_inventory || li?.conceptMap || null;
+    if (Array.isArray(inventory)) {
       const matched = inventory.find(c => {
-        const cName = String(c.canonical_name || '').toLowerCase();
-        return cName.includes(conceptLower) || conceptLower.includes(cName);
+        const cName = String(c.canonical_name || c.name || c.concept_name || '').toLowerCase();
+        return cName && (cName.includes(conceptLower) || conceptLower.includes(cName));
       });
       if (matched) {
-        const hasMechanism = Boolean(matched.mechanism_or_rule && matched.mechanism_or_rule !== 'NOT_OBSERVED');
-        const categories = Array.isArray(matched.pedagogical_category) ? matched.pedagogical_category : [matched.pedagogical_category];
-        const supportsHard = hasMechanism || categories.includes('COMPARISON') || categories.includes('TRADEOFF') || categories.includes('SCENARIO');
+        const mech = String(matched.mechanism_or_rule || '').trim();
+        const hasMechanism = Boolean(mech && mech !== 'NOT_OBSERVED' && mech !== 'null');
+        const rawCats = matched.pedagogical_category || matched.substanceType || [];
+        const categories = Array.isArray(rawCats) ? rawCats : [rawCats];
+        const substanceType = String(matched.substanceType || '').toUpperCase();
+        if (substanceType && !categories.includes(substanceType)) categories.push(substanceType);
+
+        const textToCheck = `${conceptLower} ${evidenceLower} ${mech.toLowerCase()} ${String(matched.definition || '').toLowerCase()}`;
+        const hasInvariant = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree|null pointer)\b/i.test(textToCheck);
+        const hasViolation = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid)\b/i.test(textToCheck);
+        const hasTradeoff = /\b(versus|vs|difference|compare|tradeoff|advantage|disadvantage|contrast|unlike)\b/i.test(textToCheck);
+        const hasProcedure = /\b(step|algorithm|procedure|transition|traverse|insert|delete|replace|swap|rotate|push|pop)\b/i.test(textToCheck);
+
+        const supportsHard = hasMechanism || hasInvariant || hasTradeoff || categories.includes('COMPARISON') || categories.includes('TRADEOFF') || categories.includes('SCENARIO') || categories.includes('RULE');
         return {
           supportsHard,
           hasMechanism,
+          hasInvariant,
+          hasViolation,
+          hasTradeoff,
+          hasProcedure,
           categories,
           source: 'LECTURE_INTELLIGENCE'
         };
       }
     }
 
-    // 2. Check depth via textual indicators in supporting evidence
-    const mechanismIndicators = /\b(computes?|calculat|translat|allocat|schedules?|converts?|decodes?|evaluates?|executes?|verif|generates?|transitions?|compares?|steps?|algorithm|procedure|condition|when|unless|if\s+[a-z]+|formula|difference between|versus|advantage|tradeoff)\b/i;
+    // 2. Check depth via textual indicators in supporting evidence and concept
+    const mechanismIndicators = /\b(computes?|calculat|translat|allocat|schedules?|converts?|decodes?|evaluates?|executes?|verif|generates?|transitions?|compares?|steps?|algorithm|procedure|condition|when|unless|if\s+[a-z]+|formula|difference between|versus|advantage|tradeoff|pointer|travers|insert|delet)\b/i;
+    const invariantIndicators = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree)\b/i;
+    const violationIndicators = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid)\b/i;
+    const tradeoffIndicators = /\b(versus|vs|difference between|compare|tradeoff|advantage|contrast)\b/i;
+
     const hasMechanismWords = mechanismIndicators.test(evidenceLower) || mechanismIndicators.test(conceptLower);
-    const definitionOnly = !hasMechanismWords && (evidenceLower.length < 50 || /\b(is defined as|refers to|is a term|is called|stands for)\b/i.test(evidenceLower));
+    const hasInvariantWords = invariantIndicators.test(evidenceLower) || invariantIndicators.test(conceptLower);
+    const hasViolationWords = violationIndicators.test(evidenceLower) || violationIndicators.test(conceptLower);
+    const hasTradeoffWords = tradeoffIndicators.test(evidenceLower) || tradeoffIndicators.test(conceptLower);
+
+    const definitionOnly = !hasMechanismWords && !hasInvariantWords && !hasTradeoffWords &&
+      (evidenceLower.length < 50 || /\b(is defined as|refers to|is a term|is called|stands for)\b/i.test(evidenceLower));
+
+    const supportsHard = (hasMechanismWords || hasInvariantWords || hasTradeoffWords) && !definitionOnly;
 
     return {
-      supportsHard: hasMechanismWords,
+      supportsHard,
       hasMechanism: hasMechanismWords,
-      categories: definitionOnly ? ['DEFINITION'] : ['MECHANISM'],
+      hasInvariant: hasInvariantWords,
+      hasViolation: hasViolationWords,
+      hasTradeoff: hasTradeoffWords,
+      hasProcedure: mechanismIndicators.test(evidenceLower),
+      categories: definitionOnly ? ['DEFINITION'] : (hasTradeoffWords ? ['COMPARISON'] : ['MECHANISM']),
       source: 'HEURISTIC'
     };
   }
 
   /**
+   * Generates distinct Hard assessment angles for a deep concept.
+   * Each angle tests a distinct cognitive operation and reasoning demand,
+   * avoiding trivial fact rephrasing or keyword duplication.
+   */
+  _getDistinctHardAngles(conceptName, supportingEvidence = '', evidencePackage = {}, depth = null) {
+    const conceptDepth = depth || this._detectConceptDepth(conceptName, supportingEvidence, evidencePackage);
+    if (!conceptDepth.supportsHard) return [];
+
+    const angles = [];
+    const name = String(conceptName || 'Core Mechanism').trim();
+    const evLower = String(supportingEvidence || '').toLowerCase();
+
+    // Angle 1: PREDICT_CONSTRAINT (Invariant Preservation & Boundary Constraints)
+    angles.push({
+      angleId: 'PREDICT_CONSTRAINT',
+      dimension: 'Prediction',
+      intendedCognitiveOperation: 'PREDICT_CONSTRAINT',
+      bloomLevel: 'Apply / Evaluate',
+      subtopicAngle: `${name} - Invariant Boundary`,
+      operationalGuidance: 'Assess invariant preservation, boundary constraints, or state outcomes under structural conditions. For example, evaluating whether a property holds after an operation or what condition is required. Prohibit simple recall.',
+      instruction: `Assess invariant preservation and boundary conditions for ${name}. Evaluate whether structural properties or invariants remain valid under state conditions.`
+    });
+
+    // Angle 2: DIAGNOSE (Fault Diagnosis, Defect Identification & Violation Resolution)
+    const supportsDiagnose = conceptDepth.hasViolation || conceptDepth.hasInvariant ||
+      (conceptDepth.categories && conceptDepth.categories.includes('SCENARIO'));
+
+    if (supportsDiagnose) {
+      angles.push({
+        angleId: 'DIAGNOSE',
+        dimension: 'Scenario Analysis',
+        intendedCognitiveOperation: 'DIAGNOSE',
+        bloomLevel: 'Analyze / Evaluate',
+        subtopicAngle: `${name} - Violation Diagnosis`,
+        operationalGuidance: 'Assess diagnostic reasoning: identify structural defects, invariant violations, or edge-case failure consequences based strictly on taught rules. Prohibit simple keyword matching.',
+        instruction: `Assess fault diagnosis and constraint violation consequences for ${name}. Diagnose structural defects or edge-case failures based strictly on taught rules.`
+      });
+    }
+
+    // Angle 3: APPLY (Procedural Execution & Scenario State Transitions)
+    const supportsApply = conceptDepth.hasMechanism && (
+      conceptDepth.hasProcedure ||
+      (conceptDepth.categories && (conceptDepth.categories.includes('ALGORITHM') || conceptDepth.categories.includes('PROCEDURE')))
+    );
+
+    if (supportsApply) {
+      angles.push({
+        angleId: 'APPLY',
+        dimension: 'Application',
+        intendedCognitiveOperation: 'APPLY',
+        bloomLevel: 'Apply',
+        subtopicAngle: `${name} - Procedural Application`,
+        operationalGuidance: 'Assess concrete scenario application, multi-step pointer/state transitions, or operational procedure execution based strictly on taught rules. Require precise step-by-step reasoning.',
+        instruction: `Assess concrete procedural application and state transitions for ${name}. Apply multi-step operational rules to solve a concrete scenario.`
+      });
+    }
+
+    // Angle 4: COMPARE (Comparative Constraints & Structural Tradeoffs)
+    const supportsCompare = conceptDepth.hasTradeoff ||
+      (conceptDepth.categories && (conceptDepth.categories.includes('COMPARISON') || conceptDepth.categories.includes('TRADEOFF')));
+
+    if (supportsCompare) {
+      angles.push({
+        angleId: 'COMPARE',
+        dimension: 'Comparison / Tradeoff',
+        intendedCognitiveOperation: 'COMPARE',
+        bloomLevel: 'Understand / Analyze',
+        subtopicAngle: `${name} - Comparative Constraints`,
+        operationalGuidance: 'Assess comparative constraint tradeoffs between alternatives taught in the lecture. Require reasoning beyond superficial terminology differences.',
+        instruction: `Assess comparative constraint tradeoffs for ${name} against contrasting structural alternatives taught in the session.`
+      });
+    }
+
+    return angles;
+  }
+
+  /**
+   * Collects and round-robins distinct Hard angles across all deep concepts
+   * to maximize curricular concept diversity while allowing deep concepts to contribute multiple distinct angles.
+   */
+  _collectDistinctHardAngles(targets = [], evidencePackage = {}) {
+    // Deduplicate by canonical concept name to ensure distinct angles per unique curriculum concept
+    const seenConcepts = new Set();
+    const uniqueTargets = [];
+    for (const t of targets) {
+      const cKey = String(t.concept || '').trim().toLowerCase();
+      if (!cKey || seenConcepts.has(cKey)) continue;
+      seenConcepts.add(cKey);
+      uniqueTargets.push(t);
+    }
+
+    const targetsWithDepth = uniqueTargets.map((t, idx) => {
+      const depth = this._detectConceptDepth(t.concept, t.supportingEvidence, evidencePackage);
+      return { target: t, depth, originalIdx: idx };
+    });
+
+    const deepTargets = targetsWithDepth.filter(item => item.depth.supportsHard);
+    if (deepTargets.length === 0) return [];
+
+    const perConceptAngles = deepTargets.map(item => ({
+      target: item.target,
+      depth: item.depth,
+      angles: this._getDistinctHardAngles(item.target.concept, item.target.supportingEvidence, evidencePackage, item.depth)
+    }));
+
+    const distinctCandidates = [];
+    const maxAngles = Math.max(...perConceptAngles.map(p => p.angles.length), 0);
+
+    for (let angleIdx = 0; angleIdx < maxAngles; angleIdx++) {
+      for (const item of perConceptAngles) {
+        if (item.angles[angleIdx]) {
+          distinctCandidates.push({
+            target: item.target,
+            depth: item.depth,
+            angle: item.angles[angleIdx]
+          });
+        }
+      }
+    }
+
+    return distinctCandidates;
+  }
+
+  /**
    * Difficulty Blueprinting Entry Point.
    * Branches cleanly based on DIFFICULTY_CALIBRATION_MODE:
-   * - 'v1_bloom_quota' (default): Existing legacy Bloom N/3 formula.
+   * - 'v1_bloom_quota' (default): Legacy Bloom N/3 formula with transparent capacity bounds.
    * - 'v2_intent_relative': Intent-relative dynamic difficulty calibration and auditable quota rebalancing.
    */
-  _applyDifficultyBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}) {
+  _applyDifficultyBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}, deficitPolicy = null) {
     const providerConfig = require('../../config/providerConfig');
     const mode = process.env.DIFFICULTY_CALIBRATION_MODE || providerConfig?.difficulty?.calibrationMode || 'v1_bloom_quota';
 
     if (mode === 'v2_intent_relative') {
-      return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage);
+      return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
     }
 
-    // Default: v1_bloom_quota (Existing exact code, completely untouched)
-    return this._applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage);
+    // Default: v1_bloom_quota
+    return this._applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
   }
 
   /**
    * Module 2 (v1 Legacy): Difficulty Blueprinting & Capacity Limitation Engine.
-   * Applies deterministic difficulty distribution, cognitive blueprinting, and capacity auditing.
-   * Invariant: Never silently downgrades a requested Hard tier to Easy/Medium.
-   * If evidence is definition-only, records transparent capacity limitations.
+   * Applies deterministic difficulty distribution, multi-angle cognitive blueprinting, and capacity auditing.
+   * Strict Invariant: Never silently downgrades a requested Hard tier to Easy/Medium.
+   * If evidence is definition-only or insufficient, records transparent capacity limitations.
    */
-  _applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}) {
+  _applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}, deficitPolicy = null) {
     const blueprint = this.computeDifficultyDistribution(requestedDifficulty, requestedCount);
     const capacityLimitations = [];
     let supportedHardCount = 0;
     const requestedHardCount = blueprint.counts.Hard;
 
-    const targets = planData.assessmentTargets || [];
+    let targets = planData.assessmentTargets || [];
+    if (targets.length === 0 && requestedCount > 0) {
+      for (let i = 0; i < requestedCount; i++) {
+        targets.push({
+          targetId: `T${String(i + 1).padStart(2, '0')}`,
+          concept: `Curriculum Concept ${i + 1}`,
+          supportingEvidence: ''
+        });
+      }
+    } else if (targets.length > 0 && targets.length < requestedCount) {
+      const baseTargets = [...targets];
+      while (targets.length < requestedCount) {
+        const idx = targets.length;
+        const ref = baseTargets[idx % baseTargets.length];
+        targets.push({
+          ...ref,
+          targetId: `T${String(idx + 1).padStart(2, '0')}`,
+          concept: ref.concept
+        });
+      }
+    }
 
     // Analyze depth of each target concept
     const targetsWithDepth = targets.map((t, idx) => {
@@ -622,55 +803,147 @@ Generate the curricular assessment plan strictly covering educational concepts w
       return { target: t, depth, originalIdx: idx };
     });
 
-    // If Hard targets are requested, prioritize assigning concepts with mechanism/scenario depth to Hard slots
-    if (blueprint.counts.Hard > 0 && targetsWithDepth.length > 1) {
-      targetsWithDepth.sort((a, b) => {
-        const aScore = a.depth.supportsHard ? 2 : 1;
-        const bScore = b.depth.supportsHard ? 2 : 1;
-        return aScore - bScore; // Ascending: definition-only (1) first, mechanism (2) last
-      });
-    }
+    // Collect distinct Hard candidates across deep concepts
+    const distinctHardCandidates = (requestedHardCount > 0)
+      ? this._collectDistinctHardAngles(targets, evidencePackage)
+      : [];
 
-    const reorderedTargets = targetsWithDepth.map(item => item.target);
+    const availableDistinctHardCount = distinctHardCandidates.length;
+    const feasibleHardCount = Math.min(requestedHardCount, availableDistinctHardCount);
 
-    // Assign targetDifficulty and cognitive blueprint to each target
-    const finalTargets = reorderedTargets.map((target, idx) => {
-      const assignedTier = blueprint.distribution[idx] || 'Medium';
-      const depth = targetsWithDepth[idx].depth;
-      const cognitiveBp = this.getCognitiveBlueprint(assignedTier, target.dimension, idx);
+    const finalTargets = [];
+    let hardCandidateIdx = 0;
 
-      target.targetDifficulty = assignedTier;
-      target.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
-      target.bloomLevel = cognitiveBp.bloomLevel;
-      target.operationalGuidance = cognitiveBp.operationalGuidance;
+    // Handle Uniform Hard mode
+    if (requestedDifficulty.toLowerCase() === 'hard') {
+      // 1. Assign feasible Hard targets using distinct angles
+      for (let i = 0; i < feasibleHardCount; i++) {
+        const candidate = distinctHardCandidates[hardCandidateIdx++];
+        const angle = candidate.angle;
+        const originalTarget = candidate.target;
 
-      if (!target.instruction || target.instruction.startsWith('Test understanding')) {
-        target.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${target.concept}.`;
+        finalTargets.push({
+          ...originalTarget,
+          targetId: `T${String(finalTargets.length + 1).padStart(2, '0')}`,
+          subtopic: angle.subtopicAngle,
+          dimension: angle.dimension,
+          targetDifficulty: 'Hard',
+          intendedCognitiveOperation: angle.intendedCognitiveOperation,
+          bloomLevel: angle.bloomLevel,
+          operationalGuidance: angle.operationalGuidance,
+          instruction: angle.instruction
+        });
+        supportedHardCount++;
       }
 
-      // Audit Hard target capability
-      if (assignedTier === 'Hard') {
-        if (depth.supportsHard) {
-          supportedHardCount++;
+      // 2. Handle deficit slots
+      const deficitCount = requestedHardCount - feasibleHardCount;
+      if (deficitCount > 0) {
+        if (deficitPolicy === 'FILL_WITH_MEDIUM') {
+          // Explicit teacher policy: fill remaining deficit with Medium questions
+          const remainingTargets = targets.filter(t => !finalTargets.some(f => f.concept === t.concept));
+          for (let i = 0; i < deficitCount; i++) {
+            const fallbackTarget = remainingTargets[i % (remainingTargets.length || 1)] || targets[i % targets.length];
+            const cognitiveBp = this.getCognitiveBlueprint('Medium', fallbackTarget.dimension, i);
+            finalTargets.push({
+              ...fallbackTarget,
+              targetId: `T${String(finalTargets.length + 1).padStart(2, '0')}`,
+              targetDifficulty: 'Medium',
+              intendedCognitiveOperation: cognitiveBp.intendedCognitiveOperation,
+              bloomLevel: cognitiveBp.bloomLevel,
+              operationalGuidance: cognitiveBp.operationalGuidance,
+              instruction: `${cognitiveBp.operationalGuidance} Test concept: ${fallbackTarget.concept}.`,
+              isDeficitFill: true,
+              originalRequestedDifficulty: 'Hard'
+            });
+          }
         } else {
-          // Record capacity limitation without silently changing requested level!
-          target.capacityLimitation = {
-            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            reason: `Concept "${target.concept}" lacks observed mechanism or operational rule in lecture evidence for application/diagnosis`,
-            observedDepth: 'DEFINITION_ONLY'
-          };
-          capacityLimitations.push({
-            targetId: target.targetId,
-            concept: target.concept,
-            requestedDifficulty: 'Hard',
-            limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            message: `Requested Hard question for concept "${target.concept}", but session evidence is definition-only with no taught mechanisms, operational rules, or scenarios to assess defensible diagnosis/application without hallucinating untaught depth.`
-          });
+          // TEACHER IS KING: NO silent downgrade to Medium!
+          // Mark deficit slots transparently
+          const remainingTargets = targets.filter(t => !finalTargets.some(f => f.concept === t.concept));
+          for (let i = 0; i < deficitCount; i++) {
+            const conceptObj = remainingTargets[i] || targets[i % targets.length];
+            const deficitConceptName = conceptObj?.concept || `Concept Deficit Slot ${i + 1}`;
+            const targetId = `T${String(finalTargets.length + 1).padStart(2, '0')}`;
+            const deficitReason = `Insufficient lecture evidence for ${deficitCount} additional distinct Hard questions without hallucination`;
+
+            const deficitTarget = {
+              ...(conceptObj || {}),
+              targetId,
+              concept: deficitConceptName,
+              targetDifficulty: 'Hard',
+              intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+              bloomLevel: 'Apply / Evaluate',
+              dimension: 'Scenario Analysis',
+              operationalGuidance: 'Capacity deficit: concept lacks observed mechanisms in lecture evidence to fulfill requested Hard difficulty without hallucination.',
+              instruction: deficitReason,
+              capacityLimitation: {
+                status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+                reason: deficitReason,
+                observedDepth: 'DEFINITION_ONLY'
+              }
+            };
+            finalTargets.push(deficitTarget);
+            capacityLimitations.push({
+              targetId,
+              concept: deficitConceptName,
+              requestedDifficulty: 'Hard',
+              limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+              message: `Requested Hard question for concept "${deficitConceptName}", but session evidence is definition-only with no taught mechanisms, operational rules, or scenarios to assess defensible diagnosis/application without hallucinating untaught depth.`
+            });
+          }
         }
       }
+    } else {
+      // Balanced or Easy/Medium distribution
+      // Prioritize assigning concepts with mechanism/scenario depth to Hard slots
+      if (blueprint.counts.Hard > 0 && targetsWithDepth.length > 1) {
+        targetsWithDepth.sort((a, b) => {
+          const aScore = a.depth.supportsHard ? 2 : 1;
+          const bScore = b.depth.supportsHard ? 2 : 1;
+          return aScore - bScore; // Ascending: definition-only (1) first, mechanism (2) last
+        });
+      }
 
-      return target;
-    });
+      const reorderedTargets = targetsWithDepth.map(item => item.target);
+
+      reorderedTargets.forEach((target, idx) => {
+        const assignedTier = blueprint.distribution[idx] || 'Medium';
+        const depth = targetsWithDepth[idx].depth;
+        const cognitiveBp = this.getCognitiveBlueprint(assignedTier, target.dimension, idx);
+
+        target.targetDifficulty = assignedTier;
+        target.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+        target.bloomLevel = cognitiveBp.bloomLevel;
+        target.operationalGuidance = cognitiveBp.operationalGuidance;
+
+        if (!target.instruction || target.instruction.startsWith('Test understanding')) {
+          target.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${target.concept}.`;
+        }
+
+        // Audit Hard target capability
+        if (assignedTier === 'Hard') {
+          if (depth.supportsHard) {
+            supportedHardCount++;
+          } else {
+            target.capacityLimitation = {
+              status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+              reason: `Concept "${target.concept}" lacks observed mechanism or operational rule in lecture evidence for application/diagnosis`,
+              observedDepth: 'DEFINITION_ONLY'
+            };
+            capacityLimitations.push({
+              targetId: target.targetId,
+              concept: target.concept,
+              requestedDifficulty: 'Hard',
+              limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+              message: `Requested Hard question for concept "${target.concept}", but session evidence is definition-only with no taught mechanisms, operational rules, or scenarios to assess defensible diagnosis/application without hallucinating untaught depth.`
+            });
+          }
+        }
+
+        finalTargets.push(target);
+      });
+    }
 
     // Re-assign target IDs sequentially: T01, T02, ...
     finalTargets.forEach((t, idx) => {
@@ -692,6 +965,29 @@ Generate the curricular assessment plan strictly covering educational concepts w
       supportedHardCount,
       deficit: Math.max(0, requestedHardCount - supportedHardCount),
       hasDeficit: requestedHardCount > supportedHardCount
+    };
+
+    // Capacity Deficit Report
+    const deficitCount = Math.max(0, requestedHardCount - supportedHardCount);
+    const hasDeficit = deficitCount > 0;
+    planData.capacityDeficitReport = {
+      requestedCount,
+      generatedCount: requestedCount - (deficitPolicy === 'FILL_WITH_MEDIUM' ? 0 : deficitCount),
+      requestedDifficulty: blueprint.requestedDifficulty,
+      fulfilledDifficulty: (deficitPolicy === 'FILL_WITH_MEDIUM' && hasDeficit)
+        ? (supportedHardCount > 0 ? `Mixed (${supportedHardCount} Hard, ${deficitCount} Medium)` : 'Medium')
+        : blueprint.requestedDifficulty,
+      capacityDeficit: deficitCount,
+      deficitPolicyApplied: deficitPolicy === 'FILL_WITH_MEDIUM' ? 'FILL_WITH_MEDIUM' : null,
+      deficitReason: hasDeficit
+        ? (capacityLimitations[0]?.message || `Insufficient lecture evidence for ${deficitCount} additional distinct Hard questions without hallucination`)
+        : null,
+      teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
+      options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
+        { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${supportedHardCount} Hard Question${supportedHardCount === 1 ? '' : 's'}` },
+        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${deficitCount} with Deep Medium Questions` },
+        { action: 'CANCEL', label: 'Cancel / Adjust Request' }
+      ] : []
     };
 
     // Also blueprint reserve targets so peer substitutes match the needed difficulty tiers
@@ -717,9 +1013,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
    * 1. Hard feasibility is relative to the teacher's demonstrated instructional intent and evidence.
    * 2. NEVER invents Hard questions merely to satisfy an N/3 quota when evidence is purely taxonomic.
    * 3. Explicit capacityAudit records requested vs allocated difficulty and reason for reallocation.
-   * 4. Enforces negative boundaries (NO_CODE, NO_MATH, NO_CLI, NO_TRIVIA) across all generated targets.
+   * 4. Multi-angle Hard target assignment: draws distinct reasoning angles from deeply taught concepts.
+   * 5. Teacher sovereignty: If Hard requested and deficit exists, NEVER silently downgrades to Medium unless deficitPolicy === 'FILL_WITH_MEDIUM'.
+   * 6. Enforces negative boundaries (NO_CODE, NO_MATH, NO_CLI, NO_TRIVIA) across all generated targets.
    */
-  _applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}) {
+  _applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}, deficitPolicy = null) {
     const profile = evidencePackage.instructionalProfile || {
       instructionalIntent: evidencePackage.instructionalIntent || 'FOUNDATIONAL_UNDERSTANDING',
       negativeBoundaries: evidencePackage.negativeBoundaries || [],
@@ -728,7 +1026,6 @@ Generate the curricular assessment plan strictly covering educational concepts w
       operationalGuidance: evidencePackage.hardOperationalGuidance || ''
     };
 
-    const isHardFeasible = Boolean(profile.hardFeasibility && profile.hardFeasibility.hardFeasible);
     const negativeBoundaries = profile.negativeBoundaries || [];
     const intent = profile.instructionalIntent || 'FOUNDATIONAL_UNDERSTANDING';
 
@@ -758,109 +1055,265 @@ Generate the curricular assessment plan strictly covering educational concepts w
       }
     }
 
-    // 2. Calibrate allocation according to genuine teacher evidence
+    let targets = planData.assessmentTargets || [];
+    if (targets.length === 0 && requestedCount > 0) {
+      for (let i = 0; i < requestedCount; i++) {
+        targets.push({
+          targetId: `T${String(i + 1).padStart(2, '0')}`,
+          concept: `Curriculum Concept ${i + 1}`,
+          supportingEvidence: ''
+        });
+      }
+    } else if (targets.length > 0 && targets.length < requestedCount) {
+      const baseTargets = [...targets];
+      while (targets.length < requestedCount) {
+        const idx = targets.length;
+        const ref = baseTargets[idx % baseTargets.length];
+        targets.push({
+          ...ref,
+          targetId: `T${String(idx + 1).padStart(2, '0')}`,
+          concept: ref.concept
+        });
+      }
+    }
+
+    // 2. Calibrate allocation according to genuine teacher evidence and distinct Hard angles
+    const distinctHardCandidates = (requestedHard > 0 && (profile.hardFeasibility?.hardFeasible !== false))
+      ? this._collectDistinctHardAngles(targets, evidencePackage)
+      : [];
+
+    const isHardFeasible = Boolean(
+      (profile.hardFeasibility?.hardFeasible !== false) &&
+      (diffLower === 'hard'
+        ? distinctHardCandidates.length > 0
+        : (distinctHardCandidates.length > 0 || (profile.hardFeasibility && profile.hardFeasibility.hardFeasible === true && (!targets[0] || distinctHardCandidates.length > 0))))
+    );
+
+    const availableDistinctHardCount = isHardFeasible ? distinctHardCandidates.length : 0;
+    const feasibleHardCount = Math.min(requestedHard, availableDistinctHardCount);
+
+    const finalTargets = [];
+    const capacityLimitations = [];
+    let hardCandidateIdx = 0;
+
     let allocatedHard = requestedHard;
     let allocatedMedium = requestedMedium;
     let allocatedEasy = requestedEasy;
     let capacityAudit = null;
+    let distribution = [];
 
-    if (requestedHard > 0 && !isHardFeasible) {
-      // REFUSE to fabricate Hard questions when evidence cannot support them
-      allocatedHard = 0;
-      const reallocatedCount = requestedHard;
-      // Reallocate to Medium if mechanism aspects exist, else Easy
-      const reallocatedTo = intent !== 'FOUNDATIONAL_UNDERSTANDING' ? 'Medium' : (allocatedEasy > 0 ? 'Easy' : 'Medium');
-      if (reallocatedTo === 'Medium') {
-        allocatedMedium += reallocatedCount;
+    if (diffLower === 'hard') {
+      const deficitCount = requestedHard - feasibleHardCount;
+      allocatedHard = feasibleHardCount;
+
+      if (deficitPolicy === 'FILL_WITH_MEDIUM') {
+        allocatedMedium = deficitCount;
+        allocatedEasy = 0;
+        capacityAudit = {
+          mode: 'v2_intent_relative',
+          requestedDifficulty,
+          requestedCount,
+          requestedHardCount: requestedHard,
+          allocatedHardCount: feasibleHardCount,
+          reallocatedCount: deficitCount,
+          reallocatedTo: 'Medium',
+          reason: `Filled ${deficitCount} deficit slots with Medium questions per teacher instruction due to evidence limits`,
+          deficitStatus: null
+        };
       } else {
-        allocatedEasy += reallocatedCount;
+        // TEACHER IS KING: NO silent difficulty downgrade!
+        allocatedMedium = 0;
+        allocatedEasy = 0;
+        capacityAudit = {
+          mode: 'v2_intent_relative',
+          requestedDifficulty,
+          requestedCount,
+          requestedHardCount: requestedHard,
+          allocatedHardCount: feasibleHardCount,
+          reallocatedCount: 0,
+          deficitStatus: deficitCount > 0 ? 'INSUFFICIENT_EVIDENCE_FOR_HARD' : null,
+          reason: deficitCount > 0 ? (profile.hardFeasibility?.message || `Insufficient lecture evidence for ${deficitCount} additional distinct Hard questions without hallucination`) : null
+        };
       }
 
-      capacityAudit = {
-        mode: 'v2_intent_relative',
-        requestedDifficulty,
-        requestedCount,
-        requestedHardCount: requestedHard,
-        allocatedHardCount: 0,
-        reallocatedCount,
-        reallocatedTo,
-        reason: profile.hardFeasibility?.message || 'Lecture evidence is purely taxonomic/descriptive with zero taught trade-offs or perturbation dynamics.',
-        deficitStatus: 'INSUFFICIENT_EVIDENCE_FOR_HARD'
-      };
+      // 1. Assign feasible Hard targets using distinct angles
+      for (let i = 0; i < feasibleHardCount; i++) {
+        const candidate = distinctHardCandidates[hardCandidateIdx++];
+        const angle = candidate.angle;
+        const originalTarget = candidate.target;
+
+        let hardOp = angle.intendedCognitiveOperation || 'DEEP_CONCEPTUAL_ANALYSIS';
+        if (intent === 'EXPLORATION' && angle.angleId === 'PREDICT_CONSTRAINT') hardOp = 'BEHAVIORAL_PREDICTION';
+        else if (intent === 'COMPARATIVE_TRADEOFF' && angle.angleId === 'COMPARE') hardOp = 'SCENARIO_TRADEOFF';
+        else if (intent === 'IMPLEMENTATION_PRACTICE' && angle.angleId === 'APPLY') hardOp = 'CODE_OR_TRACE';
+        else if (intent === 'PROCEDURAL_TRACE' && angle.angleId === 'APPLY') hardOp = 'STEP_TRACE';
+        else if (intent === 'CAUSAL_ANALYSIS' && angle.angleId === 'DIAGNOSE') hardOp = 'CAUSAL_EXPLANATION';
+
+        finalTargets.push({
+          ...originalTarget,
+          targetId: `T${String(finalTargets.length + 1).padStart(2, '0')}`,
+          subtopic: angle.subtopicAngle || originalTarget.subtopic,
+          dimension: angle.dimension || originalTarget.dimension,
+          targetDifficulty: 'Hard',
+          intendedCognitiveOperation: hardOp,
+          bloomLevel: angle.bloomLevel || 'Evaluate / Synthesize',
+          operationalGuidance: profile.operationalGuidance || angle.operationalGuidance,
+          instruction: profile.operationalGuidance
+            ? `${profile.operationalGuidance} Test concept: ${originalTarget.concept}.`
+            : angle.instruction,
+          negativeBoundaries
+        });
+      }
+
+      // 2. Handle deficit slots
+      if (deficitCount > 0) {
+        if (deficitPolicy === 'FILL_WITH_MEDIUM') {
+          const remainingTargets = targets.filter(t => !finalTargets.some(f => f.concept === t.concept));
+          for (let i = 0; i < deficitCount; i++) {
+            const fallbackTarget = remainingTargets[i % (remainingTargets.length || 1)] || targets[i % targets.length];
+            let negConstraint = '';
+            if (negativeBoundaries.includes('NO_CODE_IMPLEMENTATION')) negConstraint += ' [Do NOT ask for code syntax.]';
+            if (negativeBoundaries.includes('NO_VENDOR_SPECIFIC_CLI')) negConstraint += ' [Do NOT ask for vendor CLI flags.]';
+
+            finalTargets.push({
+              ...fallbackTarget,
+              targetId: `T${String(finalTargets.length + 1).padStart(2, '0')}`,
+              targetDifficulty: 'Medium',
+              intendedCognitiveOperation: intent === 'COMPARATIVE_TRADEOFF' ? 'COMPARE' : (intent === 'PROCEDURAL_TRACE' ? 'TRACE' : 'EXPLAIN_MECHANISM'),
+              bloomLevel: 'Understand / Apply',
+              operationalGuidance: `Require operational reasoning about mechanisms and state transitions.${negConstraint}`,
+              instruction: `Assess operational understanding of ${fallbackTarget.concept}.${negConstraint}`,
+              negativeBoundaries,
+              isDeficitFill: true,
+              originalRequestedDifficulty: 'Hard'
+            });
+          }
+        } else {
+          // TEACHER IS KING: NO silent difficulty downgrade!
+          const remainingTargets = targets.filter(t => !finalTargets.some(f => f.concept === t.concept));
+          for (let i = 0; i < deficitCount; i++) {
+            const conceptObj = remainingTargets[i] || targets[i % targets.length];
+            const deficitConceptName = conceptObj?.concept || `Concept Deficit Slot ${i + 1}`;
+            const targetId = `T${String(finalTargets.length + 1).padStart(2, '0')}`;
+            const deficitReason = profile.hardFeasibility?.message || `Insufficient lecture evidence for ${deficitCount} additional distinct Hard questions without hallucination`;
+
+            finalTargets.push({
+              ...(conceptObj || {}),
+              targetId,
+              concept: deficitConceptName,
+              targetDifficulty: 'Hard',
+              intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+              bloomLevel: 'Evaluate / Synthesize',
+              dimension: 'Scenario Analysis',
+              operationalGuidance: 'Capacity deficit: concept lacks observed mechanisms in lecture evidence to fulfill requested Hard difficulty without hallucination.',
+              instruction: deficitReason,
+              capacityLimitation: {
+                status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+                reason: deficitReason
+              },
+              negativeBoundaries
+            });
+
+            capacityLimitations.push({
+              targetId,
+              concept: deficitConceptName,
+              requestedDifficulty: 'Hard',
+              limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+              message: deficitReason
+            });
+          }
+        }
+      }
+
+      distribution = finalTargets.map(t => t.targetDifficulty);
     } else {
-      capacityAudit = {
-        mode: 'v2_intent_relative',
-        requestedDifficulty,
-        requestedCount,
-        requestedHardCount: requestedHard,
-        allocatedHardCount: allocatedHard,
-        reallocatedCount: 0,
-        deficitStatus: null
-      };
-    }
-
-    // 3. Build target distribution array
-    const distribution = [];
-    for (let i = 0; i < allocatedEasy; i++) distribution.push('Easy');
-    for (let i = 0; i < allocatedMedium; i++) distribution.push('Medium');
-    for (let i = 0; i < allocatedHard; i++) distribution.push('Hard');
-
-    // 4. Map targets to calibrated difficulty and intent-relative operations
-    const targets = planData.assessmentTargets || [];
-    const capacityLimitations = [];
-
-    const finalTargets = targets.map((target, idx) => {
-      const assignedTier = distribution[idx] || (isHardFeasible ? 'Medium' : 'Easy');
-      target.targetDifficulty = assignedTier;
-      target.negativeBoundaries = negativeBoundaries;
-
-      if (assignedTier === 'Hard') {
-        if (!isHardFeasible) {
-          target.capacityLimitation = {
-            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            reason: capacityAudit.reason
-          };
-          capacityLimitations.push({
-            targetId: target.targetId,
-            concept: target.concept,
-            requestedDifficulty: 'Hard',
-            limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            message: capacityAudit.reason
-          });
+      // Balanced, Easy, or Medium mode
+      if (requestedHard > 0 && (!isHardFeasible || feasibleHardCount < requestedHard)) {
+        allocatedHard = 0;
+        const reallocatedCount = requestedHard;
+        const reallocatedTo = intent !== 'FOUNDATIONAL_UNDERSTANDING' ? 'Medium' : (allocatedEasy > 0 ? 'Easy' : 'Medium');
+        if (reallocatedTo === 'Medium') {
+          allocatedMedium += reallocatedCount;
+        } else {
+          allocatedEasy += reallocatedCount;
         }
 
-        // Assign intent-relative cognitive operation
-        let hardOp = 'DEEP_CONCEPTUAL_ANALYSIS';
-        if (intent === 'EXPLORATION') hardOp = 'BEHAVIORAL_PREDICTION';
-        else if (intent === 'COMPARATIVE_TRADEOFF') hardOp = 'SCENARIO_TRADEOFF';
-        else if (intent === 'IMPLEMENTATION_PRACTICE') hardOp = 'CODE_OR_TRACE';
-        else if (intent === 'PROCEDURAL_TRACE') hardOp = 'STEP_TRACE';
-        else if (intent === 'CAUSAL_ANALYSIS') hardOp = 'CAUSAL_EXPLANATION';
-
-        target.intendedCognitiveOperation = hardOp;
-        target.bloomLevel = 'Evaluate / Synthesize';
-        target.operationalGuidance = profile.operationalGuidance;
-        target.instruction = `${profile.operationalGuidance} Test concept: ${target.concept}.`;
-      } else if (assignedTier === 'Medium') {
-        target.intendedCognitiveOperation = intent === 'COMPARATIVE_TRADEOFF' ? 'COMPARE' : (intent === 'PROCEDURAL_TRACE' ? 'TRACE' : 'EXPLAIN_MECHANISM');
-        target.bloomLevel = 'Understand / Apply';
-        let negConstraint = '';
-        if (negativeBoundaries.includes('NO_CODE_IMPLEMENTATION')) negConstraint += ' [Do NOT ask for code syntax.]';
-        if (negativeBoundaries.includes('NO_VENDOR_SPECIFIC_CLI')) negConstraint += ' [Do NOT ask for vendor CLI flags.]';
-        target.operationalGuidance = `Require operational reasoning about mechanisms and state transitions.${negConstraint}`;
-        target.instruction = `Assess operational understanding of ${target.concept}.${negConstraint}`;
+        capacityAudit = {
+          mode: 'v2_intent_relative',
+          requestedDifficulty,
+          requestedCount,
+          requestedHardCount: requestedHard,
+          allocatedHardCount: 0,
+          reallocatedCount,
+          reallocatedTo,
+          reason: profile.hardFeasibility?.message || 'Lecture evidence is purely taxonomic/descriptive with zero taught trade-offs or perturbation dynamics.',
+          deficitStatus: 'INSUFFICIENT_EVIDENCE_FOR_HARD'
+        };
       } else {
-        // Easy
-        target.intendedCognitiveOperation = 'RECALL';
-        target.bloomLevel = 'Remember';
-        let negConstraint = '';
-        if (negativeBoundaries.includes('NO_CODE_IMPLEMENTATION')) negConstraint += ' [Do NOT ask for code syntax.]';
-        target.operationalGuidance = `Directly assess concept recognition or definition.${negConstraint}`;
-        target.instruction = `Assess basic recall of ${target.concept}.${negConstraint}`;
+        capacityAudit = {
+          mode: 'v2_intent_relative',
+          requestedDifficulty,
+          requestedCount,
+          requestedHardCount: requestedHard,
+          allocatedHardCount: allocatedHard,
+          reallocatedCount: 0,
+          deficitStatus: null
+        };
       }
 
-      return target;
-    });
+      for (let i = 0; i < allocatedEasy; i++) distribution.push('Easy');
+      for (let i = 0; i < allocatedMedium; i++) distribution.push('Medium');
+      for (let i = 0; i < allocatedHard; i++) distribution.push('Hard');
+
+      const mappedTargets = targets.slice(0, requestedCount).map((target, idx) => {
+        let assignedTier = distribution[idx] || (isHardFeasible ? 'Medium' : 'Easy');
+        target.targetDifficulty = assignedTier;
+        target.negativeBoundaries = negativeBoundaries;
+
+        if (assignedTier === 'Hard') {
+          const candidate = distinctHardCandidates[hardCandidateIdx++];
+          let hardOp = 'DEEP_CONCEPTUAL_ANALYSIS';
+          if (intent === 'EXPLORATION') hardOp = 'BEHAVIORAL_PREDICTION';
+          else if (intent === 'COMPARATIVE_TRADEOFF') hardOp = 'SCENARIO_TRADEOFF';
+          else if (intent === 'IMPLEMENTATION_PRACTICE') hardOp = 'CODE_OR_TRACE';
+          else if (intent === 'PROCEDURAL_TRACE') hardOp = 'STEP_TRACE';
+          else if (intent === 'CAUSAL_ANALYSIS') hardOp = 'CAUSAL_EXPLANATION';
+          else if (candidate && candidate.angle) hardOp = candidate.angle.intendedCognitiveOperation;
+
+          target.intendedCognitiveOperation = hardOp;
+          target.bloomLevel = 'Evaluate / Synthesize';
+          target.operationalGuidance = profile.operationalGuidance || (candidate && candidate.angle ? candidate.angle.operationalGuidance : 'Assess deep conceptual analysis.');
+          target.instruction = profile.operationalGuidance
+            ? `${profile.operationalGuidance} Test concept: ${target.concept}.`
+            : (candidate && candidate.angle ? candidate.angle.instruction : `Assess deep understanding of ${target.concept}.`);
+
+          if (candidate && candidate.angle) {
+            target.subtopic = candidate.angle.subtopicAngle || target.subtopic;
+            target.dimension = candidate.angle.dimension || target.dimension;
+          }
+        } else if (assignedTier === 'Medium') {
+          target.intendedCognitiveOperation = intent === 'COMPARATIVE_TRADEOFF' ? 'COMPARE' : (intent === 'PROCEDURAL_TRACE' ? 'TRACE' : 'EXPLAIN_MECHANISM');
+          target.bloomLevel = 'Understand / Apply';
+          let negConstraint = '';
+          if (negativeBoundaries.includes('NO_CODE_IMPLEMENTATION')) negConstraint += ' [Do NOT ask for code syntax.]';
+          if (negativeBoundaries.includes('NO_VENDOR_SPECIFIC_CLI')) negConstraint += ' [Do NOT ask for vendor CLI flags.]';
+          target.operationalGuidance = `Require operational reasoning about mechanisms and state transitions.${negConstraint}`;
+          target.instruction = `Assess operational understanding of ${target.concept}.${negConstraint}`;
+        } else {
+          // Easy
+          target.intendedCognitiveOperation = 'RECALL';
+          target.bloomLevel = 'Remember';
+          let negConstraint = '';
+          if (negativeBoundaries.includes('NO_CODE_IMPLEMENTATION')) negConstraint += ' [Do NOT ask for code syntax.]';
+          target.operationalGuidance = `Directly assess concept recognition or definition.${negConstraint}`;
+          target.instruction = `Assess basic recall of ${target.concept}.${negConstraint}`;
+        }
+
+        return target;
+      });
+
+      for (const t of mappedTargets) finalTargets.push(t);
+    }
 
     finalTargets.forEach((t, idx) => {
       t.targetId = `T${String(idx + 1).padStart(2, '0')}`;
@@ -881,7 +1334,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     planData.depthCapacity = {
       requestedHardCount: requestedHard,
       supportedHardCount: allocatedHard,
-      deficit: requestedHard - allocatedHard,
+      deficit: Math.max(0, requestedHard - allocatedHard),
       hasDeficit: requestedHard > allocatedHard
     };
     planData.metadata = {
@@ -890,6 +1343,29 @@ Generate the curricular assessment plan strictly covering educational concepts w
       calibrationMode: 'v2_intent_relative',
       instructionalIntent: intent,
       negativeBoundaries
+    };
+
+    // Capacity Deficit Report
+    const totalHardDeficit = Math.max(0, requestedHard - allocatedHard);
+    const hasDeficit = totalHardDeficit > 0;
+    planData.capacityDeficitReport = {
+      requestedCount,
+      generatedCount: requestedCount - (deficitPolicy === 'FILL_WITH_MEDIUM' ? 0 : totalHardDeficit),
+      requestedDifficulty,
+      fulfilledDifficulty: (deficitPolicy === 'FILL_WITH_MEDIUM' && hasDeficit)
+        ? (allocatedHard > 0 ? `Mixed (${allocatedHard} Hard, ${totalHardDeficit} Medium)` : 'Medium')
+        : requestedDifficulty,
+      capacityDeficit: totalHardDeficit,
+      deficitPolicyApplied: deficitPolicy === 'FILL_WITH_MEDIUM' ? 'FILL_WITH_MEDIUM' : null,
+      deficitReason: hasDeficit
+        ? (capacityAudit?.reason || `Insufficient lecture evidence for ${totalHardDeficit} additional distinct Hard questions without hallucination`)
+        : null,
+      teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
+      options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
+        { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${allocatedHard} Hard Question${allocatedHard === 1 ? '' : 's'}` },
+        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalHardDeficit} with Deep Medium Questions` },
+        { action: 'CANCEL', label: 'Cancel / Adjust Request' }
+      ] : []
     };
 
     // Blueprint reserve targets with boundary constraints

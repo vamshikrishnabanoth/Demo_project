@@ -183,7 +183,11 @@ class PipelineOrchestrator {
       // Stage 03: AGENT 1 — ASSESSMENT PLANNING & TC ANALYSIS
       // ──────────────────────────────────────────────────────────────────────────
       const t2 = Date.now();
-      plan = await agent1Planner.planAssessment(evidencePackage, requestedDifficulty, requestedCount);
+      plan = await agent1Planner.planAssessment(evidencePackage, {
+        requestedDifficulty,
+        requestedCount,
+        deficitPolicy: sessionInputs.deficitPolicy || evidencePackage.deficitPolicy || null
+      });
       const primaryTargets = [...plan.assessmentTargets];
       const reservePool = [...(plan.reserveTargets || [])];
 
@@ -393,23 +397,34 @@ class PipelineOrchestrator {
           unfulfilledTargets.push(outcome.deficitRecord);
           targetResults.push(outcome.deficitRecord);
 
-          // Auto-promote reserve target to fulfill question count!
+          // Only promote reserve target if reserve target itself supports the requested difficulty
           if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
-            const nextReserve = activeReservePool.shift();
-            nextReserve.targetDifficulty = tier;
-            const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
-            nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
-            nextReserve.bloomLevel = cognitiveBp.bloomLevel;
-            nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
-            nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
-            candidateQueue.push(nextReserve);
-            console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} to substitute for capacity-limited target ${currentTarget.targetId}`);
-          } else if (passingQuestions.length < requestedCount) {
-            // No reserve targets left: adaptively calibrate this concept to Medium so a valid grounded question is produced
+            const nextReserve = activeReservePool[0];
+            const reserveDepth = agent1Planner._detectConceptDepth(nextReserve.concept, nextReserve.supportingEvidence, evidencePackage);
+            const canSupportTier = (tier !== 'Hard') || reserveDepth.supportsHard;
+
+            if (canSupportTier) {
+              activeReservePool.shift();
+              nextReserve.targetDifficulty = tier;
+              const cognitiveBp = agent1Planner.getCognitiveBlueprint(tier, nextReserve.dimension || 'Conceptual');
+              nextReserve.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation;
+              nextReserve.bloomLevel = cognitiveBp.bloomLevel;
+              nextReserve.operationalGuidance = cognitiveBp.operationalGuidance;
+              nextReserve.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${nextReserve.concept}.`;
+              candidateQueue.push(nextReserve);
+              console.log(`🔄 [Orchestrator] Promoted reserve target ${nextReserve.targetId} to substitute for capacity-limited target ${currentTarget.targetId}`);
+              return;
+            }
+          }
+
+          // Invariant: NEVER silently downgrade to Medium unless deficitPolicy === 'FILL_WITH_MEDIUM'
+          if (sessionInputs.deficitPolicy === 'FILL_WITH_MEDIUM' && passingQuestions.length < requestedCount) {
             const calibratedTarget = {
               ...currentTarget,
               targetId: `${currentTarget.targetId}_cal`,
-              targetDifficulty: 'Medium'
+              targetDifficulty: 'Medium',
+              isDeficitFill: true,
+              originalRequestedDifficulty: tier
             };
             delete calibratedTarget.capacityLimitation;
             const cognitiveBp = agent1Planner.getCognitiveBlueprint('Medium', calibratedTarget.dimension || 'Conceptual');
@@ -418,7 +433,9 @@ class PipelineOrchestrator {
             calibratedTarget.operationalGuidance = cognitiveBp.operationalGuidance;
             calibratedTarget.instruction = `${cognitiveBp.operationalGuidance} Test concept: ${calibratedTarget.concept}.`;
             candidateQueue.unshift(calibratedTarget);
-            console.log(`ℹ️ [Orchestrator] Adaptively calibrated target ${currentTarget.targetId} to Medium to ensure question fulfillment.`);
+            console.log(`ℹ️ [Orchestrator] Explicit teacher policy: filled deficit target ${currentTarget.targetId} with Medium question.`);
+          } else {
+            console.log(`🛑 [Orchestrator] Preserving capacity deficit for target ${currentTarget.targetId}: teacher requested ${tier}, insufficient evidence without hallucination.`);
           }
           return;
         }
@@ -917,6 +934,45 @@ class PipelineOrchestrator {
       // Finalize Session Trace & Persist final_session_trace.json
       const finalTraceData = await trace.finalize(validatedQuestions, plan?.tcScore, evidencePackage, plan, pipelineStatus);
 
+      const totalDeficit = Math.max(0, requestedCount - deliveredCount);
+      const hasDeficit = totalDeficit > 0;
+      const primaryReason = unfulfilledTargets.find(u => u.reason)?.reason ||
+        (hasDeficit ? `Insufficient lecture evidence for ${totalDeficit} additional distinct ${requestedDifficulty} questions without hallucination` : null);
+
+      const capacityDeficitReport = plan?.capacityDeficitReport ? {
+        ...plan.capacityDeficitReport,
+        generatedCount: deliveredCount,
+        capacityDeficit: totalDeficit,
+        teacherActionRequired: hasDeficit && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM',
+        options: (hasDeficit && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
+          { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${deliveredCount} ${requestedDifficulty} Question${deliveredCount === 1 ? '' : 's'}` },
+          { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficit} with Deep Medium Questions` },
+          { action: 'CANCEL', label: 'Cancel / Adjust Request' }
+        ] : []
+      } : {
+        requestedCount,
+        generatedCount: deliveredCount,
+        requestedDifficulty,
+        fulfilledDifficulty: (deliveredCount === 0)
+          ? 'None'
+          : (achievedDistribution.Hard === deliveredCount)
+            ? 'Hard'
+            : (achievedDistribution.Medium === deliveredCount)
+              ? 'Medium'
+              : (achievedDistribution.Easy === deliveredCount)
+                ? 'Easy'
+                : `Mixed (${achievedDistribution.Hard} Hard, ${achievedDistribution.Medium} Medium, ${achievedDistribution.Easy} Easy)`,
+        capacityDeficit: totalDeficit,
+        deficitPolicyApplied: sessionInputs.deficitPolicy || null,
+        deficitReason: primaryReason,
+        teacherActionRequired: hasDeficit && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM',
+        options: (hasDeficit && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
+          { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${deliveredCount} ${requestedDifficulty} Question${deliveredCount === 1 ? '' : 's'}` },
+          { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficit} with Deep Medium Questions` },
+          { action: 'CANCEL', label: 'Cancel / Adjust Request' }
+        ] : []
+      };
+
       return {
         sessionId: sessionId,
         pipelineStatus: pipelineStatus,
@@ -945,8 +1001,10 @@ class PipelineOrchestrator {
             totalRequested: requestedCount,
             totalDelivered: deliveredCount,
             deficitCount: requestedCount - deliveredCount
-          }
+          },
+          capacityDeficitReport
         },
+        capacityDeficitReport,
         metrics,
         questionDecisionLedger: validatedQuestions.map(q => q.metadata?.decisionLedger).filter(Boolean),
         tcScore: plan?.tcScore,

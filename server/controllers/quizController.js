@@ -757,7 +757,7 @@ const checkAiServiceOnline = async (url) => {
 // LOCAL/CLOUD AI Generation - Architecture Baseline v1.0 (Three-Agent Assessment Pipeline)
 const pipelineOrchestrator = require('../engine/pipelineOrchestrator');
 
-const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED') => {
+const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null) => {
     try {
         console.log(`🚀 [Baseline v1.0] Executing 3-Agent Pipeline: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
 
@@ -817,7 +817,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             codeSnippets: codeSnippets,
             commonDocumentModel: commonDocModel,
             difficulty: difficulty,
-            count: parseInt(count)
+            count: parseInt(count),
+            deficitPolicy: deficitPolicy || null
         };
 
         const stageLabelMap = {
@@ -884,6 +885,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     tObj.deliveredCount = result.questions.length;
                     tObj.representation_mode = tObj.representation_mode || result.representationMode || null;
                     tObj.pipelineResult = result;
+                    tObj.capacityDeficitReport = result.capacityDeficitReport || null;
                     if (result.stages) tObj.stages = result.stages;
                 }
             }
@@ -2663,9 +2665,9 @@ exports.generateQuizQuestions = async (req, res) => {
             return res.status(400).json({ msg: preflight.error, code: 'DOCKET_LIMIT_EXCEEDED', warnings: preflight.warnings });
         }
 
-        // Create a task immediately and return taskId — client polls /generate/status/:taskId
         const filesStr = allUploadedFiles.map(f => f.originalname || f.name || '').join(',');
-        const idempotencyRaw = `${req.user?.id || 'anon'}_${req.body.topic || ''}_${req.body.type || ''}_${req.body.questionCount || ''}_${filesStr}`;
+        const promptStr = typeof req.body.text_prompts === 'string' ? req.body.text_prompts.substring(0, 100) : '';
+        const idempotencyRaw = `${req.user?.id || 'anon'}_${req.body.topic || ''}_${req.body.type || ''}_${req.body.questionCount || ''}_${req.body.difficulty || ''}_${req.body.deficitPolicy || ''}_${filesStr}_${promptStr}`;
         const idempotencyKey = crypto.createHash('sha256').update(idempotencyRaw).digest('hex');
 
         const reqQuestionCount = parseInt(req.body.questionCount || req.body.question_count, 10) || 5;
@@ -2686,7 +2688,7 @@ exports.generateQuizQuestions = async (req, res) => {
             console.log(JSON.stringify(req.body, null, 2));
             console.log('========================================================\n');
 
-            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts, startPage, endPage, isolated_narratives, questionStyle } = req.body;
+            let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts, startPage, endPage, isolated_narratives, questionStyle, deficitPolicy } = req.body;
             let start = startPage ? parseInt(startPage) : 1;
             let end = endPage ? parseInt(endPage) : 999;
             let parsedIsolatedNarratives = null;
@@ -3300,17 +3302,17 @@ exports.generateQuizQuestions = async (req, res) => {
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
             } else if (req.file) {
                 if (extractedText) {
-                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle);
+                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
                 } else {
-                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle);
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
                 }
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle);
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
             }
 
             if (finalQuestions === 'ACCEPTED') {
@@ -3361,6 +3363,7 @@ exports.generateQuizQuestions = async (req, res) => {
                 quizEvaluation:  (finalTaskObj && finalTaskObj.pipelineResult?.quizEvaluation) || null,
                 targetResults:   (finalTaskObj && finalTaskObj.pipelineResult?.targetResults) || [],
                 difficultyReport: (finalTaskObj && finalTaskObj.pipelineResult?.difficultyReport) || null,
+                capacityDeficitReport: (finalTaskObj && finalTaskObj.capacityDeficitReport) || (finalTaskObj && finalTaskObj.pipelineResult?.capacityDeficitReport) || null,
                 telemetry:       (finalTaskObj && finalTaskObj.pipelineResult?.telemetry) || null,
                 metadata: {
                     executionMessages: (finalTaskObj && finalTaskObj.executionMessages) || []

@@ -102,6 +102,142 @@ class LectureIntelligence {
   }
 
   /**
+   * Evaluates natural assessable capacity based on evidence depth and reasoning operations.
+   * Decouples recommended question count from raw concept count.
+   * Evaluates:
+   * - Evidence strength per concept (anchors, definition substance, lack of passing-mention noise)
+   * - Teaching depth & mechanisms (rules, procedures, invariants, comparative tradeoffs)
+   * - Distinct reasoning operations across cognitive tiers:
+   *     Easy: Direct factual recall / definition recognition
+   *     Medium: Operational tracing / mechanism explanation / comparative tradeoffs
+   *     Hard: Invariant preservation / constraint violation / edge cases / diagnosis
+   * - Low-evidence concepts do not inflate capacity.
+   * - Deep concepts can contribute multiple distinct assessment angles.
+   *
+   * @param {Array<Object>} concepts - Extracted concept map
+   * @param {Object} pedagogicalCritique - Lecture pedagogical critique (explanatoryDepth, reasoningDepth, etc.)
+   * @param {Object} options - Additional context (wordCount, isCurricular, characteristics)
+   * @returns {Object} { distinctConceptCount, recommendedQuestionCount, capacityByDifficulty: { easy, medium, hard }, totalDefensibleCapacity, advisoryRationale }
+   */
+  deriveSemanticCapacity(concepts = [], pedagogicalCritique = {}, options = {}) {
+    const conceptList = Array.isArray(concepts) ? concepts : [];
+    if (conceptList.length === 0) {
+      return {
+        distinctConceptCount: 0,
+        recommendedQuestionCount: 5,
+        capacityByDifficulty: { easy: 2, medium: 2, hard: 1 },
+        totalDefensibleCapacity: 5,
+        advisoryRationale: 'Baseline pedagogical scope for introductory content.'
+      };
+    }
+
+    const explanatory = pedagogicalCritique?.explanatoryDepth || [];
+    const reasoning = pedagogicalCritique?.reasoningDepth || [];
+    const demonstrations = pedagogicalCritique?.practicalDemonstrations || [];
+
+    const hasMechanismsInLecture = explanatory.includes('OPERATIONAL_MECHANISM') || explanatory.includes('THEORETICAL_DERIVATION');
+    const hasInvariantsInLecture = reasoning.includes('INVARIANT_AND_CAUSAL') || explanatory.includes('THEORETICAL_DERIVATION');
+    const hasPracticalTraces = demonstrations.includes('WORKED_TRACE_OR_CODE');
+
+    let totalEasy = 0;
+    let totalMedium = 0;
+    let totalHard = 0;
+    let substantiveConceptCount = 0;
+
+    for (const c of conceptList) {
+      const name = String(c.name || c.concept_name || '').trim();
+      const def = String(c.definition || '').trim();
+      const mech = String(c.mechanism_or_rule || '').trim();
+      const anchors = Array.isArray(c.sourceAnchors) ? c.sourceAnchors : [];
+      const substanceType = String(c.substanceType || 'DEFINITION').toUpperCase();
+
+      // Rule 1: Filter out trivial / administrative / passing mention concepts
+      if (name.length < 3) continue;
+      const isPassingMention = /^(not covered|passing mention|briefly mentioned|out of scope)\b/i.test(def) ||
+        (/^(none|not observed|null|n\/a)$/i.test(mech) && def.length < 15 && anchors.length === 0);
+
+      // Rule 2: Low-evidence concepts DO NOT inflate capacity
+      // If a concept has no source anchors, minimal definition (< 20 chars), and no mechanism, it gets 0 capacity!
+      const isLowEvidence = (anchors.length === 0 && def.length < 20 && (!mech || mech === 'NOT_OBSERVED' || mech === 'null'));
+      if (isPassingMention || isLowEvidence) {
+        continue;
+      }
+
+      substantiveConceptCount++;
+
+      // Cognitive Operation 1: Easy Angle (Recall / Recognize / Define)
+      // Supported if valid definition or anchors exist
+      const supportsEasy = def.length >= 10 || anchors.length > 0;
+      if (supportsEasy) {
+        totalEasy += 1;
+      }
+
+      // Cognitive Operation 2: Medium Angles (Mechanism / Trace / Comparison)
+      const hasConceptMechanism = Boolean(mech && mech !== 'NOT_OBSERVED' && mech !== 'null' && mech.length >= 15);
+      const isComparison = substanceType === 'COMPARISON' || /\b(versus|vs|difference|compare|tradeoff|unlike)\b/i.test(`${name} ${def}`);
+      const isRuleOrProcedure = substanceType === 'RULE' || substanceType === 'MECHANISM' || /\b(algorithm|steps?|compute|formula|condition|pointer)\b/i.test(`${def} ${mech}`);
+
+      let conceptMediumAngles = 0;
+      if (hasConceptMechanism || isRuleOrProcedure || (hasMechanismsInLecture && def.length >= 40)) {
+        conceptMediumAngles += 1; // Operational mechanism / execution trace angle
+      }
+      if (isComparison) {
+        conceptMediumAngles += 1; // Comparative distinction / tradeoff angle
+      }
+      // Cap medium angles per single concept to 2 distinct operations
+      totalMedium += Math.min(conceptMediumAngles, 2);
+
+      // Cognitive Operation 3: Hard Angles (Invariant Preservation / Constraint Violation / Fault Diagnosis)
+      // Requires mechanism + invariant/formula/causal constraint in evidence
+      let conceptHardAngles = 0;
+      const hasFormulaOrInvariant = /\b(invariant|formula|balance|height|log|degree|at most|exactly|violation|overflow|null pointer|boundary)\b/i.test(`${name} ${def} ${mech}`);
+
+      if ((hasConceptMechanism || hasFormulaOrInvariant) && (hasInvariantsInLecture || hasFormulaOrInvariant)) {
+        conceptHardAngles += 1; // Invariant prediction / boundary condition angle
+      }
+      // If concept also has worked traces or code demonstrations, it supports multi-step scenario/diagnostic angle
+      if (hasConceptMechanism && (hasPracticalTraces || anchors.length >= 3) && def.length >= 80) {
+        conceptHardAngles += 1; // Deep diagnostic / multi-step edge case angle
+      }
+      // Cap hard angles per single concept to 2 distinct operations
+      totalHard += Math.min(conceptHardAngles, 2);
+    }
+
+    const totalDefensibleCapacity = totalEasy + totalMedium + totalHard;
+
+    // Derive Recommended Question Count from defensible capacity:
+    // Decoupled from concept count!
+    // A standard balanced assessment covers the viable operations without excessive redundancy.
+    let recommendedCount;
+    if (totalDefensibleCapacity <= 4) {
+      recommendedCount = Math.max(1, totalDefensibleCapacity);
+    } else if (totalDefensibleCapacity <= 10) {
+      recommendedCount = Math.min(totalDefensibleCapacity, Math.max(5, Math.round(totalDefensibleCapacity * 0.75)));
+    } else if (totalDefensibleCapacity <= 20) {
+      recommendedCount = Math.min(totalDefensibleCapacity, Math.max(8, Math.round(totalDefensibleCapacity * 0.65)));
+    } else {
+      recommendedCount = Math.min(30, Math.max(12, Math.round(totalDefensibleCapacity * 0.55)));
+    }
+
+    // Safety ceiling: 30 as a resource guard, never a target
+    recommendedCount = Math.max(1, Math.min(recommendedCount, 30));
+
+    const advisoryRationale = `Defensible assessment capacity of ${totalDefensibleCapacity} questions across ${substantiveConceptCount} substantive concepts (Easy: ${totalEasy}, Medium: ${totalMedium}, Hard: ${totalHard}). Recommended count is advisory; user-requested count will be honored.`;
+
+    return {
+      distinctConceptCount: substantiveConceptCount,
+      recommendedQuestionCount: recommendedCount,
+      capacityByDifficulty: {
+        easy: totalEasy,
+        medium: totalMedium,
+        hard: totalHard
+      },
+      totalDefensibleCapacity,
+      advisoryRationale
+    };
+  }
+
+  /**
    * Validate schema compliance and modality-specific timing invariants.
    */
   validateLectureIntelligence(data, { hasTimingData = false, inputModality = 'DOCUMENT_ONLY', sourceText = '' } = {}) {
@@ -196,8 +332,8 @@ class LectureIntelligence {
     const wordCount = words.length;
     const isBriefExcerpt = wordCount < 150;
 
-    // Build partial concept map strictly from verified curricular segments
-    const concepts = (depthResult.detectedFocus || []).slice(0, 6).map((term, i) => {
+    // Build partial concept map strictly from verified curricular segments (safety guard 30)
+    const concepts = (depthResult.detectedFocus || []).slice(0, 30).map((term, i) => {
       const match = depthResult.curricularSegments.find(s => (s.text || '').toLowerCase().includes(term.toLowerCase()));
       return {
         id: `C${String(i + 1).padStart(2, '0')}`,
@@ -214,6 +350,15 @@ class LectureIntelligence {
     const limitationNote = isBriefExcerpt
       ? `The submitted evidence is a brief excerpt (${wordCount} words). Absence of worked examples or student interaction reflects excerpt scope rather than instructional deficiency.`
       : 'Automated fallback generated via deterministic evidence analysis.';
+
+    const fallbackPedagogicalCritique = {
+      explanatoryDepth: depthResult.isCurricular ? ['DEFINITION_AND_TERMINOLOGY'] : [],
+      reasoningDepth: ['ASSERTION_BASED'],
+      practicalDemonstrations: ['NOT_OBSERVED_IN_EXCERPT'],
+      discourseStyle: ['MONOLOGUE_LECTURE'],
+      evidenceQuotes: [],
+      limitationsOfExcerpt: limitationNote
+    };
 
     return {
       schema_version: SCHEMA_VERSION,
@@ -241,20 +386,13 @@ class LectureIntelligence {
           key_concepts: depthResult.detectedFocus?.slice(0, 4) || []
         }
       ],
-      pedagogicalCritique: {
-        explanatoryDepth: depthResult.isCurricular ? ['DEFINITION_AND_TERMINOLOGY'] : [],
-        reasoningDepth: ['ASSERTION_BASED'],
-        practicalDemonstrations: ['NOT_OBSERVED_IN_EXCERPT'],
-        discourseStyle: ['MONOLOGUE_LECTURE'],
-        evidenceQuotes: [],
-        limitationsOfExcerpt: limitationNote
-      },
+      pedagogicalCritique: fallbackPedagogicalCritique,
       conceptMap: concepts,
-      evidenceCapacity: {
-        distinctConceptCount: concepts.length,
-        recommendedQuestionCount: Math.max(1, Math.min(concepts.length, 30)),
-        advisoryRationale: `Evidence contains ${concepts.length} distinct assessable concepts. Recommended count is advisory; user request will be honored.`
-      },
+      evidenceCapacity: this.deriveSemanticCapacity(concepts, fallbackPedagogicalCritique, {
+        wordCount,
+        isCurricular: depthResult.isCurricular,
+        curricularSegmentsCount: depthResult.curricularSegments?.length || 0
+      }),
       auditTrail: {
         modelUsed: 'deterministic-depth-analyzer-v1',
         analyzedAt: new Date().toISOString(),
@@ -326,10 +464,11 @@ EVIDENCE-GROUNDING RULES:
    - mechanism_or_rule: How it operates, or NULL if the lecture only introduced or defined the term without explaining its mechanism. DO NOT INVENT MECHANISMS NOT TAUGHT!
    - substanceType: "DEFINITION" | "MECHANISM" | "RULE" | "COMPARISON"
    - sourceAnchors: Array of segment IDs or verbatim quote snippets anchoring where this concept was taught.
-5. ADVISORY QUESTION COUNT:
+5. ADVISORY QUESTION CAPACITY:
    - distinctConceptCount: Total distinct assessable concepts detected.
-   - recommendedQuestionCount: Natural assessable capacity based on evidence depth.
-   - advisoryRationale: Clear statement that this count is advisory and the user's requested count is respected.
+   - recommendedQuestionCount: Total defensible assessment capacity derived from teaching depth and available reasoning operations across Bloom levels. A deeply taught concept with mechanisms/invariants supports multiple distinct assessment angles (Easy recall, Medium mechanism/comparison, Hard diagnosis/scenarios); low-evidence concepts do not inflate capacity. Do NOT simply set recommendedQuestionCount equal to distinctConceptCount.
+   - capacityByDifficulty: { "easy": number, "medium": number, "hard": number }
+   - advisoryRationale: Rationale explaining how evidence depth and operations support this capacity.
 
 Return STRICT JSON matching this schema:
 {
@@ -373,8 +512,9 @@ Return STRICT JSON matching this schema:
   ],
   "evidenceCapacity": {
     "distinctConceptCount": 3,
-    "recommendedQuestionCount": 3,
-    "advisoryRationale": "Advisory guidance"
+    "recommendedQuestionCount": 7,
+    "capacityByDifficulty": { "easy": 2, "medium": 3, "hard": 2 },
+    "advisoryRationale": "Defensible assessment capacity derived from 3 concepts with operational mechanisms and comparative tradeoffs."
   }
 }`;
 
@@ -409,6 +549,20 @@ ${rawText}`;
           const quoteCheck = this.validateEvidenceQuotes(parsed.pedagogicalCritique.evidenceQuotes, rawText);
           parsed.pedagogicalCritique.evidenceQuotes = quoteCheck.matches;
         }
+
+        // Decouple recommendation from concept count & ground in semantic capacity
+        const semanticCap = this.deriveSemanticCapacity(
+          parsed.conceptMap,
+          parsed.pedagogicalCritique,
+          { wordCount, rawTextLength: rawText.length }
+        );
+        parsed.evidenceCapacity = {
+          distinctConceptCount: semanticCap.distinctConceptCount,
+          recommendedQuestionCount: semanticCap.recommendedQuestionCount,
+          capacityByDifficulty: semanticCap.capacityByDifficulty,
+          totalDefensibleCapacity: semanticCap.totalDefensibleCapacity,
+          advisoryRationale: semanticCap.advisoryRationale
+        };
 
         // Validate
         const val = this.validateLectureIntelligence(parsed, {
