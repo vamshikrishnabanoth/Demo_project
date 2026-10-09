@@ -618,7 +618,7 @@ export default function LiveRecordPanel({ onQuestionsLoaded, accumulatedAudioCou
                             <button
                                 type="button"
                                 onClick={handleConfigConfirm}
-                                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-500/20 transition-all"
+                                className="px-6 py-2.5 bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white text-xs font-bold rounded-xl shadow-[0_4px_14px_rgba(234,88,12,0.28)] transition-all"
                             >
                                 Generate MCQs
                             </button>

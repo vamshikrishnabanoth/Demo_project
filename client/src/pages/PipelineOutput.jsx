@@ -49,8 +49,8 @@ export default function PipelineOutput() {
   })();
   const taskId = pipelineData?.taskId || queryTaskId || storedTaskId || 'live-session';
 
-  // Navigation tabs: 'inspector' (Stage Output Inspector) vs 'telemetry' (16-Stage Live Telemetry Console)
-  const [viewMode, setViewMode] = useState(searchParams.get('mode') === 'telemetry' ? 'telemetry' : 'inspector');
+  // Store the origin path so we can navigate back to generation screen
+  const originPath = pipelineData?.originPath || searchParams.get('from') || -1;
 
   const initialStatus = pipelineData?.status || 'PROCESSING';
   const sourceNames = pipelineData?.sourceNames || [];
@@ -485,43 +485,25 @@ export default function PipelineOutput() {
             </p>
           </div>
 
-          {/* VIEW SWITCHER & ACTIONS */}
+          {/* ACTIONS */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto shrink-0">
-            {/* View Mode Toggle */}
-            <div className="bg-slate-100 p-1 rounded-2xl flex items-center border border-slate-200">
-              <button
-                type="button"
-                onClick={() => setViewMode('inspector')}
-                className={`flex-1 sm:flex-none px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                  viewMode === 'inspector'
-                    ? 'bg-white text-orange-600 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Layers size={15} />
-                <span>Stage Outputs</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setViewMode('telemetry')}
-                className={`flex-1 sm:flex-none px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                  viewMode === 'telemetry'
-                    ? 'bg-slate-900 text-emerald-400 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Activity size={15} className={viewMode === 'telemetry' ? 'text-emerald-400 animate-pulse' : ''} />
-                <span>16-Stage Telemetry</span>
-              </button>
-            </div>
+            {/* Back to Generation */}
+            <button
+              type="button"
+              onClick={() => navigate(originPath)}
+              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-black text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer transition-all"
+              title="Return to generation screen"
+            >
+              <ArrowLeft size={15} />
+              <span>Back to Generation</span>
+            </button>
 
             {/* Quick Actions */}
             <div className="flex items-center gap-2">
               {status === 'COMPLETED' && (
                 <button
                   onClick={handleLaunchClassroom}
-                  className="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm cursor-pointer transition-all"
+                  className="px-4 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-[0_4px_14px_rgba(234,88,12,0.28)] cursor-pointer transition-all"
                 >
                   <Rocket size={14} />
                   <span>Launch Live</span>
@@ -531,7 +513,7 @@ export default function PipelineOutput() {
               {deliveredQuestions.length > 0 && (
                 <button
                   onClick={handlePreviewQuiz}
-                  className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-sm cursor-pointer transition-all"
+                  className="px-4 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-[0_4px_14px_rgba(234,88,12,0.28)] cursor-pointer transition-all"
                 >
                   <Eye size={14} />
                   <span>Preview Quiz</span>
@@ -585,247 +567,56 @@ export default function PipelineOutput() {
           </div>
         </div>
 
-        {/* ── TAB 1: STAGE OUTPUT INSPECTOR ── */}
-        {viewMode === 'inspector' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: Timeline Navigation (4 cols) */}
-            <div className="lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <Layers size={16} className="text-orange-600" />
-                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">
-                    Pipeline Stages ({STAGE_DEFINITIONS.length})
-                  </h3>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
-                  Click to inspect
-                </span>
+        {/* ── STAGE OUTPUT INSPECTOR ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Timeline Navigation (4 cols) */}
+          <div className="lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <Layers size={16} className="text-orange-600" />
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                  Pipeline Stages ({STAGE_DEFINITIONS.length})
+                </h3>
               </div>
-
-              <PipelineTimeline
-                stagesData={timelineStagesData}
-                selectedStageId={selectedStageId}
-                onSelectStage={(id) => setSelectedStageId(id)}
-                pipelineStatus={status}
-                currentBackendStage={currentBackendStage}
-              />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
+                Click to inspect
+              </span>
             </div>
 
-            {/* Right Column: Actual Stage Output Panel (8 cols) */}
-            <div className="lg:col-span-8 space-y-4">
-              <StageOutputPanel
-                selectedStageId={selectedStageId}
-                status={status}
-                sessionInputs={{
-                  taskId,
-                  inputs,
-                  sourceNames,
-                  isVoice,
-                  difficulty,
-                  questionCount,
-                  keyTopics,
-                  lectureWordCount,
-                  title: quizTitle
-                }}
-                liveArtifacts={liveArtifacts}
-                pipelineResult={pipelineResult}
-                stages={stages}
-                stageMap={stageMap}
-                onLaunchClassroom={handleLaunchClassroom}
-                onPreviewQuiz={handlePreviewQuiz}
-              />
-            </div>
+            <PipelineTimeline
+              stagesData={timelineStagesData}
+              selectedStageId={selectedStageId}
+              onSelectStage={(id) => setSelectedStageId(id)}
+              pipelineStatus={status}
+              currentBackendStage={currentBackendStage}
+            />
           </div>
-        )}
 
-        {/* ── TAB 2: 16-STAGE LIVE TELEMETRY CONSOLE ── */}
-        {viewMode === 'telemetry' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: 16-Stage Master Stepper (4 cols) */}
-            <div className="lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <Activity size={16} className="text-emerald-500 animate-pulse" />
-                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-900">
-                    16-Stage Telemetry Loop
-                  </h3>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">
-                  {Object.keys(telemetryStagesMap).length}/16 stages recorded
-                </span>
-              </div>
-
-              {activeRetryLoop && (
-                <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between text-xs text-amber-800 animate-pulse font-mono">
-                  <div className="flex items-center gap-2">
-                    <RotateCcw size={14} className="animate-spin text-amber-600" />
-                    <span>Swap Reserve Loop: {activeRetryLoop.retryCount}/{activeRetryLoop.maxRetries}</span>
-                  </div>
-                  <span className="text-[10px] bg-amber-200/60 px-2 py-0.5 rounded font-bold">Stage 11 ➔ 6</span>
-                </div>
-              )}
-
-              <div className="space-y-1.5 max-h-[640px] overflow-y-auto pr-1">
-                {STAGES_16_CONFIG.map((stage) => {
-                  const stageData = telemetryStagesMap[stage.number];
-                  const isRunning = stageData?.status === 'RUNNING';
-                  const isSelected = activeTelemetryStage === stage.number;
-
-                  return (
-                    <div
-                      key={stage.number}
-                      onClick={() => setActiveTelemetryStage(stage.number)}
-                      className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                        isSelected
-                          ? 'border-orange-500 bg-orange-50/50 shadow-xs'
-                          : isRunning
-                          ? 'border-blue-400 bg-blue-50/40 ring-1 ring-blue-400/40'
-                          : stageData
-                          ? 'border-slate-200 hover:border-slate-300 bg-white'
-                          : 'border-slate-100 bg-slate-50/60 opacity-60'
-                      }`}
-                    >
-                      <div className="min-w-0 flex items-center gap-3">
-                        <span className={`w-6 h-6 rounded-lg flex items-center justify-center font-mono text-xs font-black shrink-0 ${
-                          stageData?.status === 'PASS' || stageData?.status === 'COMPLETED'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : isRunning
-                            ? 'bg-blue-100 text-blue-700 animate-pulse'
-                            : 'bg-slate-100 text-slate-500'
-                        }`}>
-                          {String(stage.number).padStart(2, '0')}
-                        </span>
-                        <div className="truncate">
-                          <p className="text-xs font-black text-slate-900 truncate">{stage.name}</p>
-                          <p className="text-[10px] text-slate-400 truncate">{stage.desc}</p>
-                        </div>
-                      </div>
-
-                      <div className="shrink-0 flex items-center gap-1.5">
-                        {getTelemetryStatusBadge(stageData?.status)}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Right Column: Live Terminal Stream & Stage Detail Inspector (8 cols) */}
-            <div className="lg:col-span-8 space-y-5">
-              {/* Selected Stage Detail Inspector */}
-              {(() => {
-                const currentStageInfo = STAGES_16_CONFIG.find(s => s.number === activeTelemetryStage);
-                const currentStageData = telemetryStagesMap[activeTelemetryStage];
-
-                return (
-                  <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-4">
-                    <div className="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded">
-                            STAGE {String(activeTelemetryStage).padStart(2, '0')}
-                          </span>
-                          <h3 className="text-base font-black text-slate-900">
-                            {currentStageInfo?.name}
-                          </h3>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-1">{currentStageInfo?.desc}</p>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {getTelemetryStatusBadge(currentStageData?.status)}
-                        {currentStageData?.durationMs && (
-                          <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
-                            {currentStageData.durationMs}ms
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {currentStageData ? (
-                      <div className="space-y-4">
-                        {/* Metrics Grid */}
-                        {currentStageData.metrics && (
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            {Object.entries(currentStageData.metrics).map(([key, val]) => (
-                              <div key={key} className="bg-slate-50 border border-slate-200 rounded-xl p-3">
-                                <span className="text-[10px] font-mono text-slate-400 uppercase block truncate">{key}</span>
-                                <span className="text-xs font-black text-slate-900 font-mono">
-                                  {typeof val === 'number' ? val.toLocaleString() : String(val)}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Stage Summary / Payload */}
-                        <div className="bg-slate-950 text-slate-100 rounded-2xl p-4 font-mono text-xs space-y-2 overflow-x-auto border border-slate-800">
-                          <div className="flex items-center justify-between text-slate-400 text-[11px] pb-2 border-b border-slate-800">
-                            <span>Stage Telemetry Payload</span>
-                            <span className="text-emerald-400">Valid Schema</span>
-                          </div>
-                          <pre className="text-[11px] text-emerald-300 whitespace-pre-wrap max-h-56 overflow-y-auto">
-                            {JSON.stringify(currentStageData, null, 2)}
-                          </pre>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center space-y-2">
-                        <Clock size={24} className="mx-auto text-slate-400" />
-                        <p className="text-xs font-bold text-slate-600">Awaiting Stage Execution</p>
-                        <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
-                          Stage {activeTelemetryStage} telemetry events will stream in automatically once the backend executor reaches this step.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
-
-              {/* Streaming Live Terminal Log */}
-              <div className="bg-slate-950 border border-slate-800 rounded-3xl p-5 font-mono shadow-inner space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <div className="flex items-center gap-2 text-emerald-400">
-                    <Terminal size={14} className="animate-pulse" />
-                    <span className="text-xs font-black uppercase tracking-wider">
-                      Real-Time SSE Agent Telemetry Stream
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] text-slate-400">
-                      {telemetryLogs.length} events logged
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setTelemetryLogs([])}
-                      className="text-[10px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800/60 hover:bg-slate-800 cursor-pointer transition-all"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5 max-h-64 overflow-y-auto text-xs pr-1">
-                  {telemetryLogs.length === 0 ? (
-                    <div className="text-slate-500 py-6 text-center text-xs">
-                      Connecting to pipeline event stream...
-                    </div>
-                  ) : (
-                    telemetryLogs.map((log, idx) => (
-                      <div key={idx} className="flex items-start gap-2 leading-relaxed">
-                        <span className="text-emerald-500 font-bold shrink-0">›</span>
-                        <span className={idx === telemetryLogs.length - 1 ? 'text-emerald-300 font-bold' : 'text-slate-300'}>
-                          {log}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                  <div ref={terminalEndRef} />
-                </div>
-              </div>
-            </div>
+          {/* Right Column: Actual Stage Output Panel (8 cols) */}
+          <div className="lg:col-span-8 space-y-4">
+            <StageOutputPanel
+              selectedStageId={selectedStageId}
+              status={status}
+              sessionInputs={{
+                taskId,
+                inputs,
+                sourceNames,
+                isVoice,
+                difficulty,
+                questionCount,
+                keyTopics,
+                lectureWordCount,
+                title: quizTitle
+              }}
+              liveArtifacts={liveArtifacts}
+              pipelineResult={pipelineResult}
+              stages={stages}
+              stageMap={stageMap}
+              onLaunchClassroom={handleLaunchClassroom}
+              onPreviewQuiz={handlePreviewQuiz}
+            />
           </div>
-        )}
+        </div>
 
       </div>
     </DashboardLayout>

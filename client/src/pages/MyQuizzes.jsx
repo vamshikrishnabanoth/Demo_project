@@ -300,14 +300,6 @@ export default function MyQuizzes() {
 
                     <div className="flex flex-wrap items-center gap-3 z-10 shrink-0">
                         <button
-                            onClick={() => navigate('/pipeline-output')}
-                            className="px-4 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-emerald-400 font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 cursor-pointer transition-all border border-slate-700"
-                            title="Inspect Stage Outputs & Live Agent Telemetry Console"
-                        >
-                            <Activity size={17} className="text-emerald-400 animate-pulse" />
-                            <span>Stage Outputs &amp; Telemetry</span>
-                        </button>
-                        <button
                             onClick={() => navigate('/teacher-dashboard')}
                             className="px-5 py-3.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-[0_6px_16px_rgba(194,65,12,0.24)] flex items-center gap-2 cursor-pointer transition-all border-none outline-none"
                         >
