@@ -241,6 +241,23 @@ export default function MyQuizzes() {
         }
     };
 
+    const handleEndLiveQuiz = async (quizId, quizTitle) => {
+        const result = await showConfirm(
+            'End Live Classroom?',
+            `Conclude the active live room for "${cleanQuizTitle(quizTitle)}"? Students will no longer be able to answer questions and the room will be closed.`,
+            'Yes, End Room'
+        );
+        if (!result.isConfirmed) return;
+        try {
+            await api.put(`/quiz/${quizId}`, { isActive: false, isLive: false, status: 'finished' });
+            setQuizzes(prev => prev.map(q => q.id === quizId ? { ...q, isActive: false, isLive: false, status: 'finished' } : q));
+            toast.success('Live room ended successfully.');
+            refetch();
+        } catch (err) {
+            toast.error(err.response?.data?.msg || 'Failed to end live room.');
+        }
+    };
+
     const filteredQuizzes = quizzes.filter(quiz => !quiz.isTemplate).filter(quiz => {
         const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             quiz.topic?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -253,7 +270,7 @@ export default function MyQuizzes() {
         return matchesSearch && matchesType;
     });
 
-    const activeLiveQuiz = quizzes.find(q => !q.isTemplate && q.isLive && quizIsActive(q));
+    const activeLiveQuizzes = quizzes.filter(q => !q.isTemplate && q.isLive && quizIsActive(q));
 
     function quizIsActive(q) {
         return q.isActive && q.status !== 'finished';
@@ -283,12 +300,12 @@ export default function MyQuizzes() {
 
                     <div className="flex flex-wrap items-center gap-3 z-10 shrink-0">
                         <button
-                            onClick={() => navigate('/telemetry/live-session')}
+                            onClick={() => navigate('/pipeline-output')}
                             className="px-4 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-emerald-400 font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 cursor-pointer transition-all border border-slate-700"
-                            title="Open 16-Stage Live Agent Telemetry Console"
+                            title="Inspect Stage Outputs & Live Agent Telemetry Console"
                         >
                             <Activity size={17} className="text-emerald-400 animate-pulse" />
-                            <span>Live Telemetry</span>
+                            <span>Stage Outputs &amp; Telemetry</span>
                         </button>
                         <button
                             onClick={() => navigate('/teacher-dashboard')}
@@ -304,8 +321,8 @@ export default function MyQuizzes() {
                     </div>
                 </div>
 
-                {/* ── ACTIVE LIVE CLASSROOM REVISIT BANNER ── */}
-                {activeLiveQuiz && (
+                {/* ── ACTIVE LIVE CLASSROOM SHELF (Handles 1 OR Multiple Concurrent Rooms Cleanly) ── */}
+                {activeLiveQuizzes.length === 1 && (
                     <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-3xl p-6 sm:p-7 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 border border-amber-300/40">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
@@ -317,24 +334,102 @@ export default function MyQuizzes() {
                                         ⚡ Live Quiz In Progress
                                     </span>
                                     <span className="font-mono text-xs font-bold bg-black/30 px-3 py-0.5 rounded-md border border-white/20">
-                                        PIN: {activeLiveQuiz.joinCode}
+                                        PIN: {activeLiveQuizzes[0].joinCode}
                                     </span>
                                 </div>
                                 <h3 className="text-lg sm:text-xl font-black mt-1 text-white drop-shadow-sm">
-                                    {cleanQuizTitle(activeLiveQuiz.title)}
+                                    {cleanQuizTitle(activeLiveQuizzes[0].title)}
                                 </h3>
                                 <p className="text-xs text-white/95 font-medium leading-relaxed max-w-2xl">
                                     You have a live room active right now! If you navigated back by mistake, click below to immediately resume question control, view student responses, or advance questions.
                                 </p>
                             </div>
                         </div>
-                        <button
-                            onClick={() => navigate(`/live-room-teacher/${activeLiveQuiz.joinCode}`)}
-                            className="w-full md:w-auto px-7 py-4 rounded-2xl bg-white hover:bg-orange-50 text-orange-600 font-black text-xs uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer shrink-0 border-none"
-                        >
-                            <Play size={17} className="fill-current text-orange-600" />
-                            <span>Revisit &amp; Control Live Room</span>
-                        </button>
+                        <div className="flex items-center gap-2 w-full md:w-auto shrink-0">
+                            <button
+                                onClick={() => navigate(`/live-room-teacher/${activeLiveQuizzes[0].joinCode}`)}
+                                className="flex-1 md:flex-none px-7 py-4 rounded-2xl bg-white hover:bg-orange-50 text-orange-600 font-black text-xs uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer border-none"
+                            >
+                                <Play size={17} className="fill-current text-orange-600" />
+                                <span>Revisit &amp; Control Live Room</span>
+                            </button>
+                            <button
+                                onClick={() => handleEndLiveQuiz(activeLiveQuizzes[0].id, activeLiveQuizzes[0].title)}
+                                className="px-5 py-4 rounded-2xl bg-black/25 hover:bg-rose-900/80 text-white font-black text-xs uppercase tracking-wider border border-white/20 cursor-pointer transition-all active:scale-95"
+                                title="End this live classroom"
+                            >
+                                End Room
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Multiple Active Live Classrooms Shelf (Organized, un-messy 3-column card deck) */}
+                {activeLiveQuizzes.length > 1 && (
+                    <div className="bg-slate-900 border border-amber-500/30 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+                        <div className="flex items-center justify-between flex-wrap gap-3 border-b border-slate-800 pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                                    <Radio size={20} className="animate-pulse" />
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
+                                            Active Live Classrooms
+                                        </h2>
+                                        <span className="bg-amber-500 text-slate-950 font-black text-[10px] uppercase px-2.5 py-0.5 rounded-full">
+                                            {activeLiveQuizzes.length} Concurrent Rooms
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-slate-400 font-medium mt-0.5">
+                                        Multiple concurrent live quiz rooms are running. You can jump directly into any room to control questions or end session.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pt-1">
+                            {activeLiveQuizzes.map(liveQ => (
+                                <div key={liveQ.id} className="bg-slate-800/80 border border-slate-700 hover:border-amber-500/50 rounded-2xl p-4.5 space-y-3.5 flex flex-col justify-between transition-all shadow-md group">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider font-mono">
+                                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                                LIVE ROOM
+                                            </span>
+                                            <span className="font-mono text-xs font-black text-amber-300 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
+                                                PIN: {liveQ.joinCode}
+                                            </span>
+                                        </div>
+                                        <h4 className="text-sm font-black text-white line-clamp-1 group-hover:text-amber-400 transition-colors">
+                                            {cleanQuizTitle(liveQ.title)}
+                                        </h4>
+                                        <p className="text-[11px] text-slate-400 line-clamp-1">
+                                            {liveQ.topic || 'Classroom Assessment'} • {liveQ.questions?.length || 0} Questions
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 pt-2 border-t border-slate-700/60">
+                                        <button
+                                            type="button"
+                                            onClick={() => navigate(`/live-room-teacher/${liveQ.joinCode}`)}
+                                            className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-all active:scale-95"
+                                        >
+                                            <Play size={13} className="fill-current" />
+                                            <span>Enter Room</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleEndLiveQuiz(liveQ.id, liveQ.title)}
+                                            className="py-2.5 px-3 rounded-xl bg-slate-700/60 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 border border-slate-600 hover:border-rose-800 text-xs font-bold cursor-pointer transition-all"
+                                            title="End this live session"
+                                        >
+                                            End
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
 
@@ -592,7 +687,30 @@ export default function MyQuizzes() {
                                             </button>
 
                                             {/* STEP 2: ROOM / LAUNCH BUTTON */}
-                                            {quiz.isAssessment ? (
+                                            {quiz.isLive && quiz.isActive && quiz.status !== 'finished' ? (
+                                                <div className="flex items-center gap-1.5">
+                                                    <Link
+                                                        to={`/live-room-teacher/${quiz.joinCode}`}
+                                                        className="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-1.5 cursor-pointer transition-all bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 ring-2 ring-amber-400/50 shadow-amber-500/20"
+                                                        title="Revisit and control live quiz classroom"
+                                                    >
+                                                        <Play size={14} className="fill-current animate-pulse text-white" />
+                                                        <span>▶ Revisit Live Room ({quiz.joinCode})</span>
+                                                    </Link>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleEndLiveQuiz(quiz.id, quiz.title)}
+                                                        className="px-3 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-black text-xs uppercase tracking-wider cursor-pointer transition-all active:scale-95"
+                                                        title="End this live session"
+                                                    >
+                                                        End
+                                                    </button>
+                                                </div>
+                                            ) : quiz.status === 'finished' ? (
+                                                <span className="px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold font-mono">
+                                                    Concluded
+                                                </span>
+                                            ) : quiz.isAssessment ? (
                                                 <button
                                                     onClick={() => updateQuizMode(quiz.id, quiz.isActive ? 'close' : 'assessment')}
                                                     className={`px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider text-white shadow-sm flex items-center gap-1.5 cursor-pointer transition-all ${
@@ -603,20 +721,14 @@ export default function MyQuizzes() {
                                                     <span>{quiz.isActive ? 'Close Exam' : 'Reopen Exam'}</span>
                                                 </button>
                                             ) : (
-                                                quiz.status !== 'finished' && (
-                                                    <Link
-                                                        to={`/live-room-teacher/${quiz.joinCode}`}
-                                                        className={`px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-1.5 cursor-pointer transition-all ${
-                                                            quiz.isLive && quiz.isActive
-                                                                ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 ring-2 ring-amber-400/50 shadow-md animate-pulse'
-                                                                : 'bg-[#fff7ed] hover:bg-[#ffedd5] border border-[#fdba74] text-[#9a4a12]'
-                                                        }`}
-                                                        title="Revisit and control live quiz classroom"
-                                                    >
-                                                        <Play size={14} className="fill-current" />
-                                                        <span>{quiz.isLive && quiz.isActive ? `▶ Revisit Live Room (${quiz.joinCode})` : `Room PIN: ${quiz.joinCode}`}</span>
-                                                    </Link>
-                                                )
+                                                <Link
+                                                    to={`/live-room-teacher/${quiz.joinCode}`}
+                                                    className="px-4 py-2.5 rounded-xl bg-[#fff7ed] hover:bg-[#ffedd5] border border-[#fdba74] text-[#9a4a12] font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-1.5 cursor-pointer transition-all"
+                                                    title="Host live quiz classroom"
+                                                >
+                                                    <Play size={14} className="fill-current" />
+                                                    <span>Room PIN: {quiz.joinCode}</span>
+                                                </Link>
                                             )}
 
                                             {/* STEP 3: SCHEDULE & ANALYTICS */}

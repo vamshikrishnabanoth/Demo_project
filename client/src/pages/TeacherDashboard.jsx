@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
-import TelemetryWidget from '../components/dashboard/TelemetryWidget';
 
 export default function TeacherDashboard() {
     const [showModal, setShowModal] = useState(false);
@@ -134,26 +133,6 @@ export default function TeacherDashboard() {
                             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform !text-white" style={{ color: '#ffffff' }} />
                         </button>
                     </div>
-                </div>
-
-                {/* ── LIVE AGENT TELEMETRY STREAM SUITE ── */}
-                <div className="space-y-3 pt-2">
-                    <div className="flex items-center justify-between px-2">
-                        <div className="flex items-center gap-2">
-                            <Activity className="text-emerald-500 animate-pulse" size={18} />
-                            <h3 className="text-xs font-black uppercase tracking-widest text-[#334155]">
-                                Live Agent Telemetry Stream (16-Stage Observability)
-                            </h3>
-                        </div>
-                        <button
-                            onClick={() => navigate('/telemetry/live-session')}
-                            className="text-xs font-black uppercase tracking-wider text-emerald-600 hover:text-emerald-700 flex items-center gap-1.5 cursor-pointer transition-colors bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200"
-                        >
-                            <span>Open Telemetry Console</span>
-                            <ArrowRight size={13} />
-                        </button>
-                    </div>
-                    <TelemetryWidget sessionId="live-session" />
                 </div>
             </div>
 

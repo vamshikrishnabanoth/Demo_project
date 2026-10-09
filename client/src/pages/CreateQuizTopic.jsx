@@ -1112,6 +1112,7 @@ export default function CreateQuizTopic() {
             const { taskId } = res.data;
             if (!taskId) throw new Error('No taskId returned from server');
             setCurrentTaskId(taskId);
+            try { localStorage.setItem('latest_pipeline_task_id', taskId); } catch (_) {}
             setSubmitting(false);
 
             // Clean up docket cache for fresh subsequent runs

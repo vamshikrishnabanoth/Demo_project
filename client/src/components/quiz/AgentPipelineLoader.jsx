@@ -578,12 +578,14 @@ export default function AgentPipelineLoader({
                                         type="button"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            window.open(`/telemetry/${sessionId || 'live-session'}`, '_blank');
+                                            const targetSession = sessionId || 'live-session';
+                                            try { localStorage.setItem('latest_pipeline_task_id', targetSession); } catch (_) {}
+                                            window.open(`/pipeline-output?taskId=${targetSession}`, '_blank');
                                         }}
-                                        className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 cursor-pointer transition-all hover:scale-105 active:scale-95"
-                                        title="Open 16-Stage Live Stream Console in new tab"
+                                        className="text-[10px] font-black px-3 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95 shadow-sm"
+                                        title="Inspect stage outputs & live telemetry stream"
                                     >
-                                        <span>Open 16-Stage Console ↗</span>
+                                        <span>Inspect Stage Outputs &amp; Telemetry ↗</span>
                                     </button>
                                 </div>
                             </div>
