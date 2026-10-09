@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
     Clock, Inbox, Network, Ruler, Scale, Search, ShieldCheck, Zap, Rocket,
     CheckCircle2, Loader2, Sparkles, Activity, Cpu, Shield, ArrowRight, Terminal
 } from "lucide-react";
-import PipelineInspectorDrawer from "../pipeline/PipelineInspectorDrawer";
 
 const PIPELINE_STAGES = [
     { label: "Ingesting & Analyzing Material",             sub: "Verifying inputs, removing noise, and validating content structure...",     icon: Inbox,       shortLabel: "Input Analysis" },
@@ -350,7 +350,7 @@ export default function AgentPipelineLoader({
     sessionId = null,
 }) {
     const stageList = PIPELINE_STAGES;
-    const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+    const navigate = useNavigate();
 
     const [activeStage, setActiveStage] = useState(() => {
         if (stageLabel && STAGE_MAP[stageLabel] !== undefined) {
@@ -578,28 +578,16 @@ export default function AgentPipelineLoader({
 
                             <button
                                 type="button"
-                                onClick={() => setIsInspectorOpen(true)}
+                                onClick={() => navigate(`/pipeline-output?taskId=${sessionId || 'live-session'}`)}
                                 className="px-5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-[0_4px_14px_rgba(234,88,12,0.28)] flex items-center gap-2 cursor-pointer transition-all border-none outline-none shrink-0"
-                                title="Inspect stage outputs & live telemetry without interrupting generation"
+                                title="Open live pipeline output and telemetry"
                             >
                                 <Activity size={15} className="animate-pulse text-white" />
-                                <span>Inspect Stage Outputs &amp; Telemetry</span>
+                                <span>Live Pipeline Output &amp; Telemetry</span>
                             </button>
                         </div>
                     </div>
                 </div>
-
-                {/* Real-Time Observability & Live Telemetry Panel Overlay */}
-                <PipelineInspectorDrawer
-                    isOpen={isInspectorOpen}
-                    onClose={() => setIsInspectorOpen(false)}
-                    sessionId={sessionId || 'live-session'}
-                    isVoice={isVoice}
-                    representationMode={representationMode}
-                    currentStageIndex={activeStage}
-                    currentStageLabel={stageLabel || stageList[activeStage]?.label}
-                    elapsedSeconds={elapsed}
-                />
             </motion.div>
         </div>
     );
