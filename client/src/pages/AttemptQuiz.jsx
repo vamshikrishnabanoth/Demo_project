@@ -472,8 +472,7 @@ export default function AttemptQuiz() {
     const handleAutoSubmitAnswer = async () => {
         const currentAnswer = answers[currentQuestion] || '';
         if (quiz.isLive && isOnline && quiz.timerPerQuestion > 0) {
-            const token = localStorage.getItem('token');
-            const userId = JSON.parse(atob(token.split('.')[1])).user.id;
+            const userId = authUser?.id;
             socket.emit('submit_question_answer', {
                 quizId: id, studentId: userId,
                 questionIndex: currentQuestion, answer: currentAnswer, timeRemaining: 0
@@ -481,6 +480,7 @@ export default function AttemptQuiz() {
             setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
         }
     };
+
 
     const handleTimeUp = () => {
         if (result || missionComplete) return; // Do nothing if quiz completed / waiting
@@ -525,14 +525,12 @@ export default function AttemptQuiz() {
 
     useEffect(() => {
         if (quiz && !isReviewMode && !result) {
-            const token = localStorage.getItem('token');
-            if (token) {
+            if (authUser?.id) {
                 try {
-                    const decoded = JSON.parse(atob(token.split('.')[1]));
                     socket.emit('student_question_focus', {
                         quizId: id,
-                        studentId: decoded.user.id,
-                        username: decoded.user.username,
+                        studentId: authUser.id,
+                        username: authUser.username,
                         questionIndex: currentQuestion
                     });
                 } catch (e) {
@@ -540,7 +538,8 @@ export default function AttemptQuiz() {
                 }
             }
         }
-    }, [currentQuestion, quiz, isReviewMode, result, id]);
+    }, [currentQuestion, quiz, isReviewMode, result, id, authUser]);
+
 
     // Anti-Cheat & Exam Integrity Controls — Centralised via useExamProctoring hook
     const handleAutoSubmit = useCallback((reason) => {
@@ -845,8 +844,7 @@ export default function AttemptQuiz() {
             if (!isOnline) {
                 return showError('Offline', 'You are offline! Wait for your connection to restore before submitting.');
             }
-            const token = localStorage.getItem('token');
-            const userId = JSON.parse(atob(token.split('.')[1])).user.id;
+            const userId = authUser?.id;
             socket.emit('submit_question_answer', {
                 quizId: id, studentId: userId,
                 questionIndex: currentQuestion,
@@ -854,6 +852,7 @@ export default function AttemptQuiz() {
                 timeRemaining: timeLeft
             });
             setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+
             // Show mission complete screen after last question submitted
             if (currentQuestion === quiz.questions.length - 1) {
                 setMissionComplete(true);
@@ -1586,8 +1585,7 @@ export default function AttemptQuiz() {
                                         <button
                                             key={idx}
                                             onClick={() => {
-                                                const token = localStorage.getItem('token');
-                                                const userId = JSON.parse(atob(token.split('.')[1])).user.id;
+                                                const userId = authUser?.id;
 
                                                 socket.emit('submit_new_question', {
                                                     quizId: id,
@@ -1595,6 +1593,7 @@ export default function AttemptQuiz() {
                                                     questionIndex: newQuestionNotification.questionIndex,
                                                     answer: option
                                                 });
+
 
                                                 setShowNewQuestionModal(false);
                                                 showSuccess('Success', `Answer submitted: ${option}`);

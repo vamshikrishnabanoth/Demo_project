@@ -5,11 +5,13 @@ const { check, validationResult } = require('express-validator');
 const { logSecurityEvent } = require('../middleware/security');
 
 // Rate limiter for authentication (Brute force protection)
+const isDevRateLimitDisabled = process.env.NODE_ENV !== 'production' && process.env.DISABLE_LIMITS === 'true';
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 15, // limit each IP to 15 login attempts per window
+    max: isDevRateLimitDisabled ? 100000000 : 15, // limit each IP to 15 login attempts per window
     message: 'Too many login attempts from this IP, please try again after 15 minutes'
 });
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma'); // Using Prisma
@@ -242,20 +244,25 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
             }
         };
 
+        if (!process.env.JWT_SECRET) {
+            throw new Error('FATAL: JWT_SECRET environment variable is missing.');
+        }
+
+        const isProduction = process.env.NODE_ENV === 'production';
+
         jwt.sign(
             payload,
-            process.env.JWT_SECRET || 'secret123',
+            process.env.JWT_SECRET,
             { expiresIn: '12h' },
             (err, token) => {
                 if (err) throw err;
                 res.cookie('token', token, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax',
+                    secure: isProduction,
+                    sameSite: isProduction ? 'none' : 'lax',
                     maxAge: 12 * 60 * 60 * 1000
                 });
                 res.json({ 
-                    token, 
                     user: { 
                         id: user.id, 
                         username: user.username, 
@@ -269,6 +276,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
                 });
             }
         );
+
     } catch (err) {
         console.error("Login Error:", err);
         res.status(500).json({ msg: 'Server error' });
@@ -339,9 +347,17 @@ router.post('/set-role', auth, async (req, res) => {
             { expiresIn: '12h' },
             (err, token) => {
                 if (err) throw err;
-                res.json({ token, role: user.role });
+                const isProduction = process.env.NODE_ENV === 'production';
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: isProduction,
+                    sameSite: isProduction ? 'none' : 'lax',
+                    maxAge: 12 * 60 * 60 * 1000
+                });
+                res.json({ role: user.role });
             }
         );
+
 
     } catch (err) {
         console.error(err.message);
@@ -544,30 +560,44 @@ router.post('/admin-reset-password', auth, [
 
 // @route   POST api/auth/logout
 // @desc    Logout user & invalidate token immediately (defense-in-depth)
-// @access  Private
-router.post('/logout', auth, async (req, res) => {
+// @access  Public / Private
+router.post('/logout', async (req, res) => {
     try {
-        await prisma.user.update({
-            where: { id: req.user.id },
-            data: {
-                isOnline: false,
-                tokenVersion: { increment: 1 } // Invalidate the current session token immediately
-            }
-        });
+        const token = req.cookies?.token || req.header('x-auth-token');
+        if (token && process.env.JWT_SECRET) {
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
+                if (decoded?.user?.id) {
+                    await prisma.user.update({
+                        where: { id: decoded.user.id },
+                        data: {
+                            isOnline: false,
+                            tokenVersion: { increment: 1 } // Invalidate the current session token immediately
+                        }
+                    }).catch(() => {});
 
-        logSecurityEvent({
-            type: 'LOGOUT',
-            message: 'User logged out securely',
-            userId: req.user.id,
-            ip: req.ip || 'unknown',
-        });
+                    logSecurityEvent({
+                        type: 'LOGOUT',
+                        message: 'User logged out securely',
+                        userId: decoded.user.id,
+                        ip: req.ip || 'unknown',
+                    });
+                }
+            } catch (_) {}
+        }
 
-        res.clearCookie('token');
+        const isProduction = process.env.NODE_ENV === 'production';
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'lax',
+        });
         res.json({ msg: 'Logged out successfully.' });
     } catch (err) {
         console.error('Logout error:', err);
         res.status(500).json({ msg: 'Server Error' });
     }
 });
+
 
 module.exports = router;

@@ -22,10 +22,11 @@ const ProtectedRoute = ({ children, roles = [], allowNone = false }) => {
     }
 
     // If a connection or server cold start error occurred during hydration, display the connection error page
-    if (authError && localStorage.getItem('token')) {
+    if (authError) {
         if (isDev) console.warn('[ProtectedRoute] Auth hydration failed:', authError);
         return <ConnectionErrorPage error={authError} onRetry={retryAuth} />;
     }
+
 
     // Not logged in → go to login
     if (!user) {

@@ -49,8 +49,15 @@ const authMiddleware = async function (req, res, next) {
                     const graceWindow = 2 * 60 * 1000; // 2 minute grace period (covers slow page loads only)
                     
                     if (decoded && decoded.user && (Date.now() - expiredAt < graceWindow)) {
-                        // Issue sliding refresh token header for client synchronization
+                        // Issue sliding refresh token header and cookie for client synchronization
                         const newToken = jwt.sign({ user: decoded.user }, process.env.JWT_SECRET, { expiresIn: '12h' });
+                        const isProduction = process.env.NODE_ENV === 'production';
+                        res.cookie('token', newToken, {
+                            httpOnly: true,
+                            secure: isProduction,
+                            sameSite: isProduction ? 'none' : 'lax',
+                            maxAge: 12 * 60 * 60 * 1000
+                        });
                         res.setHeader('X-Refreshed-Token', newToken);
                     } else {
                         return res.status(401).json({ msg: 'Token expired. Please login again.', code: 'TOKEN_EXPIRED' });

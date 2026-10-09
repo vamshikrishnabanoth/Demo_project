@@ -1,7 +1,11 @@
 const { Client } = require('pg');
 require('dotenv').config();
 
-const connectionString = "postgresql://postgres:Kahoot%401070@db.gwcfytsqfprrqqvxowaj.supabase.co:5432/postgres";
+const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
+if (!connectionString) {
+    console.error('❌ DIRECT_URL or DATABASE_URL environment variable is required.');
+    process.exit(1);
+}
 
 async function main() {
     console.log('Attempting direct connection to Supabase DB (bypassing pooler)...');

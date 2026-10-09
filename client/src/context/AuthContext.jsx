@@ -9,46 +9,22 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [authError, setAuthError] = useState(null);
 
-    // ── Restore session on mount ─────────────────────────────────────────────
+    // ── Restore session on mount via secure cookie ────────────────────────────
     const checkUser = useCallback(async () => {
-        console.log('[DIAGNOSTIC-AUTH] Hydration phase initiated.');
-        const token = localStorage.getItem('token');
-        console.log('[DIAGNOSTIC-AUTH] Retrieved token from localStorage:', token ? `${token.slice(0, 15)}...` : 'NONE');
-        // Background pre-warm ping to keep backend active
-        api.get('/health').catch(() => {});
-
-        if (!token) {
-            console.log('[DIAGNOSTIC-AUTH] No token found. Skipping session hydration.');
-            setLoading(false);
-            return;
-        }
         try {
-            console.log('[DIAGNOSTIC-AUTH] Dispatching GET /auth/me request to backend...');
-            const startTime = Date.now();
             const res = await api.get('/auth/me');
-            console.log(`[DIAGNOSTIC-AUTH] GET /auth/me succeeded in ${Date.now() - startTime}ms. Payload:`, res.data);
             setUser(res.data);
             setAuthError(null);
         } catch (err) {
-            console.error('[DIAGNOSTIC-AUTH] Hydration failed! Catching error details:', {
-                message: err.message,
-                code: err.code,
-                status: err.response?.status,
-                statusText: err.response?.statusText,
-                responseBody: err.response?.data
-            });
-            
-            // Only clear token if the server explicitly tells us the token is invalid/expired (401 or 403)
-            // If it's a temporary network error or 5xx server error, keep the token so we don't force log out!
+            // If the server explicitly tells us the token is invalid/expired (401 or 403)
             if (err.response?.status === 401 || err.response?.status === 403) {
-                console.warn('[AuthContext] Session expired/invalid. Clearing token.', err);
-                localStorage.removeItem('token');
+                setUser(null);
+                try { localStorage.removeItem('token'); } catch (_) {}
             } else {
                 console.error('[AuthContext] Network or server error during auth hydration:', err);
                 setAuthError(err);
             }
         } finally {
-            console.log('[DIAGNOSTIC-AUTH] Hydration completed. Setting loading state to FALSE.');
             setLoading(false);
         }
     }, []);
@@ -81,18 +57,16 @@ export const AuthProvider = ({ children }) => {
 
     const login = useCallback(async (email, password) => {
         const res = await api.post('/auth/login', { email, password });
-        localStorage.setItem('token', res.data.token);
-        // Use token from login response directly — avoids a second round-trip to /me
-        // Fall back to /me if user data not included in login response
+        try { localStorage.removeItem('token'); } catch (_) {} // Purge any legacy token
         const userData = res.data.user ?? (await api.get('/auth/me')).data;
         setUser(userData);
-        // Reconnect socket so it picks up the new auth token via dynamic auth callback
         if (socket.connected) {
             socket.disconnect();
         }
         ensureSocketConnected();
         return userData;
     }, []);
+
 
     const setRole = useCallback(async (role) => {
         const res = await api.post('/auth/set-role', { role });

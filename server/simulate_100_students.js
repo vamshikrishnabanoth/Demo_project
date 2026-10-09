@@ -17,6 +17,7 @@
 
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const { io } = require('socket.io-client');
 let prisma = null;
@@ -28,7 +29,11 @@ const args = process.argv.slice(2);
 const QUIZ_TARGET = args[0] || process.env.QUIZ_ID || process.env.QUIZ_CODE;
 const STUDENT_COUNT = parseInt(args[1] || process.env.STUDENT_COUNT || '100', 10);
 const BASE_URL = (args[2] || process.env.BASE_URL || 'http://localhost:5000').replace(/\/$/, '');
-const SIMULATION_SECRET = 'KMIT_SIMULATION_2026_SECRET_KEY';
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret) {
+    console.error('\n❌ ERROR: JWT_SECRET environment variable is required to run the simulation.');
+    process.exit(1);
+}
 
 if (!QUIZ_TARGET) {
     console.error('\n❌ ERROR: Quiz ID or Join Code is required!');
@@ -91,10 +96,10 @@ async function runSimulation() {
         const username = dbUser ? dbUser.username : `Student_Bot_${i}`;
         const role = 'simulation';
 
-        // Sign simulation token using unified fallback secret
+        // Sign simulation token using configured JWT secret
         const token = jwt.sign(
             { user: { id: studentId, username, role } },
-            SIMULATION_SECRET,
+            jwtSecret,
             { expiresIn: '24h' }
         );
 

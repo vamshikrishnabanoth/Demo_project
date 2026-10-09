@@ -9,6 +9,22 @@ if (typeof globalThis.File === 'undefined') {
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
+// Strict production security guards
+if (!process.env.JWT_SECRET) {
+    if (process.env.NODE_ENV === 'production') {
+        console.error('FATAL SECURITY ERROR: JWT_SECRET environment variable is missing.');
+        process.exit(1);
+    } else {
+        console.warn('WARNING: JWT_SECRET not configured. Generating ephemeral secret.');
+        process.env.JWT_SECRET = require('crypto').randomBytes(32).toString('hex');
+    }
+}
+
+if (process.env.NODE_ENV === 'production' && process.env.DISABLE_LIMITS === 'true') {
+    console.error('FATAL SECURITY ERROR: DISABLE_LIMITS must not be enabled in production.');
+    process.exit(1);
+}
+
 // Global Error Handlers to catch silent crashes
 process.on('uncaughtException', (err) => {
     console.error('🔥 UNCAUGHT EXCEPTION:', err);
@@ -42,7 +58,6 @@ const prisma = require('./lib/prisma'); // Using Prisma
 const { verifyQuizIntegrity } = require('./lib/quizintegrity');
 const { gradeAnswer, resolveCorrectOptionText } = require('./utils/grading');
 const { getCache, setCache } = require('./lib/cache');
-const { exec } = require('child_process');
 const quizState = require('./lib/quizState'); // In-memory quiz state engine
 
 const gzipCompressionMiddleware = require('./middleware/compression');
@@ -83,8 +98,8 @@ app.use(cors({
             'http://localhost:5173',
             'http://127.0.0.1:5173',
         ];
-        // Allow all Vercel preview and production URLs for this project
-        const isVercel = /^https:\/\/kmit-(kahoot|khaoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin) || origin.endsWith('.vercel.app');
+        // Allow all Vercel preview and production URLs for this project ONLY
+        const isVercel = /^https:\/\/kmit-(kahoot|khaoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
         if (allowed.includes(origin) || isVercel) {
             callback(null, true);
         } else {
@@ -144,12 +159,14 @@ app.use((req, res, next) => {
     next();
 });
 
+const isDevRateLimitDisabled = process.env.NODE_ENV !== 'production' && process.env.DISABLE_LIMITS === 'true';
+
 // 3. Rate Limiting (Brute Force / DOS protection)
 // 500 req / 15 min per IP: enough for a full class session (login + quiz join + answers = ~4 req/action)
 // while still blocking automated brute-force attacks (which hit thousands of req/min)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 500, // limit each IP to 500 requests per windowMs
+    max: isDevRateLimitDisabled ? 100000000 : 500, // limit each IP to 500 requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes',
     standardHeaders: true,  // Return rate limit info in `RateLimit-*` headers
     legacyHeaders: false,   // Disable `X-RateLimit-*` headers
@@ -159,7 +176,7 @@ app.use('/api/', limiter); // Apply to all API routes
 // 3.5 Progressive Speed Limiting (DDoS mitigation — slows down repeat offenders)
 const speedLimiter = slowDown({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    delayAfter: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 300, // allow 300 requests per windowMs without delay
+    delayAfter: isDevRateLimitDisabled ? 100000000 : 300, // allow 300 requests per windowMs without delay
     delayMs: (hits) => (hits - 300) * 100, // add 100ms delay per request above 300
     maxDelayMs: 5000, // max 5 second delay
 });
@@ -200,22 +217,32 @@ app.get('/', (req, res) => {
     res.status(200).json({ status: 'online', service: 'KMIT Quiz Backend', timestamp: new Date().toISOString() });
 });
 
+const auth = require('./middleware/authMiddleware');
+const cookie = require('cookie');
+
+const adminOnly = async (req, res, next) => {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id }, select: { role: true } });
+        if (!user || user.role !== 'admin') {
+            return res.status(403).json({ error: 'Access denied. Administrator privileges required.' });
+        }
+        next();
+    } catch {
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
 app.get('/api/health', async (req, res) => {
     try {
         await prisma.$queryRaw`SELECT 1`;
         res.json({
             status: 'healthy',
-            uptime: process.uptime(),
             timestamp: new Date().toISOString(),
-            memoryUsage: process.memoryUsage(),
-            quizEngine: quizState.getStats(),
         });
     } catch (err) {
         res.status(503).json({
             status: 'degraded',
-            error: 'Database ping failed',
             timestamp: new Date().toISOString(),
-            quizEngine: quizState.getStats(),
         });
     }
 });
@@ -223,8 +250,13 @@ app.get('/api/health', async (req, res) => {
 const productionMetrics = require('./utils/productionMetrics');
 require('./utils/diskCleanup');
 
-app.get('/api/metrics', (req, res) => {
-    res.json(productionMetrics.getMetricsSummary());
+app.get('/api/metrics', auth, adminOnly, (req, res) => {
+    res.json({
+        ...productionMetrics.getMetricsSummary(),
+        uptime: process.uptime(),
+        memoryUsage: process.memoryUsage(),
+        quizEngine: quizState.getStats(),
+    });
 });
 
 app.use('/api/auth', require('./routes/auth'));
@@ -257,7 +289,7 @@ const io = new Server(server, {
     pingTimeout: 180000, // 3 minutes timeout to survive heavy CPU/transcription load
     pingInterval: 25000,
     connectTimeout: 45000,
-    maxHttpBufferSize: 1e8, // 100 MB max payload for socket events
+    maxHttpBufferSize: 1e6, // 1 MB max payload for socket events
     cors: {
         origin: (origin, callback) => {
             if (!origin) return callback(null, true);
@@ -269,7 +301,7 @@ const io = new Server(server, {
                 'http://localhost:3000',
                 'http://127.0.0.1:3000'
             ];
-            const isVercelPreview = /^https:\/\/kmit-(khaoot|kahoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin) || origin.endsWith('.vercel.app');
+            const isVercelPreview = /^https:\/\/kmit-(khaoot|kahoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
             if (allowed.includes(origin) || isVercelPreview) {
                 callback(null, true);
             } else {
@@ -347,21 +379,24 @@ setInterval(() => {
     }
 }, 30000); // Every 30 seconds
 
-// Helper for verifying socket tokens against environment secret or simulation secret
+// Helper for verifying socket tokens securely against configured JWT secret
 function verifySocketToken(token) {
-    if (!token) return null;
-    const secrets = Array.from(new Set([process.env.JWT_SECRET, 'KMIT_SIMULATION_2026_SECRET_KEY', 'secret123', 'secret', ''])).filter(s => s !== null && s !== undefined);
-    for (const secret of secrets) {
-        try {
-            const decoded = jwt.verify(token, secret);
-            if (decoded) return decoded;
-        } catch (_) {}
+    if (!token || !process.env.JWT_SECRET) return null;
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET);
+    } catch (_) {
+        return null;
     }
-    return null;
 }
 
 io.use(async (socket, next) => {
-    const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
+    let token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
+    if (!token && socket.handshake.headers?.cookie) {
+        try {
+            const parsed = cookie.parse(socket.handshake.headers.cookie);
+            token = parsed.token;
+        } catch (_) {}
+    }
     if (!token) {
         return next(new Error('Authentication failed: Missing token'));
     }

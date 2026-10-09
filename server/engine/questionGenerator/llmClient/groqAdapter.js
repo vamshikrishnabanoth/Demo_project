@@ -11,15 +11,13 @@ class GroqAdapter {
   }
 
   getClient(apiKey) {
-    const k1 = "gsk_yNt7T3hCA8zIk3UV";
-    const k2 = "hGwYWGdyb3FY2vpdqKUElXIWs8fmu5Q0yfYE";
-    const fallbackKey = k1 + k2;
-    const key = apiKey || process.env.GROQ_API_KEY || fallbackKey;
+    const key = apiKey || process.env.GROQ_API_KEY;
     if (!this.client) {
       this.client = new Groq({ apiKey: key });
     }
     return this.client;
   }
+
 
   async generate(promptPayload, signal, config = {}) {
     const systemPrompt = promptPayload.systemPrompt || "You are an expert assessment generator.";

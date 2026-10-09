@@ -151,17 +151,19 @@ const upload = multer({
     }
 });
 
+const isDevQuizLimitsDisabled = process.env.NODE_ENV !== 'production' && process.env.DISABLE_LIMITS === 'true';
+
 // Rate limiter for joining quizzes (prevents brute force on codes)
 const joinLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 20,
+    max: isDevQuizLimitsDisabled ? 100000000 : 20,
     message: 'Too many attempts to join quizzes. Please try again later.'
 });
 
 // Rate limiter for expensive generation workloads
 const generationLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 30,
+    max: isDevQuizLimitsDisabled ? 100000000 : 30,
     keyGenerator: (req, res) => req.user?.id || ipKeyGenerator(req, res),
     message: { msg: 'Rate limit exceeded: too many generation requests. Please wait a few minutes before submitting again.' }
 });
@@ -169,10 +171,11 @@ const generationLimiter = rateLimit({
 // Rate limiter for document uploads
 const uploadLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: process.env.DISABLE_LIMITS === 'true' ? 100000000 : 60,
+    max: isDevQuizLimitsDisabled ? 100000000 : 60,
     keyGenerator: (req, res) => req.user?.id || ipKeyGenerator(req, res),
     message: { msg: 'Too many upload requests. Please slow down.' }
 });
+
 
 const quizValidation = [
     check('title', 'Title must be at least 1 character').optional().isLength({ min: 1 }).trim(),

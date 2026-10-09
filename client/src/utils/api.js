@@ -10,7 +10,6 @@ const isProductionDomain = typeof window !== 'undefined' && (
 const API_BASE_URL = import.meta.env.VITE_API_URL || (isProductionDomain ? PRODUCTION_API_URL : 'http://localhost:5000/api');
 
 async function request(endpoint, options = {}, retryCount = 0) {
-    const token = localStorage.getItem('token');
     let url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
 
     // Automatically convert options.params object into URL query string (Axios compatibility)
@@ -31,10 +30,6 @@ async function request(endpoint, options = {}, retryCount = 0) {
         'Content-Type': 'application/json',
         ...(options.headers || {}),
     };
-
-    if (token) {
-        headers['x-auth-token'] = token;
-    }
 
     // CRITICAL: When sending FormData, delete Content-Type so fetch() automatically sets boundary
     if (options.body instanceof FormData || (headers['Content-Type'] && headers['Content-Type'].includes('multipart/form-data'))) {
@@ -73,12 +68,6 @@ async function request(endpoint, options = {}, retryCount = 0) {
         const response = await fetch(url, fetchOptions);
         clearTimeout(timeoutId);
 
-        // Automatically capture sliding refreshed token if issued by authMiddleware
-        const refreshedToken = response.headers.get('x-refreshed-token') || response.headers.get('X-Refreshed-Token');
-        if (refreshedToken) {
-            localStorage.setItem('token', refreshedToken);
-        }
-
         let data;
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
@@ -89,7 +78,7 @@ async function request(endpoint, options = {}, retryCount = 0) {
 
         if (!response.ok) {
             if (response.status === 401) {
-                localStorage.removeItem('token');
+                try { localStorage.removeItem('token'); } catch (_) {}
                 if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
                     window.location.href = '/login';
                 }
@@ -98,6 +87,7 @@ async function request(endpoint, options = {}, retryCount = 0) {
             err.response = { status: response.status, data };
             throw err;
         }
+
 
         return { data, status: response.status, headers: response.headers };
     } catch (error) {

@@ -11,10 +11,7 @@ const isProductionDomain = typeof window !== 'undefined' && (
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (isProductionDomain ? PRODUCTION_SOCKET_URL : 'http://localhost:5000');
 
 const socket = io(SOCKET_URL, {
-    auth: (cb) => {
-        const token = localStorage.getItem('token') || '';
-        cb({ token });
-    },
+    withCredentials: true,
     transports: ['websocket', 'polling'],
     upgrade: true,
     reconnection: true,
@@ -33,11 +30,6 @@ socket.on('connect', () => {
 
 socket.on('disconnect', (reason) => {
     console.warn('[SOCKET] Disconnected from server. Reason:', reason);
-    if (reason === 'io server disconnect') {
-        // Server forcefully disconnected due to auth failure; don't auto-reconnect without fresh token
-        const token = localStorage.getItem('token');
-        if (token) socket.connect();
-    }
 });
 
 socket.on('connect_error', (err) => {
@@ -51,21 +43,17 @@ socket.on('connect_error', (err) => {
 socket.on('error_alert', (data) => {
     console.error('[SOCKET ERROR ALERT]:', data?.msg || data);
     if (data?.code === 'SESSION_EXPIRED') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        } catch (_) {}
         window.location.href = '/login?expired=true';
     }
 });
 
 export const ensureSocketConnected = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        console.warn('[SOCKET] Refusing connect: No auth token found.');
-        if (socket.connected) socket.disconnect();
-        return socket;
-    }
     if (!socket.connected) {
-        console.log('[SOCKET] Connecting socket with auth token...');
+        console.log('[SOCKET] Connecting socket...');
         socket.connect();
     }
     return socket;
@@ -78,9 +66,5 @@ export const disconnectSocket = () => {
     }
 };
 
-// Only connect on module import if a valid token exists
-if (typeof window !== 'undefined' && localStorage.getItem('token')) {
-    socket.connect();
-}
-
 export default socket;
+

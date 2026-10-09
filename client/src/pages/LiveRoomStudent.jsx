@@ -78,21 +78,18 @@ export default function LiveRoomStudent() {
                     return;
                 }
 
-                const token = localStorage.getItem('token');
-                let studentId = null;
-                if (token) {
-                    try { studentId = JSON.parse(atob(token.split('.')[1])).user.id; } catch (_) { }
-                }
+                const studentId = user?.id;
                 
                 const sessionData = {
                     quizId: quizRes.data.id,
-                    username: user.username,
+                    username: user?.username,
                     role: 'student',
-                    _id: studentId || user.id
+                    _id: studentId
                 };
                 localStorage.setItem(`live_quiz_session_student_${quizRes.data.id}`, JSON.stringify(sessionData));
                 ensureSocketConnected();
-                socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: 'student', _id: studentId || user.id } });
+                socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user?.username, role: 'student', _id: studentId } });
+
 
             } catch (err) {
                 console.error('[LiveRoomStudent] Error initializing quiz join:', err);

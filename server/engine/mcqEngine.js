@@ -113,10 +113,8 @@ class LightweightConceptGraph {
 
 class LLMProvider {
   constructor(apiKey) {
-    const k1 = "gsk_yNt7T3hCA8zIk3UV";
-    const k2 = "hGwYWGdyb3FY2vpdqKUElXIWs8fmu5Q0yfYE";
-    const fallbackKey = k1 + k2;
-    this.client = new Groq({ apiKey: apiKey || process.env.GROQ_API_KEY || fallbackKey });
+    const key = apiKey || process.env.GROQ_API_KEY;
+    this.client = new Groq({ apiKey: key });
   }
 
   async generateJSON(prompt, systemMessage = PROMPT_CONFIG.SYSTEM_PROMPT) {
