@@ -20,6 +20,7 @@ venv/
 
 # Build & Logs
 client/dist/
+backend/dist/
 server/*.log
 server/logs/
 *.txt

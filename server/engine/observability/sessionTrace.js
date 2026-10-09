@@ -109,6 +109,19 @@ class SessionTrace {
       });
     }
 
+    try {
+      const telemetryService = require('../../services/telemetryService');
+      telemetryService.emitStageUpdate(this.sessionId, {
+        stageNumber: parseInt(stageOrder, 10) || 1,
+        stageName: stageName,
+        status: stageRecord.validation.status || 'PASS',
+        metrics: calculations || {},
+        sampleOutput: output || {},
+        logs: decisions || [],
+        timestamp: Date.now()
+      });
+    } catch (_) {}
+
     return stageRecord;
   }
 

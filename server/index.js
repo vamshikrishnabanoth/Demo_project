@@ -237,6 +237,7 @@ app.use('/api/students', require('./routes/students'));
 app.use('/api/broadcast', require('./routes/broadcast'));
 app.use('/api/developer', require('./routes/developer'));
 app.use('/api/knowledge', require('./routes/knowledge'));
+app.use('/api/pipeline', require('./routes/telemetry'));
 
 // Global Express Error Middleware Isolation
 app.use(errorMiddleware);
