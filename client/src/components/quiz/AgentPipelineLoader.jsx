@@ -4,6 +4,7 @@ import {
     Clock, Inbox, Network, Ruler, Scale, Search, ShieldCheck, Zap, Rocket,
     CheckCircle2, Loader2, Sparkles, Activity, Cpu, Shield, ArrowRight, Terminal
 } from "lucide-react";
+import PipelineInspectorDrawer from "../pipeline/PipelineInspectorDrawer";
 
 const PIPELINE_STAGES = [
     { label: "Ingesting & Analyzing Material",             sub: "Verifying inputs, removing noise, and validating content structure...",     icon: Inbox,       shortLabel: "Input Analysis" },
@@ -349,6 +350,7 @@ export default function AgentPipelineLoader({
     sessionId = null,
 }) {
     const stageList = PIPELINE_STAGES;
+    const [isInspectorOpen, setIsInspectorOpen] = useState(false);
 
     const [activeStage, setActiveStage] = useState(() => {
         if (stageLabel && STAGE_MAP[stageLabel] !== undefined) {
@@ -563,56 +565,41 @@ export default function AgentPipelineLoader({
                             </div>
                         </div>
 
-                        {/* Live Agent Telemetry Stream Console */}
-                        <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3 font-mono text-[11px] shadow-inner space-y-1.5 overflow-hidden">
-                            <div className="flex items-center justify-between border-b border-slate-800/80 pb-1.5">
-                                <div className="flex items-center gap-2 text-emerald-400 font-bold">
-                                    <Terminal size={12} className="animate-pulse" />
-                                    <span className="text-[10px] uppercase tracking-wider">Live Agent Telemetry Stream</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                        Stage {activeStage + 1}/8 Active
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            const targetSession = sessionId || 'live-session';
-                                            try { localStorage.setItem('latest_pipeline_task_id', targetSession); } catch (_) {}
-                                            window.open(`/pipeline-output?taskId=${targetSession}`, '_blank');
-                                        }}
-                                        className="text-[10px] font-black px-3 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95 shadow-sm"
-                                        title="Inspect stage outputs & live telemetry stream"
-                                    >
-                                        <span>Inspect Stage Outputs &amp; Telemetry ↗</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="space-y-1 py-0.5">
-                                {(STAGE_TELEMETRY[activeStage] || []).map((log, idx) => (
-                                    <div key={idx} className="flex items-start gap-2 leading-relaxed">
-                                        <span className="text-emerald-500 font-bold">›</span>
-                                        <span className={idx === (STAGE_TELEMETRY[activeStage]?.length - 1) ? "text-emerald-300 font-bold" : "text-slate-400"}>
-                                            {log}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Bottom Informational Bar */}
-                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-400">
+                        {/* Bottom Informational Bar & Outside Inspection Action */}
+                        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-bold text-slate-400">
                             <div className="flex items-center gap-3">
                                 <span className="flex items-center gap-1.5 text-slate-600">
                                     <Shield size={13} className="text-emerald-500" />
                                     Zero-Hallucination Verified
                                 </span>
+                                <span className="hidden sm:inline text-slate-300">•</span>
+                                <span>Do not refresh or close</span>
                             </div>
-                            <span>Do not refresh or close</span>
+
+                            <button
+                                type="button"
+                                onClick={() => setIsInspectorOpen(true)}
+                                className="px-5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-[0_4px_14px_rgba(234,88,12,0.28)] flex items-center gap-2 cursor-pointer transition-all border-none outline-none shrink-0"
+                                title="Inspect stage outputs & live telemetry without interrupting generation"
+                            >
+                                <Activity size={15} className="animate-pulse text-white" />
+                                <span>Inspect Stage Outputs &amp; Telemetry</span>
+                            </button>
                         </div>
                     </div>
                 </div>
+
+                {/* Real-Time Observability & Live Telemetry Panel Overlay */}
+                <PipelineInspectorDrawer
+                    isOpen={isInspectorOpen}
+                    onClose={() => setIsInspectorOpen(false)}
+                    sessionId={sessionId || 'live-session'}
+                    isVoice={isVoice}
+                    representationMode={representationMode}
+                    currentStageIndex={activeStage}
+                    currentStageLabel={stageLabel || stageList[activeStage]?.label}
+                    elapsedSeconds={elapsed}
+                />
             </motion.div>
         </div>
     );
