@@ -269,12 +269,7 @@ export default function PipelineOutput() {
     };
   }, [taskId]);
 
-  // Auto-scroll telemetry terminal
-  useEffect(() => {
-    if (viewMode === 'telemetry' && terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [telemetryLogs, viewMode]);
+
 
   const deliveredQuestions = pipelineResult?.questions || pipelineResult?.deliveredQuestions || [];
   const questionCountDisplay = deliveredQuestions.length || questionCount;
