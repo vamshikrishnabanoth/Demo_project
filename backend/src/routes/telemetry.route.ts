@@ -23,9 +23,13 @@ router.get('/stream/:sessionId', async (req: Request, res: Response) => {
     (res as any).flushHeaders();
   }
 
+  const targetId = (sessionId === 'live-session' || sessionId === 'default_session' || sessionId === 'latest')
+    ? (telemetryService.getLatestSessionId() || sessionId)
+    : sessionId;
+
   // Send historical logs replay first
   try {
-    const historicalLogs = await telemetryService.getLogs(sessionId);
+    const historicalLogs = await telemetryService.getLogs(targetId);
     for (const log of historicalLogs) {
       res.write(`data: ${JSON.stringify(log)}\n\n`);
     }
@@ -34,11 +38,10 @@ router.get('/stream/:sessionId', async (req: Request, res: Response) => {
   }
 
   // Subscribe to live telemetry updates
-  const unsubscribe = telemetryService.subscribe(sessionId, (payload) => {
+  const onPayload = (payload: any) => {
     try {
       res.write(`data: ${JSON.stringify(payload)}\n\n`);
       if (payload.status === 'COMPLETED' || payload.status === 'REJECTED') {
-        // Pipeline reached terminal state
         setTimeout(() => {
           unsubscribe();
           res.end();
@@ -48,7 +51,14 @@ router.get('/stream/:sessionId', async (req: Request, res: Response) => {
       console.error(`Error writing SSE to client for session ${sessionId}:`, err.message);
       unsubscribe();
     }
-  });
+  };
+
+  const unsub1 = telemetryService.subscribe(sessionId, onPayload);
+  const unsub2 = targetId !== sessionId ? telemetryService.subscribe(targetId, onPayload) : () => {};
+  const unsubscribe = () => {
+    unsub1();
+    unsub2();
+  };
 
   // Keep-alive heartbeat every 15 seconds
   const heartbeatTimer = setInterval(() => {

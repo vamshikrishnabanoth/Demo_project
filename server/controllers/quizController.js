@@ -1159,15 +1159,20 @@ exports.createQuiz = async (req, res) => {
         let finalQuestions = [];
 
         // --- UNIQUE QUIZ NAME CHECK ---
+        // Exclude saved templates (isTemplate: true) so saved repository quizzes can be published seamlessly without collisions
         const titleStr = (title || topic || content || 'Untitled').trim();
+        let finalQuizTitle = title || `${topic || content || 'Untitled'} Quiz`;
         const existingQuiz = await prisma.quiz.findFirst({
             where: {
                 createdById: req.user.id,
+                isTemplate: false,
                 title: { equals: titleStr, mode: 'insensitive' }
             }
         });
         if (existingQuiz && (!req.body.id || existingQuiz.id !== req.body.id)) {
-            return res.status(400).json({ msg: `A quiz named '${titleStr}' already exists. Please choose a unique name.` });
+            const now = new Date();
+            const timeTag = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            finalQuizTitle = `${titleStr} (${timeTag})`;
         }
 
         // --- AI MODERATION GUARD ---
@@ -1297,7 +1302,7 @@ exports.createQuiz = async (req, res) => {
 
         const newQuiz = await prisma.quiz.create({
             data: {
-                title: title || `${topic || content || 'Untitled'} Quiz`,
+                title: finalQuizTitle,
                 description: `Level: ${difficulty || 'Medium'}`,
                 questions: finalQuestions,
                 createdById: req.user.id,
@@ -1451,7 +1456,10 @@ exports.joinByCode = async (req, res) => {
 exports.getMyQuizzes = async (req, res) => {
     try {
         const quizzes = await prisma.quiz.findMany({
-            where: { createdById: req.user.id },
+            where: {
+                createdById: req.user.id,
+                isTemplate: false // CRITICAL: Exclude saved templates from live/active list
+            },
             orderBy: { createdAt: 'desc' }
         });
 
@@ -1502,6 +1510,38 @@ exports.getMyQuizzes = async (req, res) => {
     }
 };
 
+exports.getActiveTeacherLiveQuiz = async (req, res) => {
+    try {
+        const activeQuiz = await prisma.quiz.findFirst({
+            where: {
+                createdById: req.user.id,
+                isLive: true,
+                isActive: true,
+                isTemplate: false,
+                status: { not: 'finished' }
+            },
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                title: true,
+                joinCode: true,
+                status: true,
+                isLive: true,
+                isActive: true,
+                difficulty: true,
+                timerPerQuestion: true,
+                createdAt: true,
+                joinedStudentsCount: true
+            }
+        });
+
+        res.json({ activeQuiz: activeQuiz || null });
+    } catch (err) {
+        console.error('Error fetching active teacher live quiz:', err.message);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
 exports.saveTemplate = async (req, res) => {
     try {
         let { id, title, description, topic, questions, difficulty, timerPerQuestion, assignedGroups } = req.body;
@@ -1511,16 +1551,18 @@ exports.saveTemplate = async (req, res) => {
             return res.status(400).json({ msg: 'Quiz title is required to save template.' });
         }
 
-        // Title Uniqueness check per teacher
+        // Title Uniqueness check per teacher (only check against other templates)
         const existing = await prisma.quiz.findFirst({
             where: {
                 createdById: req.user.id,
+                isTemplate: true,
                 title: { equals: titleStr, mode: 'insensitive' }
             }
         });
 
         if (existing && (!id || existing.id !== id)) {
-            return res.status(400).json({ msg: `A quiz named '${titleStr}' already exists. Please choose a unique name.` });
+            // Update the existing template in place rather than throwing a duplicate error
+            id = existing.id;
         }
 
         let finalQuestions = Array.isArray(questions) ? questions : [];

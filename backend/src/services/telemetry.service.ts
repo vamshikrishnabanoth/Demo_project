@@ -117,14 +117,25 @@ export class TelemetryService {
     }
   }
 
+  public getLatestSessionId(): string | null {
+    const keys = Array.from(this.memoryLogs.keys());
+    return keys.length > 0 ? keys[keys.length - 1] : null;
+  }
+
   /**
    * Fetch all logs for a sessionId sorted by timestamp for replay
    */
   public async getLogs(sessionId: string): Promise<StageUpdatePayload[]> {
+    let targetSessionId = sessionId;
+    if (sessionId === 'live-session' || sessionId === 'default_session' || sessionId === 'latest') {
+      const latest = this.getLatestSessionId();
+      if (latest) targetSessionId = latest;
+    }
+
     if (this.mongoCollection) {
       try {
         const docs = await this.mongoCollection
-          .find({ sessionId })
+          .find({ sessionId: targetSessionId })
           .sort({ timestamp: 1 })
           .toArray();
         if (docs && docs.length > 0) {
@@ -138,7 +149,11 @@ export class TelemetryService {
       }
     }
 
-    return (this.memoryLogs.get(sessionId) || []).sort((a, b) => a.timestamp - b.timestamp);
+    let list = this.memoryLogs.get(targetSessionId);
+    if (!list && targetSessionId !== sessionId) {
+      list = this.memoryLogs.get(sessionId);
+    }
+    return (list || []).sort((a, b) => a.timestamp - b.timestamp);
   }
 
   /**

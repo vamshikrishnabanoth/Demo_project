@@ -43,8 +43,20 @@ class TelemetryService {
     }
   }
 
+  getLatestSessionId() {
+    const keys = Array.from(this.memoryLogs.keys());
+    return keys.length > 0 ? keys[keys.length - 1] : null;
+  }
+
   async getLogs(sessionId) {
-    return (this.memoryLogs.get(sessionId) || []).sort((a, b) => a.timestamp - b.timestamp);
+    let list = this.memoryLogs.get(sessionId);
+    if ((!list || list.length === 0) && (sessionId === 'live-session' || sessionId === 'default_session' || sessionId === 'latest')) {
+      const latestId = this.getLatestSessionId();
+      if (latestId) {
+        list = this.memoryLogs.get(latestId);
+      }
+    }
+    return (list || []).sort((a, b) => a.timestamp - b.timestamp);
   }
 }
 

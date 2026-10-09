@@ -29,7 +29,8 @@ import {
     Layers,
     Clock,
     Award,
-    Target
+    Target,
+    Radio
 } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
@@ -43,7 +44,7 @@ export default function MyQuizzes() {
     
     useEffect(() => {
         if (quizzesData) {
-            setQuizzes(quizzesData);
+            setQuizzes(quizzesData.filter(q => !q.isTemplate));
         }
     }, [quizzesData]);
 
@@ -240,7 +241,7 @@ export default function MyQuizzes() {
         }
     };
 
-    const filteredQuizzes = quizzes.filter(quiz => {
+    const filteredQuizzes = quizzes.filter(quiz => !quiz.isTemplate).filter(quiz => {
         const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             quiz.topic?.toLowerCase().includes(searchTerm.toLowerCase());
             
@@ -252,8 +253,14 @@ export default function MyQuizzes() {
         return matchesSearch && matchesType;
     });
 
-    const activeSessionsCount = quizzes.filter(q => q.isActive).length;
-    const totalCompletions = quizzes.reduce((sum, q) => sum + (q.completionCount || 0), 0);
+    const activeLiveQuiz = quizzes.find(q => !q.isTemplate && q.isLive && quizIsActive(q));
+
+    function quizIsActive(q) {
+        return q.isActive && q.status !== 'finished';
+    }
+
+    const activeSessionsCount = quizzes.filter(q => !q.isTemplate && q.isActive).length;
+    const totalCompletions = quizzes.filter(q => !q.isTemplate).reduce((sum, q) => sum + (q.completionCount || 0), 0);
 
     return (
         <DashboardLayout role="teacher">
@@ -274,7 +281,15 @@ export default function MyQuizzes() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 z-10 shrink-0">
+                    <div className="flex flex-wrap items-center gap-3 z-10 shrink-0">
+                        <button
+                            onClick={() => navigate('/telemetry/live-session')}
+                            className="px-4 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-emerald-400 font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 cursor-pointer transition-all border border-slate-700"
+                            title="Open 16-Stage Live Agent Telemetry Console"
+                        >
+                            <Activity size={17} className="text-emerald-400 animate-pulse" />
+                            <span>Live Telemetry</span>
+                        </button>
                         <button
                             onClick={() => navigate('/teacher-dashboard')}
                             className="px-5 py-3.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-[0_6px_16px_rgba(194,65,12,0.24)] flex items-center gap-2 cursor-pointer transition-all border-none outline-none"
@@ -288,6 +303,40 @@ export default function MyQuizzes() {
                         <FileText size={260} />
                     </div>
                 </div>
+
+                {/* ── ACTIVE LIVE CLASSROOM REVISIT BANNER ── */}
+                {activeLiveQuiz && (
+                    <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-3xl p-6 sm:p-7 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 border border-amber-300/40">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
+                                <Radio size={28} className="text-white animate-spin" />
+                            </div>
+                            <div>
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className="bg-white text-orange-950 font-black text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-sm">
+                                        ⚡ Live Quiz In Progress
+                                    </span>
+                                    <span className="font-mono text-xs font-bold bg-black/30 px-3 py-0.5 rounded-md border border-white/20">
+                                        PIN: {activeLiveQuiz.joinCode}
+                                    </span>
+                                </div>
+                                <h3 className="text-lg sm:text-xl font-black mt-1 text-white drop-shadow-sm">
+                                    {cleanQuizTitle(activeLiveQuiz.title)}
+                                </h3>
+                                <p className="text-xs text-white/95 font-medium leading-relaxed max-w-2xl">
+                                    You have a live room active right now! If you navigated back by mistake, click below to immediately resume question control, view student responses, or advance questions.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => navigate(`/live-room-teacher/${activeLiveQuiz.joinCode}`)}
+                            className="w-full md:w-auto px-7 py-4 rounded-2xl bg-white hover:bg-orange-50 text-orange-600 font-black text-xs uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer shrink-0 border-none"
+                        >
+                            <Play size={17} className="fill-current text-orange-600" />
+                            <span>Revisit &amp; Control Live Room</span>
+                        </button>
+                    </div>
+                )}
 
                 {/* ── STEP-BY-STEP WORKFLOW BANNER ────────────────────────────────────────── */}
                 <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-[0_4px_18px_rgba(15,23,42,0.04)] space-y-4">
@@ -557,10 +606,15 @@ export default function MyQuizzes() {
                                                 quiz.status !== 'finished' && (
                                                     <Link
                                                         to={`/live-room-teacher/${quiz.joinCode}`}
-                                                        className="px-4 py-2.5 rounded-xl bg-[#fff7ed] hover:bg-[#ffedd5] border border-[#fdba74] text-[#9a4a12] font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-1.5 cursor-pointer transition-all"
+                                                        className={`px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-1.5 cursor-pointer transition-all ${
+                                                            quiz.isLive && quiz.isActive
+                                                                ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 ring-2 ring-amber-400/50 shadow-md animate-pulse'
+                                                                : 'bg-[#fff7ed] hover:bg-[#ffedd5] border border-[#fdba74] text-[#9a4a12]'
+                                                        }`}
+                                                        title="Revisit and control live quiz classroom"
                                                     >
-                                                        <ExternalLink size={15} />
-                                                        <span>Room PIN</span>
+                                                        <Play size={14} className="fill-current" />
+                                                        <span>{quiz.isLive && quiz.isActive ? `▶ Revisit Live Room (${quiz.joinCode})` : `Room PIN: ${quiz.joinCode}`}</span>
                                                     </Link>
                                                 )
                                             )}

@@ -24,7 +24,11 @@ router.get('/stream/:sessionId', async (req, res) => {
   }
 
   // Subscribe
-  const unsubscribe = telemetryService.subscribe(sessionId, (payload) => {
+  const targetId = (sessionId === 'live-session' || sessionId === 'default_session' || sessionId === 'latest')
+    ? (telemetryService.getLatestSessionId() || sessionId)
+    : sessionId;
+
+  const onUpdate = (payload) => {
     try {
       res.write(`data: ${JSON.stringify(payload)}\n\n`);
       if (payload.status === 'COMPLETED' || payload.status === 'REJECTED') {
@@ -36,7 +40,14 @@ router.get('/stream/:sessionId', async (req, res) => {
     } catch (err) {
       unsubscribe();
     }
-  });
+  };
+
+  const unsub1 = telemetryService.subscribe(sessionId, onUpdate);
+  const unsub2 = targetId !== sessionId ? telemetryService.subscribe(targetId, onUpdate) : () => {};
+  const unsubscribe = () => {
+    unsub1();
+    unsub2();
+  };
 
   const heartbeat = setInterval(() => {
     try {

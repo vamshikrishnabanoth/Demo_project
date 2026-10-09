@@ -16,7 +16,9 @@ import {
     UserCheck,
     Shield,
     Cpu,
-    Bell
+    Bell,
+    Activity,
+    Radio
 } from 'lucide-react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
@@ -120,12 +122,31 @@ export default function DashboardLayout({ children, role }) {
         }
     };
 
+    // Teacher Live Quiz Active Tracking
+    const [activeLiveQuiz, setActiveLiveQuiz] = useState(null);
+
+    const fetchActiveLiveQuiz = async () => {
+        if (role !== 'teacher' || !user?.id) return;
+        try {
+            const res = await api.get('/quiz/live/active-teacher');
+            setActiveLiveQuiz(res.data?.activeQuiz || null);
+        } catch (err) {
+            console.error('Error loading active live quiz:', err);
+        }
+    };
+
+    React.useEffect(() => {
+        if (!user?.id || role !== 'teacher') return;
+        fetchActiveLiveQuiz();
+    }, [role, user, location.pathname]);
+
     const isActive = (path) => location.pathname === path;
 
     const teacherLinks = [
-        { name: 'Home',       path: '/teacher-dashboard', icon: LayoutDashboard },
-        { name: 'My Quizzes', path: '/my-quizzes',        icon: BookOpen },
-        { name: 'Profile',    path: '/profile',           icon: User },
+        { name: 'Home',           path: '/teacher-dashboard',      icon: LayoutDashboard },
+        { name: 'My Quizzes',     path: '/my-quizzes',             icon: BookOpen },
+        { name: 'Live Telemetry', path: '/telemetry/live-session', icon: Activity },
+        { name: 'Profile',        path: '/profile',                icon: User },
     ];
     const studentLinks = [
         { name: 'Home',        path: '/student-dashboard', icon: LayoutDashboard },
@@ -213,6 +234,17 @@ export default function DashboardLayout({ children, role }) {
 
                         {/* Right actions */}
                         <div className="flex items-center gap-3 shrink-0">
+                            {role === 'teacher' && activeLiveQuiz && (
+                                <Link
+                                    to={`/live-room-teacher/${activeLiveQuiz.joinCode}`}
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-[11px] shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all animate-pulse"
+                                    title={`Revisit Live Quiz: ${activeLiveQuiz.title}`}
+                                >
+                                    <Radio size={13} className="stroke-[2.5]" />
+                                    <span className="font-mono">LIVE PIN: {activeLiveQuiz.joinCode}</span>
+                                    <span className="hidden sm:inline bg-black/20 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold">Control Room ↗</span>
+                                </Link>
+                            )}
                             {/* Essentials Only on Mobile */}
                             {!isSmallScreen && <StatusBadge label="Live" />}
 
@@ -307,6 +339,19 @@ export default function DashboardLayout({ children, role }) {
                             {/* Scrollable Navigation Links */}
                             <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 py-1">
                                 <nav className="space-y-2.5" aria-label="Mobile navigation">
+                                    {role === 'teacher' && activeLiveQuiz && (
+                                        <Link
+                                            to={`/live-room-teacher/${activeLiveQuiz.joinCode}`}
+                                            onClick={() => setMobileOpen(false)}
+                                            className="flex items-center gap-3 p-3.5 mb-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-xs uppercase tracking-wider shadow-md animate-pulse"
+                                        >
+                                            <Radio size={18} className="shrink-0" />
+                                            <div className="min-w-0 flex-1">
+                                                <p className="truncate">Live Quiz PIN: {activeLiveQuiz.joinCode}</p>
+                                                <p className="text-[10px] opacity-90 normal-case font-bold">Tap to Revisit & Control Live Room</p>
+                                            </div>
+                                        </Link>
+                                    )}
                                     {links.map((link) => {
                                         const Icon = link.icon;
                                         const active = isActive(link.path);

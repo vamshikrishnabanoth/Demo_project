@@ -464,6 +464,10 @@ router.get('/my-quizzes', auth, quizController.getMyQuizzes);
 // @desc    Get all unique sources of ingested documents
 router.get('/documents', auth, quizController.getIngestedDocuments);
 
+// @route   GET api/quiz/live/active-teacher
+// @desc    Get currently active live quiz for current teacher to resume/control
+router.get('/live/active-teacher', auth, quizController.getActiveTeacherLiveQuiz);
+
 // @route   GET api/quiz/live
 // @desc    Get all active quizzes for students
 router.get('/live', auth, quizController.getLiveQuizzes);

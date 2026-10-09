@@ -150,6 +150,7 @@ export default function CreateQuizTopic() {
     const [stageLabel, setStageLabel] = useState('Generating Questions');
     const [representationMode, setRepresentationMode] = useState(null);
     const [elapsed, setElapsed] = useState(0);
+    const [currentTaskId, setCurrentTaskId] = useState(null);
     const [pollError, setPollError] = useState(null);
     const pollIntervalRef = useRef(null);
     const startTimeRef = useRef(null);
@@ -1110,6 +1111,7 @@ export default function CreateQuizTopic() {
 
             const { taskId } = res.data;
             if (!taskId) throw new Error('No taskId returned from server');
+            setCurrentTaskId(taskId);
             setSubmitting(false);
 
             // Clean up docket cache for fresh subsequent runs
@@ -1157,6 +1159,7 @@ export default function CreateQuizTopic() {
                     elapsed={elapsed}
                     isVoice={inputs.some(inp => inp.type === 'voice' || inp.type === 'audio')}
                     representationMode={representationMode}
+                    sessionId={currentTaskId}
                 />
             )}
 

@@ -346,6 +346,7 @@ export default function AgentPipelineLoader({
     isVoice = false,
     elapsed = 0,
     representationMode = null,
+    sessionId = null,
 }) {
     const stageList = PIPELINE_STAGES;
 
@@ -569,9 +570,22 @@ export default function AgentPipelineLoader({
                                     <Terminal size={12} className="animate-pulse" />
                                     <span className="text-[10px] uppercase tracking-wider">Live Agent Telemetry Stream</span>
                                 </div>
-                                <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    Stage {activeStage + 1}/8 Active
-                                </span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                        Stage {activeStage + 1}/8 Active
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open(`/telemetry/${sessionId || 'live-session'}`, '_blank');
+                                        }}
+                                        className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 cursor-pointer transition-all hover:scale-105 active:scale-95"
+                                        title="Open 16-Stage Live Stream Console in new tab"
+                                    >
+                                        <span>Open 16-Stage Console ↗</span>
+                                    </button>
+                                </div>
                             </div>
                             <div className="space-y-1 py-0.5">
                                 {(STAGE_TELEMETRY[activeStage] || []).map((log, idx) => (
