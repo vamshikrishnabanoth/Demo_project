@@ -26,8 +26,16 @@ async function request(endpoint, options = {}, retryCount = 0) {
         }
     }
 
+    let token = null;
+    try {
+        if (typeof window !== 'undefined') {
+            token = localStorage.getItem('token');
+        }
+    } catch (_) {}
+
     const headers = {
         'Content-Type': 'application/json',
+        ...(token ? { 'x-auth-token': token, 'Authorization': `Bearer ${token}` } : {}),
         ...(options.headers || {}),
     };
 
@@ -78,8 +86,9 @@ async function request(endpoint, options = {}, retryCount = 0) {
 
         if (!response.ok) {
             if (response.status === 401) {
-                try { localStorage.removeItem('token'); } catch (_) {}
-                if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+                const isAuthCheck = endpoint.includes('/auth/me');
+                if (!isAuthCheck && typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+                    try { localStorage.removeItem('token'); } catch (_) {}
                     window.location.href = '/login';
                 }
             }

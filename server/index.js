@@ -612,7 +612,13 @@ io.on('connection', async (socket) => {
     socket.use(async ([event, ...args], next) => {
         if (event === 'disconnect') return next();
 
-        const token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
+        let token = socket.handshake.auth?.token || socket.handshake.headers?.['x-auth-token'];
+        if (!token && socket.handshake.headers?.cookie) {
+            try {
+                const parsed = cookie.parse(socket.handshake.headers.cookie);
+                token = parsed.token;
+            } catch (_) {}
+        }
         if (token) {
             const verified = verifySocketToken(token);
             if (!verified) {

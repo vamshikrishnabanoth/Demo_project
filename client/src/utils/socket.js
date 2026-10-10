@@ -10,7 +10,18 @@ const isProductionDomain = typeof window !== 'undefined' && (
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (isProductionDomain ? PRODUCTION_SOCKET_URL : 'http://localhost:5000');
 
+const getToken = () => {
+    try {
+        return localStorage.getItem('token');
+    } catch (_) {
+        return null;
+    }
+};
+
 const socket = io(SOCKET_URL, {
+    auth: (cb) => {
+        cb({ token: getToken() });
+    },
     withCredentials: true,
     transports: ['websocket', 'polling'],
     upgrade: true,

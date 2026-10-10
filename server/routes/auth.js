@@ -16,6 +16,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma'); // Using Prisma
 const auth = require('../middleware/authMiddleware');
+const { clearUserCache } = require('../middleware/authMiddleware');
 
 // Validation Rules
 const registerValidation = [
@@ -209,7 +210,7 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
         // --- RULE 5: Handle Active / Stale Session Override ---
         // If account is marked online (e.g. closed tab without logout or network drop),
         // increment tokenVersion to invalidate the old token & seamlessly take over session.
-        let updatedTokenVersion = user.tokenVersion;
+        let updatedTokenVersion = (user.tokenVersion ?? 0);
         if (user.isOnline) {
             updatedTokenVersion += 1;
         }
@@ -226,6 +227,9 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
                 tokenVersion: updatedTokenVersion
             }
         });
+
+        // CRITICAL: Invalidate in-memory session cache immediately so subsequent requests don't hit stale cache
+        clearUserCache(user.id);
 
         logSecurityEvent({
             type: 'LOGIN_SUCCESS',
@@ -260,9 +264,11 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
                     httpOnly: true,
                     secure: isProduction,
                     sameSite: isProduction ? 'none' : 'lax',
-                    maxAge: 12 * 60 * 60 * 1000
+                    maxAge: 12 * 60 * 60 * 1000,
+                    path: '/'
                 });
                 res.json({ 
+                    token,
                     user: { 
                         id: user.id, 
                         username: user.username, 
@@ -271,7 +277,8 @@ router.post('/login', authLimiter, loginValidation, async (req, res) => {
                         studentBranch: user.studentBranch,
                         section: user.section,
                         name: user.name,
-                        year: user.year
+                        year: user.year,
+                        tokenVersion: updatedTokenVersion
                     } 
                 });
             }
@@ -332,12 +339,14 @@ router.post('/set-role', auth, async (req, res) => {
             data: { role: role }
         });
 
+        clearUserCache(user.id);
+
         const payload = {
             user: {
                 id: user.id,
                 username: user.username,
                 role: user.role,
-                tokenVersion: user.tokenVersion
+                tokenVersion: user.tokenVersion ?? 0
             }
         };
 
@@ -352,9 +361,10 @@ router.post('/set-role', auth, async (req, res) => {
                     httpOnly: true,
                     secure: isProduction,
                     sameSite: isProduction ? 'none' : 'lax',
-                    maxAge: 12 * 60 * 60 * 1000
+                    maxAge: 12 * 60 * 60 * 1000,
+                    path: '/'
                 });
-                res.json({ role: user.role });
+                res.json({ token, role: user.role });
             }
         );
 
@@ -404,6 +414,8 @@ router.put('/change-password', auth, [
                 tokenVersion: { increment: 1 } // SECURITY: Revoke all old sessions
             }
         });
+
+        clearUserCache(req.user.id);
 
         logSecurityEvent({
             type: 'PASSWORD_CHANGED',
@@ -495,6 +507,8 @@ router.post('/reset-password', authLimiter, [
             }
         });
 
+        clearUserCache(user.id);
+
         res.json({ msg: 'Password has been reset successfully.' });
     } catch (err) {
         console.error('Reset password error:', err);
@@ -543,6 +557,8 @@ router.post('/admin-reset-password', auth, [
             }
         });
 
+        clearUserCache(userId);
+
         logSecurityEvent({
             type: 'ADMIN_PASSWORD_RESET',
             message: `Admin ${adminUser.username} reset password for user ${targetUser.username}`,
@@ -576,6 +592,8 @@ router.post('/logout', async (req, res) => {
                         }
                     }).catch(() => {});
 
+                    clearUserCache(decoded.user.id);
+
                     logSecurityEvent({
                         type: 'LOGOUT',
                         message: 'User logged out securely',
@@ -591,6 +609,7 @@ router.post('/logout', async (req, res) => {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? 'none' : 'lax',
+            path: '/'
         });
         res.json({ msg: 'Logged out successfully.' });
     } catch (err) {

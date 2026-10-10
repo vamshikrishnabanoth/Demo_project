@@ -57,7 +57,9 @@ export const AuthProvider = ({ children }) => {
 
     const login = useCallback(async (email, password) => {
         const res = await api.post('/auth/login', { email, password });
-        try { localStorage.removeItem('token'); } catch (_) {} // Purge any legacy token
+        if (res.data?.token) {
+            try { localStorage.setItem('token', res.data.token); } catch (_) {}
+        }
         const userData = res.data.user ?? (await api.get('/auth/me')).data;
         setUser(userData);
         if (socket.connected) {
@@ -70,6 +72,9 @@ export const AuthProvider = ({ children }) => {
 
     const setRole = useCallback(async (role) => {
         const res = await api.post('/auth/set-role', { role });
+        if (res.data?.token) {
+            try { localStorage.setItem('token', res.data.token); } catch (_) {}
+        }
         setUser(prev => ({ ...prev, role: res.data.role }));
         return res.data;
     }, []);

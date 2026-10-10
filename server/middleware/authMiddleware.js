@@ -30,7 +30,7 @@ function clearUserCache(userId) {
 }
 
 const authMiddleware = async function (req, res, next) {
-    const token = req.cookies?.token || req.header('x-auth-token');
+    const token = req.cookies?.token || req.header('x-auth-token') || req.header('authorization')?.replace(/^Bearer\s+/i, '');
 
     if (!token) {
         return res.status(401).json({ msg: 'No token, authorization denied' });
@@ -56,7 +56,8 @@ const authMiddleware = async function (req, res, next) {
                             httpOnly: true,
                             secure: isProduction,
                             sameSite: isProduction ? 'none' : 'lax',
-                            maxAge: 12 * 60 * 60 * 1000
+                            maxAge: 12 * 60 * 60 * 1000,
+                            path: '/'
                         });
                         res.setHeader('X-Refreshed-Token', newToken);
                     } else {
@@ -84,8 +85,10 @@ const authMiddleware = async function (req, res, next) {
             if (user) setCachedUser(decoded.user.id, user);
         }
 
-        // SECURITY: Strict tokenVersion check — if token lacks a version, treat as -1 (always fails)
-        if (!user || (user.tokenVersion != null && user.tokenVersion !== (decoded.user.tokenVersion ?? -1))) {
+        // SECURITY: Strict tokenVersion check — default null/undefined versions to 0
+        const dbTokenVersion = user.tokenVersion ?? 0;
+        const decodedTokenVersion = decoded.user.tokenVersion ?? 0;
+        if (!user || dbTokenVersion !== decodedTokenVersion) {
             return res.status(401).json({ msg: 'Session expired or revoked. Please login again.', code: 'SESSION_REVOKED' });
         }
 
