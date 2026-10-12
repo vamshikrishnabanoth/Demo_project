@@ -8,7 +8,11 @@ const isProductionDomain = typeof window !== 'undefined' && (
     !['localhost', '127.0.0.1'].includes(window.location.hostname)
 );
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (isProductionDomain ? PRODUCTION_SOCKET_URL : 'http://localhost:5000');
+// Guard against stale suspended render instances configured in Vercel environment variables
+const rawSocketUrl = import.meta.env.VITE_SOCKET_URL;
+const validSocketUrl = (rawSocketUrl && !rawSocketUrl.includes('demo-project-3izc')) ? rawSocketUrl : null;
+
+const SOCKET_URL = validSocketUrl || (isProductionDomain ? PRODUCTION_SOCKET_URL : 'http://localhost:5000');
 
 const getToken = () => {
     try {

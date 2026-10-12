@@ -68,7 +68,8 @@ export default function Login() {
     useEffect(() => {
         const wakeUp = async () => {
             try {
-                const BACKEND = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://quiz-backend-qgro.onrender.com';
+                let rawBackend = import.meta.env.VITE_API_URL?.replace('/api', '');
+                const BACKEND = (rawBackend && !rawBackend.includes('demo-project-3izc')) ? rawBackend : 'https://quiz-backend-qgro.onrender.com';
                 await fetch(`${BACKEND}/health`, {
                     method: 'GET',
                     signal: AbortSignal.timeout(90000),

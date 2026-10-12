@@ -7,7 +7,11 @@ const isProductionDomain = typeof window !== 'undefined' && (
     !['localhost', '127.0.0.1'].includes(window.location.hostname)
 );
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (isProductionDomain ? PRODUCTION_API_URL : 'http://localhost:5000/api');
+// Guard against stale suspended render instances configured in Vercel environment variables
+const rawApiUrl = import.meta.env.VITE_API_URL;
+const validApiUrl = (rawApiUrl && !rawApiUrl.includes('demo-project-3izc')) ? rawApiUrl : null;
+
+const API_BASE_URL = validApiUrl || (isProductionDomain ? PRODUCTION_API_URL : 'http://localhost:5000/api');
 
 async function request(endpoint, options = {}, retryCount = 0) {
     let url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
