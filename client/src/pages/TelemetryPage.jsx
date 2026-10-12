@@ -5,6 +5,7 @@ import {
   RotateCcw, Lock, Radio, Terminal, ChevronDown, ChevronRight,
   ShieldAlert, Play, Layers
 } from "lucide-react";
+import api, { API_BASE_URL } from "../utils/api";
 
 const STAGES_CONFIG = [
   { number: 1, name: "Teacher Inputs" },
@@ -72,12 +73,9 @@ export default function TelemetryPage() {
 
     const fetchReplay = async () => {
       try {
-        const res = await fetch(`/api/pipeline/logs/${sessionId}`);
-        if (res.ok) {
-          const json = await res.json();
-          if (json && json.logs && Array.isArray(json.logs)) {
-            for (const item of json.logs) processStageData(item);
-          }
+        const res = await api.get(`/pipeline/logs/${sessionId}`);
+        if (res.data && res.data.logs && Array.isArray(res.data.logs)) {
+          for (const item of res.data.logs) processStageData(item);
         }
       } catch (err) {}
     };
@@ -85,7 +83,7 @@ export default function TelemetryPage() {
     const connectSSE = () => {
       if (!isMounted) return;
       try {
-        eventSource = new EventSource(`/api/pipeline/stream/${sessionId}`);
+        eventSource = new EventSource(`${API_BASE_URL}/pipeline/stream/${sessionId}`, { withCredentials: true });
         eventSource.onopen = () => {
           if (isMounted) setIsConnected(true);
         };

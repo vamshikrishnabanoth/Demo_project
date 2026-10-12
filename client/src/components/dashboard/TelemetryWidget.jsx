@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Activity, ArrowRight, Loader2 } from "lucide-react";
+import api, { API_BASE_URL } from "../../utils/api";
 
 const STAGE_NAMES = [
   "Teacher Inputs",
@@ -34,11 +35,11 @@ export default function TelemetryWidget({ sessionId = "default_session", classNa
     let eventSource = null;
     let isSubscribed = true;
 
-    fetch(`/api/pipeline/logs/${sessionId}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
+    api.get(`/pipeline/logs/${sessionId}`)
+      .then((res) => {
         if (!isSubscribed) return;
         setIsLoading(false);
+        const data = res.data;
         if (data && data.logs && data.logs.length > 0) {
           const map = {};
           let lastStage = 0;
@@ -58,7 +59,7 @@ export default function TelemetryWidget({ sessionId = "default_session", classNa
       });
 
     try {
-      eventSource = new EventSource(`/api/pipeline/stream/${sessionId}`);
+      eventSource = new EventSource(`${API_BASE_URL}/pipeline/stream/${sessionId}`, { withCredentials: true });
       eventSource.onopen = () => {
         if (isSubscribed) setIsConnected(true);
       };

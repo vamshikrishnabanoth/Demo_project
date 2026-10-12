@@ -43,10 +43,16 @@ export default defineConfig({
     ],
   },
 
-  // Faster HMR in dev
+  // Faster HMR in dev and proxy to backend
   server: {
     hmr: {
       overlay: false, // Don't show full-screen error overlay (less rerenders)
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
     },
   },
 })

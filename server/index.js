@@ -93,13 +93,16 @@ app.use(cors({
         // Allow requests with no origin (mobile apps, curl, Postman)
         if (!origin) return callback(null, true);
         const allowed = [
+            process.env.CLIENT_URL,
             'https://kmit-kahoot.vercel.app',
             'https://kmit-khaoot.vercel.app',
             'http://localhost:5173',
             'http://127.0.0.1:5173',
-        ];
-        // Allow all Vercel preview and production URLs for this project ONLY
-        const isVercel = /^https:\/\/kmit-(kahoot|khaoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+        ].filter(Boolean);
+        // Allow all Vercel preview and production URLs
+        const isVercel = /^https:\/\/kmit-(kahoot|khaoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin) || origin.endsWith('.vercel.app');
         if (allowed.includes(origin) || isVercel) {
             callback(null, true);
         } else {
@@ -294,14 +297,15 @@ const io = new Server(server, {
         origin: (origin, callback) => {
             if (!origin) return callback(null, true);
             const allowed = [
+                process.env.CLIENT_URL,
                 'https://kmit-khaoot.vercel.app',
                 'https://kmit-kahoot.vercel.app',
                 'http://localhost:5173',
                 'http://127.0.0.1:5173',
                 'http://localhost:3000',
                 'http://127.0.0.1:3000'
-            ];
-            const isVercelPreview = /^https:\/\/kmit-(khaoot|kahoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin);
+            ].filter(Boolean);
+            const isVercelPreview = /^https:\/\/kmit-(khaoot|kahoot)(-[a-z0-9]+)*\.vercel\.app$/.test(origin) || origin.endsWith('.vercel.app');
             if (allowed.includes(origin) || isVercelPreview) {
                 callback(null, true);
             } else {

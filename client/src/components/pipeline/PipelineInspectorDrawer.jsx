@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import PipelineTimeline, { STAGE_DEFINITIONS } from './PipelineTimeline';
 import StageOutputPanel from './StageOutputPanel';
-import api from '../../utils/api';
+import api, { API_BASE_URL } from '../../utils/api';
 import toast from 'react-hot-toast';
 
 const STAGES_16_CONFIG = [
@@ -140,17 +140,16 @@ export default function PipelineInspectorDrawer({
     }, 1400);
 
     // 3. Telemetry replay logs
-    fetch(`/api/pipeline/logs/${sessionId}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(json => {
-        if (!isMounted || !json || !json.logs) return;
-        json.logs.forEach(processTelemetryItem);
+    api.get(`/pipeline/logs/${sessionId}`)
+      .then(res => {
+        if (!isMounted || !res?.data || !res.data.logs) return;
+        res.data.logs.forEach(processTelemetryItem);
       })
       .catch(() => {});
 
     // 4. Telemetry SSE stream
     try {
-      const source = new EventSource(`/api/pipeline/stream/${sessionId}`);
+      const source = new EventSource(`${API_BASE_URL}/pipeline/stream/${sessionId}`, { withCredentials: true });
       telemetrySseRef.current = source;
 
       source.onopen = () => {

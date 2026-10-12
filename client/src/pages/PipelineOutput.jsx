@@ -4,7 +4,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import PipelineTimeline, { STAGE_DEFINITIONS } from '../components/pipeline/PipelineTimeline';
 import StageOutputPanel from '../components/pipeline/StageOutputPanel';
 import StageStatusBadge from '../components/pipeline/StageStatusBadge';
-import api from '../utils/api';
+import api, { API_BASE_URL } from '../utils/api';
 import toast from 'react-hot-toast';
 import {
   Rocket, ArrowLeft, Download, Eye, Play, Clock,
@@ -159,8 +159,8 @@ export default function PipelineOutput() {
 
     if (status === 'PROCESSING') {
       try {
-        const sseUrl = `/api/quiz/generate/events/${taskId}`;
-        const eventSource = new EventSource(sseUrl);
+        const sseUrl = `${API_BASE_URL}/quiz/generate/events/${taskId}`;
+        const eventSource = new EventSource(sseUrl, { withCredentials: true });
         sseRef.current = eventSource;
 
         eventSource.onmessage = (e) => {
@@ -233,17 +233,16 @@ export default function PipelineOutput() {
     };
 
     // Load initial telemetry logs from replay endpoint
-    fetch(`/api/pipeline/logs/${taskId}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(json => {
-        if (!isMounted || !json || !json.logs) return;
-        json.logs.forEach(processTelemetryItem);
+    api.get(`/pipeline/logs/${taskId}`)
+      .then(res => {
+        if (!isMounted || !res?.data || !res.data.logs) return;
+        res.data.logs.forEach(processTelemetryItem);
       })
       .catch(() => {});
 
     // Live Telemetry EventSource
     try {
-      const source = new EventSource(`/api/pipeline/stream/${taskId}`);
+      const source = new EventSource(`${API_BASE_URL}/pipeline/stream/${taskId}`, { withCredentials: true });
       telemetrySseRef.current = source;
 
       source.onopen = () => {
