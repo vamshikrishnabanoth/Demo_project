@@ -812,6 +812,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
         }
 
         const sessionInputs = {
+            sessionId: taskId || undefined,
+            taskId: taskId || null,
             voiceTranscript: voiceText,
             documentTexts: docTexts,
             documentNames: docNames,

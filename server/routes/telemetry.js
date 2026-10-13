@@ -31,7 +31,7 @@ router.get('/stream/:sessionId', async (req, res) => {
   const onUpdate = (payload) => {
     try {
       res.write(`data: ${JSON.stringify(payload)}\n\n`);
-      if (payload.status === 'COMPLETED' || payload.status === 'REJECTED') {
+      if (payload.status === 'COMPLETED' || payload.status === 'REJECTED' || payload.status === 'FAILED') {
         setTimeout(() => {
           unsubscribe();
           res.end();

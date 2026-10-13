@@ -29,9 +29,16 @@ class PipelineOrchestrator {
    * @returns {Object} Final Quiz Payload & Execution Telemetry
    */
   async runPipeline(sessionInputs = {}, progressCallback = null) {
-    const sessionId = sessionInputs.sessionId || 'sess_' + Math.random().toString(36).substring(2, 8);
+    const sessionId = sessionInputs.sessionId || sessionInputs.taskId || 'sess_' + Math.random().toString(36).substring(2, 8);
     const requestedCount = sessionInputs.count || sessionInputs.requestedCount || 5;
     const requestedDifficulty = sessionInputs.difficulty || 'Balanced';
+
+    if (sessionInputs.taskId && sessionInputs.taskId !== sessionId) {
+      try {
+        const telemetryService = require('../services/telemetryService');
+        telemetryService.registerAlias(sessionInputs.taskId, sessionId);
+      } catch (_) {}
+    }
 
     // Initialize Session Trace Coordinator
     const trace = new SessionTrace(sessionId, progressCallback);
