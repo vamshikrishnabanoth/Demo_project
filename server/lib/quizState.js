@@ -503,6 +503,12 @@ function getProgress(quizId) {
  * into a single write (latest state wins).
  */
 function _queueWrite(quizId, studentId, data) {
+    // Simulated bots are synthetic and do not exist in PostgreSQL User table.
+    // Their state is tracked authoritatively in-memory in quizStore for real-time leaderboard/dashboard.
+    if (studentId && (studentId.startsWith('sim') || data?.role === 'simulation')) {
+        return;
+    }
+
     if (totalPending >= MAX_BUFFER_SIZE) {
         console.warn(`[QuizState] Write buffer at capacity (${MAX_BUFFER_SIZE}). Dropping write for ${studentId} in quiz ${quizId}.`);
         return;
@@ -569,6 +575,9 @@ async function _executeBatch(keys) {
  */
 async function _persistEntry(entry) {
     const { quizId, studentId, data } = entry;
+    if (studentId && (studentId.startsWith('sim') || data?.role === 'simulation')) {
+        return;
+    }
 
     await prisma.result.upsert({
         where: { quizId_studentId: { quizId, studentId } },

@@ -106,41 +106,61 @@ export default function LiveRoomTeacher() {
             });
         }, 300);
 
-        const handleProgressUpdate = ({ studentId, username, questionIndex, isCorrect, skipped, points, currentScore }) => {
-            const qIdx = parseInt(questionIndex);
-            const isAnsCorrect = isCorrect === true || isCorrect === 'true' || isCorrect === 1;
-            const awardedPoints = points !== undefined ? points : (isAnsCorrect ? 10 : 0);
-            const progressEntry = {
-                answered: true,
-                isCorrect: isAnsCorrect,
-                skipped: skipped === true,
-                points: awardedPoints
-            };
+        const pendingProgressUpdates = [];
+        let progressFlushTimer = null;
+
+        const flushProgressBatch = () => {
+            progressFlushTimer = null;
+            if (pendingProgressUpdates.length === 0) return;
+            const batch = pendingProgressUpdates.splice(0, pendingProgressUpdates.length);
 
             setStudentProgress(prev => {
                 const newState = { ...prev };
-                if (studentId) {
-                    newState[studentId] = {
-                        ...(newState[studentId] || {}),
-                        [qIdx]: progressEntry
+                for (const item of batch) {
+                    const { studentId, username, questionIndex, isCorrect, skipped, points } = item;
+                    const qIdx = parseInt(questionIndex);
+                    const isAnsCorrect = isCorrect === true || isCorrect === 'true' || isCorrect === 1;
+                    const awardedPoints = points !== undefined ? points : (isAnsCorrect ? 10 : 0);
+                    const progressEntry = {
+                        answered: true,
+                        isCorrect: isAnsCorrect,
+                        skipped: skipped === true,
+                        points: awardedPoints
                     };
-                }
-                if (username) {
-                    newState[username] = {
-                        ...(newState[username] || {}),
-                        [qIdx]: progressEntry
-                    };
+                    if (studentId) {
+                        newState[studentId] = {
+                            ...(newState[studentId] || {}),
+                            [qIdx]: progressEntry
+                        };
+                    }
+                    if (username) {
+                        newState[username] = {
+                            ...(newState[username] || {}),
+                            [qIdx]: progressEntry
+                        };
+                    }
                 }
                 return newState;
             });
 
-            if (currentScore !== undefined) {
-                setStudentScores(prev => {
-                    const nextScores = { ...prev };
-                    if (username) nextScores[username.toString().toLowerCase()] = currentScore;
-                    if (studentId) nextScores[studentId.toString().toLowerCase()] = currentScore;
-                    return nextScores;
-                });
+            setStudentScores(prev => {
+                let hasScores = false;
+                const nextScores = { ...prev };
+                for (const item of batch) {
+                    if (item.currentScore !== undefined) {
+                        hasScores = true;
+                        if (item.username) nextScores[item.username.toString().toLowerCase()] = item.currentScore;
+                        if (item.studentId) nextScores[item.studentId.toString().toLowerCase()] = item.currentScore;
+                    }
+                }
+                return hasScores ? nextScores : prev;
+            });
+        };
+
+        const handleProgressUpdate = (payload) => {
+            pendingProgressUpdates.push(payload);
+            if (!progressFlushTimer) {
+                progressFlushTimer = setTimeout(flushProgressBatch, 100);
             }
         };
 
@@ -296,6 +316,7 @@ if (socket.connected) {
         socket.on('disconnect', () => setIsOnline(false));
 
         return () => {
+            if (progressFlushTimer) clearTimeout(progressFlushTimer);
             if (quiz?.id) {
                 socket.emit('leave_room', { quizId: quiz.id });
             }

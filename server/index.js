@@ -444,6 +444,8 @@ const roomParticipants = new Map(); // { quizId: [{ username, role, socketId }] 
 const roomState = new Map(); // { quizId: { currentQuestion: 0, status: 'started', endTime: TIMESTAMP } }
 // Map to track which room/user a socket belongs to
 const socketToUser = new Map(); // { socketId: { quizId, username } }
+// In-memory cache for lobby study summaries to prevent DB query stampede when hundreds of students join
+const quizLobbySummaryCache = new Map();
 
 // Debounce tracking for room participant broadcasts
 // Map<quizId, { timer: NodeJS.Timeout, firstScheduled: number }>
@@ -659,19 +661,22 @@ io.on('connection', async (socket) => {
         console.log(`User identified securely: ${userId} (${socket.user.username}) for socket ${socket.id}`);
         // Fire-and-forget: online status update must NOT block connection setup.
         // With 1000 simultaneous joins, awaiting 1000 DB writes here would saturate the pool.
-        prisma.user.update({
-            where: { id: userId },
-            data: { isOnline: true }
-        }).then(() => {
-            // Scoped broadcast: only to rooms this user participates in (not all connected sockets)
-            for (const [quizId, participants] of roomParticipants.entries()) {
-                if (participants.some(p => (p._id || p.id) === userId)) {
-                    io.to(quizId).emit('user_status_change', { userId, isOnline: true });
+        // Simulation bots do not exist in PostgreSQL User table — skip DB update to prevent connection pool exhaustion.
+        if (!userId.startsWith('sim') && socket.user?.role !== 'simulation') {
+            prisma.user.update({
+                where: { id: userId },
+                data: { isOnline: true }
+            }).then(() => {
+                // Scoped broadcast: only to rooms this user participates in (not all connected sockets)
+                for (const [quizId, participants] of roomParticipants.entries()) {
+                    if (participants.some(p => (p._id || p.id) === userId)) {
+                        io.to(quizId).emit('user_status_change', { userId, isOnline: true });
+                    }
                 }
-            }
-        }).catch(err => {
-            console.error('Error updating online status on connect:', err.message);
-        });
+            }).catch(err => {
+                console.error('Error updating online status on connect:', err.message);
+            });
+        }
     }
 
     // Global Identity check fallback (fully validated)
@@ -689,19 +694,21 @@ io.on('connection', async (socket) => {
         userSockets.get(userId).add(socket.id);
         socket.userId = userId;
 
-        try {
-            await prisma.user.update({
-                where: { id: userId },
-                data: { isOnline: true }
-            });
-            // Scoped broadcast: only to rooms this user participates in
-            for (const [quizId, participants] of roomParticipants.entries()) {
-                if (participants.some(p => (p._id || p.id) === userId)) {
-                    io.to(quizId).emit('user_status_change', { userId, isOnline: true });
+        if (!userId.startsWith('sim') && socket.user?.role !== 'simulation') {
+            try {
+                await prisma.user.update({
+                    where: { id: userId },
+                    data: { isOnline: true }
+                });
+                // Scoped broadcast: only to rooms this user participates in
+                for (const [quizId, participants] of roomParticipants.entries()) {
+                    if (participants.some(p => (p._id || p.id) === userId)) {
+                        io.to(quizId).emit('user_status_change', { userId, isOnline: true });
+                    }
                 }
+            } catch (err) {
+                console.error('Error updating online status:', err);
             }
-        } catch (err) {
-            console.error('Error updating online status:', err);
         }
     });
 
@@ -902,17 +909,26 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                 socket.join(`teacher:${realQuizId}`);
             }
 
-            // Fetch and emit lobby study summary to the user
-            prisma.quiz.findUnique({
-                where: { id: realQuizId },
-                select: { lobbySummary: true }
-            }).then(q => {
-                if (q && q.lobbySummary) {
-                    socket.emit('lobby_summary_update', { lobbySummary: q.lobbySummary });
+            // Fetch and emit lobby study summary to the user (in-memory cached to eliminate DB burst)
+            if (quizLobbySummaryCache.has(realQuizId)) {
+                const lobbySummary = quizLobbySummaryCache.get(realQuizId);
+                if (lobbySummary) {
+                    socket.emit('lobby_summary_update', { lobbySummary });
                 }
-            }).catch(err => {
-                console.error('Error fetching lobby summary on join_room:', err);
-            });
+            } else {
+                prisma.quiz.findUnique({
+                    where: { id: realQuizId },
+                    select: { lobbySummary: true }
+                }).then(q => {
+                    const lobbySummary = q?.lobbySummary || null;
+                    quizLobbySummaryCache.set(realQuizId, lobbySummary);
+                    if (lobbySummary) {
+                        socket.emit('lobby_summary_update', { lobbySummary });
+                    }
+                }).catch(err => {
+                    console.error('Error fetching lobby summary on join_room:', err);
+                });
+            }
 
             // Track this socket's association for disconnect cleanup
             socketToUser.set(socket.id, { quizId: realQuizId, username: verifiedUsername });
@@ -1296,6 +1312,7 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             }
             quizState.closeQuiz(quizId);
             roomState.delete(quizId);
+            quizLobbySummaryCache.delete(quizId);
             console.log(`[QuizEnd] Quiz ${quizId} closed to new submissions.`);
 
             // ── STEP 2: Wait briefly for any in-flight answer processing to settle ─
@@ -1314,9 +1331,11 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             // Use a single DB query to find which students already have records,
             // then batch-create only the missing ones. Avoids N individual findFirst() calls.
             const participants = roomParticipants.get(quizId) || [];
-            const realStudents = participants.filter(p =>
-                p.role?.toLowerCase() !== 'teacher' && !((p._id || p.id || '').toString().startsWith('bot_student_'))
-            );
+            const realStudents = participants.filter(p => {
+                const sid = (p._id || p.id || '').toString();
+                const role = (p.role || '').toLowerCase();
+                return role !== 'teacher' && role !== 'simulation' && !sid.startsWith('bot_student_') && !sid.startsWith('sim');
+            });
             const totalQuestions = Array.isArray(quiz.questions) ? quiz.questions.length : 0;
 
             if (realStudents.length > 0) {
@@ -1703,34 +1722,37 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             roomState.set(realQuizId, { ...currentRoomState, progress: updatedProgress });
 
             // ── Immediate: emit result to this student ────────────────────
-            // Speed feedback calculation (uses in-memory progress for peer comparison)
-            const isUnattempted = answer === null || answer === undefined || String(answer).trim() === '';
-            const otherTimes = [];
-            const participants = roomParticipants.get(realQuizId) || [];
-            participants.forEach(p => {
-                const idKey = p._id || p.id;
-                if (idKey && idKey.toString() !== studentId.toString()) {
-                    const prog = updatedProgress[idKey.toString()];
-                    if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
-                        otherTimes.push(prog[questionIndex].timeTaken);
+            const isSimulation = studentId.toString().startsWith('sim') || socket.user?.role === 'simulation';
+            if (!isSimulation) {
+                // Speed feedback calculation (uses in-memory progress for peer comparison)
+                const isUnattempted = answer === null || answer === undefined || String(answer).trim() === '';
+                const otherTimes = [];
+                const participants = roomParticipants.get(realQuizId) || [];
+                participants.forEach(p => {
+                    const idKey = p._id || p.id;
+                    if (idKey && idKey.toString() !== studentId.toString()) {
+                        const prog = updatedProgress[idKey.toString()];
+                        if (prog && prog[questionIndex] && typeof prog[questionIndex].timeTaken === 'number') {
+                            otherTimes.push(prog[questionIndex].timeTaken);
+                        }
                     }
-                }
-            });
-            const isFast = !isUnattempted && (otherTimes.length > 0
-                ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
-                : (qTimeTaken <= timerMax * 0.3));
+                });
+                const isFast = !isUnattempted && (otherTimes.length > 0
+                    ? (qTimeTaken <= (otherTimes.reduce((a, b) => a + b, 0) / otherTimes.length))
+                    : (qTimeTaken <= timerMax * 0.3));
 
-            const fastMessages = ['⚡ Fast Answer! Lightning speed!', '⚡ Quick Response Bonus! Unstoppable!', '🚀 Speed Demon! Lock and load for the next one!', '🔥 Absolute Heat! Superb speed!'];
-            const slowMessages = ["🐢 Smooth and steady, but let's pick up the pace next time!", '⏰ Took your time! Try to lock it in quicker!', '💡 Great focus, but speed is key!'];
-            const unattemptedMessages = ["⏳ Time is up! You didn't select an answer.", '❌ Question unanswered! Lock in a choice before the timer expires.'];
-            const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
+                const fastMessages = ['⚡ Fast Answer! Lightning speed!', '⚡ Quick Response Bonus! Unstoppable!', '🚀 Speed Demon! Lock and load for the next one!', '🔥 Absolute Heat! Superb speed!'];
+                const slowMessages = ["🐢 Smooth and steady, but let's pick up the pace next time!", '⏰ Took your time! Try to lock it in quicker!', '💡 Great focus, but speed is key!'];
+                const unattemptedMessages = ["⏳ Time is up! You didn't select an answer.", '❌ Question unanswered! Lock in a choice before the timer expires.'];
+                const messageList = isUnattempted ? unattemptedMessages : (isFast ? fastMessages : slowMessages);
 
-            socket.emit('answer_feedback', {
-                isFast,
-                isUnattempted,
-                message: messageList[Math.floor(Math.random() * messageList.length)],
-                timeTaken: qTimeTaken,
-            });
+                socket.emit('answer_feedback', {
+                    isFast,
+                    isUnattempted,
+                    message: messageList[Math.floor(Math.random() * messageList.length)],
+                    timeTaken: qTimeTaken,
+                });
+            }
 
             // ── Immediate: notify teacher of student progress ─────────────────────
             // PERFORMANCE: Route progress updates to teacher room only, eliminating O(N^2)
@@ -1872,17 +1894,19 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
 
             // Fire-and-forget: same pattern as the connect handler.
             // Many students disconnecting at once (quiz end) must not cause a DB burst.
-            prisma.user.update({
-                where: { id: socket.userId },
-                data: { isOnline: false }
-            }).then(() => {
-                io.emit('user_status_change', {
-                    userId: socket.userId,
-                    isOnline: false
+            if (!socket.userId.startsWith('sim') && socket.user?.role !== 'simulation') {
+                prisma.user.update({
+                    where: { id: socket.userId },
+                    data: { isOnline: false }
+                }).then(() => {
+                    io.emit('user_status_change', {
+                        userId: socket.userId,
+                        isOnline: false
+                    });
+                }).catch(err => {
+                    console.error('Error updating offline status on disconnect:', err.message);
                 });
-            }).catch(err => {
-                console.error('Error updating offline status on disconnect:', err.message);
-            });
+            }
         }
     }
 
