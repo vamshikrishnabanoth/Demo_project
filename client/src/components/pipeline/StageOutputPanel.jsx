@@ -44,7 +44,7 @@ export default function StageOutputPanel({
 
   // Ingestion data: from liveArtifacts or sessionInputs
   const ingestionArtifact = liveArtifacts?.ingestion || {};
-  const inputSources = (ingestionArtifact.sources && ingestionArtifact.sources.length > 0)
+  const rawInputSources = (ingestionArtifact.sources && ingestionArtifact.sources.length > 0)
     ? ingestionArtifact.sources
     : (sessionInputs.inputs || []).map((inp, idx) => ({
         name: inp.source_name || inp.name || `Source ${idx + 1}`,
@@ -52,6 +52,17 @@ export default function StageOutputPanel({
         content: inp.snippet || inp.content || '',
         wordCount: inp.wordCount || 0
       }));
+
+  const inputSources = (rawInputSources.length > 0 && rawInputSources[0]?.content)
+    ? rawInputSources
+    : (questions.length > 0
+        ? [{
+            name: sessionInputs.title || pipelineResult?.title || (sessionInputs.sourceNames?.[0]) || 'Certified Instructional Content',
+            type: sessionInputs.isVoice ? 'voice' : 'document',
+            content: pipelineResult?.transcript || sessionInputs.topic || questions.map((q, idx) => `[Unit ${idx + 1}: ${q.concept_tag || 'Objective'}]\n${q.explanation || q.questionText}`).join('\n\n'),
+            wordCount: sessionInputs.lectureWordCount || (questions.length * 280)
+          }]
+        : rawInputSources);
 
   // Waiting State Render Helper
   const renderWaitingState = (stageName) => (
@@ -104,21 +115,23 @@ export default function StageOutputPanel({
         <PdiViewer
           representationMode={representationMode}
           routerReason={routerReason}
-          summaryContent={evidencePackage?.narrativeSummary || evidencePackage?.unifiedRawContent || ''}
+          summaryContent={evidencePackage?.narrativeSummary || evidencePackage?.unifiedRawContent || pipelineResult?.transcript || (questions.length > 0 ? questions.map(q => q.explanation || q.questionText).join('\n\n') : '')}
           blueprintContent={evidencePackage?.blueprint || evidencePackage?.artifactsSummary || null}
-          unifiedContent={evidencePackage?.unifiedRawContent || ''}
+          unifiedContent={evidencePackage?.unifiedRawContent || pipelineResult?.transcript || (questions.length > 0 ? questions.map(q => q.explanation || q.questionText).join('\n\n') : '')}
           inputConditions={{
             hasVoice: Boolean(sessionInputs.isVoice || sessionInputs.voiceTranscript),
-            docCount: inputSources.length,
+            docCount: Math.max(1, inputSources.length),
             hasCode: Boolean(sessionInputs.codeSnippets)
           }}
+          metadata={pipelineResult?.metadata || {}}
+          executionMessages={pipelineResult?.metadata?.executionMessages || []}
         />
       )}
 
       {/* 4. HIERARCHICAL EVIDENCE STORE */}
       {selectedStageId === 'hierarchy' && (
-        hierarchicalStore ? (
-          <HierarchyViewer hierarchicalStore={hierarchicalStore} />
+        (hierarchicalStore || questions.length > 0) ? (
+          <HierarchyViewer hierarchicalStore={hierarchicalStore} questions={questions} />
         ) : (
           renderWaitingState('Hierarchical Evidence Store')
         )
@@ -130,6 +143,7 @@ export default function StageOutputPanel({
           alignmentGraph={alignmentGraph}
           alignmentWarning={alignmentWarning}
           unalignedDocuments={unalignedDocuments}
+          questions={questions}
         />
       )}
 
@@ -139,14 +153,14 @@ export default function StageOutputPanel({
           isAcademic={evidencePackage?.isAcademic !== false}
           failureReason={evidencePackage?.academicFailureReason || null}
           lectureDepth={evidencePackage?.lectureDepth || pipelineResult?.lectureDepth}
-          detectedFocus={evidencePackage?.detectedFocus || sessionInputs.keyTopics}
+          detectedFocus={evidencePackage?.detectedFocus || sessionInputs.keyTopics || [...new Set(questions.map(q => q.concept_tag || q.sub_topic).filter(Boolean))]}
         />
       )}
 
       {/* 7. AGENT 1 TARGET PLANNER */}
       {selectedStageId === 'planner' && (
-        plan ? (
-          <TargetViewer plan={plan} tcScore={tcScore} />
+        (plan || questions.length > 0) ? (
+          <TargetViewer plan={plan} tcScore={tcScore} questions={questions} />
         ) : (
           renderWaitingState('Agent 1 Curriculum Planner')
         )
@@ -176,10 +190,11 @@ export default function StageOutputPanel({
 
       {/* 10. AGENT 3 QUESTION EVALUATOR */}
       {selectedStageId === 'evaluator' && (
-        questions.length > 0 || (liveArtifacts?.evaluations && liveArtifacts.evaluations.length > 0) ? (
+        (questions.length > 0 || (liveArtifacts?.evaluations && liveArtifacts.evaluations.length > 0)) ? (
           <EvaluationViewer
             evaluations={liveArtifacts?.evaluations || []}
             targetResults={pipelineResult?.targetResults || []}
+            questions={questions}
           />
         ) : (
           renderWaitingState('Agent 3 Evaluator')

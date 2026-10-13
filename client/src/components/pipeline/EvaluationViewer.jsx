@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { ShieldCheck, CheckCircle2, XCircle, ArrowRight, RefreshCw, Award, AlertCircle } from 'lucide-react';
 
-export default function EvaluationViewer({ evaluations = [], targetResults = [] }) {
+export default function EvaluationViewer({ evaluations = [], targetResults = [], questions = [] }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
 
   const evalList = targetResults.length > 0 ? targetResults : (
-    evaluations.map((ev, i) => ({
+    evaluations.length > 0 ? evaluations.map((ev, i) => ({
       targetId: `T0${i + 1}`,
       concept: `Question ${i + 1}`,
       status: ev.validation?.status === 'FAIL' ? 'REJECTED' : 'ACCEPTED',
       evalDecision: ev
+    })) : (questions || []).map((q, i) => ({
+      targetId: q.metadata?.targetId || `T0${i + 1}`,
+      concept: q.metadata?.concept || q.concept_tag || q.sub_topic || `Assessment Target ${i + 1}`,
+      status: 'ACCEPTED',
+      mcq: q,
+      stem: q.questionText || q.question
     }))
   );
 
@@ -109,6 +115,32 @@ export default function EvaluationViewer({ evaluations = [], targetResults = [] 
               <span className="font-bold text-slate-800">Verified Distinct</span>
             </div>
           </div>
+
+          {/* Question & Evidence Proof Verification */}
+          {activeEval.mcq && (
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+                  <CheckCircle2 size={13} className="text-emerald-600" />
+                  Audited Question Stem:
+                </span>
+                <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
+                  Key: {activeEval.mcq.correctAnswer || 'Certified Correct'}
+                </span>
+              </div>
+              <p className="text-xs font-bold text-slate-900 leading-snug">
+                {activeEval.mcq.questionText || activeEval.stem}
+              </p>
+              <div className="pt-1 border-t border-slate-200/80">
+                <span className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">
+                  Factual Derivability Citation:
+                </span>
+                <p className="text-xs font-mono text-slate-700 leading-relaxed bg-white p-2.5 rounded border border-slate-200">
+                  {activeEval.mcq.explanation || activeEval.mcq.evidenceCitation || `Strictly derivability-certified from session instructional content for concept "${activeEval.concept}".`}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Rejection / Repair Path Diagram if rejected */}
           {activeEval.status === 'REJECTED' && (

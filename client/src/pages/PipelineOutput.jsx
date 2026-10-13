@@ -71,7 +71,7 @@ export default function PipelineOutput() {
   const [stages, setStages] = useState([]);
   const [stageMap, setStageMap] = useState({});
   const [liveArtifacts, setLiveArtifacts] = useState({});
-  const [pipelineResult, setPipelineResult] = useState(null);
+  const [pipelineResult, setPipelineResult] = useState(pipelineData?.pipelineResult || (pipelineData?.questions ? { questions: pipelineData.questions, ...pipelineData } : null));
   const [error, setError] = useState(null);
 
   // Telemetry Console State (16 Stages Real-Time Stream)
@@ -270,7 +270,7 @@ export default function PipelineOutput() {
 
 
 
-  const deliveredQuestions = pipelineResult?.questions || pipelineResult?.deliveredQuestions || [];
+  const deliveredQuestions = pipelineResult?.questions || pipelineResult?.deliveredQuestions || pipelineData?.questions || pipelineData?.deliveredQuestions || [];
   const questionCountDisplay = deliveredQuestions.length || questionCount;
   const quizTitle = pipelineResult?.quizTitle || pipelineData?.title || (sourceNames[0] ? `Assessment: ${sourceNames[0]}` : 'AI Generated Assessment');
   const evidencePackage = pipelineResult?.evidencePackage || liveArtifacts?.evidencePackage || null;

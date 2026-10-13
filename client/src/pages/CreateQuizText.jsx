@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, Activity, FileText, Target, BarChart3 } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, ChevronRight, Activity, Layers, FileText, Target, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -179,6 +179,8 @@ export default function CreateQuizText() {
     const [isPartialYield, setIsPartialYield] = useState(false);
     const [requestedCount, setRequestedCount] = useState(null);
     const [representationMode, setRepresentationMode] = useState(null);
+    const [executionMessages, setExecutionMessages] = useState([]);
+    const hasInjectedToastRef = useRef(false);
 
     const computedAssignedGroups = useCallback(() => {
         if (assignedGroups && assignedGroups.length > 0) return assignedGroups;
@@ -282,25 +284,17 @@ export default function CreateQuizText() {
                 setRepresentationMode('BLUEPRINT');
             }
 
-            if (location.state.isTemplate || location.state.source === 'template') {
-                toast.success('Template Loaded for Preview & Publishing');
-            } else {
-                toast.success('AI Intel Injected Successfully');
+            if (!hasInjectedToastRef.current) {
+                hasInjectedToastRef.current = true;
+                if (location.state.isTemplate || location.state.source === 'template') {
+                    toast.success('Template Loaded for Preview & Publishing');
+                } else {
+                    toast.success('Quiz Questions & AI Intel Loaded Successfully');
+                }
             }
 
-            if (location.state.executionMessages && Array.isArray(location.state.executionMessages) && location.state.executionMessages.length > 0) {
-                location.state.executionMessages.forEach(msg => {
-                    toast(msg, {
-                        icon: <Info size={16} aria-hidden="true" />,
-                        duration: 8000,
-                        style: {
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            padding: '16px',
-                            color: '#fff',
-                            background: '#0f172a',
-                        }
-                    });
-                });
+            if (location.state.executionMessages && Array.isArray(location.state.executionMessages)) {
+                setExecutionMessages(location.state.executionMessages);
             }
         }
     }, [location.state]);
@@ -511,6 +505,38 @@ export default function CreateQuizText() {
         }
     };
 
+    const handleViewPipeline = () => {
+        const effectiveTaskId = location.state?.taskId || localStorage.getItem('latest_pipeline_task_id') || 'session-telemetry';
+        navigate('/pipeline-output', {
+            state: {
+                taskId: effectiveTaskId,
+                originPath: '/create-quiz/text',
+                status: 'COMPLETED',
+                questions: questions,
+                deliveredQuestions: questions,
+                title: title || 'AI Generated Assessment',
+                sourceNames: [title || 'AI Assessment Material'],
+                questionCount: questions.length,
+                difficulty: 'Balanced',
+                representationMode: representationMode || 'UNIFIED',
+                agentReport: agentReport || location.state?.agentReport || null,
+                finalValidation: location.state?.finalValidation || null,
+                lectureDepth: lectureDepth || location.state?.lectureDepth || null,
+                pipelineResult: location.state?.pipelineResult || {
+                    questions: questions,
+                    deliveredQuestions: questions,
+                    title: title || 'AI Generated Assessment',
+                    duration: duration || 10,
+                    agentReport: agentReport || location.state?.agentReport || null,
+                    finalValidation: location.state?.finalValidation || null,
+                    representationMode: representationMode || 'UNIFIED',
+                    lectureDepth: lectureDepth || location.state?.lectureDepth || null,
+                    metadata: location.state?.metadata || { executionMessages: executionMessages || location.state?.executionMessages || [] }
+                }
+            }
+        });
+    };
+
     return (
         <DashboardLayout role="teacher">
             <div className="max-w-[100rem] mx-auto px-6 py-8">
@@ -528,6 +554,17 @@ export default function CreateQuizText() {
                         </h1>
                     </div>
                     <div className="flex items-center gap-3 z-10">
+                        {isGeneratedSource && (
+                            <button
+                                type="button"
+                                onClick={handleViewPipeline}
+                                className="px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 active:scale-[0.98] text-white font-black text-[10px] uppercase tracking-[0.18em] shadow-[0_4px_14px_rgba(234,88,12,0.35)] flex items-center gap-2 cursor-pointer transition-all border border-orange-400 shrink-0"
+                                title="Inspect 16-Stage Observability Pipeline"
+                            >
+                                <Activity size={15} className="stroke-[2.5] text-amber-200 animate-pulse" />
+                                <span>Inspect Pipeline</span>
+                            </button>
+                        )}
                         {(aikenLoaded || isGeneratedSource) && (
                             <button
                                 type="button"
@@ -555,9 +592,21 @@ export default function CreateQuizText() {
                                 {representationMode === 'BLUEPRINT' && 'Document / Code Blueprint Path: Structured syllabus & programmatic artifact schema.'}
                             </p>
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.18em] hidden sm:inline-block px-2.5 py-1 rounded-md bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-secondary)]">
-                            Architecture E Verified
-                        </span>
+                        <div className="flex items-center gap-2.5 shrink-0">
+                            <button
+                                type="button"
+                                onClick={handleViewPipeline}
+                                className="px-3.5 py-1.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/30 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                                title="Open full 16-stage pipeline telemetry"
+                            >
+                                <Layers size={13} />
+                                <span>Inspect Pipeline Stages</span>
+                                <ChevronRight size={13} />
+                            </button>
+                            <span className="text-[10px] font-black uppercase tracking-[0.18em] hidden sm:inline-block px-2.5 py-1 rounded-md bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-secondary)]">
+                                Architecture E Verified
+                            </span>
+                        </div>
                     </div>
                 )}
 

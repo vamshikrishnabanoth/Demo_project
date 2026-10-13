@@ -151,6 +151,7 @@ function App() {
                 position="top-right"
                 reverseOrder={false}
                 gutter={8}
+                limit={2}
                 containerStyle={{ top: 20, right: 20 }}
                 toastOptions={{
                     duration: 2400,
