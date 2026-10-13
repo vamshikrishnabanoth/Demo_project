@@ -592,21 +592,9 @@ export default function CreateQuizText() {
                                 {representationMode === 'BLUEPRINT' && 'Document / Code Blueprint Path: Structured syllabus & programmatic artifact schema.'}
                             </p>
                         </div>
-                        <div className="flex items-center gap-2.5 shrink-0">
-                            <button
-                                type="button"
-                                onClick={handleViewPipeline}
-                                className="px-3.5 py-1.5 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/30 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
-                                title="Open full 16-stage pipeline telemetry"
-                            >
-                                <Layers size={13} />
-                                <span>Inspect Pipeline Stages</span>
-                                <ChevronRight size={13} />
-                            </button>
-                            <span className="text-[10px] font-black uppercase tracking-[0.18em] hidden sm:inline-block px-2.5 py-1 rounded-md bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-secondary)]">
-                                Architecture E Verified
-                            </span>
-                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.18em] hidden sm:inline-block px-2.5 py-1 rounded-md bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-secondary)] shrink-0">
+                            Architecture E Verified
+                        </span>
                     </div>
                 )}
 

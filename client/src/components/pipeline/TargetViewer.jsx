@@ -80,10 +80,10 @@ export default function TargetViewer({ plan = {}, tcScore = null, questions = []
           className={`px-3.5 py-1.5 rounded-lg text-xs font-black transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === 'primary'
               ? 'bg-purple-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900'
           }`}
         >
-          <Target size={13} />
+          <Target size={13} className={activeTab === 'primary' ? 'text-white' : 'text-purple-600'} />
           Primary Targets ({primaryTargets.length})
         </button>
 
@@ -92,10 +92,10 @@ export default function TargetViewer({ plan = {}, tcScore = null, questions = []
           className={`px-3.5 py-1.5 rounded-lg text-xs font-black transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === 'reserve'
               ? 'bg-purple-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900'
           }`}
         >
-          <Shield size={13} />
+          <Shield size={13} className={activeTab === 'reserve' ? 'text-white' : 'text-amber-600'} />
           Reserve Pool ({reserveTargets.length})
         </button>
 
@@ -104,10 +104,10 @@ export default function TargetViewer({ plan = {}, tcScore = null, questions = []
           className={`px-3.5 py-1.5 rounded-lg text-xs font-black transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === 'tc'
               ? 'bg-purple-600 text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900'
           }`}
         >
-          <Award size={13} />
+          <Award size={13} className={activeTab === 'tc' ? 'text-white' : 'text-indigo-600'} />
           TC Score Breakdown
         </button>
       </div>
