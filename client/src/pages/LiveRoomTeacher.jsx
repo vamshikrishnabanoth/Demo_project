@@ -84,7 +84,25 @@ export default function LiveRoomTeacher() {
             const students = participantsList.filter(
                 p => p.role?.toLowerCase() !== 'teacher' && (isLiveActive ? true : p.isOnline !== false)
             );
-            setParticipants([...students]);
+            // CRITICAL FIX: Merge participants with previous state so 250 students never vanish
+            setParticipants(prev => {
+                if (students.length === 0 && prev.length > 0) {
+                    return prev;
+                }
+                const mergedMap = new Map();
+                prev.forEach(p => {
+                    const key = (p._id || p.id || p.userId || p.username || '').toString().toLowerCase();
+                    if (key) mergedMap.set(key, p);
+                });
+                students.forEach(p => {
+                    const key = (p._id || p.id || p.userId || p.username || '').toString().toLowerCase();
+                    if (key) {
+                        const existing = mergedMap.get(key);
+                        mergedMap.set(key, existing ? { ...existing, ...p } : p);
+                    }
+                });
+                return Array.from(mergedMap.values());
+            });
         }, 300);
 
         const handleProgressUpdate = ({ studentId, username, questionIndex, isCorrect, skipped }) => {
@@ -144,11 +162,27 @@ export default function LiveRoomTeacher() {
             if (state.leaderboard && state.leaderboard.length > 0) {
                 setLeaderboard(state.leaderboard);
             }
-            if (state.participants) {
+            if (state.participants && state.participants.length > 0) {
                 const students = state.participants.filter(
                     p => p.role?.toLowerCase() !== 'teacher'
                 );
-                setParticipants([...students]);
+                if (students.length > 0) {
+                    setParticipants(prev => {
+                        const mergedMap = new Map();
+                        prev.forEach(p => {
+                            const key = (p._id || p.id || p.userId || p.username || '').toString().toLowerCase();
+                            if (key) mergedMap.set(key, p);
+                        });
+                        students.forEach(p => {
+                            const key = (p._id || p.id || p.userId || p.username || '').toString().toLowerCase();
+                            if (key) {
+                                const existing = mergedMap.get(key);
+                                mergedMap.set(key, existing ? { ...existing, ...p } : p);
+                            }
+                        });
+                        return Array.from(mergedMap.values());
+                    });
+                }
             }
             if (state.progress) {
                 setStudentProgress(state.progress);
@@ -404,31 +438,46 @@ if (socket.connected) {
         showSuccess('Copied', 'Join Code copied!');
     };
 
-    // Merge participants (connected) + leaderboard (submitted) so all students always show
+    // Merge participants (connected) + leaderboard (submitted) + studentProgress so all students always show
     const allStudents = useMemo(() => {
         const map = new Map();
         const lbMap = new Map();
-        leaderboard.forEach(l => lbMap.set(l.studentId?.toString(), l));
-        // Also index by username fallback
-        leaderboard.forEach(l => { if (l.username) lbMap.set(l.username, l); });
+        leaderboard.forEach(l => {
+            if (l.studentId) lbMap.set(l.studentId.toString(), l);
+            if (l.username) lbMap.set(l.username, l);
+        });
 
         // Seed from participants (includes isOnline state from server)
         participants.forEach(p => {
-            const key = p._id?.toString() || p.username;
-            const lb = lbMap.get(p._id?.toString()) || lbMap.get(p.username);
-            map.set(key, { ...p, isOnline: p.isOnline === true, lb });
+            const key = (p._id || p.id || p.userId || p.username || '').toString();
+            if (!key) return;
+            const lb = lbMap.get(key) || lbMap.get(p.username);
+            map.set(key, { ...p, isOnline: p.isOnline !== false, lb });
         });
 
-        // Add any leaderboard entries not already in participants (joined but then disconnected before reconnecting)
+        // Add any leaderboard entries not already in participants
         leaderboard.forEach(l => {
-            const key = l.studentId?.toString();
+            const key = (l.studentId || l.username || '').toString();
             if (key && !map.has(key) && !map.has(l.username)) {
                 map.set(key, {
                     username: l.username,
                     _id: l.studentId?.toString(),
                     role: 'student',
-                    isOnline: false,
+                    isOnline: true,
                     lb: l
+                });
+            }
+        });
+
+        // Also add any student from studentProgress not yet in map
+        Object.keys(studentProgress).forEach(progKey => {
+            if (progKey && !map.has(progKey)) {
+                map.set(progKey, {
+                    username: progKey,
+                    _id: progKey,
+                    role: 'student',
+                    isOnline: true,
+                    lb: lbMap.get(progKey)
                 });
             }
         });
@@ -442,7 +491,7 @@ if (socket.connected) {
             const timeB = b.lb?.totalTimeTaken ?? Infinity;
             return timeA - timeB;
         });
-    }, [participants, leaderboard]);
+    }, [participants, leaderboard, studentProgress]);
 
     const [searchCheatQuery, setSearchCheatQuery] = useState('');
 

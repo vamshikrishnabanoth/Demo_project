@@ -73,6 +73,7 @@ async function runSimulation() {
 
     // Try fetching real student users from database if available
     let dbStudents = [];
+    let quizQuestions = [];
     if (prisma) {
         try {
             dbStudents = await prisma.user.findMany({
@@ -81,6 +82,17 @@ async function runSimulation() {
                 select: { id: true, username: true, role: true }
             });
             console.log(`📦 Loaded ${dbStudents.length} real student accounts from database.`);
+        } catch (_) {}
+
+        try {
+            const q = await prisma.quiz.findUnique({
+                where: { id: realQuizId },
+                select: { questions: true }
+            });
+            if (q && q.questions) {
+                quizQuestions = typeof q.questions === 'string' ? JSON.parse(q.questions) : q.questions;
+                console.log(`📝 Loaded ${quizQuestions.length} quiz questions for realistic option selection.`);
+            }
         } catch (_) {}
     }
 
@@ -150,8 +162,15 @@ async function runSimulation() {
             // Random reaction delay between 800ms and 2500ms
             const delay = Math.floor(Math.random() * 1700) + 800;
             setTimeout(() => {
-                const sampleOptions = ['Option A', 'Option B', 'Option C', 'Option D'];
-                const selectedOption = sampleOptions[Math.floor(Math.random() * sampleOptions.length)];
+                let selectedOption = 'Option A';
+                const curQ = quizQuestions[nextIdx];
+                if (curQ && Array.isArray(curQ.options) && curQ.options.length > 0) {
+                    const opt = curQ.options[Math.floor(Math.random() * curQ.options.length)];
+                    selectedOption = typeof opt === 'string' ? opt : (opt.text || opt.label || String(opt));
+                } else {
+                    const sampleOptions = ['Option A', 'Option B', 'Option C', 'Option D'];
+                    selectedOption = sampleOptions[Math.floor(Math.random() * sampleOptions.length)];
+                }
 
                 socket.emit('submit_question_answer', {
                     quizId: realQuizId,
