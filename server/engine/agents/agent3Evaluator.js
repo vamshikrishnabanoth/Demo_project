@@ -421,7 +421,7 @@ ${evidenceContext}
     }
 
     // 2. Correct Answer Inclusion Check
-    if (!candidateMCQ.options || !candidateMCQ.options.includes(candidateMCQ.correctAnswer)) {
+    if (!Array.isArray(candidateMCQ.options) || !candidateMCQ.options.includes(candidateMCQ.correctAnswer)) {
       failureReasons.push(EVALUATOR_FAILURE_CODES.CORRECT_ANSWER_NOT_IN_OPTIONS);
     }
 
@@ -770,7 +770,7 @@ ${evidenceContext}
 
     // Feature 4: Option Structure & Semantic Complexity
     const avgOptionWords = options.length > 0 
-      ? options.reduce((sum, o) => sum + (o || '').trim().split(/\s+/).filter(Boolean).length, 0) / options.length 
+      ? options.reduce((sum, o) => sum + String(o || '').trim().split(/\s+/).filter(Boolean).length, 0) / options.length 
       : 0;
 
     const optionsAreSingleTerms = avgOptionWords <= 3 && !options.some(o => 

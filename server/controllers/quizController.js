@@ -561,7 +561,8 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
                 engineErr.message.includes('LIVE_GENERATOR_UNAVAILABLE')
             ));
         
-        if (isUserOrConfigError || process.env.ALLOW_MOCK_FALLBACK !== 'true') {
+        const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+        if (isUserOrConfigError || !isMockAllowed) {
             throw engineErr;
         }
     }
@@ -891,8 +892,9 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             }
             return result.questions;
         }
-        if (result && result.pipelineStatus === 'FAILED') {
-            throw new Error(result.error || 'Pipeline generation failed: All AI providers unavailable.');
+        if (result && (result.pipelineStatus === 'FAILED' || !result.questions || result.questions.length === 0)) {
+            const failureMsg = result.error || result.notice || 'Pipeline generation failed: No grounded questions could be generated.';
+            throw new Error(failureMsg);
         }
     } catch (err) {
         console.warn(`⚠️ [Baseline v1.0] Pipeline notice: ${err.message}`);

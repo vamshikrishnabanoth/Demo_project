@@ -278,6 +278,26 @@ class Agent2Generator {
       };
     }
 
+    // 3. Environment Guard: Never serve canned question templates in production
+    const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+    if (!isMockAllowed) {
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_PROVIDER_FAILURE',
+        isUnfulfilled: true,
+        unfulfilledReason: 'PROVIDER_UNAVAILABLE',
+        message: `Cannot generate grounded question for "${concept}". Model generation failed and canned fallbacks are disabled.`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          isCapacityLimited: false
+        }
+      };
+    }
+
     const conceptLower = concept.toLowerCase();
     const evidenceLower = (typeof evidence === 'string' ? evidence : '').toLowerCase();
 
@@ -825,8 +845,26 @@ Generate a single grounded multiple-choice question testing the assessment targe
         sessionId: evidencePackage?.sessionId
       });
     } catch (llmErr) {
-      console.warn(`⚠️ [Agent 2] LLM generation notice on target ${target.targetId}: ${llmErr.message}. Generating resilient fallback MCQ.`);
-      return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+      console.warn(`⚠️ [Agent 2] LLM generation error on target ${target.targetId}: ${llmErr.message}`);
+      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+      if (isMockAllowed) {
+        return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+      }
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_PROVIDER_FAILURE',
+        isUnfulfilled: true,
+        unfulfilledReason: 'PROVIDER_UNAVAILABLE',
+        message: `LLM generation failed for target "${target.concept}": ${llmErr.message}`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          isCapacityLimited: false
+        }
+      };
     }
 
     let parsedMCQ;
@@ -844,8 +882,26 @@ Generate a single grounded multiple-choice question testing the assessment targe
         });
         parsedMCQ = safeParseJson(repairResponse);
       } catch (repairErr) {
-        console.warn(`⚠️ [Agent 2] JSON repair notice for target ${target.targetId}: ${repairErr.message}. Generating resilient fallback MCQ.`);
-        return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+        console.warn(`⚠️ [Agent 2] JSON repair notice for target ${target.targetId}: ${repairErr.message}.`);
+        const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+        if (isMockAllowed) {
+          return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+        }
+        return {
+          targetId: target.targetId,
+          fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
+          isUnfulfilled: true,
+          unfulfilledReason: 'JSON_REPAIR_FAILED',
+          message: `JSON repair failed for target "${target.concept}": ${repairErr.message}`,
+          metadata: {
+            targetDifficulty: tier,
+            achievedDifficulty: null,
+            intendedCognitiveOperation: op,
+            achievedCognitiveOperation: null,
+            concept: target.concept,
+            isCapacityLimited: false
+          }
+        };
       }
     }
 

@@ -341,7 +341,25 @@ class PipelineOrchestrator {
           candidateMCQ = await agent2Generator.generateQuestion(currentTarget, evidencePackage);
         } catch (genErr) {
           console.warn(`⚠️ [Orchestrator] Generation threw on target ${currentTarget.targetId}: ${genErr.message}`);
-          candidateMCQ = agent2Generator.generateQuestionFallback(currentTarget, evidencePackage);
+          const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+          if (isMockAllowed) {
+            candidateMCQ = agent2Generator.generateQuestionFallback(currentTarget, evidencePackage);
+          } else {
+            candidateMCQ = {
+              targetId: currentTarget.targetId,
+              fulfillmentStatus: 'UNFULFILLED_PROVIDER_FAILURE',
+              isUnfulfilled: true,
+              unfulfilledReason: 'PROVIDER_UNAVAILABLE',
+              message: `Generation error on target "${currentTarget.concept}": ${genErr.message}`,
+              metadata: {
+                targetDifficulty: tier,
+                achievedDifficulty: null,
+                intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
+                concept: currentTarget.concept,
+                isCapacityLimited: false
+              }
+            };
+          }
         }
 
         // 3. If Generation Produced an Unfulfilled Item (e.g. empty evidence)
@@ -889,7 +907,15 @@ class PipelineOrchestrator {
       let pipelineStatus = 'COMPLETED';
       let notice = null;
 
-      if (!isFullyConformant || deliveredCount < requestedCount) {
+      if (deliveredCount === 0) {
+        pipelineStatus = 'FAILED';
+        const failureReason = unfulfilledTargets.length > 0
+          ? `No grounded questions could be generated. ${unfulfilledTargets.length} target(s) unfulfilled: ${unfulfilledTargets.map(u => u.reason || u.concept).join('; ')}`
+          : (rejectedTargets.length > 0
+            ? `No grounded questions could be generated. All candidate questions were rejected during quality audit.`
+            : `No grounded questions could be generated from the provided material.`);
+        notice = failureReason;
+      } else if (!isFullyConformant || deliveredCount < requestedCount) {
         pipelineStatus = 'COMPLETED_WITH_PARTIAL_FULFILLMENT';
         const noticeParts = [];
         noticeParts.push(`Delivered ${deliveredCount} of ${requestedCount} requested questions.`);
@@ -983,6 +1009,7 @@ class PipelineOrchestrator {
         requestedCount,
         deliveredCount,
         notice,
+        error: (deliveredCount === 0 ? notice : null),
         alignmentWarning: evidencePackage.alignmentWarning || null,
         unalignedDocuments: evidencePackage.unalignedDocuments || [],
         lectureDepth: evidencePackage.lectureDepth,
