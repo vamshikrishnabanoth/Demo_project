@@ -415,8 +415,8 @@ io.use(async (socket, next) => {
         }
         socket.user = decoded.user;
         
-        // Fetch username & name from DB to ensure it's up-to-date and complete
-        if (socket.user && socket.user.id) {
+        // Fetch username & name from DB only if missing in decoded token payload (prevents DB saturation on concurrent join)
+        if (socket.user && socket.user.id && (!socket.user.username || !socket.user.name)) {
             try {
                 const dbUser = await prisma.user.findUnique({
                     where: { id: socket.user.id },
@@ -617,7 +617,7 @@ async function _submitAnswerLegacy({ socket, quizId, studentId, questionIndex, a
         });
 
         socket.emit('answer_feedback', { isFast: false, isUnattempted: false, message: '✅ Answer recorded!', timeTaken: qTimeTaken });
-        io.to(realQuizId).emit('student_progress_update', { studentId, username, questionIndex, answered: true, isCorrect });
+        io.to(realQuizId).emit('student_progress_update', { studentId, username, questionIndex, answered: true, isCorrect, points, currentScore: newScore });
     } catch (err) {
         console.error('[LegacyPath] Error in legacy submit:', err.message);
     }
@@ -1372,6 +1372,7 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                     where: { quizId },
                     select: { studentId: true, answers: true }
                 });
+                const eligibleUpdates = [];
                 for (const r of finishedResults) {
                     if (!r.studentId) continue;
                     let correctCount = 0;
@@ -1379,15 +1380,21 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                         correctCount = r.answers.filter(a => a && (a.isCorrect === true || a.isCorrect === 'true' || a.isCorrect === 1)).length;
                     }
                     if (correctCount > 0) {
-                        await prisma.user.update({
-                            where: { id: r.studentId },
+                        eligibleUpdates.push({ studentId: r.studentId, correctCount });
+                    }
+                }
+                const BATCH_SIZE = 15;
+                for (let i = 0; i < eligibleUpdates.length; i += BATCH_SIZE) {
+                    const batch = eligibleUpdates.slice(i, i + BATCH_SIZE);
+                    await Promise.allSettled(batch.map(({ studentId, correctCount }) =>
+                        prisma.user.update({
+                            where: { id: studentId },
                             data: {
                                 points: { increment: correctCount },
                                 xp: { increment: correctCount * 10 }
                             }
-                        }).catch(e => console.error(`[Gamification] Failed awarding points to ${r.studentId}:`, e.message));
-                        console.log(`[Gamification] Awarded +${correctCount} points to student ${r.studentId} for live quiz`);
-                    }
+                        }).catch(() => {})
+                    ));
                 }
             } catch (ptsErr) {
                 console.error('[QuizEnd] Error awarding gamification points:', ptsErr.message);
@@ -1514,14 +1521,25 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             return socket.emit('error_alert', { msg: 'Unauthorized action.' });
         }
 
+        const realQuizId = quizState.resolveQuizId(quizId);
         const qIdx = parseInt(questionIndex);
-        const state = roomState.get(quizId) || {};
-        roomState.set(quizId, { ...state, currentQuestion: qIdx });
+        const state = roomState.get(realQuizId) || {};
+        roomState.set(realQuizId, { ...state, currentQuestion: qIdx });
 
         // Update in-memory state for student reconnect sync
-        quizState.updateQuizState(quizId, { currentQuestion: qIdx });
+        quizState.updateQuizState(realQuizId, { currentQuestion: qIdx });
 
-        io.to(quizId).emit('change_question', { questionIndex: qIdx });
+        io.to(realQuizId).emit('change_question', { questionIndex: qIdx });
+
+        // Also broadcast full updated leaderboard immediately on question change so scores never lag
+        const leaderboard = quizState.getLeaderboard(realQuizId);
+        if (leaderboard.length > 0) {
+            io.to(realQuizId).emit('question_leaderboard', { questionIndex: qIdx, leaderboard });
+            const teacherRoom = `teacher:${realQuizId}`;
+            if (io.sockets.adapter.rooms.has(teacherRoom)) {
+                io.to(teacherRoom).emit('question_leaderboard', { questionIndex: qIdx, leaderboard });
+            }
+        }
     });
 
     // Tracking which question a student is currently viewing
@@ -1726,6 +1744,8 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                 questionIndex,
                 answered:      true,
                 isCorrect:     result.isCorrect,
+                points:        result.points || 0,
+                currentScore:  result.updatedScore ?? 0,
             });
 
             // ── Throttled: broadcast leaderboard to all (not on every answer) ─────
@@ -1735,6 +1755,9 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                 // Also update legacy roomState leaderboard for reconnect sync
                 roomState.set(realQuizId, { ...(roomState.get(realQuizId) || {}), leaderboard });
                 io.to(realQuizId).emit('question_leaderboard', { questionIndex, leaderboard });
+                if (hasTeacherRoom) {
+                    io.to(teacherRoom).emit('question_leaderboard', { questionIndex, leaderboard });
+                }
             }
 
             // ── Persistence is already queued inside processAnswer() ──────────────

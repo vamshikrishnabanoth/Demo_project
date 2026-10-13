@@ -20,6 +20,7 @@ export default function LiveRoomTeacher() {
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
     const [studentProgress, setStudentProgress] = useState({});
+    const [studentScores, setStudentScores] = useState({});
     const [timeLeft, setTimeLeft] = useState(30);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [leaderboard, setLeaderboard] = useState([]);
@@ -105,11 +106,19 @@ export default function LiveRoomTeacher() {
             });
         }, 300);
 
-        const handleProgressUpdate = ({ studentId, username, questionIndex, isCorrect, skipped }) => {
+        const handleProgressUpdate = ({ studentId, username, questionIndex, isCorrect, skipped, points, currentScore }) => {
+            const qIdx = parseInt(questionIndex);
+            const isAnsCorrect = isCorrect === true || isCorrect === 'true' || isCorrect === 1;
+            const awardedPoints = points !== undefined ? points : (isAnsCorrect ? 10 : 0);
+            const progressEntry = {
+                answered: true,
+                isCorrect: isAnsCorrect,
+                skipped: skipped === true,
+                points: awardedPoints
+            };
+
             setStudentProgress(prev => {
                 const newState = { ...prev };
-                const qIdx = parseInt(questionIndex);
-                const progressEntry = { answered: true, isCorrect, skipped: skipped === true };
                 if (studentId) {
                     newState[studentId] = {
                         ...(newState[studentId] || {}),
@@ -124,6 +133,15 @@ export default function LiveRoomTeacher() {
                 }
                 return newState;
             });
+
+            if (currentScore !== undefined) {
+                setStudentScores(prev => {
+                    const nextScores = { ...prev };
+                    if (username) nextScores[username.toString().toLowerCase()] = currentScore;
+                    if (studentId) nextScores[studentId.toString().toLowerCase()] = currentScore;
+                    return nextScores;
+                });
+            }
         };
 
         socket.on('participants_update', handleParticipantsUpdate);
@@ -438,60 +456,112 @@ if (socket.connected) {
         showSuccess('Copied', 'Join Code copied!');
     };
 
-    // Merge participants (connected) + leaderboard (submitted) + studentProgress so all students always show
+    // Merge participants (connected) + leaderboard (submitted) + studentProgress so all students always show without duplicates
     const allStudents = useMemo(() => {
-        const map = new Map();
+        const studentMap = new Map(); // canonicalKey -> studentObj
+        const idToCanonical = new Map(); // id / roll alias -> canonicalKey
+
+        // Build lookup map from leaderboard
         const lbMap = new Map();
-        leaderboard.forEach(l => {
-            if (l.studentId) lbMap.set(l.studentId.toString(), l);
-            if (l.username) lbMap.set(l.username, l);
+        (leaderboard || []).forEach(l => {
+            if (l.studentId) lbMap.set(l.studentId.toString().toLowerCase(), l);
+            if (l.username) lbMap.set(l.username.toString().toLowerCase(), l);
         });
 
-        // Seed from participants (includes isOnline state from server)
-        participants.forEach(p => {
-            const key = (p._id || p.id || p.userId || p.username || '').toString();
-            if (!key) return;
-            const lb = lbMap.get(key) || lbMap.get(p.username);
-            map.set(key, { ...p, isOnline: p.isOnline !== false, lb });
+        // 1. Seed from participants
+        (participants || []).forEach(p => {
+            const rollOrName = (p.username || p.studentRollNumber || p.rollNumber || '').toString().trim();
+            const sid = (p._id || p.id || p.userId || '').toString().trim();
+            const canonicalKey = (rollOrName || sid).toLowerCase();
+            if (!canonicalKey) return;
+
+            if (sid) idToCanonical.set(sid.toLowerCase(), canonicalKey);
+            if (rollOrName) idToCanonical.set(rollOrName.toLowerCase(), canonicalKey);
+
+            const lb = lbMap.get(canonicalKey) || (sid ? lbMap.get(sid.toLowerCase()) : null);
+
+            studentMap.set(canonicalKey, {
+                ...p,
+                username: rollOrName || p.username || 'Student',
+                _id: sid || p._id || canonicalKey,
+                isOnline: p.isOnline !== false,
+                lb
+            });
         });
 
-        // Add any leaderboard entries not already in participants
-        leaderboard.forEach(l => {
-            const key = (l.studentId || l.username || '').toString();
-            if (key && !map.has(key) && !map.has(l.username)) {
-                map.set(key, {
-                    username: l.username,
-                    _id: l.studentId?.toString(),
+        // 2. Add any leaderboard entries not yet in studentMap
+        (leaderboard || []).forEach(l => {
+            const rollOrName = (l.username || '').toString().trim();
+            const sid = (l.studentId || '').toString().trim();
+            const canonicalKey = (rollOrName || sid).toLowerCase();
+            if (!canonicalKey) return;
+
+            const existingKey = idToCanonical.get(canonicalKey) || (sid && idToCanonical.get(sid.toLowerCase()));
+            if (!existingKey || !studentMap.has(existingKey)) {
+                if (sid) idToCanonical.set(sid.toLowerCase(), canonicalKey);
+                if (rollOrName) idToCanonical.set(rollOrName.toLowerCase(), canonicalKey);
+
+                studentMap.set(canonicalKey, {
+                    username: rollOrName || sid,
+                    _id: sid || canonicalKey,
                     role: 'student',
                     isOnline: true,
                     lb: l
                 });
+            } else {
+                const existing = studentMap.get(existingKey);
+                if (existing && !existing.lb) existing.lb = l;
             }
         });
 
-        // Also add any student from studentProgress not yet in map
-        Object.keys(studentProgress).forEach(progKey => {
-            if (progKey && !map.has(progKey)) {
-                map.set(progKey, {
-                    username: progKey,
-                    _id: progKey,
-                    role: 'student',
-                    isOnline: true,
-                    lb: lbMap.get(progKey)
-                });
-            }
+        // 3. Attach scores and calculate progress score fallback
+        const studentList = Array.from(studentMap.values()).map(student => {
+            const rollOrName = (student.username || '').toString().trim().toLowerCase();
+            const sid = (student._id || student.id || student.userId || '').toString().trim().toLowerCase();
+
+            // Progress lookup across possible identifier keys
+            const prog = (student.username && studentProgress[student.username]) ||
+                         (student._id && studentProgress[student._id]) ||
+                         (student.id && studentProgress[student.id]) ||
+                         (student.userId && studentProgress[student.userId]) || {};
+
+            let calculatedScore = 0;
+            let answeredCount = 0;
+            Object.values(prog).forEach(ans => {
+                if (ans && (ans.answered === true || ans.isCorrect !== undefined)) {
+                    answeredCount++;
+                    if (ans.isCorrect === true || ans.isCorrect === 'true' || ans.isCorrect === 1) {
+                        calculatedScore += (ans.points !== undefined ? ans.points : 10);
+                    }
+                }
+            });
+
+            // Score resolution: liveScore (from socket progress) > lbScore (from leaderboard) > calculatedScore
+            const liveScore = (rollOrName && studentScores[rollOrName] !== undefined)
+                ? studentScores[rollOrName]
+                : (sid && studentScores[sid] !== undefined ? studentScores[sid] : undefined);
+
+            const lbScore = student.lb?.currentScore;
+            const finalScore = liveScore !== undefined ? liveScore : (lbScore !== undefined ? lbScore : calculatedScore);
+            const timeTaken = student.lb?.totalTimeTaken ?? 0;
+
+            return {
+                ...student,
+                score: finalScore,
+                answeredCount,
+                timeTaken,
+            };
         });
 
         // Sort: highest score first; ties broken by fastest total time
-        return Array.from(map.values()).sort((a, b) => {
-            const scoreA = a.lb?.currentScore ?? 0;
-            const scoreB = b.lb?.currentScore ?? 0;
-            if (scoreB !== scoreA) return scoreB - scoreA;
-            const timeA = a.lb?.totalTimeTaken ?? Infinity;
-            const timeB = b.lb?.totalTimeTaken ?? Infinity;
-            return timeA - timeB;
+        studentList.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            if (a.timeTaken !== b.timeTaken) return a.timeTaken - b.timeTaken;
+            return (a.username || '').localeCompare(b.username || '');
         });
-    }, [participants, leaderboard, studentProgress]);
+
+        return studentList.map((s, idx) => ({ ...s, rank: idx + 1 }));
+    }, [participants, leaderboard, studentProgress, studentScores]);
 
     const [searchCheatQuery, setSearchCheatQuery] = useState('');
 
@@ -823,9 +893,9 @@ if (socket.connected) {
                             const rankColors = ['text-amber-500', 'text-slate-400', 'text-amber-700'];
                             return (
                                 <div key={s.username || i} className="flex items-center gap-2">
-                                    <span className={`text-xs font-black w-4 text-right ${rankColors[i] || 'text-slate-300'}`}>#{i + 1}</span>
+                                    <span className={`text-xs font-black w-4 text-right ${rankColors[i] || 'text-slate-300'}`}>#{s.rank || (i + 1)}</span>
                                     <span className="font-bold text-slate-700 text-xs truncate flex-1">{s.username || 'Unknown'}</span>
-                                    <span className="font-black text-[var(--bg-accent)] text-xs">{s.lb?.currentScore ?? 0}pts</span>
+                                    <span className="font-black text-[var(--bg-accent)] text-xs">{s.score ?? 0}pts</span>
                                 </div>
                             );
                         })}
@@ -933,14 +1003,12 @@ if (socket.connected) {
                         <div className="divide-y divide-slate-50">
                             {paginatedStudents.map((p, pIdx) => {
                                 const globalIdx = (currentPage - 1) * studentsPerPage + pIdx;
-                                const rank = p.lb?.rank ?? (globalIdx + 1);
-                                const progressById = (p._id && studentProgress[p._id]) ? studentProgress[p._id]
-                                    : (p.id && studentProgress[p.id]) ? studentProgress[p.id]
-                                    : (p.userId && studentProgress[p.userId]) ? studentProgress[p.userId]
-                                    : null;
-                                const progressByName = p.username ? studentProgress[p.username] : null;
-                                const progress = progressById || progressByName || {};
-                                const score = p.lb?.currentScore ?? 0;
+                                const rank = p.rank ?? (globalIdx + 1);
+                                const progress = (p.username && studentProgress[p.username]) ||
+                                    (p._id && studentProgress[p._id]) ||
+                                    (p.id && studentProgress[p.id]) ||
+                                    (p.userId && studentProgress[p.userId]) || {};
+                                const score = p.score ?? p.lb?.currentScore ?? 0;
 
                                 // Count answered on current question
                                 const curData = progress[currentQuestion] || progress[currentQuestion?.toString()];

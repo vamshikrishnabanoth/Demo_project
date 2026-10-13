@@ -150,18 +150,18 @@ async function runSimulation() {
             console.error(`\n⚠️  [${username}] Connection Error:`, err.message);
         });
 
-        socket.on('quiz_started', () => {
-            console.log(`\n🔔 Quiz Started notification received by ${username}`);
-            currentQIdx = 0;
-        });
+        const submittedQuestions = new Set();
 
-        socket.on('change_question', ({ questionIndex }) => {
-            const nextIdx = parseInt(questionIndex);
-            currentQIdx = nextIdx;
-            
-            // Random reaction delay between 800ms and 2500ms
-            const delay = Math.floor(Math.random() * 1700) + 800;
+        const submitAnswer = (idx) => {
+            const nextIdx = parseInt(idx);
+            if (isNaN(nextIdx) || nextIdx < 0) return;
+            if (submittedQuestions.has(nextIdx)) return;
+            submittedQuestions.add(nextIdx);
+
+            // Realistic reaction delay between 300ms and 1400ms
+            const delay = Math.floor(Math.random() * 1100) + 300;
             setTimeout(() => {
+                if (!socket.connected) return;
                 let selectedOption = 'Option A';
                 const curQ = quizQuestions[nextIdx];
                 if (curQ && Array.isArray(curQ.options) && curQ.options.length > 0) {
@@ -180,6 +180,17 @@ async function runSimulation() {
                     timeRemaining: 20
                 });
             }, delay);
+        };
+
+        socket.on('quiz_started', () => {
+            currentQIdx = 0;
+            submitAnswer(0);
+        });
+
+        socket.on('change_question', ({ questionIndex }) => {
+            const nextIdx = parseInt(questionIndex);
+            currentQIdx = nextIdx;
+            submitAnswer(nextIdx);
         });
 
         socket.on('quiz_ended', () => {
