@@ -9,6 +9,7 @@
     "vercel-build": "cd client && npm install && npm run build",
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
+    "test": "npm --prefix server test",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "install-all": "cd server && npm install && cd ../client && npm install",
     "test:http": "powershell -Command \"$env:K6_WEB_DASHBOARD='true'; & 'C:\\Program Files\\k6\\k6.exe' run --out json=load_tests/http_results.json load_tests/http_test.js; node generate_html_report.js\"",
