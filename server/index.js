@@ -519,7 +519,8 @@ setInterval(() => {
     for (const [quizId, participants] of roomParticipants.entries()) {
         let updated = false;
         participants.forEach(p => {
-            if (p.isOnline && p.lastSeen && (now - p.lastSeen > 10000)) {
+            const isSocketAlive = p.socketId && io.sockets.sockets.has(p.socketId);
+            if (p.isOnline && !isSocketAlive && p.lastSeen && (now - p.lastSeen > 15000)) {
                 p.isOnline = false;
                 p.socketId = null;
                 updated = true;

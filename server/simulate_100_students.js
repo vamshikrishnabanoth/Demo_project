@@ -106,6 +106,7 @@ async function runSimulation() {
             reconnectionAttempts: 10
         });
 
+        let heartbeatTimer = null;
         socket.on('connect', () => {
             connectedCount++;
 
@@ -114,6 +115,14 @@ async function runSimulation() {
                 quizId: realQuizId,
                 user: { username, role: 'student', _id: studentId }
             });
+
+            // Maintain active heartbeat every 3s so the lobby doesn't timeout the student
+            if (heartbeatTimer) clearInterval(heartbeatTimer);
+            heartbeatTimer = setInterval(() => {
+                if (socket.connected) {
+                    socket.emit('heartbeat', { quizId: realQuizId, userId: studentId, username });
+                }
+            }, 3000);
         });
 
         socket.on('participants_update', (participants = []) => {
@@ -159,6 +168,7 @@ async function runSimulation() {
         });
 
         socket.on('disconnect', () => {
+            if (heartbeatTimer) clearInterval(heartbeatTimer);
             connectedCount = Math.max(0, connectedCount - 1);
         });
 
