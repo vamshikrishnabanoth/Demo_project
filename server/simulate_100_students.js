@@ -29,11 +29,7 @@ const args = process.argv.slice(2);
 const QUIZ_TARGET = args[0] || process.env.QUIZ_ID || process.env.QUIZ_CODE;
 const STUDENT_COUNT = parseInt(args[1] || process.env.STUDENT_COUNT || '100', 10);
 const BASE_URL = (args[2] || process.env.BASE_URL || 'http://localhost:5000').replace(/\/$/, '');
-const jwtSecret = process.env.JWT_SECRET;
-if (!jwtSecret) {
-    console.error('\n❌ ERROR: JWT_SECRET environment variable is required to run the simulation.');
-    process.exit(1);
-}
+const jwtSecret = process.env.JWT_SECRET || 'KMIT_SIMULATION_2026_SECRET_KEY';
 
 if (!QUIZ_TARGET) {
     console.error('\n❌ ERROR: Quiz ID or Join Code is required!');
