@@ -2,24 +2,30 @@ import React from 'react';
 import { Scale, BarChart3, Award, ShieldCheck, CheckCircle2, AlertTriangle, Layers } from 'lucide-react';
 
 export default function AuditViewer({ quizEvaluation = {}, difficultyReport = null, questions = [] }) {
-  const blooms = quizEvaluation?.bloomDistribution || {
-    Remember: 2,
-    Understand: 3,
-    Apply: 3,
-    Analyse: 1,
-    Evaluate: 1
-  };
+  const blooms = quizEvaluation?.bloomDistribution || (() => {
+    if (!questions || questions.length === 0) return {};
+    const counts = {};
+    questions.forEach(q => {
+      const b = q.targetBloom || q.metadata?.targetBloom || q.metadata?.bloomsLevel || q.blooms_level;
+      if (b) counts[b] = (counts[b] || 0) + 1;
+    });
+    return counts;
+  })();
 
-  const cognitiveDist = quizEvaluation?.cognitiveDistribution || {
-    Conceptual: 4,
-    Application: 3,
-    Analytical: 2,
-    Synthesis: 1
-  };
+  const cognitiveDist = quizEvaluation?.cognitiveDistribution || (() => {
+    if (!questions || questions.length === 0) return {};
+    const counts = {};
+    questions.forEach(q => {
+      const c = q.metadata?.dimension || q.cognitiveDimension || q.framingStyle;
+      if (c) counts[c] = (counts[c] || 0) + 1;
+    });
+    return counts;
+  })();
 
-  const coverageScore = quizEvaluation?.coverageScore || 92;
-  const isBalanced = quizEvaluation?.isBalanced !== undefined ? quizEvaluation.isBalanced : true;
-  const qualityStatus = quizEvaluation?.quizQualityStatus || 'QUALITY_PASSED';
+  const coverageScore = typeof quizEvaluation?.coverageScore === 'number' ? quizEvaluation.coverageScore : null;
+  const isEvaluated = coverageScore !== null;
+  const qualityStatus = quizEvaluation?.quizQualityStatus || (isEvaluated ? 'QUALITY_PASSED' : 'NOT_EVALUATED');
+  const isBalanced = quizEvaluation?.isBalanced !== undefined ? quizEvaluation.isBalanced : (isEvaluated ? true : null);
 
   return (
     <div className="space-y-5">
@@ -39,8 +45,13 @@ export default function AuditViewer({ quizEvaluation = {}, difficultyReport = nu
           </div>
         </div>
 
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-white text-teal-800 border border-teal-300">
-          <CheckCircle2 size={13} className="text-teal-600" />
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black ${
+          qualityStatus === 'QUALITY_PASSED' ? 'bg-white text-teal-800 border border-teal-300' :
+          qualityStatus === 'NEEDS_REFINEMENT' ? 'bg-amber-50 text-amber-800 border border-amber-300' :
+          'bg-slate-100 text-slate-700 border border-slate-300'
+        }`}>
+          {qualityStatus === 'QUALITY_PASSED' && <CheckCircle2 size={13} className="text-teal-600" />}
+          {qualityStatus === 'NEEDS_REFINEMENT' && <AlertTriangle size={13} className="text-amber-600" />}
           {qualityStatus}
         </span>
       </div>
@@ -51,7 +62,9 @@ export default function AuditViewer({ quizEvaluation = {}, difficultyReport = nu
           <span className="text-[10px] uppercase font-black tracking-wider text-slate-400 block mb-1">
             Curriculum Coverage
           </span>
-          <span className="text-2xl font-black text-teal-700">{coverageScore}%</span>
+          <span className="text-2xl font-black text-teal-700">
+            {typeof coverageScore === 'number' ? `${coverageScore}%` : 'Not evaluated'}
+          </span>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
@@ -59,7 +72,7 @@ export default function AuditViewer({ quizEvaluation = {}, difficultyReport = nu
             Pedagogical Balance
           </span>
           <span className="text-base font-black text-slate-800">
-            {isBalanced ? '✓ Balanced Across Bloom' : 'Developing'}
+            {isBalanced === true ? '✓ Balanced Across Bloom' : (isBalanced === false ? 'Developing' : 'Not evaluated')}
           </span>
         </div>
 
@@ -89,23 +102,27 @@ export default function AuditViewer({ quizEvaluation = {}, difficultyReport = nu
             Bloom's Taxonomy Distribution
           </h5>
 
-          <div className="space-y-2 text-xs">
-            {Object.entries(blooms).map(([level, count]) => {
-              const total = Object.values(blooms).reduce((s, c) => s + (typeof c === 'number' ? c : 0), 0) || 1;
-              const pct = Math.round(((typeof count === 'number' ? count : 0) / total) * 100);
-              return (
-                <div key={level} className="space-y-1">
-                  <div className="flex justify-between text-slate-700 font-semibold">
-                    <span>{level}</span>
-                    <span className="font-mono text-slate-500">{count} ({pct}%)</span>
+          {Object.keys(blooms).length === 0 ? (
+            <p className="text-xs text-slate-400 italic">No Bloom distribution data available</p>
+          ) : (
+            <div className="space-y-2 text-xs">
+              {Object.entries(blooms).map(([level, count]) => {
+                const total = Object.values(blooms).reduce((s, c) => s + (typeof c === 'number' ? c : 0), 0) || 1;
+                const pct = Math.round(((typeof count === 'number' ? count : 0) / total) * 100);
+                return (
+                  <div key={level} className="space-y-1">
+                    <div className="flex justify-between text-slate-700 font-semibold">
+                      <span>{level}</span>
+                      <span className="font-mono text-slate-500">{count} ({pct}%)</span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div className="bg-teal-600 h-1.5 rounded-full" style={{ width: `${pct}%` }} />
+                    </div>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div className="bg-teal-600 h-1.5 rounded-full" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Cognitive Dimension Diversity */}
@@ -115,23 +132,27 @@ export default function AuditViewer({ quizEvaluation = {}, difficultyReport = nu
             Cognitive Dimension Allocation
           </h5>
 
-          <div className="space-y-2 text-xs">
-            {Object.entries(cognitiveDist).map(([dim, count]) => {
-              const total = Object.values(cognitiveDist).reduce((s, c) => s + (typeof c === 'number' ? c : 0), 0) || 1;
-              const pct = Math.round(((typeof count === 'number' ? count : 0) / total) * 100);
-              return (
-                <div key={dim} className="space-y-1">
-                  <div className="flex justify-between text-slate-700 font-semibold">
-                    <span>{dim}</span>
-                    <span className="font-mono text-slate-500">{count} ({pct}%)</span>
+          {Object.keys(cognitiveDist).length === 0 ? (
+            <p className="text-xs text-slate-400 italic">No cognitive dimension data available</p>
+          ) : (
+            <div className="space-y-2 text-xs">
+              {Object.entries(cognitiveDist).map(([dim, count]) => {
+                const total = Object.values(cognitiveDist).reduce((s, c) => s + (typeof c === 'number' ? c : 0), 0) || 1;
+                const pct = Math.round(((typeof count === 'number' ? count : 0) / total) * 100);
+                return (
+                  <div key={dim} className="space-y-1">
+                    <div className="flex justify-between text-slate-700 font-semibold">
+                      <span>{dim}</span>
+                      <span className="font-mono text-slate-500">{count} ({pct}%)</span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div className="bg-purple-600 h-1.5 rounded-full" style={{ width: `${pct}%` }} />
+                    </div>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                    <div className="bg-purple-600 h-1.5 rounded-full" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

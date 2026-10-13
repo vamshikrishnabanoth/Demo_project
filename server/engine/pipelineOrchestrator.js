@@ -191,13 +191,10 @@ class PipelineOrchestrator {
       const primaryTargets = [...plan.assessmentTargets];
       const reservePool = [...(plan.reserveTargets || [])];
 
+      const hasTcScore = typeof plan.tcScore?.overallScore === 'number';
       const tcCalculations = plan.tcScore?.breakdown || {
-        conceptCoverage: '24/25',
-        applicationCoverage: '21/25',
-        artifactCoverage: '18/20',
-        teacherEmphasis: '14/15',
-        depth: '9/15',
-        total: `${plan.tcScore?.overallScore || 85}/100`
+        status: hasTcScore ? 'EVALUATED' : 'NOT_EVALUATED',
+        total: hasTcScore ? `${plan.tcScore.overallScore}/100` : 'Not evaluated'
       };
 
       await trace.recordStage({
@@ -221,7 +218,9 @@ class PipelineOrchestrator {
         decisions: [
           `Identified Subject: "${plan.subject}" | Main Topic: "${plan.mainTopic}"`,
           `Planned ${primaryTargets.length} primary targets + ${reservePool.length} reserve targets`,
-          `TC Score assessed at ${plan.tcScore?.overallScore}/100 based on concept depth and artifact presence`
+          hasTcScore
+            ? `TC Score assessed at ${plan.tcScore.overallScore}/100 based on concept depth and artifact presence`
+            : `TC Score: Not evaluated (insufficient curricular calibration evidence)`
         ],
         rulesApplied: [
           'Target Reserve Rule: Generate N primary targets + M reserve targets upfront',
@@ -747,10 +746,10 @@ class PipelineOrchestrator {
       // ──────────────────────────────────────────────────────────────────────────
       const t5 = Date.now();
       const quizEval = passingQuestions.length > 0 ? agent3Evaluator.evaluateQuizSet(passingQuestions, plan) : {
-        quizQualityStatus: 'NEEDS_REFINEMENT',
+        quizQualityStatus: 'NOT_EVALUATED',
         isBalanced: false,
         totalQuestions: 0,
-        coverageScore: 0
+        coverageScore: null
       };
 
       await trace.recordStage({
@@ -1003,7 +1002,7 @@ class PipelineOrchestrator {
         sessionId: sessionId,
         pipelineStatus: pipelineStatus,
         evidenceSafety: evidenceSafety,
-        quizQualityStatus: quizEval?.quizQualityStatus || 'QUALITY_PASSED',
+        quizQualityStatus: quizEval?.quizQualityStatus || (deliveredCount > 0 ? 'QUALITY_PASSED' : 'NOT_EVALUATED'),
         quizTitle: plan?.mainTopic || 'AI Generated Quiz',
         subject: plan?.subject,
         requestedCount,

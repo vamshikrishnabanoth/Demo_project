@@ -3366,14 +3366,34 @@ exports.generateQuizQuestions = async (req, res) => {
 
             console.log(`[Questions Generated] count=${finalQuestions.length}`);
 
-            let agentReport = { verdict: 'approved', avgScore: 95, questionsChanged: 0, fallback: false, perQuestion: [], questionDiffs: [] };
+            const finalTaskObj = getTaskFromMgr(taskId);
+            const pResult = finalTaskObj?.pipelineResult;
+            const qEval = pResult?.quizEvaluation;
+
+            const isEvaluated = Boolean(qEval && typeof qEval.coverageScore === 'number');
+            const calculatedAvgScore = isEvaluated ? qEval.coverageScore : null;
+
+            let agentReport = {
+                verdict: isEvaluated ? (qEval.quizQualityStatus === 'QUALITY_PASSED' ? 'approved' : 'review') : 'not_evaluated',
+                evaluationStatus: isEvaluated ? (qEval.quizQualityStatus || 'EVALUATED') : 'NOT_EVALUATED',
+                avgScore: calculatedAvgScore,
+                questionsChanged: 0,
+                fallback: false,
+                perQuestion: finalQuestions.map(q => {
+                    const gScore = q.metadata?.groundingScore;
+                    const vVerdict = q.metadata?.decisionLedger?.agent3?.verdict;
+                    return {
+                        score: typeof gScore === 'number' ? Math.round(gScore * 100) : null,
+                        verdict: vVerdict ? (vVerdict === 'PASS' ? 'pass' : 'fail') : (isEvaluated ? 'pass' : null)
+                    };
+                }),
+                questionDiffs: []
+            };
             console.log(`✅ [Baseline v1.0] Questions delivered directly from Architecture Baseline v1.0 Pipeline (Count: ${finalQuestions.length}).`);
 
             console.log(`\n[Final Validation] Running final quiz validator...`);
             updateTaskStage(taskId, 7, 'Grounding Gate & Final Audit');
             const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
-
-            const finalTaskObj = getTaskFromMgr(taskId);
             let lectureDepth = null;
             if (isVoiceSource && extractedText) {
                 const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText);
@@ -3804,11 +3824,15 @@ exports.generateQuizFromVoice = async (req, res) => {
                                 duration: 10,
                                 lectureDepth: depthAnalysis.lectureDepth,
                                 agentReport: {
-                                    verdict: 'approved',
-                                    avgScore: suite.overall_quality_score ? Math.round(suite.overall_quality_score * 100) : 95,
+                                    verdict: suite.overall_quality_score != null ? (suite.overall_quality_score >= 0.7 ? 'approved' : 'review') : 'not_evaluated',
+                                    evaluationStatus: suite.overall_quality_score != null ? 'EVALUATED' : 'NOT_EVALUATED',
+                                    avgScore: suite.overall_quality_score != null ? Math.round(suite.overall_quality_score * 100) : null,
                                     questionsChanged: 0,
                                     fallback: false,
-                                    perQuestion: normalizedQuestions.map(q => ({ score: 100, verdict: 'pass' })),
+                                    perQuestion: normalizedQuestions.map(q => ({
+                                        score: typeof q.quality_score === 'number' ? Math.round(q.quality_score * 100) : (suite.overall_quality_score != null ? Math.round(suite.overall_quality_score * 100) : null),
+                                        verdict: q.evaluation?.verdict || (suite.overall_quality_score != null ? (suite.overall_quality_score >= 0.7 ? 'pass' : 'fail') : null)
+                                    })),
                                     questionDiffs: []
                                 },
                                 finalValidation: { isValid: true, warnings: [] },
@@ -3916,12 +3940,31 @@ exports.generateQuizFromVoice = async (req, res) => {
             const validation = finalQuizValidator(questions, difficulty || 'Medium');
             const depthAnalysis = depthAnalyzer.analyzeLecture(transcript);
 
+            const fallbackTaskObj = getTask(taskId);
+            const fbResult = fallbackTaskObj?.pipelineResult;
+            const fbEval = fbResult?.quizEvaluation;
+            const isFbEvaluated = Boolean(fbEval && typeof fbEval.coverageScore === 'number');
+
             completeTask(taskId, {
                 questions: questions,
                 title: voiceTitle,
                 transcript,
                 duration: 10,
-                agentReport: { verdict: 'approved', avgScore: 95, questionsChanged: 0, fallback: false },
+                agentReport: {
+                    verdict: isFbEvaluated ? (fbEval.quizQualityStatus === 'QUALITY_PASSED' ? 'approved' : 'review') : 'not_evaluated',
+                    evaluationStatus: isFbEvaluated ? (fbEval.quizQualityStatus || 'EVALUATED') : 'NOT_EVALUATED',
+                    avgScore: isFbEvaluated ? fbEval.coverageScore : null,
+                    questionsChanged: 0,
+                    fallback: false,
+                    perQuestion: questions.map(q => {
+                        const gScore = q.metadata?.groundingScore;
+                        const vVerdict = q.metadata?.decisionLedger?.agent3?.verdict;
+                        return {
+                            score: typeof gScore === 'number' ? Math.round(gScore * 100) : null,
+                            verdict: vVerdict ? (vVerdict === 'PASS' ? 'pass' : 'fail') : (isFbEvaluated ? 'pass' : null)
+                        };
+                    })
+                },
                 finalValidation: validation,
                 lectureDepth: depthAnalysis.lectureDepth,
                 isVoice: true,

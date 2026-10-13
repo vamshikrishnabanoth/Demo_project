@@ -319,7 +319,7 @@ export default function PipelineOutput() {
       isCompleted: Boolean(plan?.assessmentTargets || stages.some(s => s.stage === 'AGENT_1_PLANNING')),
       isActive: currentBackendStage === 'AGENT_1_PLANNING',
       summary: plan?.assessmentTargets
-        ? `${plan.assessmentTargets.length} Primary Targets • TC: ${plan.tcScore?.overallScore || 85}/100`
+        ? `${plan.assessmentTargets.length} Primary Targets • TC: ${typeof plan.tcScore?.overallScore === 'number' ? `${plan.tcScore.overallScore}/100` : 'Not evaluated'}`
         : null,
       durationMs: stageMap['AGENT_1_PLANNING']?.durationMs || null
     },
@@ -349,7 +349,7 @@ export default function PipelineOutput() {
       isCompleted: Boolean(pipelineResult?.quizEvaluation || liveArtifacts?.quizEval),
       isActive: currentBackendStage === 'AGENT_3_QUIZ_EVAL',
       summary: pipelineResult?.quizEvaluation
-        ? `Coverage: ${pipelineResult.quizEvaluation.coverageScore || 92}% • Bloom Balanced`
+        ? `Coverage: ${typeof pipelineResult.quizEvaluation.coverageScore === 'number' ? `${pipelineResult.quizEvaluation.coverageScore}%` : 'Not evaluated'} • Bloom Balanced`
         : null,
       durationMs: stageMap['AGENT_3_QUIZ_EVAL']?.durationMs || null
     },

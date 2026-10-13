@@ -12,24 +12,36 @@ import {
 
 // ─── Verdict config ────────────────────────────────────────────────────────────
 const VERDICT_CONFIG = {
+    approved: {
+        label: 'Agent Verified — Quality: Approved',
+        badge: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+        glow:  'shadow-emerald-500/20',
+        icon:  <CheckCircle size={14} className="text-emerald-400" />,
+    },
     excellent: {
         label: 'Agent Verified — Quality: Excellent',
         badge: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
         glow:  'shadow-emerald-500/20',
-        icon:  <CheckCircle size={16} className="text-emerald-400" />,
+        icon:  <CheckCircle size={14} className="text-emerald-400" />,
     },
     good: {
         label: 'Agent Verified — Quality: Good',
         badge: 'text-sky-400 bg-sky-500/10 border-sky-500/30',
         glow:  'shadow-sky-500/20',
-        icon:  <CheckCircle size={16} className="text-sky-400" />,
+        icon:  <CheckCircle size={14} className="text-sky-400" />,
     },
     review: {
         label: 'Manual Review Recommended',
         badge: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
         glow:  'shadow-amber-500/20',
-        icon:  <AlertTriangle size={16} className="text-amber-400" />,
+        icon:  <AlertTriangle size={14} className="text-amber-400" />,
     },
+    not_evaluated: {
+        label: 'Quality Audit: Not Evaluated',
+        badge: 'text-slate-400 bg-slate-500/10 border-slate-500/30',
+        glow:  'shadow-slate-500/20',
+        icon:  <Info size={14} className="text-slate-400" />,
+    }
 };
 
 // ─── Refiner status config ────────────────────────────────────────────────────
@@ -62,11 +74,16 @@ function AgentExecutionSummary({ report }) {
     const {
         criticExecuted, refinerStatus, questionsChanged,
         scoreBefore, scoreAfter, qualityBefore, qualityAfter,
-        generated,
+        generated, avgScore, evaluationStatus, verdict
     } = report;
 
     const rCfg = REFINER_STATUS_CONFIG[refinerStatus] || REFINER_STATUS_CONFIG.no_change;
     const refinerLabel = rCfg.label(questionsChanged ?? 0);
+
+    const activeVerdictKey = (evaluationStatus === 'NOT_EVALUATED' && (avgScore === null || avgScore === undefined))
+        ? 'not_evaluated'
+        : (verdict || (typeof avgScore === 'number' && avgScore >= 70 ? 'approved' : 'review'));
+    const vCfg = VERDICT_CONFIG[activeVerdictKey] || VERDICT_CONFIG.not_evaluated;
 
     // Build the pipeline steps with contextual Refiner state
     const steps = [
@@ -91,7 +108,13 @@ function AgentExecutionSummary({ report }) {
 
     return (
         <div className="rounded-2xl border border-sky-500/20 bg-sky-500/5 p-5 space-y-4">
-            <p className="text-[10px] font-black text-sky-400/60 uppercase tracking-widest">Agent Execution Summary</p>
+            <div className="flex items-center justify-between pb-1 border-b border-white/5">
+                <p className="text-[10px] font-black text-sky-400/60 uppercase tracking-widest">Agent Execution Summary</p>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black border ${vCfg.badge}`}>
+                    {vCfg.icon}
+                    {vCfg.label}
+                </span>
+            </div>
 
             {/* Pipeline steps */}
             <div className="flex items-center gap-3 flex-wrap">
@@ -111,22 +134,26 @@ function AgentExecutionSummary({ report }) {
             {/* Stats grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="rounded-xl bg-white/5 px-3 py-2 text-center">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Generated</p>
-                    <p className="text-lg font-black text-white">{generated || '—'}</p>
+                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Questions</p>
+                    <p className="text-lg font-black text-white">{(generated !== undefined && generated !== null) ? generated : '—'}</p>
                 </div>
                 <div className="rounded-xl bg-white/5 px-3 py-2 text-center">
                     <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Improved</p>
-                    <p className={`text-lg font-black ${questionsChanged > 0 ? 'text-emerald-400' : 'text-white/40'}`}>
+                    <p className={`text-lg font-black ${(questionsChanged ?? 0) > 0 ? 'text-emerald-400' : 'text-white/40'}`}>
                         {questionsChanged ?? '—'}
                     </p>
                 </div>
                 <div className="rounded-xl bg-white/5 px-3 py-2 text-center">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Quality Before</p>
-                    <p className="text-xs font-black text-amber-400">{qualityBefore || '—'}</p>
+                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Audit Status</p>
+                    <p className={`text-xs font-black ${evaluationStatus === 'NOT_EVALUATED' ? 'text-slate-400' : 'text-emerald-400'}`}>
+                        {evaluationStatus || (typeof avgScore === 'number' ? 'EVALUATED' : 'NOT_EVALUATED')}
+                    </p>
                 </div>
                 <div className="rounded-xl bg-white/5 px-3 py-2 text-center">
-                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Quality After</p>
-                    <p className="text-xs font-black text-emerald-400">{qualityAfter || '—'}</p>
+                    <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Quality Score</p>
+                    <p className={`text-xs font-black ${typeof avgScore === 'number' ? (avgScore >= 70 ? 'text-emerald-400' : 'text-amber-400') : 'text-slate-400'}`}>
+                        {typeof avgScore === 'number' ? `${avgScore}%` : 'Not evaluated'}
+                    </p>
                 </div>
             </div>
 
@@ -146,5 +173,6 @@ function AgentExecutionSummary({ report }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AgentQualityBadge({ agentReport }) {
-    return null;
+    if (!agentReport) return null;
+    return <AgentExecutionSummary report={agentReport} />;
 }
