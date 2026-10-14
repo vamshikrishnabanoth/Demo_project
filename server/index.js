@@ -1008,12 +1008,15 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
 
             // SYNC STATE
             const state = roomState.get(realQuizId);
-            if (state) {
-                if (state.status === 'started') socket.emit('quiz_started');
-                if (state.currentQuestion !== undefined) socket.emit('change_question', { questionIndex: state.currentQuestion });
+            const qState = quizState.getQuizState(realQuizId);
+            const activeQIdx = state?.currentQuestion !== undefined ? state.currentQuestion : (qState?.currentQuestion || 0);
+
+            if (state || qState) {
+                // If quiz is already in-progress, sync current question index (DO NOT emit quiz_started which resets student to Q0!)
+                socket.emit('change_question', { questionIndex: activeQIdx });
 
                 // MASTER TIMER SYNC
-                if (state.endTime) {
+                if (state?.endTime) {
                     const timeLeft = Math.max(0, Math.ceil((state.endTime - Date.now()) / 1000));
                     socket.emit('sync_timer', { timeLeft });
                 }
@@ -1062,7 +1065,7 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
         }
     });
 
-    socket.on('reconnectUser', ({ quizId, user }) => {
+    socket.on('reconnectUser', async ({ quizId, user }) => {
         // SECURITY CHECK: Verify identity matches socket.user payload safely
         if (!socket.user) {
             console.warn(`[Security Alert] Unauthenticated socket ${socket.id} attempted reconnectUser`);
@@ -1077,7 +1080,25 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             return socket.emit('error_alert', { msg: 'Unauthorized identity mismatch.' });
         }
 
-        const realQuizId = quizState.resolveQuizId(quizId);
+        let realQuizId = quizState.resolveQuizId(quizId);
+        if (realQuizId === quizId) {
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(quizId);
+            if (!isUUID) {
+                try {
+                    const foundQuiz = await prisma.quiz.findFirst({
+                        where: { OR: [{ id: quizId }, { joinCode: quizId }] },
+                        select: { id: true, joinCode: true }
+                    });
+                    if (foundQuiz) {
+                        realQuizId = foundQuiz.id;
+                        if (foundQuiz.joinCode) quizState.registerPin(foundQuiz.joinCode, foundQuiz.id);
+                    }
+                } catch (err) {
+                    console.error('Error resolving PIN in reconnectUser:', err.message);
+                }
+            }
+        }
+
         socket.join(realQuizId);
         if (socket.user.role === 'teacher') {
             socket.join(`teacher:${realQuizId}`);
@@ -1586,12 +1607,14 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
         // Direct socket echo to teacher
         socket.emit('change_question', { questionIndex: qIdx });
 
-        // Also broadcast full updated leaderboard immediately on question change so scores never lag
+        // Broadcast full updated leaderboard to TEACHER ROOM ONLY on question changes.
+        // Flooding 500 student sockets with full sorted arrays saturated socket buffers and blocked change_question.
         const leaderboard = quizState.getLeaderboard(realQuizId);
         if (leaderboard.length > 0) {
-            io.to(realQuizId).emit('question_leaderboard', { questionIndex: qIdx, leaderboard });
             if (io.sockets.adapter.rooms.has(teacherRoom)) {
                 io.to(teacherRoom).emit('question_leaderboard', { questionIndex: qIdx, leaderboard });
+            } else {
+                io.to(realQuizId).emit('question_leaderboard', { questionIndex: qIdx, leaderboard });
             }
         }
     });

@@ -178,11 +178,17 @@ export default function AttemptQuiz() {
         // fullscreen is requested at the correct moment.
         socket.on('quiz_started', () => {
             console.log('[AttemptQuiz] quiz_started event received — activating active quiz at Question 1.');
-            setQuiz(prev => prev ? { ...prev, status: 'started' } : prev);
-            setCurrentQuestion(0);
-            currentQuestionRef.current = 0;
-            setAnswers({});
-            setAnsweredQuestions(new Set());
+            setQuiz(prev => {
+                if (prev?.status === 'started') return prev;
+                return prev ? { ...prev, status: 'started' } : prev;
+            });
+            // ONLY reset if quiz was not already in progress (prevents wiping answers or jumping back to Q0 on refresh)
+            if (quizRef.current?.status !== 'started') {
+                setCurrentQuestion(0);
+                currentQuestionRef.current = 0;
+                setAnswers({});
+                setAnsweredQuestions(new Set());
+            }
             setWaitingForState(false);
             if (quizRef.current?.timerPerQuestion > 0) {
                 const pqTime = quizRef.current.timerPerQuestion;
@@ -693,7 +699,34 @@ export default function AttemptQuiz() {
                         }
                     }
 
-                    // Ensure first question is displayed immediately without blocking sync screen
+                    // Restoring submitted questions lock state from client storage so submitted options stay locked
+                    const localSubmitted = localStorage.getItem(`quiz_submitted_${id}`);
+                    if (localSubmitted) {
+                        try {
+                            const submittedArray = JSON.parse(localSubmitted);
+                            if (Array.isArray(submittedArray)) {
+                                setAnsweredQuestions(new Set(submittedArray));
+                            }
+                        } catch (e) {
+                            console.error('[DIAGNOSTIC-QUIZ] Error parsing localStorage submitted questions:', e);
+                        }
+                    }
+
+                    // Restoring live session position (currentQuestion) so student does not jump back to Question 0
+                    const localSession = localStorage.getItem(`live_quiz_session_${id}`);
+                    if (localSession) {
+                        try {
+                            const sess = JSON.parse(localSession);
+                            if (typeof sess.currentQuestion === 'number') {
+                                setCurrentQuestion(sess.currentQuestion);
+                                currentQuestionRef.current = sess.currentQuestion;
+                            }
+                        } catch (e) {
+                            console.error('[DIAGNOSTIC-QUIZ] Error parsing localStorage session position:', e);
+                        }
+                    }
+
+                    // Ensure active question is displayed immediately without blocking sync screen
                     setWaitingForState(false);
                     // join_room is sent in the dedicated authUser effect below so it fires even
                     // if authUser loads asynchronously after this fetchQuiz effect runs.
@@ -825,6 +858,10 @@ export default function AttemptQuiz() {
 
     const handleOptionSelect = (option) => {
         if (isReviewMode) return;
+        // Strictly prevent changing answer if already submitted in live mode
+        if (quiz?.isLive && answeredQuestions.has(currentQuestion)) {
+            return;
+        }
         const newAnswers = { ...answers, [currentQuestion]: option };
         setAnswers(newAnswers);
         localStorage.setItem(`quiz_answers_${id}`, JSON.stringify(newAnswers));
@@ -852,7 +889,13 @@ export default function AttemptQuiz() {
                 answer: answers[currentQuestion],
                 timeRemaining: timeLeft
             });
-            setAnsweredQuestions(prev => new Set([...prev, currentQuestion]));
+            setAnsweredQuestions(prev => {
+                const next = new Set([...prev, currentQuestion]);
+                try {
+                    localStorage.setItem(`quiz_submitted_${id}`, JSON.stringify(Array.from(next)));
+                } catch (_) {}
+                return next;
+            });
 
             // Show mission complete screen after last question submitted
             if (currentQuestion === quiz.questions.length - 1) {
