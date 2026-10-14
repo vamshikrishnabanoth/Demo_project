@@ -160,7 +160,35 @@ export default function LiveRoomTeacher() {
         const handleProgressUpdate = (payload) => {
             pendingProgressUpdates.push(payload);
             if (!progressFlushTimer) {
-                progressFlushTimer = setTimeout(flushProgressBatch, 100);
+                // Batch updates every 400ms (max 2.5 UI re-renders per second under heavy 500-student load)
+                progressFlushTimer = setTimeout(flushProgressBatch, 400);
+            }
+        };
+
+        // BATCHED FOCUS UPDATES: Prevents 500 focus events from re-rendering the teacher dashboard 500 times in 2 seconds
+        const pendingFocusUpdates = [];
+        let focusFlushTimer = null;
+
+        const flushFocusBatch = () => {
+            focusFlushTimer = null;
+            if (pendingFocusUpdates.length === 0) return;
+            const batch = pendingFocusUpdates.splice(0, pendingFocusUpdates.length);
+            setStudentProgress(prev => {
+                const newState = { ...prev };
+                for (const item of batch) {
+                    const id = item.studentId || item.username;
+                    if (id) {
+                        newState[id] = { ...(newState[id] || {}), current: parseInt(item.questionIndex) };
+                    }
+                }
+                return newState;
+            });
+        };
+
+        const handleFocusUpdate = (payload) => {
+            pendingFocusUpdates.push(payload);
+            if (!focusFlushTimer) {
+                focusFlushTimer = setTimeout(flushFocusBatch, 400);
             }
         };
 
@@ -177,15 +205,7 @@ export default function LiveRoomTeacher() {
             setCurrentQuestion(parseInt(questionIndex));
         });
 
-        socket.on('student_focus_update', ({ studentId, username, questionIndex }) => {
-            setStudentProgress(prev => {
-                const newState = { ...prev };
-                const id = studentId || username;
-                if (!id) return prev;
-                newState[id] = { ...(newState[id] || {}), current: parseInt(questionIndex) };
-                return newState;
-            });
-        });
+        socket.on('student_focus_update', handleFocusUpdate);
 
         socket.on('question_leaderboard', (data) => {
             setLeaderboard(data.leaderboard);
@@ -317,6 +337,7 @@ if (socket.connected) {
 
         return () => {
             if (progressFlushTimer) clearTimeout(progressFlushTimer);
+            if (focusFlushTimer) clearTimeout(focusFlushTimer);
             if (quiz?.id) {
                 socket.emit('leave_room', { quizId: quiz.id });
             }

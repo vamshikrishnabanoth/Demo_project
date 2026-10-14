@@ -499,7 +499,27 @@ function broadcastParticipantsDebounced(quizId, forceImmediate = false) {
                 roomParticipants.set(realQuizId, currentParticipants);
             }
         } catch (_) {}
-        io.to(realQuizId).emit('participants_update', currentParticipants);
+
+        const teacherRoom = `teacher:${realQuizId}`;
+        const hasTeacherRoom = io.sockets.adapter.rooms.has(teacherRoom);
+
+        if (hasTeacherRoom) {
+            // Teacher needs full participant details (usernames, cards, IDs)
+            io.to(teacherRoom).emit('participants_update', currentParticipants);
+
+            // Students only need role, online status, and joinedAt; strip internal socketId, lastSeen, etc.
+            // to eliminate over 80% of socket payload across 500 mobile devices
+            const lightweightStudents = currentParticipants
+                .filter(p => p.role?.toLowerCase() !== 'teacher')
+                .map(p => ({
+                    role: 'student',
+                    isOnline: p.isOnline !== false,
+                    joinedAt: p.joinedAt
+                }));
+            io.to(realQuizId).except(teacherRoom).emit('participants_update', lightweightStudents);
+        } else {
+            io.to(realQuizId).emit('participants_update', currentParticipants);
+        }
     };
 
     if (forceImmediate) {
@@ -1582,9 +1602,15 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
         if (!socket.user || socket.user.id !== studentId) {
             return;
         }
-        console.log(`Student ${username} focused on question ${questionIndex} in quiz ${quizId}`);
 
-        io.to(quizId).emit('student_focus_update', {
+        // PERFORMANCE: Route student focus updates to teacher room ONLY.
+        // Students do not use this event; broadcasting to 500 students generated 250,000 wasted socket messages.
+        const realQuizId = quizState.resolveQuizId(quizId);
+        const teacherRoom = `teacher:${realQuizId}`;
+        const hasTeacherRoom = io.sockets.adapter.rooms.has(teacherRoom);
+        const target = hasTeacherRoom ? teacherRoom : realQuizId;
+
+        io.to(target).emit('student_focus_update', {
             studentId,
             username,
             questionIndex
@@ -1636,8 +1662,13 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             });
         }
 
-        // Broadcast to the quiz room so the teacher dashboard receives the cheat warning in real-time
-        io.to(quizId).emit('student_cheat_warning', warningPayload);
+        // Broadcast to teacher room ONLY so students are not spammed with security alerts
+        const realQuizId = quizState.resolveQuizId(quizId);
+        const teacherRoom = `teacher:${realQuizId}`;
+        const hasTeacherRoom = io.sockets.adapter.rooms.has(teacherRoom);
+        const target = hasTeacherRoom ? teacherRoom : quizId;
+
+        io.to(target).emit('student_cheat_warning', warningPayload);
     });
 
     // Increase time for the current question
