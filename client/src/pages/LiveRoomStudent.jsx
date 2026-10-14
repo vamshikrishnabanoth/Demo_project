@@ -425,11 +425,11 @@ export default function LiveRoomStudent() {
                             </motion.div>
                         )}
 
-                        {/* Feature Grid with Interactive High-Contrast Badges */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Security Verification Badge */}
+                        <div className="flex justify-center">
                             <motion.div 
                                 whileHover={{ scale: 1.03, translateY: -2 }}
-                                className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex items-center gap-6 text-left shadow-md hover:border-[var(--bg-accent)] transition-all cursor-pointer group"
+                                className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex items-center gap-6 text-left shadow-md hover:border-[var(--bg-accent)] transition-all cursor-pointer group max-w-md w-full"
                             >
                                 <div className="bg-emerald-500/10 p-4 rounded-2xl text-emerald-600 border border-emerald-500/20 group-hover:scale-110 transition-transform">
                                     <ShieldCheck size={32} />
@@ -437,19 +437,6 @@ export default function LiveRoomStudent() {
                                 <div>
                                     <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Security</p>
                                     <p className="text-xl font-black text-emerald-600 uppercase italic">Verified</p>
-                                </div>
-                            </motion.div>
-                            
-                            <motion.div 
-                                whileHover={{ scale: 1.03, translateY: -2 }}
-                                className="bg-white border-2 border-[var(--border-color)] p-6 sm:p-8 rounded-[2.5rem] flex items-center gap-6 text-left shadow-md hover:border-[var(--bg-accent)] transition-all cursor-pointer group"
-                            >
-                                <div className="bg-[var(--bg-accent)]/10 p-4 rounded-2xl text-[var(--text-accent)] border border-[var(--bg-accent)]/20 group-hover:scale-110 transition-transform">
-                                    <Users size={32} />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em] mb-1">Status</p>
-                                    <p className="text-xl font-black text-[var(--text-primary)] uppercase italic">{displayCount} Joined</p>
                                 </div>
                             </motion.div>
                         </div>
