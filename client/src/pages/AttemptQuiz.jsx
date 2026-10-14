@@ -860,6 +860,10 @@ export default function AttemptQuiz() {
         if (isReviewMode) return;
         // Strictly prevent changing answer if already submitted in live mode
         if (quiz?.isLive && answeredQuestions.has(currentQuestion)) {
+            toast('Your answer is locked in! Waiting for the teacher to advance.', {
+                icon: '🔒',
+                id: 'answer-locked-toast'
+            });
             return;
         }
         const newAnswers = { ...answers, [currentQuestion]: option };
@@ -1076,48 +1080,65 @@ export default function AttemptQuiz() {
     if (missionComplete && quiz?.isLive) {
         return (
             <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col items-center justify-center p-6 text-[var(--text-primary)] text-center font-inter relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--bg-accent)]/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] -ml-64 -mb-64"></div>
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] -mr-64 -mt-64 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] -ml-64 -mb-64 pointer-events-none"></div>
                 <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="relative z-10 space-y-8 max-w-md w-full"
+                    className="relative z-10 space-y-6 max-w-md w-full"
                 >
-                    <div className="w-24 h-24 bg-white/5 backdrop-blur-xl border border-white/20 rounded-[2rem] flex items-center justify-center mx-auto mb-4">
-                        <Clock className="text-[var(--text-accent)] animate-pulse" size={40} />
+                    <div className="w-20 h-20 bg-orange-50 border-2 border-orange-200/80 rounded-3xl flex items-center justify-center mx-auto mb-2 shadow-sm">
+                        <Clock className="text-orange-600 animate-pulse" size={38} />
                     </div>
-                    <h1 className="text-5xl font-black italic uppercase tracking-tighter leading-none">Mission <span className="text-[var(--text-accent)]">Complete</span></h1>
-                    <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs leading-relaxed">
-                        All answers submitted! The leaderboard will appear when the host terminates the session.
-                    </p>
-                    <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-10 backdrop-blur-md flex flex-col items-center gap-6 shadow-2xl">
-                        <div className="flex flex-col items-center gap-2">
-                            <span className="text-[var(--text-secondary)] font-black uppercase tracking-[0.3em] text-[10px] mb-2">Session Status</span>
-                            
-                            <div className="relative w-32 h-32">
-                                <motion.div 
-                                    animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0.3, 0.1] }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                    className="absolute inset-0 bg-[var(--bg-accent)] rounded-full blur-2xl"
-                                />
-                                <svg className="w-full h-full transform -rotate-90">
-                                    <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/5" />
-                                    <motion.circle
-                                        cx="64" cy="64" r="60" stroke="var(--bg-accent)" strokeWidth="6" fill="transparent"
-                                        strokeDasharray="377"
-                                        initial={{ strokeDashoffset: 377 }}
-                                        animate={{ strokeDashoffset: 377 * (1 - timeLeft / (quiz.duration * 60 || 1800)) }}
-                                        transition={{ duration: 1, ease: "linear" }}
-                                        strokeLinecap="round"
-                                    />
-                                </svg>
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-4xl font-black italic text-[var(--text-accent)] tracking-tighter">
-                                        {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
-                                    </span>
-                                </div>
+                    <div>
+                        <h1 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter leading-none text-[#0f172a]">
+                            Mission <span className="text-orange-600">Complete</span>
+                        </h1>
+                        <p className="text-slate-500 font-bold uppercase tracking-wider text-xs leading-relaxed mt-2.5 max-w-sm mx-auto">
+                            All answers submitted! The leaderboard will appear when the host terminates the session.
+                        </p>
+                    </div>
+
+                    <div className="bg-white border-2 border-slate-200/80 rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col items-center gap-6 relative overflow-hidden">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200/80 shadow-xs">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                            </span>
+                            <span className="text-[11px] font-black uppercase tracking-widest text-orange-700">Session Status</span>
+                        </div>
+
+                        <div className="flex flex-col items-center">
+                            <div className="flex items-baseline justify-center gap-1.5 font-mono font-black text-[#0f172a] tracking-tight select-none">
+                                <span className="text-6xl sm:text-7xl drop-shadow-xs">
+                                    {Math.floor(timeLeft / 60)}
+                                </span>
+                                <span className="text-4xl sm:text-5xl text-orange-500 animate-pulse font-sans font-bold pb-1">
+                                    :
+                                </span>
+                                <span className="text-6xl sm:text-7xl drop-shadow-xs">
+                                    {String(timeLeft % 60).padStart(2, '0')}
+                                </span>
                             </div>
-                            <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest mt-4">Remaining Duration</p>
+                            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-2">
+                                Remaining Duration
+                            </span>
+                        </div>
+
+                        <div className="w-full max-w-[260px] h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                            <motion.div 
+                                className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 rounded-full"
+                                initial={false}
+                                animate={{ 
+                                    width: `${Math.max(0, Math.min(100, (timeLeft / (quiz?.duration * 60 || 1800)) * 100))}%` 
+                                }}
+                                transition={{ duration: 1, ease: "linear" }}
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-center gap-2 text-slate-500 text-xs font-semibold pt-4 border-t border-slate-100 w-full">
+                            <Loader2 className="animate-spin text-orange-500" size={14} />
+                            <span className="text-[11px] font-bold text-slate-600">Waiting for host to publish final standings</span>
                         </div>
                     </div>
                 </motion.div>
@@ -1132,51 +1153,66 @@ export default function AttemptQuiz() {
             return (
                 <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col items-center justify-center p-6 text-[var(--text-primary)] text-center font-inter relative overflow-hidden">
                     {/* Background Decorations */}
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--bg-accent)]/10 rounded-full blur-[120px] -mr-64 -mt-64"></div>
-                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] -ml-64 -mb-64"></div>
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] -mr-64 -mt-64 pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] -ml-64 -mb-64 pointer-events-none"></div>
 
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative z-10 space-y-8 max-w-md w-full"
+                        className="relative z-10 space-y-6 max-w-md w-full"
                     >
-                        <div className="w-24 h-24 bg-white/5 backdrop-blur-xl border border-white/20 rounded-[2rem] flex items-center justify-center mx-auto mb-4">
-                            <Clock className="text-[var(--text-accent)] animate-pulse" size={40} />
+                        <div className="w-20 h-20 bg-orange-50 border-2 border-orange-200/80 rounded-3xl flex items-center justify-center mx-auto mb-2 shadow-sm">
+                            <Clock className="text-orange-600 animate-pulse" size={38} />
                         </div>
-                        <h1 className="text-4xl font-black italic uppercase tracking-tighter">Mission <span className="text-[var(--text-accent)]">Complete</span></h1>
-                        <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-xs leading-relaxed">
-                            Your data has been transmitted. The gateway will open when the synchronization sequence concludes.
-                        </p>
-                        <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-[3rem] p-10 backdrop-blur-md flex flex-col items-center gap-6 shadow-2xl">
-                            <div className="flex flex-col items-center gap-2">
-                                <span className="text-[var(--text-secondary)] font-black uppercase tracking-[0.3em] text-[10px] mb-2">Leaderboard appears in</span>
-                                <div className="relative w-32 h-32">
-                                    <motion.div 
-                                        animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0.3, 0.1] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        className="absolute inset-0 bg-[var(--bg-accent)] rounded-full blur-2xl"
-                                    />
-                                    <svg className="w-full h-full transform -rotate-90">
-                                        <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/5" />
-                                        <motion.circle
-                                            cx="64" cy="64" r="60" stroke="var(--bg-accent)" strokeWidth="6" fill="transparent"
-                                            strokeDasharray="377"
-                                            initial={{ strokeDashoffset: 377 }}
-                                            animate={{ strokeDashoffset: 377 * (1 - timeLeft / (quiz.duration * 60 || 1800)) }}
-                                            transition={{ duration: 1, ease: "linear" }}
-                                            strokeLinecap="round"
-                                        />
-                                    </svg>
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                        <span className="text-4xl font-black italic text-[var(--text-accent)] tracking-tighter">
-                                            {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
-                                        </span>
-                                    </div>
-                                </div>
+                        <div>
+                            <h1 className="text-4xl sm:text-5xl font-black italic uppercase tracking-tighter leading-none text-[#0f172a]">
+                                Mission <span className="text-orange-600">Complete</span>
+                            </h1>
+                            <p className="text-slate-500 font-bold uppercase tracking-wider text-xs leading-relaxed mt-2.5 max-w-sm mx-auto">
+                                Your data has been transmitted. The gateway will open when the synchronization sequence concludes.
+                            </p>
+                        </div>
+
+                        <div className="bg-white border-2 border-slate-200/80 rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col items-center gap-6 relative overflow-hidden">
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200/80 shadow-xs">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                                </span>
+                                <span className="text-[11px] font-black uppercase tracking-widest text-orange-700">Leaderboard incoming</span>
                             </div>
-                            <div className="flex items-center justify-center gap-4 text-[var(--text-secondary)] opacity-50">
-                                <Loader2 className="animate-spin" size={16} />
-                                <span className="font-black italic uppercase tracking-widest text-[10px]">Synchronizing Results...</span>
+
+                            <div className="flex flex-col items-center">
+                                <div className="flex items-baseline justify-center gap-1.5 font-mono font-black text-[#0f172a] tracking-tight select-none">
+                                    <span className="text-6xl sm:text-7xl drop-shadow-xs">
+                                        {Math.floor(timeLeft / 60)}
+                                    </span>
+                                    <span className="text-4xl sm:text-5xl text-orange-500 animate-pulse font-sans font-bold pb-1">
+                                        :
+                                    </span>
+                                    <span className="text-6xl sm:text-7xl drop-shadow-xs">
+                                        {String(timeLeft % 60).padStart(2, '0')}
+                                    </span>
+                                </div>
+                                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-2">
+                                    Session Countdown
+                                </span>
+                            </div>
+
+                            <div className="w-full max-w-[260px] h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                                <motion.div 
+                                    className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 rounded-full"
+                                    initial={false}
+                                    animate={{ 
+                                        width: `${Math.max(0, Math.min(100, (timeLeft / (quiz?.duration * 60 || 1800)) * 100))}%` 
+                                    }}
+                                    transition={{ duration: 1, ease: "linear" }}
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-center gap-2 text-slate-500 text-xs font-semibold pt-4 border-t border-slate-100 w-full">
+                                <Loader2 className="animate-spin text-orange-500" size={14} />
+                                <span className="text-[11px] font-bold text-slate-600">Synchronizing Results...</span>
                             </div>
                         </div>
                     </motion.div>
@@ -1342,14 +1378,16 @@ export default function AttemptQuiz() {
 
             {/* Strict Mode Waiting Overlay */}
             {quiz?.isLive && answeredQuestions.has(currentQuestion) && (
-                <div className="fixed inset-0 z-[var(--z-overlay)] bg-[var(--bg-primary)]/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-[var(--text-primary)]">
+                <div className="fixed inset-0 z-[var(--z-overlay)] bg-white/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center text-[#0f172a]">
                     <LiveQuizWaitAnimation
                         variant="synchronizing-answers"
+                        title="Answer Locked In"
+                        subtitle="Your response is recorded. Waiting for teacher to advance..."
                         answeredCount={answeredCount}
                         totalStudents={totalStudents}
                         detail={totalStudents > 0 && answeredCount < totalStudents
-                            ? `${answeredCount} of ${totalStudents} answered`
-                            : 'Real-time sync active'}
+                            ? `${answeredCount} of ${totalStudents} students submitted`
+                            : 'All responses synchronized'}
                     />
                 </div>
             )}
@@ -1464,6 +1502,9 @@ export default function AttemptQuiz() {
                                     let textColor = '#0f172a';
                                     let shapeFill = '#0f172a';
 
+                                    // In live mode: lock only after submit, allow free re-selection before
+                                    const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
+
                                     if (isReviewMode) {
                                         if (isCorrect) {
                                             containerClass = 'bg-emerald-600 border-emerald-600 shadow-md text-white';
@@ -1479,13 +1520,20 @@ export default function AttemptQuiz() {
                                             shapeFill = '#94a3b8';
                                         }
                                     } else if (isSelected) {
-                                        containerClass = 'bg-amber-500/10 border-2 border-amber-500 ring-4 ring-amber-500/20 shadow-md scale-[0.98]';
-                                        textColor = '#0f172a';
-                                        shapeFill = '#d97706';
+                                        if (isSubmittedLive) {
+                                            containerClass = 'bg-emerald-50 border-2 border-emerald-600 ring-4 ring-emerald-500/20 shadow-md scale-[0.99]';
+                                            textColor = '#065f46';
+                                            shapeFill = '#059669';
+                                        } else {
+                                            containerClass = 'bg-amber-500/10 border-2 border-amber-500 ring-4 ring-amber-500/20 shadow-md scale-[0.98]';
+                                            textColor = '#0f172a';
+                                            shapeFill = '#d97706';
+                                        }
+                                    } else if (isSubmittedLive) {
+                                        containerClass = 'bg-slate-50 border-2 border-slate-200 text-slate-400 opacity-60 cursor-not-allowed';
+                                        textColor = '#94a3b8';
+                                        shapeFill = '#94a3b8';
                                     }
-
-                                    // In live mode: lock only after submit, allow free re-selection before
-                                    const isSubmittedLive = quiz?.isLive && answeredQuestions.has(currentQuestion);
 
                                     return (
                                         <motion.button
@@ -1494,13 +1542,13 @@ export default function AttemptQuiz() {
                                             onClick={() => handleOptionSelect(option)}
                                             style={{ willChange: 'transform' }}
                                             animate={{
-                                                scale: isSubmittedLive && isSelected ? 1.04 : isSelected ? 0.98 : 1,
+                                                scale: isSubmittedLive && isSelected ? 1.02 : isSelected ? 0.98 : 1,
                                                 opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.75 : 1
                                             }}
                                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                                             className={`relative min-h-[3.5rem] sm:min-h-[4.5rem] h-auto text-left px-4 sm:px-6 py-3 sm:py-5 rounded-xl sm:rounded-2xl transition-all duration-300 flex items-start gap-3 sm:gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
                                         >
-                                            <div className={`flex-shrink-0 p-2 sm:p-3 rounded-lg sm:rounded-xl transition-transform group-hover:scale-110 mt-0.5 ${isSelected && !isReviewMode ? 'bg-amber-500 text-white shadow-xs' : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
+                                            <div className={`flex-shrink-0 p-2 sm:p-3 rounded-lg sm:rounded-xl transition-transform group-hover:scale-110 mt-0.5 ${isSelected && !isReviewMode ? (isSubmittedLive ? 'bg-emerald-600 text-white shadow-xs' : 'bg-amber-500 text-white shadow-xs') : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
                                                 <ShapeIcon size={20} fill={shapeFill} strokeWidth={0} />
                                             </div>
                                             <span className="text-sm sm:text-base font-bold leading-relaxed break-words whitespace-pre-wrap min-w-0 flex-1 select-text" style={{ color: textColor }}>
@@ -1508,24 +1556,18 @@ export default function AttemptQuiz() {
                                             </span>
 
                                             {isSelected && !isReviewMode && (
-                                                <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-amber-500 text-white rounded-full px-2.5 py-1 shadow-md">
+                                                <div className={`absolute top-4 right-4 flex items-center gap-1.5 ${isSubmittedLive ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'} rounded-full px-2.5 py-1 shadow-md`}>
                                                     {isSubmittedLive ? (
-                                                        <motion.div
-                                                            initial={{ rotate: -90, scale: 0 }}
-                                                            animate={{ rotate: 0, scale: 1 }}
-                                                            transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                                                            className="flex items-center justify-center text-white"
-                                                        >
+                                                        <div className="flex items-center gap-1 text-[11px] font-black uppercase tracking-wider">
                                                             <Lock size={12} className="fill-white/20" />
-                                                        </motion.div>
-                                                    ) : null}
-                                                    <motion.div
-                                                        initial={{ scale: 0 }}
-                                                        animate={{ scale: 1 }}
-                                                        transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
-                                                    >
-                                                        <CheckCircle size={14} className="text-white" />
-                                                    </motion.div>
+                                                            <span>Locked</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1 text-[11px] font-black uppercase tracking-wider">
+                                                            <CheckCircle size={14} className="text-white" />
+                                                            <span>Selected</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
                                         </motion.button>
