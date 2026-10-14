@@ -44,13 +44,15 @@ async function main() {
   await runTest('Smoke 1: Text/Document route generates grounded MCQs', async () => {
     const taskId = 'smoke_text_' + Date.now();
     const docText = `
-      Operating Systems: Process Synchronization.
-      A semaphore is a synchronization tool introduced by Edsger Dijkstra.
-      It is an integer variable that, apart from initialization, is accessed only through
-      two standard atomic operations: wait() and signal(). Originally, Dijkstra called these
-      operations P (from Dutch proberen, to test) and V (from Dutch verhogen, to increment).
-      Counting semaphores can range over an unrestricted integer domain, whereas binary
-      semaphores can range only between 0 and 1. Binary semaphores behave similarly to mutex locks.
+      Data Structures and Algorithms: Binary Search Trees.
+      A Binary Search Tree (BST) is a node-based binary tree data structure with the following properties:
+      The left subtree of a node contains only nodes with keys lesser than the node's key.
+      The right subtree of a node contains only nodes with keys greater than the node's key.
+      Both the left and right subtrees must also be binary search trees.
+      The in-order traversal of a binary search tree yields the keys in sorted, ascending order.
+      In a balanced binary search tree, the time complexity for search, insertion, and deletion operations is O(log n).
+      If the tree degenerates into a linear chain of nodes, the search time complexity degrades to O(n) in the worst case.
+      Self-balancing binary search trees such as AVL trees and Red-Black trees maintain logarithmic height by performing rotations.
     `;
 
     const result = await pipelineOrchestrator.runPipeline({
