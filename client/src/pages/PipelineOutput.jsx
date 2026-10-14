@@ -71,7 +71,7 @@ export default function PipelineOutput() {
   const [stages, setStages] = useState([]);
   const [stageMap, setStageMap] = useState({});
   const [liveArtifacts, setLiveArtifacts] = useState({});
-  const [pipelineResult, setPipelineResult] = useState(null);
+  const [pipelineResult, setPipelineResult] = useState(pipelineData?.pipelineResult || (pipelineData?.questions ? { questions: pipelineData.questions, ...pipelineData } : null));
   const [error, setError] = useState(null);
 
   // Telemetry Console State (16 Stages Real-Time Stream)
@@ -270,7 +270,7 @@ export default function PipelineOutput() {
 
 
 
-  const deliveredQuestions = pipelineResult?.questions || pipelineResult?.deliveredQuestions || [];
+  const deliveredQuestions = pipelineResult?.questions || pipelineResult?.deliveredQuestions || pipelineData?.questions || pipelineData?.deliveredQuestions || [];
   const questionCountDisplay = deliveredQuestions.length || questionCount;
   const quizTitle = pipelineResult?.quizTitle || pipelineData?.title || (sourceNames[0] ? `Assessment: ${sourceNames[0]}` : 'AI Generated Assessment');
   const evidencePackage = pipelineResult?.evidencePackage || liveArtifacts?.evidencePackage || null;
@@ -484,7 +484,7 @@ export default function PipelineOutput() {
             {/* Back to Generation */}
             <button
               type="button"
-              onClick={() => navigate(originPath)}
+              onClick={() => navigate(originPath && originPath !== -1 ? originPath : '/create-quiz/text')}
               className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-black text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer transition-all"
               title="Return to generation screen"
             >

@@ -26,10 +26,12 @@ export default function CreateQuizVoice() {
     const [elapsed, setElapsed] = useState(0);
     const [representationMode, setRepresentationMode] = useState(null);
 
-    const handleQuestionsLoaded = (questions, title, agentReport, lectureDepth, repMode = null) => {
+    const handleQuestionsLoaded = (questions, title, agentReport, lectureDepth, repMode = null, result = null, currentTaskId = null) => {
+        const taskId = currentTaskId || localStorage.getItem('latest_pipeline_task_id') || 'voice-session';
         // Redirect to the editor with generated questions + full agent report
         navigate('/create-quiz/text', {
             state: {
+                taskId,
                 questions,
                 title,
                 duration:           10,
@@ -37,7 +39,8 @@ export default function CreateQuizVoice() {
                 isVoice:            true,
                 agentReport:        agentReport || null,
                 lectureDepth:       lectureDepth || null,
-                representationMode: repMode || representationMode || 'SUMMARY'
+                representationMode: repMode || representationMode || 'SUMMARY',
+                pipelineResult:     result || null
             }
         });
     };
@@ -138,7 +141,9 @@ export default function CreateQuizVoice() {
                                 result.title || audioFile.name.replace(/\.[^/.]+$/, ''), 
                                 result.agentReport, 
                                 result.lectureDepth,
-                                rm || result.representation_mode || representationMode
+                                rm || result.representation_mode || representationMode,
+                                result,
+                                taskId
                             );
                         } else {
                             setError('No questions were generated from the recording. Please try an audio file with clearer speech.');

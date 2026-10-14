@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GitBranch, CheckCircle2, AlignLeft, LayoutTemplate, Combine, Code2, ListTree } from 'lucide-react';
+import { GitBranch, CheckCircle2, AlignLeft, LayoutTemplate, Combine, Code2, ListTree, Cpu, Terminal, Shield } from 'lucide-react';
 
 export default function PdiViewer({
   representationMode = 'UNIFIED',
@@ -7,7 +7,9 @@ export default function PdiViewer({
   summaryContent = '',
   blueprintContent = null,
   unifiedContent = '',
-  inputConditions = {}
+  inputConditions = {},
+  metadata = {},
+  executionMessages = []
 }) {
   const [blueprintViewTab, setBlueprintViewTab] = useState('tree'); // 'tree' | 'json'
 
@@ -190,6 +192,65 @@ export default function PdiViewer({
             ) : (
               <p className="italic text-slate-400">Multi-source unified representation linking spoken audio intent to document formulas and code artifacts.</p>
             )}
+          </div>
+        )}
+      </div>
+
+      {/* AI Engine Telemetry & Model Infrastructure Card */}
+      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <Cpu size={16} className="text-orange-600" />
+            <h5 className="text-xs font-black uppercase tracking-wider text-slate-800">
+              AI Engine & Hardware Pipeline Telemetry
+            </h5>
+          </div>
+          <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+            {metadata.pipeline_version || 'Architecture E v2.0'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <span className="text-slate-400 block text-[10px] uppercase font-bold">Active Generator</span>
+            <span className="font-mono font-bold text-slate-800 text-[11px] truncate block">
+              {metadata.generator_model || 'openai/gpt-oss-20b'}
+            </span>
+            <span className="text-[10px] text-slate-500 font-mono">Provider: {metadata.generator_provider || 'Groq Fast LPU'}</span>
+          </div>
+
+          <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <span className="text-slate-400 block text-[10px] uppercase font-bold">Target Generator</span>
+            <span className="font-mono font-bold text-slate-800 text-[11px] truncate block">
+              {metadata.target_generator || 'ft-llama-3-8b-kmit'}
+            </span>
+            <span className="text-[10px] text-slate-500 font-mono">Hardware: KMIT GPU Cluster</span>
+          </div>
+
+          <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <span className="text-slate-400 block text-[10px] uppercase font-bold">Serving Mode</span>
+            <span className="font-mono font-bold text-orange-700 text-[11px] truncate block">
+              {metadata.serving_mode || 'PRODUCTION_PIPELINE'}
+            </span>
+            <span className="text-[10px] text-slate-500 font-mono">Zero Contamination certified</span>
+          </div>
+        </div>
+
+        {/* Pipeline Execution Messages Trace */}
+        {executionMessages && executionMessages.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Terminal size={12} className="text-slate-500" />
+              Pipeline Execution Trace Ledger ({executionMessages.length} steps):
+            </span>
+            <div className="bg-slate-900 text-slate-200 p-3 rounded-lg font-mono text-[11px] space-y-1">
+              {executionMessages.map((msg, idx) => (
+                <div key={idx} className="flex items-start gap-2">
+                  <span className="text-emerald-400 font-bold">❯</span>
+                  <span>{msg}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

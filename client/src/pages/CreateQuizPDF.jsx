@@ -417,6 +417,7 @@ export default function CreateQuizPDF() {
                 onComplete: (result) => {
                     navigate('/create-quiz/text', {
                         state: {
+                            taskId:             taskId,
                             questions:          result.questions,
                             title:              result.title || file.name.replace(/\.[^/.]+$/, ''),
                             duration:           result.duration || 10,
@@ -424,6 +425,7 @@ export default function CreateQuizPDF() {
                             agentReport:        result.agentReport || null,
                             finalValidation:    result.finalValidation || null,
                             representationMode: result.representation_mode || representationMode || 'BLUEPRINT',
+                            pipelineResult:     result,
                             executionMessages:  result.metadata?.executionMessages || []
                         },
                     });

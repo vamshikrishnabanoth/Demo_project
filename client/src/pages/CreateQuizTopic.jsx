@@ -1125,6 +1125,7 @@ export default function CreateQuizTopic() {
                 onComplete: (result) => {
                     navigate('/create-quiz/text', {
                         state: {
+                            taskId:             taskId,
                             questions:          result.questions,
                             title:              result.title || (inputs[0]?.source_name ? `Quiz: ${inputs[0].source_name}` : 'AI Generated Assessment'),
                             duration:           result.duration || 10,
@@ -1132,6 +1133,7 @@ export default function CreateQuizTopic() {
                             agentReport:        result.agentReport || null,
                             finalValidation:    result.finalValidation || null,
                             representationMode: result.representation_mode || representationMode || 'BLUEPRINT',
+                            pipelineResult:     result,
                             executionMessages:  result.metadata?.executionMessages || []
                         }
                     });

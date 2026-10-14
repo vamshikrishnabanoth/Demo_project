@@ -98,11 +98,19 @@ async function setCache(key, value, ttlMs = 60000) {
         try {
             const ttlSeconds = Math.ceil(ttlMs / 1000);
             const valStr = JSON.stringify(value);
-            const url = `${process.env.UPSTASH_REDIS_REST_URL}/set/${encodeURIComponent(key)}/${encodeURIComponent(valStr)}?EX=${ttlSeconds}`;
-            await axios.get(url, {
-                headers: { Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}` },
-                timeout: 1000
-            });
+            // CRITICAL FIX: Use POST with JSON command array instead of GET in URL query.
+            // GET /set/:key/:val fails with HTTP 414 (URI Too Long) when caching rooms with 50+ participants (~40KB).
+            await axios.post(
+                process.env.UPSTASH_REDIS_REST_URL,
+                ["SET", key, valStr, "EX", ttlSeconds],
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    timeout: 2500
+                }
+            );
         } catch (err) {
             console.warn('[Cache] Upstash Redis SET warning:', err.message);
         }
@@ -111,6 +119,19 @@ async function setCache(key, value, ttlMs = 60000) {
 
 function invalidateCache(keyOrPattern) {
     memoryCache.clearPattern(keyOrPattern);
+    if (isRedisConfigured && typeof keyOrPattern === 'string' && !keyOrPattern.includes('*')) {
+        axios.post(
+            process.env.UPSTASH_REDIS_REST_URL,
+            ["DEL", keyOrPattern],
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                timeout: 1500
+            }
+        ).catch(() => {});
+    }
 }
 
 module.exports = {
