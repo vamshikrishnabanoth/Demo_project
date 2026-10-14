@@ -70,18 +70,18 @@ exports.getQuizAnalytics = async (req, res) => {
             }
         }
 
-        // Query with 4-second hard timeout for graceful degradation
+        // Query with 15-second timeout and graceful degradation to quiz.finalLeaderboard
         const fetchAnalyticsData = async () => {
             const normalizedQuestions = normalizeQuestions(quiz.questions);
             const results = await prisma.result.findMany({
-                where: { quizId: quizId, status: 'completed' },
+                where: { quizId: quizId },
                 include: { student: { select: { username: true, email: true, section: true, studentBranch: true } } }
             });
             return { normalizedQuestions, results };
         };
 
         const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('ANALYTICS_TIMEOUT')), 4000)
+            setTimeout(() => reject(new Error('ANALYTICS_TIMEOUT')), 15000)
         );
 
         let normalizedQuestions, results;
@@ -90,25 +90,68 @@ exports.getQuizAnalytics = async (req, res) => {
             normalizedQuestions = data.normalizedQuestions;
             results = data.results;
         } catch (timeoutErr) {
-            console.warn(`[ANALYTICS_DEGRADATION] Quiz ${quizId} analytics query timed out/failed. Serving fallback payload.`);
+            console.warn(`[ANALYTICS_DEGRADATION] Quiz ${quizId} analytics query timed out/failed. Serving fallback from finalLeaderboard.`);
+            const fallbackLeaderboard = Array.isArray(quiz.finalLeaderboard) ? quiz.finalLeaderboard : [];
+            const fbParticipants = fallbackLeaderboard.length;
+            const fbHighest = fbParticipants > 0 ? Math.max(...fallbackLeaderboard.map(l => l.currentScore || 0)) : 0;
+            const fbAvg = fbParticipants > 0 ? Math.round(fallbackLeaderboard.reduce((a, b) => a + (b.currentScore || 0), 0) / fbParticipants) : 0;
             return res.json({
                 degraded: true,
                 quizTitle: quiz.title || 'Live Quiz',
                 topic: quiz.topic || '',
                 totalQuestions: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
-                totalParticipants: 0,
-                averageScore: 0,
-                highestScore: 0,
-                scoreDistribution: { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 },
+                totalParticipants: fbParticipants,
+                averageScore: fbAvg,
+                highestScore: fbHighest,
+                scoreDistribution: { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': fbParticipants },
                 questionPerformance: [],
                 sectionPerformance: [],
-                participationRate: { attempted: 0, totalEligible: 0 },
-                leaderboard: []
+                participationRate: { attempted: fbParticipants, totalEligible: fbParticipants },
+                leaderboard: fallbackLeaderboard.map((item, idx) => ({
+                    id: item.studentId,
+                    email: 'N/A',
+                    rank: item.rank || (idx + 1),
+                    username: item.username,
+                    score: item.currentScore,
+                    timeTaken: item.totalTimeTaken || 0,
+                    accuracy: 0,
+                    answers: []
+                }))
             });
         }
 
         const totalParticipants = results.length;
         if (totalParticipants === 0) {
+             const fallbackLeaderboard = Array.isArray(quiz.finalLeaderboard) ? quiz.finalLeaderboard : [];
+             if (fallbackLeaderboard.length > 0) {
+                 const fbParticipants = fallbackLeaderboard.length;
+                 const fbHighest = Math.max(...fallbackLeaderboard.map(l => l.currentScore || 0));
+                 const fbAvg = Math.round(fallbackLeaderboard.reduce((a, b) => a + (b.currentScore || 0), 0) / fbParticipants);
+                 return res.json({
+                     quizTitle: quiz.title,
+                     topic: quiz.topic,
+                     totalQuestions: normalizedQuestions.length,
+                     totalParticipants: fbParticipants,
+                     averageScore: fbAvg,
+                     highestScore: fbHighest,
+                     scoreDistribution: [],
+                     questionPerformance: [],
+                     sectionPerformance: [],
+                     participationRate: { attempted: fbParticipants, totalEligible: fbParticipants },
+                     topStudents: fallbackLeaderboard.slice(0, 5).map((l, i) => ({ ...l, rank: i + 1 })),
+                     leaderboard: fallbackLeaderboard.map((item, idx) => ({
+                         id: item.studentId,
+                         email: 'N/A',
+                         rank: item.rank || (idx + 1),
+                         username: item.username,
+                         score: item.currentScore,
+                         timeTaken: item.totalTimeTaken || 0,
+                         accuracy: 0,
+                         answers: []
+                     })),
+                     cheatingLogs: []
+                 });
+             }
              return res.json({
                  quizTitle: quiz.title,
                  topic: quiz.topic,

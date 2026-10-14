@@ -1324,31 +1324,41 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             // This ensures all pending in-memory writes are persisted before we
             // compute the final leaderboard from DB.
             console.log(`[QuizEnd] Draining write buffer for quiz ${quizId}...`);
-            const drainResult = await quizState.drainWrites(quizId, 10000);
+            const drainResult = await quizState.drainWrites(quizId, 25000);
             console.log(`[QuizEnd] Drain complete: ${drainResult.flushed} flushed, ${drainResult.failed} failed.`);
 
             // ── STEP 4: Create missing zero-score records for non-answerers ──────
-            // Use a single DB query to find which students already have records,
-            // then batch-create only the missing ones. Avoids N individual findFirst() calls.
-            const participants = roomParticipants.get(quizId) || [];
-            const realStudents = participants.filter(p => {
-                const sid = (p._id || p.id || '').toString();
+            // Merge participants from both roomParticipants AND quizState students so no student is missed
+            const participantMap = new Map();
+            (roomParticipants.get(quizId) || []).forEach(p => {
+                const sid = (p._id || p.id || p.userId || '').toString();
+                if (sid) participantMap.set(sid, { studentId: sid, username: p.username || sid, role: p.role });
+            });
+            quizState.getAllStudentStates(quizId).forEach(s => {
+                const sid = (s.studentId || '').toString();
+                if (sid && !participantMap.has(sid)) {
+                    participantMap.set(sid, { studentId: sid, username: s.username || sid, role: 'student' });
+                }
+            });
+
+            const realStudents = Array.from(participantMap.values()).filter(p => {
+                const sid = p.studentId;
                 const role = (p.role || '').toLowerCase();
-                return role !== 'teacher' && role !== 'simulation' && !sid.startsWith('bot_student_') && !sid.startsWith('sim');
+                return role !== 'teacher' && !sid.startsWith('sim') && !sid.startsWith('bot_student_');
             });
             const totalQuestions = Array.isArray(quiz.questions) ? quiz.questions.length : 0;
 
             if (realStudents.length > 0) {
                 // Fetch all existing result records in one query
                 const existingResults = await prisma.result.findMany({
-                    where: { quizId, studentId: { in: realStudents.map(p => (p._id || p.id || '').toString()) } },
+                    where: { quizId, studentId: { in: realStudents.map(p => p.studentId) } },
                     select: { studentId: true }
                 });
                 const existingIds = new Set(existingResults.map(r => r.studentId));
 
                 // Build list of students without any result record
                 const missingStudents = realStudents.filter(p => {
-                    const sid = (p._id || p.id || '').toString();
+                    const sid = p.studentId;
                     return sid && !existingIds.has(sid);
                 });
 
@@ -1359,7 +1369,7 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                     for (let i = 0; i < missingStudents.length; i += BATCH) {
                         const batch = missingStudents.slice(i, i + BATCH);
                         await Promise.allSettled(batch.map(p => {
-                            const studentId = (p._id || p.id || '').toString();
+                            const studentId = p.studentId;
                             return prisma.result.create({
                                 data: {
                                     quizId,
@@ -1549,12 +1559,17 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
         quizState.updateQuizState(realQuizId, { currentQuestion: qIdx });
 
         io.to(realQuizId).emit('change_question', { questionIndex: qIdx });
+        const teacherRoom = `teacher:${realQuizId}`;
+        if (io.sockets.adapter.rooms.has(teacherRoom)) {
+            io.to(teacherRoom).emit('change_question', { questionIndex: qIdx });
+        }
+        // Direct socket echo to teacher
+        socket.emit('change_question', { questionIndex: qIdx });
 
         // Also broadcast full updated leaderboard immediately on question change so scores never lag
         const leaderboard = quizState.getLeaderboard(realQuizId);
         if (leaderboard.length > 0) {
             io.to(realQuizId).emit('question_leaderboard', { questionIndex: qIdx, leaderboard });
-            const teacherRoom = `teacher:${realQuizId}`;
             if (io.sockets.adapter.rooms.has(teacherRoom)) {
                 io.to(teacherRoom).emit('question_leaderboard', { questionIndex: qIdx, leaderboard });
             }
@@ -1770,15 +1785,18 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                 currentScore:  result.updatedScore ?? 0,
             });
 
-            // ── Throttled: broadcast leaderboard to all (not on every answer) ─────
-            // Prevents broadcasting a full sorted array to 1000 clients every ms.
+            // ── Throttled: update leaderboard for teacher (NOT flooding 300 student sockets) ──
+            // Broadcasting full sorted leaderboards to 300+ student sockets while they are answering
+            // generates 13.5 MB/s of outbound socket traffic and saturates network buffers.
+            // Students only need leaderboards on question transitions or quiz end.
             if (quizState.shouldBroadcastLeaderboard(realQuizId)) {
                 const leaderboard = quizState.getLeaderboard(realQuizId);
                 // Also update legacy roomState leaderboard for reconnect sync
                 roomState.set(realQuizId, { ...(roomState.get(realQuizId) || {}), leaderboard });
-                io.to(realQuizId).emit('question_leaderboard', { questionIndex, leaderboard });
                 if (hasTeacherRoom) {
                     io.to(teacherRoom).emit('question_leaderboard', { questionIndex, leaderboard });
+                } else {
+                    io.to(realQuizId).emit('question_leaderboard', { questionIndex, leaderboard });
                 }
             }
 

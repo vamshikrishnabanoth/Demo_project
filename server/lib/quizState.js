@@ -30,7 +30,8 @@ const prisma = require('./prisma');
 
 // ─── Tuning Constants ─────────────────────────────────────────────────────────
 const FLUSH_INTERVAL_MS  = 2000;   // Flush write buffer every 2 seconds
-const FLUSH_CONCURRENCY  = 3;      // Max simultaneous DB write operations
+const FLUSH_CONCURRENCY  = 10;     // Max simultaneous DB write operations (increased from 3 to 10 for rapid 300-student flushing)
+const DRAIN_TIMEOUT_MS   = 25000;  // Default max time to wait for buffer to drain on quiz end
 const MAX_RETRIES        = 3;      // Max retry attempts per failed write
 const RETRY_BASE_MS      = 500;    // Base delay for exponential backoff
 const MAX_BUFFER_SIZE    = 5000;   // Safety cap: total pending writes across all quizzes
@@ -550,7 +551,12 @@ async function _executeBatch(keys) {
                 totalPending = Math.max(0, totalPending - 1);
                 flushed++;
             } catch (err) {
-                if (entry.retries < MAX_RETRIES) {
+                // If student doesn't exist in User table (foreign key constraint P2003), don't waste retries
+                if (err.code === 'P2003') {
+                    writeBuffer.delete(key);
+                    totalPending = Math.max(0, totalPending - 1);
+                    failed++;
+                } else if (entry.retries < MAX_RETRIES) {
                     entry.retries++;
                     const backoffMs = RETRY_BASE_MS * Math.pow(2, entry.retries - 1);
                     console.warn(`[QuizState] Write failed for ${entry.studentId} (retry ${entry.retries}/${MAX_RETRIES}): ${err.message}. Retrying in ${backoffMs}ms`);

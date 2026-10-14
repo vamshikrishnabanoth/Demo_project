@@ -386,10 +386,10 @@ if (socket.connected) {
 
             socket.emit('end_quiz', quiz.id);
 
-            // Safety fallback: Navigate after 2.5 seconds max if socket event delayed
+            // Safety fallback: Navigate after 20 seconds max if socket event delayed
             setTimeout(() => {
                 goToAnalytics();
-            }, 2500);
+            }, 20000);
         }
     };
 
@@ -398,10 +398,12 @@ if (socket.connected) {
         if (quiz && currentQuestion < quiz.questions.length - 1) {
             isTransitioning.current = true;
             const nextIdx = currentQuestion + 1;
+            // Optimistic UI update so teacher dashboard immediately advances without network latency
+            setCurrentQuestion(nextIdx);
             socket.emit('change_question', { quizId: quiz.id, questionIndex: nextIdx });
             setTimeout(() => {
                 isTransitioning.current = false;
-            }, 1000);
+            }, 500);
         }
     };
 
@@ -425,11 +427,12 @@ if (socket.connected) {
 
             if (targetIdx !== -1) {
                 isTransitioning.current = true;
+                setCurrentQuestion(targetIdx);
                 socket.emit('change_question', { quizId: quiz.id, questionIndex: targetIdx });
                 toast.success(`Rolling back to skipped Question ${targetIdx + 1}`);
                 setTimeout(() => {
                     isTransitioning.current = false;
-                }, 1000);
+                }, 500);
             } else {
                 toast.error("No skipped questions found in past timeline.");
             }
