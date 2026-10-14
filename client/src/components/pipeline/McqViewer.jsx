@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bot, CheckCircle2, ChevronRight, Sparkles, HelpCircle, Award } from 'lucide-react';
+import FormattedQuestionText from '../quiz/FormattedQuestionText';
 
 export default function McqViewer({ questions = [], activeTarget = null, targetResults = [] }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -93,14 +94,16 @@ export default function McqViewer({ questions = [], activeTarget = null, targetR
             </div>
           </div>
 
-          {/* Stem */}
+          {/* Stem — now using FormattedQuestionText for code block support */}
           <div className="space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
               Question Stem
             </span>
-            <p className="text-sm font-bold text-slate-900 leading-relaxed font-sans select-text">
-              {activeQ.questionText || activeQ.question || activeQ.prompt_text}
-            </p>
+            <FormattedQuestionText
+              questionText={activeQ.questionText || activeQ.question || activeQ.prompt_text || ''}
+              textClassName="text-sm font-bold text-slate-900 leading-relaxed font-sans select-text"
+              showBadge={true}
+            />
           </div>
 
           {/* Options */}
