@@ -59,13 +59,15 @@ export default function AdaptiveQuestionContainer({ questionText = '' }) {
         if (hasMath) {
             loadKaTeX().then(() => {
                 setKatexLoaded(true);
+            }).catch((err) => {
+                console.warn('KaTeX CDN loading failed, math will display as plain text:', err);
             });
         }
     }, [hasMath]);
 
     // Render formulas after loading
     useEffect(() => {
-        if (katexLoaded && containerRef.current) {
+        if (katexLoaded && containerRef.current && window.renderMathInElement) {
             try {
                 window.renderMathInElement(containerRef.current, {
                     delimiters: [
@@ -77,7 +79,7 @@ export default function AdaptiveQuestionContainer({ questionText = '' }) {
                     throwOnError: false
                 });
             } catch (err) {
-                console.error('KaTeX rendering error:', err);
+                console.warn('KaTeX rendering error (non-fatal):', err);
             }
         }
     }, [katexLoaded, questionText]);

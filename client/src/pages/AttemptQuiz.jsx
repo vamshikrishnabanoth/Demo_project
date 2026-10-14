@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import SubmissionSequence from '../components/quiz/SubmissionSequence';
 import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
+import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import { showError, showSuccess } from '../utils/alerts';
 import useExamProctoring from '../hooks/useExamProctoring';
 import throttle from '../utils/throttle';
@@ -1240,40 +1241,40 @@ export default function AttemptQuiz() {
                     You are offline — progress saved locally. Submissions paused until reconnected.
                 </div>
             )}
-            <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky z-[var(--z-header)] top-0 shadow-xs" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
-                <div className="flex items-center gap-4">
+            <header className="bg-white border-b border-slate-200 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between sticky z-[var(--z-header)] top-0 shadow-xs" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
+                <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-shrink">
                     <button
                         onClick={() => navigate('/student-dashboard')}
-                        className="p-2 hover:bg-slate-100 rounded-lg text-[#0f172a] transition-colors"
+                        className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg text-[#0f172a] transition-colors flex-shrink-0"
                         style={{ color: '#0f172a' }}
                     >
-                        <ChevronLeft size={24} />
+                        <ChevronLeft size={20} />
                     </button>
-                    <div>
-                        <h2 className="font-bold text-[#0f172a] uppercase tracking-tight italic" style={{ color: '#0f172a' }}>{cleanQuizTitle(quiz.title)}</h2>
+                    <div className="min-w-0">
+                        <h2 className="font-bold text-[#0f172a] uppercase tracking-tight italic text-sm sm:text-base truncate" style={{ color: '#0f172a' }}>{cleanQuizTitle(quiz.title)}</h2>
                         <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{currentQuestion + 1} of {quiz.questions.length} Questions {isReviewMode && '• Review Mode'}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                     {timeLeft > 0 && !isReviewMode && !result && (
-                        <div className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1.5 border shadow-sm ${timeLeft < 60 ? 'bg-red-500/20 text-red-600 border-red-500/40 animate-pulse' : 'bg-emerald-500/20 text-emerald-700 border-emerald-500/40'}`}>
-                            <Clock size={14} className={timeLeft < 60 ? 'animate-bounce' : ''} />
+                        <div className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 sm:gap-1.5 border shadow-sm ${timeLeft < 60 ? 'bg-red-500/20 text-red-600 border-red-500/40 animate-pulse' : 'bg-emerald-500/20 text-emerald-700 border-emerald-500/40'}`}>
+                            <Clock size={14} className={`flex-shrink-0 ${timeLeft < 60 ? 'animate-bounce' : ''}`} />
                             <span>{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
                         </div>
                     )}
                     {isReviewMode && (
-                        <div className="bg-[#0f172a] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest italic">
+                        <div className="hidden sm:block bg-[#0f172a] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest italic">
                             Yield: {result.score} / {result.maxPossibleScore || (result.totalQuestions * 10)}
                         </div>
                     )}
-                    <div className="w-48 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="hidden sm:block w-32 md:w-48 h-2 bg-slate-200 rounded-full overflow-hidden">
                         <div
                             className="h-full transition-all duration-300 bg-[#0f172a]"
                             style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
                         />
                     </div>
                     {/* Visual Progress Dots */}
-                    <div className="hidden md:flex items-center gap-1">
+                    <div className="hidden lg:flex items-center gap-1">
                         {quiz.questions.map((_, idx) => (
                             <div
                                 key={`prog-${idx}`}
@@ -1285,12 +1286,12 @@ export default function AttemptQuiz() {
                     {(result || isReviewMode) && (
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-1.5 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap ml-2"
+                            className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-[10px] sm:text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap ml-1 sm:ml-2"
                             aria-label="Log out"
                             title="Log out"
                         >
                             <LogOut size={15} />
-                            <span>Logout</span>
+                            <span className="hidden sm:inline">Logout</span>
                         </button>
                     )}
                 </div>
@@ -1310,8 +1311,8 @@ export default function AttemptQuiz() {
                 </div>
             )}
 
-            <main className="flex-1 flex flex-col items-center justify-start p-6 pb-24 relative bg-slate-50">
-                <div className="max-w-2xl w-full">
+            <main className="flex-1 flex flex-col items-center justify-start p-3 sm:p-6 pb-24 relative bg-slate-50">
+                <div className="max-w-3xl w-full">
                     {isReviewMode && (
                         <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 border ${questionResult?.isCorrect
                             ? 'bg-emerald-100 border-emerald-400 text-emerald-800'
@@ -1361,7 +1362,7 @@ export default function AttemptQuiz() {
                         </div>
                     )}
 
-                    <div className="bg-white border-2 border-slate-200 rounded-[3rem] shadow-xl p-8 md:p-12 mb-8 relative overflow-visible" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
+                    <div className="bg-white border-2 border-slate-200 rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 md:p-10 mb-6 sm:mb-8 relative overflow-visible" style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0' }}>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-slate-100 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
                         
                         <div className="flex items-center justify-between mb-8 flex-wrap gap-4 relative z-10">
@@ -1401,7 +1402,7 @@ export default function AttemptQuiz() {
                                 />
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                            <div className={`grid gap-3 sm:gap-4 relative z-10 ${question.options.every(o => o.length < 40) ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
                                 {question.options.map((option, idx) => {
                                     const isSelected = answers[currentQuestion] === option;
                                     const isCorrect = questionResult?.correctOption === option;
@@ -1454,12 +1455,12 @@ export default function AttemptQuiz() {
                                                 opacity: answers[currentQuestion] && !isSelected && !isReviewMode ? 0.75 : 1
                                             }}
                                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                                            className={`relative min-h-[5.5rem] md:min-h-[6.5rem] h-auto text-left px-6 py-5 rounded-2xl transition-all duration-300 flex items-center gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
+                                            className={`relative min-h-[3.5rem] sm:min-h-[4.5rem] h-auto text-left px-4 sm:px-6 py-3 sm:py-5 rounded-xl sm:rounded-2xl transition-all duration-300 flex items-start gap-3 sm:gap-4 group ${containerClass} disabled:cursor-not-allowed cursor-pointer`}
                                         >
-                                            <div className={`flex-shrink-0 p-3 rounded-xl transition-transform group-hover:scale-110 ${isSelected && !isReviewMode ? 'bg-amber-500 text-white shadow-xs' : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
-                                                <ShapeIcon size={24} fill={shapeFill} strokeWidth={0} />
+                                            <div className={`flex-shrink-0 p-2 sm:p-3 rounded-lg sm:rounded-xl transition-transform group-hover:scale-110 mt-0.5 ${isSelected && !isReviewMode ? 'bg-amber-500 text-white shadow-xs' : isReviewMode && (isCorrect || (isSelected && !isCorrect)) ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#0f172a] border border-slate-200'}`}>
+                                                <ShapeIcon size={20} fill={shapeFill} strokeWidth={0} />
                                             </div>
-                                            <span className="text-base md:text-lg font-black italic uppercase tracking-tight leading-snug break-words whitespace-normal min-w-0 flex-1" style={{ color: textColor }}>
+                                            <span className="text-sm sm:text-base font-bold leading-relaxed break-words whitespace-pre-wrap min-w-0 flex-1 select-text" style={{ color: textColor }}>
                                                 {option}
                                             </span>
 
@@ -1491,11 +1492,11 @@ export default function AttemptQuiz() {
                         )}
 
                         {isReviewMode && !questionResult?.isCorrect && (
-                            <div className="mt-8 p-4 bg-emerald-100 border border-emerald-300 rounded-2xl flex items-center gap-4 text-emerald-900">
-                                <CheckCircle size={20} className="text-emerald-700" />
-                                <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-800 mb-1">TACTICAL SOLUTION</p>
-                                    <p className="text-lg font-black italic uppercase tracking-tight leading-none text-emerald-950">{questionResult?.correctOption}</p>
+                            <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-emerald-100 border border-emerald-300 rounded-xl sm:rounded-2xl flex items-start gap-3 sm:gap-4 text-emerald-900">
+                                <CheckCircle size={20} className="text-emerald-700 flex-shrink-0 mt-0.5" />
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-800 mb-1">CORRECT ANSWER</p>
+                                    <p className="text-sm sm:text-base font-bold leading-relaxed text-emerald-950 break-words whitespace-pre-wrap">{questionResult?.correctOption}</p>
                                 </div>
                             </div>
                         )}
@@ -1507,14 +1508,14 @@ export default function AttemptQuiz() {
 
                         {/* Live mode: after submitting show Next Question button */}
                         {quiz?.isLive && answeredQuestions.has(currentQuestion) && !isLastQuestion ? (
-                            <div className="px-8 py-4 bg-slate-100 border-2 border-slate-300 rounded-2xl text-[#0f172a] font-black italic uppercase tracking-widest text-[11px] shadow-xs">
+                            <div className="px-4 sm:px-8 py-3 sm:py-4 bg-slate-100 border-2 border-slate-300 rounded-xl sm:rounded-2xl text-[#0f172a] font-black italic uppercase tracking-widest text-[10px] sm:text-[11px] shadow-xs text-center">
                                 Awaiting Tactical Commands...
                             </div>
                         ) : isLastQuestion ? (
                             isReviewMode ? (
                                 <button
                                     onClick={() => setIsReviewMode(false)}
-                                    className="flex items-center gap-3 bg-[#0f172a] text-white px-10 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
+                                    className="flex items-center gap-2 sm:gap-3 bg-[#0f172a] text-white px-5 sm:px-10 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-black italic uppercase tracking-tighter text-sm hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
                                 >
                                     <Home size={20} /> Terminate Review
                                 </button>
@@ -1522,7 +1523,7 @@ export default function AttemptQuiz() {
                                 <button
                                     onClick={quiz?.isLive ? handleSingleQuestionSubmit : submitQuiz}
                                     disabled={submitting || !answers[currentQuestion] || (!isOnline && quiz?.isLive)}
-                                    className="flex items-center gap-3 bg-[#0f172a] text-white px-10 py-4 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-slate-800 transition shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    className="flex items-center gap-2 sm:gap-3 bg-[#0f172a] text-white px-5 sm:px-10 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-black italic uppercase tracking-tighter text-sm hover:bg-slate-800 transition shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                 >
                                     {submitting ? <Loader2 className="animate-spin" size={20} /> : (!isOnline && quiz?.isLive) ? <WifiOff size={20} /> : <Send size={20} />}
                                     {submitting ? 'Transmitting...' : (!isOnline && quiz?.isLive) ? 'Link Severed' : (quiz?.isLive ? 'Submit Sequence' : 'Finalize Mission')}
@@ -1551,7 +1552,7 @@ export default function AttemptQuiz() {
                                 <button
                                     onClick={handleSingleQuestionSubmit}
                                     disabled={isWaiting || !answers[currentQuestion] || (!isOnline && quiz?.isLive)}
-                                    className="flex items-center gap-3 px-10 py-5 rounded-2xl font-black italic uppercase tracking-tighter hover:bg-slate-800 transition shadow-xl active:scale-95 disabled:opacity-50 bg-[#0f172a] text-white cursor-pointer disabled:cursor-not-allowed"
+                                    className="flex items-center gap-2 sm:gap-3 px-5 sm:px-10 py-3 sm:py-5 rounded-xl sm:rounded-2xl font-black italic uppercase tracking-tighter text-sm hover:bg-slate-800 transition shadow-xl active:scale-95 disabled:opacity-50 bg-[#0f172a] text-white cursor-pointer disabled:cursor-not-allowed"
                                 >
                                     {!isOnline && quiz?.isLive ? <><WifiOff size={24} /> Link Severed</> : <>Initiate Submission <Send size={20} /></>}
                                 </button>
@@ -1578,9 +1579,13 @@ export default function AttemptQuiz() {
                                 </div>
                             </div>
 
-                            <div className="bg-indigo-50 rounded-2xl p-6 mb-6">
-                                <h3 className="text-lg font-bold text-gray-900 mb-4">{newQuestionNotification.question.questionText}</h3>
-                                <div className="space-y-3">
+                            <div className="bg-indigo-50 rounded-2xl p-4 sm:p-6 mb-6">
+                                <FormattedQuestionText
+                                    questionText={newQuestionNotification.question.questionText}
+                                    textClassName="text-base font-bold text-gray-900 leading-relaxed"
+                                    showBadge={true}
+                                />
+                                <div className="space-y-3 mt-4">
                                     {newQuestionNotification.question.options.map((option, idx) => (
                                         <button
                                             key={idx}
@@ -1598,7 +1603,7 @@ export default function AttemptQuiz() {
                                                 setShowNewQuestionModal(false);
                                                 showSuccess('Success', `Answer submitted: ${option}`);
                                             }}
-                                            className="w-full text-left p-4 rounded-xl border-2 border-indigo-200 hover:border-indigo-600 hover:bg-indigo-50 transition-all font-medium text-gray-700"
+                                            className="w-full text-left p-4 rounded-xl border-2 border-indigo-200 hover:border-indigo-600 hover:bg-indigo-50 transition-all font-medium text-gray-700 break-words whitespace-pre-wrap"
                                         >
                                             {option}
                                         </button>

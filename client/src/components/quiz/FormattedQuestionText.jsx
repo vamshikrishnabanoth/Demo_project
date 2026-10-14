@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Terminal, Database, FileCode, Layers, Copy, Check, Maximize2, Minimize2, ChevronRight } from 'lucide-react';
+import { Terminal, Database, FileCode, Layers, Copy, Check, Maximize2, Minimize2, ChevronRight, ImageOff } from 'lucide-react';
 import { parseQuestionContent } from '../../utils/questionFormatter';
 
 const getLangIcon = (lang) => {
@@ -18,6 +18,132 @@ const getLangIcon = (lang) => {
             return Terminal;
     }
 };
+
+/**
+ * Safely renders text with basic formatting support:
+ * - **bold**, *italic*, `inline code`
+ * - Markdown images: ![alt](url)
+ * - Line breaks preserved via whitespace-pre-wrap
+ * Does NOT use dangerouslySetInnerHTML — all content is React elements.
+ */
+function SafeRichText({ content, className = '' }) {
+    if (!content) return null;
+
+    // Split by markdown images first
+    const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = imageRegex.exec(content)) !== null) {
+        if (match.index > lastIndex) {
+            parts.push({ type: 'text', content: content.slice(lastIndex, match.index) });
+        }
+        parts.push({ type: 'image', alt: match[1], src: match[2] });
+        lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < content.length) {
+        parts.push({ type: 'text', content: content.slice(lastIndex) });
+    }
+
+    return (
+        <div className={className}>
+            {parts.map((part, i) => {
+                if (part.type === 'image') {
+                    return <QuestionImage key={i} src={part.src} alt={part.alt} />;
+                }
+                return <FormattedTextSpan key={i} text={part.content} />;
+            })}
+        </div>
+    );
+}
+
+/**
+ * Renders inline formatting: **bold**, *italic*, `code`
+ * Safe — no HTML injection.
+ */
+function FormattedTextSpan({ text }) {
+    if (!text) return null;
+    
+    // Process inline formatting tokens
+    const tokens = [];
+    // Combined regex for **bold**, *italic*, and `code`
+    const inlineRegex = /(\*\*(.+?)\*\*|\*(.+?)\*|`([^`]+)`)/g;
+    let lastIdx = 0;
+    let m;
+
+    while ((m = inlineRegex.exec(text)) !== null) {
+        if (m.index > lastIdx) {
+            tokens.push({ type: 'plain', content: text.slice(lastIdx, m.index) });
+        }
+        if (m[2]) {
+            tokens.push({ type: 'bold', content: m[2] });
+        } else if (m[3]) {
+            tokens.push({ type: 'italic', content: m[3] });
+        } else if (m[4]) {
+            tokens.push({ type: 'inlineCode', content: m[4] });
+        }
+        lastIdx = m.index + m[0].length;
+    }
+    if (lastIdx < text.length) {
+        tokens.push({ type: 'plain', content: text.slice(lastIdx) });
+    }
+
+    if (tokens.length === 0) {
+        return <span>{text}</span>;
+    }
+
+    return (
+        <>
+            {tokens.map((token, i) => {
+                switch (token.type) {
+                    case 'bold':
+                        return <strong key={i} className="font-bold">{token.content}</strong>;
+                    case 'italic':
+                        return <em key={i}>{token.content}</em>;
+                    case 'inlineCode':
+                        return (
+                            <code key={i} className="px-1.5 py-0.5 bg-slate-100 text-rose-600 rounded text-[0.85em] font-mono border border-slate-200">
+                                {token.content}
+                            </code>
+                        );
+                    default:
+                        return <span key={i}>{token.content}</span>;
+                }
+            })}
+        </>
+    );
+}
+
+/**
+ * Image component with loading state and error fallback.
+ */
+function QuestionImage({ src, alt }) {
+    const [error, setError] = useState(false);
+
+    if (error) {
+        return (
+            <div className="my-4 flex items-center gap-3 p-4 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 text-sm">
+                <ImageOff size={20} className="flex-shrink-0 text-slate-400" />
+                <span>Image could not be loaded{alt ? `: ${alt}` : ''}</span>
+            </div>
+        );
+    }
+
+    return (
+        <div className="my-4 max-w-full">
+            <img
+                src={src}
+                alt={alt || 'Question image'}
+                onError={() => setError(true)}
+                className="max-w-full h-auto rounded-xl border border-slate-200 shadow-sm"
+                style={{ maxHeight: '400px', objectFit: 'contain' }}
+                loading="lazy"
+            />
+            {alt && <p className="text-xs text-slate-500 mt-1 italic">{alt}</p>}
+        </div>
+    );
+}
 
 export default function FormattedQuestionText({
     questionText = '',
@@ -54,13 +180,13 @@ export default function FormattedQuestionText({
                         <React.Fragment key={idx}>
                             {/* Standard In-Page Code Container */}
                             <div 
-                                className={`my-4 relative rounded-2xl overflow-hidden border ${
+                                className={`my-3 sm:my-4 relative rounded-xl sm:rounded-2xl overflow-hidden border ${
                                     dark ? 'border-slate-800 bg-[#090d16]' : 'border-slate-800 bg-[#0f172a]'
                                 } shadow-xl text-left select-text group transition-all w-full max-w-full code-scroll-fade`}
                             >
                                 {/* Code Header Bar */}
                                 {showBadge && (
-                                    <div className="flex items-center justify-between px-4 py-2 bg-slate-900/90 border-b border-slate-800 text-[10px] font-black uppercase tracking-widest text-cyan-400 select-none">
+                                    <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-slate-900/90 border-b border-slate-800 text-[10px] font-black uppercase tracking-widest text-cyan-400 select-none">
                                         <div className="flex items-center gap-2">
                                             <LangIcon size={14} className="text-cyan-400 shrink-0" />
                                             <span>{langLabel}</span>
@@ -69,7 +195,7 @@ export default function FormattedQuestionText({
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2 sm:gap-3">
                                             {/* Mobile Scroll Visual Hint */}
                                             <div className="hidden sm:flex md:hidden items-center gap-1 opacity-50 text-[9px] font-mono text-slate-400">
                                                 <span>Scroll</span>
@@ -80,18 +206,18 @@ export default function FormattedQuestionText({
                                             <button
                                                 type="button"
                                                 onClick={() => handleCopy(segment.content, idx)}
-                                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-all text-[9px] font-bold font-mono border border-cyan-500 cursor-pointer active:scale-95 shadow-sm"
+                                                className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white transition-all text-[9px] font-bold font-mono border border-cyan-500 cursor-pointer active:scale-95 shadow-sm"
                                                 title="Copy Code"
                                             >
                                                 {copiedIdx === idx ? (
                                                     <>
                                                         <Check size={12} className="text-white shrink-0" />
-                                                        <span className="text-white">COPIED</span>
+                                                        <span className="text-white hidden sm:inline">COPIED</span>
                                                     </>
                                                 ) : (
                                                     <>
                                                         <Copy size={12} className="text-white shrink-0" />
-                                                        <span className="text-white">COPY</span>
+                                                        <span className="text-white hidden sm:inline">COPY</span>
                                                     </>
                                                 )}
                                             </button>
@@ -100,7 +226,7 @@ export default function FormattedQuestionText({
                                             <button
                                                 type="button"
                                                 onClick={() => setExpandedIdx(isExpanded ? null : idx)}
-                                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-all text-[9px] font-bold font-mono border border-indigo-500 cursor-pointer active:scale-95 shadow-sm"
+                                                className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-all text-[9px] font-bold font-mono border border-indigo-500 cursor-pointer active:scale-95 shadow-sm"
                                                 title="Toggle Fullscreen View"
                                             >
                                                 <Maximize2 size={12} className="text-white shrink-0" />
@@ -112,7 +238,7 @@ export default function FormattedQuestionText({
 
                                 {/* Main Code Block with Left Gutter Line Numbers */}
                                 <div className="relative overflow-x-auto w-full max-w-full">
-                                    <pre className={`question-code p-4 md:p-5 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto text-slate-100 bg-transparent whitespace-pre select-text ${codeClassName}`}>
+                                    <pre className={`question-code p-3 sm:p-4 md:p-5 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto text-slate-100 bg-transparent whitespace-pre select-text ${codeClassName}`}>
                                         <code className="font-mono whitespace-pre text-cyan-300 block code-line-table">
                                             {lines.map((lineStr, lineIdx) => (
                                                 <div key={lineIdx} className="code-line-row">
@@ -177,16 +303,18 @@ export default function FormattedQuestionText({
                     );
                 }
 
-                // Text / Scenario / Normal Question Segment
+                // Text / Scenario / Normal Question Segment — with safe rich text rendering
                 return (
-                    <div 
+                    <SafeRichText
                         key={idx}
+                        content={segment.content}
                         className={`whitespace-pre-wrap break-words leading-relaxed select-text ${textClassName}`}
-                    >
-                        {segment.content}
-                    </div>
+                    />
                 );
             })}
         </div>
     );
 }
+
+// Export for reuse in other components
+export { SafeRichText, QuestionImage };

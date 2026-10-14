@@ -3094,3 +3094,97 @@ input.global-search-input:focus,
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
 }
+
+/* ─── QUIZ QUESTION RESPONSIVE SAFEGUARDS ───────────────────────────────── */
+
+/* Prevent any question content from causing page-level horizontal scroll */
+.formatted-question-container {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Responsive tables inside questions — wrap in scrollable container */
+.formatted-question-container table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin: 0.75rem 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+}
+
+.formatted-question-container th,
+.formatted-question-container td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.formatted-question-container th {
+  background: #f8fafc;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #475569;
+}
+
+/* Responsive images inside questions */
+.formatted-question-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+
+/* Inline code in question text */
+.formatted-question-container code:not(.code-line-table code) {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+}
+
+/* Long URLs and words in questions */
+.formatted-question-container a,
+.formatted-question-container span {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ─── QUIZ MOBILE RESPONSIVE OVERRIDES ──────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Tighter code blocks on small screens */
+  .question-code {
+    font-size: 0.6875rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .code-line-number {
+    padding-right: 0.5rem;
+    min-width: 1.5rem;
+    font-size: 0.6875rem;
+  }
+
+  .code-line-content {
+    padding-left: 0.5rem;
+  }
+
+  /* Ensure code scroll fade doesn't eat too much space */
+  .code-scroll-fade::after {
+    width: 12px;
+  }
+}
+
+/* ─── QUIZ OPTION ACCESSIBILITY ─────────────────────────────────────────── */
+/* Ensure disabled option buttons remain visually distinguishable */
+button:disabled .option-shape-icon {
+  opacity: 0.5;
+}
+
+/* Ensure option text preserves special characters and code-like content */
+.quiz-option-text {
+  font-variant-ligatures: none;
+  -webkit-font-variant-ligatures: none;
+  text-rendering: optimizeLegibility;
+}
