@@ -240,6 +240,7 @@ class EvidencePackager {
         }
       }
       packageData.multimodalStore = packageData.hierarchicalStore;
+      packageData.hasRealTimestamps = Boolean(packageData.hierarchicalStore?.children?.some(c => c.hasRealTimestamps));
       packageData.alignmentGraph = CrossMaterialAligner.buildAlignmentGraph(packageData.hierarchicalStore);
       // Step 2: Build Lightweight In-Memory Concept-Evidence Graph (preserving all provenance and evidence fields)
       packageData.conceptEvidenceGraph = this._buildConceptEvidenceGraph(voiceText, effectiveDocTexts, unalignedDocs, primaryAnalysis, exactArtifacts);

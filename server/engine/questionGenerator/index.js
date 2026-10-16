@@ -46,31 +46,40 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
       let parseRepairApplied = false;
       let unicodeNormalized = false;
 
-      // Circuit Breaker / Fallback Guard: If broken or offline, route directly to MockAdapter
+      // Circuit Breaker / Fallback Guard: If broken or offline, route directly to MockAdapter ONLY in test/mock mode
+      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' || process.env.NODE_ENV === 'test';
       if (circuitBreaker.isBroken()) {
-        console.warn(`[GENERATOR_FALLBACK] Circuit breaker is OPEN for ${slotId}. Using MockAdapter fallback.`);
-        try {
-          const mockRes = await mockAdapter.generate(slotPayload);
-          const parsedMock = JSON.parse(mockRes.rawText);
-          const mockVal = validateParsedMCQSchema(parsedMock);
+        if (isMockAllowed) {
+          console.warn(`[GENERATOR_FALLBACK] Circuit breaker is OPEN for ${slotId}. Using MockAdapter fallback in test/mock mode.`);
+          try {
+            const mockRes = await mockAdapter.generate(slotPayload);
+            const parsedMock = JSON.parse(mockRes.rawText);
+            const mockVal = validateParsedMCQSchema(parsedMock);
 
-          if (mockVal.isValid) {
-            const item = assembleCandidateItem({
-              slotPayload,
-              validatedSchema: mockVal,
-              llmResponse: { rawText: mockRes.rawText, latencyMs: 50, model: "mock-fallback" },
-              attempts: 1,
-              retryHistory: [],
-              parseRepairApplied: false,
-              unicodeNormalized: false,
-              reqId
-            });
-            candidateItems.push(item);
-            return;
+            if (mockVal.isValid) {
+              const item = assembleCandidateItem({
+                slotPayload,
+                validatedSchema: mockVal,
+                llmResponse: { rawText: mockRes.rawText, latencyMs: 50, model: "mock-fallback" },
+                attempts: 1,
+                retryHistory: [],
+                parseRepairApplied: false,
+                unicodeNormalized: false,
+                reqId
+              });
+              candidateItems.push(item);
+              return;
+            }
+          } catch (mockErr) {
+            console.error(`[GENERATOR_FALLBACK] Mock adapter error for ${slotId}:`, mockErr.message);
           }
-        } catch (mockErr) {
-          console.error(`[GENERATOR_FALLBACK] Mock adapter error for ${slotId}:`, mockErr.message);
         }
+        failedSlots.push({
+          slotId,
+          reason: 'CIRCUIT_BREAKER_OPEN',
+          attempts: 0
+        });
+        return;
       }
 
       while (attempts <= GENERATOR_CONFIG.MAX_RETRIES_PER_SLOT) {
@@ -148,29 +157,31 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
             retriesPerformed++;
             await waitWithJitter(attempts);
           } else {
-            // Primary provider failed; route slot to MockAdapter fallback so pipeline delivers valid questions
-            console.warn(`[GENERATOR_FALLBACK] Slot ${slotId} primary dispatch failed. Triggering MockAdapter fallback.`);
-            try {
-              const mockRes = await mockAdapter.generate(slotPayload);
-              const parsedMock = JSON.parse(mockRes.rawText);
-              const mockVal = validateParsedMCQSchema(parsedMock);
+            // Primary provider failed; route slot to MockAdapter fallback ONLY in test/mock mode
+            if (isMockAllowed) {
+              console.warn(`[GENERATOR_FALLBACK] Slot ${slotId} primary dispatch failed. Triggering MockAdapter fallback in test/mock mode.`);
+              try {
+                const mockRes = await mockAdapter.generate(slotPayload);
+                const parsedMock = JSON.parse(mockRes.rawText);
+                const mockVal = validateParsedMCQSchema(parsedMock);
 
-              if (mockVal.isValid) {
-                const item = assembleCandidateItem({
-                  slotPayload,
-                  validatedSchema: mockVal,
-                  llmResponse: { rawText: mockRes.rawText, latencyMs: 50, model: "mock-fallback" },
-                  attempts,
-                  retryHistory,
-                  parseRepairApplied: false,
-                  unicodeNormalized: false,
-                  reqId
-                });
-                candidateItems.push(item);
-                return;
+                if (mockVal.isValid) {
+                  const item = assembleCandidateItem({
+                    slotPayload,
+                    validatedSchema: mockVal,
+                    llmResponse: { rawText: mockRes.rawText, latencyMs: 50, model: "mock-fallback" },
+                    attempts,
+                    retryHistory,
+                    parseRepairApplied: false,
+                    unicodeNormalized: false,
+                    reqId
+                  });
+                  candidateItems.push(item);
+                  return;
+                }
+              } catch (fallbackErr) {
+                console.error(`[GENERATOR_FALLBACK] Mock fallback failed for ${slotId}:`, fallbackErr.message);
               }
-            } catch (fallbackErr) {
-              console.error(`[GENERATOR_FALLBACK] Mock fallback failed for ${slotId}:`, fallbackErr.message);
             }
 
             failedSlots.push({

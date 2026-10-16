@@ -214,6 +214,183 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
   return parts.join('\n\n');
 }
 
+/**
+ * Format seconds into mm:ss
+ */
+function formatTs(seconds) {
+  if (typeof seconds !== 'number' || isNaN(seconds) || seconds < 0) return '00:00';
+  const total = Math.floor(seconds);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+/**
+ * Resolves and strictly verifies the genuine evidence provenance for an assessment target / question.
+ * Safeguard 3: Checks all supporting chunk IDs against the active evidence store.
+ * Safeguard 4: Sets VOICE + DOCUMENT only when an actual, validated relationship exists.
+ *
+ * @param {Object} target - AssessmentTarget
+ * @param {Object} evidencePackage - Session evidence package
+ * @param {Object} [evalResult] - Agent 3 evaluation result
+ * @returns {Object} Provenance metadata
+ */
+function resolveTargetProvenance(target = {}, evidencePackage = null, evalResult = null) {
+  const activeStore = evidencePackage?.multimodalStore || evidencePackage?.hierarchicalStore;
+  const targetId = target.targetId || target.target_id || 'T_UNKNOWN';
+
+  if (!activeStore || !Array.isArray(activeStore.children) || activeStore.children.length === 0) {
+    return {
+      targetId,
+      supportingChunks: [],
+      parentChunks: [],
+      timeSpan: null,
+      hasRealTimestamps: false,
+      sourceOrigin: 'VOICE',
+      isEvidenceVerified: false,
+      verificationStatus: 'UNVERIFIED_NO_STORE'
+    };
+  }
+
+  // 1. Identify matched evidence children from the active store
+  let matchedChildren = [];
+  try {
+    const candidates = HybridRetriever.retrieveForTarget(activeStore, target, { topK: 3 });
+    if (candidates && candidates.length > 0) {
+      matchedChildren = candidates.map(c => c.child).filter(Boolean);
+    }
+  } catch (_) {}
+
+  if (matchedChildren.length === 0) {
+    try {
+      const hierRetrieved = HierarchicalRetriever.retrieveForTarget(activeStore, target, 2);
+      if (hierRetrieved && Array.isArray(hierRetrieved.matchedChildIds)) {
+        matchedChildren = hierRetrieved.matchedChildIds
+          .map(cid => activeStore.childMap?.[cid])
+          .filter(Boolean);
+      }
+    } catch (_) {}
+  }
+
+  // Check if target specified explicit sourceChunks that are missing from active store
+  const hasExplicitSourceChunks = Array.isArray(target.sourceChunks) && target.sourceChunks.length > 0;
+  const invalidSourceChunks = hasExplicitSourceChunks
+    ? target.sourceChunks.filter(cid => !activeStore.childMap?.[cid])
+    : [];
+
+  // Fallback to target's existing sourceChunks if valid
+  if (matchedChildren.length === 0 && hasExplicitSourceChunks) {
+    matchedChildren = target.sourceChunks
+      .map(cid => activeStore.childMap?.[cid])
+      .filter(Boolean);
+  }
+
+  // If still no specific match, bind to the most representative child in store ONLY if no explicit invalid chunks were passed
+  if (matchedChildren.length === 0 && activeStore.children.length > 0 && invalidSourceChunks.length === 0) {
+    const phase = String(target.trajectoryPhase || 'MID').toUpperCase();
+    const cCount = activeStore.children.length;
+    let fallbackIdx = Math.floor(cCount / 2);
+    if (phase === 'EARLY') fallbackIdx = 0;
+    else if (phase === 'LATE') fallbackIdx = Math.max(0, cCount - 1);
+    matchedChildren = [activeStore.children[fallbackIdx]];
+  }
+
+  const supportingChunks = Array.from(new Set(matchedChildren.map(c => c.evidenceId).filter(Boolean)));
+  const parentChunks = Array.from(new Set(matchedChildren.map(c => c.parentId).filter(Boolean)));
+
+  // 2. Strict Provenance Verification against Active Store (Safeguard 3)
+  const allChunksValid = supportingChunks.length > 0 && invalidSourceChunks.length === 0 &&
+    supportingChunks.every(id => {
+      const child = activeStore.childMap?.[id];
+      return Boolean(child && typeof child.text === 'string' && child.text.length > 0);
+    });
+
+  const isEvidenceVerified = allChunksValid;
+  const verificationStatus = isEvidenceVerified
+    ? 'VERIFIED_AGAINST_STORE'
+    : (invalidSourceChunks.length > 0 ? 'UNVERIFIED_INVALID_CHUNK_REFERENCE' : (supportingChunks.length === 0 ? 'UNVERIFIED_NO_CHUNKS' : 'UNVERIFIED_INVALID_CHUNK_REFERENCE'));
+
+  // 3. Genuine Whisper Timestamp Propagation (Safeguard 2: null when unavailable, not fake timing)
+  const getChildStart = c => typeof c?.start === 'number' ? c.start : (typeof c?.timeSpan?.start === 'number' ? c.timeSpan.start : null);
+  const getChildEnd = c => typeof c?.end === 'number' ? c.end : (typeof c?.timeSpan?.end === 'number' ? c.timeSpan.end : null);
+
+  const timedChildren = matchedChildren.filter(c => {
+    const s = getChildStart(c);
+    const e = getChildEnd(c);
+    const hasTs = Boolean(c?.hasRealTimestamps || c?.timeSpan?.hasRealTimestamps);
+    return hasTs && s !== null && e !== null && !isNaN(s) && !isNaN(e);
+  });
+
+  let timeSpan = null;
+  let hasRealTimestamps = false;
+
+  if (timedChildren.length > 0) {
+    const minStart = Math.min(...timedChildren.map(getChildStart));
+    const maxEnd = Math.max(...timedChildren.map(getChildEnd));
+    timeSpan = {
+      start: minStart,
+      end: maxEnd,
+      formatted: `${formatTs(minStart)} - ${formatTs(maxEnd)}`,
+      hasRealTimestamps: true
+    };
+    hasRealTimestamps = true;
+  }
+
+  // 4. Truthful Modality Attribution (Safeguard 4: Do not overstate alignment)
+  const sessionHasDocs = Boolean(
+    evidencePackage?.hasAlignedDocs ||
+    (Array.isArray(evidencePackage?.documentTexts) && evidencePackage.documentTexts.length > 0) ||
+    activeStore.children.some(c => c.sourceType === 'SLIDE' || c.sourceType === 'CODE')
+  );
+  const sessionHasVoice = Boolean(
+    evidencePackage?.voiceAnalysis ||
+    (typeof evidencePackage?.unifiedRawContent === 'string' && evidencePackage.unifiedRawContent.includes('[VOICE TRANSCRIPT]')) ||
+    activeStore.children.some(c => c.sourceType === 'TRANSCRIPT')
+  );
+
+  const matchedHasVoice = matchedChildren.some(c => c.sourceType === 'TRANSCRIPT');
+  const matchedHasDocs = matchedChildren.some(c => c.sourceType === 'SLIDE' || c.sourceType === 'CODE');
+
+  // Check if cross-material alignment graph links any of these audio chunks to an aligned slide
+  const alignmentGraph = evidencePackage?.alignmentGraph || {};
+  const hasLinkedCrossModalSlide = supportingChunks.some(cid =>
+    Array.isArray(alignmentGraph[cid]) && alignmentGraph[cid].length > 0
+  );
+
+  let sourceOrigin = 'VOICE';
+  if (!sessionHasDocs && sessionHasVoice) {
+    // Pure voice session: 100% voice authority, zero document attribution
+    sourceOrigin = 'VOICE';
+  } else if (!sessionHasVoice && sessionHasDocs) {
+    // Pure document session
+    sourceOrigin = 'DOCUMENT';
+  } else if (sessionHasVoice && sessionHasDocs) {
+    // Mixed session: Only assign 'VOICE + DOCUMENT' if a validated cross-material link exists!
+    const isDocAligned = Boolean(evidencePackage?.hasAlignedDocs && !evidencePackage?.unalignedDocuments?.includes(target.concept));
+    if ((matchedHasVoice && matchedHasDocs) || (matchedHasVoice && hasLinkedCrossModalSlide && isDocAligned)) {
+      sourceOrigin = 'VOICE + DOCUMENT';
+    } else if (matchedHasDocs && !matchedHasVoice) {
+      sourceOrigin = 'DOCUMENT';
+    } else {
+      sourceOrigin = 'VOICE';
+    }
+  }
+
+  return {
+    targetId,
+    supportingChunks,
+    parentChunks,
+    timeSpan,
+    hasRealTimestamps,
+    sourceOrigin,
+    isEvidenceVerified,
+    verificationStatus
+  };
+}
+
 module.exports = {
-  getTargetEvidenceContext
+  getTargetEvidenceContext,
+  resolveTargetProvenance,
+  formatTs
 };
+

@@ -22,10 +22,12 @@ const productionMetrics = require('../../utils/productionMetrics');
 class LLMRouter {
   constructor() {
     this.groqApiKey = process.env.GROQ_API_KEY || null;
+    this.geminiApiKey = process.env.GEMINI_API_KEY || null;
+    this.geminiCooldownUntil = 0;
     this.aiServiceUrl = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
     this.ollamaUrl = process.env.OLLAMA_URL || 'http://127.0.0.1:11434/api/generate';
     this.vllmUrl = process.env.VLLM_URL || null;
-    this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'local_ollama');
+    this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : (process.env.GEMINI_API_KEY ? 'gemini' : 'local_ollama'));
     this.keyCooldowns = new Map();
     this.modelCooldowns = new Map();
     this.invalidKeys = new Set();
@@ -44,6 +46,9 @@ class LLMRouter {
   async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null }) {
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
+    }
+    if (!this.geminiApiKey && process.env.GEMINI_API_KEY) {
+      this.geminiApiKey = process.env.GEMINI_API_KEY;
     }
 
     const errors = [];
@@ -68,18 +73,35 @@ class LLMRouter {
         });
       } catch (err) {
         errors.push(`Groq (${err.message})`);
-        console.warn(`⚠️ [LLMRouter] Groq provider failed: ${err.message}. Trying local AI...`);
+        console.warn(`⚠️ [LLMRouter] Groq provider failed: ${err.message}. Trying Gemini fallback...`);
       }
     }
 
-    // 2. Try Local Ollama / FastAPI AI service
+    // 2. Try Gemini Provider (Cloud Fallback for Groq 429 / failure)
+    if (this.geminiApiKey || process.env.GEMINI_API_KEY) {
+      try {
+        return await this._callGemini({
+          prompt,
+          systemPrompt,
+          temperature,
+          responseFormat,
+          model,
+          sessionId
+        });
+      } catch (err) {
+        errors.push(`Gemini (${err.message})`);
+        console.warn(`⚠️ [LLMRouter] Gemini provider failed: ${err.message}. Trying local AI...`);
+      }
+    }
+
+    // 3. Try Local Ollama / FastAPI AI service
     try {
       return await this._callOllama({ prompt, systemPrompt, temperature, model: model || 'quiz-expert', sessionId });
     } catch (err) {
       errors.push(`Local Ollama (${err.message})`);
     }
 
-    // 3. Try Local vLLM if configured
+    // 4. Try Local vLLM if configured
     if (this.vllmUrl) {
       try {
         return await this._callVLLM({ prompt, systemPrompt, temperature, sessionId });
@@ -88,13 +110,13 @@ class LLMRouter {
       }
     }
 
-    // 4. Check for mock test mode ONLY if explicitly enabled for unit tests
+    // 5. Check for mock test mode ONLY if explicitly enabled for unit tests
     if (process.env.ALLOW_MOCK_FALLBACK === 'true' || process.env.NODE_ENV === 'test') {
       console.warn('⚠️ [LLMRouter] Using test mock fallback because ALLOW_MOCK_FALLBACK is enabled.');
       return this._getMockResponse(prompt, systemPrompt);
     }
 
-    // 5. PRODUCTION SAFETY RULE: No provider -> Fail honestly! NEVER return fabricated mock MCQs!
+    // 6. PRODUCTION SAFETY RULE: No provider -> Fail honestly! NEVER return fabricated mock MCQs!
     const errMsg = `NO_LLM_PROVIDER_AVAILABLE: All AI providers failed [${errors.join('; ')}]. Please verify your API key or try again in a few moments.`;
     console.error(`❌ [LLMRouter] ${errMsg}`);
     const fatalError = new Error(errMsg);
@@ -318,6 +340,108 @@ class LLMRouter {
     throw lastErr || new Error('Configured Groq models failed across all available keys in pool');
   }
 
+  /**
+   * Call Google Gemini API as cloud fallback when Groq hits 429/failures.
+   */
+  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null }) {
+    const apiKey = (this.geminiApiKey || process.env.GEMINI_API_KEY || '').trim();
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY is missing or empty');
+    }
+
+    if (this.geminiCooldownUntil && Date.now() < this.geminiCooldownUntil) {
+      throw new Error(`Gemini provider temporarily in cooldown until ${new Date(this.geminiCooldownUntil).toISOString()}`);
+    }
+
+    let GoogleGenerativeAI;
+    try {
+      GoogleGenerativeAI = require('@google/generative-ai').GoogleGenerativeAI;
+    } catch (e) {
+      throw new Error(`@google/generative-ai SDK not available: ${e.message}`);
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+
+    // Configurable model cascade: allows env override, defaults to gemini-2.5-flash, gemini-1.5-flash then alternatives
+    const candidateModels = Array.from(new Set([
+      process.env.GEMINI_MODEL,
+      model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
+      'gemini-2.5-flash',
+      'gemini-1.5-flash',
+      'gemini-1.5-pro',
+      'gemini-2.0-flash'
+    ].filter(Boolean)));
+
+    let lastErr = null;
+
+    for (const geminiModelName of candidateModels) {
+      try {
+        const modelConfig = {
+          model: geminiModelName,
+          generationConfig: {
+            temperature: typeof temperature === 'number' ? temperature : 0.3
+          }
+        };
+
+        if (responseFormat === 'json') {
+          modelConfig.generationConfig.responseMimeType = 'application/json';
+        }
+
+        if (systemPrompt && typeof systemPrompt === 'string' && systemPrompt.trim()) {
+          modelConfig.systemInstruction = systemPrompt.trim();
+        }
+
+        const generativeModel = genAI.getGenerativeModel(modelConfig);
+
+        const result = await generativeModel.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+
+        if (!text || !text.trim()) {
+          throw new Error('Gemini returned an empty response');
+        }
+
+        productionMetrics.inc('llm_requests_total');
+
+        if (sessionId) {
+          try {
+            const telemetryLedger = require('../observability/telemetryLedger');
+            telemetryLedger.recordCallUsage(sessionId, {
+              prompt,
+              completion: text,
+              model: geminiModelName,
+              provider: 'gemini'
+            });
+          } catch (_) {}
+        }
+
+        return text.trim();
+      } catch (err) {
+        lastErr = err;
+        const msg = err.message || '';
+        const status = err.status || (msg.includes('429') ? 429 : (msg.includes('403') ? 403 : (msg.includes('404') ? 404 : 500)));
+
+        if (status === 429 || msg.includes('RESOURCE_EXHAUSTED')) {
+          this.geminiCooldownUntil = Date.now() + 60000;
+          console.warn(`⚠️ [LLMRouter] Gemini hit rate limit (429). Setting 60s cooldown.`);
+          break; // Don't burn requests across models if key is throttled
+        } else if (status === 403 || msg.includes('PERMISSION_DENIED') || msg.includes('leaked')) {
+          this.geminiCooldownUntil = Date.now() + 3600000; // 1-hour cooldown for invalid/leaked key
+          console.warn(`🚨 [LLMRouter] Gemini authentication error (${msg}). Marking key unavailable.`);
+          break;
+        } else if (status === 404 || msg.includes('not found') || msg.includes('is not supported')) {
+          console.warn(`⚠️ [LLMRouter] Gemini model '${geminiModelName}' not found or unsupported. Trying next candidate model...`);
+          continue;
+        } else {
+          console.warn(`⚠️ [LLMRouter] Gemini call failed for '${geminiModelName}': ${msg}`);
+          continue;
+        }
+      }
+    }
+
+    throw lastErr || new Error('All Gemini candidate models failed');
+  }
+
   /** Call local FastAPI / Ollama backend */
   async _callOllama({ prompt, systemPrompt, temperature, model, sessionId = null }) {
     try {
@@ -434,4 +558,6 @@ class LLMRouter {
   }
 }
 
-module.exports = new LLMRouter();
+const routerInstance = new LLMRouter();
+routerInstance.LLMRouter = LLMRouter;
+module.exports = routerInstance;
