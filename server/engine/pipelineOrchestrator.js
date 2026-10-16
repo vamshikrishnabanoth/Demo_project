@@ -20,6 +20,8 @@ const agent3Evaluator = require('./agents/agent3Evaluator');
 const deterministicValidator = require('./validators/deterministicValidator');
 const groundingGate = require('./validators/groundingGate');
 const DocketPolicy = require('./docketPolicy');
+const evidenceContextSelector = require('./evidence/evidenceContextSelector');
+const lectureIntelligence = require('./intelligence/lectureIntelligence');
 
 class PipelineOrchestrator {
   /**
@@ -85,14 +87,36 @@ class PipelineOrchestrator {
       evidencePackage.sessionId = sessionId;
       const voiceEmphasis = evidencePackage.voiceEmphasis || {};
 
+      const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
+      const hasAlignedDocs = Boolean(evidencePackage.hasAlignedDocs);
+      const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
+
+      // Connect Lecture Intelligence for consistent preview vs production capacity alignment
+      if (!evidencePackage.lectureIntelligence) {
+        try {
+          const rawVoice = sessionInputs.voiceTranscript || '';
+          const rawDocs = (sessionInputs.documentTexts || []).join('\n');
+          const combinedEvidence = evidencePackage.unifiedRawContent || `${rawVoice}\n${rawDocs}`;
+          const timingSegments = sessionInputs.voiceSegments || sessionInputs.segments || null;
+          const hasTiming = Array.isArray(timingSegments) && timingSegments.length > 0;
+          const negBoundaries = evidencePackage.negativeBoundaries || evidencePackage.instructionalProfile?.negativeBoundaries || [];
+
+          evidencePackage.lectureIntelligence = lectureIntelligence.buildPartialFallback({
+            evidenceText: combinedEvidence,
+            modality: sessionInputs.modality || (hasVoice && hasAlignedDocs ? 'UNIFIED' : (hasVoice ? 'VOICE_ONLY' : 'DOCUMENT_ONLY')),
+            hasTimingData: hasTiming,
+            errorReason: 'Deterministic lecture intelligence attached at Stage 02',
+            negativeBoundaries: negBoundaries
+          });
+        } catch (liErr) {
+          console.warn(`[PipelineOrchestrator] Notice attaching lecture intelligence: ${liErr.message}`);
+        }
+      }
+
       // Representation Router Decision (Condition A: Modality Baseline vs Condition B: Adaptive PDI)
       const usePdiRouter = process.env.ROUTER_MODE === 'pdi';
       let representationMode = 'UNIFIED';
       let routerReason = '';
-
-      const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
-      const hasAlignedDocs = Boolean(evidencePackage.hasAlignedDocs);
-      const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
 
       if (evidencePackage.hasExcludedMaterials && !hasAlignedDocs && !hasCode) {
         // Policy C + B: Voice primary authority - all unaligned materials excluded
@@ -158,7 +182,9 @@ class PipelineOrchestrator {
           `Material Authority applied: ${evidencePackage.artifacts?.formulasDetected?.length || 0} formulas detected, Code presence = ${evidencePackage.artifacts?.hasCode}`,
           `PDI Representation Path selected: ${representationMode}`,
           `Hierarchical RAG: ${evidencePackage.hierarchicalStore?.children?.length || 0} children mapped to ${evidencePackage.hierarchicalStore?.parents?.length || 0} parent windows`,
-          `Cross-Material Alignment: ${Object.keys(evidencePackage.alignmentGraph || {}).length} bidirectional cross-modal nodes established`
+          Object.keys(evidencePackage.alignmentGraph || {}).length > 0
+            ? `Cross-Material Alignment: ${Object.keys(evidencePackage.alignmentGraph || {}).length} bidirectional cross-modal nodes established`
+            : `Single-Modality Authority: 100% Spoken Lecture Authority (0 cross-material links)`
         ].filter(Boolean),
         rulesApplied: [
           'Dual-Source Authority Division Rule: Voice rules intent/emphasis, Materials rule exact artifacts',
@@ -195,8 +221,12 @@ class PipelineOrchestrator {
         requestedCount,
         deficitPolicy: sessionInputs.deficitPolicy || evidencePackage.deficitPolicy || null
       });
-      const primaryTargets = [...plan.assessmentTargets];
-      const reservePool = [...(plan.reserveTargets || [])];
+      const primaryTargets = Array.isArray(plan?.assessmentTargets) ? [...plan.assessmentTargets] : [];
+      const reservePool = Array.isArray(plan?.reserveTargets) ? [...plan.reserveTargets] : [];
+
+      if (primaryTargets.length === 0) {
+        throw new Error('INSUFFICIENT_CURRICULAR_TARGETS: No assessment targets could be planned from the session evidence.');
+      }
 
       const hasTcScore = typeof plan.tcScore?.overallScore === 'number';
       const tcCalculations = plan.tcScore?.breakdown || {
@@ -237,7 +267,12 @@ class PipelineOrchestrator {
         output: {
           subject: plan.subject,
           mainTopic: plan.mainTopic,
-          primaryTargetsSummary: primaryTargets.map(t => ({ id: t.targetId, concept: t.concept, dimension: t.dimension })),
+          trajectoryDistribution: {
+            early: primaryTargets.filter(t => t.trajectoryPhase === 'EARLY').length,
+            mid: primaryTargets.filter(t => t.trajectoryPhase === 'MID').length,
+            late: primaryTargets.filter(t => t.trajectoryPhase === 'LATE').length
+          },
+          primaryTargetsSummary: primaryTargets.map(t => ({ id: t.targetId, concept: t.concept, dimension: t.dimension, phase: t.trajectoryPhase })),
           reserveTargetsSummary: reservePool.map(r => ({ id: r.targetId, concept: r.concept }))
         },
         validation: { status: 'PASS', checks: ['AssessmentPlan schema valid', 'Reserve targets generated'] },
@@ -285,9 +320,13 @@ class PipelineOrchestrator {
         const targetStartTime = Date.now();
         const currentQNum = passingQuestions.length + 1;
 
-        // 1. Check for Pre-Identified Capacity Deficits (e.g. definition-only concept requested as Hard)
-        const isPreIdentifiedDeficit = currentTarget.capacityLimitation && 
-          currentTarget.capacityLimitation.status === 'INSUFFICIENT_EVIDENCE_FOR_HARD';
+        // 1. Check for Pre-Identified Capacity Deficits (difficulty deficit or concept capacity deficit)
+        const isPreIdentifiedDeficit = Boolean(
+          currentTarget.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+          currentTarget.isCapacityLimited === true ||
+          (currentTarget.capacityLimitation && 
+            ['INSUFFICIENT_EVIDENCE_FOR_HARD', 'INSUFFICIENT_CURRICULAR_EVIDENCE', 'CAPACITY_DEFICIT'].includes(currentTarget.capacityLimitation.status))
+        );
 
         if (isPreIdentifiedDeficit) {
           totalGenerationAttempts++;
@@ -304,7 +343,7 @@ class PipelineOrchestrator {
             targetDifficulty: currentTarget.targetDifficulty,
             intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
             status: 'UNFULFILLED_CAPACITY_DEFICIT',
-            reason: currentTarget.capacityLimitation.reason || deficitMCQ.message || 'Capacity deficit: concept lacks observed mechanisms in lecture evidence to fulfill requested Hard difficulty',
+            reason: currentTarget.capacityLimitation?.reason || deficitMCQ.message || 'Capacity deficit: lecture evidence exhausted without hallucinating un-taught concepts',
             attempts: 1,
             repairAttempted: false,
             repairSuccessful: false,
@@ -368,8 +407,8 @@ class PipelineOrchestrator {
           }
         }
 
-        // 3. If Generation Produced an Unfulfilled Item (e.g. empty evidence)
-        if (candidateMCQ.isUnfulfilled) {
+        // 3. If Generation Produced an Unfulfilled Item (or returned null / invalid object)
+        if (!candidateMCQ || typeof candidateMCQ !== 'object' || candidateMCQ.isUnfulfilled) {
           if (byTier[tier]) byTier[tier].unfulfilled++;
           const unfulfilledRecord = {
             targetId: currentTarget.targetId,
@@ -377,12 +416,12 @@ class PipelineOrchestrator {
             subtopic: currentTarget.subtopic || 'General Topic',
             targetDifficulty: currentTarget.targetDifficulty,
             intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
-            status: candidateMCQ.fulfillmentStatus || 'UNFULFILLED_INSUFFICIENT_EVIDENCE',
-            reason: candidateMCQ.message || 'Supporting session evidence is empty or insufficient',
+            status: candidateMCQ?.fulfillmentStatus || 'UNFULFILLED_GENERATION_FAILED',
+            reason: candidateMCQ?.message || 'Candidate question formulation failed or produced invalid payload',
             attempts: 1,
             repairAttempted: false,
             repairSuccessful: false,
-            mcq: candidateMCQ
+            mcq: candidateMCQ || null
           };
           return { status: 'UNFULFILLED', unfulfilledRecord, currentTarget, tier, targetStartTime };
         }
@@ -418,8 +457,10 @@ class PipelineOrchestrator {
         const { currentTarget, tier, targetStartTime } = outcome;
 
         if (outcome.status === 'DEFICIT') {
-          unfulfilledTargets.push(outcome.deficitRecord);
-          targetResults.push(outcome.deficitRecord);
+          if (outcome.deficitRecord) {
+            unfulfilledTargets.push(outcome.deficitRecord);
+            targetResults.push(outcome.deficitRecord);
+          }
 
           // Only promote reserve target if reserve target itself supports the requested difficulty
           if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
@@ -465,8 +506,10 @@ class PipelineOrchestrator {
         }
 
         if (outcome.status === 'UNFULFILLED') {
-          unfulfilledTargets.push(outcome.unfulfilledRecord);
-          targetResults.push(outcome.unfulfilledRecord);
+          if (outcome.unfulfilledRecord) {
+            unfulfilledTargets.push(outcome.unfulfilledRecord);
+            targetResults.push(outcome.unfulfilledRecord);
+          }
 
           // Auto-promote reserve target to fulfill question count
           if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
@@ -492,11 +535,19 @@ class PipelineOrchestrator {
           if (!dupCheck.isDuplicate) {
             if (passingQuestions.length < requestedCount) {
               const qNum = passingQuestions.length + 1;
+              const provenance = evidenceContextSelector.resolveTargetProvenance(currentTarget, evidencePackage, evalResult);
+
               const decisionLedger = {
                 questionId: `Q${qNum}`,
                 source: {
                   tier: evalResult.evidenceGrounding?.tier || 'EVIDENCE_DERIVED',
-                  supportingChunks: currentTarget.sourceChunks || ['chunk_01']
+                  sourceOrigin: provenance.sourceOrigin,
+                  supportingChunks: provenance.supportingChunks,
+                  parentChunks: provenance.parentChunks,
+                  timeSpan: provenance.timeSpan,
+                  hasRealTimestamps: provenance.hasRealTimestamps,
+                  isEvidenceVerified: provenance.isEvidenceVerified,
+                  verificationStatus: provenance.verificationStatus
                 },
                 concept: currentTarget.concept,
                 subtopic: currentTarget.subtopic || 'Core Mechanism',
@@ -514,12 +565,18 @@ class PipelineOrchestrator {
                   groundingScore: evalResult.evidenceGrounding?.groundingScore || 0.95,
                   repaired: Boolean(evalResult.repaired)
                 },
-                grounding: { status: 'GROUNDED' }
+                grounding: {
+                  status: provenance.isEvidenceVerified ? 'GROUNDED' : 'UNVERIFIED_PROVENANCE',
+                  isEvidenceVerified: provenance.isEvidenceVerified
+                }
               };
 
               const traceabilityAudit = {
-                "1_sourceOrigin": currentTarget.evidenceType || "VOICE + DOCUMENT",
-                "2_supportingSessionChunks": currentTarget.sourceChunks || ["chunk_01"],
+                "1_sourceOrigin": provenance.sourceOrigin,
+                "2_supportingSessionChunks": provenance.supportingChunks,
+                "2b_timeSpan": provenance.timeSpan,
+                "2c_hasRealTimestamps": provenance.hasRealTimestamps,
+                "2d_isEvidenceVerified": provenance.isEvidenceVerified,
                 "3_agent1AssessmentReasoning": {
                   "whyAssessed": `Teacher emphasized ${currentTarget.concept} as a key learning outcome.`,
                   "targetDifficulty": currentTarget.targetDifficulty,
@@ -542,10 +599,18 @@ class PipelineOrchestrator {
                   "optionsMutuallyExclusive": true
                 },
                 "7_finalGroundingGateReasoning": {
-                  "status": "PASSED",
-                  "justification": `Question and options are directly justified by session evidence for ${currentTarget.concept}.`
+                  "status": provenance.isEvidenceVerified ? "PASSED" : "UNVERIFIED",
+                  "justification": provenance.isEvidenceVerified
+                    ? `Question and options are directly justified by verified session evidence chunks [${provenance.supportingChunks.join(', ')}] for ${currentTarget.concept}.`
+                    : `Question evidence references could not be verified against the active session store.`
                 }
               };
+
+              evalResult.mcq.timeSpan = provenance.timeSpan;
+              evalResult.mcq.hasRealTimestamps = provenance.hasRealTimestamps;
+              evalResult.mcq.sourceOrigin = provenance.sourceOrigin;
+              evalResult.mcq.supportingChunks = provenance.supportingChunks;
+              evalResult.mcq.isEvidenceVerified = provenance.isEvidenceVerified;
 
               evalResult.mcq.metadata = {
                 ...evalResult.mcq.metadata,
@@ -555,6 +620,13 @@ class PipelineOrchestrator {
                 cognitiveLevel: currentTarget.cognitiveLevel,
                 targetDifficulty: currentTarget.targetDifficulty,
                 intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
+                sourceOrigin: provenance.sourceOrigin,
+                supportingChunks: provenance.supportingChunks,
+                parentChunks: provenance.parentChunks,
+                timeSpan: provenance.timeSpan,
+                hasRealTimestamps: provenance.hasRealTimestamps,
+                isEvidenceVerified: provenance.isEvidenceVerified,
+                evidenceVerificationStatus: provenance.verificationStatus,
                 groundingScore: evalResult.evidenceGrounding?.groundingScore || 0.95,
                 targetId: currentTarget.targetId,
                 repairAttempted,
@@ -916,7 +988,7 @@ class PipelineOrchestrator {
       if (deliveredCount === 0) {
         pipelineStatus = 'FAILED';
         const failureReason = unfulfilledTargets.length > 0
-          ? `No grounded questions could be generated. ${unfulfilledTargets.length} target(s) unfulfilled: ${unfulfilledTargets.map(u => u.reason || u.concept).join('; ')}`
+          ? `No grounded questions could be generated. ${unfulfilledTargets.length} target(s) unfulfilled: ${unfulfilledTargets.filter(Boolean).map(u => u?.reason || u?.concept || 'Target unfulfilled').join('; ')}`
           : (rejectedTargets.length > 0
             ? `No grounded questions could be generated. All candidate questions were rejected during quality audit.`
             : `No grounded questions could be generated from the provided material.`);
@@ -927,11 +999,11 @@ class PipelineOrchestrator {
         noticeParts.push(`Delivered ${deliveredCount} of ${requestedCount} requested questions.`);
         
         if (unfulfilledTargets.length > 0) {
-          const deficitsSummary = unfulfilledTargets.map(u => `"${u.concept}": ${u.reason}`).join('; ');
+          const deficitsSummary = unfulfilledTargets.filter(Boolean).map(u => `"${u?.concept || 'Target'}": ${u?.reason || 'Capacity limit'}`).join('; ');
           noticeParts.push(`${unfulfilledTargets.length} question(s) withheld due to evidence capacity limitations (${deficitsSummary}).`);
         }
         if (rejectedTargets.length > 0) {
-          const rejectionSummary = rejectedTargets.map(r => `"${r.concept}": ${r.reason}`).join('; ');
+          const rejectionSummary = rejectedTargets.filter(Boolean).map(r => `"${r?.concept || 'Target'}": ${r?.reason || 'Quality audit'}`).join('; ');
           noticeParts.push(`${rejectedTargets.length} question(s) withheld due to quality or cognitive calibration audit (${rejectionSummary}).`);
         }
         noticeParts.push('Questions were withheld to ensure strict factual grounding and prevent artificial difficulty drift.');
@@ -956,10 +1028,10 @@ class PipelineOrchestrator {
           failedRepairs: repairMetrics.failedRepairs
         },
         rejectionReasons: rejectionReasonsCount,
-        capacityDeficits: unfulfilledTargets.map(u => ({
-          concept: u.concept,
-          targetDifficulty: u.targetDifficulty,
-          reason: u.reason
+        capacityDeficits: unfulfilledTargets.filter(Boolean).map(u => ({
+          concept: u?.concept || 'Target',
+          targetDifficulty: u?.targetDifficulty || 'Medium',
+          reason: u?.reason || 'Capacity deficit'
         }))
       };
 
@@ -1065,6 +1137,7 @@ class PipelineOrchestrator {
         traceSummaryPath: `server/logs/debug/sessions/${sessionId}/final_session_trace.json`
       };
     } catch (err) {
+      console.error('💥 [PipelineOrchestrator Error Stack]:', err.stack || err);
       const isInsufficient = err.code === 'INSUFFICIENT_READABLE_EVIDENCE' || (err.message && err.message.includes('INSUFFICIENT_READABLE_EVIDENCE'));
       const isFatal = err.code === 'NO_LLM_PROVIDER_AVAILABLE' || (err.message && err.message.includes('NO_LLM_PROVIDER_AVAILABLE'));
       let failureReason;

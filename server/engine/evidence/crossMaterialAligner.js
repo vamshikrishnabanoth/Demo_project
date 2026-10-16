@@ -136,6 +136,11 @@ class CrossMaterialAligner {
     const audioChunks = store.children.filter(c => c.sourceType === 'TRANSCRIPT');
     const slideChunks = store.children.filter(c => c.sourceType === 'SLIDE' || c.sourceType === 'CODE');
 
+    // Strict Modality Truth: Voice-only or Document-only sessions have ZERO cross-material links
+    if (audioChunks.length === 0 || slideChunks.length === 0) {
+      return {};
+    }
+
     const alignmentMap = {};
 
     for (const a of audioChunks) {
@@ -164,10 +169,12 @@ class CrossMaterialAligner {
       }
 
       scoredSlides.sort((x, y) => y.score - x.score);
-      alignmentMap[aEid] = scoredSlides.slice(0, 2).map(item => item.sEid);
+      if (scoredSlides.length > 0) {
+        alignmentMap[aEid] = scoredSlides.slice(0, 2).map(item => item.sEid);
+      }
     }
 
-    // Reverse mapping: Slide / Code -> Audio
+    // Reverse mapping: Slide / Code -> Audio (only for actually linked slides)
     for (const s of slideChunks) {
       const sEid = s.evidenceId;
       const linkedAudio = [];
@@ -176,7 +183,9 @@ class CrossMaterialAligner {
           linkedAudio.push(aEid);
         }
       }
-      alignmentMap[sEid] = linkedAudio.slice(0, 2);
+      if (linkedAudio.length > 0) {
+        alignmentMap[sEid] = linkedAudio.slice(0, 2);
+      }
     }
 
     return alignmentMap;

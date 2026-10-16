@@ -18,6 +18,7 @@ const deterministicValidator = require('../validators/deterministicValidator');
 const DifficultyAwareDistractorValidator = require('../validators/difficultyAwareDistractorValidator');
 const { safeParseJson } = require('../utils/jsonParser');
 const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelector');
+const { validateQuestionCodeArtifacts } = require('../validators/astParser');
 
 const EVALUATOR_FAILURE_CODES = {
   OPTION_VALIDATION_ERROR: 'OPTION_VALIDATION_ERROR',
@@ -28,7 +29,9 @@ const EVALUATOR_FAILURE_CODES = {
   UNGROUNDED_EVIDENCE_CLAIM: 'UNGROUNDED_EVIDENCE_CLAIM',
   FOREIGN_DOMAIN_CONTAMINATION: 'FOREIGN_DOMAIN_CONTAMINATION',
   INSUFFICIENT_EVIDENCE_FOR_HARD: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-  EMPTY_SESSION_EVIDENCE: 'EMPTY_SESSION_EVIDENCE'
+  EMPTY_SESSION_EVIDENCE: 'EMPTY_SESSION_EVIDENCE',
+  CODE_SYNTAX_ERROR: 'CODE_SYNTAX_ERROR',
+  TEACHER_BOUNDARY_VIOLATION: 'TEACHER_BOUNDARY_VIOLATION'
 };
 
 const OPTION_VERDICTS = {
@@ -279,13 +282,32 @@ ${evidenceContext}
    * @returns {Object} Final evaluation result with repair metadata
    */
   async evaluateAndRepairQuestion(candidateMCQ, target, evidencePackage, generator = null) {
+    // 0. If candidate is null or not an object, fail immediately as unfulfilled without attempting repair
+    if (!candidateMCQ || typeof candidateMCQ !== 'object') {
+      return {
+        status: 'UNFULFILLED',
+        passed: false,
+        score: 0.0,
+        verdict: 'FAIL',
+        isUnfulfilled: true,
+        fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
+        failureReasons: ['MISSING_OR_MALFORMED_CANDIDATE'],
+        failureReason: 'Candidate question is null or invalid object',
+        repaired: false,
+        mcq: null,
+        repair: { attempted: false, successful: false, repairAttempts: 0, instruction: null }
+      };
+    }
+
     // 1. Initial Evaluation
     const initialEval = await this.evaluateQuestion(candidateMCQ, target, evidencePackage);
 
-    // 2. If already passed, or if unfulfilled capacity deficit, return immediately without repair
-    if (initialEval.status === 'PASS' || initialEval.status === 'UNFULFILLED' || initialEval.isUnfulfilled) {
+    // 2. If already passed, or if unfulfilled, return immediately without repair
+    if (initialEval.status === 'PASS' || initialEval.status === 'UNFULFILLED' || initialEval.isUnfulfilled || candidateMCQ.isUnfulfilled) {
       return {
         ...initialEval,
+        isUnfulfilled: Boolean(initialEval.isUnfulfilled || candidateMCQ.isUnfulfilled),
+        fulfillmentStatus: candidateMCQ.fulfillmentStatus || initialEval.fulfillmentStatus,
         repaired: false,
         mcq: candidateMCQ,
         repair: {
@@ -343,6 +365,25 @@ ${evidenceContext}
       };
     }
 
+    // If repair returned null or a non-object, treat repair as failed cleanly
+    if (!repairedMCQ || typeof repairedMCQ !== 'object') {
+      console.warn(`⚠️ [Agent 3] Repair generation returned invalid/null output on target ${target?.targetId}`);
+      return {
+        ...initialEval,
+        repaired: false,
+        mcq: candidateMCQ,
+        repair: {
+          attempted: true,
+          successful: false,
+          repairAttempts: 1,
+          instruction: repairInstruction,
+          error: 'Repair generator produced null or invalid payload',
+          originalMCQ: candidateMCQ,
+          repairedMCQ: null
+        }
+      };
+    }
+
     // If repair returned an unfulfilled capacity deficit, do not pass
     if (repairedMCQ.isUnfulfilled || repairedMCQ.fulfillmentStatus === 'UNFULFILLED_CAPACITY_DEFICIT') {
       return {
@@ -351,7 +392,7 @@ ${evidenceContext}
         verdict: 'UNFULFILLED_CAPACITY_DEFICIT',
         isUnfulfilled: true,
         unfulfilledReason: repairedMCQ.unfulfilledReason || 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-        failureReason: repairedMCQ.message,
+        failureReason: repairedMCQ.message || 'Capacity deficit remains unfulfilled after repair',
         failureReasons: ['INSUFFICIENT_EVIDENCE_FOR_HARD'],
         repaired: false,
         mcq: candidateMCQ,
@@ -450,6 +491,24 @@ ${evidenceContext}
         if (flaw.code === 'POTENTIAL_MULTI_KEY' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR)) {
           failureReasons.push(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
         }
+      }
+    }
+
+    // 3c. AST Code & SQL Syntax Gate (Phase 6 / Stage 3)
+    const codeAudit = validateQuestionCodeArtifacts(candidateMCQ);
+    if (!codeAudit.valid && codeAudit.hasCode) {
+      for (const err of codeAudit.errors) {
+        if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.CODE_SYNTAX_ERROR)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.CODE_SYNTAX_ERROR);
+        }
+      }
+    }
+
+    // 3d. Teacher Negative Boundary Enforcement (e.g., NO_CODE, NO_MATH)
+    const activeBoundaries = target.negativeBoundaries || evidencePackage?.negativeBoundaries || [];
+    if (activeBoundaries.some(b => /no_code/i.test(b)) && codeAudit.hasCode) {
+      if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.TEACHER_BOUNDARY_VIOLATION)) {
+        failureReasons.push(EVALUATOR_FAILURE_CODES.TEACHER_BOUNDARY_VIOLATION);
       }
     }
 

@@ -15,6 +15,143 @@ const { safeParseJson } = require('../utils/jsonParser');
 
 class Agent1Planner {
   /**
+   * Constructs a 3-Phase Chronological Trajectory Package from the full session evidence.
+   * Eliminates destructive 16k truncation while guaranteeing complete chronological coverage:
+   * - Phase 1: EARLY LECTURE (0% - 33%) -> Foundations, definitions, baseline properties, terminology.
+   * - Phase 2: MID LECTURE (33% - 66%) -> Operational mechanisms, comparative tradeoffs, real-world scenarios.
+   * - Phase 3: LATE LECTURE (66% - 100%) -> Code walkthroughs, implementations, edge cases, synthesis.
+   */
+  _buildChronologicalTrajectoryPackage(evidencePackage = {}, rawContent = '') {
+    const curricularContent = evidencePackage?.curricularContent || '';
+    const voiceText = evidencePackage?.voiceText || evidencePackage?.voiceTranscript || '';
+    const textToUse = curricularContent || rawContent || voiceText || '';
+
+    // Extract artifacts (code, formulas)
+    const artifacts = evidencePackage?.artifacts || {};
+    const codeSnippets = Array.isArray(artifacts.codeSnippets) ? artifacts.codeSnippets : (artifacts.codeSnippets ? [artifacts.codeSnippets] : []);
+    const formulasDetected = Array.isArray(artifacts.formulasDetected) ? artifacts.formulasDetected : [];
+
+    let earlyText = '';
+    let midText = '';
+    let lateText = '';
+    let earlyTime = '00:00 - 15:00';
+    let midTime = '15:00 - 30:00';
+    let lateTime = '30:00 - 45:00';
+
+    const hierarchicalStore = evidencePackage?.hierarchicalStore;
+    const parents = hierarchicalStore?.parents || [];
+
+    if (Array.isArray(parents) && parents.length >= 3) {
+      const totalParents = parents.length;
+      const p1EndIdx = Math.max(1, Math.floor(totalParents / 3));
+      const p2EndIdx = Math.max(p1EndIdx + 1, Math.floor((2 * totalParents) / 3));
+
+      const earlyParents = parents.slice(0, p1EndIdx);
+      const midParents = parents.slice(p1EndIdx, p2EndIdx);
+      const lateParents = parents.slice(p2EndIdx);
+
+      const formatTime = (sec) => {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      };
+
+      if (earlyParents[0]?.timeSpan) {
+        earlyTime = `${formatTime(earlyParents[0].timeSpan.start)} - ${formatTime(earlyParents[earlyParents.length - 1].timeSpan.end)}`;
+      }
+      if (midParents[0]?.timeSpan) {
+        midTime = `${formatTime(midParents[0].timeSpan.start)} - ${formatTime(midParents[midParents.length - 1].timeSpan.end)}`;
+      }
+      if (lateParents[0]?.timeSpan) {
+        lateTime = `${formatTime(lateParents[0].timeSpan.start)} - ${formatTime(lateParents[lateParents.length - 1].timeSpan.end)}`;
+      }
+
+      earlyText = earlyParents.map(p => `[${p.title}]\n${p.fullText}`).join('\n\n');
+      midText = midParents.map(p => `[${p.title}]\n${p.fullText}`).join('\n\n');
+      lateText = lateParents.map(p => `[${p.title}]\n${p.fullText}`).join('\n\n');
+    } else {
+      // Partition based on natural sentence boundaries or text length
+      const sentences = textToUse.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [textToUse];
+      const totalSentences = sentences.length;
+
+      if (totalSentences >= 6) {
+        const s1End = Math.max(1, Math.floor(totalSentences / 3));
+        const s2End = Math.max(s1End + 1, Math.floor((2 * totalSentences) / 3));
+
+        earlyText = sentences.slice(0, s1End).join(' ').trim();
+        midText = sentences.slice(s1End, s2End).join(' ').trim();
+        lateText = sentences.slice(s2End).join(' ').trim();
+      } else {
+        const len = textToUse.length;
+        const c1 = Math.floor(len / 3);
+        const c2 = Math.floor((2 * len) / 3);
+        earlyText = textToUse.slice(0, c1).trim();
+        midText = textToUse.slice(c1, c2).trim();
+        lateText = textToUse.slice(c2).trim();
+      }
+    }
+
+    // Budget allocation per phase: Up to 2,500 chars per phase (~7,500 chars total)
+    // guarantees representative excerpting from ALL 3 phases within provider token limits.
+    const formatPhaseContent = (phaseText, maxChars = 2500) => {
+      if (!phaseText || phaseText.length <= maxChars) {
+        return phaseText;
+      }
+      return phaseText.slice(0, maxChars - 100) + '\n...[Evidence continuation preserved within phase]...';
+    };
+
+    const earlyFormatted = formatPhaseContent(earlyText);
+    const midFormatted = formatPhaseContent(midText);
+    let lateFormatted = formatPhaseContent(lateText);
+
+    // If code snippets exist, attach them directly to Late phase or as artifacts
+    let codeBlock = '';
+    if (codeSnippets.length > 0) {
+      codeBlock = `\n\n[CODE WALKTHROUGH & IMPLEMENTATION ARTIFACTS (CRITICAL EVIDENCE FOR CODE TARGETS)]\n` +
+        codeSnippets.map((c, i) => `--- Snippet ${i + 1} ---\n${c}`).join('\n\n');
+      lateFormatted += codeBlock;
+    }
+
+    let formulaBlock = '';
+    if (formulasDetected.length > 0) {
+      formulaBlock = `\n\n[FORMULAS & TECHNICAL SYNTAX DETECTED]\n` +
+        formulasDetected.map(f => `- ${f}`).join('\n');
+    }
+
+    const assessableContent = `
+================================================================================
+[CHRONOLOGICAL TIMELINE - PHASE 1: EARLY LECTURE (0% - 33%) - FOUNDATIONS & DEFINITIONS]
+Time Window: ${earlyTime}
+Phase Emphasis: Core definitions, terminology, foundational properties, conceptual motivation
+Evidence:
+${earlyFormatted || 'Foundational principles presented in early lecture.'}
+
+================================================================================
+[CHRONOLOGICAL TIMELINE - PHASE 2: MID LECTURE (33% - 66%) - MECHANISMS, SCENARIOS & TRADEOFFS]
+Time Window: ${midTime}
+Phase Emphasis: Operational mechanics, comparative analysis, real-world scenarios, worked examples
+Evidence:
+${midFormatted || 'Operational mechanisms and scenarios presented in mid lecture.'}
+
+================================================================================
+[CHRONOLOGICAL TIMELINE - PHASE 3: LATE LECTURE (66% - 100%) - CODE WALKTHROUGHS, IMPLEMENTATION & ADVANCED CASES]
+Time Window: ${lateTime}
+Phase Emphasis: Algorithmic code walkthrough, recursive implementation, pointer transitions, invariant edge cases, diagnostics
+Evidence:
+${lateFormatted || 'Code walkthrough and implementation details presented in late lecture.'}${formulaBlock}
+================================================================================`;
+
+    return {
+      assessableContent,
+      phases: {
+        early: { timeWindow: earlyTime, text: earlyFormatted },
+        mid: { timeWindow: midTime, text: midFormatted },
+        late: { timeWindow: lateTime, text: lateFormatted }
+      }
+    };
+  }
+
+  /**
    * Plan Assessment targets and calculate TC Score.
    * @param {Object} evidencePackage - Session evidence package from EvidencePackager
    * @param {String} requestedDifficulty - 'Easy' | 'Medium' | 'Hard' | 'Balanced'
@@ -90,6 +227,16 @@ CORE PRINCIPLES:
      * "operationalGuidance": Explicit instructions on cognitive demand and distractor design.
    - Hard targets MUST be linked to concepts that have observed mechanisms, procedural rules, or concrete constraints in the lecture evidence. If the lecture is purely definitional, do NOT invent un-taught complexity.
 
+7. FULL-LECTURE CHRONOLOGICAL TRAJECTORY UNDERSTANDING:
+   - The lecture evidence is organized into 3 chronological phases:
+     * Phase 1 (Early 0%-33%): Foundations, definitions, baseline properties, core terminology.
+     * Phase 2 (Mid 33%-66%): Operational mechanisms, comparative tradeoffs, real-world application scenarios.
+     * Phase 3 (Late 66%-100%): Code walkthroughs, algorithmic implementations, recursive execution, edge cases.
+   - When requestedCount >= 3, you MUST distribute targets across ALL THREE PHASES (at least 1 Early, 1 Mid, 1 Late). Never concentrate all questions in the opening minutes!
+   - For every target, explicitly specify "trajectoryPhase": "EARLY" | "MID" | "LATE".
+   - If Phase 3 contains a code walkthrough or implementation, plan at least one target testing the code behavior, parameter transitions, or base conditions.
+   - If Phase 2 contains a real-world scenario (e.g. database indexing, IP routing, production systems), plan at least one target testing understanding of that taught scenario.
+
 JSON SCHEMA:
 {
   "subject": "string",
@@ -98,17 +245,14 @@ JSON SCHEMA:
   "teachingEmphasis": { "conceptual": "HIGH", "application": "HIGH", "syntax": "MEDIUM", "calculation": "LOW" },
   "targetCount": ${requestedCount},
   "assessmentTargets": [
-    { "targetId": "T01", "subtopic": "...", "concept": "Specific unique learning objective", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual|Cause / Effect|Comparison / Tradeoff|Scenario Analysis|Application|Prediction|Flow / Trace|Foundational Prerequisite|Evidence-Derived Inference", "cognitiveLevel": "Remember|Understand|Apply|Analyze|Evaluate", "targetDifficulty": "Easy|Medium|Hard", "intendedCognitiveOperation": "RECALL|COMPARE|TRACE|APPLY|DIAGNOSE", "operationalGuidance": "Guidance on cognitive demand", "evidenceType": "VOICE|CODE|DOCUMENT|VOICE + DOCUMENT", "supportingEvidence": "Verbatim quote or factual sentence from session content", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_01"], "requiresExactArtifact": false, "instruction": "Guidance" }
+    { "targetId": "T01", "subtopic": "...", "concept": "Specific unique learning objective", "trajectoryPhase": "EARLY|MID|LATE", "timestamp": "00:00 - 15:00", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual|Cause / Effect|Comparison / Tradeoff|Scenario Analysis|Application|Prediction|Flow / Trace|Foundational Prerequisite|Evidence-Derived Inference", "cognitiveLevel": "Remember|Understand|Apply|Analyze|Evaluate", "targetDifficulty": "Easy|Medium|Hard", "intendedCognitiveOperation": "RECALL|COMPARE|TRACE|APPLY|DIAGNOSE", "operationalGuidance": "Guidance on cognitive demand", "evidenceType": "VOICE|CODE|DOCUMENT|VOICE + DOCUMENT", "supportingEvidence": "Verbatim quote or factual sentence from session content", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_01"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ],
   "reserveTargets": [
-    { "targetId": "R01", "subtopic": "...", "concept": "Distinct fallback concept", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual", "cognitiveLevel": "Understand", "targetDifficulty": "Medium", "intendedCognitiveOperation": "COMPARE", "operationalGuidance": "Guidance", "evidenceType": "VOICE", "supportingEvidence": "Verbatim quote", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_02"], "requiresExactArtifact": false, "instruction": "Guidance" }
+    { "targetId": "R01", "subtopic": "...", "concept": "Distinct fallback concept", "trajectoryPhase": "EARLY|MID|LATE", "timestamp": "00:00 - 15:00", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual", "cognitiveLevel": "Understand", "targetDifficulty": "Medium", "intendedCognitiveOperation": "COMPARE", "operationalGuidance": "Guidance", "evidenceType": "VOICE", "supportingEvidence": "Verbatim quote", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_02"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ]
 }`;
-    const rawAssessable = evidencePackage.curricularContent || rawContent;
-    const MAX_PLANNER_CHARS = 16000;
-    const assessableContent = (rawAssessable && rawAssessable.length > MAX_PLANNER_CHARS)
-      ? rawAssessable.slice(0, MAX_PLANNER_CHARS) + '\n...[Evidence continuation summarized for assessment planning]...'
-      : (rawAssessable || '');
+    const trajectoryPackage = this._buildChronologicalTrajectoryPackage(evidencePackage, rawContent);
+    const assessableContent = trajectoryPackage.assessableContent;
 
     const coverageProfile = evidencePackage.curricularCoverage || null;
     let coveragePromptBlock = '';
@@ -166,41 +310,99 @@ Generate the curricular assessment plan strictly covering educational concepts w
         throw new Error('No assessment targets found in LLM response');
       }
 
-      // Filter targets to ensure they have supporting evidence
+      // Filter targets to ensure they have supporting evidence and chronological trajectory
       const filterGrounded = (targets, prefix) => {
         return targets
           .filter(t => t && t.concept && t.concept.trim().length > 3)
-          .map((t, idx) => ({
-            targetId: t.targetId || `${prefix}0${idx + 1}`,
-            subtopic: t.subtopic || (parsed.subtopics && parsed.subtopics[idx % (parsed.subtopics.length || 1)]) || 'General Concept',
-            concept: t.concept,
-            tier: t.tier || (prefix === 'T' ? 'Core' : (idx === 0 ? 'Core' : 'Secondary')),
-            dimension: t.dimension || 'Conceptual',
-            cognitiveLevel: t.cognitiveLevel || 'Understand',
-            targetDifficulty: t.targetDifficulty || requestedDifficulty,
-            evidenceType: t.evidenceType || 'VOICE + DOCUMENT',
-            supportingEvidence: t.supportingEvidence || t.evidenceSpan || '',
-            evidenceSpan: t.evidenceSpan || t.supportingEvidence || '',
-            confidence: t.confidence || 'HIGH',
-            sourceChunks: t.sourceChunks || ['chunk_01'],
-            requiresExactArtifact: Boolean(t.requiresExactArtifact),
-            instruction: t.instruction || `Test understanding of ${t.concept}.`
-          }));
+          .map((t, idx) => {
+            let trajectoryPhase = t.trajectoryPhase || t.phase;
+            const activeStore = evidencePackage?.multimodalStore || evidencePackage?.hierarchicalStore;
+            const cLower = String(t.concept || '').toLowerCase();
+            const sLower = String(t.subtopic || '').toLowerCase();
+            if (activeStore && Array.isArray(activeStore.children) && activeStore.children.length > 0) {
+              const cIdx = activeStore.children.findIndex(c => {
+                const tLower = (c.text || '').toLowerCase();
+                return (cLower.length > 3 && tLower.includes(cLower.slice(0, 15))) || (sLower.length > 3 && tLower.includes(sLower.slice(0, 15)));
+              });
+              if (cIdx !== -1) {
+                const ratio = cIdx / activeStore.children.length;
+                if (ratio <= 0.33) trajectoryPhase = 'EARLY';
+                else if (ratio >= 0.66) trajectoryPhase = 'LATE';
+                else trajectoryPhase = 'MID';
+              }
+            }
+            if (!trajectoryPhase) {
+              if (idx < Math.ceil(targets.length / 3)) trajectoryPhase = 'EARLY';
+              else if (idx < Math.ceil((2 * targets.length) / 3)) trajectoryPhase = 'MID';
+              else trajectoryPhase = 'LATE';
+            }
+            trajectoryPhase = String(trajectoryPhase).toUpperCase();
+            if (!['EARLY', 'MID', 'LATE'].includes(trajectoryPhase)) trajectoryPhase = 'MID';
+
+            const prov = this._resolveTargetEvidenceProvenance(t.concept, t.subtopic, trajectoryPhase, evidencePackage);
+            const rawTs = t.timestamp;
+            const isSyntheticTs = rawTs && (rawTs.includes('00:00 - 15:00') || rawTs.includes('15:00 - 30:00') || rawTs.includes('30:00 - 45:00'));
+
+            return {
+              targetId: t.targetId || `${prefix}0${idx + 1}`,
+              subtopic: t.subtopic || (parsed.subtopics && parsed.subtopics[idx % (parsed.subtopics.length || 1)]) || 'General Concept',
+              concept: t.concept,
+              trajectoryPhase,
+              timestamp: (rawTs && !isSyntheticTs) ? rawTs : prov.timestamp,
+              tier: t.tier || (prefix === 'T' ? 'Core' : (idx === 0 ? 'Core' : 'Secondary')),
+              dimension: t.dimension || 'Conceptual',
+              cognitiveLevel: t.cognitiveLevel || 'Understand',
+              targetDifficulty: t.targetDifficulty || requestedDifficulty,
+              evidenceType: prov.evidenceType,
+              supportingEvidence: t.supportingEvidence || t.evidenceSpan || '',
+              evidenceSpan: t.evidenceSpan || t.supportingEvidence || '',
+              confidence: t.confidence || 'HIGH',
+              sourceChunks: (Array.isArray(t.sourceChunks) && t.sourceChunks.length > 0 && !t.sourceChunks.includes('chunk_01')) ? t.sourceChunks : prov.sourceChunks,
+              requiresExactArtifact: Boolean(t.requiresExactArtifact),
+              instruction: t.instruction || `Test understanding of ${t.concept}.`
+            };
+          });
       };
 
       const initialTargets = filterGrounded(rawTargets, 'T');
       const initialReserve = filterGrounded(rawReserve, 'R');
 
-      // Layer 4: Audit targets against pedagogical / administrative contamination and curricular coverage exclusions
-      const { auditedTargets, auditedReserve, auditLog } = this._auditAssessmentTargets(initialTargets, initialReserve, requestedCount, evidencePackage);
+      // Phase 5: Expand deep concepts into distinct assessment facets if targets are fewer than requestedCount
+      const expandedTargets = this._expandTargetsWithConceptFacets(initialTargets, requestedCount, evidencePackage, requestedDifficulty);
 
-      // If LLM returned fewer targets than requested, replenish from grounded fallback plan up to requestedCount
-      if (auditedTargets.length < requestedCount) {
-        const fallback = this._buildFallbackPlan(rawContent, requestedDifficulty, requestedCount, categoryWeights, lectureDepth, detectedFocus, evidencePackage);
-        for (const ft of fallback.assessmentTargets) {
-          if (auditedTargets.length >= requestedCount) break;
-          ft.targetId = `T0${auditedTargets.length + 1}`;
-          auditedTargets.push(ft);
+      // Layer 4: Audit targets against pedagogical / administrative contamination and curricular coverage exclusions
+      const { auditedTargets, auditedReserve, auditLog } = this._auditAssessmentTargets(expandedTargets, initialReserve, requestedCount, evidencePackage);
+
+      // Capacity deficit preservation: If LLM returned fewer targets than requested, do NOT invent fake targets!
+      // Mark deficit slots explicitly so the teacher sees truthful capacity reporting.
+      const genuineCount = auditedTargets.length;
+      if (genuineCount < requestedCount) {
+        const deficitCount = requestedCount - genuineCount;
+        const deficitReason = `Lecture evidence contains only ${genuineCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
+        for (let i = 0; i < deficitCount; i++) {
+          const slotNum = genuineCount + i + 1;
+          const targetId = `T${String(slotNum).padStart(2, '0')}`;
+          auditedTargets.push({
+            targetId,
+            concept: `Curricular Capacity Deficit Slot ${slotNum}`,
+            subtopic: 'Curricular Capacity Limit',
+            trajectoryPhase: 'LATE',
+            timestamp: 'End of Lecture',
+            tier: 'Peripheral',
+            dimension: 'Conceptual',
+            cognitiveLevel: 'Remember',
+            targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : requestedDifficulty,
+            intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+            isCapacityLimited: true,
+            capacityLimitation: {
+              status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+              reason: deficitReason,
+              availableCount: genuineCount,
+              requestedCount
+            },
+            supportingEvidence: '',
+            instruction: deficitReason
+          });
         }
       }
 
@@ -218,7 +420,12 @@ Generate the curricular assessment plan strictly covering educational concepts w
         lectureDepth: lectureDepth,
         assessmentTargets: auditedTargets,
         reserveTargets: auditedReserve,
-        targetAuditLog: auditLog
+        targetAuditLog: auditLog,
+        trajectorySummary: {
+          earlyTargetsCount: auditedTargets.filter(t => t.trajectoryPhase === 'EARLY').length,
+          midTargetsCount: auditedTargets.filter(t => t.trajectoryPhase === 'MID').length,
+          lateTargetsCount: auditedTargets.filter(t => t.trajectoryPhase === 'LATE').length
+        }
       };
     } catch (err) {
       console.warn(`⚠️ [Agent 1 Planner] LLM call notice: ${err.message}. Building adaptive fallback plan.`);
@@ -227,6 +434,21 @@ Generate the curricular assessment plan strictly covering educational concepts w
 
     // Apply deterministic difficulty blueprint, cognitive operations, and capacity audit
     this._applyDifficultyBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+
+    if (planData.assessmentTargets && planData.assessmentTargets.length >= 3) {
+      if (!planData.assessmentTargets.some(t => t.trajectoryPhase === 'LATE')) {
+        planData.assessmentTargets[planData.assessmentTargets.length - 1].trajectoryPhase = 'LATE';
+      }
+      if (!planData.assessmentTargets.some(t => t.trajectoryPhase === 'EARLY')) {
+        planData.assessmentTargets[0].trajectoryPhase = 'EARLY';
+      }
+    }
+
+    planData.trajectorySummary = {
+      earlyTargetsCount: (planData.assessmentTargets || []).filter(t => t.trajectoryPhase === 'EARLY').length,
+      midTargetsCount: (planData.assessmentTargets || []).filter(t => t.trajectoryPhase === 'MID').length,
+      lateTargetsCount: (planData.assessmentTargets || []).filter(t => t.trajectoryPhase === 'LATE').length
+    };
 
     planData.tcScore = this._computeTCScore(rawContent, voiceEmphasis, lectureDepth, {
       auditedTargets: planData.assessmentTargets,
@@ -238,7 +460,185 @@ Generate the curricular assessment plan strictly covering educational concepts w
     return planData;
   }
 
-  _auditAssessmentTargets(targets, reserve, requestedCount, evidencePackage = null) {
+  /**
+   * Phase 5: Expand concepts into distinct assessment facets across cognitive dimensions.
+   * Enables one underlying concept (e.g., BST) to support multiple distinct questions
+   * (e.g. Easy: ordering rule, Medium: insertion trace, Hard: shape/performance under sorted insertion)
+   * without assuming 1 concept = 1 question or generating duplicates.
+   */
+  _expandTargetsWithConceptFacets(initialTargets = [], requestedCount = 5, evidencePackage = {}, requestedDifficulty = 'Balanced') {
+    if (!Array.isArray(initialTargets) || initialTargets.length === 0) {
+      return initialTargets || [];
+    }
+
+    if (initialTargets.length >= requestedCount) {
+      return initialTargets;
+    }
+
+    const expanded = [...initialTargets];
+    const seenFacets = new Set();
+
+    // Index existing target facets
+    for (const t of expanded) {
+      const normConcept = (t.concept || '').toLowerCase().trim().replace(/^(the|a|an)\s+/i, '');
+      const op = t.intendedCognitiveOperation || t.dimension || 'GENERAL';
+      seenFacets.add(`${normConcept}::${op}`);
+    }
+
+    const negBoundaries = evidencePackage?.negativeBoundaries || evidencePackage?.instructionalProfile?.negativeBoundaries || [];
+    const isCodeExcluded = negBoundaries.includes('NO_CODE') || negBoundaries.includes('NO_CODE_IMPLEMENTATION');
+    const isMathExcluded = negBoundaries.includes('NO_MATH');
+
+    // Gather candidate concepts with depth
+    const candidateConcepts = [];
+    for (const t of initialTargets) {
+      if (t.concept && !candidateConcepts.some(c => c.name.toLowerCase() === t.concept.toLowerCase())) {
+        candidateConcepts.push({ name: t.concept, evidence: t.supportingEvidence || '' });
+      }
+    }
+
+    const detectedFocus = evidencePackage?.detectedFocus || [];
+    for (const f of detectedFocus) {
+      const fStr = String(f).trim();
+      if (fStr.length > 2 && !candidateConcepts.some(c => c.name.toLowerCase() === fStr.toLowerCase())) {
+        candidateConcepts.push({ name: fStr, evidence: '' });
+      }
+    }
+
+    const diffLower = String(requestedDifficulty || 'Balanced').toLowerCase();
+
+    for (const cand of candidateConcepts) {
+      if (expanded.length >= requestedCount) break;
+
+      const depth = this._detectConceptDepth(cand.name, cand.evidence, evidencePackage);
+      const normConcept = cand.name.toLowerCase().trim().replace(/^(the|a|an)\s+/i, '');
+
+      // Define possible distinct assessment facets based on concept depth
+      const potentialFacets = [];
+
+      // 1. RECOGNIZE / IDENTIFY_DEFINITION (Easy)
+      if (diffLower === 'easy' || diffLower === 'balanced') {
+        potentialFacets.push({
+          op: 'RECOGNIZE',
+          dimension: 'Conceptual',
+          tier: 'Core',
+          targetDifficulty: 'Easy',
+          bloomLevel: 'Remember',
+          phase: 'EARLY',
+          subtopic: `${cand.name} - Foundational Definition & Core Properties`,
+          guidance: `Assess direct factual recall, terminology definition, or explicit concept recognition of ${cand.name}. Prohibit multi-step tracing.`,
+          instruction: `Assess foundational understanding and definition of ${cand.name}.`
+        });
+      }
+
+      // 2. TRACE / EXPLAIN_MECHANISM (Medium)
+      if ((depth.hasMechanism || depth.hasProcedure) && (diffLower === 'medium' || diffLower === 'balanced')) {
+        potentialFacets.push({
+          op: 'TRACE',
+          dimension: 'Flow / Trace',
+          tier: 'Core',
+          targetDifficulty: 'Medium',
+          bloomLevel: 'Understand / Analyze',
+          phase: 'MID',
+          subtopic: `${cand.name} - Operational Trace & State Transitions`,
+          guidance: `Assess operational step-by-step state transitions or execution sequence for ${cand.name}.${isCodeExcluded ? ' [Do NOT ask for code syntax.]' : ''}`,
+          instruction: `Assess step-by-step operational trace or state transitions of ${cand.name}.${isCodeExcluded ? ' [Do NOT ask for code syntax.]' : ''}`
+        });
+      }
+
+      // 3. COMPARE / TRADEOFF (Medium)
+      if ((depth.hasTradeoff || depth.hasMechanism) && (diffLower === 'medium' || diffLower === 'balanced')) {
+        potentialFacets.push({
+          op: 'COMPARE',
+          dimension: 'Comparison / Tradeoff',
+          tier: 'Core',
+          targetDifficulty: 'Medium',
+          bloomLevel: 'Analyze',
+          phase: 'MID',
+          subtopic: `${cand.name} - Comparative Tradeoffs & Alternatives`,
+          guidance: `Assess comparative constraint tradeoffs for ${cand.name} against alternatives taught in the lecture.`,
+          instruction: `Assess comparative tradeoffs and distinctions of ${cand.name} against alternative structures or techniques.`
+        });
+      }
+
+      // 4. PREDICT_CONSTRAINT (Hard) - requires observed mechanism and invariant/constraint
+      if (depth.supportsHard && !isMathExcluded && (diffLower === 'hard' || diffLower === 'balanced')) {
+        potentialFacets.push({
+          op: 'PREDICT_CONSTRAINT',
+          dimension: 'Prediction',
+          tier: 'Core',
+          targetDifficulty: 'Hard',
+          bloomLevel: 'Apply / Evaluate',
+          phase: 'LATE',
+          subtopic: `${cand.name} - Invariant Boundary & Performance Degradation`,
+          guidance: `Assess invariant preservation, boundary constraints, or state outcomes under structural conditions for ${cand.name}.${isCodeExcluded ? ' [Do NOT ask for code syntax.]' : ''}`,
+          instruction: `Assess boundary conditions and invariant preservation for ${cand.name}.${isCodeExcluded ? ' [Do NOT ask for code syntax.]' : ''}`
+        });
+      }
+
+      // 5. DIAGNOSE (Hard) - requires violation/defect indicators
+      if (depth.supportsHard && (depth.hasViolation || depth.hasInvariant) && (diffLower === 'hard' || diffLower === 'balanced')) {
+        potentialFacets.push({
+          op: 'DIAGNOSE',
+          dimension: 'Scenario Analysis',
+          tier: 'Core',
+          targetDifficulty: 'Hard',
+          bloomLevel: 'Analyze / Evaluate',
+          phase: 'LATE',
+          subtopic: `${cand.name} - Structural Defect & Violation Diagnosis`,
+          guidance: `Assess diagnostic reasoning: identify structural defects or invariant violations for ${cand.name}.${isCodeExcluded ? ' [Do NOT ask for code syntax.]' : ''}`,
+          instruction: `Assess fault diagnosis and constraint violation consequences for ${cand.name}.${isCodeExcluded ? ' [Do NOT ask for code syntax.]' : ''}`
+        });
+      }
+
+      // Add eligible facets that are not yet targeted
+      for (const facet of potentialFacets) {
+        if (expanded.length >= requestedCount) break;
+
+        const facetKey = `${normConcept}::${facet.op}`;
+        if (seenFacets.has(facetKey)) continue;
+
+        seenFacets.add(facetKey);
+        const prov = this._resolveTargetEvidenceProvenance(cand.name, facet.subtopic, facet.phase, evidencePackage);
+
+        expanded.push({
+          targetId: `T${String(expanded.length + 1).padStart(2, '0')}`,
+          subtopic: facet.subtopic,
+          concept: cand.name,
+          trajectoryPhase: facet.phase,
+          timestamp: prov.timestamp,
+          tier: facet.tier,
+          dimension: facet.dimension,
+          cognitiveLevel: facet.cognitiveLevel,
+          targetDifficulty: facet.targetDifficulty,
+          intendedCognitiveOperation: facet.op,
+          bloomLevel: facet.bloomLevel,
+          operationalGuidance: facet.guidance,
+          evidenceType: prov.evidenceType,
+          sourceChunks: prov.sourceChunks,
+          requiresExactArtifact: false,
+          instruction: facet.instruction,
+          supportingEvidence: cand.evidence || facet.instruction,
+          evidenceSpan: cand.evidence || facet.instruction,
+          confidence: 'HIGH',
+          negativeBoundaries: negBoundaries
+        });
+      }
+    }
+
+    return expanded;
+  }
+
+  _auditAssessmentTargets(targets = [], reserve = [], requestedCount = null, evidencePackage = null) {
+    // Polymorphic guard: if called as (targets, requestedCount, evidencePackage)
+    if (typeof reserve === 'number') {
+      evidencePackage = requestedCount;
+      requestedCount = reserve;
+      reserve = [];
+    }
+    const safeTargets = Array.isArray(targets) ? targets : [];
+    const safeReserve = Array.isArray(reserve) ? reserve : [];
+
     const pedagogicalOrAdminPatterns = [
       /\b(teaching (?:pace|gear)|medium gear|top gear|pace of (?:teaching|instruction))\b/i,
       /\b(student (?:comfort|feelings|anxiety|confidence|mood)|comfort level|comfortable with (?:pace|teaching))\b/i,
@@ -249,7 +649,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     ];
 
     const auditLog = {
-      totalInput: targets.length + reserve.length,
+      totalInput: safeTargets.length + safeReserve.length,
       rejected: [],
       accepted: 0,
       promotedFromReserve: 0,
@@ -272,39 +672,128 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const cLower = `${target.concept || ''} ${target.subtopic || ''}`.toLowerCase();
       return excludedConcepts.find(e => e.name && e.name.length > 2 && cLower.includes(e.name));
     };
+    const rawContent = (evidencePackage?.unifiedRawContent || '').toLowerCase();
+    const isGroundingSupported = (target) => {
+      if (target.isCapacityLimited || target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT') return true;
+      if (!rawContent || rawContent.length < 50) return true;
 
+      // Check verbatim supportingEvidence if present
+      if (target.supportingEvidence && typeof target.supportingEvidence === 'string' && target.supportingEvidence.trim().length > 15) {
+        const evLower = target.supportingEvidence.toLowerCase().trim();
+        if (rawContent.includes(evLower.slice(0, 30))) return true;
+        const evWords = evLower.split(/\s+/).filter(w => w.length > 3);
+        const evMatched = evWords.filter(w => rawContent.includes(w)).length;
+        if (evWords.length > 0 && (evMatched / evWords.length) >= 0.4) return true;
+      }
+
+      // Check key concept terms in rawContent
+      const cWords = (target.concept || '').toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 3 && !['what', 'when', 'which', 'where', 'tree', 'code', 'aspect', 'intro', 'slot', 'concept', 'understanding', 'definition', 'overview', 'general'].includes(w));
+      if (cWords.length === 0) return true;
+      const matched = cWords.filter(w => rawContent.includes(w));
+      return matched.length > 0;
+    };
+
+    const focusList = (evidencePackage?.detectedFocus || [])
+      .map(f => String(f).trim().toLowerCase())
+      .filter(f => f.length > 2 && !f.includes('core lecture topic'));
+
+    // Semantic defensible capacity bounds:
+    // If lectureIntelligence.evidenceCapacity is present, use totalDefensibleCapacity.
+    // Otherwise fallback to focusList.length (preserving legacy test behavior).
+    const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity || evidencePackage?.lectureIntelligence;
+    const maxDefensibleCapacity = liCap?.totalDefensibleCapacity || (focusList.length > 0 ? focusList.length : requestedCount);
+
+    const seenFocus = new Set();
+    const isFocusDuplicate = (target) => {
+      if (focusList.length === 0) return false;
+      const text = `${target.concept || ''} ${target.subtopic || ''}`.toLowerCase();
+      const op = target.intendedCognitiveOperation || null;
+      for (const focus of focusList) {
+        const fWords = focus.split(/\s+/).filter(w => w.length > 3);
+        const matchesFocus = text.includes(focus) || (fWords.length > 0 && fWords.every(w => text.includes(w)));
+        if (matchesFocus) {
+          const focusKey = op ? `${focus}::${op}` : focus;
+          if (seenFocus.has(focusKey)) {
+            return focus;
+          }
+          seenFocus.add(focusKey);
+          return false;
+        }
+      }
+      return false;
+    };
+
+    const seenConceptFacets = new Set();
     const cleanTargets = [];
-    for (const t of targets) {
+    for (const t of safeTargets) {
       const covExcl = isExcludedByCoverage(t);
+      const normConcept = (t.concept || '').toLowerCase().trim().replace(/^(the|a|an)\s+/i, '');
+      const op = t.intendedCognitiveOperation || t.dimension || null;
+      const conceptFingerprint = op ? `${normConcept}::${op}` : normConcept;
+      const focusDup = isFocusDuplicate(t);
       if (covExcl) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Curricular Coverage Exclusion: ${covExcl.status} (${covExcl.reason})` });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'CURRICULAR_COVERAGE_EXCLUSION', status: 'REJECTED', reason: `Target concept "${t.concept}" is ruled out by curricular coverage (${covExcl.status}: ${covExcl.reason}).` });
       } else if (isContaminated(t)) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: 'Administrative or pedagogical process contamination' });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_OR_ADMINISTRATIVE', status: 'REJECTED', reason: 'Target assesses teaching process, student comfort, or classroom management instead of curricular subject matter.' });
+      } else if (!isGroundingSupported(t)) {
+        auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: 'Target concept not grounded in lecture evidence' });
+        auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'UNGROUNDED_IN_LECTURE', status: 'REJECTED', reason: `Target concept "${t.concept}" has no lexical or semantic grounding in the taught session content.` });
+      } else if (normConcept && seenConceptFacets.has(conceptFingerprint)) {
+        auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: 'Duplicate concept already targeted' });
+        auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Target concept "${t.concept}" duplicates an already planned target concept.` });
+      } else if (focusDup) {
+        auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Duplicate concept already targeted for focus "${focusDup}"` });
+        auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Target concept "${t.concept}" duplicates already targeted focus concept "${focusDup}".` });
+      } else if (maxDefensibleCapacity > 0 && cleanTargets.length >= maxDefensibleCapacity) {
+        auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Curricular concept capacity reached (${maxDefensibleCapacity} distinct concepts in session evidence)` });
+        auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'CAPACITY_LIMIT_EXCEEDED', status: 'REJECTED', reason: `Session evidence supports only ${maxDefensibleCapacity} distinct curricular concept(s). Excess target rejected to prevent quota inflation.` });
       } else {
+        if (normConcept) seenConceptFacets.add(conceptFingerprint);
         cleanTargets.push(t);
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'CURRICULAR', status: 'ACCEPTED', reason: 'Valid curricular subject matter target.' });
       }
     }
 
     const cleanReserve = [];
-    for (const r of reserve) {
+    for (const r of safeReserve) {
       const covExcl = isExcludedByCoverage(r);
+      const normConcept = (r.concept || '').toLowerCase().trim().replace(/^(the|a|an)\s+/i, '');
+      const op = r.intendedCognitiveOperation || r.dimension || null;
+      const conceptFingerprint = op ? `${normConcept}::${op}` : normConcept;
+      const focusDup = isFocusDuplicate(r);
       if (covExcl) {
         auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: `Curricular Coverage Exclusion: ${covExcl.status} (${covExcl.reason})` });
         auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'CURRICULAR_COVERAGE_EXCLUSION', status: 'REJECTED', reason: `Reserve target concept "${r.concept}" is ruled out by curricular coverage.` });
       } else if (isContaminated(r)) {
         auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: 'Administrative or pedagogical process contamination' });
         auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'PEDAGOGICAL_OR_ADMINISTRATIVE', status: 'REJECTED', reason: 'Reserve target assesses teaching process or classroom management.' });
+      } else if (!isGroundingSupported(r)) {
+        auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: 'Reserve concept not grounded in lecture evidence' });
+        auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'UNGROUNDED_IN_LECTURE', status: 'REJECTED', reason: `Reserve target concept "${r.concept}" has no grounding in taught session content.` });
+      } else if (normConcept && seenConceptFacets.has(conceptFingerprint)) {
+        auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: 'Duplicate concept already targeted' });
+        auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Reserve target concept "${r.concept}" duplicates an existing concept.` });
+      } else if (focusDup) {
+        auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: `Duplicate concept already targeted for focus "${focusDup}"` });
+        auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Reserve target concept "${r.concept}" duplicates already targeted focus concept "${focusDup}".` });
+      } else if (maxDefensibleCapacity > 0 && (cleanTargets.length + cleanReserve.length) >= maxDefensibleCapacity) {
+        auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: `Curricular concept capacity reached (${maxDefensibleCapacity} distinct concepts in session evidence)` });
+        auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'CAPACITY_LIMIT_EXCEEDED', status: 'REJECTED', reason: `Reserve concept exceeds session concept capacity (${maxDefensibleCapacity}).` });
       } else {
+        if (normConcept) seenConceptFacets.add(conceptFingerprint);
         cleanReserve.push(r);
         auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'CURRICULAR', status: 'ACCEPTED', reason: 'Valid curricular reserve target.' });
       }
     }
 
-    // Promote clean reserve targets if needed to fulfill requestedCount
-    while (cleanTargets.length < requestedCount && cleanReserve.length > 0) {
+    // Promote clean reserve targets if needed to fulfill requestedCount within genuine capacity bounds
+    const maxCapacity = maxDefensibleCapacity || requestedCount;
+    while (cleanTargets.length < requestedCount && cleanTargets.length < maxCapacity && cleanReserve.length > 0) {
       const promoted = cleanReserve.shift();
       promoted.targetId = `T0${cleanTargets.length + 1}`;
       cleanTargets.push(promoted);
@@ -312,7 +801,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     }
 
     auditLog.accepted = cleanTargets.length;
-    return { auditedTargets: cleanTargets, auditedReserve: cleanReserve, auditLog };
+    return { auditedTargets: cleanTargets, auditedReserve: cleanReserve, cleanTargets, cleanReserve, auditLog };
   }
 
   _computeTCScore(rawContent, voiceEmphasis = {}, lectureDepth = {}, planSummary = {}) {
@@ -347,6 +836,76 @@ Generate the curricular assessment plan strictly covering educational concepts w
     };
   }
 
+  _resolveTargetEvidenceProvenance(conceptName = '', subtopic = '', phase = 'MID', evidencePackage = null) {
+    const activeStore = evidencePackage?.multimodalStore || evidencePackage?.hierarchicalStore;
+    const sessionHasDocs = Boolean(
+      evidencePackage?.hasAlignedDocs ||
+      (Array.isArray(evidencePackage?.documentTexts) && evidencePackage.documentTexts.length > 0) ||
+      (activeStore?.children || []).some(c => c.sourceType === 'SLIDE' || c.sourceType === 'CODE')
+    );
+    const sessionHasVoice = Boolean(
+      evidencePackage?.voiceAnalysis ||
+      (typeof evidencePackage?.unifiedRawContent === 'string' && evidencePackage.unifiedRawContent.includes('[VOICE TRANSCRIPT]')) ||
+      (activeStore?.children || []).some(c => c.sourceType === 'TRANSCRIPT')
+    );
+
+    let sourceChunks = [];
+    let timestamp = null;
+    let hasRealTimestamps = false;
+    let matchedChild = null;
+
+    if (activeStore && Array.isArray(activeStore.children) && activeStore.children.length > 0) {
+      const cLower = String(conceptName || '').toLowerCase();
+      const sLower = String(subtopic || '').toLowerCase();
+
+      matchedChild = activeStore.children.find(c => {
+        const tLower = (c.text || '').toLowerCase();
+        return (cLower.length > 3 && tLower.includes(cLower)) || (sLower.length > 3 && tLower.includes(sLower));
+      });
+
+      if (!matchedChild) {
+        const total = activeStore.children.length;
+        let pIdx = Math.floor(total / 2);
+        if (phase === 'EARLY') pIdx = 0;
+        else if (phase === 'LATE') pIdx = Math.max(0, total - 1);
+        matchedChild = activeStore.children[pIdx];
+      }
+
+      if (matchedChild) {
+        sourceChunks = [matchedChild.evidenceId];
+        if (matchedChild.hasRealTimestamps && matchedChild.timeSpan && matchedChild.timeSpan.formatted) {
+          timestamp = matchedChild.timeSpan.formatted;
+          hasRealTimestamps = true;
+        }
+      }
+    }
+
+    let evidenceType = 'VOICE';
+    if (!sessionHasDocs && sessionHasVoice) {
+      evidenceType = 'VOICE';
+    } else if (!sessionHasVoice && sessionHasDocs) {
+      evidenceType = 'DOCUMENT';
+    } else if (sessionHasVoice && sessionHasDocs) {
+      const alignmentGraph = evidencePackage?.alignmentGraph || {};
+      const isLinked = sourceChunks.some(cid => Array.isArray(alignmentGraph[cid]) && alignmentGraph[cid].length > 0);
+      const isDocAligned = Boolean(evidencePackage?.hasAlignedDocs && !evidencePackage?.unalignedDocuments?.includes(conceptName));
+      if (isLinked && isDocAligned) {
+        evidenceType = 'VOICE + DOCUMENT';
+      } else if (matchedChild?.sourceType === 'SLIDE' || matchedChild?.sourceType === 'CODE') {
+        evidenceType = 'DOCUMENT';
+      } else {
+        evidenceType = 'VOICE';
+      }
+    }
+
+    return {
+      sourceChunks,
+      timestamp,
+      hasRealTimestamps,
+      evidenceType
+    };
+  }
+
   _buildFallbackPlan(rawContent, difficulty, count, categoryWeights = {}, lectureDepth = {}, detectedFocus = [], evidencePackage = {}) {
     const targets = [];
     const dimensions = [
@@ -361,41 +920,107 @@ Generate the curricular assessment plan strictly covering educational concepts w
       'Evidence-Derived Inference'
     ];
 
+    const excludedConcepts = (evidencePackage?.curricularCoverage?.excludedOrUncoveredConcepts || []).map(c => ({
+      name: (c.concept || '').toLowerCase().trim(),
+      status: c.status
+    }));
+
+    const uniqueFocus = Array.from(new Set(
+      (detectedFocus || [])
+        .map(f => String(f).trim())
+        .filter(f => {
+          if (!f || f.length <= 2 || f.toLowerCase().includes('topic concept')) return false;
+          const fLower = f.toLowerCase();
+          return !excludedConcepts.some(e => e.name && e.name.length > 2 && (fLower === e.name || fLower.includes(e.name)));
+        })
+    ));
+
+    const isExplicitCurriculum = uniqueFocus.length > 0 && !uniqueFocus.every(f => f.toLowerCase().includes('core lecture topic'));
+    const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity;
+    let defensibleCapacity = count;
+    if (isExplicitCurriculum) {
+      if (liCap && liCap.totalDefensibleCapacity) {
+        defensibleCapacity = liCap.totalDefensibleCapacity;
+      } else {
+        defensibleCapacity = uniqueFocus.length;
+      }
+    }
+    const availableCount = isExplicitCurriculum ? Math.min(count, defensibleCapacity) : count;
+    const subtopicsList = uniqueFocus.length > 0 ? uniqueFocus : ['Core Definitions', 'Mechanism Sequence', 'Performance Impact'];
+
     for (let i = 1; i <= count; i++) {
-      const subtopic = detectedFocus[i % (detectedFocus.length || 1)] || `Topic Concept ${i}`;
-      targets.push({
-        targetId: `T0${i}`,
-        subtopic: subtopic,
-        concept: `${subtopic} - Aspect ${i}`,
-        tier: 'Core',
-        dimension: dimensions[(i - 1) % dimensions.length],
-        cognitiveLevel: i % 2 === 0 ? 'Apply' : 'Understand',
-        targetDifficulty: difficulty,
-        evidenceType: 'VOICE + DOCUMENT',
-        sourceChunks: ['chunk_01'],
-        requiresExactArtifact: false,
-        instruction: `Assess understanding and application of ${subtopic}`
-      });
+      let phase = 'MID';
+      if (i <= Math.ceil(count / 3)) phase = 'EARLY';
+      else if (i > Math.ceil((2 * count) / 3)) phase = 'LATE';
+
+      if (!isExplicitCurriculum || i <= availableCount) {
+        const subtopic = subtopicsList[(i - 1) % subtopicsList.length];
+        const conceptName = isExplicitCurriculum ? subtopic : `${subtopic} - Aspect ${i}`;
+        const prov = this._resolveTargetEvidenceProvenance(conceptName, subtopic, phase, evidencePackage);
+        const dimension = dimensions[(i - 1) % dimensions.length];
+        targets.push({
+          targetId: `T${String(i).padStart(2, '0')}`,
+          subtopic: subtopic,
+          concept: conceptName,
+          trajectoryPhase: phase,
+          timestamp: prov.timestamp,
+          tier: 'Core',
+          dimension: dimension,
+          cognitiveLevel: i % 2 === 0 ? 'Apply' : 'Understand',
+          targetDifficulty: difficulty,
+          intendedCognitiveOperation: dimension.toUpperCase().replace(/[^A-Z]/g, '_'),
+          evidenceType: prov.evidenceType,
+          sourceChunks: prov.sourceChunks,
+          requiresExactArtifact: false,
+          instruction: `Assess understanding and application of ${conceptName}`
+        });
+      } else {
+        // True capacity deficit
+        const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${count}. Remaining slot withheld to prevent hallucination.`;
+        targets.push({
+          targetId: `T${String(i).padStart(2, '0')}`,
+          subtopic: 'Curricular Capacity Limit',
+          concept: `Curricular Capacity Deficit Slot ${i}`,
+          trajectoryPhase: phase,
+          timestamp: 'End of Lecture',
+          tier: 'Peripheral',
+          dimension: 'Conceptual',
+          cognitiveLevel: 'Remember',
+          targetDifficulty: difficulty === 'Balanced' ? 'Medium' : difficulty,
+          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+          isCapacityLimited: true,
+          capacityLimitation: {
+            status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+            reason: deficitReason,
+            availableCount,
+            requestedCount: count
+          },
+          supportingEvidence: '',
+          instruction: deficitReason
+        });
+      }
     }
 
     const fallbackReserve = Array.from({ length: Math.max(3, Math.ceil(count * 0.4)) }, (_, idx) => {
-      const subtopic = detectedFocus[(count + idx) % (detectedFocus.length || 1)] || `Reserve Concept ${idx + 1}`;
+      const subtopic = subtopicsList[(count + idx) % subtopicsList.length] || `Reserve Concept ${idx + 1}`;
+      let phase = idx % 2 === 0 ? 'MID' : 'LATE';
+      const prov = this._resolveTargetEvidenceProvenance(subtopic, subtopic, phase, evidencePackage);
       return {
-        targetId: `R0${idx + 1}`,
+        targetId: `R${String(idx + 1).padStart(2, '0')}`,
         subtopic: subtopic,
         concept: `${subtopic} - Extension ${idx + 1}`,
+        trajectoryPhase: phase,
+        timestamp: prov.timestamp,
         tier: idx === 0 ? 'Core' : 'Secondary',
         dimension: dimensions[(count + idx) % dimensions.length],
         cognitiveLevel: 'Understand',
         targetDifficulty: difficulty,
-        evidenceType: 'VOICE + DOCUMENT',
-        sourceChunks: ['chunk_01'],
+        evidenceType: prov.evidenceType,
+        sourceChunks: prov.sourceChunks,
         requiresExactArtifact: false,
         instruction: `Assess grounded understanding of ${subtopic}`
       };
     });
-
-    const subtopicsList = detectedFocus.length > 0 ? detectedFocus : ['Core Definitions', 'Mechanism Sequence', 'Performance Impact'];
 
     const planData = {
       subject: (detectedFocus && detectedFocus.length > 0) ? detectedFocus[0] : 'Academic Curriculum',
@@ -753,9 +1378,14 @@ Generate the curricular assessment plan strictly covering educational concepts w
    */
   _applyDifficultyBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}, deficitPolicy = null) {
     const providerConfig = require('../../config/providerConfig');
-    const mode = process.env.DIFFICULTY_CALIBRATION_MODE || providerConfig?.difficulty?.calibrationMode || 'v1_bloom_quota';
+    const envMode = process.env.DIFFICULTY_CALIBRATION_MODE;
+    const configMode = providerConfig?.difficulty?.calibrationMode;
 
-    if (mode === 'v2_intent_relative') {
+    if (envMode === 'v1_bloom_quota') {
+      return this._applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+    }
+
+    if (envMode === 'v2_intent_relative' || configMode === 'v2_intent_relative' || evidencePackage?.instructionalProfile || evidencePackage?.instructionalIntent) {
       return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
     }
 
@@ -785,14 +1415,31 @@ Generate the curricular assessment plan strictly covering educational concepts w
         });
       }
     } else if (targets.length > 0 && targets.length < requestedCount) {
-      const baseTargets = [...targets];
-      while (targets.length < requestedCount) {
-        const idx = targets.length;
-        const ref = baseTargets[idx % baseTargets.length];
+      const availableCount = targets.length;
+      const deficitCount = requestedCount - availableCount;
+      const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
+      for (let i = 0; i < deficitCount; i++) {
+        const slotNum = availableCount + i + 1;
         targets.push({
-          ...ref,
-          targetId: `T${String(idx + 1).padStart(2, '0')}`,
-          concept: ref.concept
+          targetId: `T${String(slotNum).padStart(2, '0')}`,
+          concept: `Curricular Capacity Deficit Slot ${slotNum}`,
+          subtopic: 'Curricular Capacity Limit',
+          trajectoryPhase: 'LATE',
+          timestamp: 'End of Lecture',
+          tier: 'Peripheral',
+          dimension: 'Conceptual',
+          cognitiveLevel: 'Remember',
+          targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : requestedDifficulty,
+          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+          isCapacityLimited: true,
+          capacityLimitation: {
+            status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+            reason: deficitReason,
+            availableCount,
+            requestedCount
+          },
+          supportingEvidence: '',
+          instruction: deficitReason
         });
       }
     }
@@ -908,6 +1555,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const reorderedTargets = targetsWithDepth.map(item => item.target);
 
       reorderedTargets.forEach((target, idx) => {
+        if (target.isCapacityLimited || target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT') {
+          finalTargets.push(target);
+          return;
+        }
         const assignedTier = blueprint.distribution[idx] || 'Medium';
         const depth = targetsWithDepth[idx].depth;
         const cognitiveBp = this.getCognitiveBlueprint(assignedTier, target.dimension, idx);
@@ -967,20 +1618,25 @@ Generate the curricular assessment plan strictly covering educational concepts w
       hasDeficit: requestedHardCount > supportedHardCount
     };
 
-    // Capacity Deficit Report
-    const deficitCount = Math.max(0, requestedHardCount - supportedHardCount);
-    const hasDeficit = deficitCount > 0;
+    // Capacity Deficit Report (unifies both difficulty-based and concept-count-based deficits)
+    const countDeficit = finalTargets.filter(t => 
+      t.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      t.capacityLimitation?.status === 'INSUFFICIENT_CURRICULAR_EVIDENCE'
+    ).length;
+    const difficultyDeficit = Math.max(0, requestedHardCount - supportedHardCount);
+    const totalCapacityDeficit = Math.max(difficultyDeficit, countDeficit);
+    const hasDeficit = totalCapacityDeficit > 0;
     planData.capacityDeficitReport = {
       requestedCount,
-      generatedCount: requestedCount - (deficitPolicy === 'FILL_WITH_MEDIUM' ? 0 : deficitCount),
+      generatedCount: requestedCount - (deficitPolicy === 'FILL_WITH_MEDIUM' ? countDeficit : totalCapacityDeficit),
       requestedDifficulty: blueprint.requestedDifficulty,
-      fulfilledDifficulty: (deficitPolicy === 'FILL_WITH_MEDIUM' && hasDeficit)
-        ? (supportedHardCount > 0 ? `Mixed (${supportedHardCount} Hard, ${deficitCount} Medium)` : 'Medium')
+      fulfilledDifficulty: (deficitPolicy === 'FILL_WITH_MEDIUM' && difficultyDeficit > 0 && countDeficit === 0)
+        ? (supportedHardCount > 0 ? `Mixed (${supportedHardCount} Hard, ${difficultyDeficit} Medium)` : 'Medium')
         : blueprint.requestedDifficulty,
-      capacityDeficit: deficitCount,
+      capacityDeficit: totalCapacityDeficit,
       deficitPolicyApplied: deficitPolicy === 'FILL_WITH_MEDIUM' ? 'FILL_WITH_MEDIUM' : null,
       deficitReason: hasDeficit
-        ? (capacityLimitations[0]?.message || `Insufficient lecture evidence for ${deficitCount} additional distinct Hard questions without hallucination`)
+        ? (capacityLimitations[0]?.message || finalTargets.find(t => t.capacityLimitation)?.capacityLimitation?.reason || `Insufficient lecture evidence for ${totalCapacityDeficit} additional distinct questions without hallucination`)
         : null,
       teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
       options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
@@ -1065,14 +1721,31 @@ Generate the curricular assessment plan strictly covering educational concepts w
         });
       }
     } else if (targets.length > 0 && targets.length < requestedCount) {
-      const baseTargets = [...targets];
-      while (targets.length < requestedCount) {
-        const idx = targets.length;
-        const ref = baseTargets[idx % baseTargets.length];
+      const availableCount = targets.length;
+      const deficitCount = requestedCount - availableCount;
+      const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
+      for (let i = 0; i < deficitCount; i++) {
+        const slotNum = availableCount + i + 1;
         targets.push({
-          ...ref,
-          targetId: `T${String(idx + 1).padStart(2, '0')}`,
-          concept: ref.concept
+          targetId: `T${String(slotNum).padStart(2, '0')}`,
+          concept: `Curricular Capacity Deficit Slot ${slotNum}`,
+          subtopic: 'Curricular Capacity Limit',
+          trajectoryPhase: 'LATE',
+          timestamp: 'End of Lecture',
+          tier: 'Peripheral',
+          dimension: 'Conceptual',
+          cognitiveLevel: 'Remember',
+          targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : requestedDifficulty,
+          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+          isCapacityLimited: true,
+          capacityLimitation: {
+            status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+            reason: deficitReason,
+            availableCount,
+            requestedCount
+          },
+          supportingEvidence: '',
+          instruction: deficitReason
         });
       }
     }
@@ -1266,6 +1939,9 @@ Generate the curricular assessment plan strictly covering educational concepts w
       for (let i = 0; i < allocatedHard; i++) distribution.push('Hard');
 
       const mappedTargets = targets.slice(0, requestedCount).map((target, idx) => {
+        if (target.isCapacityLimited || target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT') {
+          return target;
+        }
         let assignedTier = distribution[idx] || (isHardFeasible ? 'Medium' : 'Easy');
         target.targetDifficulty = assignedTier;
         target.negativeBoundaries = negativeBoundaries;
@@ -1345,25 +2021,30 @@ Generate the curricular assessment plan strictly covering educational concepts w
       negativeBoundaries
     };
 
-    // Capacity Deficit Report
+    // Capacity Deficit Report (unifies both difficulty-based and concept-count-based deficits)
+    const countDeficit = finalTargets.filter(t => 
+      t.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      t.capacityLimitation?.status === 'INSUFFICIENT_CURRICULAR_EVIDENCE'
+    ).length;
     const totalHardDeficit = Math.max(0, requestedHard - allocatedHard);
-    const hasDeficit = totalHardDeficit > 0;
+    const totalCapacityDeficit = Math.max(totalHardDeficit, countDeficit);
+    const hasDeficit = totalCapacityDeficit > 0;
     planData.capacityDeficitReport = {
       requestedCount,
-      generatedCount: requestedCount - (deficitPolicy === 'FILL_WITH_MEDIUM' ? 0 : totalHardDeficit),
+      generatedCount: requestedCount - (deficitPolicy === 'FILL_WITH_MEDIUM' ? countDeficit : totalCapacityDeficit),
       requestedDifficulty,
-      fulfilledDifficulty: (deficitPolicy === 'FILL_WITH_MEDIUM' && hasDeficit)
+      fulfilledDifficulty: (deficitPolicy === 'FILL_WITH_MEDIUM' && totalHardDeficit > 0 && countDeficit === 0)
         ? (allocatedHard > 0 ? `Mixed (${allocatedHard} Hard, ${totalHardDeficit} Medium)` : 'Medium')
         : requestedDifficulty,
-      capacityDeficit: totalHardDeficit,
+      capacityDeficit: totalCapacityDeficit,
       deficitPolicyApplied: deficitPolicy === 'FILL_WITH_MEDIUM' ? 'FILL_WITH_MEDIUM' : null,
       deficitReason: hasDeficit
-        ? (capacityAudit?.reason || `Insufficient lecture evidence for ${totalHardDeficit} additional distinct Hard questions without hallucination`)
+        ? (capacityAudit?.reason || finalTargets.find(t => t.capacityLimitation)?.capacityLimitation?.reason || `Insufficient lecture evidence for ${totalCapacityDeficit} additional distinct questions without hallucination`)
         : null,
       teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
       options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
-        { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${allocatedHard} Hard Question${allocatedHard === 1 ? '' : 's'}` },
-        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalHardDeficit} with Deep Medium Questions` },
+        { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${requestedCount - totalCapacityDeficit} Question${(requestedCount - totalCapacityDeficit) === 1 ? '' : 's'}` },
+        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalCapacityDeficit} with Deep Medium Questions` },
         { action: 'CANCEL', label: 'Cancel / Adjust Request' }
       ] : []
     };

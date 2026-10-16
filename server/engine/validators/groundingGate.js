@@ -107,7 +107,8 @@ class GroundingGate {
    * @returns {Object} { status: 'PASSED'|'FAILED', validatedQuestions: [], rejectedCount: 0 }
    */
   verifyQuizGrounding(quizQuestions = [], evidencePackage = {}) {
-    const rawContent = (evidencePackage.unifiedRawContent || '').toLowerCase();
+    const rawContent = (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || '')).toLowerCase();
+    const pkgObj = typeof evidencePackage === 'string' ? { unifiedRawContent: evidencePackage } : evidencePackage;
     const validated = [];
     let rejectedCount = 0;
     let failureReasons = [];
@@ -115,8 +116,8 @@ class GroundingGate {
     // Extract table and visual contents from multimodalStore or commonDocumentModel if present
     let tableText = '';
     let visualText = '';
-    if (evidencePackage.commonDocumentModel) {
-      const blocks = evidencePackage.commonDocumentModel.getAllBlocks?.() || [];
+    if (pkgObj?.commonDocumentModel) {
+      const blocks = pkgObj.commonDocumentModel.getAllBlocks?.() || [];
       for (const b of blocks) {
         if (b.type === 'table') tableText += ' ' + b.content.toLowerCase();
         if (b.type === 'chart' || b.type === 'diagram' || b.type === 'image') visualText += ' ' + b.content.toLowerCase();
@@ -126,11 +127,11 @@ class GroundingGate {
     const fullVerifiableContent = `${rawContent} ${tableText} ${visualText}`.trim();
 
     for (const q of quizQuestions) {
-      const qText = (q.questionText || '').toLowerCase();
+      const qText = (q.questionText || q.question || '').toLowerCase();
       const ansText = (q.correctAnswer || '').toLowerCase();
 
       // Semantic keywords overlap verification against verifiable session content
-      const { isJustified, reason } = this._checkJustification(qText, ansText, fullVerifiableContent);
+      const { isJustified, reason } = this._checkJustification(qText, ansText, fullVerifiableContent, q, pkgObj);
 
       if (isJustified) {
         validated.push(q);
@@ -152,12 +153,34 @@ class GroundingGate {
     };
   }
 
-  _checkJustification(qText, ansText, rawContent) {
+  validateJustification(quizQuestions = [], rawContent = '', evidencePackage = {}) {
+    const pkg = typeof rawContent === 'object' && rawContent !== null
+      ? rawContent
+      : { ...(evidencePackage || {}), unifiedRawContent: String(rawContent || '') };
+    const res = this.verifyQuizGrounding(quizQuestions, pkg);
+    return {
+      status: res.status,
+      justifiedQuestions: res.validatedQuestions,
+      rejectedQuestions: (res.reasons || []).map((reason, idx) => ({ reason, question: quizQuestions[idx] })),
+      ...res
+    };
+  }
+
+  _checkJustification(qText, ansText, rawContent, q = null, evidencePackage = {}) {
     if (!rawContent || rawContent.length < 50) {
       return { isJustified: false, reason: 'INSUFFICIENT_READABLE_EVIDENCE: Session content too sparse to verify grounding' };
     }
 
-    // Stopwords list: common grammatical/conversational question words & question scaffolding
+    // Check explicit teacher negative boundaries (e.g. NO_CODE, NO_MATH)
+    const boundaries = evidencePackage?.negativeBoundaries || evidencePackage?.instructionalProfile?.negativeBoundaries || [];
+    if (boundaries.includes('NO_CODE')) {
+      const codeRegex = /\b(def |class |int |void |public |private |malloc|printf|cout|cin|std::|#include|import )\b/;
+      if (codeRegex.test(qText) || codeRegex.test(ansText)) {
+        return { isJustified: false, reason: 'TEACHER_BOUNDARY_VIOLATION: Code syntax generated despite explicit NO_CODE instruction' };
+      }
+    }
+
+    // Stopwords list: common grammatical, question scaffolding, and domain-neutral scenario reasoning words
     const stopwords = new Set([
       'which', 'what', 'where', 'when', 'after', 'before', 'during', 'should',
       'between', 'their', 'there', 'about', 'using', 'would', 'could', 'because',
@@ -176,7 +199,28 @@ class GroundingGate {
       'calculated', 'calculate', 'identify', 'identifies', 'specific', 'specified',
       'established', 'represents', 'described', 'describes', 'indicated', 'indicates',
       'mentioned', 'discusses', 'discussed', 'value', 'values', 'difference',
-      'example', 'examples', 'variable', 'variables'
+      'example', 'examples', 'variable', 'variables',
+
+      // Domain-neutral scenario, application & reasoning terms (never treated as foreign topics)
+      'same', 'size', 'initial', 'initialize', 'initialized', 'initializes', 'initializing',
+      'element', 'elements', 'contain', 'contains', 'contained', 'containing',
+      'item', 'items', 'entry', 'entries', 'case', 'cases', 'instance', 'instances',
+      'assume', 'assumes', 'assumed', 'assuming', 'given', 'suppose', 'supposes', 'supposed', 'supposing',
+      'program', 'programs', 'execution', 'executions', 'start', 'starts', 'started', 'starting',
+      'end', 'ends', 'ended', 'ending', 'type', 'types', 'store', 'stores', 'stored', 'storing',
+      'behavior', 'behaviors', 'scenario', 'scenarios', 'state', 'states', 'structure', 'structures',
+      'data', 'operation', 'operations', 'operational', 'outcome', 'outcomes',
+      'perform', 'performs', 'performed', 'performing', 'performance', 'respect',
+      'condition', 'conditions', 'input', 'inputs', 'output', 'outputs', 'order', 'ordered', 'ordering',
+      'occur', 'occurs', 'occurred', 'occurring', 'raise', 'raises', 'raised', 'raising',
+      'exception', 'exceptions', 'error', 'errors', 'valid', 'invalid', 'locate', 'locates', 'located', 'locating',
+      'access', 'accesses', 'accessed', 'accessing', 'compare', 'compares', 'compared', 'comparing',
+      'contrast', 'contrasts', 'divergence', 'diverges', 'characteristic', 'characteristics',
+      'consequence', 'consequences', 'add', 'adds', 'added', 'adding', 'append', 'appends', 'appended', 'appending',
+      'remove', 'removes', 'removed', 'removing', 'find', 'finds', 'found', 'finding',
+      'return', 'returns', 'returned', 'returning', 'hold', 'holds', 'held', 'holding',
+      'true', 'false', 'none', 'null', 'yes', 'number', 'numbers', 'equal', 'equals',
+      'smaller', 'greater', 'larger', 'highest', 'lowest', 'minimum', 'maximum'
     ]);
 
     // Extract all alphanumeric tokens
@@ -222,8 +266,8 @@ class GroundingGate {
     }
 
     // 3. Evidence-based foreign domain contamination:
-    // Multiple substantive unsupported anchors (>=3) with weak evidence support (<3 matches or <30% overlap)
-    if (unsupportedSubstantive.length >= 3 && (matchedSubstantive.length < 3 || matchRatio < 0.30)) {
+    // Multiple substantive unsupported anchors (>=3) with weak evidence support (<2 matches or <25% overlap)
+    if (unsupportedSubstantive.length >= 3 && (matchedSubstantive.length < 2 || matchRatio < 0.25)) {
       const sampleUnsupported = Array.from(new Set(unsupportedSubstantive)).slice(0, 4).join(', ');
       return {
         isJustified: false,
@@ -231,16 +275,16 @@ class GroundingGate {
       };
     }
 
-    // 4. Severe under-grounding (< 20% overlap)
-    if (matchRatio < 0.20) {
+    // 4. Severe under-grounding (< 15% overlap)
+    if (matchRatio < 0.15) {
       return {
         isJustified: false,
         reason: `ZERO_SESSION_OVERLAP: Match ratio ${(matchRatio * 100).toFixed(1)}% (found ${matchedCount}/${totalTokens} terms in evidence)`
       };
     }
 
-    // 5. Sparse match floor: only 1 substantive keyword matched out of 4+ substantive terms
-    if (matchedSubstantive.length < 2 && matchRatio < 0.30 && substantiveTokens.length >= 4) {
+    // 5. Sparse match floor: only 1 substantive keyword matched out of 5+ substantive terms with < 20% overlap
+    if (matchedSubstantive.length < 2 && matchRatio < 0.20 && substantiveTokens.length >= 5) {
       return {
         isJustified: false,
         reason: `ZERO_SESSION_OVERLAP: Match ratio ${(matchRatio * 100).toFixed(1)}% (found ${matchedCount}/${totalTokens} terms in evidence)`

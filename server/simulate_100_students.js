@@ -72,18 +72,10 @@ async function runSimulation() {
     const realQuizId = await resolveRealQuizId(QUIZ_TARGET);
     console.log(`📌 Resolved Quiz Room ID: ${realQuizId}`);
 
-    // Try fetching real student users from database if available
-    let dbStudents = [];
+    // STRICT ISOLATION GUARD: Synthetic bot testing only.
+    // NEVER query or impersonate real student accounts from database to prevent result pollution or identity collision.
     let quizQuestions = [];
     if (prisma) {
-        try {
-            dbStudents = await prisma.user.findMany({
-                where: { role: 'student' },
-                take: STUDENT_COUNT,
-                select: { id: true, username: true, role: true }
-            });
-            console.log(`📦 Loaded ${dbStudents.length} real student accounts from database.`);
-        } catch (_) {}
 
         try {
             const q = await prisma.quiz.findUnique({
@@ -115,9 +107,8 @@ async function runSimulation() {
     console.log(`⏳ Connecting ${STUDENT_COUNT} student bots to live room...`);
 
     for (let i = 1; i <= STUDENT_COUNT; i++) {
-        const dbUser = dbStudents[i - 1];
-        const studentId = dbUser ? dbUser.id : `sim_student_${i}_${Date.now()}`;
-        const username = dbUser ? dbUser.username : `Student_Bot_${i}`;
+        const studentId = `sim_student_${i}_${Date.now()}`;
+        const username = `Student_Bot_${i}`;
         const role = 'simulation';
 
         // Sign simulation token using configured JWT secret
