@@ -9,20 +9,8 @@ export default function AlignmentViewer({ alignmentGraph = {}, alignmentWarning 
     ...val
   }));
 
-  const links = rawLinks.length > 0 ? rawLinks : (
-    (questions || []).map((q, idx) => ({
-      concept: q.concept_tag || q.sub_topic || `Curriculum Unit ${idx + 1}`,
-      relationship: 'CLOSELY_ALIGNED',
-      spokenText: q.questionText
-        ? `Teacher verbally emphasised: "${q.questionText.substring(0, 90)}..."`
-        : `Lecture audio confirmed dominant spoken authority for this concept.`,
-      documentRef: q.explanation || q.evidenceCitation
-        ? (q.explanation || q.evidenceCitation).substring(0, 120) + '...'
-        : `Companion document corroborates this concept with matching terminology and supporting examples.`,
-      priority: idx < 3 ? 1 : 2,
-      confidence: q.confidence || (0.88 + (idx % 5) * 0.02),
-    }))
-  );
+  // Honest Alignment Representation: Voice-only sessions produce 0 links and show the Single Modality state
+  const links = rawLinks;
 
   const RELATIONSHIP_META = {
     CLOSELY_ALIGNED: {
@@ -107,47 +95,81 @@ export default function AlignmentViewer({ alignmentGraph = {}, alignmentWarning 
               <Link2 size={20} />
             </div>
             <div>
-              <h4 className="text-sm font-black text-slate-900">Cross-Material Alignment Graph</h4>
-              <p className="text-xs text-slate-600">Bidirectional semantic mapping: Lecture Audio ↔ Companion Documents</p>
+              <h4 className="text-sm font-black text-slate-900">
+                {links.length > 0 ? 'Cross-Material Alignment Graph' : 'Single Modality Session (Pure Spoken Lecture)'}
+              </h4>
+              <p className="text-xs text-slate-600">
+                {links.length > 0
+                  ? 'Bidirectional semantic mapping: Lecture Audio ↔ Companion Documents'
+                  : '100% Spoken Lecture Authority. All assessment targets are derived directly from teacher utterance evidence.'}
+              </p>
             </div>
           </div>
-          <div className="text-xs font-mono font-black text-indigo-700 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg shadow-sm">
-            Avg Confidence: {avgConfidence}%
-          </div>
+          {links.length > 0 ? (
+            <div className="text-xs font-mono font-black text-indigo-700 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg shadow-sm">
+              Avg Confidence: {avgConfidence}%
+            </div>
+          ) : (
+            <div className="text-xs font-mono font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg shadow-sm">
+              Spoken Authority: 100%
+            </div>
+          )}
         </div>
 
         {/* How it works */}
         <div className="bg-white/70 border border-indigo-100 rounded-lg p-3 text-[11px] text-slate-600 leading-relaxed">
           <strong className="text-indigo-700 font-black">How Cross-Material Alignment works:</strong>{' '}
-          Each concept detected in the <span className="text-orange-600 font-bold">lecture audio</span> is cross-referenced against
-          text in <span className="text-sky-600 font-bold">uploaded documents/slides</span>. The alignment relationship describes
-          how closely the two sources agree on that concept. Only aligned material is used in question generation.
+          {links.length > 0 ? (
+            <>
+              Each concept detected in the <span className="text-orange-600 font-bold">lecture audio</span> is cross-referenced against
+              text in <span className="text-sky-600 font-bold">uploaded documents/slides</span>. The alignment relationship describes
+              how closely the two sources agree on that concept. Only aligned material is used in question generation.
+            </>
+          ) : (
+            <>
+              No companion document was attached for this session. The pipeline operates under <span className="text-emerald-700 font-bold">Pure Spoken Authority</span>: questions are strictly grounded in classroom audio transcript timestamps without cross-modal synthesis.
+            </>
+          )}
         </div>
 
         {/* Stat pills */}
-        <div className="flex flex-wrap gap-2">
-          <span className="text-[11px] font-bold px-3 py-1 bg-white border border-indigo-200 rounded-full text-indigo-700 flex items-center gap-1.5">
-            <Link2 size={11} /> {stats.total} Total Concepts
-          </span>
-          <span className="text-[11px] font-bold px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-emerald-700 flex items-center gap-1.5">
-            <CheckCircle2 size={11} /> {stats.aligned} Closely Aligned
-          </span>
-          {stats.partial > 0 && (
-            <span className="text-[11px] font-bold px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-amber-700 flex items-center gap-1.5">
-              <TrendingUp size={11} /> {stats.partial} Partial / Variant
+        {links.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            <span className="text-[11px] font-bold px-3 py-1 bg-white border border-indigo-200 rounded-full text-indigo-700 flex items-center gap-1.5">
+              <Link2 size={11} /> {stats.total} Total Concepts
             </span>
-          )}
-          {stats.unrelated > 0 && (
-            <span className="text-[11px] font-bold px-3 py-1 bg-rose-50 border border-rose-200 rounded-full text-rose-700 flex items-center gap-1.5">
-              <XCircle size={11} /> {stats.unrelated} Unrelated (Suppressed)
+            <span className="text-[11px] font-bold px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-emerald-700 flex items-center gap-1.5">
+              <CheckCircle2 size={11} /> {stats.aligned} Closely Aligned
             </span>
-          )}
-          {unalignedDocuments.length > 0 && (
-            <span className="text-[11px] font-bold px-3 py-1 bg-rose-50 border border-rose-200 rounded-full text-rose-700 flex items-center gap-1.5">
-              <XCircle size={11} /> {unalignedDocuments.length} Doc(s) Fully Suppressed
+            {stats.partial > 0 && (
+              <span className="text-[11px] font-bold px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-amber-700 flex items-center gap-1.5">
+                <TrendingUp size={11} /> {stats.partial} Partial / Variant
+              </span>
+            )}
+            {stats.unrelated > 0 && (
+              <span className="text-[11px] font-bold px-3 py-1 bg-rose-50 border border-rose-200 rounded-full text-rose-700 flex items-center gap-1.5">
+                <XCircle size={11} /> {stats.unrelated} Unrelated (Suppressed)
+              </span>
+            )}
+            {unalignedDocuments.length > 0 && (
+              <span className="text-[11px] font-bold px-3 py-1 bg-rose-50 border border-rose-200 rounded-full text-rose-700 flex items-center gap-1.5">
+                <XCircle size={11} /> {unalignedDocuments.length} Doc(s) Fully Suppressed
+              </span>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            <span className="text-[11px] font-bold px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-emerald-700 flex items-center gap-1.5">
+              <Mic size={11} /> Single Modality (Voice Only)
             </span>
-          )}
-        </div>
+            <span className="text-[11px] font-bold px-3 py-1 bg-sky-50 border border-sky-200 rounded-full text-sky-700 flex items-center gap-1.5">
+              <CheckCircle2 size={11} /> Zero Fabricated Alignments
+            </span>
+            <span className="text-[11px] font-bold px-3 py-1 bg-white border border-slate-200 rounded-full text-slate-600 flex items-center gap-1.5">
+              0 Document Links
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Filter bar */}
@@ -288,14 +310,14 @@ export default function AlignmentViewer({ alignmentGraph = {}, alignmentWarning 
         </div>
       ) : (
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center text-slate-500">
-          <Link2 size={28} className="mx-auto text-slate-300 mb-2" />
-          <p className="text-sm font-semibold">
-            {filter !== 'ALL' ? `No concepts in this filter category` : 'Single Modality Session'}
+          <Mic size={28} className="mx-auto text-indigo-400 mb-2" />
+          <p className="text-sm font-semibold text-slate-800">
+            {filter !== 'ALL' ? `No concepts in this filter category` : 'Single Modality Session (Pure Spoken Lecture)'}
           </p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
             {filter !== 'ALL'
               ? 'Try switching the filter to "All" to see all alignment nodes.'
-              : 'Cross-material alignment is active when both spoken audio and companion documents/slides are uploaded.'}
+              : 'Cross-material alignment is active when companion documents or slides are uploaded alongside audio. In voice-only sessions, 100% of questions are grounded strictly in the spoken lecture transcript.'}
           </p>
         </div>
       )}

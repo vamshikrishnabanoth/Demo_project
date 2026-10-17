@@ -169,6 +169,10 @@ function wholeQuizCritic(questions, requestedDifficulty) {
 function finalQuizValidator(questions, requestedDifficulty) {
     const issues = [];
 
+    if (!Array.isArray(questions) || questions.length === 0) {
+        return { passed: false, issues: ['No questions provided to validate'] };
+    }
+
     // 1. No empty fields
     questions.forEach((q, i) => {
         if (!q.questionText || !q.questionText.trim()) issues.push(`Q${i + 1}: Empty question text`);

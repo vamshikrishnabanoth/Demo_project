@@ -48,49 +48,65 @@ class HierarchicalChunker {
     // ──────────────────────────────────────────────────────────────────────────
     // 1. Process Spoken Audio Transcript
     // ──────────────────────────────────────────────────────────────────────────
+    // 1. Process Spoken Audio Transcript
+    // ──────────────────────────────────────────────────────────────────────────
     const voiceText = (sessionInputs.voiceTranscript || '').trim();
     const rawSegments = sessionInputs.transcriptSegments || [];
 
+    // Strictly detect genuine Whisper numeric timestamps
+    const hasRealTimestamps = Array.isArray(rawSegments) && rawSegments.length > 0 &&
+      rawSegments.some(s => typeof s.start === 'number' && typeof s.end === 'number' && !isNaN(s.start) && !isNaN(s.end));
+
     let segmentsToProcess = [];
 
-    if (Array.isArray(rawSegments) && rawSegments.length > 0) {
-      segmentsToProcess = rawSegments;
+    if (hasRealTimestamps) {
+      segmentsToProcess = rawSegments.map(s => ({
+        text: (s.text || '').trim(),
+        start: typeof s.start === 'number' ? s.start : null,
+        end: typeof s.end === 'number' ? s.end : null,
+        speaker: s.speaker || 'Speaker'
+      }));
+    } else if (Array.isArray(rawSegments) && rawSegments.length > 0) {
+      segmentsToProcess = rawSegments.map(s => ({
+        text: (s.text || (typeof s === 'string' ? s : '')).trim(),
+        start: null,
+        end: null,
+        speaker: s.speaker || 'Speaker'
+      }));
     } else if (voiceText.length > 0) {
       // Split raw transcript into natural pseudo-sentence segments to preserve incremental chunking
+      // Zero fabrication: no estimated words * 0.46s timing
       const sentences = voiceText.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [voiceText];
-      let runningTime = 0.0;
       for (const sent of sentences) {
         const text = sent.trim();
         if (!text) continue;
-        const wCount = countWords(text);
-        // Estimate ~130 words per minute -> ~0.46s per word
-        const duration = Math.max(1.0, wCount * 0.46);
         segmentsToProcess.push({
           text,
-          start: runningTime,
-          end: runningTime + duration
+          start: null,
+          end: null
         });
-        runningTime += duration;
       }
     }
 
     if (segmentsToProcess.length > 0) {
       // Step A: Build Child Chunks (75 words each)
       let currWords = [];
-      let currStart = 0.0;
-      let currEnd = 0.0;
+      let currStart = null;
+      let currEnd = null;
       let childIdx = 1;
       const tempChildren = [];
 
       for (const seg of segmentsToProcess) {
         const text = (seg.text || '').trim();
-        const sTime = typeof seg.start === 'number' ? seg.start : 0.0;
-        const eTime = typeof seg.end === 'number' ? seg.end : 0.0;
+        const sTime = typeof seg.start === 'number' ? seg.start : null;
+        const eTime = typeof seg.end === 'number' ? seg.end : null;
 
         if (currWords.length === 0) {
           currStart = sTime;
         }
-        currEnd = eTime;
+        if (eTime !== null) {
+          currEnd = eTime;
+        }
         currWords.push(text);
 
         if (countWords(currWords.join(' ')) >= CHILD_WINDOW_WORDS) {
@@ -100,14 +116,17 @@ class HierarchicalChunker {
           tempChildren.push({
             childId: cid,
             evidenceId: eid,
-            start: currStart,
-            end: currEnd,
+            start: hasRealTimestamps ? currStart : null,
+            end: hasRealTimestamps ? currEnd : null,
+            hasRealTimestamps,
             text: cText,
             wordCount: countWords(cText),
             keywords: tokenizeKeywords(cText)
           });
           childIdx++;
           currWords = [];
+          currStart = null;
+          currEnd = null;
         }
       }
 
@@ -118,8 +137,9 @@ class HierarchicalChunker {
         tempChildren.push({
           childId: cid,
           evidenceId: eid,
-          start: currStart,
-          end: currEnd,
+          start: hasRealTimestamps ? currStart : null,
+          end: hasRealTimestamps ? currEnd : null,
+          hasRealTimestamps,
           text: cText,
           wordCount: countWords(cText),
           keywords: tokenizeKeywords(cText)
@@ -138,22 +158,32 @@ class HierarchicalChunker {
         if (currPWords >= PARENT_WINDOW_WORDS) {
           const pId = `P_${String(parentIdx).padStart(2, '0')}`;
           const pEid = `E_PARENT_${String(parentIdx).padStart(2, '0')}`;
-          const pStart = currPChildren[0].start;
-          const pEnd = currPChildren[currPChildren.length - 1].end;
+          const pStart = hasRealTimestamps ? currPChildren[0].start : null;
+          const pEnd = hasRealTimestamps ? currPChildren[currPChildren.length - 1].end : null;
           const pText = currPChildren.map(c => c.text).join(' ');
           const cIds = currPChildren.map(c => c.evidenceId);
 
-          const startMin = Math.floor(pStart / 60);
-          const startSec = Math.floor(pStart % 60);
-          const endMin = Math.floor(pEnd / 60);
-          const endSec = Math.floor(pEnd % 60);
+          const hasValidTimes = typeof pStart === 'number' && typeof pEnd === 'number';
+          let parentTitle = `Lecture Segment ${parentIdx}`;
+          let timeSpan = null;
+
+          if (hasValidTimes) {
+            const startMin = Math.floor(pStart / 60);
+            const startSec = Math.floor(pStart % 60);
+            const endMin = Math.floor(pEnd / 60);
+            const endSec = Math.floor(pEnd % 60);
+            const formatted = `${String(startMin).padStart(2, '0')}:${String(startSec).padStart(2, '0')} - ${String(endMin).padStart(2, '0')}:${String(endSec).padStart(2, '0')}`;
+            parentTitle = `Lecture Segment ${parentIdx} (${startMin}m${String(startSec).padStart(2, '0')}s - ${endMin}m${String(endSec).padStart(2, '0')}s)`;
+            timeSpan = { start: pStart, end: pEnd, formatted, hasRealTimestamps: true };
+          }
 
           const parentObj = {
             parentId: pId,
             evidenceId: pEid,
-            title: `Lecture Segment ${parentIdx} (${startMin}m${String(startSec).padStart(2, '0')}s - ${endMin}m${String(endSec).padStart(2, '0')}s)`,
+            title: parentTitle,
             sourceType: 'TRANSCRIPT',
-            timeSpan: { start: pStart, end: pEnd },
+            timeSpan,
+            hasRealTimestamps: hasValidTimes,
             fullText: pText,
             wordCount: countWords(pText),
             childIds: cIds
@@ -162,12 +192,25 @@ class HierarchicalChunker {
           parentMap[pEid] = parentObj;
 
           for (const c of currPChildren) {
+            const childValidTimes = typeof c.start === 'number' && typeof c.end === 'number';
+            const childTimeSpan = childValidTimes
+              ? {
+                  start: c.start,
+                  end: c.end,
+                  formatted: `${Math.floor(c.start / 60).toString().padStart(2, '0')}:${Math.floor(c.start % 60).toString().padStart(2, '0')} - ${Math.floor(c.end / 60).toString().padStart(2, '0')}:${Math.floor(c.end % 60).toString().padStart(2, '0')}`,
+                  hasRealTimestamps: true
+                }
+              : null;
+
             const childObj = {
               childId: c.childId,
               evidenceId: c.evidenceId,
               parentId: pEid,
               sourceType: 'TRANSCRIPT',
-              timeSpan: { start: c.start, end: c.end },
+              start: childValidTimes ? c.start : null,
+              end: childValidTimes ? c.end : null,
+              timeSpan: childTimeSpan,
+              hasRealTimestamps: childValidTimes,
               text: c.text,
               wordCount: c.wordCount,
               keywords: c.keywords
@@ -185,22 +228,32 @@ class HierarchicalChunker {
       if (currPChildren.length > 0) {
         const pId = `P_${String(parentIdx).padStart(2, '0')}`;
         const pEid = `E_PARENT_${String(parentIdx).padStart(2, '0')}`;
-        const pStart = currPChildren[0].start;
-        const pEnd = currPChildren[currPChildren.length - 1].end;
+        const pStart = hasRealTimestamps ? currPChildren[0].start : null;
+        const pEnd = hasRealTimestamps ? currPChildren[currPChildren.length - 1].end : null;
         const pText = currPChildren.map(c => c.text).join(' ');
         const cIds = currPChildren.map(c => c.evidenceId);
 
-        const startMin = Math.floor(pStart / 60);
-        const startSec = Math.floor(pStart % 60);
-        const endMin = Math.floor(pEnd / 60);
-        const endSec = Math.floor(pEnd % 60);
+        const hasValidTimes = typeof pStart === 'number' && typeof pEnd === 'number';
+        let parentTitle = `Lecture Segment ${parentIdx}`;
+        let timeSpan = null;
+
+        if (hasValidTimes) {
+          const startMin = Math.floor(pStart / 60);
+          const startSec = Math.floor(pStart % 60);
+          const endMin = Math.floor(pEnd / 60);
+          const endSec = Math.floor(pEnd % 60);
+          const formatted = `${String(startMin).padStart(2, '0')}:${String(startSec).padStart(2, '0')} - ${String(endMin).padStart(2, '0')}:${String(endSec).padStart(2, '0')}`;
+          parentTitle = `Lecture Segment ${parentIdx} (${startMin}m${String(startSec).padStart(2, '0')}s - ${endMin}m${String(endSec).padStart(2, '0')}s)`;
+          timeSpan = { start: pStart, end: pEnd, formatted, hasRealTimestamps: true };
+        }
 
         const parentObj = {
           parentId: pId,
           evidenceId: pEid,
-          title: `Lecture Segment ${parentIdx} (${startMin}m${String(startSec).padStart(2, '0')}s - ${endMin}m${String(endSec).padStart(2, '0')}s)`,
+          title: parentTitle,
           sourceType: 'TRANSCRIPT',
-          timeSpan: { start: pStart, end: pEnd },
+          timeSpan,
+          hasRealTimestamps: hasValidTimes,
           fullText: pText,
           wordCount: countWords(pText),
           childIds: cIds
@@ -209,12 +262,25 @@ class HierarchicalChunker {
         parentMap[pEid] = parentObj;
 
         for (const c of currPChildren) {
+          const childValidTimes = typeof c.start === 'number' && typeof c.end === 'number';
+          const childTimeSpan = childValidTimes
+            ? {
+                start: c.start,
+                end: c.end,
+                formatted: `${Math.floor(c.start / 60).toString().padStart(2, '0')}:${Math.floor(c.start % 60).toString().padStart(2, '0')} - ${Math.floor(c.end / 60).toString().padStart(2, '0')}:${Math.floor(c.end % 60).toString().padStart(2, '0')}`,
+                hasRealTimestamps: true
+              }
+            : null;
+
           const childObj = {
             childId: c.childId,
             evidenceId: c.evidenceId,
             parentId: pEid,
             sourceType: 'TRANSCRIPT',
-            timeSpan: { start: c.start, end: c.end },
+            start: childValidTimes ? c.start : null,
+            end: childValidTimes ? c.end : null,
+            timeSpan: childTimeSpan,
+            hasRealTimestamps: childValidTimes,
             text: c.text,
             wordCount: c.wordCount,
             keywords: c.keywords

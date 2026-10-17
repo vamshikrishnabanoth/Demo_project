@@ -120,12 +120,21 @@ class LectureIntelligence {
    * @returns {Object} { distinctConceptCount, recommendedQuestionCount, capacityByDifficulty: { easy, medium, hard }, totalDefensibleCapacity, advisoryRationale }
    */
   deriveSemanticCapacity(concepts = [], pedagogicalCritique = {}, options = {}) {
-    const conceptList = Array.isArray(concepts) ? concepts : [];
+    let conceptList = Array.isArray(concepts) ? concepts : [];
+    if (typeof concepts === 'string') {
+      const fb = this.buildPartialFallback(concepts);
+      conceptList = fb.conceptMap || [];
+      if (!pedagogicalCritique || Object.keys(pedagogicalCritique).length === 0) {
+        pedagogicalCritique = fb.pedagogicalCritique;
+      }
+    }
+
     if (conceptList.length === 0) {
       return {
         distinctConceptCount: 0,
         recommendedQuestionCount: 5,
-        capacityByDifficulty: { easy: 2, medium: 2, hard: 1 },
+        capacityByDifficulty: { easy: 2, medium: 2, hard: 1, balanced: 5 },
+        recommendedByDifficulty: { easy: 2, medium: 2, hard: 1, balanced: 5 },
         totalDefensibleCapacity: 5,
         advisoryRationale: 'Baseline pedagogical scope for introductory content.'
       };
@@ -187,19 +196,36 @@ class LectureIntelligence {
       // Cap medium angles per single concept to 2 distinct operations
       totalMedium += Math.min(conceptMediumAngles, 2);
 
+      // Negative boundary enforcement: if teacher explicitly excluded code or math, discount those angles
+      const negBoundaries = Array.isArray(options.negativeBoundaries) ? options.negativeBoundaries : (Array.isArray(pedagogicalCritique?.negativeBoundaries) ? pedagogicalCritique.negativeBoundaries : []);
+      const isCodeExcluded = negBoundaries.includes('NO_CODE');
+      const isMathExcluded = negBoundaries.includes('NO_MATH');
+
       // Cognitive Operation 3: Hard Angles (Invariant Preservation / Constraint Violation / Fault Diagnosis)
       // Requires mechanism + invariant/formula/causal constraint in evidence
       let conceptHardAngles = 0;
       const hasFormulaOrInvariant = /\b(invariant|formula|balance|height|log|degree|at most|exactly|violation|overflow|null pointer|boundary)\b/i.test(`${name} ${def} ${mech}`);
 
-      if ((hasConceptMechanism || hasFormulaOrInvariant) && (hasInvariantsInLecture || hasFormulaOrInvariant)) {
-        conceptHardAngles += 1; // Invariant prediction / boundary condition angle
+      if (!isCodeExcluded && !isMathExcluded) {
+        if ((hasConceptMechanism || hasFormulaOrInvariant) && (hasInvariantsInLecture || hasFormulaOrInvariant)) {
+          conceptHardAngles += 1; // Invariant prediction / boundary condition angle
+        }
+        // If concept also has worked traces or code demonstrations, it supports multi-step scenario/diagnostic angle
+        if (hasConceptMechanism && (hasPracticalTraces || anchors.length >= 3) && def.length >= 80) {
+          conceptHardAngles += 1; // Deep diagnostic / multi-step edge case angle
+        }
+      } else if (isCodeExcluded && !isMathExcluded) {
+        // Code excluded: allow only conceptual invariant/tradeoff analysis, NOT code walkthrough
+        if (hasFormulaOrInvariant && (hasInvariantsInLecture || hasFormulaOrInvariant)) {
+          conceptHardAngles += 1;
+        }
+      } else if (!isCodeExcluded && isMathExcluded) {
+        if (hasConceptMechanism && (hasPracticalTraces || anchors.length >= 3) && def.length >= 80) {
+          conceptHardAngles += 1;
+        }
       }
-      // If concept also has worked traces or code demonstrations, it supports multi-step scenario/diagnostic angle
-      if (hasConceptMechanism && (hasPracticalTraces || anchors.length >= 3) && def.length >= 80) {
-        conceptHardAngles += 1; // Deep diagnostic / multi-step edge case angle
-      }
-      // Cap hard angles per single concept to 2 distinct operations
+
+      // Cap hard angles per single concept to validated operations
       totalHard += Math.min(conceptHardAngles, 2);
     }
 
@@ -207,7 +233,6 @@ class LectureIntelligence {
 
     // Derive Recommended Question Count from defensible capacity:
     // Decoupled from concept count!
-    // A standard balanced assessment covers the viable operations without excessive redundancy.
     let recommendedCount;
     if (totalDefensibleCapacity <= 4) {
       recommendedCount = Math.max(1, totalDefensibleCapacity);
@@ -222,16 +247,35 @@ class LectureIntelligence {
     // Safety ceiling: 30 as a resource guard, never a target
     recommendedCount = Math.max(1, Math.min(recommendedCount, 30));
 
-    const advisoryRationale = `Defensible assessment capacity of ${totalDefensibleCapacity} questions across ${substantiveConceptCount} substantive concepts (Easy: ${totalEasy}, Medium: ${totalMedium}, Hard: ${totalHard}). Recommended count is advisory; user-requested count will be honored.`;
+    // Balanced recommendation: distinct mixed-difficulty distribution grounded in available tiers
+    let balancedRec = recommendedCount;
+    if (totalHard === 0) {
+      balancedRec = Math.min(totalEasy + totalMedium, recommendedCount);
+    } else {
+      balancedRec = Math.min(totalDefensibleCapacity, recommendedCount);
+    }
+
+    const recommendedByDifficulty = {
+      easy: totalEasy,
+      medium: totalMedium,
+      hard: totalHard,
+      balanced: balancedRec
+    };
+
+    const capacityByDifficulty = {
+      easy: totalEasy,
+      medium: totalMedium,
+      hard: totalHard,
+      balanced: totalDefensibleCapacity
+    };
+
+    const advisoryRationale = `Defensible assessment capacity of ${totalDefensibleCapacity} questions across ${substantiveConceptCount} substantive concepts (Easy: ${totalEasy}, Medium: ${totalMedium}, Hard: ${totalHard}, Balanced: ${balancedRec}). Recommended counts per difficulty: Easy=${totalEasy}, Medium=${totalMedium}, Hard=${totalHard}, Balanced=${balancedRec}.`;
 
     return {
       distinctConceptCount: substantiveConceptCount,
       recommendedQuestionCount: recommendedCount,
-      capacityByDifficulty: {
-        easy: totalEasy,
-        medium: totalMedium,
-        hard: totalHard
-      },
+      recommendedByDifficulty,
+      capacityByDifficulty,
       totalDefensibleCapacity,
       advisoryRationale
     };
@@ -318,7 +362,9 @@ class LectureIntelligence {
    * Deterministic partial fallback via depthAnalyzer.
    * Safeguard 4: Genuinely deterministic and explicitly marks unobserved capabilities as partial/null.
    */
-  buildPartialFallback({ evidenceText, modality, hasTimingData, decoyFilename = null, errorReason = 'LLM analysis unavailable' }) {
+  buildPartialFallback(opts = {}) {
+    const inputOpts = typeof opts === 'string' ? { evidenceText: opts } : (opts || {});
+    const { evidenceText, modality = 'VOICE_ONLY', hasTimingData = false, decoyFilename = null, errorReason = 'LLM analysis unavailable', negativeBoundaries = [] } = inputOpts;
     const rawText = (evidenceText || '').trim();
     const depthResult = depthAnalyzer.analyzeLecture(rawText);
 
@@ -357,6 +403,7 @@ class LectureIntelligence {
       practicalDemonstrations: ['NOT_OBSERVED_IN_EXCERPT'],
       discourseStyle: ['MONOLOGUE_LECTURE'],
       evidenceQuotes: [],
+      negativeBoundaries: Array.isArray(negativeBoundaries) ? negativeBoundaries : [],
       limitationsOfExcerpt: limitationNote
     };
 
@@ -391,7 +438,8 @@ class LectureIntelligence {
       evidenceCapacity: this.deriveSemanticCapacity(concepts, fallbackPedagogicalCritique, {
         wordCount,
         isCurricular: depthResult.isCurricular,
-        curricularSegmentsCount: depthResult.curricularSegments?.length || 0
+        curricularSegmentsCount: depthResult.curricularSegments?.length || 0,
+        negativeBoundaries: Array.isArray(negativeBoundaries) ? negativeBoundaries : []
       }),
       auditTrail: {
         modelUsed: 'deterministic-depth-analyzer-v1',
@@ -559,6 +607,7 @@ ${rawText}`;
         parsed.evidenceCapacity = {
           distinctConceptCount: semanticCap.distinctConceptCount,
           recommendedQuestionCount: semanticCap.recommendedQuestionCount,
+          recommendedByDifficulty: semanticCap.recommendedByDifficulty,
           capacityByDifficulty: semanticCap.capacityByDifficulty,
           totalDefensibleCapacity: semanticCap.totalDefensibleCapacity,
           advisoryRationale: semanticCap.advisoryRationale

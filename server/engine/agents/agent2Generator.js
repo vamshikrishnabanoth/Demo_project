@@ -228,30 +228,37 @@ class Agent2Generator {
     const op = target.intendedCognitiveOperation || target.cognitiveOperation || target.operation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
     const evidence = target.supportingEvidence || evidencePackage?.curricularContent || '';
 
-    // 1. Explicit Capacity Deficit Check for Hard tier:
-    // When concept lacks observed mechanisms in lecture evidence,
-    // do NOT fabricate un-taught complexity or pretend a definition meets Hard criteria.
-    const isHardDeficit = tier === 'Hard' && (
-      (target.capacityLimitation && target.capacityLimitation.status === 'INSUFFICIENT_EVIDENCE_FOR_HARD') ||
-      (typeof evidence === 'string' && evidence.length < 60 && !/\b(computes?|calculat|translat|allocat|schedules?|executes?|algorithm|travers|hazard|stage)\b/i.test(evidence))
+    // 1. Explicit Capacity Deficit Check:
+    // If target has pre-identified capacity deficit (either difficulty-based or concept-count-based),
+    // do NOT fabricate un-taught material.
+    const isExplicitDeficit = (
+      (tier === 'Hard' && (
+        (target.capacityLimitation && target.capacityLimitation.status === 'INSUFFICIENT_EVIDENCE_FOR_HARD') ||
+        (typeof evidence === 'string' && evidence.length < 60 && !/\b(computes?|calculat|translat|allocat|schedules?|executes?|algorithm|travers|hazard|stage)\b/i.test(evidence))
+      )) ||
+      target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      target.isCapacityLimited === true ||
+      (target.capacityLimitation && ['INSUFFICIENT_EVIDENCE_FOR_HARD', 'INSUFFICIENT_CURRICULAR_EVIDENCE', 'CAPACITY_DEFICIT'].includes(target.capacityLimitation.status))
     );
 
-    if (isHardDeficit) {
+    if (isExplicitDeficit) {
+      const reasonCode = target.capacityLimitation?.status || 'INSUFFICIENT_EVIDENCE';
+      const reasonMsg = target.capacityLimitation?.reason || `Cannot fulfill target "${concept}". Lecture evidence exhausted.`;
       return {
         targetId: target.targetId,
         fulfillmentStatus: 'UNFULFILLED_CAPACITY_DEFICIT',
         isUnfulfilled: true,
-        unfulfilledReason: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-        message: `Concept "${concept}" has only definitional evidence in the lecture session. Requested Hard operation (${op}) cannot be fulfilled without fabricating un-taught procedural complexity.`,
+        unfulfilledReason: reasonCode,
+        message: reasonMsg,
         metadata: {
-          targetDifficulty: 'Hard',
+          targetDifficulty: tier,
           achievedDifficulty: null,
           intendedCognitiveOperation: op,
           achievedCognitiveOperation: null,
           concept: target.concept,
           capacityLimitation: target.capacityLimitation || {
-            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            reason: 'Concept lacks observed mechanism in lecture evidence'
+            status: reasonCode,
+            reason: reasonMsg
           },
           isCapacityLimited: true
         }
@@ -311,8 +318,10 @@ class Agent2Generator {
     const isPipelining = conceptLower.includes('pipelin') || conceptLower.includes('hazard') || 
       conceptLower.includes('stage') || evidenceLower.includes('pipeline stage');
 
+    const subtopicLower = (target.subtopic || '').toLowerCase();
     const isTree = conceptLower.includes('tree') || conceptLower.includes('bst') || 
-      conceptLower.includes('traversal') || evidenceLower.includes('binary tree');
+      conceptLower.includes('traversal') || subtopicLower.includes('tree') || subtopicLower.includes('bst') ||
+      evidenceLower.includes('binary tree') || evidenceLower.includes('binary search tree') || evidenceLower.includes('bst');
 
     let questionText = '';
     let correctAnswer = '';
@@ -421,16 +430,36 @@ class Agent2Generator {
       }
     } else if (isTree) {
       if (tier === 'Easy') {
-        questionText = `In Binary Search Tree (BST) operations, what is the key property of an inorder traversal?`;
-        correctAnswer = `Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right`;
-        distractors = [
-          `Visits the root node first before traversing either subtree in Root, Left, Right order`,
-          `Visits the root node last after completely traversing both subtrees in Left, Right, Root order`,
-          `Visits all nodes at the current tree depth before proceeding to subsequent levels`
-        ];
-        usedArchetypes = ['NEAR_MISS_MECHANISM', 'MISCONCEPTION_INVERSION', 'SCOPE_PRECONDITION_ERROR'];
+        if (conceptLower.includes('property') || conceptLower.includes('invariant') || conceptLower.includes('order') || conceptLower.includes('definition') || target.trajectoryPhase === 'EARLY') {
+          questionText = `In a Binary Search Tree (BST), what fundamental ordering property must hold for every node X?`;
+          correctAnswer = `All keys in X's left subtree are strictly less than X's key, and all keys in X's right subtree are strictly greater than X's key`;
+          distractors = [
+            `All keys in X's left subtree are strictly greater than X's key, and all keys in X's right subtree are strictly less than X's key`,
+            `The left child must have a smaller key than X, but arbitrary descendants in the left subtree may exceed X`,
+            `Keys are ordered chronologically by insertion timestamp rather than numerical comparison`
+          ];
+          usedArchetypes = ['MISCONCEPTION_INVERSION', 'SCOPE_PRECONDITION_ERROR', 'NEAR_MISS_MECHANISM'];
+        } else {
+          questionText = `In Binary Search Tree (BST) operations, what is the key property of an inorder traversal?`;
+          correctAnswer = `Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right`;
+          distractors = [
+            `Visits the root node first before traversing either subtree in Root, Left, Right order`,
+            `Visits the root node last after completely traversing both subtrees in Left, Right, Root order`,
+            `Visits all nodes at the current tree depth before proceeding to subsequent levels`
+          ];
+          usedArchetypes = ['NEAR_MISS_MECHANISM', 'MISCONCEPTION_INVERSION', 'SCOPE_PRECONDITION_ERROR'];
+        }
       } else if (tier === 'Medium') {
-        if (conceptLower.includes('skew') || conceptLower.includes('balanced')) {
+        if (conceptLower.includes('scenario') || conceptLower.includes('routing') || conceptLower.includes('index') || conceptLower.includes('lookup') || target.trajectoryPhase === 'MID') {
+          questionText = `In a database index or routing lookup table modeled as a Binary Search Tree, what operational guarantee maintains logarithmic O(log n) search performance?`;
+          correctAnswer = `Maintaining height balance so that each key comparison halves the remaining search candidate space`;
+          distractors = [
+            `Allowing sequential tree skew so that nodes form a linear chain resembling a linked list`,
+            `Hashing all keys into contiguous fixed-size buckets without branch pointer traversal`,
+            `Duplicating parent nodes across both subtrees to eliminate comparison overhead`
+          ];
+          usedArchetypes = ['MISCONCEPTION_INVERSION', 'NEAR_MISS_MECHANISM', 'SCOPE_PRECONDITION_ERROR'];
+        } else if (conceptLower.includes('skew') || conceptLower.includes('balanced')) {
           questionText = `Which statement best compares the worst-case search behavior of a skewed binary search tree to that of a balanced binary search tree, in terms of sequential node traversal versus logarithmic branch halving?`;
           correctAnswer = `A skewed BST requires O(n) comparisons in the worst case like a linked list, while a balanced BST requires O(log n) comparisons`;
           distractors = [
@@ -459,14 +488,25 @@ class Agent2Generator {
           usedArchetypes = ['SCOPE_PRECONDITION_ERROR', 'MISCONCEPTION_INVERSION', 'NEAR_MISS_MECHANISM'];
         }
       } else if (tier === 'Hard') {
-        questionText = `When deleting a node with two children from a Binary Search Tree, what diagnostic sequence ensures BST invariants remain valid?`;
-        correctAnswer = `Finds the inorder successor (smallest in right subtree), replaces the target node's key with the successor's key, and deletes the successor node`;
-        distractors = [
-          `Deletes the target node and moves its left child to the root position without re-balancing the right subtree`,
-          `Replaces the target node with an arbitrary leaf node from the left subtree without key comparison`,
-          `Promotes both child subtrees simultaneously by allocating a new root pointer in memory`
-        ];
-        usedArchetypes = ['SCOPE_PRECONDITION_ERROR', 'NEAR_MISS_MECHANISM', 'MISCONCEPTION_INVERSION'];
+        if (conceptLower.includes('code') || conceptLower.includes('walkthrough') || conceptLower.includes('recursive') || conceptLower.includes('pointer') || target.trajectoryPhase === 'LATE' || evidenceLower.includes('nullptr') || evidenceLower.includes('node*')) {
+          questionText = `Consider the recursive BST insertion code walkthrough:\n\`\`\`cpp\nNode* insert(Node* root, int key) {\n  if (root == nullptr) return new Node(key);\n  if (key < root->data) root->left = insert(root->left, key);\n  else if (key > root->data) root->right = insert(root->right, key);\n  return root;\n}\n\`\`\`\nWhen the recursive call reaches the base case (root == nullptr), what exact pointer execution behavior occurs?`;
+          correctAnswer = `Allocates a new Node with the key and returns its pointer so the parent caller assigns it to root->left or root->right`;
+          distractors = [
+            `Returns nullptr to signal that insertion failed due to an uninitialized tree state`,
+            `Re-executes the search from the tree root with an incremented search depth counter`,
+            `Modifies the parent node's data in-place without returning a newly allocated pointer`
+          ];
+          usedArchetypes = ['SCOPE_PRECONDITION_ERROR', 'NEAR_MISS_MECHANISM', 'MISCONCEPTION_INVERSION'];
+        } else {
+          questionText = `When deleting a node with two children from a Binary Search Tree, what diagnostic sequence ensures BST invariants remain valid?`;
+          correctAnswer = `Finds the inorder successor (smallest in right subtree), replaces the target node's key with the successor's key, and deletes the successor node`;
+          distractors = [
+            `Deletes the target node and moves its left child to the root position without re-balancing the right subtree`,
+            `Replaces the target node with an arbitrary leaf node from the left subtree without key comparison`,
+            `Promotes both child subtrees simultaneously by allocating a new root pointer in memory`
+          ];
+          usedArchetypes = ['SCOPE_PRECONDITION_ERROR', 'NEAR_MISS_MECHANISM', 'MISCONCEPTION_INVERSION'];
+        }
       }
     } else {
       // General concept with verified evidence
@@ -690,23 +730,35 @@ class Agent2Generator {
     const op = target.intendedCognitiveOperation || target.cognitiveOperation || target.operation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
     // 1. Explicit Capacity Deficit Handling:
-    // If target requested Hard, but concept only has definitional evidence,
-    // do NOT call LLM or generate a definition-level pseudo-question.
+    // If target has insufficient curricular evidence, insufficient evidence for hard,
+    // or is marked as a capacity deficit, do NOT call LLM or generate a pseudo-question.
     // Return explicit unfulfilled capacity status immediately.
-    if (tier === 'Hard' && target.capacityLimitation && target.capacityLimitation.status === 'INSUFFICIENT_EVIDENCE_FOR_HARD') {
+    const isExplicitDeficit = (
+      target.fulfillmentStatus === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      target.isCapacityLimited === true ||
+      (target.capacityLimitation && ['INSUFFICIENT_EVIDENCE_FOR_HARD', 'INSUFFICIENT_CURRICULAR_EVIDENCE', 'CAPACITY_DEFICIT'].includes(target.capacityLimitation.status))
+    );
+
+    if (isExplicitDeficit) {
+      const reasonCode = target.capacityLimitation?.status || 'INSUFFICIENT_EVIDENCE';
+      const reasonMsg = target.capacityLimitation?.reason || `Cannot fulfill target "${target.concept}". Lecture evidence exhausted.`;
       return {
         targetId: target.targetId,
         fulfillmentStatus: 'UNFULFILLED_CAPACITY_DEFICIT',
         isUnfulfilled: true,
-        unfulfilledReason: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-        message: `Concept "${target.concept}" has only definitional evidence in the lecture session. Requested Hard operation (${op}) cannot be fulfilled without fabricating un-taught procedural complexity.`,
+        unfulfilledReason: reasonCode,
+        message: reasonMsg,
         metadata: {
-          targetDifficulty: 'Hard',
+          targetDifficulty: tier,
           achievedDifficulty: null,
           intendedCognitiveOperation: op,
           achievedCognitiveOperation: null,
           concept: target.concept,
-          capacityLimitation: target.capacityLimitation,
+          capacityLimitation: target.capacityLimitation || {
+            status: reasonCode,
+            reason: reasonMsg
+          },
           isCapacityLimited: true
         }
       };
@@ -905,8 +957,82 @@ Generate a single grounded multiple-choice question testing the assessment targe
       }
     }
 
+    // 1. Guard against null or non-object returned by safeParseJson
+    if (!parsedMCQ || typeof parsedMCQ !== 'object' || Array.isArray(parsedMCQ)) {
+      console.warn(`⚠️ [Agent 2] Output from target ${target.targetId} is not a valid JSON object.`);
+      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+      if (isMockAllowed) {
+        return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+      }
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
+        isUnfulfilled: true,
+        unfulfilledReason: 'INVALID_OBJECT_STRUCTURE',
+        message: `Model output for target "${target.concept}" did not produce a valid JSON object.`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          isCapacityLimited: false
+        }
+      };
+    }
+
     if (parsedMCQ.isUnfulfilled) {
       return parsedMCQ;
+    }
+
+    // 2. Strict Schema Validation before proceeding to calculation and shuffle
+    const rawQuestionText = parsedMCQ.questionText || parsedMCQ.question || parsedMCQ.stem || '';
+    parsedMCQ.questionText = typeof rawQuestionText === 'string' ? rawQuestionText.trim() : '';
+
+    if (!parsedMCQ.questionText || parsedMCQ.questionText.length < 10) {
+      console.warn(`⚠️ [Agent 2] Output for target ${target.targetId} missing valid questionText.`);
+      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+      if (isMockAllowed) {
+        return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+      }
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
+        isUnfulfilled: true,
+        unfulfilledReason: 'EMPTY_OR_SHORT_QUESTION_TEXT',
+        message: `Model output for target "${target.concept}" lacked sufficient question text (min 10 chars).`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          isCapacityLimited: false
+        }
+      };
+    }
+
+    if (!Array.isArray(parsedMCQ.options) || parsedMCQ.options.length < 4) {
+      console.warn(`⚠️ [Agent 2] Output for target ${target.targetId} missing 4 distinct options.`);
+      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+      if (isMockAllowed) {
+        return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+      }
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
+        isUnfulfilled: true,
+        unfulfilledReason: 'INSUFFICIENT_OPTIONS_COUNT',
+        message: `Model output for target "${target.concept}" provided ${Array.isArray(parsedMCQ.options) ? parsedMCQ.options.length : 0} options (exactly 4 required).`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          isCapacityLimited: false
+        }
+      };
     }
 
     // Deterministically normalize correctAnswer before schema validation
@@ -918,6 +1044,30 @@ Generate a single grounded multiple-choice question testing the assessment targe
       if (!parsedMCQ.options.includes(calculatedData.expectedAnswer)) {
         parsedMCQ.options[0] = calculatedData.expectedAnswer;
       }
+    }
+
+    // Verify correctAnswer exists within options array
+    if (!parsedMCQ.options.includes(parsedMCQ.correctAnswer)) {
+      console.warn(`⚠️ [Agent 2] Output for target ${target.targetId}: correctAnswer does not match any of the provided options.`);
+      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+      if (isMockAllowed) {
+        return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+      }
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
+        isUnfulfilled: true,
+        unfulfilledReason: 'CORRECT_ANSWER_MISMATCH',
+        message: `Model output for target "${target.concept}" specified correctAnswer not present in options array.`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          isCapacityLimited: false
+        }
+      };
     }
 
     parsedMCQ.targetId = target.targetId;

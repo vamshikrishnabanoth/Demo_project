@@ -774,10 +774,21 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
 
         let commonDocModel = null;
 
+        let transcriptSegments = [];
+
         if (Array.isArray(inputs) && inputs.length > 0) {
             const voiceInputs = inputs.filter(inp => inp.type === 'voice' || inp.type === 'audio' || inp.type === 'transcript');
             const codeInputs = inputs.filter(inp => inp.type === 'code');
             const docInputs = inputs.filter(inp => !['voice', 'audio', 'transcript', 'code'].includes(inp.type));
+
+            // Extract genuine Whisper segments if available
+            voiceInputs.forEach(v => {
+                if (Array.isArray(v.segments) && v.segments.length > 0) {
+                    transcriptSegments.push(...v.segments);
+                } else if (Array.isArray(v.transcriptSegments) && v.transcriptSegments.length > 0) {
+                    transcriptSegments.push(...v.transcriptSegments);
+                }
+            });
 
             // 1. Multi-Voice Consolidation: Multiple voices/recordings are unified into ONE single continuous lecture narrative
             if (voiceInputs.length === 1) {
@@ -820,6 +831,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             sessionId: taskId || undefined,
             taskId: taskId || null,
             voiceTranscript: voiceText,
+            transcriptSegments: transcriptSegments.length > 0 ? transcriptSegments : null,
             documentTexts: docTexts,
             documentNames: docNames,
             codeSnippets: codeSnippets,
@@ -2849,12 +2861,14 @@ exports.generateQuizQuestions = async (req, res) => {
                         if (isAudio) {
                             console.log(`🎙️ Transcribing uploaded lecture audio: ${file.originalname}`);
                             updateTaskStage(taskId, 0, 'Ingesting & Analyzing Material');
-                            const transcript = await transcribeAudio(filePath);
+                            const transcriptionResult = await transcribeAudioWithTimestamps(filePath);
                             safeUnlink(filePath);
-                            if (transcript && transcript.trim().length > 0) {
+                            if (transcriptionResult && transcriptionResult.text && transcriptionResult.text.trim().length > 0) {
                                 return {
                                     type: 'voice',
-                                    content: transcript,
+                                    content: transcriptionResult.text,
+                                    segments: transcriptionResult.segments || [],
+                                    transcriptSegments: transcriptionResult.segments || [],
                                     source_name: file.originalname
                                 };
                             }
@@ -2929,6 +2943,8 @@ exports.generateQuizQuestions = async (req, res) => {
                             parsedInputs.push({
                                 type: isVoice ? 'voice' : (p.type || 'text'),
                                 content: p.content,
+                                segments: p.segments || p.transcriptSegments || null,
+                                transcriptSegments: p.segments || p.transcriptSegments || null,
                                 source_name: p.source_name || (isVoice ? 'Lecture Audio Transcript' : `Text Prompt ${idx + 1}`),
                                 startPage: p.startPage || null,
                                 endPage: p.endPage || null
@@ -3273,6 +3289,7 @@ exports.generateQuizQuestions = async (req, res) => {
             }
 
             let extractedText = null;
+            let extractedSegments = [];
             let absolutePath = null;
             let isVoiceSource = false;
             
@@ -3282,7 +3299,9 @@ exports.generateQuizQuestions = async (req, res) => {
                 const AUDIO_EXTS = ['.mp3', '.wav', '.m4a', '.webm', '.ogg', '.aac', '.flac'];
                 if (AUDIO_EXTS.includes(ext)) {
                     isVoiceSource = true;
-                    extractedText = await transcribeAudio(absolutePath);
+                    const transcriptionResult = await transcribeAudioWithTimestamps(absolutePath);
+                    extractedText = transcriptionResult?.text || '';
+                    extractedSegments = transcriptionResult?.segments || [];
                 } else if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
                      extractedText = await extractTextWithRange(absolutePath, start, end);
                 }
@@ -3355,7 +3374,16 @@ exports.generateQuizQuestions = async (req, res) => {
             if (parsedInputs && parsedInputs.length > 0) {
                 finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
             } else if (req.file) {
-                if (extractedText) {
+                if (isVoiceSource && extractedText) {
+                    const voiceInput = [{
+                        type: 'voice',
+                        content: extractedText,
+                        segments: extractedSegments,
+                        transcriptSegments: extractedSegments,
+                        source_name: req.file.originalname
+                    }];
+                    finalQuestions = await generateQuestions('voice', extractedText, questionCount, difficulty, source_material_id, blendedRatios, voiceInput, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
+                } else if (extractedText) {
                     finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
                 } else {
                     finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
@@ -3909,7 +3937,10 @@ exports.generateQuizFromVoice = async (req, res) => {
             console.log(`\n[Fallback Voice Generator] Transcribing audio...`);
             updateTaskStage(taskId, 0, 'Transcribing Audio');
 
-            const transcript = await transcribeAudio(absolutePath);
+            const transcriptionResult = await transcribeAudioWithTimestamps(absolutePath);
+            const transcript = transcriptionResult?.text || '';
+            const transcriptSegments = transcriptionResult?.segments || [];
+
             if (!transcript || transcript.trim().length < 20) {
                 cleanupFiles();
                 const origName = req.file.originalname || '';
@@ -3940,14 +3971,30 @@ exports.generateQuizFromVoice = async (req, res) => {
                 executionMessages = blendRes.executionMessages;
             }
 
-            const questions = await generateQuestions('voice', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, blendedRatios, null, null, taskId, null, null, derivedStyle);
+            const voiceInput = [{
+                type: 'voice',
+                content: transcript,
+                segments: transcriptSegments,
+                transcriptSegments: transcriptSegments,
+                source_name: req.file ? req.file.originalname : 'Lecture Audio'
+            }];
+
+            const questions = await generateQuestions('voice', transcript, questionCount || 5, difficulty || 'Medium', source_material_id, blendedRatios, voiceInput, null, taskId, null, null, derivedStyle);
             cleanupFiles();
+
+            const fallbackTaskObj = getTask(taskId);
+            const hasValidQuestions = Array.isArray(questions) && questions.length > 0;
+
+            if (!hasValidQuestions) {
+                const failureMsg = fallbackTaskObj?.error || fallbackTaskObj?.pipelineNotice || 'No grounded questions could be generated from the audio recording.';
+                failTask(taskId, failureMsg, fallbackTaskObj?.errorCode || 'FAILED_GENERATION');
+                return;
+            }
 
             updateTaskStage(taskId, 7, 'Preparing Final Quiz');
             const validation = finalQuizValidator(questions, difficulty || 'Medium');
             const depthAnalysis = depthAnalyzer.analyzeLecture(transcript);
 
-            const fallbackTaskObj = getTask(taskId);
             const fbResult = fallbackTaskObj?.pipelineResult;
             const fbEval = fbResult?.quizEvaluation;
             const isFbEvaluated = Boolean(fbEval && typeof fbEval.coverageScore === 'number');
@@ -3973,7 +4020,7 @@ exports.generateQuizFromVoice = async (req, res) => {
                     })
                 },
                 finalValidation: validation,
-                lectureDepth: depthAnalysis.lectureDepth,
+                lectureDepth: depthAnalysis?.lectureDepth || { score: 65, rating: 'Developing' },
                 isVoice: true,
                 metadata: { executionMessages }
             });

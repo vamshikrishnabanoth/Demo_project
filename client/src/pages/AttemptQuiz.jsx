@@ -1099,44 +1099,8 @@ export default function AttemptQuiz() {
                         </p>
                     </div>
 
-                    <div className="bg-white border-2 border-slate-200/80 rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col items-center gap-6 relative overflow-hidden">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200/80 shadow-xs">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-                            </span>
-                            <span className="text-[11px] font-black uppercase tracking-widest text-orange-700">Session Status</span>
-                        </div>
-
-                        <div className="flex flex-col items-center">
-                            <div className="flex items-baseline justify-center gap-1.5 font-mono font-black text-[#0f172a] tracking-tight select-none">
-                                <span className="text-6xl sm:text-7xl drop-shadow-xs">
-                                    {Math.floor(timeLeft / 60)}
-                                </span>
-                                <span className="text-4xl sm:text-5xl text-orange-500 animate-pulse font-sans font-bold pb-1">
-                                    :
-                                </span>
-                                <span className="text-6xl sm:text-7xl drop-shadow-xs">
-                                    {String(timeLeft % 60).padStart(2, '0')}
-                                </span>
-                            </div>
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-2">
-                                Remaining Duration
-                            </span>
-                        </div>
-
-                        <div className="w-full max-w-[260px] h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                            <motion.div 
-                                className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 rounded-full"
-                                initial={false}
-                                animate={{ 
-                                    width: `${Math.max(0, Math.min(100, (timeLeft / (quiz?.duration * 60 || 1800)) * 100))}%` 
-                                }}
-                                transition={{ duration: 1, ease: "linear" }}
-                            />
-                        </div>
-
-                        <div className="flex items-center justify-center gap-2 text-slate-500 text-xs font-semibold pt-4 border-t border-slate-100 w-full">
+                    <div className="bg-white border-2 border-slate-200/80 rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col items-center gap-5 relative overflow-hidden">
+                        <div className="flex items-center justify-center gap-2 text-slate-500 text-xs font-semibold w-full">
                             <Loader2 className="animate-spin text-orange-500" size={14} />
                             <span className="text-[11px] font-bold text-slate-600">Waiting for host to publish final standings</span>
                         </div>
@@ -1173,44 +1137,8 @@ export default function AttemptQuiz() {
                             </p>
                         </div>
 
-                        <div className="bg-white border-2 border-slate-200/80 rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col items-center gap-6 relative overflow-hidden">
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200/80 shadow-xs">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-                                </span>
-                                <span className="text-[11px] font-black uppercase tracking-widest text-orange-700">Leaderboard incoming</span>
-                            </div>
-
-                            <div className="flex flex-col items-center">
-                                <div className="flex items-baseline justify-center gap-1.5 font-mono font-black text-[#0f172a] tracking-tight select-none">
-                                    <span className="text-6xl sm:text-7xl drop-shadow-xs">
-                                        {Math.floor(timeLeft / 60)}
-                                    </span>
-                                    <span className="text-4xl sm:text-5xl text-orange-500 animate-pulse font-sans font-bold pb-1">
-                                        :
-                                    </span>
-                                    <span className="text-6xl sm:text-7xl drop-shadow-xs">
-                                        {String(timeLeft % 60).padStart(2, '0')}
-                                    </span>
-                                </div>
-                                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-2">
-                                    Session Countdown
-                                </span>
-                            </div>
-
-                            <div className="w-full max-w-[260px] h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                                <motion.div 
-                                    className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 rounded-full"
-                                    initial={false}
-                                    animate={{ 
-                                        width: `${Math.max(0, Math.min(100, (timeLeft / (quiz?.duration * 60 || 1800)) * 100))}%` 
-                                    }}
-                                    transition={{ duration: 1, ease: "linear" }}
-                                />
-                            </div>
-
-                            <div className="flex items-center justify-center gap-2 text-slate-500 text-xs font-semibold pt-4 border-t border-slate-100 w-full">
+                        <div className="bg-white border-2 border-slate-200/80 rounded-3xl p-8 sm:p-10 shadow-xl flex flex-col items-center gap-5 relative overflow-hidden">
+                            <div className="flex items-center justify-center gap-2 text-slate-500 text-xs font-semibold w-full">
                                 <Loader2 className="animate-spin text-orange-500" size={14} />
                                 <span className="text-[11px] font-bold text-slate-600">Synchronizing Results...</span>
                             </div>
@@ -1383,11 +1311,6 @@ export default function AttemptQuiz() {
                         variant="synchronizing-answers"
                         title="Answer Locked In"
                         subtitle="Your response is recorded. Waiting for teacher to advance..."
-                        answeredCount={answeredCount}
-                        totalStudents={totalStudents}
-                        detail={totalStudents > 0 && answeredCount < totalStudents
-                            ? `${answeredCount} of ${totalStudents} students submitted`
-                            : 'All responses synchronized'}
                     />
                 </div>
             )}
@@ -1450,22 +1373,6 @@ export default function AttemptQuiz() {
                             <span className="inline-block bg-slate-100 text-[#0f172a] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-slate-300">
                                 Sequence {currentQuestion + 1}
                             </span>
-                            {quiz?.isLive && (
-                                <div className="flex flex-col items-end gap-1.5 min-w-[200px]">
-                                    <div className="flex justify-between w-full text-[10px] font-black uppercase tracking-widest text-slate-500">
-                                        <span>Progress:</span>
-                                        <span>{answeredCount} of {totalStudents} Answered</span>
-                                    </div>
-                                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                                        <motion.div 
-                                            className="h-full bg-gradient-to-r from-[#0f172a] to-blue-600"
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${totalStudents > 0 ? (answeredCount / totalStudents) * 100 : 0}%` }}
-                                            transition={{ duration: 0.3 }}
-                                        />
-                                    </div>
-                                </div>
-                            )}
                         </div>
                         <AdaptiveQuestionContainer questionText={question.questionText} />
 

@@ -214,11 +214,11 @@ export default function PipelineInspectorDrawer({
         : null
     },
     alignment: {
-      isCompleted: Boolean(evidencePackage?.alignmentGraph),
+      isCompleted: Boolean(evidencePackage?.alignmentGraph && Object.keys(evidencePackage.alignmentGraph).length > 0),
       isActive: currentBackendStage === 'EVIDENCE_PACKAGE',
-      summary: evidencePackage?.alignmentGraph
+      summary: evidencePackage?.alignmentGraph && Object.keys(evidencePackage.alignmentGraph).length > 0
         ? `${Object.keys(evidencePackage.alignmentGraph).length} Aligned Cross-Modal Link(s)`
-        : (isVoice ? 'Voice-to-document graph verified' : 'Single modality verified')
+        : (isVoice ? 'Single Modality: 100% Spoken Lecture Authority' : 'Single Modality Verified')
     },
     academicity: {
       isCompleted: Boolean(evidencePackage?.isAcademic !== undefined),
