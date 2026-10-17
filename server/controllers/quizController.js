@@ -128,11 +128,13 @@ const transcribeAudioWithTimestamps = async (filePath) => {
 
             const response = await axios.post(`${AI_SERVICE_URL}/transcribe`, formData, {
                 headers: {
-                    ...formData.getHeaders()
+                    ...formData.getHeaders(),
+                    'Bypass-Tunnel-Reminder': 'true',
+                    'ngrok-skip-browser-warning': 'true'
                 },
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
-                timeout: 2500 // 2.5s fast timeout
+                timeout: 600000 // 10 minutes timeout for large lecture transcription
             });
 
             if (response.data && response.data.status === 'success') {
@@ -712,8 +714,11 @@ const checkAiServiceOnline = async (url) => {
     try {
         console.log(`🔍 Probing local AI Service at ${url}...`);
         const res = await axios.get(url, { 
-            headers: { 'Bypass-Tunnel-Reminder': 'true' },
-            timeout: 1500 
+            headers: { 
+                'Bypass-Tunnel-Reminder': 'true',
+                'ngrok-skip-browser-warning': 'true'
+            }, 
+            timeout: 3000 
         });
         const latency = Date.now() - startProbe;
         const isOnline = res.status === 200;
