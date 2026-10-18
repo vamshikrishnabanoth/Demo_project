@@ -413,42 +413,47 @@ export default function CreateQuizTopic() {
             return;
         }
 
-        let currentP = 15;
-        const progressTicker = setInterval(() => {
-            // Smooth dynamic progress without artificial 94% dead-end lock
-            currentP = Math.min(98, currentP < 35 ? currentP + 4 : currentP < 75 ? currentP + 2 : currentP < 90 ? currentP + 1 : currentP + 0.3);
-            const roundedP = Math.floor(currentP);
-            setInputs(prev => prev.map(item => {
-                if (item.id !== id || item.status !== 'transcribing') return item;
-                let step = 'Uploading audio payload...';
-                let phase = 'Payload Transfer';
-                if (roundedP >= 35 && roundedP < 75) {
-                    step = 'Whisper speech decoding in progress...';
-                    phase = 'Acoustic Model Inference';
-                } else if (roundedP >= 75 && roundedP < 92) {
-                    step = 'Indexing speech timestamps & curriculum depth...';
-                    phase = 'Pedagogical Parsing';
-                } else if (roundedP >= 92) {
-                    step = 'Finalizing lecture transcript...';
-                    phase = 'Finalizing';
-                }
-                return { ...item, progress: roundedP, stepText: step, phaseLabel: phase };
-            }));
-        }, 700);
+        setInputs(prev => prev.map(item => {
+            if (item.id !== id || item.status !== 'transcribing') return item;
+            return { ...item, progress: 5, stepText: 'Preparing audio upload...', phaseLabel: 'Starting' };
+        }));
 
         try {
             const formData = new FormData();
             formData.append('file', file);
 
-            // Scale timeout with file size: 5 min base + 1 min per 10 MB (for slow connections)
-            const uploadTimeoutMs = Math.max(300000, 300000 + Math.floor((file.size / (10 * 1024 * 1024)) * 60000));
+            // Scale timeout with file size: 30 min base + 1 min per 10 MB (for slow connections & deep local Whisper CPU inference)
+            const uploadTimeoutMs = Math.max(1800000, 1800000 + Math.floor((file.size / (10 * 1024 * 1024)) * 60000));
 
             const transcribeRes = await api.post('/quiz/transcribe', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: uploadTimeoutMs
+                timeout: uploadTimeoutMs,
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        const uploadPercent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        const loadedMb = (progressEvent.loaded / (1024 * 1024)).toFixed(1);
+                        const totalMb = (progressEvent.total / (1024 * 1024)).toFixed(1);
+                        setInputs(prev => prev.map(item => {
+                            if (item.id !== id || item.status !== 'transcribing') return item;
+                            if (uploadPercent < 100) {
+                                return {
+                                    ...item,
+                                    progress: Math.min(85, Math.floor(uploadPercent * 0.85)),
+                                    stepText: `Uploading: ${loadedMb} MB / ${totalMb} MB (${uploadPercent}%)...`,
+                                    phaseLabel: 'Uploading'
+                                };
+                            } else {
+                                return {
+                                    ...item,
+                                    progress: 92,
+                                    stepText: `Uploaded (${totalMb} MB). Transcribing on Local Whisper...`,
+                                    phaseLabel: 'Whisper Inference'
+                                };
+                            }
+                        }));
+                    }
+                }
             });
-
-            clearInterval(progressTicker);
 
             if (transcribeRes.data && transcribeRes.data.text && transcribeRes.data.text.trim().length >= 5) {
                 const smartName = transcribeRes.data.sourceName || transcribeRes.data.smartTitle || file.name;

@@ -51,6 +51,61 @@ async function request(endpoint, options = {}, retryCount = 0) {
 
     const { headers: customHeaders, timeout: customTimeout, ...restOptions } = options;
 
+    // Use XMLHttpRequest for file uploads requiring real-time onUploadProgress events
+    if (options.onUploadProgress && typeof XMLHttpRequest !== 'undefined') {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open(options.method || 'POST', url, true);
+            xhr.withCredentials = true;
+
+            Object.entries(headers).forEach(([k, v]) => {
+                xhr.setRequestHeader(k, v);
+            });
+
+            xhr.upload.onprogress = (event) => {
+                options.onUploadProgress(event);
+            };
+
+            const effectiveTimeout = customTimeout !== undefined ? customTimeout : (options.timeout || 1800000);
+            xhr.timeout = effectiveTimeout;
+
+            xhr.onload = () => {
+                let data;
+                try {
+                    data = JSON.parse(xhr.responseText);
+                } catch {
+                    data = xhr.responseText;
+                }
+
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve({ data, status: xhr.status });
+                } else {
+                    if (xhr.status === 401 && !endpoint.includes('/auth/me') && typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+                        try { localStorage.removeItem('token'); } catch (_) {}
+                        window.location.href = '/login';
+                    }
+                    const err = new Error(data?.message || data?.msg || data?.error || `HTTP Error ${xhr.status}`);
+                    err.response = { status: xhr.status, data };
+                    reject(err);
+                }
+            };
+
+            xhr.onerror = () => {
+                const err = new Error('Network transfer error during audio upload');
+                err.response = { status: 0, data: { message: 'Network transfer error' } };
+                reject(err);
+            };
+
+            xhr.ontimeout = () => {
+                const err = new Error(`Audio upload timed out after ${Math.round(effectiveTimeout / 1000)}s`);
+                err.response = { status: 408, data: { message: 'Upload timed out' } };
+                reject(err);
+            };
+
+            xhr.send(options.body);
+        });
+    }
+
     const fetchOptions = {
         method: options.method || 'GET',
         credentials: 'include',

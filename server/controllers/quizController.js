@@ -128,11 +128,13 @@ const transcribeAudioWithTimestamps = async (filePath) => {
 
             const response = await axios.post(`${AI_SERVICE_URL}/transcribe`, formData, {
                 headers: {
-                    ...formData.getHeaders()
+                    ...formData.getHeaders(),
+                    'Bypass-Tunnel-Reminder': 'true',
+                    'ngrok-skip-browser-warning': 'true'
                 },
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
-                timeout: 2500 // 2.5s fast timeout
+                timeout: 1800000 // 30 minutes timeout for multi-hour local lecture transcription
             });
 
             if (response.data && response.data.status === 'success') {
@@ -148,7 +150,7 @@ const transcribeAudioWithTimestamps = async (filePath) => {
             }
         }
     } catch (err) {
-        console.log('ℹ️ Local timestamp transcription unavailable. Falling back to Cloud STT...');
+        console.log(`ℹ️ Local timestamp transcription failed (${err.message}). Falling back to Cloud STT...`);
     }
 
     // 2. Production STT: Groq Whisper Turbo / Large-v3 with Gemini Multimodal Fallback
@@ -712,8 +714,11 @@ const checkAiServiceOnline = async (url) => {
     try {
         console.log(`🔍 Probing local AI Service at ${url}...`);
         const res = await axios.get(url, { 
-            headers: { 'Bypass-Tunnel-Reminder': 'true' },
-            timeout: 1500 
+            headers: { 
+                'Bypass-Tunnel-Reminder': 'true',
+                'ngrok-skip-browser-warning': 'true'
+            }, 
+            timeout: 3000 
         });
         const latency = Date.now() - startProbe;
         const isOnline = res.status === 200;
