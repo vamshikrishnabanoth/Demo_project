@@ -18,8 +18,12 @@
 
 'use strict';
 
-const { spawn } = require('child_process');
 const path = require('path');
+try {
+  require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+} catch (_) {}
+
+const { spawn } = require('child_process');
 
 const SUITES = [
   { name: 'Phase 1: Zero-Crash Reliability', file: 'test_phase1_zero_crash_reliability.js' },

@@ -4592,7 +4592,56 @@ exports.analyzeDepth = async (req, res) => {
             }
         }
 
-        const recommendedQuestionCount = lectureIntel?.evidenceCapacity?.recommendedQuestionCount || analysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5;
+        const evCap = lectureIntel?.evidenceCapacity;
+        const recBreakdown = analysis.lectureDepth?.breakdown;
+        const fallbackRecCount = recBreakdown?.recommendedQuestionCount || 5;
+        const chars = analysis.lectureDepth?.characteristics || {};
+        const supportsHard = chars.reasoning === 'Strong' || chars.procedures === 'Strong';
+
+        let recommendedByDifficulty;
+        let capacityByDifficulty;
+        let totalDefensibleCapacity;
+        let advisoryRationale;
+        let recommendedQuestionCount;
+
+        if (!analysis.isAcademic) {
+            recommendedByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
+            capacityByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
+            totalDefensibleCapacity = 0;
+            advisoryRationale = analysis.reason || 'Cannot recommend questions: Non-academic content.';
+            recommendedQuestionCount = 0;
+            recommendedQuestions = '0 Questions';
+        } else if (evCap && evCap.recommendedByDifficulty) {
+            recommendedByDifficulty = evCap.recommendedByDifficulty;
+            capacityByDifficulty = evCap.capacityByDifficulty || {
+                easy: evCap.recommendedByDifficulty.easy,
+                medium: evCap.recommendedByDifficulty.medium,
+                hard: evCap.recommendedByDifficulty.hard,
+                balanced: evCap.totalDefensibleCapacity || evCap.recommendedQuestionCount
+            };
+            totalDefensibleCapacity = evCap.totalDefensibleCapacity || (evCap.recommendedByDifficulty.easy + evCap.recommendedByDifficulty.medium + evCap.recommendedByDifficulty.hard);
+            advisoryRationale = evCap.advisoryRationale || '';
+            recommendedQuestionCount = evCap.recommendedQuestionCount || fallbackRecCount;
+        } else {
+            const easyCount = Math.max(1, Math.round(fallbackRecCount * 0.4));
+            const medCount = Math.max(1, Math.round(fallbackRecCount * 0.4));
+            const hardCount = supportsHard ? Math.max(1, Math.round(fallbackRecCount * 0.2)) : 0;
+            recommendedByDifficulty = {
+                easy: easyCount,
+                medium: medCount,
+                hard: hardCount,
+                balanced: fallbackRecCount
+            };
+            capacityByDifficulty = {
+                easy: Math.max(fallbackRecCount, easyCount),
+                medium: Math.max(fallbackRecCount, medCount),
+                hard: hardCount,
+                balanced: fallbackRecCount
+            };
+            totalDefensibleCapacity = fallbackRecCount;
+            advisoryRationale = recBreakdown?.recommendedQuestionsRationale || 'Estimated from curricular scope and pedagogical depth';
+            recommendedQuestionCount = fallbackRecCount;
+        }
 
         return res.json({
             success: true,
@@ -4605,6 +4654,10 @@ exports.analyzeDepth = async (req, res) => {
             wordCount,
             recommendedQuestions,
             recommendedQuestionCount,
+            recommendedByDifficulty,
+            capacityByDifficulty,
+            totalDefensibleCapacity,
+            advisoryRationale,
             lecture_intelligence: lectureIntel
         });
     } catch (err) {

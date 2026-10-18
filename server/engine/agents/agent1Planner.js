@@ -1059,9 +1059,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
    *
    * @param {String} difficulty - 'Easy' | 'Medium' | 'Hard' | 'Balanced'
    * @param {Number} count - Total question count requested (N)
+   * @param {Object} [capacityContext] - Optional { hardFeasible, maxHard, instructionalIntent, capacityByDifficulty }
    * @returns {Object} { requestedDifficulty, isBalanced, counts: { Easy, Medium, Hard }, distribution: Array<String> }
    */
-  computeDifficultyDistribution(difficulty = 'Medium', count = 5) {
+  computeDifficultyDistribution(difficulty = 'Medium', count = 5, capacityContext = null) {
     const N = Math.max(1, parseInt(count, 10) || 1);
     const diff = String(difficulty || 'Medium').trim();
     const normalizedDiff = diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase();
@@ -1084,15 +1085,50 @@ Generate the curricular assessment plan strictly covering educational concepts w
     let hardCount = 0;
     let mediumCount = 0;
 
-    if (N === 1) {
-      mediumCount = 1;
-    } else if (N === 2) {
-      easyCount = 1;
-      mediumCount = 1;
+    // Capacity-aware Balanced allocation when capacityContext is provided
+    if (capacityContext) {
+      const hardFeasible = capacityContext.hardFeasible !== false && (capacityContext.maxHard === undefined || capacityContext.maxHard > 0);
+      const maxHard = capacityContext.maxHard !== undefined ? capacityContext.maxHard : (hardFeasible ? Math.floor(N / 3) : 0);
+      const intent = capacityContext.instructionalIntent || 'FOUNDATIONAL_UNDERSTANDING';
+
+      if (!hardFeasible || maxHard === 0) {
+        // Lecture has 0 Hard capacity: smoothly distribute across eligible tiers (Easy and Medium)
+        if (N === 1) {
+          mediumCount = 1;
+        } else if (N === 2) {
+          easyCount = 1;
+          mediumCount = 1;
+        } else if (intent === 'FOUNDATIONAL_UNDERSTANDING') {
+          easyCount = Math.ceil(N / 2);
+          mediumCount = N - easyCount;
+        } else {
+          easyCount = Math.floor(N / 2);
+          mediumCount = N - easyCount;
+        }
+        hardCount = 0;
+      } else {
+        // Hard is supported: mixed set across Easy, Medium, and Hard, bounded by maxHard
+        hardCount = Math.min(maxHard, Math.max(1, Math.floor(N / 3)));
+        const rem = N - hardCount;
+        if (intent === 'FOUNDATIONAL_UNDERSTANDING') {
+          easyCount = Math.ceil(rem / 2);
+        } else {
+          easyCount = Math.floor(rem / 2);
+        }
+        mediumCount = rem - easyCount;
+      }
     } else {
-      easyCount = Math.floor(N / 3);
-      hardCount = Math.floor(N / 3);
-      mediumCount = N - easyCount - hardCount;
+      // Default legacy split when no capacityContext is provided (preserves exact Suite 2 invariants)
+      if (N === 1) {
+        mediumCount = 1;
+      } else if (N === 2) {
+        easyCount = 1;
+        mediumCount = 1;
+      } else {
+        easyCount = Math.floor(N / 3);
+        hardCount = Math.floor(N / 3);
+        mediumCount = N - easyCount - hardCount;
+      }
     }
 
     const distribution = [
@@ -1389,8 +1425,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
       return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
     }
 
-    // Default: v1_bloom_quota
-    return this._applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+    // Default: v2_intent_relative (capacity-aware)
+    return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
   }
 
   /**
@@ -1641,7 +1677,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
       teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
       options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
         { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${supportedHardCount} Hard Question${supportedHardCount === 1 ? '' : 's'}` },
-        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${deficitCount} with Deep Medium Questions` },
+        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalCapacityDeficit} with Deep Medium Questions` },
         { action: 'CANCEL', label: 'Cancel / Adjust Request' }
       ] : []
     };
@@ -1901,7 +1937,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
       distribution = finalTargets.map(t => t.targetDifficulty);
     } else {
       // Balanced, Easy, or Medium mode
-      if (requestedHard > 0 && (!isHardFeasible || feasibleHardCount < requestedHard)) {
+      if (requestedHard > 0 && (!isHardFeasible || feasibleHardCount === 0)) {
+        // Zero Hard supported by lecture evidence: gracefully reallocate all Hard to eligible tiers
         allocatedHard = 0;
         const reallocatedCount = requestedHard;
         const reallocatedTo = intent !== 'FOUNDATIONAL_UNDERSTANDING' ? 'Medium' : (allocatedEasy > 0 ? 'Easy' : 'Medium');
@@ -1921,6 +1958,28 @@ Generate the curricular assessment plan strictly covering educational concepts w
           reallocatedTo,
           reason: profile.hardFeasibility?.message || 'Lecture evidence is purely taxonomic/descriptive with zero taught trade-offs or perturbation dynamics.',
           deficitStatus: 'INSUFFICIENT_EVIDENCE_FOR_HARD'
+        };
+      } else if (requestedHard > 0 && feasibleHardCount < requestedHard) {
+        // Partial Hard supported: preserve the feasible Hard questions, reallocate only the deficit slots
+        allocatedHard = feasibleHardCount;
+        const reallocatedCount = requestedHard - feasibleHardCount;
+        const reallocatedTo = intent !== 'FOUNDATIONAL_UNDERSTANDING' ? 'Medium' : 'Easy';
+        if (reallocatedTo === 'Medium') {
+          allocatedMedium += reallocatedCount;
+        } else {
+          allocatedEasy += reallocatedCount;
+        }
+
+        capacityAudit = {
+          mode: 'v2_intent_relative',
+          requestedDifficulty,
+          requestedCount,
+          requestedHardCount: requestedHard,
+          allocatedHardCount: feasibleHardCount,
+          reallocatedCount,
+          reallocatedTo,
+          reason: `Lecture evidence supports ${feasibleHardCount} distinct Hard question(s); reallocated ${reallocatedCount} slot(s) to ${reallocatedTo} without hallucinating untaught depth.`,
+          deficitStatus: null
         };
       } else {
         capacityAudit = {

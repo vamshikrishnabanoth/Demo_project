@@ -172,6 +172,7 @@ export default function CreateQuizText() {
     const [whatWasTaught, setWhatWasTaught] = useState('');
     const [keyTopics, setKeyTopics] = useState([]);
     const [recommendedQuestions, setRecommendedQuestions] = useState('');
+    const [recommendedByDifficulty, setRecommendedByDifficulty] = useState(null);
     const [lectureWordCount, setLectureWordCount] = useState(0);
     const [isVoice, setIsVoice] = useState(false);
     const [pipelineNotice, setPipelineNotice] = useState(null);
@@ -260,6 +261,9 @@ export default function CreateQuizText() {
             }
             if (location.state.recommendedQuestions) {
                 setRecommendedQuestions(location.state.recommendedQuestions);
+            }
+            if (location.state.recommendedByDifficulty) {
+                setRecommendedByDifficulty(location.state.recommendedByDifficulty);
             }
             if (location.state.wordCount) {
                 setLectureWordCount(location.state.wordCount);
@@ -1174,6 +1178,11 @@ export default function CreateQuizText() {
                                                 {recommendedQuestions && (
                                                     <span className="flex items-center gap-1.5 text-slate-700">
                                                         <Target size={13} className="text-[#c2410c] shrink-0" /> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions}</span>
+                                                        {recommendedByDifficulty && (
+                                                            <span className="text-slate-500 font-medium text-[9px]">
+                                                                (Easy: {recommendedByDifficulty.easy}, Med: {recommendedByDifficulty.medium}, Hard: {recommendedByDifficulty.hard})
+                                                            </span>
+                                                        )}
                                                     </span>
                                                 )}
                                             </div>

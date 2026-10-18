@@ -734,10 +734,15 @@ class PipelineOrchestrator {
           if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             const nextReserve = activeReservePool.shift();
             // Determine tier to maintain balance:
-            const easyDelivered = passingQuestions.filter(q => (q.metadata?.targetDifficulty || q.metadata?.tier) === 'Easy').length;
-            const hardDelivered = passingQuestions.filter(q => (q.metadata?.targetDifficulty || q.metadata?.tier) === 'Hard').length;
-            const neededTier = (hardDelivered < Math.floor(requestedCount / 3)) ? 'Hard' 
-              : ((easyDelivered < Math.floor(requestedCount / 3)) ? 'Easy' : 'Medium');
+            let neededTier = requestedDifficulty;
+            if (String(requestedDifficulty || '').toLowerCase() === 'balanced') {
+              const targetEasy = plan?.difficultyBlueprint?.counts?.Easy ?? Math.floor(requestedCount / 3);
+              const targetHard = plan?.difficultyBlueprint?.counts?.Hard ?? Math.floor(requestedCount / 3);
+              const easyDelivered = passingQuestions.filter(q => (q.metadata?.targetDifficulty || q.metadata?.tier) === 'Easy').length;
+              const hardDelivered = passingQuestions.filter(q => (q.metadata?.targetDifficulty || q.metadata?.tier) === 'Hard').length;
+              neededTier = (hardDelivered < targetHard) ? 'Hard' 
+                : ((easyDelivered < targetEasy) ? 'Easy' : 'Medium');
+            }
 
             nextReserve.targetDifficulty = neededTier;
             const cognitiveBp = agent1Planner.getCognitiveBlueprint(neededTier, nextReserve.dimension || 'Conceptual');

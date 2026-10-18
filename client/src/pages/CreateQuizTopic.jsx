@@ -68,6 +68,9 @@ export default function CreateQuizTopic() {
     const [lectureWordCount, setLectureWordCount] = useState(0);
     const [recommendedQuestions, setRecommendedQuestions] = useState('');
     const [recommendedQuestionCount, setRecommendedQuestionCount] = useState(null);
+    const [recommendedByDifficulty, setRecommendedByDifficulty] = useState(null);
+    const [capacityByDifficulty, setCapacityByDifficulty] = useState(null);
+    const [totalDefensibleCapacity, setTotalDefensibleCapacity] = useState(null);
     const [showTeachingScoreModal, setShowTeachingScoreModal] = useState(false);
     const [depthLoading, setDepthLoading] = useState(false);
     const [depthError, setDepthError] = useState(false);
@@ -257,6 +260,9 @@ export default function CreateQuizTopic() {
                         setLectureWordCount(res.data.wordCount || textToAnalyze.trim().split(/\s+/).length);
                         setRecommendedQuestions(res.data.recommendedQuestions || '');
                         setRecommendedQuestionCount(res.data.recommendedQuestionCount || res.data.lectureDepth?.breakdown?.recommendedQuestionCount || 5);
+                        setRecommendedByDifficulty(res.data.recommendedByDifficulty || res.data.lecture_intelligence?.evidenceCapacity?.recommendedByDifficulty || null);
+                        setCapacityByDifficulty(res.data.capacityByDifficulty || res.data.lecture_intelligence?.evidenceCapacity?.capacityByDifficulty || null);
+                        setTotalDefensibleCapacity(res.data.totalDefensibleCapacity || res.data.lecture_intelligence?.evidenceCapacity?.totalDefensibleCapacity || null);
                         setLectureIntel(res.data.lecture_intelligence || null);
                         setDepthError(false);
                     } else if (res.data && !res.data.isAcademic) {
@@ -267,17 +273,26 @@ export default function CreateQuizTopic() {
                         setLectureWordCount(0);
                         setRecommendedQuestions('');
                         setRecommendedQuestionCount(null);
+                        setRecommendedByDifficulty(null);
+                        setCapacityByDifficulty(null);
+                        setTotalDefensibleCapacity(null);
                         setLectureIntel(null);
                         setDepthError(false);
                     } else {
                         setLectureDepth(null);
                         setLectureIntel(null);
+                        setRecommendedByDifficulty(null);
+                        setCapacityByDifficulty(null);
+                        setTotalDefensibleCapacity(null);
                         setDepthError(true);
                     }
                 } catch (err) {
                     console.warn('[DepthAnalysis] Failed to analyze lecture depth:', err);
                     setLectureDepth(null);
                     setLectureIntel(null);
+                    setRecommendedByDifficulty(null);
+                    setCapacityByDifficulty(null);
+                    setTotalDefensibleCapacity(null);
                     setDepthError(true);
                 } finally {
                     setDepthLoading(false);
@@ -293,8 +308,10 @@ export default function CreateQuizTopic() {
             setLectureWordCount(0);
             setRecommendedQuestions('');
             setRecommendedQuestionCount(null);
+            setRecommendedByDifficulty(null);
+            setCapacityByDifficulty(null);
+            setTotalDefensibleCapacity(null);
             setDepthLoading(false);
-            setDepthError(false);
             setDepthError(false);
         }
     }, [inputs, depthRetryCount]);
@@ -1819,26 +1836,45 @@ export default function CreateQuizTopic() {
                                                 <span>Content Volume: <strong className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</strong></span>
                                             </div>
                                             
-                                            <div className="flex items-center justify-between sm:justify-end gap-3 flex-wrap">
-                                                <span className="flex items-center gap-1.5 text-slate-700 font-medium">
-                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Recommended: <strong className="font-black text-[#c2410c]">{recommendedQuestions || `${recommendedQuestionCount || 5} Questions`}</strong>
-                                                </span>
-                                                
-                                                {recommendedQuestionCount && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setQuestionCount(recommendedQuestionCount);
-                                                            toast.success(`Applied recommended ${recommendedQuestionCount} questions!`);
-                                                        }}
-                                                        className="px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-[11px] uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
-                                                        title="Apply recommended question count into Question Count configuration"
-                                                    >
-                                                        <Zap size={13} />
-                                                        <span>Apply {recommendedQuestionCount} Qs</span>
-                                                    </button>
-                                                )}
-                                            </div>
+                                            {(() => {
+                                                const selKey = (difficulty || 'Balanced').toLowerCase();
+                                                const curRec = recommendedByDifficulty && recommendedByDifficulty[selKey] !== undefined
+                                                    ? recommendedByDifficulty[selKey]
+                                                    : (recommendedQuestionCount || 5);
+                                                const curCap = capacityByDifficulty && capacityByDifficulty[selKey] !== undefined
+                                                    ? capacityByDifficulty[selKey]
+                                                    : null;
+
+                                                return (
+                                                    <div className="flex items-center justify-between sm:justify-end gap-3 flex-wrap">
+                                                        <span className="flex items-center gap-1.5 text-slate-700 font-medium">
+                                                            <Target size={13} className="text-[#c2410c] shrink-0" /> Recommended ({difficulty}): <strong className="font-black text-[#c2410c]">{curRec} Questions</strong>
+                                                            {curCap !== null && curCap !== curRec && (
+                                                                <span className="text-slate-500 font-normal text-[11px]">(Capacity: {curCap})</span>
+                                                            )}
+                                                        </span>
+                                                        
+                                                        {curRec > 0 ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setQuestionCount(curRec);
+                                                                    toast.success(`Applied recommended ${curRec} ${difficulty} questions!`);
+                                                                }}
+                                                                className="px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-[11px] uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
+                                                                title={`Apply recommended ${curRec} questions for ${difficulty} difficulty`}
+                                                            >
+                                                                <Zap size={13} />
+                                                                <span>Apply {curRec} {difficulty} Qs</span>
+                                                            </button>
+                                                        ) : (
+                                                            <span className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 font-bold text-[11px] border border-amber-300">
+                                                                0 {difficulty} Qs Supported
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })()}
                                         </div>
 
                                         {/* 6. Pedagogical Depth Characteristics */}
@@ -1877,21 +1913,36 @@ export default function CreateQuizTopic() {
 
                                 <div className="bg-white border-2 border-[var(--border-color)] rounded-2xl p-5 shadow-sm space-y-3">
                                     <div className="grid grid-cols-2 gap-2.5">
-                                        {['Balanced', 'Easy', 'Medium', 'Hard'].map((level) => (
-                                            <button
-                                                key={level}
-                                                type="button"
-                                                disabled={isGenerating}
-                                                onClick={() => setDifficulty(level)}
-                                                className={`py-3 px-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-200 border-2 cursor-pointer active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed ${
-                                                    difficulty === level
-                                                        ? 'bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] shadow-md shadow-[var(--bg-accent)]/20'
-                                                        : 'bg-white text-[var(--text-primary)] border-slate-200 hover:border-[var(--bg-accent)]/60 hover:bg-slate-50'
-                                                }`}
-                                            >
-                                                {level === 'Balanced' ? <><Scale size={14} className="inline mr-1" aria-hidden="true" /> Balanced</> : level}
-                                            </button>
-                                        ))}
+                                        {['Balanced', 'Easy', 'Medium', 'Hard'].map((level) => {
+                                            const lvlKey = level.toLowerCase();
+                                            const recVal = recommendedByDifficulty ? recommendedByDifficulty[lvlKey] : null;
+                                            return (
+                                                <button
+                                                    key={level}
+                                                    type="button"
+                                                    disabled={isGenerating}
+                                                    onClick={() => setDifficulty(level)}
+                                                    className={`py-3 px-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-200 border-2 cursor-pointer active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-between ${
+                                                        difficulty === level
+                                                            ? 'bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] shadow-md shadow-[var(--bg-accent)]/20'
+                                                            : 'bg-white text-[var(--text-primary)] border-slate-200 hover:border-[var(--bg-accent)]/60 hover:bg-slate-50'
+                                                    }`}
+                                                >
+                                                    <span className="flex items-center">
+                                                        {level === 'Balanced' ? <><Scale size={14} className="inline mr-1 shrink-0" aria-hidden="true" /> Balanced</> : level}
+                                                    </span>
+                                                    {recVal !== null && recVal !== undefined && (
+                                                        <span className={`text-[10px] px-2 py-0.5 rounded-lg font-black tracking-normal ${
+                                                            difficulty === level
+                                                                ? 'bg-white/25 text-white'
+                                                                : (recVal === 0 ? 'bg-amber-100 text-amber-700' : 'bg-orange-100 text-orange-800')
+                                                        }`}>
+                                                            {recVal} Qs
+                                                        </span>
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
