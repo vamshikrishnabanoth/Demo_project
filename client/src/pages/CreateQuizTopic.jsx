@@ -405,8 +405,8 @@ export default function CreateQuizTopic() {
             const formData = new FormData();
             formData.append('file', file);
 
-            // Scale timeout with file size: 5 min base + 1 min per 10 MB (for slow connections)
-            const uploadTimeoutMs = Math.max(300000, 300000 + Math.floor((file.size / (10 * 1024 * 1024)) * 60000));
+            // Scale timeout with file size: 30 min base + 1 min per 10 MB (for slow connections & deep local Whisper CPU inference)
+            const uploadTimeoutMs = Math.max(1800000, 1800000 + Math.floor((file.size / (10 * 1024 * 1024)) * 60000));
 
             const transcribeRes = await api.post('/quiz/transcribe', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },

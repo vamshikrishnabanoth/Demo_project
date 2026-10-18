@@ -27,17 +27,6 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-app = FastAPI(title="Local Whisper STT Engine", version="1.0.0")
-
-# Enable CORS for local development
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # Global model holder
 whisper_model = None
 MODEL_SIZE = os.environ.get("WHISPER_MODEL", "small")  # "small" (cached, instant) or "medium", "large-v3-turbo"
@@ -80,15 +69,29 @@ def get_model():
     return whisper_model
 
 
-@app.on_event("startup")
-def startup_event():
-    print("[*] Pre-warming Whisper model on startup...")
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("[*] Pre-warming Whisper model on startup...", flush=True)
     get_model()
-    print("=======================================================")
-    print("[+] WHISPER ENGINE READY!")
+    print("=======================================================", flush=True)
+    print("[+] WHISPER ENGINE READY!", flush=True)
     print("    Listening on: http://127.0.0.1:8000")
     print("    Waiting for audio uploads from your AWS EC2 server...")
-    print("=======================================================\n")
+    print("=======================================================\n", flush=True)
+    yield
+
+app = FastAPI(title="Local Whisper STT Engine", version="1.0.0", lifespan=lifespan)
+
+# Enable CORS for local development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -98,26 +101,37 @@ def health():
 
 
 @app.post("/transcribe")
-async def transcribe_audio(file: UploadFile = File(...)):
+def transcribe_audio(file: UploadFile = File(...)):
     """
     Accepts an audio file upload and returns timestamped transcription compatible
-    with Node.js quizController.js.
+    with Node.js quizController.js. Runs in threadpool so event loop remains free.
     """
     start_time = time.perf_counter()
+    print("\n=======================================================", flush=True)
+    print(f"[*] [INCOMING AUDIO STREAM] Receiving from AWS: {file.filename}", flush=True)
+    print(f"[*] Streaming chunks to local disk...", flush=True)
+
     model = get_model()
 
     # Save uploaded file to a temporary location
     suffix = Path(file.filename or "audio.wav").suffix or ".wav"
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_audio:
         temp_path = temp_audio.name
-        shutil.copyfileobj(file.file, temp_audio)
+        total_bytes = 0
+        while True:
+            chunk = file.file.read(8 * 1024 * 1024)
+            if not chunk:
+                break
+            temp_audio.write(chunk)
+            total_bytes += len(chunk)
+            print(f"    --> Received {total_bytes / (1024 * 1024):.1f} MB from AWS...", flush=True)
 
     try:
         file_size_mb = os.path.getsize(temp_path) / (1024 * 1024)
-        print("\n=======================================================")
-        print(f"[AUDIO RECEIVED FROM AWS] {file.filename} ({file_size_mb:.2f} MB)")
-        print(f"[*] Transcribing audio speech to text now on your laptop...")
-        print("=======================================================")
+        print("-------------------------------------------------------", flush=True)
+        print(f"[+] Audio download complete: {file_size_mb:.2f} MB saved", flush=True)
+        print(f"[*] Transcribing audio with faster-whisper ('{MODEL_SIZE}')...", flush=True)
+        print("-------------------------------------------------------", flush=True)
 
         # Transcribe with VAD filter to ignore silence
         segments_gen, info = model.transcribe(
@@ -130,13 +144,22 @@ async def transcribe_audio(file: UploadFile = File(...)):
 
         segments = []
         text_parts = []
+        seg_idx = 0
         for s in segments_gen:
-            text_parts.append(s.text.strip())
+            seg_idx += 1
+            txt = s.text.strip()
+            text_parts.append(txt)
             segments.append({
                 "start": round(s.start, 2),
                 "end": round(s.end, 2),
-                "text": s.text.strip()
+                "text": txt
             })
+            if seg_idx % 4 == 1 or seg_idx <= 3:
+                total_s = int(s.end)
+                h = total_s // 3600
+                m = (total_s % 3600) // 60
+                sc = total_s % 60
+                print(f"    [{h:02d}:{m:02d}:{sc:02d}] {txt[:70]}", flush=True)
 
         full_text = " ".join(text_parts).strip()
         elapsed = time.perf_counter() - start_time
@@ -149,10 +172,11 @@ async def transcribe_audio(file: UploadFile = File(...)):
         s = total_s % 60
         duration_formatted = f"{h:02d}:{m:02d}:{s:02d}"
 
-        print(f"[+] Transcribed successfully in {elapsed:.2f}s!")
-        print(f"    Audio duration: {duration_formatted} ({duration:.1f}s)")
-        print(f"    Characters: {len(full_text)} | Segments: {len(segments)}")
-        print("=======================================================\n")
+        print("=======================================================", flush=True)
+        print(f"[+] Transcribed successfully in {elapsed:.2f}s!", flush=True)
+        print(f"    Audio duration: {duration_formatted} ({duration:.1f}s)", flush=True)
+        print(f"    Characters: {len(full_text)} | Segments: {len(segments)}", flush=True)
+        print("=======================================================\n", flush=True)
 
         return {
             "status": "success",
@@ -165,7 +189,7 @@ async def transcribe_audio(file: UploadFile = File(...)):
         }
 
     except Exception as err:
-        print(f"[!] Transcription error: {err}")
+        print(f"[!] Transcription error: {err}", flush=True)
         raise HTTPException(status_code=500, detail=str(err))
 
     finally:
@@ -178,5 +202,5 @@ async def transcribe_audio(file: UploadFile = File(...)):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    print(f"Starting Local Whisper Service on http://127.0.0.1:{port}")
-    uvicorn.run("local_whisper_server:app", host="0.0.0.0", port=port, reload=False)
+    print(f"Starting Local Whisper Service on http://127.0.0.1:{port}", flush=True)
+    uvicorn.run(app, host="0.0.0.0", port=port, reload=False)
