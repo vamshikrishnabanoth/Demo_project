@@ -99,6 +99,232 @@ function isTokenSupported(token, rawLower) {
   return false;
 }
 
+// Canonical predicate semantic families for relational entailment verification
+const PREDICATE_FAMILIES = {
+  PRODUCE: {
+    stems: ['synthesiz', 'generat', 'produc', 'creat', 'yield', 'emit', 'secret', 'build', 'form', 'manufactur']
+  },
+  CAUSE: {
+    stems: ['caus', 'accelerat', 'trigger', 'induc', 'stimulat', 'catalyz', 'prompt', 'result', 'lead']
+  },
+  INHIBIT: {
+    stems: ['inhibit', 'prevent', 'block', 'halt', 'stop', 'suppress', 'restrict', 'limit']
+  },
+  EXECUTE: {
+    stems: ['execut', 'process', 'comput', 'calculat', 'schedul', 'allocat', 'run']
+  },
+  CONTAIN: {
+    stems: ['stor', 'contain', 'hold', 'hous', 'enclos']
+  },
+  TRANSFORM: {
+    stems: ['condens', 'fold', 'compress', 'divid', 'separat', 'split', 'dissolv', 'replicat', 'transcrib', 'translat']
+  }
+};
+
+const DISCOURSE_CONNECTORS = new Set([
+  'meanwhile', 'however', 'furthermore', 'moreover', 'likewise', 'consequently',
+  'similarly', 'whereas', 'separately', 'instead', 'therefore', 'nevertheless',
+  'nonetheless', 'contrast', 'otherwise', 'accordingly'
+]);
+
+const DISJUNCTIVE_MARKERS = /\b(meanwhile|in contrast|separately|on the other hand|elsewhere|whereas|unlike)\b/i;
+
+const MUTUALLY_EXCLUSIVE_PAIRS = [
+  ['fifo', 'lifo'],
+  ['first-in first-out', 'last-in first-out'],
+  ['preemptive', 'non-preemptive'],
+  ['contiguous', 'non-contiguous'],
+  ['synchronous', 'asynchronous'],
+  ['deterministic', 'non-deterministic'],
+  ['static', 'dynamic'],
+  ['linear', 'non-linear'],
+  ['mutable', 'immutable']
+];
+
+function matchPredicateStem(word) {
+  const w = word.toLowerCase().trim();
+  if (w.length < 4) return null;
+  for (const [family, def] of Object.entries(PREDICATE_FAMILIES)) {
+    for (const stem of def.stems) {
+      if (w === stem || w.startsWith(stem)) {
+        return { family, stem, word: w };
+      }
+    }
+  }
+  return null;
+}
+
+function parseClauses(text) {
+  if (!text) return [];
+  return text
+    .split(/(?<=[.!?\n;])\s+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 5);
+}
+
+function cleanTokens(text) {
+  if (!text) return [];
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+}
+
+function buildEvidenceGraph(rawContent, stopwords) {
+  const clauses = parseClauses(rawContent);
+  const evidenceRecords = [];
+
+  for (let idx = 0; idx < clauses.length; idx++) {
+    const clause = clauses[idx];
+    const words = cleanTokens(clause);
+    const isDisjunctive = DISJUNCTIVE_MARKERS.test(clause);
+
+    const tokens = [];
+    for (let i = 0; i < words.length; i++) {
+      const w = words[i];
+      if (DISCOURSE_CONNECTORS.has(w) || (stopwords && stopwords.has(w))) continue;
+      const pred = matchPredicateStem(w);
+      tokens.push({
+        word: w,
+        index: i,
+        isPred: Boolean(pred),
+        predInfo: pred
+      });
+    }
+
+    const substantiveWords = tokens.filter(t => !t.isPred && t.word.length >= 3);
+    const predsInClause = tokens.filter(t => t.isPred);
+
+    const relations = [];
+    for (const p of predsInClause) {
+      const agents = substantiveWords.filter(s => s.index < p.index && s.index >= p.index - 4).map(s => s.word);
+      const targets = substantiveWords.filter(s => s.index > p.index && s.index <= p.index + 6).map(s => s.word);
+
+      if (agents.length > 0 || targets.length > 0) {
+        relations.push({
+          predicate: p.predInfo,
+          agents,
+          targets
+        });
+      }
+    }
+
+    evidenceRecords.push({
+      clauseIndex: idx,
+      clauseText: clause,
+      isDisjunctive,
+      substantiveWords: substantiveWords.map(s => s.word),
+      predicates: predsInClause.map(p => p.predInfo),
+      relations
+    });
+  }
+
+  return evidenceRecords;
+}
+
+function verifyRelationalGrounding(qText, ansText, evidenceRecords, rawEvidence = '', stopwords = null) {
+  const candFull = `${qText} ${ansText}`.toLowerCase();
+
+  // 0. Mutual Exclusion / Factual Contradiction Check
+  for (const [termA, termB] of MUTUALLY_EXCLUSIVE_PAIRS) {
+    if (candFull.includes(termA) || candFull.includes(termB)) {
+      const assertedTerm = candFull.includes(termA) ? termA : termB;
+      const oppositeTerm = assertedTerm === termA ? termB : termA;
+
+      const candRegex = new RegExp(`(\\b[a-z0-9_-]+\\b)(?:\\s+(?:is|operates|defined|considered|acts as a|as a)){1,3}\\s+\\b${assertedTerm}\\b`, 'i');
+      const mCand = candFull.match(candRegex);
+      if (mCand) {
+        const subject = mCand[1];
+        if ((!stopwords || !stopwords.has(subject)) && subject.length >= 3) {
+          const evidRegex = new RegExp(`\\b${subject}\\b[^.!?\\n]*\\b${oppositeTerm}\\b`, 'i');
+          if (evidRegex.test(rawEvidence.toLowerCase())) {
+            return {
+              isJustified: false,
+              reason: `FACTUAL_CONTRADICTION: Candidate asserts "${subject}" is "${assertedTerm}", but evidence explicitly states "${subject}" is "${oppositeTerm}"`
+            };
+          }
+        }
+      }
+    }
+  }
+
+  const candidateSentences = parseClauses(`${qText}. ${ansText}`);
+
+  for (const candSent of candidateSentences) {
+    const words = cleanTokens(candSent);
+    const tokens = [];
+    for (let i = 0; i < words.length; i++) {
+      const w = words[i];
+      if (DISCOURSE_CONNECTORS.has(w) || (stopwords && stopwords.has(w))) continue;
+      const pred = matchPredicateStem(w);
+      tokens.push({
+        word: w,
+        index: i,
+        isPred: Boolean(pred),
+        predInfo: pred
+      });
+    }
+
+    const candSubstantive = tokens.filter(t => !t.isPred && t.word.length >= 3);
+    const candPreds = tokens.filter(t => t.isPred);
+
+    for (const cp of candPreds) {
+      const agentsAsserted = candSubstantive.filter(s => s.index < cp.index && s.index >= cp.index - 5).map(s => s.word);
+      const targetsAsserted = candSubstantive.filter(s => s.index > cp.index && s.index <= cp.index + 6).map(s => s.word);
+
+      if (agentsAsserted.length === 0 || targetsAsserted.length === 0) continue;
+
+      // 1. Check Misattribution for each target
+      for (const target of targetsAsserted) {
+        const clausesWithTarget = evidenceRecords.filter(r => r.substantiveWords.includes(target));
+        if (clausesWithTarget.length === 0) continue;
+
+        for (const er of clausesWithTarget) {
+          const matchingRel = er.relations.find(rel => rel.predicate.family === cp.predInfo.family && rel.targets.includes(target));
+          if (matchingRel && matchingRel.agents.length > 0) {
+            const evidenceAgents = matchingRel.agents;
+            const agentMatched = agentsAsserted.some(a => evidenceAgents.includes(a));
+            if (!agentMatched) {
+              const agentInClause = agentsAsserted.some(a => er.substantiveWords.includes(a));
+              if (!agentInClause) {
+                return {
+                  isJustified: false,
+                  reason: `UNGROUNDED_RELATIONAL_CLAIM: Candidate asserts "${agentsAsserted.join(' ')}" ${cp.predInfo.word} "${target}", but evidence attributes this to "${evidenceAgents.join(' ')}"`
+                };
+              }
+            }
+          }
+        }
+      }
+
+      // 2. Check Un-taught Causal Linking across independent/disjunctive clauses
+      if (cp.predInfo.family === 'CAUSE') {
+        for (const agent of agentsAsserted) {
+          for (const target of targetsAsserted) {
+            const clauseWithAgent = evidenceRecords.find(r => r.substantiveWords.includes(agent));
+            const clauseWithTarget = evidenceRecords.find(r => r.substantiveWords.includes(target));
+
+            if (clauseWithAgent && clauseWithTarget && clauseWithAgent.clauseIndex !== clauseWithTarget.clauseIndex) {
+              if (clauseWithTarget.isDisjunctive || clauseWithAgent.isDisjunctive) {
+                const hasDirectCausal = evidenceRecords.some(r =>
+                  r.substantiveWords.includes(agent) &&
+                  r.substantiveWords.includes(target) &&
+                  r.predicates.some(p => p.family === 'CAUSE')
+                );
+                if (!hasDirectCausal) {
+                  return {
+                    isJustified: false,
+                    reason: `UNGROUNDED_RELATIONAL_CLAIM: Causal link between "${agent}" and "${target}" is absent from lecture evidence (source clauses are independent or disjunctive)`
+                  };
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return { isJustified: true };
+}
+
 class GroundingGate {
   /**
    * Run Final Grounding Gate on passing quiz questions.
@@ -173,9 +399,21 @@ class GroundingGate {
 
     // Check explicit teacher negative boundaries (e.g. NO_CODE, NO_MATH)
     const boundaries = evidencePackage?.negativeBoundaries || evidencePackage?.instructionalProfile?.negativeBoundaries || [];
-    if (boundaries.includes('NO_CODE')) {
-      const codeRegex = /\b(def |class |int |void |public |private |malloc|printf|cout|cin|std::|#include|import )\b/;
-      if (codeRegex.test(qText) || codeRegex.test(ansText)) {
+    const hasNoCodeBoundary = boundaries.some(b => /no_code/i.test(b));
+    if (hasNoCodeBoundary) {
+      const codeRegex = /\b(def\s+|class\s+|int\s+|void\s+|public\s+|private\s+|malloc\s*\(|free\s*\(|printf\s*\(|cout\s*<<|cin\s*>>|std::|#include\s*<|import\s+)\b/;
+      let hasProhibitedCode = codeRegex.test(qText) || codeRegex.test(ansText);
+      if (!hasProhibitedCode && q && Array.isArray(q.options)) {
+        hasProhibitedCode = q.options.some(opt => codeRegex.test(opt));
+      }
+      if (!hasProhibitedCode && q) {
+        try {
+          const { validateQuestionCodeArtifacts } = require('./astParser');
+          const codeAudit = validateQuestionCodeArtifacts(q);
+          if (codeAudit.hasCode) hasProhibitedCode = true;
+        } catch (_) {}
+      }
+      if (hasProhibitedCode) {
         return { isJustified: false, reason: 'TEACHER_BOUNDARY_VIOLATION: Code syntax generated despite explicit NO_CODE instruction' };
       }
     }
@@ -288,6 +526,25 @@ class GroundingGate {
       return {
         isJustified: false,
         reason: `ZERO_SESSION_OVERLAP: Match ratio ${(matchRatio * 100).toFixed(1)}% (found ${matchedCount}/${totalTokens} terms in evidence)`
+      };
+    }
+
+    // 6. Relational Grounding & Entailment Verification
+    let evidenceRecords = evidencePackage?._evidenceGraph;
+    if (!evidenceRecords) {
+      evidenceRecords = buildEvidenceGraph(rawContent, stopwords);
+      if (evidencePackage && typeof evidencePackage === 'object') {
+        try { evidencePackage._evidenceGraph = evidenceRecords; } catch (_) {}
+      }
+    }
+
+    const relationalAudit = verifyRelationalGrounding(qText, ansText, evidenceRecords, rawContent, stopwords);
+    if (!relationalAudit.isJustified) {
+      return {
+        isJustified: false,
+        reason: relationalAudit.reason,
+        matchedDomainAnchors: matchedSubstantive,
+        verifiedNumericalFacts: matchedNumeric
       };
     }
 

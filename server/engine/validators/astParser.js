@@ -314,8 +314,20 @@ function detectLanguage(codeSnippet) {
     return 'JavaScript';
   }
 
-  // C++ indicators
-  if (/\b(int\s+main\(\)|std::|cout\s*<<|cin\s*>>|#include\s*<|nullptr)\b/.test(str)) {
+  // C/C++ structural detection (requires multi-signal contextual indicators; isolated keywords like "struct" or "void" in prose do not match)
+  const isCStructural = (
+    // 1. Function definition/declaration with return type, identifier, parameter list, and body/semicolon
+    /\b(?:void|int|char|bool|float|double|size_t|uint\d+_t|int\d+_t|struct\s+[a-zA-Z_]\w*)\s*\*?\s*[a-zA-Z_]\w*\s*\([^)]*\)\s*[{;]/.test(str) ||
+    // 2. Struct member dereference in code statement: identifier->member = or identifier->member;
+    /(?:[a-zA-Z_]\w*->[a-zA-Z_]\w*)\s*(?:=|;|\()/.test(str) ||
+    // 3. Memory allocation / sizing: malloc(sizeof(...)) or free(var);
+    /\b(?:malloc|calloc|realloc)\s*\(\s*(?:sizeof|[a-zA-Z0-9_*+\s]+)\s*\)|\bfree\s*\(\s*[a-zA-Z_]\w*\s*\)\s*;?/.test(str) ||
+    // 4. Struct definition block: struct Name { ... };
+    /\bstruct\s+[a-zA-Z_]\w*\s*\{[\s\S]*?\}/.test(str) ||
+    // 5. Classic C/C++ indicators
+    /\b(int\s+main\s*\([^)]*\)|std::|cout\s*<<|cin\s*>>|#include\s*<[a-zA-Z0-9_.]+>|nullptr)\b/.test(str)
+  );
+  if (isCStructural) {
     return 'C++';
   }
 

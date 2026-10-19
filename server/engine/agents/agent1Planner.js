@@ -457,7 +457,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     });
     planData.conceptEvidenceGraph = conceptEvidenceGraph;
     planData.curricularCoverage = evidencePackage?.curricularCoverage || null;
-    return planData;
+    return this._enforceFinalCapacitySafetyGate(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
   }
 
   /**
@@ -907,6 +907,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
   }
 
   _buildFallbackPlan(rawContent, difficulty, count, categoryWeights = {}, lectureDepth = {}, detectedFocus = [], evidencePackage = {}) {
+    if (typeof rawContent === 'object' && rawContent !== null) {
+      if (!evidencePackage || Object.keys(evidencePackage).length === 0) evidencePackage = rawContent;
+      if (!detectedFocus || detectedFocus.length === 0) detectedFocus = rawContent.detectedFocus || [];
+    }
+
     const targets = [];
     const dimensions = [
       'Conceptual',
@@ -936,28 +941,93 @@ Generate the curricular assessment plan strictly covering educational concepts w
     ));
 
     const isExplicitCurriculum = uniqueFocus.length > 0 && !uniqueFocus.every(f => f.toLowerCase().includes('core lecture topic'));
-    const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity;
+    const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity || evidencePackage?.evidenceCapacity;
     let defensibleCapacity = count;
-    if (isExplicitCurriculum) {
-      if (liCap && liCap.totalDefensibleCapacity) {
-        defensibleCapacity = liCap.totalDefensibleCapacity;
-      } else {
-        defensibleCapacity = uniqueFocus.length;
-      }
+    if (liCap && typeof liCap.totalDefensibleCapacity === 'number') {
+      defensibleCapacity = liCap.totalDefensibleCapacity;
+    } else if (isExplicitCurriculum) {
+      defensibleCapacity = uniqueFocus.length;
     }
-    const availableCount = isExplicitCurriculum ? Math.min(count, defensibleCapacity) : count;
+    const availableCount = (liCap?.totalDefensibleCapacity != null || isExplicitCurriculum) ? Math.min(count, defensibleCapacity) : count;
     const subtopicsList = uniqueFocus.length > 0 ? uniqueFocus : ['Core Definitions', 'Mechanism Sequence', 'Performance Impact'];
+
+    const cap = this._resolveCapacity(evidencePackage);
+    const diffLower = String(difficulty || 'Medium').toLowerCase();
+    const hardCap = cap.effectiveHardCap;
+    let hardAssignedCount = 0;
 
     for (let i = 1; i <= count; i++) {
       let phase = 'MID';
       if (i <= Math.ceil(count / 3)) phase = 'EARLY';
       else if (i > Math.ceil((2 * count) / 3)) phase = 'LATE';
 
+      // Hard requested with 0 Hard capacity: every slot must be an unfulfilled capacity deficit
+      if (diffLower === 'hard' && hardCap === 0) {
+        const deficitReason = cap.diagnosticReason || `Lecture evidence contains zero verified Hard-level operations; requested ${count} Hard questions.`;
+        targets.push({
+          targetId: `T${String(i).padStart(2, '0')}`,
+          subtopic: 'Curricular Capacity Limit',
+          concept: `Curricular Capacity Deficit Slot ${i}`,
+          trajectoryPhase: phase,
+          timestamp: 'End of Lecture',
+          tier: 'Peripheral',
+          dimension: 'Conceptual',
+          cognitiveLevel: 'Remember',
+          targetDifficulty: 'Hard',
+          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+          isCapacityLimited: true,
+          capacityLimitation: {
+            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+            reason: deficitReason,
+            availableCount: 0,
+            requestedCount: count
+          },
+          supportingEvidence: '',
+          instruction: deficitReason
+        });
+        continue;
+      }
+
+      // Hard requested with positive capacity: clamp to hardCap
+      if (diffLower === 'hard' && hardCap > 0 && hardAssignedCount >= hardCap) {
+        const deficitReason = cap.diagnosticReason || `Lecture evidence supports at most ${hardCap} distinct Hard questions; requested ${count}.`;
+        targets.push({
+          targetId: `T${String(i).padStart(2, '0')}`,
+          subtopic: 'Curricular Capacity Limit',
+          concept: `Curricular Capacity Deficit Slot ${i}`,
+          trajectoryPhase: phase,
+          timestamp: 'End of Lecture',
+          tier: 'Peripheral',
+          dimension: 'Conceptual',
+          cognitiveLevel: 'Remember',
+          targetDifficulty: 'Hard',
+          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+          isCapacityLimited: true,
+          capacityLimitation: {
+            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+            reason: deficitReason,
+            availableCount: hardCap,
+            requestedCount: count
+          },
+          supportingEvidence: '',
+          instruction: deficitReason
+        });
+        continue;
+      }
+
       if (!isExplicitCurriculum || i <= availableCount) {
         const subtopic = subtopicsList[(i - 1) % subtopicsList.length];
         const conceptName = isExplicitCurriculum ? subtopic : `${subtopic} - Aspect ${i}`;
         const prov = this._resolveTargetEvidenceProvenance(conceptName, subtopic, phase, evidencePackage);
         const dimension = dimensions[(i - 1) % dimensions.length];
+
+        let targetDiff = difficulty;
+        if (diffLower === 'balanced' && hardCap === 0) {
+          targetDiff = (i % 2 === 0) ? 'Medium' : 'Easy';
+        } else if (diffLower === 'hard') {
+          hardAssignedCount++;
+        }
+
         targets.push({
           targetId: `T${String(i).padStart(2, '0')}`,
           subtopic: subtopic,
@@ -967,7 +1037,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
           tier: 'Core',
           dimension: dimension,
           cognitiveLevel: i % 2 === 0 ? 'Apply' : 'Understand',
-          targetDifficulty: difficulty,
+          targetDifficulty: targetDiff,
           intendedCognitiveOperation: dimension.toUpperCase().replace(/[^A-Z]/g, '_'),
           evidenceType: prov.evidenceType,
           sourceChunks: prov.sourceChunks,
@@ -1046,7 +1116,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
       reserveTargets: fallbackReserve
     };
 
-    return planData;
+    return this._enforceFinalCapacitySafetyGate(planData, difficulty, count, evidencePackage, null);
   }
 
   /**
@@ -1235,12 +1305,12 @@ Generate the curricular assessment plan strictly covering educational concepts w
         if (substanceType && !categories.includes(substanceType)) categories.push(substanceType);
 
         const textToCheck = `${conceptLower} ${evidenceLower} ${mech.toLowerCase()} ${String(matched.definition || '').toLowerCase()}`;
-        const hasInvariant = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree|null pointer)\b/i.test(textToCheck);
-        const hasViolation = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid)\b/i.test(textToCheck);
-        const hasTradeoff = /\b(versus|vs|difference|compare|tradeoff|advantage|disadvantage|contrast|unlike)\b/i.test(textToCheck);
-        const hasProcedure = /\b(step|algorithm|procedure|transition|traverse|insert|delete|replace|swap|rotate|push|pop)\b/i.test(textToCheck);
+        const hasInvariant = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree|null pointer|equilibrium|threshold|conservation|saturation|homeostasis|allosteric|rate-limiting|feedback|precondition|counterfactual|bottleneck|dilemma|paradox|consequence|theorem|proof|derivative|differentiable|continuous|integral|hypothesis|hypotheses|lemma|corollary|axiom|limit|rate of change)\b/i.test(textToCheck);
+        const hasViolation = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid|denatur|mutat|dysfunction|inhibit|toxic|deplet|fail|collaps|breakdown|crisis|conflict|breach|contradict)\b/i.test(textToCheck);
+        const hasTradeoff = /\b(versus|vs|difference|compare|tradeoff|advantage|disadvantage|contrast|unlike|counterpart|opposed to|alternative)\b/i.test(textToCheck);
+        const hasProcedure = /\b(step|algorithm|procedure|transition|traverse|insert|delete|replace|swap|rotate|push|pop|catalyz|inhibit|regulat|bind|secret|synthesiz|activat|mediat|trigger|escalat|ratif|mobiliz|govern|differentiat|integrat|substitut|evaluat)\b/i.test(textToCheck);
 
-        const supportsHard = hasMechanism || hasInvariant || hasTradeoff || categories.includes('COMPARISON') || categories.includes('TRADEOFF') || categories.includes('SCENARIO') || categories.includes('RULE');
+        const supportsHard = hasMechanism || hasInvariant || hasTradeoff || categories.includes('COMPARISON') || categories.includes('TRADEOFF') || categories.includes('SCENARIO') || categories.includes('RULE') || categories.includes('FORMAL_DERIVATION');
         return {
           supportsHard,
           hasMechanism,
@@ -1255,10 +1325,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
     }
 
     // 2. Check depth via textual indicators in supporting evidence and concept
-    const mechanismIndicators = /\b(computes?|calculat|translat|allocat|schedules?|converts?|decodes?|evaluates?|executes?|verif|generates?|transitions?|compares?|steps?|algorithm|procedure|condition|when|unless|if\s+[a-z]+|formula|difference between|versus|advantage|tradeoff|pointer|travers|insert|delet)\b/i;
-    const invariantIndicators = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree)\b/i;
-    const violationIndicators = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid)\b/i;
-    const tradeoffIndicators = /\b(versus|vs|difference between|compare|tradeoff|advantage|contrast)\b/i;
+    const mechanismIndicators = /\b(computes?|calculat|translat|allocat|schedules?|converts?|decodes?|evaluates?|executes?|verif|generates?|transitions?|compares?|steps?|algorithm|procedure|condition|when|unless|if\s+[a-z]+|formula|difference between|versus|advantage|tradeoff|pointer|travers|insert|delet|catalyz|inhibit|regulat|bind|secret|synthesiz|activat|mediat|trigger|escalat|ratif|mobiliz|govern|differentiat|integrat|substitut)\b/i;
+    const invariantIndicators = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree|equilibrium|threshold|conservation|saturation|homeostasis|allosteric|rate-limiting|feedback|precondition|counterfactual|bottleneck|dilemma|paradox|consequence|theorem|proof|derivative|differentiable|continuous|integral|hypothesis|hypotheses|lemma|corollary|axiom|limit|rate of change)\b/i;
+    const violationIndicators = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid|denatur|mutat|dysfunction|inhibit|toxic|deplet|fail|collaps|breakdown|crisis|conflict|breach|contradict)\b/i;
+    const tradeoffIndicators = /\b(versus|vs|difference between|compare|tradeoff|advantage|contrast|opposed to|counterpart|alternative)\b/i;
 
     const hasMechanismWords = mechanismIndicators.test(evidenceLower) || mechanismIndicators.test(conceptLower);
     const hasInvariantWords = invariantIndicators.test(evidenceLower) || invariantIndicators.test(conceptLower);
@@ -1268,7 +1338,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
     const definitionOnly = !hasMechanismWords && !hasInvariantWords && !hasTradeoffWords &&
       (evidenceLower.length < 50 || /\b(is defined as|refers to|is a term|is called|stands for)\b/i.test(evidenceLower));
 
-    const supportsHard = (hasMechanismWords || hasInvariantWords || hasTradeoffWords) && !definitionOnly;
+    // Also consult lectureIntelligence capacity if available
+    const liHardCapacity = Number(li?.evidenceCapacity?.capacityByDifficulty?.hard || li?.recommendedByDifficulty?.hard || 0);
+    const supportsHard = ((hasMechanismWords || hasInvariantWords || hasTradeoffWords) && !definitionOnly) ||
+      (liHardCapacity > 0 && evidenceLower.length >= 50 && (hasMechanismWords || hasInvariantWords || hasViolationWords));
 
     return {
       supportsHard,
@@ -1323,9 +1396,9 @@ Generate the curricular assessment plan strictly covering educational concepts w
     }
 
     // Angle 3: APPLY (Procedural Execution & Scenario State Transitions)
-    const supportsApply = conceptDepth.hasMechanism && (
+    const supportsApply = (conceptDepth.hasMechanism || conceptDepth.hasInvariant) && (
       conceptDepth.hasProcedure ||
-      (conceptDepth.categories && (conceptDepth.categories.includes('ALGORITHM') || conceptDepth.categories.includes('PROCEDURE')))
+      (conceptDepth.categories && (conceptDepth.categories.includes('ALGORITHM') || conceptDepth.categories.includes('PROCEDURE') || conceptDepth.categories.includes('FORMAL_DERIVATION') || conceptDepth.categories.includes('ALGORITHMIC_TRACE')))
     );
 
     if (supportsApply) {
@@ -1356,7 +1429,139 @@ Generate the curricular assessment plan strictly covering educational concepts w
       });
     }
 
+    const negBoundaries = Array.isArray(evidencePackage?.negativeBoundaries)
+      ? evidencePackage.negativeBoundaries
+      : (Array.isArray(evidencePackage?.instructionalProfile?.negativeBoundaries)
+        ? evidencePackage.instructionalProfile.negativeBoundaries
+        : (Array.isArray(evidencePackage?.lectureIntelligence?.pedagogicalCritique?.negativeBoundaries)
+          ? evidencePackage.lectureIntelligence.pedagogicalCritique.negativeBoundaries
+          : []));
+
+    const isCodeExcluded = negBoundaries.includes('NO_CODE') || negBoundaries.includes('NO_CODE_IMPLEMENTATION');
+    const isMathExcluded = negBoundaries.includes('NO_MATH');
+
+    let exclusionConstraint = '';
+    if (isCodeExcluded) exclusionConstraint += ' [Do NOT ask for code syntax or implementation.]';
+    if (isMathExcluded) exclusionConstraint += ' [Do NOT ask for mathematical calculations or formulas.]';
+
+    angles.forEach(a => {
+      a.negativeBoundaries = negBoundaries;
+      if (exclusionConstraint) {
+        a.operationalGuidance = `${a.operationalGuidance}${exclusionConstraint}`;
+        a.instruction = `${a.instruction}${exclusionConstraint}`;
+      }
+    });
+
     return angles;
+  }
+
+  /**
+   * Resolves verified pedagogical capacity across all difficulty tiers from evidencePackage.
+   * Enforces fail-closed behavior for Hard questions when capacity is missing or invalid.
+   *
+   * @param {Object} evidencePackage
+   * @returns {Object} { isCapacityValid, effectiveHardCap, easyCap, mediumCap, diagnosticReason, hardFeasible }
+   */
+  _resolveCapacity(evidencePackage) {
+    if (!evidencePackage || typeof evidencePackage !== 'object') {
+      return {
+        isCapacityValid: false,
+        effectiveHardCap: 0,
+        easyCap: null,
+        mediumCap: null,
+        diagnosticReason: 'MISSING_OR_INVALID_CAPACITY: Session evidence package is missing or invalid; failing closed to 0 Hard targets.',
+        hardFeasible: false
+      };
+    }
+
+    const li = evidencePackage.lectureIntelligence;
+    const evCap = li?.evidenceCapacity || evidencePackage.evidenceCapacity;
+    const capByDiff = evCap?.capacityByDifficulty || evidencePackage.capacityByDifficulty;
+    const profile = evidencePackage.instructionalProfile;
+    const hardFeas = profile?.hardFeasibility ?? evidencePackage.hardFeasibility;
+
+    let hasKnownCapacity = false;
+    let hardCap = null;
+    let easyCap = null;
+    let mediumCap = null;
+
+    if (capByDiff && typeof capByDiff === 'object') {
+      if (typeof capByDiff.hard === 'number' && !isNaN(capByDiff.hard)) {
+        hardCap = Math.max(0, capByDiff.hard);
+        hasKnownCapacity = true;
+      }
+      if (typeof capByDiff.easy === 'number' && !isNaN(capByDiff.easy)) {
+        easyCap = Math.max(0, capByDiff.easy);
+      }
+      if (typeof capByDiff.medium === 'number' && !isNaN(capByDiff.medium)) {
+        mediumCap = Math.max(0, capByDiff.medium);
+      }
+    }
+
+    if (hardFeas && typeof hardFeas === 'object') {
+      if (hardFeas.hardFeasible === false) {
+        hardCap = 0;
+        hasKnownCapacity = true;
+      } else if (hardFeas.hardFeasible === true) {
+        hasKnownCapacity = true;
+        if (typeof hardFeas.maxHard === 'number' && !isNaN(hardFeas.maxHard)) {
+          hardCap = (hardCap !== null) ? Math.min(hardCap, Math.max(0, hardFeas.maxHard)) : Math.max(0, hardFeas.maxHard);
+        } else if (hardCap === null) {
+          hardCap = Infinity;
+        }
+      } else if (typeof hardFeas.maxHard === 'number' && !isNaN(hardFeas.maxHard)) {
+        hardCap = (hardCap !== null) ? Math.min(hardCap, Math.max(0, hardFeas.maxHard)) : Math.max(0, hardFeas.maxHard);
+        hasKnownCapacity = true;
+      }
+    }
+
+    // If capacity is not yet resolved from capacityByDifficulty or hardFeasibility,
+    // inspect conceptMap / concept_inventory for backward compatibility with Phase 2 unit tests
+    if (!hasKnownCapacity) {
+      const inventory = li?.concept_inventory || li?.conceptMap || evidencePackage.conceptMap || null;
+      if (Array.isArray(inventory) && inventory.length > 0) {
+        let deepCount = 0;
+        for (const c of inventory) {
+          const mech = String(c.mechanism_or_rule || '').trim();
+          const hasMech = Boolean(mech && mech !== 'NOT_OBSERVED' && mech !== 'null');
+          const subType = String(c.substanceType || '').toUpperCase();
+          const isDeepType = ['RULE', 'MECHANISM', 'RULE_OR_CONDITION', 'FORMAL_DERIVATION', 'ALGORITHMIC_TRACE', 'SCENARIO', 'COMPARISON'].includes(subType);
+          const rawCats = c.pedagogical_category || [];
+          const categories = Array.isArray(rawCats) ? rawCats : [rawCats];
+          const hasDeepCat = categories.some(cat => ['RULE', 'MECHANISM', 'TRADEOFF', 'SCENARIO', 'FORMAL_DERIVATION'].includes(String(cat).toUpperCase()));
+          if (hasMech || isDeepType || hasDeepCat) {
+            deepCount++;
+          }
+        }
+        hardCap = deepCount * 3; // Each deep concept can support multiple distinct angles
+        hasKnownCapacity = true;
+      }
+    }
+
+    // Fail-closed for Hard targets if capacity is missing or invalid
+    const isCapacityValid = hasKnownCapacity && hardCap !== null;
+    const effectiveHardCap = isCapacityValid ? hardCap : 0;
+
+    let diagnosticReason = null;
+    if (!isCapacityValid) {
+      diagnosticReason = 'MISSING_OR_INVALID_CAPACITY: Hard question capacity could not be verified from instructional evidence; failing closed to 0 Hard targets.';
+    } else if (effectiveHardCap === 0) {
+      diagnosticReason = hardFeas?.deficitReason || hardFeas?.message || evCap?.advisoryRationale || 'Instructional evidence contains zero verified Hard-level operations or mechanisms.';
+    }
+
+    const totalDefensibleCapacity = (evCap && typeof evCap.totalDefensibleCapacity === 'number')
+      ? evCap.totalDefensibleCapacity
+      : ((easyCap !== null && mediumCap !== null) ? (easyCap + mediumCap + effectiveHardCap) : null);
+
+    return {
+      isCapacityValid,
+      effectiveHardCap,
+      easyCap,
+      mediumCap,
+      totalDefensibleCapacity,
+      diagnosticReason,
+      hardFeasible: isCapacityValid && effectiveHardCap > 0
+    };
   }
 
   /**
@@ -1364,6 +1569,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
    * to maximize curricular concept diversity while allowing deep concepts to contribute multiple distinct angles.
    */
   _collectDistinctHardAngles(targets = [], evidencePackage = {}) {
+    const cap = this._resolveCapacity(evidencePackage);
+    if (!cap.hardFeasible || cap.effectiveHardCap === 0) {
+      return [];
+    }
+
     // Deduplicate by canonical concept name to ensure distinct angles per unique curriculum concept
     const seenConcepts = new Set();
     const uniqueTargets = [];
@@ -1421,12 +1631,14 @@ Generate the curricular assessment plan strictly covering educational concepts w
       return this._applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
     }
 
+    let res;
     if (envMode === 'v2_intent_relative' || configMode === 'v2_intent_relative' || evidencePackage?.instructionalProfile || evidencePackage?.instructionalIntent) {
-      return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+      res = this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+    } else {
+      res = this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
     }
 
-    // Default: v2_intent_relative (capacity-aware)
-    return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+    return this._enforceFinalCapacitySafetyGate(res, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
   }
 
   /**
@@ -1436,6 +1648,12 @@ Generate the curricular assessment plan strictly covering educational concepts w
    * If evidence is definition-only or insufficient, records transparent capacity limitations.
    */
   _applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}, deficitPolicy = null) {
+    const cap = this._resolveCapacity(evidencePackage);
+    const capacityContext = {
+      hardFeasible: cap.hardFeasible,
+      maxHard: cap.effectiveHardCap,
+      capacityByDifficulty: { easy: cap.easyCap, medium: cap.mediumCap, hard: cap.effectiveHardCap }
+    };
     const blueprint = this.computeDifficultyDistribution(requestedDifficulty, requestedCount);
     const capacityLimitations = [];
     let supportedHardCount = 0;
@@ -1487,11 +1705,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
     });
 
     // Collect distinct Hard candidates across deep concepts
-    const distinctHardCandidates = (requestedHardCount > 0)
+    const distinctHardCandidates = (requestedHardCount > 0 && cap.hardFeasible && cap.effectiveHardCap > 0)
       ? this._collectDistinctHardAngles(targets, evidencePackage)
       : [];
 
-    const availableDistinctHardCount = distinctHardCandidates.length;
+    const availableDistinctHardCount = cap.effectiveHardCap > 0 ? Math.min(distinctHardCandidates.length, cap.effectiveHardCap) : 0;
     const feasibleHardCount = Math.min(requestedHardCount, availableDistinctHardCount);
 
     const finalTargets = [];
@@ -1560,6 +1778,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
               dimension: 'Scenario Analysis',
               operationalGuidance: 'Capacity deficit: concept lacks observed mechanisms in lecture evidence to fulfill requested Hard difficulty without hallucination.',
               instruction: deficitReason,
+              isCapacityLimited: true,
               capacityLimitation: {
                 status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
                 reason: deficitReason,
@@ -1613,6 +1832,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
           if (depth.supportsHard) {
             supportedHardCount++;
           } else {
+            target.isCapacityLimited = true;
             target.capacityLimitation = {
               status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
               reason: `Concept "${target.concept}" lacks observed mechanism or operational rule in lecture evidence for application/diagnosis`,
@@ -1657,9 +1877,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
     // Capacity Deficit Report (unifies both difficulty-based and concept-count-based deficits)
     const countDeficit = finalTargets.filter(t => 
       t.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      t.isCapacityLimited ||
       t.capacityLimitation?.status === 'INSUFFICIENT_CURRICULAR_EVIDENCE'
     ).length;
-    const difficultyDeficit = Math.max(0, requestedHardCount - supportedHardCount);
+    const difficultyDeficit = (blueprint.requestedDifficulty?.toLowerCase() === 'hard') ? Math.max(0, requestedHardCount - supportedHardCount) : 0;
     const totalCapacityDeficit = Math.max(difficultyDeficit, countDeficit);
     const hasDeficit = totalCapacityDeficit > 0;
     planData.capacityDeficitReport = {
@@ -1695,7 +1916,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
       });
     }
 
-    return planData;
+    if (process.env.DIFFICULTY_CALIBRATION_MODE === 'v1_bloom_quota') {
+      return planData;
+    }
+    return this._enforceFinalCapacitySafetyGate(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
   }
 
   /**
@@ -1710,13 +1934,24 @@ Generate the curricular assessment plan strictly covering educational concepts w
    * 6. Enforces negative boundaries (NO_CODE, NO_MATH, NO_CLI, NO_TRIVIA) across all generated targets.
    */
   _applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage = {}, deficitPolicy = null) {
+    const cap = this._resolveCapacity(evidencePackage);
     const profile = evidencePackage.instructionalProfile || {
       instructionalIntent: evidencePackage.instructionalIntent || 'FOUNDATIONAL_UNDERSTANDING',
       negativeBoundaries: evidencePackage.negativeBoundaries || [],
       supportedReasoningModes: evidencePackage.supportedReasoningModes || ['DEEP_CONCEPTUAL_ANALYSIS'],
-      hardFeasibility: evidencePackage.hardFeasibility || { hardFeasible: true, deficitReason: null },
+      hardFeasibility: evidencePackage.hardFeasibility || (cap.isCapacityValid
+        ? { hardFeasible: cap.hardFeasible, maxHard: cap.effectiveHardCap, deficitReason: cap.diagnosticReason, message: cap.diagnosticReason }
+        : { hardFeasible: false, maxHard: 0, deficitReason: cap.diagnosticReason, message: cap.diagnosticReason }),
       operationalGuidance: evidencePackage.hardOperationalGuidance || ''
     };
+
+    if (profile.hardFeasibility) {
+      if (!cap.isCapacityValid || cap.effectiveHardCap === 0) {
+        profile.hardFeasibility.hardFeasible = false;
+        profile.hardFeasibility.maxHard = 0;
+        if (!profile.hardFeasibility.message) profile.hardFeasibility.message = cap.diagnosticReason;
+      }
+    }
 
     const negativeBoundaries = profile.negativeBoundaries || [];
     const intent = profile.instructionalIntent || 'FOUNDATIONAL_UNDERSTANDING';
@@ -1787,18 +2022,18 @@ Generate the curricular assessment plan strictly covering educational concepts w
     }
 
     // 2. Calibrate allocation according to genuine teacher evidence and distinct Hard angles
-    const distinctHardCandidates = (requestedHard > 0 && (profile.hardFeasibility?.hardFeasible !== false))
+    const maxAllowedHard = cap.effectiveHardCap;
+    const distinctHardCandidates = (requestedHard > 0 && maxAllowedHard > 0 && (profile.hardFeasibility?.hardFeasible !== false))
       ? this._collectDistinctHardAngles(targets, evidencePackage)
       : [];
 
     const isHardFeasible = Boolean(
+      maxAllowedHard > 0 &&
       (profile.hardFeasibility?.hardFeasible !== false) &&
-      (diffLower === 'hard'
-        ? distinctHardCandidates.length > 0
-        : (distinctHardCandidates.length > 0 || (profile.hardFeasibility && profile.hardFeasibility.hardFeasible === true && (!targets[0] || distinctHardCandidates.length > 0))))
+      distinctHardCandidates.length > 0
     );
 
-    const availableDistinctHardCount = isHardFeasible ? distinctHardCandidates.length : 0;
+    const availableDistinctHardCount = isHardFeasible ? Math.min(distinctHardCandidates.length, maxAllowedHard) : 0;
     const feasibleHardCount = Math.min(requestedHard, availableDistinctHardCount);
 
     const finalTargets = [];
@@ -1916,6 +2151,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
               dimension: 'Scenario Analysis',
               operationalGuidance: 'Capacity deficit: concept lacks observed mechanisms in lecture evidence to fulfill requested Hard difficulty without hallucination.',
               instruction: deficitReason,
+              isCapacityLimited: true,
               capacityLimitation: {
                 status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
                 reason: deficitReason
@@ -1937,49 +2173,56 @@ Generate the curricular assessment plan strictly covering educational concepts w
       distribution = finalTargets.map(t => t.targetDifficulty);
     } else {
       // Balanced, Easy, or Medium mode
-      if (requestedHard > 0 && (!isHardFeasible || feasibleHardCount === 0)) {
-        // Zero Hard supported by lecture evidence: gracefully reallocate all Hard to eligible tiers
-        allocatedHard = 0;
-        const reallocatedCount = requestedHard;
-        const reallocatedTo = intent !== 'FOUNDATIONAL_UNDERSTANDING' ? 'Medium' : (allocatedEasy > 0 ? 'Easy' : 'Medium');
-        if (reallocatedTo === 'Medium') {
-          allocatedMedium += reallocatedCount;
+      let deficitSlotsCount = 0;
+      if (requestedHard > 0 && (!isHardFeasible || feasibleHardCount < requestedHard)) {
+        const unsupportedHard = requestedHard - (isHardFeasible ? feasibleHardCount : 0);
+        allocatedHard = isHardFeasible ? feasibleHardCount : 0;
+        let remainingToReallocate = unsupportedHard;
+
+        // Check tier limits if specified
+        const maxMedium = cap.mediumCap !== null ? cap.mediumCap : Infinity;
+        const maxEasy = cap.easyCap !== null ? cap.easyCap : Infinity;
+
+        let availableMed = Math.max(0, maxMedium - allocatedMedium);
+        let availableEasy = Math.max(0, maxEasy - allocatedEasy);
+
+        if (intent === 'FOUNDATIONAL_UNDERSTANDING') {
+          // Prefer Easy first
+          const toEasy = Math.min(remainingToReallocate, availableEasy);
+          allocatedEasy += toEasy;
+          remainingToReallocate -= toEasy;
+          availableEasy -= toEasy;
+
+          const toMed = Math.min(remainingToReallocate, availableMed);
+          allocatedMedium += toMed;
+          remainingToReallocate -= toMed;
+          availableMed -= toMed;
         } else {
-          allocatedEasy += reallocatedCount;
+          // Prefer Medium first
+          const toMed = Math.min(remainingToReallocate, availableMed);
+          allocatedMedium += toMed;
+          remainingToReallocate -= toMed;
+          availableMed -= toMed;
+
+          const toEasy = Math.min(remainingToReallocate, availableEasy);
+          allocatedEasy += toEasy;
+          remainingToReallocate -= toEasy;
+          availableEasy -= toEasy;
         }
+
+        deficitSlotsCount = remainingToReallocate;
+        const reallocatedTotal = unsupportedHard - deficitSlotsCount;
 
         capacityAudit = {
           mode: 'v2_intent_relative',
           requestedDifficulty,
           requestedCount,
           requestedHardCount: requestedHard,
-          allocatedHardCount: 0,
-          reallocatedCount,
-          reallocatedTo,
-          reason: profile.hardFeasibility?.message || 'Lecture evidence is purely taxonomic/descriptive with zero taught trade-offs or perturbation dynamics.',
-          deficitStatus: 'INSUFFICIENT_EVIDENCE_FOR_HARD'
-        };
-      } else if (requestedHard > 0 && feasibleHardCount < requestedHard) {
-        // Partial Hard supported: preserve the feasible Hard questions, reallocate only the deficit slots
-        allocatedHard = feasibleHardCount;
-        const reallocatedCount = requestedHard - feasibleHardCount;
-        const reallocatedTo = intent !== 'FOUNDATIONAL_UNDERSTANDING' ? 'Medium' : 'Easy';
-        if (reallocatedTo === 'Medium') {
-          allocatedMedium += reallocatedCount;
-        } else {
-          allocatedEasy += reallocatedCount;
-        }
-
-        capacityAudit = {
-          mode: 'v2_intent_relative',
-          requestedDifficulty,
-          requestedCount,
-          requestedHardCount: requestedHard,
-          allocatedHardCount: feasibleHardCount,
-          reallocatedCount,
-          reallocatedTo,
-          reason: `Lecture evidence supports ${feasibleHardCount} distinct Hard question(s); reallocated ${reallocatedCount} slot(s) to ${reallocatedTo} without hallucinating untaught depth.`,
-          deficitStatus: null
+          allocatedHardCount: allocatedHard,
+          reallocatedCount: reallocatedTotal,
+          reallocatedTo: allocatedMedium > requestedMedium ? 'Medium' : 'Easy',
+          reason: profile.hardFeasibility?.message || cap.diagnosticReason || 'Lecture evidence is purely taxonomic/descriptive with zero taught trade-offs or perturbation dynamics.',
+          deficitStatus: (!isHardFeasible || feasibleHardCount === 0 || deficitSlotsCount > 0) ? 'INSUFFICIENT_EVIDENCE_FOR_HARD' : null
         };
       } else {
         capacityAudit = {
@@ -1996,12 +2239,38 @@ Generate the curricular assessment plan strictly covering educational concepts w
       for (let i = 0; i < allocatedEasy; i++) distribution.push('Easy');
       for (let i = 0; i < allocatedMedium; i++) distribution.push('Medium');
       for (let i = 0; i < allocatedHard; i++) distribution.push('Hard');
+      for (let i = 0; i < deficitSlotsCount; i++) distribution.push('DEFICIT');
 
       const mappedTargets = targets.slice(0, requestedCount).map((target, idx) => {
         if (target.isCapacityLimited || target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT') {
           return target;
         }
         let assignedTier = distribution[idx] || (isHardFeasible ? 'Medium' : 'Easy');
+
+        if (assignedTier === 'DEFICIT') {
+          const targetId = `T${String(idx + 1).padStart(2, '0')}`;
+          const deficitReason = cap.diagnosticReason || `Capacity exhausted across all eligible tiers; slot ${idx + 1} withheld as capacity deficit.`;
+          target.targetDifficulty = 'Hard';
+          target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+          target.isCapacityLimited = true;
+          target.bloomLevel = 'Evaluate / Synthesize';
+          target.operationalGuidance = 'Capacity deficit: capacity exhausted across all eligible tiers.';
+          target.instruction = deficitReason;
+          target.capacityLimitation = {
+            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+            reason: deficitReason
+          };
+          target.negativeBoundaries = negativeBoundaries;
+          capacityLimitations.push({
+            targetId,
+            concept: target.concept,
+            requestedDifficulty: 'Hard',
+            limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+            message: deficitReason
+          });
+          return target;
+        }
+
         target.targetDifficulty = assignedTier;
         target.negativeBoundaries = negativeBoundaries;
 
@@ -2083,9 +2352,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
     // Capacity Deficit Report (unifies both difficulty-based and concept-count-based deficits)
     const countDeficit = finalTargets.filter(t => 
       t.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      t.isCapacityLimited ||
       t.capacityLimitation?.status === 'INSUFFICIENT_CURRICULAR_EVIDENCE'
     ).length;
-    const totalHardDeficit = Math.max(0, requestedHard - allocatedHard);
+    const totalHardDeficit = (diffLower === 'hard') ? Math.max(0, requestedHard - allocatedHard) : 0;
     const totalCapacityDeficit = Math.max(totalHardDeficit, countDeficit);
     const hasDeficit = totalCapacityDeficit > 0;
     planData.capacityDeficitReport = {
@@ -2117,6 +2387,333 @@ Generate the curricular assessment plan strictly covering educational concepts w
         r.negativeBoundaries = negativeBoundaries;
         r.intendedCognitiveOperation = resTier === 'Hard' ? (intent === 'EXPLORATION' ? 'BEHAVIORAL_PREDICTION' : 'SCENARIO_TRADEOFF') : (resTier === 'Medium' ? 'COMPARE' : 'RECALL');
         r.operationalGuidance = resTier === 'Hard' ? profile.operationalGuidance : 'Assess grounded curricular concepts without introducing un-taught trivia.';
+      });
+    }
+
+    return this._enforceFinalCapacitySafetyGate(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+  }
+
+  /**
+   * Final Capacity Safety Gate.
+   * Enforces hard limits, deduplication, and fail-closed policies across all planning modes
+   * (LLM generation, fallback planning, and blueprinting).
+   *
+   * Invariants:
+   * 1. Total non-deficit Hard targets <= cap.effectiveHardCap.
+   * 2. If cap is invalid or missing, fail closed to 0 Hard targets with explicit diagnostic reason.
+   * 3. Duplicate Hard targets on the same concept facet are clamped/flagged.
+   * 4. In Hard mode, unsupported slots become explicit capacity deficits (unless deficitPolicy === 'FILL_WITH_MEDIUM').
+   * 5. In Balanced mode, unsupported slots redistribute to Medium/Easy only within available capacity; otherwise become deficits.
+   * 6. Deficit targets always carry isCapacityLimited: true, intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT', and capacityLimitation.
+   * 7. capacityDeficitReport and depthCapacity are synchronized with final target counts.
+   *
+   * @param {Object} planData
+   * @param {String} requestedDifficulty
+   * @param {Number} requestedCount
+   * @param {Object} evidencePackage
+   * @param {String|null} deficitPolicy
+   * @returns {Object} Validated planData
+   */
+  _enforceFinalCapacitySafetyGate(planData, requestedDifficulty = 'Balanced', requestedCount = 5, evidencePackage = {}, deficitPolicy = null) {
+    if (!planData || !Array.isArray(planData.assessmentTargets)) {
+      return planData;
+    }
+
+    const cap = this._resolveCapacity(evidencePackage);
+    const diffLower = String(requestedDifficulty || 'Balanced').toLowerCase();
+    const count = Math.max(1, parseInt(requestedCount, 10) || planData.assessmentTargets.length || 1);
+
+    const negativeBoundaries = evidencePackage?.instructionalProfile?.negativeBoundaries ||
+      evidencePackage?.negativeBoundaries ||
+      planData.metadata?.negativeBoundaries || [];
+
+    // Track usage and bounds
+    let allowedHardRemaining = cap.effectiveHardCap;
+    const seenHardFacets = new Set();
+
+    // Total defensible assessment capacity bound:
+    // Repetitive lecture length or high requested question count must not inflate active questions beyond defensible capacity.
+    const allowedTotalRemaining = (typeof cap.totalDefensibleCapacity === 'number')
+      ? cap.totalDefensibleCapacity
+      : Infinity;
+    let nonDeficitCount = 0;
+
+    // Available capacities for redistribution in Balanced mode
+    let availableMedium = cap.mediumCap !== null ? cap.mediumCap : Infinity;
+    let availableEasy = cap.easyCap !== null ? cap.easyCap : Infinity;
+
+    // Deduct existing non-deficit Medium and Easy targets from available bounds if bounded
+    if (cap.mediumCap !== null || cap.easyCap !== null) {
+      for (const t of planData.assessmentTargets) {
+        if (!t.isCapacityLimited && t.intendedCognitiveOperation !== 'UNFULFILLED_CAPACITY_DEFICIT') {
+          if (t.targetDifficulty === 'Medium') availableMedium = Math.max(0, availableMedium - 1);
+          if (t.targetDifficulty === 'Easy') availableEasy = Math.max(0, availableEasy - 1);
+        }
+      }
+    }
+
+    const updatedTargets = [];
+    const capacityLimitations = Array.isArray(planData.capacityLimitations) ? [...planData.capacityLimitations] : [];
+
+    for (let idx = 0; idx < planData.assessmentTargets.length; idx++) {
+      const target = { ...planData.assessmentTargets[idx] };
+      const targetDiffLower = String(target.targetDifficulty || '').toLowerCase();
+      const isAlreadyDeficit = target.isCapacityLimited === true ||
+        target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+        target.capacityLimitation != null;
+
+      if (isAlreadyDeficit) {
+        target.isCapacityLimited = true;
+        target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+        if (!target.capacityLimitation) {
+          target.capacityLimitation = {
+            status: targetDiffLower === 'hard' ? 'INSUFFICIENT_EVIDENCE_FOR_HARD' : 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+            reason: cap.diagnosticReason || 'Insufficient lecture evidence to fulfill target without hallucination.'
+          };
+        }
+        target.negativeBoundaries = negativeBoundaries;
+        updatedTargets.push(target);
+        continue;
+      }
+
+      // Enforce total defensible capacity: if all defensible capacity is exhausted, slot must become a deficit
+      if (nonDeficitCount >= allowedTotalRemaining) {
+        const deficitReason = cap.diagnosticReason || `Defensible lecture capacity limit of ${cap.totalDefensibleCapacity} question(s) reached. Remaining slots withheld to prevent hallucination.`;
+        target.targetDifficulty = target.targetDifficulty || (diffLower === 'hard' ? 'Hard' : 'Medium');
+        target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+        target.isCapacityLimited = true;
+        target.bloomLevel = targetDiffLower === 'hard' ? 'Evaluate / Synthesize' : 'Understand';
+        target.operationalGuidance = 'Capacity deficit: total defensible lecture capacity reached across all eligible tiers.';
+        target.instruction = deficitReason;
+        target.capacityLimitation = {
+          status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+          reason: deficitReason
+        };
+        target.negativeBoundaries = negativeBoundaries;
+        capacityLimitations.push({
+          targetId: target.targetId,
+          concept: target.concept,
+          requestedDifficulty: target.targetDifficulty,
+          limitationType: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+          message: deficitReason
+        });
+        updatedTargets.push(target);
+        continue;
+      }
+
+      // Check if target is attempting Hard difficulty
+      if (targetDiffLower === 'hard') {
+        const facetKey = `${String(target.concept || '').trim().toLowerCase()}::${String(target.subtopic || target.dimension || '').trim().toLowerCase()}`;
+        const isDuplicate = seenHardFacets.has(facetKey);
+        const canAllowHard = allowedHardRemaining > 0 && !isDuplicate;
+
+        if (canAllowHard) {
+          seenHardFacets.add(facetKey);
+          allowedHardRemaining--;
+          nonDeficitCount++;
+          target.targetDifficulty = 'Hard';
+          target.isCapacityLimited = false;
+          delete target.capacityLimitation;
+          target.negativeBoundaries = negativeBoundaries;
+          updatedTargets.push(target);
+        } else {
+          // Hard capacity exhausted, invalid, or duplicate concept facet
+          let rejectReason;
+          if (!cap.isCapacityValid) {
+            rejectReason = cap.diagnosticReason || 'MISSING_OR_INVALID_CAPACITY: Hard question capacity could not be verified from instructional evidence; failing closed to 0 Hard targets.';
+          } else if (isDuplicate) {
+            rejectReason = `Duplicate Hard target on concept facet "${target.concept}" (${target.subtopic || 'General'}) exceeds defensible depth.`;
+          } else {
+            rejectReason = cap.diagnosticReason || `Hard question capacity limit of ${cap.effectiveHardCap} reached.`;
+          }
+
+          if (diffLower === 'hard') {
+            if (deficitPolicy === 'FILL_WITH_MEDIUM') {
+              nonDeficitCount++;
+              target.targetDifficulty = 'Medium';
+              target.intendedCognitiveOperation = 'EXPLAIN_MECHANISM';
+              target.bloomLevel = 'Understand / Apply';
+              target.operationalGuidance = 'Require operational reasoning about mechanisms and state transitions.';
+              target.instruction = `Assess operational understanding of ${target.concept}.`;
+              target.negativeBoundaries = negativeBoundaries;
+              target.isDeficitFill = true;
+              target.isCapacityLimited = false;
+              delete target.capacityLimitation;
+              updatedTargets.push(target);
+            } else {
+              target.targetDifficulty = 'Hard';
+              target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+              target.isCapacityLimited = true;
+              target.bloomLevel = 'Evaluate / Synthesize';
+              target.dimension = target.dimension || 'Scenario Analysis';
+              target.operationalGuidance = 'Capacity deficit: concept lacks observed mechanisms in lecture evidence to fulfill requested Hard difficulty without hallucination.';
+              target.instruction = rejectReason;
+              target.capacityLimitation = {
+                status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+                reason: rejectReason
+              };
+              target.negativeBoundaries = negativeBoundaries;
+              capacityLimitations.push({
+                targetId: target.targetId,
+                concept: target.concept,
+                requestedDifficulty: 'Hard',
+                limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+                message: rejectReason
+              });
+              updatedTargets.push(target);
+            }
+          } else {
+            // Balanced or other mode: gracefully redistribute to Medium/Easy if capacity exists, otherwise deficit
+            if (availableMedium > 0) {
+              availableMedium--;
+              nonDeficitCount++;
+              target.targetDifficulty = 'Medium';
+              target.intendedCognitiveOperation = 'EXPLAIN_MECHANISM';
+              target.bloomLevel = 'Understand / Apply';
+              target.operationalGuidance = 'Require operational reasoning about mechanisms and state transitions.';
+              target.instruction = `Assess operational understanding of ${target.concept}.`;
+              target.negativeBoundaries = negativeBoundaries;
+              target.isCapacityLimited = false;
+              delete target.capacityLimitation;
+              updatedTargets.push(target);
+            } else if (availableEasy > 0) {
+              availableEasy--;
+              nonDeficitCount++;
+              target.targetDifficulty = 'Easy';
+              target.intendedCognitiveOperation = 'RECALL';
+              target.bloomLevel = 'Remember';
+              target.operationalGuidance = 'Directly assess concept recognition or definition.';
+              target.instruction = `Assess basic recall of ${target.concept}.`;
+              target.negativeBoundaries = negativeBoundaries;
+              target.isCapacityLimited = false;
+              delete target.capacityLimitation;
+              updatedTargets.push(target);
+            } else {
+              // Both Medium and Easy exhausted: emit deficit
+              target.targetDifficulty = 'Hard';
+              target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+              target.isCapacityLimited = true;
+              target.bloomLevel = 'Evaluate / Synthesize';
+              target.dimension = target.dimension || 'Scenario Analysis';
+              target.operationalGuidance = 'Capacity deficit: capacity exhausted across all eligible tiers.';
+              target.instruction = rejectReason;
+              target.capacityLimitation = {
+                status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+                reason: rejectReason
+              };
+              target.negativeBoundaries = negativeBoundaries;
+              capacityLimitations.push({
+                targetId: target.targetId,
+                concept: target.concept,
+                requestedDifficulty: 'Hard',
+                limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
+                message: rejectReason
+              });
+              updatedTargets.push(target);
+            }
+          }
+        }
+      } else {
+        // Medium or Easy target: ensure clean flags and track nonDeficitCount
+        nonDeficitCount++;
+        target.isCapacityLimited = false;
+        delete target.capacityLimitation;
+        target.negativeBoundaries = negativeBoundaries;
+        updatedTargets.push(target);
+      }
+    }
+
+    // Pad to requested count if targets are short
+    while (updatedTargets.length < count) {
+      const slotNum = updatedTargets.length + 1;
+      const deficitReason = cap.diagnosticReason || `Lecture evidence insufficient for slot ${slotNum}; withheld as capacity deficit.`;
+      const deficitTarget = {
+        targetId: `T${String(slotNum).padStart(2, '0')}`,
+        concept: `Curricular Capacity Deficit Slot ${slotNum}`,
+        subtopic: 'Curricular Capacity Limit',
+        trajectoryPhase: 'LATE',
+        timestamp: 'End of Lecture',
+        tier: 'Peripheral',
+        dimension: 'Conceptual',
+        cognitiveLevel: 'Remember',
+        targetDifficulty: diffLower === 'hard' ? 'Hard' : 'Medium',
+        intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+        isCapacityLimited: true,
+        capacityLimitation: {
+          status: diffLower === 'hard' ? 'INSUFFICIENT_EVIDENCE_FOR_HARD' : 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+          reason: deficitReason,
+          availableCount: updatedTargets.length,
+          requestedCount: count
+        },
+        supportingEvidence: '',
+        instruction: deficitReason,
+        negativeBoundaries
+      };
+      updatedTargets.push(deficitTarget);
+    }
+
+    // Sequential ID re-indexing: T01, T02, ...
+    updatedTargets.forEach((t, idx) => {
+      t.targetId = `T${String(idx + 1).padStart(2, '0')}`;
+    });
+
+    planData.assessmentTargets = updatedTargets;
+    planData.targetCount = updatedTargets.length;
+    planData.capacityLimitations = capacityLimitations;
+
+    // Synchronize deficit metrics
+    const finalDeficits = updatedTargets.filter(t =>
+      t.isCapacityLimited === true ||
+      t.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      t.capacityLimitation != null
+    );
+    const finalGenerated = updatedTargets.filter(t =>
+      !t.isCapacityLimited &&
+      t.intendedCognitiveOperation !== 'UNFULFILLED_CAPACITY_DEFICIT' &&
+      !t.capacityLimitation
+    );
+    const nonDeficitHard = finalGenerated.filter(t => String(t.targetDifficulty).toLowerCase() === 'hard').length;
+    const requestedHard = diffLower === 'hard' ? count : (diffLower === 'balanced' ? Math.floor(count / 3) : 0);
+    const totalDeficitCount = finalDeficits.length;
+    const hasDeficit = totalDeficitCount > 0;
+
+    planData.depthCapacity = {
+      requestedHardCount: requestedHard,
+      supportedHardCount: nonDeficitHard,
+      deficit: Math.max(0, requestedHard - nonDeficitHard),
+      hasDeficit: requestedHard > nonDeficitHard
+    };
+
+    planData.capacityDeficitReport = {
+      requestedCount: count,
+      generatedCount: finalGenerated.length,
+      requestedDifficulty,
+      fulfilledDifficulty: (deficitPolicy === 'FILL_WITH_MEDIUM' && diffLower === 'hard' && totalDeficitCount > 0)
+        ? (nonDeficitHard > 0 ? `Mixed (${nonDeficitHard} Hard, ${totalDeficitCount} Medium)` : 'Medium')
+        : (diffLower === 'balanced' && cap.effectiveHardCap === 0 ? 'Balanced (No Hard supported)' : requestedDifficulty),
+      capacityDeficit: totalDeficitCount,
+      hasDeficit: hasDeficit,
+      deficitPolicyApplied: deficitPolicy === 'FILL_WITH_MEDIUM' ? 'FILL_WITH_MEDIUM' : null,
+      deficitReason: hasDeficit
+        ? (cap.diagnosticReason || finalDeficits[0]?.capacityLimitation?.reason || `Insufficient lecture evidence for ${totalDeficitCount} additional question(s) without hallucination`)
+        : null,
+      teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
+      options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
+        { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${finalGenerated.length} Question${finalGenerated.length === 1 ? '' : 's'}` },
+        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficitCount} with Deep Medium Questions` },
+        { action: 'CANCEL', label: 'Cancel / Adjust Request' }
+      ] : []
+    };
+
+    // Blueprint reserve targets with boundary constraints
+    if (Array.isArray(planData.reserveTargets)) {
+      const reserveTiers = ['Medium', cap.effectiveHardCap > 0 ? 'Hard' : 'Medium', 'Easy'];
+      planData.reserveTargets.forEach((r, idx) => {
+        const resTier = reserveTiers[idx % reserveTiers.length];
+        r.targetDifficulty = resTier;
+        r.negativeBoundaries = negativeBoundaries;
+        r.intendedCognitiveOperation = resTier === 'Hard' ? 'SCENARIO_TRADEOFF' : (resTier === 'Medium' ? 'COMPARE' : 'RECALL');
+        r.operationalGuidance = 'Assess grounded curricular concepts without introducing un-taught trivia.';
       });
     }
 

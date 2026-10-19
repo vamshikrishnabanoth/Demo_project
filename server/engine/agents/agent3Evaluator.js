@@ -19,6 +19,7 @@ const DifficultyAwareDistractorValidator = require('../validators/difficultyAwar
 const { safeParseJson } = require('../utils/jsonParser');
 const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelector');
 const { validateQuestionCodeArtifacts } = require('../validators/astParser');
+const groundingGate = require('../validators/groundingGate');
 
 const EVALUATOR_FAILURE_CODES = {
   OPTION_VALIDATION_ERROR: 'OPTION_VALIDATION_ERROR',
@@ -27,6 +28,8 @@ const EVALUATOR_FAILURE_CODES = {
   ACCIDENTAL_CORRECT_DISTRACTOR: 'ACCIDENTAL_CORRECT_DISTRACTOR',
   TIER_COGNITIVE_MISMATCH: 'TIER_COGNITIVE_MISMATCH',
   UNGROUNDED_EVIDENCE_CLAIM: 'UNGROUNDED_EVIDENCE_CLAIM',
+  UNGROUNDED_RELATIONAL_CLAIM: 'UNGROUNDED_RELATIONAL_CLAIM',
+  FACTUAL_CONTRADICTION: 'FACTUAL_CONTRADICTION',
   FOREIGN_DOMAIN_CONTAMINATION: 'FOREIGN_DOMAIN_CONTAMINATION',
   INSUFFICIENT_EVIDENCE_FOR_HARD: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
   EMPTY_SESSION_EVIDENCE: 'EMPTY_SESSION_EVIDENCE',
@@ -455,6 +458,53 @@ ${evidenceContext}
     const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || 
       (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
+    // 0. Teacher Negative Boundary Enforcement Gate (Evaluated FIRST as highest-precedence constraint)
+    const activeBoundaries = target.negativeBoundaries || evidencePackage?.negativeBoundaries || evidencePackage?.instructionalProfile?.negativeBoundaries || [];
+    const hasNoCodeBoundary = activeBoundaries.some(b => /no_code/i.test(b));
+    const hasNoMathBoundary = activeBoundaries.some(b => /no_math|no_formulas/i.test(b));
+
+    const codeAudit = validateQuestionCodeArtifacts(candidateMCQ);
+    const qStemAndKey = `${candidateMCQ.questionText || ''} ${candidateMCQ.correctAnswer || ''}`;
+
+    if (hasNoCodeBoundary) {
+      const codeRegex = /\b(def\s+|class\s+|int\s+|void\s+|public\s+|private\s+|malloc\s*\(|free\s*\(|printf\s*\(|cout\s*<<|cin\s*>>|std::|#include\s*<|import\s+)\b/;
+      const optionsHaveCode = (candidateMCQ.options || []).some(o => codeRegex.test(o));
+      if (codeAudit.hasCode || codeRegex.test(qStemAndKey) || optionsHaveCode) {
+        return {
+          status: 'FAIL',
+          passed: false,
+          score: 0.1,
+          verdict: 'FAIL',
+          failureReasons: [EVALUATOR_FAILURE_CODES.TEACHER_BOUNDARY_VIOLATION],
+          failureReason: EVALUATOR_FAILURE_CODES.TEACHER_BOUNDARY_VIOLATION,
+          repairInstruction: 'Remove code snippet from question and options as teacher explicitly disallowed coding implementation.',
+          optionAnalysis: (candidateMCQ.options || []).map((opt, i) => ({
+            slot: ['A', 'B', 'C', 'D'][i] || String(i),
+            text: opt,
+            isKey: opt === candidateMCQ.correctAnswer,
+            verdict: OPTION_VERDICTS.UNGROUNDED,
+            justification: 'Rejected due to explicit teacher negative boundary violation (NO_CODE)'
+          })),
+          cognitiveAudit: {
+            requestedDifficulty: requestedTier,
+            intendedCognitiveOperation: intendedOp,
+            evaluatedCognitiveDemand: 'RECALL',
+            actualCognitiveDemand: 'RECALL',
+            isCalibrated: false,
+            mismatchDetails: 'Teacher negative boundary violation: code generated under NO_CODE'
+          },
+          evidenceGrounding: {
+            tier: 'UNSUPPORTED_FOREIGN',
+            groundingScore: 0,
+            foreignDomainDetected: false
+          },
+          verificationMethod: 'DETERMINISTIC_AUDIT_FALLBACK',
+          isFallback: true,
+          repair: { attempted: false, successful: false, repairAttempts: 0, instruction: 'Remove code snippet.' }
+        };
+      }
+    }
+
     // 1. Pre-Check & Option Count Validation
     const preCheck = deterministicValidator.runPreChecks(candidateMCQ);
     if (!preCheck.isValid) {
@@ -495,7 +545,6 @@ ${evidenceContext}
     }
 
     // 3c. AST Code & SQL Syntax Gate (Phase 6 / Stage 3)
-    const codeAudit = validateQuestionCodeArtifacts(candidateMCQ);
     if (!codeAudit.valid && codeAudit.hasCode) {
       for (const err of codeAudit.errors) {
         if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.CODE_SYNTAX_ERROR)) {
@@ -504,11 +553,23 @@ ${evidenceContext}
       }
     }
 
-    // 3d. Teacher Negative Boundary Enforcement (e.g., NO_CODE, NO_MATH)
-    const activeBoundaries = target.negativeBoundaries || evidencePackage?.negativeBoundaries || [];
-    if (activeBoundaries.some(b => /no_code/i.test(b)) && codeAudit.hasCode) {
-      if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.TEACHER_BOUNDARY_VIOLATION)) {
-        failureReasons.push(EVALUATOR_FAILURE_CODES.TEACHER_BOUNDARY_VIOLATION);
+    // 3d. Relational Grounding & Factual Contradiction Gate
+    const gateCheck = groundingGate._checkJustification(
+      candidateMCQ.questionText || '',
+      candidateMCQ.correctAnswer || '',
+      cleanEvidence,
+      candidateMCQ,
+      evidencePackage
+    );
+    if (!gateCheck.isJustified) {
+      if (gateCheck.reason.includes('UNGROUNDED_RELATIONAL_CLAIM') && !failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_RELATIONAL_CLAIM)) {
+        failureReasons.push(EVALUATOR_FAILURE_CODES.UNGROUNDED_RELATIONAL_CLAIM);
+      }
+      if (gateCheck.reason.includes('FACTUAL_CONTRADICTION') && !failureReasons.includes(EVALUATOR_FAILURE_CODES.FACTUAL_CONTRADICTION)) {
+        failureReasons.push(EVALUATOR_FAILURE_CODES.FACTUAL_CONTRADICTION);
+      }
+      if (gateCheck.reason.includes('FOREIGN_TOPIC_CONTAMINATION') && !failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
+        failureReasons.push(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION);
       }
     }
 

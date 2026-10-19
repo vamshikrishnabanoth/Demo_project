@@ -80,6 +80,7 @@ const ACADEMIC_DOMAIN_TERMS = new Set([
   'starvation', 'livelock', 'client-server', 'microservice', 'microservices', 'api', 'rest api', 'serialization', 'deserialization',
   'consistency', 'linearizable', 'linearizability', 'availability', 'partition', 'partitions', 'distributed storage', 'replication', 'replica', 'replicas', 'quorum', 'consensus', 'raft', 'paxos', 'byzantine', 'fault tolerance',
   'cable', 'cables', 'coaxial', 'fiber', 'fiber optic', 'optical', 'ethernet', 'twisted pair',
+  'buffer', 'buffers', 'pipeline', 'pipelines', 'producer', 'producers', 'consumer', 'consumers', 'invariant', 'invariants',
   'interrupt', 'interrupts', 'isr', 'interrupt service routine', 'vector table', 'program counter', 'register',
   'registers', 'instruction cycle', 'polling', 'device driver',
   'automaton', 'automata', 'dfa', 'nfa', 'pda', 'turing machine', 'qubit', 'qubits', 'superposition', 'entanglement',
@@ -102,6 +103,35 @@ const ACADEMIC_DOMAIN_TERMS = new Set([
   'flip-flop', 'flip-flops', 'multiplexer', 'demultiplexer', 'encoder', 'decoder', 'counter', 'shift register',
   'combinational circuit', 'sequential circuit', 'k-map', 'karnaugh map', 'boolean simplification',
   'signal processing', 'fourier transform', 'fft', 'laplace transform', 'frequency response',
+
+  // Natural Sciences (Biology, Chemistry, Life Sciences)
+  'biology', 'photosynthesis', 'chloroplast', 'chlorophyll', 'mitochondria', 'respiration', 'enzyme', 'enzymes',
+  'substrate', 'substrates', 'catalysis', 'catalytic', 'allosteric', 'dna', 'rna', 'ribosome', 'ribosomes',
+  'transcription', 'translation', 'protein synthesis', 'genetics', 'gene', 'genes', 'allele', 'alleles',
+  'chromosome', 'chromosomes', 'mitosis', 'meiosis', 'homeostasis', 'membrane', 'atp', 'metabolism', 'metabolic',
+  'ecosystem', 'species', 'evolution', 'natural selection', 'organelle', 'organelles', 'antibody', 'antigen',
+  'chemistry', 'molecule', 'molecules', 'molecular', 'atom', 'atoms', 'atomic', 'electron', 'electrons',
+  'proton', 'protons', 'covalent', 'ionic', 'valence', 'orbital', 'orbitals', 'stoichiometry', 'enthalpy',
+  'entropy', 'equilibrium', 'catalyst', 'titration', 'ph', 'oxidation', 'reduction', 'redox', 'periodic table',
+  'compound', 'compounds', 'reaction rate', 'activation energy', 'calvin cycle', 'krebs cycle',
+  'cellular respiration', 'carbon dioxide', 'glucose', 'nitrogen fixation', 'atp synthase', 'glycolysis', 'fermentation',
+
+  // Humanities, History & Social Sciences
+  'history', 'historical', 'historiography', 'empire', 'empires', 'dynasty', 'dynasties', 'treaty', 'treaties',
+  'revolution', 'revolutions', 'colonialism', 'imperialism', 'constitution', 'constitutional', 'monarchy',
+  'sovereignty', 'civilization', 'feudalism', 'parliament', 'alliance', 'alliances', 'diplomacy', 'diplomatic',
+  'mobilization', 'warfare', 'economy', 'economic', 'inflation', 'gdp', 'fiscal', 'monetary',
+
+  // Literature, Arts & Philosophy
+  'literature', 'literary', 'poem', 'poems', 'poetry', 'poet', 'stanza', 'stanzas', 'verse', 'rhyme',
+  'meter', 'imagery', 'symbolism', 'metaphor', 'metaphors', 'simile', 'personification', 'allegory',
+  'irony', 'dramatic irony', 'satire', 'soliloquy', 'monologue', 'protagonist', 'antagonist', 'tragedy',
+  'drama', 'narrative', 'narrator', 'genre', 'motif', 'motifs', 'theme', 'themes', 'rhetoric',
+  'philosophy', 'philosophical', 'ethics', 'epistemology',
+
+  // Compiler Design & Systems
+  'compiler', 'compilers', 'lexical analysis', 'syntax analysis', 'semantic analysis',
+  'intermediate code', 'three-address code', 'code generation', 'code optimization',
 
   // Academic General, Education & Syllabus Headers
   'computer science', 'information technology', 'engineering', 'curriculum', 'syllabus',
@@ -146,7 +176,7 @@ class DepthAnalyzer {
   _normalizeMultilingualDiscourse(text) {
     if (!text || typeof text !== 'string') return '';
     let normalized = text;
-    // Telugu transitions
+    // Telugu transitions & instructional discourse markers
     normalized = normalized.replace(/\b(?:modati(?:di|ga)?)\b/gi, 'first');
     normalized = normalized.replace(/\b(?:rendava(?:di|ga)?)\b/gi, 'second');
     normalized = normalized.replace(/\b(?:moodava(?:di|ga)?)\b/gi, 'third');
@@ -154,7 +184,11 @@ class DepthAnalyzer {
     normalized = normalized.replace(/\b(?:aithava(?:di|ga)?)\b/gi, 'fifth');
     normalized = normalized.replace(/\b(?:chivara(?:ga|di)?|aakhari(?:ga)?)\b/gi, 'finally');
     normalized = normalized.replace(/\b(?:endukante|kaabatti|dheenivalla)\b/gi, 'because');
-    // Hindi transitions
+    normalized = normalized.replace(/\b(?:ante|ardham|antaru)\b/gi, 'means');
+    normalized = normalized.replace(/\b(?:choodandi|gamaninchandi)\b/gi, 'notice');
+    normalized = normalized.replace(/\b(?:anukondi|theesukondi)\b/gi, 'suppose');
+    normalized = normalized.replace(/\b(?:udaharanaki|udaharana)\b/gi, 'for example');
+    // Hindi transitions & instructional discourse markers
     normalized = normalized.replace(/\b(?:pehla|pehli)\b/gi, 'first');
     normalized = normalized.replace(/\b(?:doosra|doosri)\b/gi, 'second');
     normalized = normalized.replace(/\b(?:teesra|teesri)\b/gi, 'third');
@@ -162,6 +196,10 @@ class DepthAnalyzer {
     normalized = normalized.replace(/\b(?:paanchva|paanchvi)\b/gi, 'fifth');
     normalized = normalized.replace(/\b(?:aakhri|antim)\b/gi, 'finally');
     normalized = normalized.replace(/\b(?:kyunki|isliye)\b/gi, 'because');
+    normalized = normalized.replace(/\b(?:matlab|arth|kehte hain)\b/gi, 'means');
+    normalized = normalized.replace(/\b(?:dekhiye|dekho|dhyan dijiye)\b/gi, 'notice');
+    normalized = normalized.replace(/\b(?:maan lijiye|maan lo)\b/gi, 'suppose');
+    normalized = normalized.replace(/\b(?:jaise|udaharan ke liye)\b/gi, 'for example');
     return normalized;
   }
 
@@ -202,9 +240,13 @@ class DepthAnalyzer {
    */
   _isCodeOrTechnicalSnippet(seg) {
     if (!seg) return false;
+    // Mathematical declarations ("Let f be...", "Let x denote...") are not programming code
+    if (/\blet\s+[a-zA-Z]\s+(?:be|denote|represent|equal|belong|satisfy|have|exist)\b/i.test(seg) && !/[;{}=>]/.test(seg)) {
+      return false;
+    }
     const codePatterns = [
       /\b(?:#include\s*<|#define\s+|import\s+[\w.]+|from\s+[\w.]+\s+import|def\s+\w+\s*\(|public\s+class\s+|class\s+\w+|function\s+\w+\s*\(|void\s+\w+\s*\(|int\s+main\s*\(|pid_t\s+|fork\s*\(\)|pthread_|malloc\s*\(|free\s*\(|printf\s*\(|cout\s*<<|cin\s*>>|System\.out\.println|console\.log|SELECT\s+.*\s+FROM|CREATE\s+TABLE|INSERT\s+INTO|ALTER\s+TABLE|UPDATE\s+.*\s+SET|DELETE\s+FROM)\b/i,
-      /[{}][\s\S]*[;{}]|=>|\b(?:return|const|let|var|sizeof|typedef|struct|enum)\b\s*[\w*&]+/i,
+      /[{}][\s\S]*[;{}]|=>|\b(?:return|sizeof|typedef|struct|enum)\b\s*[\w*&]+|\b(?:const|var)\b\s*[\w*&]+|\blet\b\s*[\w*&]+\s*(?:=|[;:,])/i,
       /\b(?:[A-Za-z0-9_]+\s*=\s*[A-Za-z0-9_+\-*/()]+;|\b(?:if|while|for)\s*\([^)]+\)\s*\{?)/i
     ];
     return codePatterns.some(p => p.test(seg));
@@ -421,7 +463,9 @@ class DepthAnalyzer {
       /\b(exam will be (?:held|conducted)|mid-term examination|bring your (?:id|hall tickets|identity cards|calculator))\b/i,
       /\b(had lunch|cafeteria|traffic was|metro station|weather is nice|yesterday movie|funny haha|party|shopping)\b/i,
       /\b(listen carefully|pay attention in the back|benches|can you hear me|mic check|am i audible|silence your phones)\b/i,
-      /\b(submit (?:your\s+)?(?:[\w-]+\s+)?assignments?|assignment\s+submission|deadline\s+is\s+(?:tomorrow|friday|monday|tonight|\w+)|next\s+class\s+we\s+will)\b/i
+      /\b(assignments?\s+submit|submit (?:the|your)?\s*(?:lab\s+)?(?:reports?|assignments?|papers?|homework)|(?:late\s+)?submissions?\s+(?:will\s+)?receive\s+(?:zero\s+)?marks?|deadline\s+is\s+(?:tomorrow|friday|monday|tonight|\w+)|next\s+class\s+we\s+will)\b/i,
+      /\b(announcement is (?:very\s+)?important for (?:your\s+)?(?:final\s+)?grades?|important for the (?:exam|test|quiz)|will be (?:on|in) the (?:exam|test)|final grades?|exam marks?)\b/i,
+      /\b(speak with your (?:group\s+)?partners?|group partners?|form (?:your\s+)?groups?|room schedule|schedule might change|attendance will be (?:strictly\s+)?verified)\b/i
     ];
     for (const pat of adminPatterns) {
       if (pat.test(lower)) {
@@ -543,26 +587,27 @@ class DepthAnalyzer {
     // ──────────────────────────────────────────────────────────────────────────
     // Step 8: Core Instructional / Academic Explanations, Rules, Mechanisms
     // ──────────────────────────────────────────────────────────────────────────
-    const hasDefRelation = /\b(is an?|are(?: words)?|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|known as|named as|classified into|provides an?|acts as|serves as|used (?:to|as|in)|is (?:formally |strictly |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?)\b/i.test(lower);
-    const hasMechRelation = /\b(works by|applies|extract(?:s|ed|ing)?|transform(?:s|ed|ing)?|comput(?:es|ed|ing)?|divid(?:es|ed|ing)?|multiplie(?:s|d)?|calculat(?:es|ed|ing)?|connect(?:s|ed|ing)?|execut(?:es|ed|ing)?|process(?:es|ed|ing)?|generat(?:es|ed|ing)?|allocat(?:es|ed|ing)?|modifie(?:s|d|ying)?|conduc(?:ts|ted|ting)?|converts?|eliminat(?:es|ed|ing)?|reduc(?:es|ed|ing)?|increas(?:es|ed|ing)?|decreas(?:es|ed|ing)?|stores?|retrieves?|passes?|takes?|outputs?|returns?|handles?|implements?|travers(?:es|ed|ing)?|select(?:s|ed|ing)?|partition(?:s|ed|ing)?|discard(?:s|ed|ing)?|project(?:s|ed|ing)?|encod(?:es|ed|ing)?|decod(?:es|ed|ing)?|superpos(?:es|ed|ing)?|entangl(?:es|ed|ing)?|borrow(?:s|ed|ing)?)\b/i.test(lower);
-    const hasRuleRelation = /\b(whenever|therefore|in order to|leads to|results in|prevents|causes|so that|guarantees?|ensures?|requires?|depends on|condition|conditions|properties|invariants?|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes|cannot have both|trade-offs?|trade off|choice between)\b/i.test(lower);
-    const hasComparisonRelation = /\b(in contrast|compared to|difference between|between .* and|neither .* nor|whereas|while|faster than|slower than|preferred over|differs? from|unlike|similar to)\b/i.test(lower);
+    const hasDefRelation = /\b(is an?|are(?: words)?|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|known as|named as|classified into|provides an?|acts as|serves as|used (?:to|as|in)|is (?:formally |strictly |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?|symbolizes?|illustrates?|explores?|depicts?|conveys?|embodies?|signifies?|articulates?|examines?)\b/i.test(lower);
+    const hasMechRelation = /\b(works by|applies|extract(?:s|ed|ing)?|transform(?:s|ed|ing)?|comput(?:es|ed|ing)?|divid(?:es|ed|ing)?|multiplie(?:s|d)?|calculat(?:es|ed|ing)?|connect(?:s|ed|ing)?|execut(?:es|ed|ing)?|process(?:es|ed|ing)?|generat(?:es|ed|ing)?|allocat(?:es|ed|ing)?|modifie(?:s|d|ying)?|conduc(?:ts|ted|ting)?|converts?|eliminat(?:es|ed|ing)?|reduc(?:es|ed|ing)?|increas(?:es|ed|ing)?|decreas(?:es|ed|ing)?|stores?|retrieves?|passes?|takes?|outputs?|returns?|handles?|implements?|travers(?:es|ed|ing)?|select(?:s|ed|ing)?|partition(?:s|ed|ing)?|discard(?:s|ed|ing)?|project(?:s|ed|ing)?|encod(?:es|ed|ing)?|decod(?:es|ed|ing)?|superpos(?:es|ed|ing)?|entangl(?:es|ed|ing)?|borrow(?:s|ed|ing)?|catalyzes?|inhibits?|regulates?|binds?|secretes?|synthesizes?|activates?|mediates?|triggers?|escalates?|ratifies?|mobilizes?|governs?|produce(?:s|d|ing)?|construct(?:s|ed|ing)?|break(?:s|ing)?|halt(?:s|ed|ing)?|tripl(?:e|es|ed|ing)?|doubl(?:e|es|ed|ing)?|erupt(?:s|ed|ing)?|paralyz(?:e|es|ed|ing)?|enact(?:s|ed|ing)?|ration(?:s|ed|ing)?)\b/i.test(lower);
+    const hasRuleRelation = /\b(whenever|therefore|in order to|leads to|results in|prevents|causes|so that|guarantees?|ensures?|requires?|depends on|condition|conditions|properties|invariants?|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes|cannot have both|trade-offs?|trade off|choice between|consequently|forced to|mathematically impossible|as a result|due to|led to)\b/i.test(lower) || /^(?:when|because|faced with)\b.*,/i.test(lower);
+    const hasComparisonRelation = /\b(in contrast|compared to|difference between|between .* and|neither .* nor|whereas|while|faster than|slower than|preferred over|differs? from|unlike|similar to|contrasted with|conflicts? with|counterpart|at the cost of|trade-offs?|trade off)\b/i.test(lower);
     const hasDemonstrative = /\b(look at|notice (?:what happens|that|how)|observe (?:that|how)|see (?:what happens|that|how)|here we (?:see|have|notice)|consider (?:this|the|an?)|suppose (?:we|that)|let us (?:see|examine|trace|look)|trace (?:through|the)|given (?:an?|the)|explore (?:the|how|what|whether)?|think about why|think carefully about|for example|for instance)\b/i.test(lower);
     const hasTraceExample = /\[[0-9,\s]+\]|\b(pivot|example|trace|step|produces)\b/i.test(lower);
     const hasSocraticCurricular = /\b(what happens (?:to|if|when)|why does|why do we|how does|can the|what is the effect of|will the|why would)\b/i.test(lower);
     const hasProcRelation = /\b(first(?:ly)?,|second(?:ly)?,|third(?:ly)?,|fourth(?:ly)?,|fifth(?:ly)?,|finally,|next,|step \d+|in the (?:first|next|final) step|pauses?|saves?|transfers?|restor(?:es|ed|ing)?|resum(?:es|ed|ing)?|fetch(?:es|ed|ing)?)\b/i.test(lower);
 
     // Modern Phase 2.5 Deductive & Algorithmic Signals
-    const hasDeductiveRelation = /\b(assume|assuming|suppose|let\s+[a-zA-Z]|substitut(?:e|ing|es|ed)|simplif(?:y|ies|ying|ied)|which implies|implies|hence|thus|contradict(?:s|ion)?|gcd\(|since|follows that|q\.e\.d\.|iff|if and only if|proves that|theorem|proof|lemma|corollary|axiom|proposition)\b/i.test(lower);
-    const hasAlgorithmicRelation = /\b(initializ(?:e|es|ed|ing)|instantiat(?:e|es|ed|ing)|allocat(?:e|es|ed|ing)|push(?:es|ed|ing)?|pop(?:s|ped|ping)?|enqueue(?:s|d|ing)?|dequeue(?:s|d|ing)?|insert(?:s|ed|ing)?|delet(?:e|es|ed|ing)?|swap(?:s|ped|ping)?|compar(?:e|es|ed|ing)?|relax(?:es|ed|ing)?|travers(?:e|es|ed|ing)?|iterat(?:e|es|ed|ing)|while\s+\w+|for\s+(?:every|each)|terminat(?:es|ed|ing)?|exhausted|recurse|recurring)\b/i.test(lower);
-    const hasFormalAcademicStructure = /\b(5-tuple|tuple|subset of|cartesian product|transition function|alphabet|finite set|accept states?|superposition|hadamard|qubit|qubits|entanglement|borrow checker|lifetimes?|ownership rules?|zk-snark|polynomial-time|reduction|np-complete|deterministic finite automaton|dfa|nfa|pda|turing machine)\b/i.test(lower);
+    const hasDeductiveRelation = /\b(assume|assuming|suppose|let\s+[a-zA-Z]|substitut(?:e|ing|es|ed)|simplif(?:y|ies|ying|ied)|which implies|implies|hence|thus|contradict(?:s|ion)?|gcd\(|since|follows that|q\.e\.d\.|iff|if and only if|proves that|proof consists of|proof steps?|by contradiction|by induction|evaluating (?:the )?boundaries)\b/i.test(lower);
+    const hasCritiqueRelation = /\b(juxtaposition|juxtaposes?|critique|critiques?|paradox|paradoxical|irony|ironic|double-edged|dilemma|tension|subtext|artistic immortality|aesthetic|aestheticism|depicts?|depicted|symbolic|symbolism|metaphorical|allegorical|thematic|theme|motif|rhetorical|dialectic|argues that|arguing that|suggests that|reveals that|illustrates how|embodies the|conveys the|conflict between|frozen in|perpetual|transient|immortality)\b/i.test(lower);
+    const hasAlgorithmicRelation = /\b(initializ(?:e|es|ed|ing)|instantiat(?:e|es|ed|ing)|allocat(?:e|es|ed|ing)|push(?:es|ed|ing)?|pop(?:s|ped|ping)?|enqueue(?:s|d|ing)?|dequeue(?:s|d|ing)?|insert(?:s|ed|ing)?|delet(?:e|es|ed|ing)?|swap(?:s|ped|ping)?|compar(?:e|es|ed|ing)?|relax(?:es|ed|ing)?|travers(?:e|es|ed|ing)?|iterat(?:e|es|ed|ing)|\bwhile\s*\([^)]+\)|\bwhile\s+(?:true|false|not|\w+\s*(?:<|>|==|!=|<=|>=))\b|for\s+(?:every|each)|terminat(?:es|ed|ing)?|exhausted|recurse|recurring)\b/i.test(lower);
+    const hasFormalAcademicStructure = /\b(5-tuple|tuple|subset of|cartesian product|transition function|alphabet|finite set|accept states?|superposition|hadamard|qubit|qubits|entanglement|borrow checker|lifetimes?|ownership rules?|zk-snark|polynomial-time|reduction|np-complete|deterministic finite automaton|dfa|nfa|pda|turing machine|continuous on|differentiable on|closed interval|open interval|tangent line|secant line|vector space|linear transformation|eigenvalue|eigenvector|rate of change|mean value theorem|intermediate value|extreme value)\b/i.test(lower);
 
     const words = cleanSeg.split(/\s+/).filter(Boolean);
     const hasSubstantiveLength = words.length >= 3;
-    const hasInstructionalSignal = hasDefRelation || hasMechRelation || hasRuleRelation || hasComparisonRelation || hasDemonstrative || hasTraceExample || hasSocraticCurricular || hasProcRelation || hasDeductiveRelation || hasAlgorithmicRelation;
+    const hasInstructionalSignal = hasDefRelation || hasMechRelation || hasRuleRelation || hasComparisonRelation || hasDemonstrative || hasTraceExample || hasSocraticCurricular || hasProcRelation || hasDeductiveRelation || hasAlgorithmicRelation || hasCritiqueRelation;
 
     const extractedConcepts = this._extractConceptsFromSegment(cleanSeg);
-    const hasAcademicConcept = extractedConcepts.length > 0 || this._hasAcademicDomainWord(lower) || hasFormalAcademicStructure || hasDeductiveRelation || hasAlgorithmicRelation;
+    const hasAcademicConcept = extractedConcepts.length > 0 || this._hasAcademicDomainWord(lower) || hasFormalAcademicStructure || hasDeductiveRelation || hasAlgorithmicRelation || hasCritiqueRelation;
 
     if (hasInstructionalSignal && hasSubstantiveLength && hasAcademicConcept) {
       let contentType = 'CORE_EXPLANATION';
@@ -573,6 +618,10 @@ class DepthAnalyzer {
         contentType = 'CORE_EXPLANATION';
         substanceType = 'FORMAL_DERIVATION';
         teachingValue = 0.98;
+      } else if (hasCritiqueRelation) {
+        contentType = 'CORE_EXPLANATION';
+        substanceType = 'CRITIQUE_OR_INTERPRETATION';
+        teachingValue = 0.96;
       } else if (hasAlgorithmicRelation) {
         contentType = 'DEMONSTRATION';
         substanceType = 'ALGORITHMIC_TRACE';
@@ -632,7 +681,8 @@ class DepthAnalyzer {
     }
 
     // Academic Lexicon Mention (Slide bullet points, concept mentions, lists)
-    if (hasAcademicConcept) {
+    const hasVerifiedDomainMention = this._hasAcademicDomainWord(lower) || hasFormalAcademicStructure || hasDeductiveRelation || hasAlgorithmicRelation;
+    if (hasVerifiedDomainMention) {
       return {
         type: 'CORE_EXPLANATION',
         teaching_value: 0.75,
@@ -679,7 +729,7 @@ class DepthAnalyzer {
       'about', 'discuss', 'discussing', 'thing', 'things', 'stuff', 'really', 'actually',
       'basically', 'simply', 'maybe', 'probably', 'class', 'lecture', 'sir', 'maam', 'okay',
       'alright', 'everyone', 'everybody', 'student', 'students', 'teacher', 'we', 'you',
-      'they', 'this', 'that', 'these', 'those', 'what', 'which', 'where', 'when', 'why',
+      'they', 'it', 'its', 'them', 'him', 'her', 'me', 'us', 'this', 'that', 'these', 'those', 'what', 'which', 'where', 'when', 'why',
       'how', 'come', 'coming', 'came', 'take', 'taking', 'took', 'give', 'giving', 'gave',
       'tell', 'telling', 'told', 'write', 'writing', 'wrote', 'make', 'making', 'made',
       'want', 'wanting', 'need', 'needing', 'feel', 'feeling', 'think', 'thinking', 'thought',
@@ -701,19 +751,29 @@ class DepthAnalyzer {
     ]);
 
     const weakModifiers = new Set([
+      'top', 'bottom', 'front', 'rear', 'back',
       'smaller', 'larger', 'bigger', 'exact', 'same', 'different', 'original', 'entire', 'whole',
       'actual', 'given', 'certain', 'particular', 'single', 'multiple', 'final', 'initial'
     ]);
 
     let phrase = raw.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
     
-    // Strip conversational, prepositional, and auxiliary prefixes iteratively
-    const prefixRegex = /^(?:the|a|an|about|to|in|for|of|and|or|but|if|then|so|yes|yeah|no|into|onto|from|with|by|some|our|your|let|lets|we|you|now|just|well|look|looks|see|what|which|when|where|why|how|this|that|these|those|there|here|i\s+think|you\s+know|is|are|was|were|be|been|being|have|has|had)\s+/i;
+    // Strip conversational, prepositional, possessive, and auxiliary prefixes iteratively
+    const prefixRegex = /^(?:the|a|an|about|to|in|out|up|down|off|over|under|for|of|and|or|but|if|then|so|yes|yeah|no|into|onto|from|with|by|some|our|your|their|its|his|her|my|let|lets|we|you|now|just|well|look|looks|see|what|which|when|where|why|how|this|that|these|those|there|here|i\s+think|you\s+know|is|are|was|were|be|been|being|have|has|had)\s+/i;
     while (prefixRegex.test(phrase)) {
       phrase = phrase.replace(prefixRegex, '').trim();
     }
     phrase = phrase.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '').trim();
     if (phrase.length < 2) return '';
+
+    // Strip trailing predicate adverbs/adjectives (e.g., "mathematically impossible", "available")
+    phrase = phrase.replace(/\s+(?:mathematically\s+)?(?:impossible|possible|necessary|sufficient|inevitable|unlikely|likely|present|absent)$/i, '').trim();
+
+    // Filter out phrases dominated by numbers, percentages, or time durations
+    const lowerPhrase = phrase.toLowerCase();
+    if (/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|percent|months?|days?|years?|weeks?|hours?|minutes?|seconds?)\b/i.test(lowerPhrase)) {
+      return '';
+    }
 
     const words = phrase.split(/\s+/).filter(Boolean);
     if (words.length === 0 || words.length > 5) return '';
@@ -758,14 +818,14 @@ class DepthAnalyzer {
     });
 
     // 2. Definitional Subject: "An operating system is..." / "Deterministic Finite Automaton M is formally defined as..."
-    const defMatch = cleanSeg.match(/(?:^|\b(?:a|an|the)\s+)([A-Za-z0-9\s\-]+?)\s+(?:is an?|are(?: words)?|means|refers to|stands for|provides|applies|consists of|differs from|deals with|manages|converts?|transforms?|encodes?|maps?|represents|is (?:formally |strictly |conceptually |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?)/i);
+    const defMatch = cleanSeg.match(/(?:^|\b(?:a|an|the)\s+)([A-Za-z0-9\s\-]+?)\s+(?:is an?|are(?: words)?|means|refers to|stands for|provides|applies|consists of|differs from|deals with|manages|converts?|transforms?|encodes?|maps?|represents|explores?|symbolizes?|illustrates?|depicts?|conveys?|embodies?|examines?|is (?:formally |strictly |conceptually |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?)/i);
     if (defMatch && defMatch[1]) {
       const cleaned = this._cleanConceptPhrase(defMatch[1]);
       if (cleaned) concepts.push(cleaned);
     }
 
-    // 3. Technical compound noun phrases
-    const nounPhraseRegex = /\b([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(?:algorithm|algorithms|automaton|automata|qubit|qubits|tuple|tuples|layers?|filters?|protocols?|numbers?|spaces?|functions?|methods?|structures?|models?|elements?|inputs?|outputs?|vectors?|graphs?|nodes?|trees?|complexity|matrices|arrays?|tokens?|packets?|frames?|cookies?|gates?|circuits?|states?|references?|lifetimes?|variables?|scheduling|management|allocation|replacement|prevention|avoidance|synchronization)\b/gi;
+    // 3. Technical & Academic compound noun phrases
+    const nounPhraseRegex = /\b([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(?:algorithm|algorithms|automaton|automata|qubit|qubits|tuple|tuples|layers?|filters?|protocols?|numbers?|spaces?|functions?|methods?|structures?|models?|elements?|inputs?|outputs?|vectors?|graphs?|nodes?|trees?|complexity|matrices|arrays?|tokens?|packets?|frames?|cookies?|gates?|circuits?|states?|references?|lifetimes?|variables?|scheduling|management|allocation|replacement|prevention|avoidance|synchronization|reactions?|enzymes?|proteins?|pathways?|inhibitors?|substrates?|membranes?|receptors?|molecules?|compounds?|equations?|theorems?|proofs?|hypotheses?|treaties?|dynasties?|empires?|movements?|revolutions?|doctrines?|themes?|motifs?|poems?|narratives?|devices?|symbols?|critiques?|arguments?|perspectives?|codes?|cycles?|fixation|generation|systems?)\b/gi;
     let npMatch;
     while ((npMatch = nounPhraseRegex.exec(cleanSeg)) !== null) {
       if (npMatch[0] && npMatch[0].length > 3 && npMatch[0].length < 40) {
@@ -801,6 +861,23 @@ class DepthAnalyzer {
       }
     }
 
+    // 6. Substantive Expository Compound Noun Phrases (Subject-Agnostic: History, Economics, Humanities, Sciences)
+    const boundaryRegex = /(?:^|[,\.;:\(\)\[\]"'\n\r\t]+|\b(?:of|when|whenever|remember|remembers|remembered|remembering|operate|operates|operating|operated|go|goes|going|gone|add|adds|added|adding|because|since|as|while|whereas|although|though|if|unless|until|before|after|during|in|on|at|by|for|with|about|against|between|into|through|above|below|to|from|up|down|off|over|under|across|behind|within|without|and|or|but|nor|so|yet|is|are|was|were|be|been|being|have|has|had|do|does|did|will|would|shall|should|can|could|may|might|must|spent|made|make|makes|making|erupted|erupt|erupts|paralyzed|paralyze|paralyzes|forced|force|forces|enact|enacted|enacting|caused|causes|causing|leads|led|leading|results|resulted|resulting|triggers|triggered|triggering|halted|halt|halts|halting|stops|stopped|stopping|tripled|doubled|increased|decreased|became|become|takes|took|taking|given|gives|giving|gave|see|saw|seen|look|looks|looking|notice|notices|noticed|consider|considered|suppose|supposed|assume|assumed|show|shows|shown|showing|tell|tells|told|speak|speaks|spoke|spoken|listen|listens|listened|check|checks|checked|submit|submits|submitted|submitting|verify|verifies|verified|verifying|receive|receives|received|receiving|change|changes|changed|changing|face|faced|faces|facing)\b)+/i;
+
+    const chunks = cleanSeg.split(boundaryRegex);
+    for (const chunk of chunks) {
+      if (!chunk || chunk.trim().length < 4) continue;
+      const cleaned = this._cleanConceptPhrase(chunk);
+      if (!cleaned) continue;
+      const words = cleaned.split(/\s+/);
+      // Substantive expository entities must be 2 to 4 words (Rejects single casual words)
+      if (words.length < 2 || words.length > 4) continue;
+      if (words.every(w => /^\d+$/.test(w) || w.length <= 1)) continue;
+      const lower = cleaned.toLowerCase();
+      if (/^(today|tomorrow|yesterday|everyone|everybody|please|carefully|strictly|abruptly|suddenly|consequently|therefore|also|tonight|friday|monday|tuesday|wednesday|thursday|saturday|sunday)$/i.test(lower)) continue;
+      concepts.push(cleaned);
+    }
+
     // Sort by length descending so specific terms come before generic terms
     concepts.sort((a, b) => b.length - a.length);
 
@@ -822,6 +899,33 @@ class DepthAnalyzer {
   }
 
   /**
+   * Multi-Signal Academic Cohesion & Discourse Evaluation.
+   * Evaluates discourse continuity, clause structure, personal pronoun stance, and topic cohesion.
+   * Fails closed with 'UNCERTAIN' on ambiguous or casual text.
+   */
+  _evaluateAcademicCohesion(raw, segments, classifiedSegments) {
+    const words = (raw || '').split(/\s+/).filter(Boolean);
+    const totalWordCount = words.length;
+    if (totalWordCount < 5) {
+      return { classification: 'UNCERTAIN', reason: 'INSUFFICIENT_CONTENT: Material is too short to evaluate curriculum.' };
+    }
+
+    // 1. Personal Pronoun Ratio (1st/2nd person address indicates conversational narrative or administrative directive)
+    const personalPronouns = words.filter(w => /^(i|me|my|mine|you|your|yours|we|our|ours|us)$/i.test(w)).length;
+    const pronounRatio = personalPronouns / totalWordCount;
+
+    // High ratio of personal pronouns indicates personal conversation or administrative address
+    if (pronounRatio > 0.06 && !this._isCodeOrTechnicalSnippet(raw)) {
+      return {
+        classification: 'UNCERTAIN',
+        reason: 'UNCERTAIN_CURRICULAR_CONTENT: High ratio of first/second-person personal pronouns indicates conversational narrative rather than objective curriculum.'
+      };
+    }
+
+    return { classification: 'ACADEMIC', reason: null };
+  }
+
+  /**
    * Analyze raw text or transcript for Pedagogy-Aware Teaching Value and Curricular Depth.
    * 
    * @param {String} text - Raw transcript or combined document text
@@ -835,6 +939,7 @@ class DepthAnalyzer {
         sourceModality,
         isAcademic: false,
         isCurricular: false,
+        academicClassification: 'UNCERTAIN',
         reason: 'INSUFFICIENT_CONTENT: The provided material is too short to evaluate.',
         teachingValueScore: 0,
         lectureDepth: {
@@ -955,6 +1060,7 @@ class DepthAnalyzer {
         sourceModality,
         isAcademic: false,
         isCurricular: false,
+        academicClassification: isPurelyAdmin || isExplicitlyFictional || isPredominantlyFictional ? 'NON_ACADEMIC' : 'UNCERTAIN',
         reason,
         teachingValueScore: Math.round(totalTeachingValue * 100),
         lectureDepth: {
@@ -996,13 +1102,68 @@ class DepthAnalyzer {
       };
     }
 
+    // Multi-Signal Discourse Cohesion & Analytical Register Evaluation
+    const cohesion = this._evaluateAcademicCohesion(raw, segments, classifiedSegments);
+    if (cohesion.classification === 'UNCERTAIN') {
+      return {
+        sourceModality,
+        isAcademic: false,
+        isCurricular: false,
+        academicClassification: 'UNCERTAIN',
+        reason: cohesion.reason,
+        teachingValueScore: Math.round(totalTeachingValue * 100),
+        lectureDepth: {
+          rating: 'Non-Academic',
+          score: 10,
+          characteristics: { conceptExplanation: 'None', reasoning: 'None', examples: 'None', procedures: 'None' },
+          breakdown: {
+            earnedRubric: [
+              { category: 'Baseline Curricular Substance', earned: 10, max: 40, status: 'Failed', description: 'Ambiguous or conversational discourse lacking verified educational topic cohesion.' },
+              { category: 'Concept Definition & Explanation', earned: 0, max: 15, status: 'None', description: 'No concepts defined.' },
+              { category: 'Causal Reasoning & Invariants', earned: 0, max: 15, status: 'None', description: 'No reasoning detected.' },
+              { category: 'Concrete Examples & Traces', earned: 0, max: 15, status: 'None', description: 'No examples detected.' },
+              { category: 'Procedural Sequencing', earned: 0, max: 15, status: 'None', description: 'No procedures detected.' }
+            ],
+            deductions: [
+              {
+                factor: 'Ambiguous Discourse',
+                lostPoints: 90,
+                maxPoints: 100,
+                earnedPoints: 10,
+                reason: cohesion.reason,
+                actionableTip: 'Ensure speech is structured as objective subject matter instruction rather than conversational banter.'
+              }
+            ],
+            totalLostPoints: 90,
+            coveredAspects: [],
+            missingAspects: ['Assessable subject matter curriculum', 'Academic Definitions', 'Reasoning', 'Examples'],
+            actionableTips: ['Teach specific academic subject matter rather than conversational dialogue.'],
+            recommendedQuestionCount: 0,
+            recommendedQuestionsRationale: 'Cannot generate questions: Ambiguous non-curricular discourse.'
+          }
+        },
+        detectedFocus: [],
+        retainedSegments: [],
+        curricularSegments: [],
+        pedagogicalSegments,
+        adminSegments,
+        discardedSegments
+      };
+    }
+
     // Curricular depth calculations
     const curricularText = curricularSegments.map(s => s.classification.evidence_text || s.text).join(' ');
     const lowerCurricular = (curricularText || raw).toLowerCase();
 
+    // Exclude administrative / pedagogical meta-speech from causal and deductive reasoning counts
+    const coreExplanatorySegments = curricularSegments.filter(s => s.classification.type !== 'PEDAGOGICAL_GUIDANCE');
+    const coreCurricularText = coreExplanatorySegments.map(s => s.classification.evidence_text || s.text).join(' ');
+    const lowerCoreCurricular = (coreCurricularText || curricularText || raw).toLowerCase();
+
     const hasDef = curricularSegments.some(s => s.classification.substanceType === 'DEFINITION_OR_FACT') || /is an?|means|defined as/i.test(lowerCurricular);
     const hasMech = curricularSegments.some(s => s.classification.substanceType === 'MECHANISM') || hasCodeOrTechnical;
     const hasFormalDerivation = curricularSegments.some(s => s.classification.substanceType === 'FORMAL_DERIVATION');
+    const hasCritique = curricularSegments.some(s => s.classification.substanceType === 'CRITIQUE_OR_INTERPRETATION');
     const hasAlgorithmicTrace = curricularSegments.some(s => s.classification.substanceType === 'ALGORITHMIC_TRACE');
     const hasRule = curricularSegments.some(s => s.classification.substanceType === 'RULE_OR_CONDITION');
     const hasComp = curricularSegments.some(s => s.classification.substanceType === 'COMPARISON');
@@ -1011,30 +1172,33 @@ class DepthAnalyzer {
     const hasAnalogy = curricularSegments.some(s => s.classification.type === 'ANALOGY' || s.classification.type === 'TECHNICAL_HUMOR');
 
     // 1. Concept Depth
-    const isSubstantiveConcept = hasDef || hasMech || hasFormalDerivation || hasAlgorithmicTrace || detectedFocus.length >= 2;
+    const isSubstantiveConcept = hasDef || hasMech || hasFormalDerivation || hasCritique || hasAlgorithmicTrace || detectedFocus.length >= 2;
     const conceptExp = isSubstantiveConcept ? (curricularSegments.length > 2 || raw.length > 200 ? 'Strong' : 'Moderate') : 'Developing';
 
     // 2. Multi-Signal Reasoning
-    const causalMarkers = ['because', 'therefore', 'why', 'in order to', 'leads to', 'results in', 'prevents', 'eliminates', 'so that', 'guarantees', 'ensures', 'depends on'];
-    const deductiveMarkers = ['implies', 'which implies', 'hence', 'thus', 'assume', 'contradiction', 'contradicts', 'suppose', 'substituting', 'simplifies', 'since', 'q.e.d.', 'iff', 'if and only if', 'follows that'];
-    const causalCount = causalMarkers.filter(m => lowerCurricular.includes(m)).length;
-    const deductiveCount = deductiveMarkers.filter(m => lowerCurricular.includes(m)).length;
-    const totalReasonSignals = causalCount + deductiveCount;
+    const causalMarkers = ['because', 'therefore', 'why', 'in order to', 'leads to', 'results in', 'prevents', 'eliminates', 'so that', 'guarantees', 'ensures', 'depends on', 'causes', 'consequently', 'triggers', 'inhibits', 'catalyzes', 'escalates', 'drives', 'induces', 'yields', 'activates', 'mediates', 'necessitates'];
+    const deductiveMarkers = ['implies', 'which implies', 'hence', 'thus', 'assume', 'contradiction', 'contradicts', 'suppose', 'substituting', 'simplifies', 'since', 'q.e.d.', 'iff', 'if and only if', 'follows that', 'counterfactual', 'concludes that', 'demonstrates that'];
+    const interpretiveMarkers = ['juxtaposition', 'juxtaposes', 'paradox', 'paradoxical', 'irony', 'dramatic irony', 'critique', 'aestheticism', 'double-edged', 'tension', 'symbolic', 'allegorical', 'thematic', 'argues that', 'arguing that', 'conveys', 'embodies', 'subtext', 'dialectic'];
+    const causalCount = causalMarkers.filter(m => lowerCoreCurricular.includes(m)).length;
+    const deductiveCount = deductiveMarkers.filter(m => lowerCoreCurricular.includes(m)).length;
+    const interpretiveCount = interpretiveMarkers.filter(m => lowerCoreCurricular.includes(m)).length;
+    const totalReasonSignals = causalCount + deductiveCount + interpretiveCount;
     const hasFormalProof = hasFormalDerivation || deductiveCount >= 2 || (lowerCurricular.includes('proof') && deductiveCount >= 1);
+    const hasInterpretiveDepth = hasCritique || interpretiveCount >= 2;
 
     let reasoning = 'Light';
-    if (hasFormalProof || totalReasonSignals >= 3) {
+    if (hasFormalProof || hasInterpretiveDepth || totalReasonSignals >= 3) {
       reasoning = conceptExp === 'Developing' ? 'Moderate' : 'Strong'; // Capped if concept depth is trivial!
     } else if (totalReasonSignals >= 1) {
       reasoning = 'Moderate';
     }
 
     // 3. Multi-Signal Progression
-    const chronoMarkers = ['first', 'second', 'third', 'fourth', 'fifth', 'finally', 'then', 'step', 'after', 'before', 'next', 'pauses', 'transfers', 'restores', 'resumes'];
-    const algoMarkers = ['initialize', 'instantiate', 'push', 'pop', 'enqueue', 'dequeue', 'relax', 'swap', 'update', 'traverse', 'iterate', 'while', 'terminate', 'return'];
+    const chronoMarkers = ['first', 'second', 'third', 'fourth', 'fifth', 'finally', 'then', 'step', 'after', 'before', 'next', 'pauses', 'transfers', 'restores', 'resumes', 'consequently', 'subsequently', 'ultimately'];
+    const algoMarkers = ['initialize', 'instantiate', 'push', 'pop', 'enqueue', 'dequeue', 'relax', 'swap', 'update', 'traverse', 'iterate', 'while', 'terminate', 'return', 'synthesize', 'catalyze', 'regulate', 'bind', 'secrete', 'convert', 'transport', 'mobilize', 'ratify', 'conclude', 'collapse', 'escalate', 'govern', 'deploy'];
     const chronoCount = chronoMarkers.filter(m => lowerCurricular.includes(m)).length;
     const algoCount = algoMarkers.filter(m => lowerCurricular.includes(m)).length;
-    const hasAlgorithmicProgression = algoCount >= 3 || (algoCount >= 2 && chronoCount >= 1) || hasAlgorithmicTrace;
+    const hasAlgorithmicProgression = algoCount >= 3 || (algoCount >= 2 && chronoCount >= 1) || hasAlgorithmicTrace || (hasMech && chronoCount >= 2);
     const hasProofProgression = hasFormalProof && deductiveCount >= 2;
 
     let procedures = 'Light';
@@ -1200,6 +1364,15 @@ class DepthAnalyzer {
       rationale = '25 Questions: Full-length lecture with broad coverage across foundational concepts, application, and edge cases.';
     }
 
+    // Conceptual density safety guard:
+    // Repetitive lecture length must not inflate question capacity beyond what distinct concepts defensibly support.
+    const distinctFocusCount = (detectedFocus && detectedFocus.length > 0) ? detectedFocus.length : 1;
+    const maxSupportedByConcepts = Math.min(25, Math.max(3, Math.round(distinctFocusCount * 2)));
+    if (recCount > maxSupportedByConcepts) {
+      recCount = maxSupportedByConcepts;
+      rationale = `${recCount} Questions: Scaled to ${distinctFocusCount} distinct curricular concept(s) covered in lecture without redundant targets.`;
+    }
+
     let rating = 'Developing';
     if (depthScore < 60) rating = 'Introductory';
     else if (depthScore >= 75) rating = 'Comprehensive';
@@ -1209,8 +1382,18 @@ class DepthAnalyzer {
       sourceModality,
       isAcademic: true,
       isCurricular: true,
+      academicClassification: 'ACADEMIC',
       reason: null,
       teachingValueScore: Math.round(totalTeachingValue * 100),
+      hasDef,
+      hasMech,
+      hasFormalDerivation,
+      hasAlgorithmicTrace,
+      hasExp,
+      hasAnalogy,
+      hasRule,
+      hasComp,
+      hasCritique,
       lectureDepth: {
         rating,
         score: depthScore,

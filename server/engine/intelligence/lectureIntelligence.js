@@ -129,14 +129,29 @@ class LectureIntelligence {
       }
     }
 
+    // Explicitly non-academic or non-curricular input fails closed
+    if (options.isCurricular === false || options.isAcademic === false) {
+      return {
+        distinctConceptCount: 0,
+        recommendedQuestionCount: 0,
+        capacityByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+        recommendedByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+        totalDefensibleCapacity: 0,
+        advisoryRationale: 'No questions recommended: Recording contains no assessable instructional curriculum.',
+        operationEvidenceTrail: []
+      };
+    }
+
+    // Academic content but 0 concepts detected in conceptList
     if (conceptList.length === 0) {
       return {
         distinctConceptCount: 0,
-        recommendedQuestionCount: 5,
-        capacityByDifficulty: { easy: 2, medium: 2, hard: 1, balanced: 5 },
-        recommendedByDifficulty: { easy: 2, medium: 2, hard: 1, balanced: 5 },
-        totalDefensibleCapacity: 5,
-        advisoryRationale: 'Baseline pedagogical scope for introductory content.'
+        recommendedQuestionCount: 0,
+        capacityByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+        recommendedByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+        totalDefensibleCapacity: 0,
+        advisoryRationale: 'No assessable concepts detected in evidence.',
+        operationEvidenceTrail: []
       };
     }
 
@@ -144,33 +159,41 @@ class LectureIntelligence {
     const reasoning = pedagogicalCritique?.reasoningDepth || [];
     const demonstrations = pedagogicalCritique?.practicalDemonstrations || [];
 
-    const hasMechanismsInLecture = explanatory.includes('OPERATIONAL_MECHANISM') || explanatory.includes('THEORETICAL_DERIVATION');
-    const hasInvariantsInLecture = reasoning.includes('INVARIANT_AND_CAUSAL') || explanatory.includes('THEORETICAL_DERIVATION');
+    const hasMechanismsInLecture = explanatory.includes('OPERATIONAL_MECHANISM') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION');
+    const hasInvariantsInLecture = reasoning.includes('INVARIANT_AND_CAUSAL') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION');
     const hasPracticalTraces = demonstrations.includes('WORKED_TRACE_OR_CODE');
 
     let totalEasy = 0;
     let totalMedium = 0;
-    let totalHard = 0;
     let substantiveConceptCount = 0;
 
-    for (const c of conceptList) {
+    let op1Count = 0; // Op 1: Invariant & Boundary Violation
+    let op4Count = 0; // Op 4: Formal Derivation & Proof
+    let op5Count = 0; // Op 5: Multi-Concept Causal Chain
+    let op6Count = 0; // Op 6: Interpretive Critique & Evaluation
+    let codeTraceCount = 0; // Worked Code Trace / Diagnostic Scenario
+    const operationEvidenceTrail = [];
+
+    // Filter out trivial / administrative / passing mention concepts before capacity calculation
+    // Low-evidence concepts must NOT inflate comparative distinction or medium angles
+    const substantiveList = (conceptList || []).filter(c => {
+      const name = String(c.name || c.concept_name || '').trim();
+      const def = String(c.definition || '').trim();
+      const mech = String(c.mechanism_or_rule || '').trim();
+      const anchors = Array.isArray(c.sourceAnchors) ? c.sourceAnchors : [];
+      if (name.length < 3) return false;
+      const isPassingMention = /^(not covered|passing mention|briefly mentioned|out of scope)\b/i.test(def) ||
+        (/^(none|not observed|null|n\/a)$/i.test(mech) && def.length < 15 && anchors.length === 0);
+      const isLowEvidence = (anchors.length === 0 && def.length < 20 && (!mech || mech === 'NOT_OBSERVED' || mech === 'null'));
+      return !isPassingMention && !isLowEvidence;
+    });
+
+    for (const c of substantiveList) {
       const name = String(c.name || c.concept_name || '').trim();
       const def = String(c.definition || '').trim();
       const mech = String(c.mechanism_or_rule || '').trim();
       const anchors = Array.isArray(c.sourceAnchors) ? c.sourceAnchors : [];
       const substanceType = String(c.substanceType || 'DEFINITION').toUpperCase();
-
-      // Rule 1: Filter out trivial / administrative / passing mention concepts
-      if (name.length < 3) continue;
-      const isPassingMention = /^(not covered|passing mention|briefly mentioned|out of scope)\b/i.test(def) ||
-        (/^(none|not observed|null|n\/a)$/i.test(mech) && def.length < 15 && anchors.length === 0);
-
-      // Rule 2: Low-evidence concepts DO NOT inflate capacity
-      // If a concept has no source anchors, minimal definition (< 20 chars), and no mechanism, it gets 0 capacity!
-      const isLowEvidence = (anchors.length === 0 && def.length < 20 && (!mech || mech === 'NOT_OBSERVED' || mech === 'null'));
-      if (isPassingMention || isLowEvidence) {
-        continue;
-      }
 
       substantiveConceptCount++;
 
@@ -184,49 +207,136 @@ class LectureIntelligence {
       // Cognitive Operation 2: Medium Angles (Mechanism / Trace / Comparison)
       const hasConceptMechanism = Boolean(mech && mech !== 'NOT_OBSERVED' && mech !== 'null' && mech.length >= 15);
       const isComparison = substanceType === 'COMPARISON' || /\b(versus|vs|difference|compare|tradeoff|unlike)\b/i.test(`${name} ${def}`);
-      const isRuleOrProcedure = substanceType === 'RULE' || substanceType === 'MECHANISM' || /\b(algorithm|steps?|compute|formula|condition|pointer)\b/i.test(`${def} ${mech}`);
+      const isRuleOrProcedure = substanceType === 'RULE' || substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM' || /\b(algorithm|steps?|compute|formula|condition|pointer)\b/i.test(`${def} ${mech}`);
 
       let conceptMediumAngles = 0;
       if (hasConceptMechanism || isRuleOrProcedure || (hasMechanismsInLecture && def.length >= 40)) {
-        conceptMediumAngles += 1; // Operational mechanism / execution trace angle
+        conceptMediumAngles += 1; // Operational mechanism / execution trace angle (Op 2)
       }
-      if (isComparison) {
-        conceptMediumAngles += 1; // Comparative distinction / tradeoff angle
+      if (isComparison || substantiveList.length >= 2) {
+        conceptMediumAngles += 1; // Comparative distinction / tradeoff angle (Op 3)
       }
       // Cap medium angles per single concept to 2 distinct operations
       totalMedium += Math.min(conceptMediumAngles, 2);
 
       // Negative boundary enforcement: if teacher explicitly excluded code or math, discount those angles
       const negBoundaries = Array.isArray(options.negativeBoundaries) ? options.negativeBoundaries : (Array.isArray(pedagogicalCritique?.negativeBoundaries) ? pedagogicalCritique.negativeBoundaries : []);
-      const isCodeExcluded = negBoundaries.includes('NO_CODE');
-      const isMathExcluded = negBoundaries.includes('NO_MATH');
+      const isCodeExcluded = negBoundaries.includes('NO_CODE') || negBoundaries.includes('NO_CODE_IMPLEMENTATION');
+      const isMathExcluded = negBoundaries.includes('NO_MATH') || negBoundaries.includes('NO_FORMULAS');
 
-      // Cognitive Operation 3: Hard Angles (Invariant Preservation / Constraint Violation / Fault Diagnosis)
-      // Requires mechanism + invariant/formula/causal constraint in evidence
-      let conceptHardAngles = 0;
-      const hasFormulaOrInvariant = /\b(invariant|formula|balance|height|log|degree|at most|exactly|violation|overflow|null pointer|boundary)\b/i.test(`${name} ${def} ${mech}`);
+      // Cognitive Operation 3: Hard Angles
+      // Grounded in Op 1, Op 4, Op 5, Op 6 + Worked Traces
+      // Zero Reasoning Invariant: purely descriptive lectures lacking reasoning yield strictly 0 Hard angles.
+      if (hasInvariantsInLecture) {
+        // Op 1: Invariant Preservation & Boundary Violation (e.g. balance factor, thresholds, capacity bounds)
+        const hasBoundaryOrInvariant = (substanceType === 'RULE_OR_CONDITION' || substanceType === 'RULE') &&
+          /\b(invariant|threshold|limit|boundary|must maintain|conservation|equilibrium|capacity|overflow|violation|precondition|postcondition|at most|at least)\b/i.test(`${name} ${def} ${mech}`);
+        if (hasBoundaryOrInvariant) {
+          op1Count += 1;
+          operationEvidenceTrail.push({
+            operationId: 'OP_1_INVARIANT_BOUNDARY',
+            conceptName: name,
+            substanceType,
+            transcriptAnchors: anchors.length > 0 ? anchors : [def.slice(0, 120)],
+            decision: 'CREDITED_HARD_CAPACITY'
+          });
+        }
 
-      if (!isCodeExcluded && !isMathExcluded) {
-        if ((hasConceptMechanism || hasFormulaOrInvariant) && (hasInvariantsInLecture || hasFormulaOrInvariant)) {
-          conceptHardAngles += 1; // Invariant prediction / boundary condition angle
+        // Op 4: Formal Derivation & Deductive Proof (e.g. lemmas, Rolle's / MVT proofs; discounted if math excluded)
+        const isFormalDerivation = !isMathExcluded && (substanceType === 'FORMAL_DERIVATION' || (explanatory.includes('THEORETICAL_DERIVATION') && /\b(proof|derivation|theorem|implies|hence|thus|contradiction|extrema)\b/i.test(`${def} ${mech}`)));
+        if (isFormalDerivation) {
+          op4Count += 1;
+          operationEvidenceTrail.push({
+            operationId: 'OP_4_FORMAL_DERIVATION',
+            conceptName: name,
+            substanceType,
+            transcriptAnchors: anchors.length > 0 ? anchors : [def.slice(0, 120)],
+            decision: 'CREDITED_HARD_CAPACITY'
+          });
         }
-        // If concept also has worked traces or code demonstrations, it supports multi-step scenario/diagnostic angle
-        if (hasConceptMechanism && (hasPracticalTraces || anchors.length >= 3) && def.length >= 80) {
-          conceptHardAngles += 1; // Deep diagnostic / multi-step edge case angle
+
+        // Op 5: Multi-Concept Causal Chain (e.g. naval blockade -> price surge -> bread riots -> rationing; permitted even under NO_CODE + NO_MATH)
+        const isCausalChain = (substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM') &&
+          /\b(because|leads to|results in|causes|consequently|triggers|forces|forced to|due to|led to|as a result)\b/i.test(`${def} ${mech}`);
+        if (isCausalChain) {
+          op5Count += 1;
+          operationEvidenceTrail.push({
+            operationId: 'OP_5_CAUSAL_CHAIN',
+            conceptName: name,
+            substanceType,
+            transcriptAnchors: anchors.length > 0 ? anchors : [def.slice(0, 120)],
+            decision: 'CREDITED_HARD_CAPACITY'
+          });
         }
-      } else if (isCodeExcluded && !isMathExcluded) {
-        // Code excluded: allow only conceptual invariant/tradeoff analysis, NOT code walkthrough
-        if (hasFormulaOrInvariant && (hasInvariantsInLecture || hasFormulaOrInvariant)) {
-          conceptHardAngles += 1;
+
+        // Op 6: Interpretive Critique & Evaluation (e.g. Keats's Ode aesthetic paradox, thematic tension; permitted under NO_CODE + NO_MATH)
+        const isCritiqueOrInterpretation = substanceType === 'CRITIQUE_OR_INTERPRETATION' || (explanatory.includes('CRITIQUE_AND_EVALUATION') && /\b(critique|paradox|irony|aesthetic|juxtaposition|theme|tension|symbolic)\b/i.test(`${def} ${mech}`));
+        if (isCritiqueOrInterpretation) {
+          op6Count += 1;
+          operationEvidenceTrail.push({
+            operationId: 'OP_6_INTERPRETIVE_CRITIQUE',
+            conceptName: name,
+            substanceType,
+            transcriptAnchors: anchors.length > 0 ? anchors : [def.slice(0, 120)],
+            decision: 'CREDITED_HARD_CAPACITY'
+          });
         }
-      } else if (!isCodeExcluded && isMathExcluded) {
-        if (hasConceptMechanism && (hasPracticalTraces || anchors.length >= 3) && def.length >= 80) {
-          conceptHardAngles += 1;
+
+        // Structural / formula invariant (discounted if math excluded)
+        const hasFormulaOrInvariant = !isMathExcluded && /\b(invariant|formula|balance|height|log|degree|at most|exactly|violation|overflow|null pointer|boundary)\b/i.test(`${name} ${def} ${mech}`);
+        if (hasFormulaOrInvariant && !hasBoundaryOrInvariant) {
+          op1Count += 1;
+          operationEvidenceTrail.push({
+            operationId: 'OP_1_INVARIANT_BOUNDARY',
+            conceptName: name,
+            substanceType,
+            transcriptAnchors: anchors.length > 0 ? anchors : [def.slice(0, 120)],
+            decision: 'CREDITED_HARD_CAPACITY'
+          });
+        }
+
+        // Worked code trace / multi-step diagnostic scenario (discounted if code excluded)
+        const isCodeTrace = !isCodeExcluded && (hasPracticalTraces && hasConceptMechanism && def.length >= 80);
+        if (isCodeTrace) {
+          codeTraceCount += 1;
+          operationEvidenceTrail.push({
+            operationId: 'WORKED_CODE_TRACE',
+            conceptName: name,
+            substanceType,
+            transcriptAnchors: anchors.length > 0 ? anchors : [def.slice(0, 120)],
+            decision: 'CREDITED_HARD_CAPACITY'
+          });
         }
       }
+    }
 
-      // Cap hard angles per single concept to validated operations
-      totalHard += Math.min(conceptHardAngles, 2);
+    const wordCount = options.wordCount || 0;
+    const isBriefExcerpt = wordCount < 150 || (options.curricularSegmentsCount > 0 && options.curricularSegmentsCount <= 4);
+
+    let totalHard = 0;
+    if (isBriefExcerpt) {
+      // In a brief excerpt (< 150 words or <= 4 sentences):
+      // - A multi-hop causal sequence forms 1 cohesive causal chain (Op 5) -> max 1 Hard
+      // - A literary critique of a text forms 1 interpretive critique (Op 6) -> max 1 Hard
+      // - A mathematical proof forms at most 2 deductive proof targets (Op 4) -> max 2 Hard
+      // - A structural invariant / boundary violation (Op 1) -> max 1 Hard
+      // - Overall upper bound ceiling for brief excerpts: at most 2 Hard targets.
+      const causalHard = Math.min(op5Count > 0 ? 1 : 0, 1);
+      const critiqueHard = Math.min(op6Count > 0 ? 1 : 0, 1);
+      const proofHard = Math.min(op4Count, 2);
+      const invariantHard = Math.min(op1Count > 0 ? 1 : 0, 1);
+      const codeHard = Math.min(codeTraceCount, 1);
+
+      totalHard = Math.min(2, causalHard + critiqueHard + proofHard + invariantHard + codeHard);
+    } else {
+      // Standard / full lecture: concepts contribute their validated reasoning operations
+      const causalHard = Math.min(Math.ceil(op5Count / 2), 4);
+      const critiqueHard = Math.min(Math.ceil(op6Count / 2), 4);
+      const proofHard = Math.min(op4Count, 5);
+      const invariantHard = Math.min(op1Count, 5);
+      const codeHard = Math.min(codeTraceCount, 3);
+
+      totalHard = causalHard + critiqueHard + proofHard + invariantHard + codeHard;
     }
 
     const totalDefensibleCapacity = totalEasy + totalMedium + totalHard;
@@ -277,7 +387,8 @@ class LectureIntelligence {
       recommendedByDifficulty,
       capacityByDifficulty,
       totalDefensibleCapacity,
-      advisoryRationale
+      advisoryRationale,
+      operationEvidenceTrail
     };
   }
 
@@ -368,6 +479,50 @@ class LectureIntelligence {
     const rawText = (evidenceText || '').trim();
     const depthResult = depthAnalyzer.analyzeLecture(rawText);
 
+    const isAcademic = Boolean(depthResult?.isAcademic);
+    const isCurricular = Boolean(depthResult?.isCurricular);
+    const classification = depthResult?.academicClassification || (isAcademic ? 'ACADEMIC' : 'UNCERTAIN');
+
+    if (!isCurricular || !isAcademic) {
+      const isDefinitivelyNonAcademic = classification === 'NON_ACADEMIC';
+      return {
+        schema_version: SCHEMA_VERSION,
+        status: isDefinitivelyNonAcademic ? 'NON_ACADEMIC_EVIDENCE' : 'UNCERTAIN_CURRICULAR_EVIDENCE',
+        isPartial: true,
+        isAcademic: false,
+        academicClassification: classification,
+        fallbackReason: depthResult?.reason || (isDefinitivelyNonAcademic ? 'Recording contains no assessable instructional content.' : 'Recording contains ambiguous or unverified curricular evidence.'),
+        input_modality: modality,
+        title: isDefinitivelyNonAcademic ? 'Non-Academic Content' : 'Uncertain Curricular Content',
+        domain: { field: 'General', subfield: isDefinitivelyNonAcademic ? 'Non-Curricular' : 'Uncertain' },
+        summary: isDefinitivelyNonAcademic ? 'No assessable curriculum detected.' : 'Ambiguous discourse: unable to verify instructional curriculum.',
+        chapters: [],
+        pedagogicalCritique: {
+          explanatoryDepth: [],
+          reasoningDepth: [],
+          practicalDemonstrations: [],
+          discourseStyle: [],
+          evidenceQuotes: [],
+          limitationsOfExcerpt: 'Non-academic content.'
+        },
+        conceptMap: [],
+        evidenceCapacity: {
+          distinctConceptCount: 0,
+          recommendedQuestionCount: 0,
+          capacityByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+          recommendedByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+          totalDefensibleCapacity: 0,
+          advisoryRationale: 'No questions recommended: Recording contains no assessable instructional curriculum.'
+        },
+        auditTrail: {
+          modelUsed: 'deterministic-depth-analyzer-v1',
+          analyzedAt: new Date().toISOString(),
+          inputWordCount: (rawText.split(/\s+/).filter(Boolean)).length,
+          evidenceCharacterCount: rawText.length
+        }
+      };
+    }
+
     // Extract genuine title from framing or detected focus (ignoring decoy file name)
     let title = 'Lecture Analysis';
     if (depthResult.detectedFocus && depthResult.detectedFocus.length > 0) {
@@ -378,39 +533,120 @@ class LectureIntelligence {
     const wordCount = words.length;
     const isBriefExcerpt = wordCount < 150;
 
-    // Build partial concept map strictly from verified curricular segments (safety guard 30)
-    const concepts = (depthResult.detectedFocus || []).slice(0, 30).map((term, i) => {
-      const match = depthResult.curricularSegments.find(s => (s.text || '').toLowerCase().includes(term.toLowerCase()));
-      return {
+    // Curricular Concept Map:
+    // Deduplicate concepts by canonical topic/name across curricular segments.
+    // Identical repetitive segments aggregate their source anchors rather than spawning artificial (Aspect N) concepts.
+    const curricularSegs = depthResult.curricularSegments || [];
+    const conceptMap = new Map();
+    const focusList = depthResult.detectedFocus || [];
+
+    for (let i = 0; i < curricularSegs.length; i++) {
+      const seg = curricularSegs[i];
+      const links = seg.classification?.concept_links || [];
+      const matched = seg.classification?.matchedTerms || [];
+      const segText = seg.text || '';
+      const focusMatches = focusList.filter(t => segText.toLowerCase().includes(t.toLowerCase()));
+
+      let candidateName = focusMatches[0] || links.find(l => focusList.some(f => f.toLowerCase() === l.toLowerCase())) || links[0] || matched[0];
+      if (!candidateName || candidateName === 'Core Curriculum' || candidateName === 'Academic Curriculum') {
+        candidateName = focusMatches[0] || links.find(l => l !== 'Core Curriculum' && l !== 'Academic Curriculum');
+      }
+
+      if (!candidateName && focusList.length > 0) {
+        candidateName = focusList[conceptMap.size % focusList.length];
+      }
+
+      if (!candidateName) {
+        candidateName = `Concept ${conceptMap.size + 1}`;
+      }
+
+      const normKey = candidateName.toLowerCase().trim().replace(/s$/, '');
+      const substanceType = seg.classification?.substanceType || 'DEFINITION';
+      const hasSubstantiveMech = ['RULE_OR_CONDITION', 'FORMAL_DERIVATION', 'CRITIQUE_OR_INTERPRETATION', 'MECHANISM', 'COMPARISON'].includes(substanceType);
+      const anchorId = `seg_${i + 1}`;
+
+      if (conceptMap.has(normKey)) {
+        const existing = conceptMap.get(normKey);
+        if (!existing.sourceAnchors.includes(anchorId)) {
+          existing.sourceAnchors.push(anchorId);
+        }
+        if (!existing.mechanism_or_rule && hasSubstantiveMech) {
+          existing.mechanism_or_rule = seg.text;
+          existing.substanceType = substanceType;
+        }
+        if (seg.text && (!existing.definition || existing.definition.length < seg.text.length)) {
+          existing.definition = seg.text;
+        }
+      } else if (conceptMap.size < 25) {
+        conceptMap.set(normKey, {
+          id: `C${String(conceptMap.size + 1).padStart(2, '0')}`,
+          name: candidateName,
+          definition: seg.text || `Instructional concept covered in lecture regarding ${candidateName}.`,
+          mechanism_or_rule: hasSubstantiveMech ? seg.text : null,
+          substanceType,
+          sourceAnchors: [anchorId],
+          prerequisites: []
+        });
+      }
+    }
+
+    let concepts = Array.from(conceptMap.values());
+    if (concepts.length === 0 && focusList.length > 0) {
+      concepts = focusList.slice(0, 15).map((term, i) => ({
         id: `C${String(i + 1).padStart(2, '0')}`,
         name: term,
-        definition: match ? match.text : `Instructional concept covered in lecture regarding ${term}.`,
-        mechanism_or_rule: null, // Safeguard 1: Do not invent mechanism in fallback
-        substanceType: match?.classification?.substanceType || 'DEFINITION',
+        definition: `Instructional concept covered in lecture regarding ${term}.`,
+        mechanism_or_rule: null,
+        substanceType: 'DEFINITION',
         sourceAnchors: [`seg_${i + 1}`],
         prerequisites: []
-      };
-    });
+      }));
+    }
 
     // Safeguard 5: Excerpt-aware pedagogical critique (not labeled deficient)
     const limitationNote = isBriefExcerpt
       ? `The submitted evidence is a brief excerpt (${wordCount} words). Absence of worked examples or student interaction reflects excerpt scope rather than instructional deficiency.`
       : 'Automated fallback generated via deterministic evidence analysis.';
 
+    const explanatoryDepth = ['DEFINITION_AND_TERMINOLOGY'];
+    if (depthResult.hasFormalDerivation) explanatoryDepth.push('THEORETICAL_DERIVATION');
+    if (depthResult.hasCritique) explanatoryDepth.push('CRITIQUE_AND_EVALUATION');
+    if (depthResult.hasMech) explanatoryDepth.push('OPERATIONAL_MECHANISM');
+    if (depthResult.hasComp) explanatoryDepth.push('COMPARATIVE_TRADEOFF');
+
+    let reasoningDepth = ['ASSERTION_BASED'];
+    const rChar = depthResult.lectureDepth?.characteristics?.reasoning;
+    if (rChar === 'Strong' || depthResult.hasRule || depthResult.hasFormalDerivation || depthResult.hasCritique) {
+      reasoningDepth = ['INVARIANT_AND_CAUSAL'];
+    } else if (rChar === 'Moderate') {
+      reasoningDepth = ['MOTIVATION_PROVIDED'];
+    }
+
+    const practicalDemonstrations = [];
+    if (depthResult.curricularSegments?.some(s => s.classification?.substanceType === 'CODE_IMPLEMENTATION' || s.classification?.substanceType === 'WORKED_EXAMPLE')) {
+      practicalDemonstrations.push('WORKED_TRACE_OR_CODE');
+    } else if (depthResult.hasAnalogy) {
+      practicalDemonstrations.push('CONCEPTUAL_ANALOGY');
+    } else {
+      practicalDemonstrations.push('NOT_OBSERVED_IN_EXCERPT');
+    }
+
     const fallbackPedagogicalCritique = {
-      explanatoryDepth: depthResult.isCurricular ? ['DEFINITION_AND_TERMINOLOGY'] : [],
-      reasoningDepth: ['ASSERTION_BASED'],
-      practicalDemonstrations: ['NOT_OBSERVED_IN_EXCERPT'],
+      explanatoryDepth,
+      reasoningDepth,
+      practicalDemonstrations,
       discourseStyle: ['MONOLOGUE_LECTURE'],
       evidenceQuotes: [],
       negativeBoundaries: Array.isArray(negativeBoundaries) ? negativeBoundaries : [],
       limitationsOfExcerpt: limitationNote
     };
 
-    return {
+    const result = {
       schema_version: SCHEMA_VERSION,
       status: 'PARTIAL_ANALYSIS_FALLBACK',
       isPartial: true,
+      isAcademic: true,
+      academicClassification: depthResult.academicClassification || 'ACADEMIC',
       fallbackReason: errorReason,
       input_modality: modality,
       title,
@@ -448,6 +684,9 @@ class LectureIntelligence {
         evidenceCharacterCount: rawText.length
       }
     };
+
+    result.operationEvidenceTrail = result.evidenceCapacity?.operationEvidenceTrail || [];
+    return result;
   }
 
   /**
