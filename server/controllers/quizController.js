@@ -4688,7 +4688,7 @@ exports.analyzeDepth = async (req, res) => {
         const recBreakdown = analysis.lectureDepth?.breakdown;
         const fallbackRecCount = recBreakdown?.recommendedQuestionCount || 5;
         const chars = analysis.lectureDepth?.characteristics || {};
-        const supportsHard = chars.reasoning === 'Strong' || chars.procedures === 'Strong';
+        const supportsHard = chars.reasoning === 'Strong' || chars.procedures === 'Strong' || chars.examples === 'Present' || (analysis.curricularSegments && analysis.curricularSegments.length > 0);
 
         let recommendedByDifficulty;
         let capacityByDifficulty;
@@ -4704,14 +4704,19 @@ exports.analyzeDepth = async (req, res) => {
             recommendedQuestionCount = 0;
             recommendedQuestions = '0 Questions';
         } else if (evCap && evCap.recommendedByDifficulty) {
-            recommendedByDifficulty = evCap.recommendedByDifficulty;
-            capacityByDifficulty = evCap.capacityByDifficulty || {
+            recommendedByDifficulty = { ...evCap.recommendedByDifficulty };
+            capacityByDifficulty = evCap.capacityByDifficulty ? { ...evCap.capacityByDifficulty } : {
                 easy: evCap.recommendedByDifficulty.easy,
                 medium: evCap.recommendedByDifficulty.medium,
                 hard: evCap.recommendedByDifficulty.hard,
                 balanced: evCap.totalDefensibleCapacity || evCap.recommendedQuestionCount
             };
-            totalDefensibleCapacity = evCap.totalDefensibleCapacity || (evCap.recommendedByDifficulty.easy + evCap.recommendedByDifficulty.medium + evCap.recommendedByDifficulty.hard);
+            if (recommendedByDifficulty.hard === 0 && supportsHard && fallbackRecCount >= 3) {
+                const derivedHard = Math.max(1, Math.round(fallbackRecCount * 0.35));
+                recommendedByDifficulty.hard = derivedHard;
+                capacityByDifficulty.hard = Math.max(capacityByDifficulty.hard || 0, derivedHard);
+            }
+            totalDefensibleCapacity = evCap.totalDefensibleCapacity || (recommendedByDifficulty.easy + recommendedByDifficulty.medium + recommendedByDifficulty.hard);
             advisoryRationale = evCap.advisoryRationale || '';
             recommendedQuestionCount = evCap.recommendedQuestionCount || fallbackRecCount;
         } else {

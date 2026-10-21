@@ -1956,12 +1956,22 @@ export default function CreateQuizTopic() {
                                             
                                             {(() => {
                                                 const selKey = (difficulty || 'Balanced').toLowerCase();
-                                                const curRec = recommendedByDifficulty && recommendedByDifficulty[selKey] !== undefined
+                                                const baseRec = recommendedQuestionCount || 5;
+                                                let curRec = recommendedByDifficulty && recommendedByDifficulty[selKey] !== undefined
                                                     ? recommendedByDifficulty[selKey]
-                                                    : (recommendedQuestionCount || 5);
-                                                const curCap = capacityByDifficulty && capacityByDifficulty[selKey] !== undefined
+                                                    : baseRec;
+                                                
+                                                // Teacher Intent Hard Support: if user selects Hard and base lecture supports questions, support Hard tier
+                                                if (selKey === 'hard' && curRec === 0 && baseRec >= 2) {
+                                                    curRec = Math.max(1, Math.round(baseRec * 0.35));
+                                                }
+
+                                                let curCap = capacityByDifficulty && capacityByDifficulty[selKey] !== undefined
                                                     ? capacityByDifficulty[selKey]
                                                     : null;
+                                                if (selKey === 'hard' && (curCap === null || curCap === 0) && curRec > 0) {
+                                                    curCap = curRec;
+                                                }
 
                                                 return (
                                                     <div className="flex items-center justify-between sm:justify-end gap-3 flex-wrap">

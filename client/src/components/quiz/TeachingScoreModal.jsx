@@ -75,11 +75,13 @@ export default function TeachingScoreModal({
     const recBalanced = recommendedByDifficulty?.balanced ?? recommendedQuestionCount ?? 5;
     const recEasy = recommendedByDifficulty?.easy ?? Math.min(recBalanced, 5);
     const recMedium = recommendedByDifficulty?.medium ?? Math.min(recBalanced, 5);
-    const recHard = recommendedByDifficulty?.hard ?? 0;
+    const recHard = (recommendedByDifficulty?.hard !== undefined && recommendedByDifficulty.hard > 0)
+        ? recommendedByDifficulty.hard
+        : (recBalanced >= 3 ? Math.max(1, Math.round(recBalanced * 0.35)) : (recBalanced > 0 ? 1 : 0));
 
     const capEasy = capacityByDifficulty?.easy ?? recEasy;
     const capMedium = capacityByDifficulty?.medium ?? recMedium;
-    const capHard = capacityByDifficulty?.hard ?? recHard;
+    const capHard = Math.max(capacityByDifficulty?.hard ?? 0, recHard);
 
     // 4. Dynamic Teacher Motivation & "The Kick" Generator
     // Every lecture gets a tailored review, authentic appreciation, and genuine growth tip
