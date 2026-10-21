@@ -366,6 +366,43 @@ function failTask(taskId, error, errorCode = 'FAILED_INTERNAL') {
  * @param {string} [requestingUserId]
  * @returns {Object|null}
  */
+
+/**
+ * Retrieve all active and recent generation tasks for a given user.
+ * Enables cross-device session handover (laptop to phone).
+ *
+ * @param {string} userId
+ * @returns {Array<Object>}
+ */
+function getUserActiveTasks(userId) {
+  if (!userId) return [];
+  const userTasks = [];
+  for (const task of tasks.values()) {
+    if (task.userId === userId && task.status !== 'EXPIRED') {
+      userTasks.push({
+        id: task.id,
+        taskId: task.id,
+        status: task.status,
+        state: task.state || task.status,
+        stage: task.stage,
+        stageLabel: task.stageLabel,
+        progressPct: task.progressPct || 0,
+        representation_mode: task.representation_mode || null,
+        createdAt: task.createdAt,
+        completedAt: task.completedAt || null,
+        error: task.error || null,
+        errorCode: task.errorCode || null,
+        result: task.result ? {
+          title: task.result.title,
+          questionCount: Array.isArray(task.result.questions) ? task.result.questions.length : 0,
+          duration: task.result.duration
+        } : null
+      });
+    }
+  }
+  return userTasks.sort((a, b) => b.createdAt - a.createdAt);
+}
+
 function getTask(taskId, requestingUserId = null) {
   const task = tasks.get(taskId);
   if (!task) return null;
@@ -416,6 +453,7 @@ module.exports = {
   completeTask,
   failTask,
   getTask,
+  getUserActiveTasks,
   getActiveRunningJobCount,
   calculateAdaptiveTimeoutMs
 };

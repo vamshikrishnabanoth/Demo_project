@@ -343,6 +343,19 @@ router.post('/generate/callback/:taskId', auth, quizController.taskCompleteCallb
 
 // @route   GET api/quiz/generate/status/:taskId
 // @desc    Poll status of an async generation task with multi-tenant ownership verification
+
+// @route   GET api/quiz/generate/active-tasks
+// @desc    Get all in-progress and recent generation tasks for the authenticated teacher across any device
+router.get('/generate/active-tasks', auth, (req, res) => {
+    try {
+        const { getUserActiveTasks } = require('../services/taskManager');
+        const userTasks = getUserActiveTasks(req.user?.id);
+        res.json(userTasks);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch active tasks: ' + err.message });
+    }
+});
+
 router.get('/generate/status/:taskId', auth, (req, res) => {
     let task;
     try {
