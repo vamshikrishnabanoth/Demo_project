@@ -55,7 +55,7 @@ class LLMRouter {
 
     // Resolve model cleanly: use active models on user key
     let primaryModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
-    let fallbackModel = process.env.GROQ_FALLBACK_MODEL || 'openai/gpt-oss-20b';
+    let fallbackModel = process.env.GROQ_FALLBACK_MODEL || 'llama-3.3-70b-versatile';
     if (model) {
       primaryModel = model;
     }
@@ -94,19 +94,22 @@ class LLMRouter {
       }
     }
 
-    // 3. Try Local Ollama / FastAPI AI service
-    try {
-      return await this._callOllama({ prompt, systemPrompt, temperature, model: model || 'quiz-expert', sessionId });
-    } catch (err) {
-      errors.push(`Local Ollama (${err.message})`);
-    }
-
-    // 4. Try Local vLLM if configured
-    if (this.vllmUrl) {
+    // 3. Try Local Ollama / FastAPI AI service (Dev-only / Explicitly enabled)
+    const isLocalLlmEnabled = process.env.ENABLE_LOCAL_LLM === 'true' || process.env.LOCAL_AI_ENABLED === 'true';
+    if (isLocalLlmEnabled) {
       try {
-        return await this._callVLLM({ prompt, systemPrompt, temperature, sessionId });
+        return await this._callOllama({ prompt, systemPrompt, temperature, model: model || 'quiz-expert', sessionId });
       } catch (err) {
-        errors.push(`vLLM (${err.message})`);
+        errors.push(`Local Ollama (${err.message})`);
+      }
+
+      // 4. Try Local vLLM if configured
+      if (this.vllmUrl) {
+        try {
+          return await this._callVLLM({ prompt, systemPrompt, temperature, sessionId });
+        } catch (err) {
+          errors.push(`vLLM (${err.message})`);
+        }
       }
     }
 
@@ -151,7 +154,8 @@ class LLMRouter {
     const keys = this._getGroqKeys();
     if (keys.length === 0) throw new Error('GROQ_API_KEY is missing');
 
-    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel, process.env.GROQ_TERTIARY_MODEL, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b'].filter(Boolean)));
+    // 1-Primary + 1-Fallback Standard: Exclude degraded 20B (50% hallucination) & Qwen (147s latency)
+    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel].filter(Boolean)));
     const totalKeys = keys.length;
     let lastErr = null;
 

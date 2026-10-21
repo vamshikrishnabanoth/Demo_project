@@ -114,7 +114,8 @@ function isStudentTargeted(student, assignedGroups, assignedStudents) {
  * with automatic model failovers (Groq Whisper Turbo -> Groq Whisper Large-v3 -> Google Gemini Multimodal AI).
  */
 const _rawTranscribeAudioWithTimestamps = async (filePath) => {
-    // 1. Try local Python faster-whisper service only if AI_SERVICE_URL is local or responsive
+    // 1. Try local Python faster-whisper service ONLY if ENABLE_LOCAL_STT === 'true'
+    if (process.env.ENABLE_LOCAL_STT === 'true') {
     try {
         const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
         const isNgrokOrRemote = AI_SERVICE_URL.includes('ngrok') || AI_SERVICE_URL.includes('.dev') || AI_SERVICE_URL.includes('.app');
@@ -154,6 +155,7 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
     } catch (err) {
         console.log(`ℹ️ Local timestamp transcription failed (${err.message}). Falling back to Cloud STT...`);
     }
+    }
 
     // 2. Production STT: Groq Whisper Turbo / Large-v3 with Gemini Multimodal Fallback
     const groqKey = process.env.GROQ_API_KEY;
@@ -180,7 +182,7 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
     // Helper: Call Groq with model fallback (whisper-large-v3-turbo -> whisper-large-v3) & retry on 429
     const callGroqWhisper = async (uploadFile, preferredModel = 'whisper-large-v3-turbo') => {
         if (!groqClient) throw new Error('Groq client not configured');
-        const modelsToTry = [preferredModel, 'whisper-large-v3-turbo', 'whisper-large-v3'].filter((v, i, a) => a.indexOf(v) === i);
+        const modelsToTry = [preferredModel, 'whisper-large-v3-turbo'].filter((v, i, a) => a.indexOf(v) === i);
         let lastError = null;
 
         for (const modelName of modelsToTry) {

@@ -15,12 +15,21 @@ const providerConfig = {
   text: {
     primaryProvider: process.env.TEXT_PROVIDER || 'groq',
     primaryModel: process.env.TEXT_MODEL || 'openai/gpt-oss-120b',
-    fallbackProvider: process.env.TEXT_FALLBACK_PROVIDER || 'groq',
-    fallbackModel: process.env.TEXT_FALLBACK_MODEL || 'openai/gpt-oss-20b',
+    fallbackProvider: process.env.TEXT_FALLBACK_PROVIDER || 'gemini',
+    fallbackModel: process.env.TEXT_FALLBACK_MODEL || 'gemini-2.5-flash',
     plannerModel: process.env.PLANNER_MODEL || 'openai/gpt-oss-120b',
-    fastModel: process.env.FAST_MODEL || 'openai/gpt-oss-20b',
+    fastModel: process.env.FAST_MODEL || 'gemini-2.5-flash',
     timeoutMs: parseInt(process.env.LLM_TIMEOUT_MS, 10) || 60000,
     maxRetries: parseInt(process.env.LLM_MAX_RETRIES, 10) || 3
+  },
+
+  // Speech-to-Text (STT) Models (Clean 1-Primary + 1-Fallback Standard)
+  stt: {
+    primaryProvider: process.env.STT_PROVIDER || 'groq',
+    primaryModel: process.env.STT_MODEL || 'whisper-large-v3-turbo',
+    fallbackProvider: process.env.STT_FALLBACK_PROVIDER || 'gemini',
+    fallbackModel: process.env.STT_FALLBACK_MODEL || 'gemini-2.5-flash',
+    enableLocal: process.env.ENABLE_LOCAL_STT === 'true'
   },
 
   // Vision Models & Visual Understanding

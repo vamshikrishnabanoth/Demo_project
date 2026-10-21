@@ -1186,6 +1186,7 @@ class PipelineOrchestrator {
         evidenceSafety: 'UNKNOWN',
         quizQualityStatus: 'FAILED',
         error: failureReason,
+        deliveredCount: 0,
         questions: [],
         unfulfilledTargets: [],
         rejectedTargets: [],

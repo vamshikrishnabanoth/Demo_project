@@ -209,7 +209,7 @@ async function runSuite() {
 
       try {
         const sessionInputs = {
-          voiceTranscript: 'In today lecture we discuss operating system virtual memory and address translation.',
+          voiceTranscript: 'Virtual memory in operating systems enables processes to execute with non-contiguous physical memory allocation. Paging maps virtual page numbers to physical frame numbers using page tables, while translation lookaside buffers cache frequent address translations to minimize memory access latency.',
           count: 3,
           difficulty: 'Medium'
         };
