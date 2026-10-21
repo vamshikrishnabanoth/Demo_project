@@ -323,6 +323,7 @@ function resolveTargetProvenance(target = {}, evidencePackage = null, evalResult
 
   let timeSpan = null;
   let hasRealTimestamps = false;
+  let timestampProvenance = 'UNAVAILABLE';
 
   if (timedChildren.length > 0) {
     const minStart = Math.min(...timedChildren.map(getChildStart));
@@ -331,9 +332,11 @@ function resolveTargetProvenance(target = {}, evidencePackage = null, evalResult
       start: minStart,
       end: maxEnd,
       formatted: `${formatTs(minStart)} - ${formatTs(maxEnd)}`,
-      hasRealTimestamps: true
+      hasRealTimestamps: true,
+      provenance: 'GENUINE'
     };
     hasRealTimestamps = true;
+    timestampProvenance = 'GENUINE';
   }
 
   // 4. Truthful Modality Attribution (Safeguard 4: Do not overstate alignment)
@@ -382,6 +385,7 @@ function resolveTargetProvenance(target = {}, evidencePackage = null, evalResult
     parentChunks,
     timeSpan,
     hasRealTimestamps,
+    timestampProvenance,
     sourceOrigin,
     isEvidenceVerified,
     verificationStatus

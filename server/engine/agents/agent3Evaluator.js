@@ -140,19 +140,15 @@ class Agent3Evaluator {
       evidenceContext = directEvidence;
     }
 
-    // 4. Deterministic Option & Cognitive Pre-Audit Gate
-    // If any deterministic contract, ambiguity, foreign contamination, or cognitive mismatch is detected,
-    // reject IMMEDIATELY without wasting LLM tokens or risking LLM hallucination.
-    const deterministicResult = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
-    if (deterministicResult.status === 'FAIL') {
+    // 4. Check if deterministic-only mode requested
+    const isDeterministicOnly = options.skipLLM || process.env.AGENT3_MODE === 'deterministic_only';
+    if (isDeterministicOnly) {
+      const deterministicResult = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
+      deterministicResult.verificationMethod = 'DETERMINISTIC_AUDIT';
+      deterministicResult.isFallback = false;
+      deterministicResult.isLLMVerified = false;
       return deterministicResult;
     }
-
-    // If deterministic pre-audit passed and offline/test/deterministic mode requested, return verified result directly
-    if (options.skipLLM || process.env.NODE_ENV === 'test' || !process.env.AGENT3_FORCE_LLM) {
-      return deterministicResult;
-    }
-
     const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
     const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
@@ -244,7 +240,20 @@ ${evidenceContext}
       parsed.optionAnalysis = Array.isArray(parsed.optionAnalysis) ? parsed.optionAnalysis : [];
       parsed.verificationMethod = 'LLM_EVALUATION';
       parsed.isFallback = false;
+      parsed.isLLMVerified = true;
+      parsed.tier = parsed.tier || parsed.evidenceGrounding?.tier || 'DIRECT_EVIDENCE';
+      parsed.groundingScore = typeof parsed.groundingScore === 'number' ? parsed.groundingScore : (parsed.evidenceGrounding?.groundingScore || 0.95);
       parsed.repair = { attempted: false, successful: false, repairAttempts: 0, instruction: null };
+
+      // Hard enforcement: If tier is UNSUPPORTED_FOREIGN, override status to FAIL
+      if (parsed.tier === 'UNSUPPORTED_FOREIGN') {
+        parsed.status = 'FAIL';
+        parsed.passed = false;
+        parsed.verdict = 'FAIL';
+        if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
+          parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION);
+        }
+      }
 
       // Ensure distractor plausibility for valid distractors is normalized to HIGH
       if (parsed.optionAnalysis.length > 0) {
@@ -267,8 +276,46 @@ ${evidenceContext}
 
       return parsed;
     } catch (err) {
-      console.warn(`⚠️ [Agent 3] LLM evaluation notice (${err.message}). Engaging deterministic audit fallback.`);
-      return deterministicResult;
+      console.warn(`⚠️ [Agent 3] LLM evaluation notice (${err.message}). Engaging deterministic fallback.`);
+      const deterministicResult = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
+      const fallbackResult = { ...deterministicResult };
+      fallbackResult.verificationMethod = 'UNAUDITED_HEURISTIC_FALLBACK';
+      fallbackResult.isFallback = true;
+      fallbackResult.isLLMVerified = false;
+      fallbackResult.criticUnavailable = true;
+      fallbackResult.criticUnavailableReason = err.message;
+
+      const gScore = fallbackResult.evidenceGrounding?.groundingScore != null ? fallbackResult.evidenceGrounding.groundingScore : fallbackResult.groundingScore;
+      const isForeign = fallbackResult.tier === 'UNSUPPORTED_FOREIGN' ||
+        fallbackResult.evidenceGrounding?.tier === 'UNSUPPORTED_FOREIGN' ||
+        fallbackResult.failureReasons?.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION) ||
+        fallbackResult.failureReasons?.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) ||
+        (typeof gScore === 'number' && gScore < 0.20);
+
+      if (fallbackResult.status === 'FAIL' || isForeign) {
+        fallbackResult.status = 'FAIL';
+        fallbackResult.passed = false;
+        fallbackResult.verdict = 'FAIL';
+        fallbackResult.tier = 'UNSUPPORTED_FOREIGN';
+        fallbackResult.groundingScore = typeof gScore === 'number' ? gScore : 0.0;
+        if (!fallbackResult.failureReason) {
+          fallbackResult.failureReason = 'Question rejected due to insufficient evidence overlap (LLM unavailable fallback)';
+        } else if (isForeign && !fallbackResult.failureReason.includes('insufficient evidence overlap')) {
+          fallbackResult.failureReason += '; insufficient evidence overlap';
+        }
+        if (!fallbackResult.failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM)) {
+          fallbackResult.failureReasons.push(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM);
+        }
+      } else {
+        fallbackResult.status = 'PASS';
+        fallbackResult.passed = true;
+        fallbackResult.verdict = 'PASS';
+        fallbackResult.tier = 'VERIFICATION_FALLBACK';
+        fallbackResult.groundingScore = (typeof gScore === 'number' && gScore > 0) ? gScore : 0.85;
+        fallbackResult.auditNotice = `Audited via deterministic lexical evidence match fallback (${err.message}).`;
+      }
+
+      return fallbackResult;
     }
   }
 
@@ -506,9 +553,11 @@ ${evidenceContext}
     }
 
     // 1. Pre-Check & Option Count Validation
+    let preCheckFailureReason = null;
     const preCheck = deterministicValidator.runPreChecks(candidateMCQ);
     if (!preCheck.isValid) {
       failureReasons.push(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR);
+      preCheckFailureReason = `Pre-checks failed: ${preCheck.reason || 'Invalid candidate MCQ format or missing options'}`;
     }
 
     // 2. Correct Answer Inclusion Check
@@ -751,13 +800,17 @@ ${evidenceContext}
     const score = passed ? 0.95 : Math.max(0.1, Number((0.8 - failureReasons.length * 0.2).toFixed(2)));
     const repairInstruction = passed ? null : this._synthesizeRepairInstruction(failureReasons, candidateMCQ, target);
 
+    const isUnsupported = foreignDomainDetected || failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION) || failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) || groundingScore < 0.20;
+    const resultTier = isUnsupported ? 'UNSUPPORTED_FOREIGN' : (passed ? 'DIRECT_EVIDENCE' : 'EVIDENCE_DERIVED');
     return {
       status,
       passed,
       score,
       verdict: status,
+      tier: resultTier,
+      groundingScore,
       failureReasons,
-      failureReason: failureReasons.length > 0 ? failureReasons.join('; ') : null,
+      failureReason: preCheckFailureReason || (failureReasons.length > 0 ? failureReasons.join('; ') : null),
       repairInstruction,
       optionAnalysis,
       cognitiveAudit: {

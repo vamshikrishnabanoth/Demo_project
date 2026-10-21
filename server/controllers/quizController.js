@@ -244,12 +244,16 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                 console.log(`🎙️ Transcribing short audio directly (${probedDuration ? probedDuration.toFixed(1) + 's' : (fileSizeBytes / (1024 * 1024)).toFixed(2) + ' MB'})...`);
                 const groqUploadFile = await toFile(fs.createReadStream(filePath), path.basename(filePath));
                 let data = null;
+                let actualModel = 'whisper-large-v3-turbo';
+                let actualProvider = 'groq';
                 try {
                     data = await callGroqWhisper(groqUploadFile, 'whisper-large-v3-turbo');
                 } catch (groqErr) {
                     console.warn(`⚠️ Groq direct transcription failed: ${groqErr.message}. Checking Gemini fallback...`);
                     if (geminiKey) {
                         data = await transcribeChunkWithGemini(filePath);
+                        actualModel = 'gemini-1.5-flash';
+                        actualProvider = 'gemini';
                     } else {
                         throw groqErr;
                     }
@@ -260,14 +264,17 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                     const rawSegs = Array.isArray(data.segments) ? data.segments : [];
                     const duration = data.duration || probedDuration || (rawSegs.length > 0 ? rawSegs[rawSegs.length - 1].end : 0);
 
-                    const segments = rawSegs.length > 0 ? rawSegs.map((seg, idx) => ({
+                    const hasRealTs = rawSegs.length > 0;
+                    const segments = hasRealTs ? rawSegs.map((seg, idx) => ({
                         id: `seg_${idx + 1}`,
                         start: seg.start,
                         end: seg.end,
                         timestamp: formatTs(seg.start),
                         timestamp_end: formatTs(seg.end),
                         text: (seg.text || '').trim(),
-                        speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher'
+                        speaker: (seg.text || '').toLowerCase().startsWith('student:') || (seg.text || '').toLowerCase().startsWith('sir,') ? 'Student' : 'Teacher',
+                        provenance: 'GENUINE',
+                        hasRealTimestamps: true
                     })) : [
                         {
                             id: 'seg_1',
@@ -276,12 +283,14 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                             timestamp: formatTs(0),
                             timestamp_end: formatTs(duration),
                             text: fullText,
-                            speaker: 'Teacher'
+                            speaker: 'Teacher',
+                            provenance: 'UNAVAILABLE',
+                            hasRealTimestamps: false
                         }
                     ];
 
                     if (fullText.length >= 5) {
-                        console.log(`✅ Direct transcription successful (${fullText.length} chars, ${duration.toFixed(1)}s, 1 chunk)!`);
+                        console.log(`✅ Direct transcription successful (${fullText.length} chars, ${duration.toFixed(1)}s, 1 chunk via ${actualModel})!`);
                         return {
                             text: fullText,
                             rawText: fullText,
@@ -289,7 +298,10 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                             duration: duration,
                             duration_formatted: formatTs(duration),
                             language: data.language || 'en',
-                            model: 'whisper-large-v3-turbo',
+                            model: actualModel,
+                            sttProvider: actualProvider,
+                            hasRealTimestamps: hasRealTs,
+                            timestampProvenance: hasRealTs ? 'GENUINE' : 'UNAVAILABLE',
                             chunks_count: 1
                         };
                     }
@@ -352,6 +364,8 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                 let chunkSegs = [];
                 let chunkDuration = chunk.durationEstimate || 600;
                 let transcribed = false;
+                let chunkModel = 'whisper-large-v3-turbo';
+                let chunkProvider = 'groq';
 
                 // 1. Try Groq Whisper Large-v3-turbo / Large-v3
                 if (groqKey) {
@@ -362,6 +376,8 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                         chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
                         chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : chunkDuration);
                         transcribed = true;
+                        chunkModel = 'whisper-large-v3-turbo';
+                        chunkProvider = 'groq';
                         console.log(`✅ [Groq Whisper][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} transcribed (${chunkText.length} chars, ${chunkDuration.toFixed(1)}s)`);
                     } catch (groqErr) {
                         console.warn(`⚠️ [Groq Whisper][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} Groq error (${groqErr.message}). Escalating to Gemini fallback...`);
@@ -377,6 +393,8 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                             chunkText = sanitizeTranscriptEchoes(geminiRes.text.trim());
                             chunkSegs = [];
                             transcribed = true;
+                            chunkModel = 'gemini-1.5-flash';
+                            chunkProvider = 'gemini';
                             console.log(`✅ [Gemini STT][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} transcribed (${chunkText.length} chars)`);
                         }
                     } catch (geminiErr) {
@@ -388,7 +406,7 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                     console.warn(`⚠️ Could not transcribe chunk ${chunkNum}. Continuing with remaining chunks.`);
                 }
 
-                chunkResults[currentIndex] = { chunk, chunkText, chunkSegs, chunkDuration, i: currentIndex };
+                chunkResults[currentIndex] = { chunk, chunkText, chunkSegs, chunkDuration, chunkModel, chunkProvider, i: currentIndex };
             }
         });
 
@@ -458,8 +476,15 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
         const fullText = textParts.join(' ').trim();
         const finalDuration = probedDuration || cumulativeDuration;
 
+        const usedModels = Array.from(new Set(chunkResults.filter(Boolean).map(c => c.chunkModel)));
+        const finalModel = usedModels.length === 1 ? usedModels[0] : `hybrid (${usedModels.join(' + ')})`;
+        const usedProviders = Array.from(new Set(chunkResults.filter(Boolean).map(c => c.chunkProvider)));
+        const finalProvider = usedProviders.length === 1 ? usedProviders[0] : `hybrid (${usedProviders.join(' + ')})`;
+        const hasRealTs = allSegments.some(s => s.provenance === 'GENUINE');
+        const tsProvenance = allSegments.every(s => s.provenance === 'GENUINE') ? 'GENUINE' : (hasRealTs ? 'MIXED' : 'UNAVAILABLE');
+
         if (fullText.length >= 5) {
-            console.log(`🎉 [Multi-Hour STT] Complete lecture reassembled: ${fullText.length} characters across ${chunks.length} chunks, total duration: ${finalDuration.toFixed(1)}s (${formatTs(finalDuration)})`);
+            console.log(`🎉 [Multi-Hour STT] Complete lecture reassembled: ${fullText.length} characters across ${chunks.length} chunks via ${finalModel}, total duration: ${finalDuration.toFixed(1)}s (${formatTs(finalDuration)})`);
             return {
                 text: fullText,
                 rawText: fullText,
@@ -467,7 +492,10 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                 duration: finalDuration,
                 duration_formatted: formatTs(finalDuration),
                 language: 'en',
-                model: 'whisper-large-v3-turbo',
+                model: finalModel,
+                sttProvider: finalProvider,
+                hasRealTimestamps: hasRealTs,
+                timestampProvenance: tsProvenance,
                 chunks_count: chunks.length
             };
         } else {

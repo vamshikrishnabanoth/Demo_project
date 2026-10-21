@@ -973,7 +973,25 @@ Generate the curricular assessment plan strictly covering educational concepts w
       defensibleCapacity = uniqueFocus.length;
     }
     const availableCount = (liCap?.totalDefensibleCapacity != null || isExplicitCurriculum) ? Math.min(count, defensibleCapacity) : count;
-    const subtopicsList = uniqueFocus.length > 0 ? uniqueFocus : ['Core Definitions', 'Mechanism Sequence', 'Performance Impact'];
+    let extractedKeywords = [];
+    if (uniqueFocus.length === 0) {
+      const textToScan = typeof rawContent === 'string' ? rawContent : (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '');
+      if (textToScan && textToScan.length > 30) {
+        const words = textToScan.toLowerCase()
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .split(/\s+/)
+          .filter(w => w.length > 4 && !/^(about|after|again|almost|already|also|because|before|between|could|every|first|great|other|right|should|their|there|these|thing|think|which|would)$/.test(w));
+        const freq = {};
+        words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+        extractedKeywords = Object.entries(freq)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([w]) => w.charAt(0).toUpperCase() + w.slice(1));
+      }
+    }
+    const subtopicsList = uniqueFocus.length > 0 
+      ? uniqueFocus 
+      : (extractedKeywords.length > 0 ? extractedKeywords : ['Core Subject Principles', 'Operational Mechanisms', 'Performance Constraints']);
 
     const cap = this._resolveCapacity(evidencePackage);
     const diffLower = String(difficulty || 'Medium').toLowerCase();
@@ -1041,7 +1059,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
 
       if (!isExplicitCurriculum || i <= availableCount) {
         const subtopic = subtopicsList[(i - 1) % subtopicsList.length];
-        const conceptName = isExplicitCurriculum ? subtopic : `${subtopic} - Aspect ${i}`;
+        const conceptName = (isExplicitCurriculum || extractedKeywords.length > 0) ? subtopic : `${subtopic} (Lecture Principle ${i})`;
         const prov = this._resolveTargetEvidenceProvenance(conceptName, subtopic, phase, evidencePackage);
         const dimension = dimensions[(i - 1) % dimensions.length];
 

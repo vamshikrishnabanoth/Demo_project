@@ -561,9 +561,14 @@ class PipelineOrchestrator {
                   decision: 'KEEP'
                 },
                 agent3: {
-                  verdict: 'PASS',
-                  groundingScore: evalResult.evidenceGrounding?.groundingScore || 0.95,
-                  repaired: Boolean(evalResult.repaired)
+                  verdict: evalResult.status || 'PASS',
+                  verificationMethod: evalResult.verificationMethod || (evalResult.isFallback ? 'UNAUDITED_HEURISTIC_FALLBACK' : 'LLM_EVALUATION'),
+                  isLLMVerified: Boolean(evalResult.isLLMVerified),
+                  isFallback: Boolean(evalResult.isFallback),
+                  tier: evalResult.tier || evalResult.evidenceGrounding?.tier || 'EVIDENCE_DERIVED',
+                  groundingScore: typeof evalResult.groundingScore === 'number' ? evalResult.groundingScore : (evalResult.evidenceGrounding?.groundingScore || 0.95),
+                  repaired: Boolean(evalResult.repaired),
+                  criticUnavailableReason: evalResult.criticUnavailableReason || null
                 },
                 grounding: {
                   status: provenance.isEvidenceVerified ? 'GROUNDED' : 'UNVERIFIED_PROVENANCE',
@@ -588,10 +593,15 @@ class PipelineOrchestrator {
                   "usedArchetypes": evalResult.mcq.usedArchetypes || []
                 },
                 "5_agent3EvaluationReasoning": {
-                  "groundingScore": evalResult.evidenceGrounding?.groundingScore || 0.95,
+                  "verificationMethod": evalResult.verificationMethod || (evalResult.isFallback ? 'UNAUDITED_HEURISTIC_FALLBACK' : 'LLM_EVALUATION'),
+                  "isLLMVerified": Boolean(evalResult.isLLMVerified),
+                  "isFallback": Boolean(evalResult.isFallback),
+                  "tier": evalResult.tier || evalResult.evidenceGrounding?.tier || 'EVIDENCE_DERIVED',
+                  "groundingScore": typeof evalResult.groundingScore === 'number' ? evalResult.groundingScore : (evalResult.evidenceGrounding?.groundingScore || 0.95),
                   "cognitiveAudit": evalResult.cognitiveAudit,
                   "repaired": Boolean(evalResult.repaired),
-                  "verdict": "PASS"
+                  "verdict": evalResult.status || "PASS",
+                  "criticUnavailableReason": evalResult.criticUnavailableReason || null
                 },
                 "6_deterministicCalculations": {
                   "preChecksPassed": true,

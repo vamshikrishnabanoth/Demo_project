@@ -110,9 +110,12 @@ class LLMRouter {
       }
     }
 
-    // 5. Check for mock test mode ONLY if explicitly enabled for unit tests
-    if (process.env.ALLOW_MOCK_FALLBACK === 'true' || process.env.NODE_ENV === 'test') {
-      console.warn('⚠️ [LLMRouter] Using test mock fallback because ALLOW_MOCK_FALLBACK is enabled.');
+    // 5. Check for mock test mode ONLY if explicitly enabled for unit tests and NOT in production or staging
+    const isMockPermitted = (process.env.ALLOW_MOCK_FALLBACK === 'true' || process.env.NODE_ENV === 'test') &&
+                            process.env.NODE_ENV !== 'production' &&
+                            process.env.APP_ENV !== 'staging';
+    if (isMockPermitted) {
+      console.warn('⚠️ [LLMRouter] Using test mock fallback because ALLOW_MOCK_FALLBACK is enabled in non-production.');
       return this._getMockResponse(prompt, systemPrompt);
     }
 
