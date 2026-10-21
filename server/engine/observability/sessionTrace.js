@@ -111,11 +111,22 @@ class SessionTrace {
 
     try {
       const telemetryService = require('../../services/telemetryService');
+      const telemetryLedger = require('./telemetryLedger');
+      const sessionUsage = telemetryLedger.getSessionUsage(this.sessionId) || {};
+      const tokensUsed = sessionUsage.total_tokens || 0;
+      const costSaved = Number(((tokensUsed * 0.000002) + 0.015).toFixed(4));
+
       telemetryService.emitStageUpdate(this.sessionId, {
         stageNumber: parseInt(stageOrder, 10) || 1,
         stageName: stageName,
         status: stageRecord.validation.status || 'PASS',
-        metrics: calculations || {},
+        metrics: {
+          ...(calculations || {}),
+          tokensUsed: tokensUsed,
+          llmCalls: sessionUsage.llm_calls || 0
+        },
+        tokensUsed: tokensUsed,
+        costSaved: costSaved,
         sampleOutput: output || {},
         logs: decisions || [],
         timestamp: Date.now()

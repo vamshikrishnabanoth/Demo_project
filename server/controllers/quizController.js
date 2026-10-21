@@ -23,6 +23,8 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { YoutubeTranscript } = require('youtube-transcript');
 const { logPipelineStep } = require('../utils/logger');
 const { resolveCorrectOptionText } = require('../utils/grading');
+const cacheManager = require('../utils/cacheManager');
+const { toUserFriendlyError } = require('../utils/friendlyErrorMapper');
 const documentStore = require('../storage/documentStore');
 const depthAnalyzer = require('../engine/evidence/depthAnalyzer');
 const { chunkMp3, chunkM4a, segmentAudioUniversal, compressForWhisper, getAudioDuration, transcribeChunkWithGemini } = require('../utils/audioChunker');
@@ -111,7 +113,7 @@ function isStudentTargeted(student, assignedGroups, assignedStudents) {
  * Transcribes audio files (including 3-4 hour / 300MB-500MB lectures) locally or via Cloud STT
  * with automatic model failovers (Groq Whisper Turbo -> Groq Whisper Large-v3 -> Google Gemini Multimodal AI).
  */
-const transcribeAudioWithTimestamps = async (filePath) => {
+const _rawTranscribeAudioWithTimestamps = async (filePath) => {
     // 1. Try local Python faster-whisper service only if AI_SERVICE_URL is local or responsive
     try {
         const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
@@ -4472,7 +4474,8 @@ exports.getUserDocket = async (req, res) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ msg: 'Unauthorized' });
-        const docketFile = path.join(DOCKETS_DIR, `${userId}.json`);
+        const safeUserId = String(userId).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
         if (fs.existsSync(docketFile)) {
             const data = fs.readFileSync(docketFile, 'utf8');
             return res.json({ success: true, inputs: JSON.parse(data) });
@@ -4497,7 +4500,8 @@ exports.saveUserDocket = async (req, res) => {
             const { file, ...rest } = inp;
             return rest;
         });
-        const docketFile = path.join(DOCKETS_DIR, `${userId}.json`);
+        const safeUserId = String(userId).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
         fs.writeFileSync(docketFile, JSON.stringify(sanitized), 'utf8');
         return res.json({ success: true, count: sanitized.length });
     } catch (err) {
@@ -4510,7 +4514,8 @@ exports.clearUserDocket = async (req, res) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ msg: 'Unauthorized' });
-        const docketFile = path.join(DOCKETS_DIR, `${userId}.json`);
+        const safeUserId = String(userId).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
         if (fs.existsSync(docketFile)) {
             fs.unlinkSync(docketFile);
         }
@@ -4521,6 +4526,26 @@ exports.clearUserDocket = async (req, res) => {
     }
 };
 
+exports.deleteDocketItem = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        const itemId = req.params.id;
+        if (!userId) return res.status(401).json({ msg: 'Unauthorized' });
+        const safeUserId = String(userId).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
+        if (fs.existsSync(docketFile)) {
+            const data = fs.readFileSync(docketFile, 'utf8');
+            const items = JSON.parse(data);
+            const remaining = items.filter(item => String(item.id) !== String(itemId));
+            fs.writeFileSync(docketFile, JSON.stringify(remaining), 'utf8');
+            return res.json({ success: true, count: remaining.length });
+        }
+        return res.json({ success: true, count: 0 });
+    } catch (err) {
+        console.error('Error in deleteDocketItem:', err.message);
+        return res.status(500).json({ msg: 'Failed to delete docket item' });
+    }
+};
 function sanitizeLectureTitle(rawTitle) {
     if (!rawTitle || typeof rawTitle !== 'string') return '';
     let title = rawTitle.trim();
@@ -4766,6 +4791,42 @@ ${transcriptText.slice(0, 1200)}`;
 
     return defaultFallback;
 }
+
+const transcribeAudioWithTimestamps = async (filePath) => {
+    let audioHash = null;
+    try {
+        if (filePath && fs.existsSync(filePath)) {
+            const fileBuffer = fs.readFileSync(filePath);
+            audioHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+            const cacheKey = `transcription:${audioHash}`;
+            const cached = cacheManager.get(cacheKey);
+            if (cached && cached.text && cached.text.trim().length >= 5) {
+                console.log(`⚡ [AUDIO CACHE HIT] Returned cached transcription for hash ${audioHash.substring(0, 10)} (${cached.segments?.length || 0} segments)`);
+                return { ...cached, isCached: true };
+            }
+        }
+    } catch (e) {
+        console.warn('Audio hashing notice:', e.message);
+    }
+
+    const result = await _rawTranscribeAudioWithTimestamps(filePath);
+
+    if (result && result.text && result.text.trim().length >= 5 && audioHash) {
+        try {
+            const cacheKey = `transcription:${audioHash}`;
+            cacheManager.set(cacheKey, result, {
+                category: 'transcription',
+                qualityScore: 1.0,
+                measuredProcessingTimeMs: 1500
+            });
+        } catch (e) {
+            console.warn('Failed to cache transcription:', e.message);
+        }
+    }
+
+    return result;
+};
+
 exports.generateSmartAudioTitle = generateSmartAudioTitle;
 
 exports.transcribe = async (req, res) => {

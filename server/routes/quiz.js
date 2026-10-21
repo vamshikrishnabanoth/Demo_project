@@ -321,6 +321,7 @@ router.post('/docket', auth, quizController.saveUserDocket);
 // @route   DELETE api/quiz/docket
 // @desc    Clear user docket items
 router.delete('/docket', auth, quizController.clearUserDocket);
+router.delete('/docket/:id', auth, quizController.deleteDocketItem);
 
 // @route   POST api/quiz/create
 // @desc    Create a new quiz (Manual or AI generated)

@@ -1,3 +1,4 @@
+
 /**
  * server/engine/agents/agent1Planner.js
  *
@@ -12,6 +13,8 @@
 
 const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
+const crypto = require('crypto');
+const cacheManager = require('../../utils/cacheManager');
 
 class Agent1Planner {
   /**
@@ -187,6 +190,17 @@ ${lateFormatted || 'Code walkthrough and implementation details presented in lat
     const detectedFocus = evidencePackage.detectedFocus || [];
     // Step 3: Make conceptEvidenceGraph available alongside existing curricularContent
     const conceptEvidenceGraph = evidencePackage.conceptEvidenceGraph || null;
+    // Cache Read Check (Key: content + difficulty + count + deficitPolicy)
+    const contentKey = (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || rawContent || '').slice(0, 10000);
+    const planHash = crypto.createHash('sha256')
+      .update(`${contentKey}|${requestedDifficulty}|${requestedCount}|${deficitPolicy || ''}`)
+      .digest('hex');
+    const cacheKey = `plan:${planHash}`;
+    const cachedPlan = cacheManager.get(cacheKey);
+    if (cachedPlan && Array.isArray(cachedPlan.assessmentTargets) && cachedPlan.assessmentTargets.length > 0) {
+      console.log(`⚡ [PLANNER CACHE HIT] Reusing cached assessment plan (${cachedPlan.assessmentTargets.length} targets)`);
+      return JSON.parse(JSON.stringify(cachedPlan));
+    }
 
     // 1. Calculate TC (Teaching Coverage) Score
     const tcScoreReport = this._computeTCScore(rawContent, voiceEmphasis, lectureDepth);
@@ -429,6 +443,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     } catch (err) {
       console.warn(`⚠️ [Agent 1 Planner] LLM call notice: ${err.message}. Building adaptive fallback plan.`);
       planData = this._buildFallbackPlan(rawContent, requestedDifficulty, requestedCount, categoryWeights, lectureDepth, detectedFocus, evidencePackage);
+      planData.isFallbackPlan = true;
     }
 
     // Apply deterministic difficulty blueprint, cognitive operations, and capacity audit
@@ -456,7 +471,17 @@ Generate the curricular assessment plan strictly covering educational concepts w
     });
     planData.conceptEvidenceGraph = conceptEvidenceGraph;
     planData.curricularCoverage = evidencePackage?.curricularCoverage || null;
-    return this._enforceFinalCapacitySafetyGate(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+    const finalPlan = this._enforceFinalCapacitySafetyGate(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+    if (finalPlan && !finalPlan.isFallbackPlan && Array.isArray(finalPlan.assessmentTargets) && finalPlan.assessmentTargets.length > 0) {
+      try {
+        cacheManager.set(cacheKey, finalPlan, {
+          category: 'assessment_plan',
+          qualityScore: 1.0,
+          measuredProcessingTimeMs: 1500
+        });
+      } catch (_) {}
+    }
+    return finalPlan;
   }
 
   /**
@@ -1039,6 +1064,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
           targetDifficulty: targetDiff,
           intendedCognitiveOperation: dimension.toUpperCase().replace(/[^A-Z]/g, '_'),
           evidenceType: prov.evidenceType,
+          supportingEvidence: prov.supportingEvidence || evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '',
           sourceChunks: prov.sourceChunks,
           requiresExactArtifact: false,
           instruction: `Assess understanding and application of ${conceptName}`
@@ -1285,7 +1311,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
    */
   _detectConceptDepth(concept = '', supportingEvidence = '', evidencePackage = {}) {
     const conceptLower = String(concept || '').toLowerCase();
-    const evidenceLower = String(supportingEvidence || '').toLowerCase();
+    let evidenceLower = String(supportingEvidence || '').toLowerCase();
+    if ((!evidenceLower || evidenceLower.length < 20) && evidencePackage) {
+      evidenceLower = String(evidencePackage.unifiedRawContent || evidencePackage.curricularContent || '').toLowerCase();
+    }
 
     // 1. Check lectureIntelligence if available (Module 1 source of truth)
     const li = evidencePackage?.lectureIntelligence;

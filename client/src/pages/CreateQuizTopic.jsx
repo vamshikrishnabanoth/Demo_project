@@ -33,26 +33,70 @@ export default function CreateQuizTopic() {
     const [inputs, setInputs] = useState([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
-    // Fresh session: Do NOT restore stale inputs from previous sessions.
-    // Inputs must only be displayed when the user explicitly adds them in the current session.
+    // Account-Backed Docket Persistence (Synced across devices, stays until teacher deletes)
     useEffect(() => {
-        try {
-            localStorage.removeItem(storageKey);
-            localStorage.removeItem('quiz_docket_inputs_guest');
-            const keysToRemove = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const k = localStorage.key(i);
-                if (k && k.startsWith('quiz_docket_inputs_')) {
-                    keysToRemove.push(k);
+        let isCancelled = false;
+        const loadDocket = async () => {
+            try {
+                if (user?.id) {
+                    const res = await api.get('/quiz/docket');
+                    if (!isCancelled && res.data && Array.isArray(res.data.inputs)) {
+                        if (res.data.inputs.length > 0) {
+                            setInputs(res.data.inputs);
+                            try {
+                                localStorage.setItem(storageKey, JSON.stringify(res.data.inputs));
+                            } catch (_) {}
+                            setIsHydrated(true);
+                            return;
+                        }
+                    }
+                }
+                const local = localStorage.getItem(storageKey);
+                if (!isCancelled && local) {
+                    try {
+                        const parsed = JSON.parse(local);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            setInputs(parsed);
+                        }
+                    } catch (_) {}
+                }
+            } catch (err) {
+                console.warn('Could not restore docket from server, using local fallback:', err);
+                const local = localStorage.getItem(storageKey);
+                if (!isCancelled && local) {
+                    try {
+                        const parsed = JSON.parse(local);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            setInputs(parsed);
+                        }
+                    } catch (_) {}
+                }
+            } finally {
+                if (!isCancelled) {
+                    setIsHydrated(true);
                 }
             }
-            keysToRemove.forEach(k => localStorage.removeItem(k));
-        } catch (e) {
-            console.warn('Could not clean docket storage:', e);
+        };
+
+        loadDocket();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [user?.id, storageKey]);
+
+    // Continuous account synchronization: syncs inputs to localStorage & server docket
+    useEffect(() => {
+        if (!isHydrated) return;
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(inputs));
+        } catch (_) {}
+        if (user?.id) {
+            api.post('/quiz/docket', { inputs }).catch(err => {
+                console.warn('Silent docket sync notice:', err.message);
+            });
         }
-        setInputs([]);
-        setIsHydrated(true);
-    }, [storageKey]);
+    }, [inputs, isHydrated, user?.id, storageKey]);
 
     // 2. Difficulty Focus ("Balanced", "Easy", "Medium", "Hard")
     const [difficulty, setDifficulty] = useState('Balanced');
@@ -652,12 +696,31 @@ export default function CreateQuizTopic() {
         setShowTextModal(false);
     };
 
-    const handleRemoveInput = (id) => {
+    const handleRemoveInput = async (id) => {
         if (isGenerating) return;
         if (recordedBlobsRef.current.has(id)) {
             recordedBlobsRef.current.delete(id);
         }
         setInputs(prev => prev.filter(item => item.id !== id));
+        if (user?.id) {
+            try {
+                await api.delete(`/quiz/docket/${encodeURIComponent(id)}`);
+            } catch (_) {}
+        }
+    };
+
+    const handleClearAllDocket = async () => {
+        if (isGenerating) return;
+        if (!window.confirm('Are you sure you want to remove all items from your docket?')) return;
+        recordedBlobsRef.current.clear();
+        setInputs([]);
+        try {
+            localStorage.removeItem(storageKey);
+            if (user?.id) {
+                await api.delete('/quiz/docket');
+            }
+        } catch (_) {}
+        toast.success('Docket cleared.');
     };
 
     const handleDownloadRecording = (inputId, sourceName) => {
@@ -997,24 +1060,14 @@ export default function CreateQuizTopic() {
             let transcriptSegments = [];
             let transcriptDuration = null;
             let transcriptDurationFormatted = null;
-            try {
-                const localRes = await api.post('http://localhost:8000/transcribe', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                    timeout: 30000
-                });
-                transcriptText = localRes.data.text;
-                transcriptSegments = localRes.data.segments || [];
-                transcriptDuration = localRes.data.duration || null;
-                transcriptDurationFormatted = localRes.data.duration_formatted || null;
-            } catch (_) {
-                const transcribeRes = await api.post('/quiz/transcribe', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-                transcriptText = transcribeRes.data.text;
-                transcriptSegments = transcribeRes.data?.segments || [];
-                transcriptDuration = transcribeRes.data?.duration || null;
-                transcriptDurationFormatted = transcribeRes.data?.duration_formatted || null;
-            }
+            const transcribeRes = await api.post('/quiz/transcribe', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                timeout: 1800000
+            });
+            transcriptText = transcribeRes.data?.text || '';
+            transcriptSegments = transcribeRes.data?.segments || [];
+            transcriptDuration = transcribeRes.data?.duration || null;
+            transcriptDurationFormatted = transcribeRes.data?.duration_formatted || null;
 
             if (transcriptText && transcriptText.trim().length > 5) {
                 const recDate = sess.createdAt ? new Date(sess.createdAt) : new Date();
@@ -1137,11 +1190,7 @@ export default function CreateQuizTopic() {
             try { localStorage.setItem('latest_pipeline_task_id', taskId); } catch (_) {}
             setSubmitting(false);
 
-            // Clean up docket cache for fresh subsequent runs
-            try {
-                localStorage.removeItem(storageKey);
-                localStorage.removeItem('quiz_docket_inputs_guest');
-            } catch (_) {}
+            // Docket materials preserved across quiz generations until teacher explicitly deletes them
 
             startPolling(taskId, {
                 onComplete: (result) => {
@@ -1171,7 +1220,6 @@ export default function CreateQuizTopic() {
                 }
             });
 
-            setInputs([]);
         } catch (err) {
             console.error(err);
             const serverMsg = err.response?.data?.msg || err.response?.data?.error || (err.response?.data?.errors && err.response.data.errors.map(e => e.msg).join(', ')) || err.message;
@@ -1527,6 +1575,21 @@ export default function CreateQuizTopic() {
 
                         {/* 3. SOURCE MATERIAL DOCKET LIST (Compact Empty State py-5) */}
                         <div className={isGenerating ? 'pointer-events-none opacity-60' : ''}>
+                            {inputs.length > 0 && (
+                                <div className="flex items-center justify-between mb-2 px-1">
+                                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                                        Docket Materials ({inputs.length}) — Persisted to Account
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={handleClearAllDocket}
+                                        className="text-[10px] font-black uppercase tracking-wider text-rose-500 hover:text-rose-700 hover:underline flex items-center gap-1 cursor-pointer transition-colors"
+                                        title="Clear all materials from this account docket"
+                                    >
+                                        <Trash2 size={12} /> Clear Docket
+                                    </button>
+                                </div>
+                            )}
                             {inputs.length === 0 ? (
                                 <div className="py-5 border-2 border-dashed border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center text-center p-4 bg-white space-y-1.5 shadow-xs">
                                     <Database size={26} className="text-[var(--text-accent)] opacity-80" />

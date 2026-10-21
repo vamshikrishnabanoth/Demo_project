@@ -147,6 +147,22 @@ class TelemetryLedger {
     return finalRecord;
   }
 
+  getSessionUsage(sessionId) {
+    if (!sessionId) return null;
+    const tracked = this.sessionUsage.get(sessionId);
+    if (!tracked) return null;
+    const inTokens = tracked.has_actual_tokens ? tracked.input_tokens_actual : tracked.input_tokens_estimated;
+    const outTokens = tracked.has_actual_tokens ? tracked.output_tokens_actual : tracked.output_tokens_estimated;
+    return {
+      llm_calls: tracked.llm_calls,
+      input_tokens: inTokens,
+      output_tokens: outTokens,
+      total_tokens: inTokens + outTokens,
+      has_actual_tokens: tracked.has_actual_tokens,
+      models: Array.from(tracked.models || [])
+    };
+  }
+
   getRecentJobs(limit = 10) {
     return this.recentJobs.slice(0, limit);
   }

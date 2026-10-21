@@ -18,6 +18,7 @@ const { randomUUID } = require('crypto');
 const EventEmitter = require('events');
 const providerConfig = require('../config/providerConfig');
 const productionMetrics = require('../utils/productionMetrics');
+const { toUserFriendlyError } = require('../utils/friendlyErrorMapper');
 
 const taskEmitter = new EventEmitter();
 taskEmitter.setMaxListeners(500);
@@ -344,7 +345,9 @@ function failTask(taskId, error, errorCode = 'FAILED_INTERNAL') {
   task.status = 'FAILED';
   task.state = TaskStates[errorCode] || TaskStates.FAILED;
   task.completedAt = Date.now();
-  task.error = error;
+  const friendlyError = toUserFriendlyError(error, { errorCode });
+  task.error = friendlyError;
+  task.rawError = typeof error === 'string' ? error : (error?.message || String(error));
   task.errorCode = errorCode;
 
   productionMetrics.inc('documents_failed_total');
