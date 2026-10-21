@@ -741,7 +741,14 @@ class DepthAnalyzer {
       'sleeve', 'dress', 'garment', 'sewed', 'ripped', 'tomorrow', 'morning', 'night', 'dinner',
       'lunch', 'food', 'pizza', 'beer', 'coffee', 'party', 'car', 'movie', 'show', 'song',
       'bheem', 'dholakpur', 'kalia', 'chutki', 'dhoomketu', 'amulet', 'lava', 'controls',
-      'items', 'software', 'screen', 'laptop', 'computer things', 'brother'
+      'items', 'software', 'screen', 'laptop', 'computer things', 'brother',
+      'obviously', 'clearly', 'definitely', 'certainly', 'surely', 'literally', 'frankly', 'honestly', 'essentially',
+      'should', 'would', 'could', 'can', 'will', 'shall', 'may', 'might', 'must',
+      'change', 'changed', 'changing', 'allow', 'allowed', 'allowing',
+      'try', 'trying', 'tried', 'put', 'putting', 'check', 'checking', 'checked',
+      'ask', 'asking', 'asked', 'say', 'saying', 'said', 'start', 'starting', 'started',
+      'stop', 'stopping', 'stopped', 'guess', 'guessing', 'wonder', 'wondering',
+      'suppose', 'supposing', 'supposed', 'remember', 'remembering', 'agree', 'disagree'
     ]);
 
     const genericSingleWords = new Set([
@@ -768,17 +775,30 @@ class DepthAnalyzer {
     phrase = phrase.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '').trim();
     if (phrase.length < 2) return '';
 
+    // Filter phrases starting with modal/auxiliary/question verbs (e.g. "Should I change", "Can we do")
+    if (/^(?:should|could|would|can|will|shall|may|might|must|did|does|do|is|are|was|were|has|have|had)\b/i.test(phrase)) {
+      return '';
+    }
+
+    // Filter colloquial contractions or fragment markers (e.g. "s not allowed", "it's done")
+    if (/\b(?:isn't|aren't|wasn't|weren't|don't|doesn't|didn't|can't|couldn't|won't|wouldn't|shouldn't|it's|that's|there's|here's|what's|who's)\b/i.test(phrase)) {
+      return '';
+    }
+
     // Strip trailing predicate adverbs/adjectives (e.g., "mathematically impossible", "available")
     phrase = phrase.replace(/\s+(?:mathematically\s+)?(?:impossible|possible|necessary|sufficient|inevitable|unlikely|likely|present|absent)$/i, '').trim();
 
     // Filter out phrases dominated by numbers, percentages, or time durations
     const lowerPhrase = phrase.toLowerCase();
-    if (/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|percent|months?|days?|years?|weeks?|hours?|minutes?|seconds?)\b/i.test(lowerPhrase)) {
+    if (/\b\d+\b/.test(phrase) || /\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|percent|months?|days?|years?|weeks?|hours?|minutes?|seconds?)\b/i.test(lowerPhrase)) {
       return '';
     }
 
     const words = phrase.split(/\s+/).filter(Boolean);
     if (words.length === 0 || words.length > 5) return '';
+
+    // Reject if any word is a single character (unless standard acronym like O for Big-O)
+    if (words.some(w => w.length <= 1 && !/^[ONCRK]$/i.test(w))) return '';
 
     // Reject if single generic word or single conversational stop word
     if (words.length === 1 && (genericSingleWords.has(words[0].toLowerCase()) || conversationalStopwords.has(words[0].toLowerCase()))) {
@@ -836,12 +856,14 @@ class DepthAnalyzer {
       }
     }
 
-    // 4. Prominent Quoted Terms
+    // 4. Prominent Quoted Terms (filtered against spoken conversational quotes)
     const quoted = cleanSeg.match(/['"`](.*?)['"`]/g) || [];
     quoted.forEach(q => {
       const strip = q.replace(/['"`]/g, '').trim();
-      const cleaned = this._cleanConceptPhrase(strip);
-      if (cleaned) concepts.push(cleaned);
+      if (strip.length > 2 && strip.length < 35 && !/[?!.,;]/.test(strip)) {
+        const cleaned = this._cleanConceptPhrase(strip);
+        if (cleaned) concepts.push(cleaned);
+      }
     });
 
     // 5. High-Value Academic Bigrams & Domain Terms
@@ -1282,43 +1304,40 @@ class DepthAnalyzer {
     const totalLostPoints = deductions.reduce((sum, d) => sum + d.lostPoints, 0);
 
     const coveredAspects = [];
-    if (detectedFocus.length > 0) {
-      coveredAspects.push(`Core topics covered: ${detectedFocus.join(', ')}`);
-    }
     if (hasDef) {
-      coveredAspects.push('Explicit concept definitions and ontological characterizations');
+      coveredAspects.push('Clear concept definitions and foundational terminology');
     }
     if (hasMech) {
-      coveredAspects.push('Operational mechanisms and functional transformation processes');
+      coveredAspects.push('Detailed operational mechanisms and functional processes');
     }
     if (hasFormalDerivation) {
       coveredAspects.push('Formal mathematical derivation and deductive proof steps');
     }
     if (hasAlgorithmicTrace) {
-      coveredAspects.push('Algorithmic execution trace and state transition operations');
+      coveredAspects.push('Algorithmic execution trace and step-by-step state transitions');
     }
     if (hasExp) {
-      coveredAspects.push('Teacher industry experiences, real-world case studies, or production incidents');
+      coveredAspects.push('Real-world industry applications and practical case studies');
     }
     if (hasAnalogy) {
-      coveredAspects.push('Conceptual analogies or pedagogical technical humor');
+      coveredAspects.push('Conceptual analogies and intuitive framing');
     }
     if (hasRule) {
-      coveredAspects.push('Invariants, conditional boundaries, and operational rules');
+      coveredAspects.push('Explicit invariants, boundary conditions, and operational rules');
     }
     if (hasComp) {
-      coveredAspects.push('Comparative contrasts and structural distinctions');
+      coveredAspects.push('Comparative distinctions and tradeoff analysis');
     }
     if (examples === 'Present') {
-      coveredAspects.push('Concrete examples, observational walkthroughs, or worked traces');
+      coveredAspects.push('Concrete practical examples and worked walkthroughs');
     }
     if (procedures === 'Strong') {
-      coveredAspects.push('Step-by-step procedural workflow and algorithmic sequencing');
+      coveredAspects.push('Structured procedural workflow and algorithmic sequencing');
     } else if (procedures === 'Moderate') {
       coveredAspects.push('Introductory procedural progression');
     }
     if (reasoning === 'Strong') {
-      coveredAspects.push('Deep causal reasoning with explicit explanations of why rules apply');
+      coveredAspects.push('Deep causal reasoning explaining the "why" behind core principles');
     } else if (reasoning === 'Moderate') {
       coveredAspects.push('Foundational causal explanations');
     }

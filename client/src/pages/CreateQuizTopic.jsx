@@ -506,8 +506,8 @@ export default function CreateQuizTopic() {
                                 return {
                                     ...item,
                                     progress: 92,
-                                    stepText: `Uploaded (${totalMb} MB). Transcribing on Local Whisper...`,
-                                    phaseLabel: 'Whisper Inference'
+                                    stepText: `Uploaded (${totalMb} MB). Transcribing audio via Groq Whisper Turbo...`,
+                                    phaseLabel: 'Groq Whisper Turbo'
                                 };
                             }
                         }));
@@ -1898,7 +1898,10 @@ export default function CreateQuizTopic() {
                                                     <Target size={13} className="text-[#c2410c] shrink-0" /> Key Concepts to be Assessed
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
-                                                    {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus).map((topic, i) => (
+                                                    {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
+                                                        .filter(t => t && t.length >= 3 && !/\b\d+\b/.test(t) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
+                                                        .slice(0, 8)
+                                                        .map((topic, i) => (
                                                         <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
                                                             <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
                                                             <span>{topic}</span>
@@ -1908,42 +1911,41 @@ export default function CreateQuizTopic() {
                                             </div>
                                         )}
 
-                                        {/* 4. Observable Pedagogical Profile (Safeguard 2: Multi-Label Rubric) */}
-                                        {lectureIntel?.pedagogicalCritique && (
-                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
-                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                     <GraduationCap size={13} className="text-[#c2410c] shrink-0" /> Observable Teaching Traits
-                                                 </p>
-                                                 <div className="flex flex-wrap gap-1.5">
-                                                     {(lectureIntel.pedagogicalCritique.explanatoryDepth || []).map((tag, i) => (
-                                                         <span key={i} className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full">
-                                                             {tag.replace(/_/g, ' ')}
-                                                         </span>
-                                                     ))}
-                                                     {(lectureIntel.pedagogicalCritique.reasoningDepth || []).map((tag, i) => (
-                                                         <span key={i} className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
-                                                             {tag.replace(/_/g, ' ')}
-                                                         </span>
-                                                     ))}
-                                                     {(lectureIntel.pedagogicalCritique.practicalDemonstrations || []).map((tag, i) => (
-                                                         <span key={i} className="text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full">
-                                                             {tag.replace(/_/g, ' ')}
-                                                         </span>
-                                                     ))}
-                                                     {(lectureIntel.pedagogicalCritique.discourseStyle || []).map((tag, i) => (
-                                                         <span key={i} className="text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
-                                                             {tag.replace(/_/g, ' ')}
-                                                         </span>
-                                                     ))}
-                                                 </div>
-                                                 {lectureIntel.pedagogicalCritique.limitationsOfExcerpt && (
-                                                     <p className="text-[10px] text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-start gap-1.5">
-                                                         <Info size={12} className="text-slate-500 shrink-0 mt-0.5" />
-                                                         <span>{lectureIntel.pedagogicalCritique.limitationsOfExcerpt}</span>
-                                                     </p>
-                                                 )}
-                                             </div>
-                                        )}
+                                        {/* 4. Observed Teaching Highlights (Truthful, Clean Observability) */}
+                                        {(() => {
+                                            const highlights = [];
+                                            const chars = lectureDepth.characteristics || {};
+                                            if (chars.conceptExplanation === 'Strong') {
+                                                highlights.push({ label: 'Precise Concept Definitions', bg: 'bg-emerald-50 text-emerald-800 border-emerald-200' });
+                                            }
+                                            if (chars.procedures === 'Strong') {
+                                                highlights.push({ label: 'Step-by-Step Algorithmic Traces', bg: 'bg-indigo-50 text-indigo-800 border-indigo-200' });
+                                            }
+                                            if (chars.examples === 'Present') {
+                                                highlights.push({ label: 'Worked Practical Examples', bg: 'bg-blue-50 text-blue-800 border-blue-200' });
+                                            }
+                                            if (chars.reasoning === 'Strong') {
+                                                highlights.push({ label: 'Causal Reasoning & "Why"', bg: 'bg-purple-50 text-purple-800 border-purple-200' });
+                                            }
+                                            if (lectureIntel?.chapters && lectureIntel.chapters.length > 1) {
+                                                highlights.push({ label: `${lectureIntel.chapters.length} Structured Chapters`, bg: 'bg-amber-50 text-amber-800 border-amber-200' });
+                                            }
+                                            if (highlights.length === 0) return null;
+                                            return (
+                                                <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1.5">
+                                                    <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                        <GraduationCap size={13} className="text-[#c2410c] shrink-0" /> Observed Teaching Highlights
+                                                    </p>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {highlights.map((h, i) => (
+                                                            <span key={i} className={`text-[10px] font-bold border px-2.5 py-0.5 rounded-full ${h.bg}`}>
+                                                                {h.label}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
 
                                         {/* 5. Assessment Scope & Content Volume with 1-Click Apply */}
                                         <div className="bg-white/95 px-4 py-3 rounded-2xl border border-orange-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
@@ -1993,23 +1995,7 @@ export default function CreateQuizTopic() {
                                             })()}
                                         </div>
 
-                                        {/* 6. Pedagogical Depth Characteristics */}
-                                        {lectureDepth.characteristics && (
-                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] font-bold text-slate-600">
-                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                                    Concepts: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.conceptExplanation || 'Strong'}</span>
-                                                </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                                    Reasoning: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.reasoning || 'Light'}</span>
-                                                </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                                    Examples: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.examples || 'Present'}</span>
-                                                </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                                    Procedures: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.procedures || 'Strong'}</span>
-                                                </div>
-                                            </div>
-                                        )}
+
                                     </div>
                                 )}
                             </>

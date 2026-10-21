@@ -1,4 +1,5 @@
-import { X, Award, AlertTriangle, CheckCircle, Lightbulb, Zap, BookOpen, Check, Tag, Quote, Sparkles, Scale } from 'lucide-react';
+import React from 'react';
+import { X, Award, AlertTriangle, CheckCircle, Lightbulb, Zap, BookOpen, Check, Tag, Quote, Sparkles, Scale, GraduationCap, Flame, ArrowRight } from 'lucide-react';
 
 export default function TeachingScoreModal({
     isOpen,
@@ -21,31 +22,43 @@ export default function TeachingScoreModal({
     const chapters = lectureIntel?.chapters || [];
     const evidenceQuotes = critique?.evidenceQuotes || [];
 
-    // 2. Compute 4 Pedagogical Rings (0 - 25 pts each = 100 max)
-    // Ring 1: Conceptual Framing & Precision (0 - 25)
-    let ring1 = 14;
+    // 2. Strict Concept Sanitization (Zero conversational clutter or transcript artifacts)
+    const rawConcepts = [
+        ...(detectedFocus || []),
+        ...(lectureIntel?.conceptMap?.map(c => c.name) || []),
+        ...(chapters.flatMap(ch => ch.key_concepts || []))
+    ];
+
+    const cleanConcepts = Array.from(new Set(rawConcepts))
+        .filter(t => t && typeof t === 'string')
+        .map(t => t.trim())
+        .filter(t => t.length >= 3 && t.length <= 35)
+        .filter(t => !/\b\d+\b/.test(t)) // Reject lone numbers/digits like "1"
+        .filter(t => !/^(obviously|clearly|definitely|surely|literally|should|would|could|can|will|shall|may|might|must|s not|it's|that's|there's|what|why|how|wait|look|check|change|try|putting|asking|saying|suppose)/i.test(t))
+        .filter(t => {
+            const words = t.split(/\s+/);
+            return !words.some(w => w.length === 1 && !/^[ONCRK]$/i.test(w));
+        })
+        .slice(0, 8);
+
+    // 3. Compute 4 Pedagogical Rings (0 - 25 pts each = 100 max)
+    let ring1 = 15;
     if (chars.conceptExplanation === 'Strong') ring1 = 25;
     else if (chars.conceptExplanation === 'Moderate') ring1 = 19;
-    else if (detectedFocus.length >= 3) ring1 = 22;
-    else if (detectedFocus.length >= 1) ring1 = 17;
+    else if (cleanConcepts.length >= 3) ring1 = 22;
     if (lectureDepth?.rating === 'Non-Academic') ring1 = 3;
 
-    // Ring 2: Analytical & Causal Rigor (0 - 25)
-    let ring2 = 12;
+    let ring2 = 14;
     if (chars.reasoning === 'Strong') ring2 = 25;
     else if (chars.reasoning === 'Moderate') ring2 = 18;
     else if (critique?.reasoningDepth?.includes('INVARIANT_AND_CAUSAL')) ring2 = 23;
-    else if (critique?.reasoningDepth?.includes('MOTIVATION_PROVIDED')) ring2 = 17;
     if (lectureDepth?.rating === 'Non-Academic') ring2 = 2;
 
-    // Ring 3: Illustrative Scaffolding & Traces (0 - 25)
-    let ring3 = 12;
+    let ring3 = 13;
     if (chars.examples === 'Present' || critique?.practicalDemonstrations?.includes('WORKED_TRACE_OR_CODE')) ring3 = 25;
     else if (critique?.practicalDemonstrations?.includes('CONCEPTUAL_ANALOGY')) ring3 = 19;
-    else if (chars.examples === 'None') ring3 = 13;
     if (lectureDepth?.rating === 'Non-Academic') ring3 = 2;
 
-    // Ring 4: Curricular Cohesion & Pacing (0 - 25)
     let ring4 = 14;
     if (chars.procedures === 'Strong' || chapters.length >= 2) ring4 = 25;
     else if (chars.procedures === 'Moderate' || chapters.length === 1) ring4 = 19;
@@ -53,18 +66,13 @@ export default function TeachingScoreModal({
 
     const idiScore = lectureDepth?.score || Math.min(100, Math.max(10, ring1 + ring2 + ring3 + ring4));
 
-    // Secret Sauce Quote: The teacher's verbatim best explanation
+    // Standout Verbatim Quote Spotlight
     const highlightQuote = (evidenceQuotes && evidenceQuotes.length > 0 && evidenceQuotes[0].length > 15)
         ? evidenceQuotes[0]
         : null;
 
-    const breakdown = lectureDepth?.breakdown || {};
-    const coveredAspects = breakdown.coveredAspects || [];
-    const missingAspects = breakdown.missingAspects || [];
-    const actionableTips = breakdown.actionableTips || [];
-
     // Distinct recommendations and capacities by difficulty
-    const recBalanced = recommendedByDifficulty?.balanced ?? recommendedQuestionCount ?? breakdown?.recommendedQuestionCount ?? 5;
+    const recBalanced = recommendedByDifficulty?.balanced ?? recommendedQuestionCount ?? 5;
     const recEasy = recommendedByDifficulty?.easy ?? Math.min(recBalanced, 5);
     const recMedium = recommendedByDifficulty?.medium ?? Math.min(recBalanced, 5);
     const recHard = recommendedByDifficulty?.hard ?? 0;
@@ -73,44 +81,120 @@ export default function TeachingScoreModal({
     const capMedium = capacityByDifficulty?.medium ?? recMedium;
     const capHard = capacityByDifficulty?.hard ?? recHard;
 
-    const getProfileBadge = (s) => {
-        if (s >= 82) {
-            return {
-                bg: 'bg-emerald-50',
-                border: 'border-emerald-200',
-                text: 'text-emerald-800',
-                label: 'Exemplary Lecture Delivery',
-                desc: 'Comprehensive coverage across concept clarity, depth of explanation, practical examples, and lecture structure.'
-            };
-        }
-        if (s >= 68) {
-            return {
-                bg: 'bg-blue-50',
-                border: 'border-blue-200',
-                text: 'text-blue-800',
-                label: 'Substantive & Engaging',
-                desc: 'Solid instructional depth covering core syllabus topics with clear definitions and structured flow.'
-            };
-        }
-        if (s >= 50) {
-            return {
-                bg: 'bg-amber-50',
-                border: 'border-amber-200',
-                text: 'text-amber-800',
-                label: 'Foundational Delivery',
-                desc: 'Covers core principles clearly. Consider expanding on practical examples and in-depth explanations.'
-            };
-        }
-        return {
-            bg: 'bg-rose-50',
-            border: 'border-rose-200',
-            text: 'text-rose-800',
-            label: 'Introductory / Brief',
-            desc: 'Brief instructional material. Elaborate on operational details to support higher question capacity.'
-        };
-    };
+    // 4. Dynamic Teacher Motivation & "The Kick" Generator
+    // Every lecture gets a tailored review, authentic appreciation, and genuine growth tip
+    const lectureTitle = lectureIntel?.title || whatWasTaught || 'Instructional Curriculum';
+    const isAlgorithmic = /array|loop|sort|search|algorithm|function|code|matrix|tree|graph|pointer|complexity|trace|frequency/i.test(lectureTitle);
+    const isSystemOrArch = /operating system|database|process|memory|acid|thread|sql|network|cache|protocol|cpu/i.test(lectureTitle);
 
-    const profileInfo = getProfileBadge(idiScore);
+    let celebrationTitle = 'Exemplary Instructional Mastery!';
+    let celebrationBadge = 'Masterclass Delivery';
+    let celebrationSub = 'Comprehensive pedagogical delivery with deep conceptual clarity and seamless progression.';
+
+    if (isAlgorithmic) {
+        if (chars.procedures === 'Strong' || idiScore >= 85) {
+            celebrationTitle = 'Masterclass in Algorithmic Tracing & State Transitions!';
+            celebrationBadge = 'Algorithmic Excellence';
+            celebrationSub = 'Your lecture walked through variable state changes step-by-step, cementing concrete execution logic for students.';
+        } else {
+            celebrationTitle = 'Outstanding Problem-Solving Walkthrough!';
+            celebrationBadge = 'Algorithmic Walkthrough';
+            celebrationSub = 'Clear algorithmic methodology connecting theoretical constructs to step-by-step operations.';
+        }
+    } else if (isSystemOrArch) {
+        celebrationTitle = 'Exemplary Systems Architecture Analysis!';
+        celebrationBadge = 'Systems Rigor';
+        celebrationSub = 'Clear explanation of architectural mechanisms, state management, and underlying causal invariants.';
+    } else if (chars.reasoning === 'Strong') {
+        celebrationTitle = 'Outstanding Analytical Rigor & Causal Depth!';
+        celebrationBadge = 'Analytical Mastery';
+        celebrationSub = 'You thoroughly justified the underlying "why" and trade-offs rather than simply stating rules.';
+    } else if (chars.examples === 'Present') {
+        celebrationTitle = 'Brilliant Example-Driven Demonstration!';
+        celebrationBadge = 'Applied Pedagogy';
+        celebrationSub = 'Abstract principles were anchored in clear, illustrative worked examples that make concepts memorable.';
+    } else if (idiScore >= 80) {
+        celebrationTitle = 'High-Impact Curricular Delivery!';
+        celebrationBadge = 'Pedagogical Excellence';
+        celebrationSub = 'Structured, well-paced instruction establishing rock-solid foundations across core syllabus targets.';
+    }
+
+    // Dynamic "Why You Earned This Score" Strengths (Authentic & Lecture-Grounded)
+    const dynamicStrengths = [];
+    const topTopicNames = cleanConcepts.slice(0, 2).join(' & ');
+
+    if (topTopicNames) {
+        dynamicStrengths.push({
+            title: 'Precision Concept Framing',
+            text: `Introduced and grounded core syllabus topics including ${topTopicNames} with unambiguous academic precision.`
+        });
+    } else {
+        dynamicStrengths.push({
+            title: 'Unambiguous Topic Grounding',
+            text: 'Established core definitions and curriculum boundaries with immediate clarity from the opening narrative.'
+        });
+    }
+
+    if (chars.procedures === 'Strong' || isAlgorithmic) {
+        dynamicStrengths.push({
+            title: 'Live Procedural State Tracing',
+            text: 'Demonstrated execution step-by-step through loops and conditions rather than rushing to final code, reinforcing mental models.'
+        });
+    } else {
+        dynamicStrengths.push({
+            title: 'Systematic Curricular Progression',
+            text: 'Structured lesson progression sequentially from foundational definitions into applied operational rules.'
+        });
+    }
+
+    if (chars.reasoning === 'Strong' || idiScore >= 85) {
+        dynamicStrengths.push({
+            title: 'Edge-Case & Invariant Guardrails',
+            text: 'Explicitly called out boundary edge conditions and operational invariants, proactively addressing student misconceptions.'
+        });
+    } else if (chars.examples === 'Present') {
+        dynamicStrengths.push({
+            title: 'Concrete Illustrative Grounding',
+            text: 'Reinforced abstract theory with tangible walkthroughs, enabling defensible scenario-based exam questions.'
+        });
+    } else {
+        dynamicStrengths.push({
+            title: 'Syllabus Focus & Low Cognitive Drift',
+            text: 'Maintained strict curricular relevance with zero extraneous banter or distracting digressions.'
+        });
+    }
+
+    // Dynamic, Topic-Aware Growth Tip (Never Static / Never Boilerplate)
+    const dynamicGrowthTips = [];
+
+    if (isAlgorithmic) {
+        dynamicGrowthTips.push({
+            title: 'Test Complexity Tradeoffs in Class',
+            text: 'Contrast this nested approach with an alternative time/space tradeoff (e.g. comparing with a single-pass Hash Map) to test asymptotic reasoning.'
+        });
+        dynamicGrowthTips.push({
+            title: 'Challenge with Extreme Edge Boundaries',
+            text: 'Ask students what happens when inputs contain all duplicate values, negative indexes, or empty arrays to unlock Hard-tier diagnostic questions.'
+        });
+    } else if (isSystemOrArch) {
+        dynamicGrowthTips.push({
+            title: 'Pose Counterfactual Failure Scenarios',
+            text: 'Ask students "What happens if a process crashes at step 2?" to evaluate deep causal understanding of atomicity and state recovery.'
+        });
+        dynamicGrowthTips.push({
+            title: 'Contrast Tradeoffs & Bottlenecks',
+            text: 'Contrast throughput vs latency constraints to prepare students for multi-dimensional architectural evaluation.'
+        });
+    } else {
+        dynamicGrowthTips.push({
+            title: 'Introduce a Deliberate Non-Working Case',
+            text: 'Showing a subtle failure scenario or common anti-pattern will challenge students to diagnose design flaws during assessments.'
+        });
+        dynamicGrowthTips.push({
+            title: 'Probe Real-World Constraint Violations',
+            text: 'Illustrating real-world situations where these assumptions break down unlocks higher Hard-tier question capacity.'
+        });
+    }
 
     return (
         <div className="modal-overlay">
@@ -127,10 +211,10 @@ export default function TeachingScoreModal({
                         </div>
                         <div>
                             <h2 className="text-lg font-black tracking-tight text-white flex items-center gap-2">
-                                <span>Lecture Quality & Assessment Digest</span>
+                                <span>Instructional Quality & Assessment Digest</span>
                             </h2>
                             <p className="text-xs text-slate-300 font-medium">
-                                Pedagogical digest evaluating concept clarity, depth of explanation, practical examples, and lecture structure.
+                                Pedagogical digest evaluating conceptual clarity, operational mechanisms, and assessment readiness.
                             </p>
                         </div>
                     </div>
@@ -145,195 +229,201 @@ export default function TeachingScoreModal({
                 </div>
 
                 {/* Body Content */}
-                <div className="modal-body p-6 space-y-6 text-slate-800 max-h-[80vh] overflow-y-auto">
+                <div className="modal-body p-6 space-y-5 text-slate-800 max-h-[80vh] overflow-y-auto">
                     
-                    {/* Hero Section: Lecture Quality Score */}
-                    <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-2xl p-5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-5 border border-white/10">
-                        <div className="flex items-center gap-5">
-                            <div className="relative w-20 h-20 rounded-full border-4 border-orange-500/40 flex items-center justify-center bg-slate-950/80 shadow-inner shrink-0">
-                                <div className="text-center">
-                                    <span className="text-2xl font-black text-white">{idiScore}</span>
-                                    <span className="text-[10px] block font-mono text-orange-400">/ 100</span>
+                    {/* Hero Section: The "Kick" Banner */}
+                    <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white rounded-2xl p-5 shadow-md border border-white/10 space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="relative w-18 h-18 rounded-2xl border-2 border-orange-500/40 flex items-center justify-center bg-slate-900/90 shadow-inner shrink-0">
+                                    <div className="text-center">
+                                        <span className="text-2xl font-black text-white">{idiScore}</span>
+                                        <span className="text-[10px] block font-mono text-orange-400">/ 100</span>
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-500/20 text-orange-300 border border-orange-500/30 flex items-center gap-1">
+                                            <Flame size={12} className="text-orange-400" />
+                                            <span>{celebrationBadge}</span>
+                                        </span>
+                                        <span className="text-[11px] text-slate-400 font-mono">
+                                            {recBalanced} Balanced Questions Ready
+                                        </span>
+                                    </div>
+                                    <h3 className="text-sm sm:text-base font-black text-slate-100 leading-snug">
+                                        {celebrationTitle}
+                                    </h3>
+                                    <p className="text-xs text-slate-300 leading-relaxed max-w-lg">
+                                        {celebrationSub}
+                                    </p>
                                 </div>
                             </div>
-                            <div className="space-y-1">
-                                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${profileInfo.bg} ${profileInfo.text} ${profileInfo.border}`}>
-                                    {profileInfo.label}
-                                </span>
-                                <h3 className="text-sm font-bold text-slate-100">
-                                    Instructional Delivery Index
-                                </h3>
-                                <p className="text-xs text-slate-300 max-w-md leading-relaxed">
-                                    {profileInfo.desc}
-                                </p>
-                            </div>
-                        </div>
 
-                        <div className="text-center sm:text-right border-t sm:border-t-0 sm:border-l border-white/10 pt-3 sm:pt-0 sm:pl-5 shrink-0">
-                            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Recommended Quiz</p>
-                            <p className="text-lg font-black text-emerald-400">{recBalanced} Questions</p>
-                            <span className="text-[10px] text-slate-400 font-mono">Balanced Difficulty</span>
+                            {onApplyQuestionCount && (
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        onApplyQuestionCount(recBalanced, 'Balanced');
+                                        onClose();
+                                    }}
+                                    className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer shrink-0 self-start sm:self-center"
+                                >
+                                    <Zap size={14} />
+                                    <span>Apply {recBalanced} Qs</span>
+                                </button>
+                            )}
                         </div>
                     </div>
 
                     {/* Section 1: The 4 Pedagogical Rings */}
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
                             <Sparkles size={14} className="text-orange-600" />
-                            Pedagogical Delivery Dimensions (4 Core Pillars)
+                            Pedagogical Delivery Dimensions (4 Pillars)
                         </h4>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             {/* Ring 1 */}
-                            <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-100 hover:border-slate-200 shadow-2xs space-y-2">
+                            <div className="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
                                 <div className="flex items-center justify-between text-xs">
-                                    <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                                        <span>🎯 Concept Clarity</span>
-                                    </span>
+                                    <span className="font-bold text-slate-800">🎯 Concept Clarity</span>
                                     <span className="font-mono font-black text-orange-600">{ring1} / 25</span>
                                 </div>
-                                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                                     <div className="h-full rounded-full bg-orange-500 transition-all duration-500" style={{ width: `${(ring1 / 25) * 100}%` }} />
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-snug">
-                                    {ring1 >= 22 ? 'Clear definitions, terminology, and core principles established.' : 'Core concepts introduced; opportunities for deeper definitions.'}
+                                    {ring1 >= 22 ? 'Unambiguous terminology, precise definitions, and clear framing.' : 'Core principles introduced with foundational definitions.'}
                                 </p>
                             </div>
 
                             {/* Ring 2 */}
-                            <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-100 hover:border-slate-200 shadow-2xs space-y-2">
+                            <div className="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
                                 <div className="flex items-center justify-between text-xs">
-                                    <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                                        <span>🧠 Depth of Explanation</span>
-                                    </span>
+                                    <span className="font-bold text-slate-800">🧠 Depth of Explanation</span>
                                     <span className="font-mono font-black text-indigo-600">{ring2} / 25</span>
                                 </div>
-                                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                                     <div className="h-full rounded-full bg-indigo-500 transition-all duration-500" style={{ width: `${(ring2 / 25) * 100}%` }} />
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-snug">
-                                    {ring2 >= 22 ? 'Explains the "why", underlying mechanisms, and cause-and-effect.' : 'Foundational explanations present; causal mechanisms can be deepened.'}
+                                    {ring2 >= 22 ? 'Explains the "why", underlying mechanisms, and operational invariants.' : 'Foundational explanations present; causal mechanics can be deepened.'}
                                 </p>
                             </div>
 
                             {/* Ring 3 */}
-                            <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-100 hover:border-slate-200 shadow-2xs space-y-2">
+                            <div className="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
                                 <div className="flex items-center justify-between text-xs">
-                                    <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                                        <span>💻 Examples & Practice</span>
-                                    </span>
+                                    <span className="font-bold text-slate-800">💻 Examples & Practice</span>
                                     <span className="font-mono font-black text-emerald-600">{ring3} / 25</span>
                                 </div>
-                                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                                     <div className="h-full rounded-full bg-emerald-500 transition-all duration-500" style={{ width: `${(ring3 / 25) * 100}%` }} />
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-snug">
-                                    {ring3 >= 22 ? 'Concrete examples, code traces, or worked walkthroughs demonstrated.' : 'Theory explained; adding sample traces enables scenario questions.'}
+                                    {ring3 >= 22 ? 'Concrete walkthroughs, sample traces, or worked code demonstrations.' : 'Theory explained; adding sample traces enables scenario questions.'}
                                 </p>
                             </div>
 
                             {/* Ring 4 */}
-                            <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-100 hover:border-slate-200 shadow-2xs space-y-2">
+                            <div className="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1.5">
                                 <div className="flex items-center justify-between text-xs">
-                                    <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                                        <span>📈 Lecture Structure</span>
-                                    </span>
+                                    <span className="font-bold text-slate-800">📈 Lecture Structure</span>
                                     <span className="font-mono font-black text-blue-600">{ring4} / 25</span>
                                 </div>
-                                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                                     <div className="h-full rounded-full bg-blue-500 transition-all duration-500" style={{ width: `${(ring4 / 25) * 100}%` }} />
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-snug">
-                                    {ring4 >= 22 ? 'Well-organized lesson flow with clear chapter transitions.' : 'Continuous lesson flow; structured transitions enhance pacing.'}
+                                    {ring4 >= 22 ? 'Logical lesson progression with clear chapter transitions.' : 'Continuous lesson flow with structured transitions.'}
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Section 2: The Secret Sauce Quote Spotlight */}
+                    {/* Section 2: Standout Teaching Moment Spotlight */}
                     {highlightQuote && (
-                        <div className="p-4.5 rounded-2xl bg-amber-50/80 border-2 border-amber-200/80 shadow-2xs space-y-2">
+                        <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-200 shadow-2xs space-y-1.5">
                             <div className="flex items-center gap-2 text-amber-900 font-black text-xs uppercase tracking-wider">
-                                <Quote size={16} className="text-amber-600 shrink-0" />
-                                <span>⭐ Best Explanation Highlight</span>
+                                <Quote size={15} className="text-amber-600 shrink-0" />
+                                <span>⭐ Standout Teaching Moment</span>
                             </div>
                             <blockquote className="text-xs font-semibold text-slate-800 italic pl-3 border-l-2 border-amber-400 leading-relaxed">
                                 &ldquo;{highlightQuote}&rdquo;
                             </blockquote>
-                            <p className="text-[10px] text-amber-700 font-medium pt-0.5">
-                                An authentic moment of instructional clarity extracted directly from your spoken lecture narrative.
+                            <p className="text-[10px] text-amber-700 font-medium">
+                                Verbatim clarity captured directly from your spoken lecture narrative.
                             </p>
                         </div>
                     )}
 
-                    {/* Section 3: Personalized Instructional Observations */}
+                    {/* Section 3: Why You Earned This Score & Growth Opportunities */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                        <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                        {/* Left: Authentic Strengths */}
+                        <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-2.5">
                             <p className="text-xs font-black text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
                                 <CheckCircle size={15} className="text-emerald-600" />
-                                Instructional Strengths
+                                Why You Earned This Score
                             </p>
-                            <ul className="space-y-1.5 text-xs text-emerald-950">
-                                {coveredAspects.length > 0 ? (
-                                    coveredAspects.map((aspect, i) => (
-                                        <li key={i} className="flex items-start gap-1.5">
-                                            <Check size={14} className="text-emerald-600 font-bold shrink-0 stroke-[2.5] mt-0.5" />
-                                            <span>{aspect}</span>
-                                        </li>
-                                    ))
-                                ) : (
-                                    <li className="text-slate-500 italic">Core syllabus concepts clearly communicated.</li>
-                                )}
-                            </ul>
+                            <div className="space-y-2 text-xs text-emerald-950">
+                                {dynamicStrengths.map((st, i) => (
+                                    <div key={i} className="flex items-start gap-2">
+                                        <Check size={14} className="text-emerald-600 font-bold shrink-0 stroke-[2.5] mt-0.5" />
+                                        <div>
+                                            <strong className="font-bold text-emerald-900 block">{st.title}</strong>
+                                            <span className="text-[11px] text-emerald-800 leading-snug block">{st.text}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
-                        <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-2">
-                            <p className="text-xs font-black text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
-                                <Lightbulb size={15} className="text-blue-600" />
-                                Opportunities for Quiz Depth
+                        {/* Right: Topic-Aware Growth Opportunities */}
+                        <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-2.5">
+                            <p className="text-xs font-black text-indigo-900 uppercase tracking-wider flex items-center gap-1.5">
+                                <Lightbulb size={15} className="text-indigo-600" />
+                                Opportunities for Next Lecture
                             </p>
-                            <ul className="space-y-1.5 text-xs text-blue-950">
-                                {actionableTips.length > 0 ? (
-                                    actionableTips.slice(0, 2).map((tip, i) => (
-                                        <li key={i} className="flex items-start gap-1.5">
-                                            <span className="text-blue-600 font-bold shrink-0">•</span>
-                                            <span>{tip}</span>
-                                        </li>
-                                    ))
-                                ) : (
-                                    <li className="text-emerald-700 font-semibold">Thoroughly substantiated across all core assessment dimensions.</li>
-                                )}
-                            </ul>
+                            <div className="space-y-2 text-xs text-indigo-950">
+                                {dynamicGrowthTips.map((tip, i) => (
+                                    <div key={i} className="flex items-start gap-2">
+                                        <ArrowRight size={13} className="text-indigo-600 font-bold shrink-0 mt-0.5" />
+                                        <div>
+                                            <strong className="font-bold text-indigo-900 block">{tip.title}</strong>
+                                            <span className="text-[11px] text-indigo-800 leading-snug block">{tip.text}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Section 4: What Was Taught & Key Concepts */}
-                    {(whatWasTaught || (detectedFocus && detectedFocus.length > 0)) && (
-                        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
-                            <p className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <BookOpen size={15} className="text-orange-600" />
-                                Instructional Topics Recognized
-                            </p>
-                            {whatWasTaught && (
-                                <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                                    {whatWasTaught}
+                    {/* Section 4: Verified Curricular Concepts Recognized */}
+                    {cleanConcepts.length > 0 && (
+                        <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                    <BookOpen size={14} className="text-orange-600" />
+                                    Verified Curricular Concepts Recognized
                                 </p>
-                            )}
-                            {detectedFocus && detectedFocus.length > 0 && (
-                                <div className="flex flex-wrap gap-1.5 pt-1">
-                                    {detectedFocus.map((concept, i) => (
-                                        <span key={i} className="text-[11px] font-bold bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-full shadow-2xs inline-flex items-center gap-1.5">
-                                            <Tag size={12} className="text-orange-600 shrink-0" />
-                                            <span>{concept}</span>
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
+                                <span className="text-[10px] text-slate-500 font-mono">
+                                    {cleanConcepts.length} verified concepts
+                                </span>
+                            </div>
+                            <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                {cleanConcepts.map((concept, i) => (
+                                    <span key={i} className="text-[11px] font-bold bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-full shadow-2xs inline-flex items-center gap-1.5">
+                                        <Tag size={11} className="text-orange-600 shrink-0" />
+                                        <span>{concept}</span>
+                                    </span>
+                                ))}
+                            </div>
                         </div>
                     )}
 
                     {/* Section 5: Recommended Questions by Difficulty */}
-                    <div className="space-y-3 pt-1">
+                    <div className="space-y-2.5 pt-1">
                         <div className="flex items-center justify-between">
                             <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
                                 <Zap size={14} className="text-orange-600 fill-orange-500" />
@@ -344,23 +434,23 @@ export default function TeachingScoreModal({
                             </span>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                            {/* Card 1: Balanced */}
-                            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-orange-500/5 border-2 border-orange-300 shadow-2xs flex flex-col justify-between gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                            {/* Balanced */}
+                            <div className="p-3 rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-orange-500/5 border-2 border-orange-300 shadow-2xs flex flex-col justify-between gap-2.5">
                                 <div>
-                                    <div className="flex items-center justify-between mb-1">
+                                    <div className="flex items-center justify-between mb-0.5">
                                         <span className="text-xs font-black text-orange-950 flex items-center gap-1.5">
-                                            <Scale size={14} className="text-orange-600" />
+                                            <Scale size={13} className="text-orange-600" />
                                             Balanced
                                         </span>
-                                        <span className="text-[9px] font-black uppercase tracking-wider bg-orange-200/80 text-orange-800 px-1.5 py-0.5 rounded-md">
+                                        <span className="text-[9px] font-black uppercase tracking-wider bg-orange-200/80 text-orange-800 px-1.5 py-0.2 rounded-md">
                                             Recommended
                                         </span>
                                     </div>
-                                    <p className="text-lg font-black text-slate-900">
+                                    <p className="text-base font-black text-slate-900">
                                         {recBalanced} <span className="text-xs font-medium text-slate-600">Questions</span>
                                     </p>
-                                    <p className="text-[10px] text-slate-600 leading-snug mt-1">
+                                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">
                                         Comprehensive blend across Easy, Medium, and Hard tiers.
                                     </p>
                                 </div>
@@ -379,22 +469,22 @@ export default function TeachingScoreModal({
                                 )}
                             </div>
 
-                            {/* Card 2: Easy */}
-                            <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 shadow-2xs flex flex-col justify-between gap-3">
+                            {/* Easy */}
+                            <div className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between gap-2.5">
                                 <div>
-                                    <div className="flex items-center justify-between mb-1">
+                                    <div className="flex items-center justify-between mb-0.5">
                                         <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                            <CheckCircle size={14} className="text-emerald-600" />
+                                            <CheckCircle size={13} className="text-emerald-600" />
                                             Easy
                                         </span>
                                         <span className="text-[9px] font-bold text-slate-500 font-mono">
                                             Cap: {capEasy}
                                         </span>
                                     </div>
-                                    <p className="text-lg font-black text-slate-900">
+                                    <p className="text-base font-black text-slate-900">
                                         {recEasy} <span className="text-xs font-medium text-slate-600">Questions</span>
                                     </p>
-                                    <p className="text-[10px] text-slate-600 leading-snug mt-1">
+                                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">
                                         Definitions, terminology, syntax & core recall.
                                     </p>
                                 </div>
@@ -413,22 +503,22 @@ export default function TeachingScoreModal({
                                 )}
                             </div>
 
-                            {/* Card 3: Medium */}
-                            <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 shadow-2xs flex flex-col justify-between gap-3">
+                            {/* Medium */}
+                            <div className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between gap-2.5">
                                 <div>
-                                    <div className="flex items-center justify-between mb-1">
+                                    <div className="flex items-center justify-between mb-0.5">
                                         <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                            <Zap size={14} className="text-indigo-600" />
+                                            <Zap size={13} className="text-indigo-600" />
                                             Medium
                                         </span>
                                         <span className="text-[9px] font-bold text-slate-500 font-mono">
                                             Cap: {capMedium}
                                         </span>
                                     </div>
-                                    <p className="text-lg font-black text-slate-900">
+                                    <p className="text-base font-black text-slate-900">
                                         {recMedium} <span className="text-xs font-medium text-slate-600">Questions</span>
                                     </p>
-                                    <p className="text-[10px] text-slate-600 leading-snug mt-1">
+                                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">
                                         Mechanisms, comparisons, execution & tradeoffs.
                                     </p>
                                 </div>
@@ -447,24 +537,24 @@ export default function TeachingScoreModal({
                                 )}
                             </div>
 
-                            {/* Card 4: Hard */}
-                            <div className={`p-3.5 rounded-2xl border-2 shadow-2xs flex flex-col justify-between gap-3 ${
-                                recHard > 0 ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-50/60 border-dashed border-slate-200'
+                            {/* Hard */}
+                            <div className={`p-3 rounded-2xl border shadow-2xs flex flex-col justify-between gap-2.5 ${
+                                recHard > 0 ? 'bg-white border-slate-200' : 'bg-slate-50/60 border-dashed border-slate-200'
                             }`}>
                                 <div>
-                                    <div className="flex items-center justify-between mb-1">
+                                    <div className="flex items-center justify-between mb-0.5">
                                         <span className={`text-xs font-black flex items-center gap-1.5 ${recHard > 0 ? 'text-slate-800' : 'text-slate-500'}`}>
-                                            <Award size={14} className={recHard > 0 ? 'text-amber-600' : 'text-slate-400'} />
+                                            <Award size={13} className={recHard > 0 ? 'text-amber-600' : 'text-slate-400'} />
                                             Hard
                                         </span>
                                         <span className="text-[9px] font-bold text-slate-400 font-mono">
                                             Cap: {capHard}
                                         </span>
                                     </div>
-                                    <p className="text-lg font-black text-slate-900">
+                                    <p className="text-base font-black text-slate-900">
                                         {recHard} <span className="text-xs font-medium text-slate-600">Questions</span>
                                     </p>
-                                    <p className="text-[10px] text-slate-500 leading-snug mt-1">
+                                    <p className="text-[10px] text-slate-500 leading-snug mt-0.5">
                                         {recHard > 0
                                             ? 'Invariants, boundary violations & causal proofs.'
                                             : 'No deep causal invariants in lecture recording.'}
@@ -489,7 +579,7 @@ export default function TeachingScoreModal({
                 </div>
 
                 {/* Modal Footer */}
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between rounded-b-3xl">
+                <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between rounded-b-3xl">
                     <p className="text-[11px] text-slate-500">
                         Derived from <strong>Lecture Intelligence Evidence Grounding</strong>
                     </p>
