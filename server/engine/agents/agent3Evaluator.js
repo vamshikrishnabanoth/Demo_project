@@ -167,8 +167,8 @@ EVALUATION DIRECTIVES:
 3. ALGORITHMIC & CODE GROUNDING:
    - For algorithmic/programming concepts taught in the lecture (loops, arrays, traversals, frequency counting), concise 3–7 line code snippets illustrating the taught algorithm are validly grounded derived evidence (EVIDENCE_DERIVED or DIRECT_EVIDENCE).
    - Do NOT reject code snippets as UNGROUNDED_EVIDENCE_CLAIM merely because the lecture was delivered via audio transcript rather than written code.
-4. CONCISE MCQ FORMAT:
-   - Question stems should be crisp (strictly under 35 words plus code snippet). Options should be punchy (under 15 words).
+4. CONCISE & CREATIVE MCQ FORMAT:
+   - Question stems should be crisp (strictly under 45 words plus code snippet). Realistic applied scenarios (e.g. streaming pipelines, telemetry, cache monitors) are valid and encouraged; options should be punchy (under 15 words).
 5. COGNITIVE CALIBRATION:
    - Evaluate the actual cognitive operation demanded by the question:
      * Easy (RECALL/RECOGNIZE): Factual recall, definition recognition.
