@@ -12,6 +12,9 @@ export default function PipelineStage({
   icon: Icon = null,
   color = '#ea580c',
   isSelected = false,
+  executionMode = 'SEQUENTIAL',
+  engine = null,
+  isFallback = false,
   onClick = null
 }) {
   const isCompleted = status === 'COMPLETED' || status === 'DONE' || status === 'PASS';
@@ -60,6 +63,25 @@ export default function PipelineStage({
                 {subtitle}
               </p>
             )}
+
+            {/* Execution Nature & Model Provenance Badges */}
+            <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+              <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded flex items-center gap-0.5 ${executionMode === 'PARALLEL' ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}`}>
+                {executionMode === 'PARALLEL' ? '⚡ Parallel' : '➔ Sequential'}
+              </span>
+
+              {isFallback ? (
+                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-0.5">
+                  ⚠️ Fallback Active
+                </span>
+              ) : null}
+
+              {engine && (
+                <span className="text-[9px] font-mono text-slate-400 truncate max-w-[130px]" title={engine}>
+                  {engine}
+                </span>
+              )}
+            </div>
 
             {summary && (
               <div className="mt-1.5 text-[11px] text-slate-600 font-medium line-clamp-1 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">

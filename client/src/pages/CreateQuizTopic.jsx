@@ -136,6 +136,22 @@ export default function CreateQuizTopic() {
     const [transcribePhase, setTranscribePhase] = useState('');
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
     const [pendingRecoverySessions, setPendingRecoverySessions] = useState([]);
+    const [activeAccountTasks, setActiveAccountTasks] = useState([]);
+
+    // Check for in-progress or recently completed account tasks across any device
+    useEffect(() => {
+        async function fetchAccountTasks() {
+            try {
+                const res = await api.get('/quiz/generate/active-tasks');
+                if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+                    const relevant = res.data.filter(t => t.status === 'RUNNING' || (t.status === 'COMPLETED' && (Date.now() - t.createdAt) < 7200000));
+                    setActiveAccountTasks(relevant);
+                }
+            } catch (_) {}
+        }
+        fetchAccountTasks();
+    }, []);
+
 
     const currentSessionIdRef = useRef(null);
     const chunkIndexRef = useRef(0);
@@ -1297,6 +1313,42 @@ export default function CreateQuizTopic() {
                 )}
 
                 {/* CRASH RECOVERY BANNER WITH DETAILED TIMESTAMPS & DISCARD */}
+                
+                {/* Cross-Device In-Progress Active Tasks Banner */}
+                {activeAccountTasks.length > 0 && (
+                    <div className="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 border border-orange-300 rounded-2xl p-4 shadow-sm mb-4 space-y-2">
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-full bg-orange-600 animate-ping" />
+                                <h4 className="text-xs font-black uppercase tracking-wider text-orange-950">
+                                    Active Assessment Generation on Your Account
+                                </h4>
+                            </div>
+                            <span className="text-[10px] font-bold text-orange-800 bg-orange-100/90 border border-orange-200 px-2 py-0.5 rounded-full">
+                                Synced Across Devices
+                            </span>
+                        </div>
+                        {activeAccountTasks.slice(0, 2).map((t) => (
+                            <div key={t.id} className="flex flex-wrap items-center justify-between gap-2 bg-white/90 border border-orange-200/80 p-2.5 rounded-xl text-xs shadow-2xs">
+                                <div className="flex items-center gap-2">
+                                    <span className="font-mono font-bold text-slate-800">Task {t.id.slice(0, 12)}...</span>
+                                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-900 border border-orange-200">
+                                        {t.stageLabel || t.status}
+                                    </span>
+                                    <span className="font-mono text-slate-600 font-bold text-[11px]">{t.progressPct || 0}%</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate(`/pipeline-output?taskId=${t.id}`)}
+                                    className="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-xs cursor-pointer active:scale-95 transition-all"
+                                >
+                                    Open Live Observability ➔
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
                 {pendingRecoverySessions.length > 0 && (
                     <div className="mx-4 lg:mx-6 mt-4 p-4 bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl flex flex-col gap-3 shadow-md">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-amber-500/20 pb-2.5">

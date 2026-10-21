@@ -13,7 +13,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Teacher Inputs',
     subtitle: 'Uploaded materials & parameters',
     icon: FileText,
-    backendStage: 'INPUTS'
+    backendStage: 'INPUTS',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Client Ingest'
   },
   {
     id: 'ingestion',
@@ -21,7 +23,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Ingestion & Extraction',
     subtitle: 'OCR, text, speech transcription',
     icon: ScanText,
-    backendStage: 'INGESTION'
+    backendStage: 'INGESTION',
+    executionMode: 'PARALLEL',
+    defaultEngine: 'Groq Whisper Turbo (STT) + Tesseract OCR'
   },
   {
     id: 'pdi',
@@ -29,7 +33,9 @@ export const STAGE_DEFINITIONS = [
     name: 'PDI Representation Router',
     subtitle: 'SUMMARY / BLUEPRINT / UNIFIED',
     icon: GitBranch,
-    backendStage: 'EVIDENCE_PACKAGE'
+    backendStage: 'EVIDENCE_PACKAGE',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Deterministic Modality Split'
   },
   {
     id: 'hierarchy',
@@ -37,7 +43,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Hierarchical Evidence Store',
     subtitle: 'Parent (400w) & Child (75w) windows',
     icon: Network,
-    backendStage: 'EVIDENCE_PACKAGE'
+    backendStage: 'EVIDENCE_PACKAGE',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Sliding Window Tokenizer'
   },
   {
     id: 'alignment',
@@ -45,7 +53,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Cross-Material Alignment',
     subtitle: 'Voice-to-document semantic graph',
     icon: Link2,
-    backendStage: 'EVIDENCE_PACKAGE'
+    backendStage: 'EVIDENCE_PACKAGE',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Bidirectional Semantic Graph'
   },
   {
     id: 'academicity',
@@ -53,7 +63,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Academicity Gate',
     subtitle: 'Curricular depth & syllabus verify',
     icon: GraduationCap,
-    backendStage: 'EVIDENCE_PACKAGE'
+    backendStage: 'EVIDENCE_PACKAGE',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Curricular Depth Gate'
   },
   {
     id: 'planner',
@@ -61,7 +73,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Agent 1: Target Planner',
     subtitle: 'Primary targets & TC coverage score',
     icon: Target,
-    backendStage: 'AGENT_1_PLANNING'
+    backendStage: 'AGENT_1_PLANNING',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Groq 120B / Llama 3.3 70B'
   },
   {
     id: 'generator',
@@ -69,7 +83,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Agent 2: MCQ Generator',
     subtitle: 'Draft questions & tiered distractors',
     icon: Bot,
-    backendStage: 'QUESTION_GENERATION'
+    backendStage: 'QUESTION_GENERATION',
+    executionMode: 'PARALLEL',
+    defaultEngine: 'Groq 120B / 70B (Concurrent Slots)'
   },
   {
     id: 'prechecks',
@@ -77,7 +93,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Deterministic Pre-Checks',
     subtitle: 'Option cardinality & schema rules',
     icon: Filter,
-    backendStage: 'VALIDATING_QUESTIONS'
+    backendStage: 'VALIDATING_QUESTIONS',
+    executionMode: 'PARALLEL',
+    defaultEngine: 'Deterministic Syntax Audit'
   },
   {
     id: 'evaluator',
@@ -85,7 +103,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Agent 3: Question Evaluator',
     subtitle: 'Derivability & student answerability',
     icon: ShieldCheck,
-    backendStage: 'AGENT_3_QUESTION_EVAL'
+    backendStage: 'AGENT_3_QUESTION_EVAL',
+    executionMode: 'PARALLEL',
+    defaultEngine: 'LLM Pedagogical Critic'
   },
   {
     id: 'duplicates',
@@ -93,7 +113,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Duplicate Check & Reserve Swaps',
     subtitle: 'Jaccard deduplication & backup pool',
     icon: CopyCheck,
-    backendStage: 'DETERMINISTIC_DUPLICATE_CHECK'
+    backendStage: 'DETERMINISTIC_DUPLICATE_CHECK',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Jaccard Distance Matrix'
   },
   {
     id: 'quiz_audit',
@@ -101,7 +123,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Agent 3: Whole-Quiz Audit',
     subtitle: 'Bloom diversity & curriculum balance',
     icon: Scale,
-    backendStage: 'AGENT_3_QUIZ_EVAL'
+    backendStage: 'AGENT_3_QUIZ_EVAL',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Whole-Quiz Curriculum Auditor'
   },
   {
     id: 'grounding',
@@ -109,7 +133,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Final Grounding Gate',
     subtitle: 'Foreign contamination barrier',
     icon: ShieldCheck,
-    backendStage: 'FINAL_GROUNDING_GATE'
+    backendStage: 'FINAL_GROUNDING_GATE',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Zero-Contamination Boundary Check'
   },
   {
     id: 'publishing',
@@ -117,7 +143,9 @@ export const STAGE_DEFINITIONS = [
     name: 'Publishing & Live Classroom',
     subtitle: 'SHA-256 seal & live broadcast',
     icon: PackageCheck,
-    backendStage: 'COMPLETED'
+    backendStage: 'COMPLETED',
+    executionMode: 'SEQUENTIAL',
+    defaultEngine: 'Cryptographic SHA-256 Hasher'
   }
 ];
 
