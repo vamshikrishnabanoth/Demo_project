@@ -8,7 +8,7 @@ import {
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
     AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale, Activity,
-    Wifi, Info, Tag, BookOpen, ListOrdered, Target, GraduationCap, BarChart3
+    Wifi, Info, Tag, ListOrdered, Target
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
@@ -1847,44 +1847,29 @@ export default function CreateQuizTopic() {
 
                                         
 
-                                        {/* 2. Sequential Chapters Timeline */}
-                                        {lectureIntel?.chapters && lectureIntel.chapters.length > 0 && (
+                                        {/* Covered Subtopics / Chapters */}
+                                        {lectureIntel?.chapters && lectureIntel.chapters.length > 0 ? (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Sequential Chapters & Topics
+                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Covered Subtopics
                                                 </p>
                                                 <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                                                     {lectureIntel.chapters.map((ch, idx) => (
-                                                        <div key={ch.id || idx} className="p-2 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1">
-                                                            <div className="flex items-center justify-between">
-                                                                <span className="font-bold text-slate-800">{idx + 1}. {ch.title}</span>
-                                                                {ch.timestamp_start && (
-                                                                    <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-200/70 px-2 py-0.5 rounded-full shrink-0">
-                                                                        {ch.timestamp_start}{ch.timestamp_end ? ` - ${ch.timestamp_end}` : ''}
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                            
-                                                            {ch.key_concepts && ch.key_concepts.length > 0 && (
-                                                                <div className="flex flex-wrap gap-1 pt-0.5">
-                                                                    {ch.key_concepts.map((kc, kci) => (
-                                                                        <span key={kci} className="text-[9px] font-semibold bg-orange-100/70 text-orange-800 px-1.5 py-0.5 rounded border border-orange-200">
-                                                                            {kc}
-                                                                        </span>
-                                                                    ))}
-                                                                </div>
+                                                        <div key={ch.id || idx} className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs flex items-center justify-between">
+                                                            <span className="font-bold text-slate-800">{idx + 1}. {ch.title}</span>
+                                                            {ch.timestamp_start && (
+                                                                <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-200/70 px-2 py-0.5 rounded-full shrink-0">
+                                                                    {ch.timestamp_start}{ch.timestamp_end ? ` - ${ch.timestamp_end}` : ""}
+                                                                </span>
                                                             )}
                                                         </div>
                                                     ))}
                                                 </div>
                                             </div>
-                                        )}
-
-                                        {/* 3. Key Topics to be Assessed / Subtopics */}
-                                        {((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
+                                        ) : ((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) ? (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Key Concepts to be Assessed
+                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Covered Subtopics
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
@@ -1898,103 +1883,7 @@ export default function CreateQuizTopic() {
                                                     ))}
                                                 </div>
                                             </div>
-                                        )}
-
-                                        {/* 4. Observed Teaching Highlights (Truthful, Clean Observability) */}
-                                        {(() => {
-                                            const highlights = [];
-                                            const chars = lectureDepth.characteristics || {};
-                                            if (chars.conceptExplanation === 'Strong') {
-                                                highlights.push({ label: 'Precise Concept Definitions', bg: 'bg-emerald-50 text-emerald-800 border-emerald-200' });
-                                            }
-                                            if (chars.procedures === 'Strong') {
-                                                highlights.push({ label: 'Step-by-Step Algorithmic Traces', bg: 'bg-indigo-50 text-indigo-800 border-indigo-200' });
-                                            }
-                                            if (chars.examples === 'Present') {
-                                                highlights.push({ label: 'Worked Practical Examples', bg: 'bg-blue-50 text-blue-800 border-blue-200' });
-                                            }
-                                            if (chars.reasoning === 'Strong') {
-                                                highlights.push({ label: 'Causal Reasoning & "Why"', bg: 'bg-purple-50 text-purple-800 border-purple-200' });
-                                            }
-                                            if (lectureIntel?.chapters && lectureIntel.chapters.length > 1) {
-                                                highlights.push({ label: `${lectureIntel.chapters.length} Structured Chapters`, bg: 'bg-amber-50 text-amber-800 border-amber-200' });
-                                            }
-                                            if (highlights.length === 0) return null;
-                                            return (
-                                                <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1.5">
-                                                    <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                        <GraduationCap size={13} className="text-[#c2410c] shrink-0" /> Observed Teaching Highlights
-                                                    </p>
-                                                    <div className="flex flex-wrap gap-1.5">
-                                                        {highlights.map((h, i) => (
-                                                            <span key={i} className={`text-[10px] font-bold border px-2.5 py-0.5 rounded-full ${h.bg}`}>
-                                                                {h.label}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })()}
-
-                                        {/* 5. Assessment Scope & Content Volume with 1-Click Apply */}
-                                        <div className="bg-white/95 px-4 py-3 rounded-2xl border border-orange-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
-                                            <div className="flex items-center gap-2 text-slate-700">
-                                                <BarChart3 size={14} className="text-[#c2410c] shrink-0" />
-                                                <span>Content Volume: <strong className="font-black text-[#c2410c]">{lectureWordCount > 0 ? lectureWordCount.toLocaleString() : (inputs.find(i => i.type === 'voice' || i.type === 'audio')?.content?.split(/\s+/)?.length || 0).toLocaleString()} words</strong></span>
-                                            </div>
-                                            
-                                            {(() => {
-                                                const selKey = (difficulty || 'Balanced').toLowerCase();
-                                                const baseRec = recommendedQuestionCount || 5;
-                                                let curRec = recommendedByDifficulty && recommendedByDifficulty[selKey] !== undefined
-                                                    ? recommendedByDifficulty[selKey]
-                                                    : baseRec;
-                                                
-                                                // Teacher Intent Hard Support: if user selects Hard and base lecture supports questions, support Hard tier
-                                                if (selKey === 'hard' && curRec === 0 && baseRec >= 2) {
-                                                    curRec = Math.max(1, Math.round(baseRec * 0.35));
-                                                }
-
-                                                let curCap = capacityByDifficulty && capacityByDifficulty[selKey] !== undefined
-                                                    ? capacityByDifficulty[selKey]
-                                                    : null;
-                                                if (selKey === 'hard' && (curCap === null || curCap === 0) && curRec > 0) {
-                                                    curCap = curRec;
-                                                }
-
-                                                return (
-                                                    <div className="flex items-center justify-between sm:justify-end gap-3 flex-wrap">
-                                                        <span className="flex items-center gap-1.5 text-slate-700 font-medium">
-                                                            <Target size={13} className="text-[#c2410c] shrink-0" /> Recommended ({difficulty}): <strong className="font-black text-[#c2410c]">{curRec} Questions</strong>
-                                                            {curCap !== null && curCap !== curRec && (
-                                                                <span className="text-slate-500 font-normal text-[11px]">(Capacity: {curCap})</span>
-                                                            )}
-                                                        </span>
-                                                        
-                                                        {curRec > 0 ? (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setQuestionCount(curRec);
-                                                                    toast.success(`Applied recommended ${curRec} ${difficulty} questions!`);
-                                                                }}
-                                                                className="px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-[11px] uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
-                                                                title={`Apply recommended ${curRec} questions for ${difficulty} difficulty`}
-                                                            >
-                                                                <Zap size={13} />
-                                                                <span>Apply {curRec} {difficulty} Qs</span>
-                                                            </button>
-                                                        ) : (
-                                                            <span className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 font-bold text-[11px] border border-amber-300">
-                                                                0 {difficulty} Qs Supported
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                );
-                                            })()}
-                                        </div>
-
-
+                                        ) : null}
                                     </div>
                                 )}
                             </>

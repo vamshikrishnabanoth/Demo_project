@@ -1173,7 +1173,7 @@ export default function CreateQuizText() {
                                         {keyTopics && keyTopics.length > 0 && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Key Topics Assessed
+                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Covered Subtopics
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {keyTopics.map((topic, i) => (
@@ -1186,26 +1186,7 @@ export default function CreateQuizText() {
                                             </div>
                                         )}
 
-                                        {/* Scope & Volume */}
-                                        {(lectureWordCount > 0 || recommendedQuestions) && (
-                                            <div className="bg-white/90 px-3 py-2 rounded-2xl border border-orange-200/70 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold text-slate-600 shadow-2xs">
-                                                {lectureWordCount > 0 && (
-                                                    <span className="flex items-center gap-1.5 text-slate-700">
-                                                        <BarChart3 size={13} className="text-[#c2410c] shrink-0" /> Content Volume: <span className="font-black text-[#c2410c]">{lectureWordCount.toLocaleString()} words</span>
-                                                    </span>
-                                                )}
-                                                {recommendedQuestions && (
-                                                    <span className="flex items-center gap-1.5 text-slate-700">
-                                                        <Target size={13} className="text-[#c2410c] shrink-0" /> Recommended: <span className="font-black text-[#c2410c]">{recommendedQuestions}</span>
-                                                        {recommendedByDifficulty && (
-                                                            <span className="text-slate-500 font-medium text-[9px]">
-                                                                (Easy: {recommendedByDifficulty.easy}, Med: {recommendedByDifficulty.medium}, Hard: {recommendedByDifficulty.hard})
-                                                            </span>
-                                                        )}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
+                                        
 
                                         
                                     </div>
