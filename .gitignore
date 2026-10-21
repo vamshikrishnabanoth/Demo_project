@@ -69,3 +69,6 @@ server/data/cache/
 *.flac
 *.ogg
 *.traineddata
+
+# Local Archive of Obsolete Experiments
+archive/
