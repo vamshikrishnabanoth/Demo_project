@@ -56,6 +56,10 @@ To prevent confusion among teammates, improve build hygiene, and ensure zero acc
 | **`original_StudentDashboard.jsx`** | Root directory | `archive/loose_root_backups/` | Loose JSX backup of Student Dashboard. | Redundant copy; active component is in `client/src/pages/StudentDashboard.jsx`. |
 | **`test_local.db`** | Root directory | `archive/test_local.db` | Temporary SQLite scratch database file. | Leftover test artifact from local testing. |
 | **`Students (...).csv`** | Root directory | `archive/Students_roster_backup.csv` | Student roster CSV file. | Removed from root for security and cleanliness. |
+| **`AssessmentReport.jsx`** | `client/src/pages/` | `archive/client_legacy_pages/` | 712-line legacy report page. | Orphaned; route `/report/:id` now renders `QuizAnalytics.jsx`. |
+| **`AdminStudents/Teachers/Admins/Users.jsx`** | `client/src/pages/` | `archive/client_legacy_pages/` | 4 older standalone admin view pages. | Redundant; their logic was completely consolidated into tabs inside `AdminDashboard.jsx`. |
+| **`CreateQuizPDF/Voice.jsx`** | `client/src/pages/` | `archive/client_legacy_pages/` | 2 older single-input quiz generator pages. | Redundant; unified into `CreateQuizTopic.jsx` (multimodal audio, PDF, and text). |
+| **Direct localhost:8000 in Topic Creator** | `client/src/pages/CreateQuizTopic.jsx` | Fixed in place | Direct browser fetch to `http://localhost:8000/transcribe`. | Caused CORS / mixed-content errors in browser; routed cleanly via `POST /api/quiz/transcribe`. |
 
 ---
 

@@ -906,25 +906,10 @@ export default function CreateQuizTopic() {
                     let academicFailureReason = null;
 
                     try {
-                        const localRes = await api.post('http://localhost:8000/transcribe', formData, {
-                            headers: { 'Content-Type': 'multipart/form-data' },
-                            timeout: 30000
-                        });
-                        transcriptText = localRes.data.text;
-                        transcriptSegments = localRes.data.segments || [];
-                        transcriptDuration = localRes.data.duration || null;
-                        transcriptDurationFormatted = localRes.data.duration_formatted || null;
-                        const depthRes = await api.post('/quiz/analyze-depth', { text: transcriptText });
-                        isAcademic = depthRes.data?.isAcademic !== false;
-                        academicFailureReason = depthRes.data?.reason;
-                        if (depthRes.data?.keyTopics && depthRes.data.keyTopics.length > 0) {
-                            smartTitle = depthRes.data.keyTopics.slice(0, 3).join(' & ');
-                        }
-                    } catch (_) {
                         const transcribeRes = await api.post('/quiz/transcribe', formData, {
                             headers: { 'Content-Type': 'multipart/form-data' }
                         });
-                        transcriptText = transcribeRes.data.text;
+                        transcriptText = transcribeRes.data?.text || '';
                         transcriptSegments = transcribeRes.data?.segments || [];
                         transcriptDuration = transcribeRes.data?.duration || null;
                         transcriptDurationFormatted = transcribeRes.data?.duration_formatted || null;
@@ -933,6 +918,12 @@ export default function CreateQuizTopic() {
                         smartSourceName = transcribeRes.data?.sourceName || null;
                         isAcademic = transcribeRes.data?.isAcademic !== false;
                         academicFailureReason = transcribeRes.data?.reason;
+                    } catch (transcribeErr) {
+                        console.error('Transcription error:', transcribeErr);
+                        toast.error('Audio transcription failed. Please try again.', { id: toastId });
+                        await markSessionCompleted(newSessionId);
+                        await deleteSessionRecord(newSessionId);
+                        return;
                     }
 
                     if (!isAcademic) {
