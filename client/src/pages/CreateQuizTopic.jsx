@@ -2092,6 +2092,7 @@ export default function CreateQuizTopic() {
                 whatWasTaught={whatWasTaught}
                 recommendedQuestions={recommendedQuestions}
                 recommendedQuestionCount={recommendedQuestionCount}
+                lectureIntel={lectureIntel}
                 onApplyQuestionCount={(cnt) => {
                     setQuestionCount(cnt);
                     toast.success(`Applied recommended ${cnt} questions!`);
