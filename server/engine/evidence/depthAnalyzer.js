@@ -157,6 +157,7 @@ const FICTIONAL_CARTOON_PATTERNS = [
 
 // Entertainment Drama / Soap Script / Casual Non-Educational Dialogue Patterns
 const ENTERTAINMENT_DRAMA_PATTERNS = [
+  /\b(vlog|vlogger|vlogging|unboxing|merchandise|merch\b|weekend trip|vacation trip|subscribe to the channel|bell notification|hit that bell|welcome back to (?:the|my) (?:vlog|channel))\b/i,
   /\b(accidentally (?:sewed|ripped|dropped|cut|broke)|sewed the (?:sleeve|hem|dress|shirt)|ripped it out)\b/i,
   /\b(need to deliver this tomorrow|half of it is done|boss will kill me|deadline tomorrow|dress is ruined)\b/i,
   /\b(boyfriend|girlfriend|ex-boyfriend|ex-girlfriend|dating him|dating her|fell in love|broke my heart)\b/i,

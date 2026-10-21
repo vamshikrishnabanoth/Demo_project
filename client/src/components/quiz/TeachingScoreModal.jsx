@@ -1,4 +1,4 @@
-import { X, Award, AlertTriangle, CheckCircle, Lightbulb, Zap, BookOpen, Check, Tag, Quote, Sparkles } from 'lucide-react';
+import { X, Award, AlertTriangle, CheckCircle, Lightbulb, Zap, BookOpen, Check, Tag, Quote, Sparkles, Scale } from 'lucide-react';
 
 export default function TeachingScoreModal({
     isOpen,
@@ -8,6 +8,8 @@ export default function TeachingScoreModal({
     whatWasTaught = '',
     recommendedQuestions = '',
     recommendedQuestionCount = null,
+    recommendedByDifficulty = null,
+    capacityByDifficulty = null,
     onApplyQuestionCount = null,
     lectureIntel = null
 }) {
@@ -49,7 +51,7 @@ export default function TeachingScoreModal({
     else if (chars.procedures === 'Moderate' || chapters.length === 1) ring4 = 19;
     if (lectureDepth?.rating === 'Non-Academic') ring4 = 3;
 
-    const idiScore = Math.min(100, Math.max(10, ring1 + ring2 + ring3 + ring4));
+    const idiScore = lectureDepth?.score || Math.min(100, Math.max(10, ring1 + ring2 + ring3 + ring4));
 
     // Secret Sauce Quote: The teacher's verbatim best explanation
     const highlightQuote = (evidenceQuotes && evidenceQuotes.length > 0 && evidenceQuotes[0].length > 15)
@@ -60,7 +62,16 @@ export default function TeachingScoreModal({
     const coveredAspects = breakdown.coveredAspects || [];
     const missingAspects = breakdown.missingAspects || [];
     const actionableTips = breakdown.actionableTips || [];
-    const recCount = recommendedQuestionCount || breakdown.recommendedQuestionCount || 5;
+
+    // Distinct recommendations and capacities by difficulty
+    const recBalanced = recommendedByDifficulty?.balanced ?? recommendedQuestionCount ?? breakdown?.recommendedQuestionCount ?? 5;
+    const recEasy = recommendedByDifficulty?.easy ?? Math.min(recBalanced, 5);
+    const recMedium = recommendedByDifficulty?.medium ?? Math.min(recBalanced, 5);
+    const recHard = recommendedByDifficulty?.hard ?? 0;
+
+    const capEasy = capacityByDifficulty?.easy ?? recEasy;
+    const capMedium = capacityByDifficulty?.medium ?? recMedium;
+    const capHard = capacityByDifficulty?.hard ?? recHard;
 
     const getProfileBadge = (s) => {
         if (s >= 82) {
@@ -68,8 +79,8 @@ export default function TeachingScoreModal({
                 bg: 'bg-emerald-50',
                 border: 'border-emerald-200',
                 text: 'text-emerald-800',
-                label: 'Exemplary Collegiate Delivery',
-                desc: 'Comprehensive coverage across conceptual definitions, analytical reasoning, illustrative traces, and sequential pacing.'
+                label: 'Exemplary Lecture Delivery',
+                desc: 'Comprehensive coverage across concept clarity, depth of explanation, practical examples, and lecture structure.'
             };
         }
         if (s >= 68) {
@@ -87,7 +98,7 @@ export default function TeachingScoreModal({
                 border: 'border-amber-200',
                 text: 'text-amber-800',
                 label: 'Foundational Delivery',
-                desc: 'Covers core principles clearly. Consider expanding on practical traces and causal invariants.'
+                desc: 'Covers core principles clearly. Consider expanding on practical examples and in-depth explanations.'
             };
         }
         return {
@@ -95,7 +106,7 @@ export default function TeachingScoreModal({
             border: 'border-rose-200',
             text: 'text-rose-800',
             label: 'Introductory / Brief',
-            desc: 'Brief instructional material. Elaborate on operational mechanisms to support higher question capacity.'
+            desc: 'Brief instructional material. Elaborate on operational details to support higher question capacity.'
         };
     };
 
@@ -116,10 +127,10 @@ export default function TeachingScoreModal({
                         </div>
                         <div>
                             <h2 className="text-lg font-black tracking-tight text-white flex items-center gap-2">
-                                <span>Instructional Delivery & Assessment Digest</span>
+                                <span>Lecture Quality & Assessment Digest</span>
                             </h2>
                             <p className="text-xs text-slate-300 font-medium">
-                                Objective pedagogical observation measuring conceptual framing, analytical depth, scaffolding, and pacing.
+                                Pedagogical digest evaluating concept clarity, depth of explanation, practical examples, and lecture structure.
                             </p>
                         </div>
                     </div>
@@ -136,7 +147,7 @@ export default function TeachingScoreModal({
                 {/* Body Content */}
                 <div className="modal-body p-6 space-y-6 text-slate-800 max-h-[80vh] overflow-y-auto">
                     
-                    {/* Hero Section: Instructional Delivery Index */}
+                    {/* Hero Section: Lecture Quality Score */}
                     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-2xl p-5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-5 border border-white/10">
                         <div className="flex items-center gap-5">
                             <div className="relative w-20 h-20 rounded-full border-4 border-orange-500/40 flex items-center justify-center bg-slate-950/80 shadow-inner shrink-0">
@@ -159,9 +170,9 @@ export default function TeachingScoreModal({
                         </div>
 
                         <div className="text-center sm:text-right border-t sm:border-t-0 sm:border-l border-white/10 pt-3 sm:pt-0 sm:pl-5 shrink-0">
-                            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Defensible MCQs</p>
-                            <p className="text-lg font-black text-emerald-400">{recCount} Questions</p>
-                            <span className="text-[10px] text-slate-400 font-mono">Balanced Bloom Depth</span>
+                            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Recommended Quiz</p>
+                            <p className="text-lg font-black text-emerald-400">{recBalanced} Questions</p>
+                            <span className="text-[10px] text-slate-400 font-mono">Balanced Difficulty</span>
                         </div>
                     </div>
 
@@ -177,7 +188,7 @@ export default function TeachingScoreModal({
                             <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-100 hover:border-slate-200 shadow-2xs space-y-2">
                                 <div className="flex items-center justify-between text-xs">
                                     <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                                        <span>🏛️ Conceptual Framing & Precision</span>
+                                        <span>🎯 Concept Clarity</span>
                                     </span>
                                     <span className="font-mono font-black text-orange-600">{ring1} / 25</span>
                                 </div>
@@ -185,7 +196,7 @@ export default function TeachingScoreModal({
                                     <div className="h-full rounded-full bg-orange-500 transition-all duration-500" style={{ width: `${(ring1 / 25) * 100}%` }} />
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-snug">
-                                    {ring1 >= 22 ? 'Comprehensive definitions and clear terminology grounding.' : 'Core concepts introduced; opportunities for deeper definitions.'}
+                                    {ring1 >= 22 ? 'Clear definitions, terminology, and core principles established.' : 'Core concepts introduced; opportunities for deeper definitions.'}
                                 </p>
                             </div>
 
@@ -193,7 +204,7 @@ export default function TeachingScoreModal({
                             <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-100 hover:border-slate-200 shadow-2xs space-y-2">
                                 <div className="flex items-center justify-between text-xs">
                                     <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                                        <span>🔬 Analytical & Causal Rigor</span>
+                                        <span>🧠 Depth of Explanation</span>
                                     </span>
                                     <span className="font-mono font-black text-indigo-600">{ring2} / 25</span>
                                 </div>
@@ -201,7 +212,7 @@ export default function TeachingScoreModal({
                                     <div className="h-full rounded-full bg-indigo-500 transition-all duration-500" style={{ width: `${(ring2 / 25) * 100}%` }} />
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-snug">
-                                    {ring2 >= 22 ? 'Explicit causal explanations of why rules and invariants apply.' : 'Foundational mechanisms explained; causal links can be deepened.'}
+                                    {ring2 >= 22 ? 'Explains the "why", underlying mechanisms, and cause-and-effect.' : 'Foundational explanations present; causal mechanisms can be deepened.'}
                                 </p>
                             </div>
 
@@ -209,7 +220,7 @@ export default function TeachingScoreModal({
                             <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-100 hover:border-slate-200 shadow-2xs space-y-2">
                                 <div className="flex items-center justify-between text-xs">
                                     <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                                        <span>🛠️ Illustrative Scaffolding & Traces</span>
+                                        <span>💻 Examples & Practice</span>
                                     </span>
                                     <span className="font-mono font-black text-emerald-600">{ring3} / 25</span>
                                 </div>
@@ -217,7 +228,7 @@ export default function TeachingScoreModal({
                                     <div className="h-full rounded-full bg-emerald-500 transition-all duration-500" style={{ width: `${(ring3 / 25) * 100}%` }} />
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-snug">
-                                    {ring3 >= 22 ? 'Practical code traces, queries, or worked examples demonstrated.' : 'Theory explained; adding sample traces enables scenario MCQs.'}
+                                    {ring3 >= 22 ? 'Concrete examples, code traces, or worked walkthroughs demonstrated.' : 'Theory explained; adding sample traces enables scenario questions.'}
                                 </p>
                             </div>
 
@@ -225,7 +236,7 @@ export default function TeachingScoreModal({
                             <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-100 hover:border-slate-200 shadow-2xs space-y-2">
                                 <div className="flex items-center justify-between text-xs">
                                     <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                                        <span>📐 Curricular Cohesion & Pacing</span>
+                                        <span>📈 Lecture Structure</span>
                                     </span>
                                     <span className="font-mono font-black text-blue-600">{ring4} / 25</span>
                                 </div>
@@ -233,7 +244,7 @@ export default function TeachingScoreModal({
                                     <div className="h-full rounded-full bg-blue-500 transition-all duration-500" style={{ width: `${(ring4 / 25) * 100}%` }} />
                                 </div>
                                 <p className="text-[11px] text-slate-500 leading-snug">
-                                    {ring4 >= 22 ? 'Multi-phase sequential pacing across cohesive lecture chapters.' : 'Single-block flow; structured transitions enhance pacing.'}
+                                    {ring4 >= 22 ? 'Well-organized lesson flow with clear chapter transitions.' : 'Continuous lesson flow; structured transitions enhance pacing.'}
                                 </p>
                             </div>
                         </div>
@@ -244,7 +255,7 @@ export default function TeachingScoreModal({
                         <div className="p-4.5 rounded-2xl bg-amber-50/80 border-2 border-amber-200/80 shadow-2xs space-y-2">
                             <div className="flex items-center gap-2 text-amber-900 font-black text-xs uppercase tracking-wider">
                                 <Quote size={16} className="text-amber-600 shrink-0" />
-                                <span>Notable Pedagogical Highlight</span>
+                                <span>⭐ Best Explanation Highlight</span>
                             </div>
                             <blockquote className="text-xs font-semibold text-slate-800 italic pl-3 border-l-2 border-amber-400 leading-relaxed">
                                 &ldquo;{highlightQuote}&rdquo;
@@ -260,7 +271,7 @@ export default function TeachingScoreModal({
                         <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-2">
                             <p className="text-xs font-black text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
                                 <CheckCircle size={15} className="text-emerald-600" />
-                                Demonstrated Instructional Strengths
+                                Instructional Strengths
                             </p>
                             <ul className="space-y-1.5 text-xs text-emerald-950">
                                 {coveredAspects.length > 0 ? (
@@ -279,7 +290,7 @@ export default function TeachingScoreModal({
                         <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-2">
                             <p className="text-xs font-black text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
                                 <Lightbulb size={15} className="text-blue-600" />
-                                Pedagogical Opportunities for Quiz Depth
+                                Opportunities for Quiz Depth
                             </p>
                             <ul className="space-y-1.5 text-xs text-blue-950">
                                 {actionableTips.length > 0 ? (
@@ -321,30 +332,159 @@ export default function TeachingScoreModal({
                         </div>
                     )}
 
-                    {/* Section 5: Recommended Questions Action Banner */}
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 border-2 border-orange-300 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
-                        <div className="space-y-0.5 text-center sm:text-left">
-                            <p className="text-[10px] font-black uppercase tracking-wider text-orange-900 flex items-center justify-center sm:justify-start gap-1.5">
+                    {/* Section 5: Recommended Questions by Difficulty */}
+                    <div className="space-y-3 pt-1">
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
                                 <Zap size={14} className="text-orange-600 fill-orange-500" />
-                                Defensible Assessment Quota
-                            </p>
-                            <p className="text-xs font-bold text-slate-900">
-                                {recommendedQuestions || `${recCount} Questions (Optimal evidence balance)`}
-                            </p>
+                                Recommended Questions by Difficulty
+                            </h4>
+                            <span className="text-[10px] text-slate-500 font-mono">
+                                Balanced gives highest multi-tier coverage
+                            </span>
                         </div>
-                        {onApplyQuestionCount && (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onApplyQuestionCount(recCount);
-                                    onClose();
-                                }}
-                                className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer shrink-0"
-                            >
-                                <Zap size={14} />
-                                Apply {recCount} Questions
-                            </button>
-                        )}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            {/* Card 1: Balanced */}
+                            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-orange-500/5 border-2 border-orange-300 shadow-2xs flex flex-col justify-between gap-3">
+                                <div>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-xs font-black text-orange-950 flex items-center gap-1.5">
+                                            <Scale size={14} className="text-orange-600" />
+                                            Balanced
+                                        </span>
+                                        <span className="text-[9px] font-black uppercase tracking-wider bg-orange-200/80 text-orange-800 px-1.5 py-0.5 rounded-md">
+                                            Recommended
+                                        </span>
+                                    </div>
+                                    <p className="text-lg font-black text-slate-900">
+                                        {recBalanced} <span className="text-xs font-medium text-slate-600">Questions</span>
+                                    </p>
+                                    <p className="text-[10px] text-slate-600 leading-snug mt-1">
+                                        Comprehensive blend across Easy, Medium, and Hard tiers.
+                                    </p>
+                                </div>
+                                {onApplyQuestionCount && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            onApplyQuestionCount(recBalanced, 'Balanced');
+                                            onClose();
+                                        }}
+                                        className="w-full py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-[11px] uppercase tracking-wider flex items-center justify-center gap-1 shadow-2xs active:scale-95 transition-all cursor-pointer"
+                                    >
+                                        <Check size={13} strokeWidth={3} />
+                                        Apply Balanced
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Card 2: Easy */}
+                            <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 shadow-2xs flex flex-col justify-between gap-3">
+                                <div>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                            <CheckCircle size={14} className="text-emerald-600" />
+                                            Easy
+                                        </span>
+                                        <span className="text-[9px] font-bold text-slate-500 font-mono">
+                                            Cap: {capEasy}
+                                        </span>
+                                    </div>
+                                    <p className="text-lg font-black text-slate-900">
+                                        {recEasy} <span className="text-xs font-medium text-slate-600">Questions</span>
+                                    </p>
+                                    <p className="text-[10px] text-slate-600 leading-snug mt-1">
+                                        Definitions, terminology, syntax & core recall.
+                                    </p>
+                                </div>
+                                {onApplyQuestionCount && (
+                                    <button
+                                        type="button"
+                                        disabled={recEasy === 0}
+                                        onClick={() => {
+                                            onApplyQuestionCount(recEasy, 'Easy');
+                                            onClose();
+                                        }}
+                                        className="w-full py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold text-[11px] uppercase tracking-wider flex items-center justify-center gap-1 shadow-2xs active:scale-95 transition-all cursor-pointer disabled:cursor-not-allowed"
+                                    >
+                                        Apply Easy
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Card 3: Medium */}
+                            <div className="p-3.5 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 shadow-2xs flex flex-col justify-between gap-3">
+                                <div>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                            <Zap size={14} className="text-indigo-600" />
+                                            Medium
+                                        </span>
+                                        <span className="text-[9px] font-bold text-slate-500 font-mono">
+                                            Cap: {capMedium}
+                                        </span>
+                                    </div>
+                                    <p className="text-lg font-black text-slate-900">
+                                        {recMedium} <span className="text-xs font-medium text-slate-600">Questions</span>
+                                    </p>
+                                    <p className="text-[10px] text-slate-600 leading-snug mt-1">
+                                        Mechanisms, comparisons, execution & tradeoffs.
+                                    </p>
+                                </div>
+                                {onApplyQuestionCount && (
+                                    <button
+                                        type="button"
+                                        disabled={recMedium === 0}
+                                        onClick={() => {
+                                            onApplyQuestionCount(recMedium, 'Medium');
+                                            onClose();
+                                        }}
+                                        className="w-full py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold text-[11px] uppercase tracking-wider flex items-center justify-center gap-1 shadow-2xs active:scale-95 transition-all cursor-pointer disabled:cursor-not-allowed"
+                                    >
+                                        Apply Medium
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Card 4: Hard */}
+                            <div className={`p-3.5 rounded-2xl border-2 shadow-2xs flex flex-col justify-between gap-3 ${
+                                recHard > 0 ? 'bg-white border-slate-200 hover:border-slate-300' : 'bg-slate-50/60 border-dashed border-slate-200'
+                            }`}>
+                                <div>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className={`text-xs font-black flex items-center gap-1.5 ${recHard > 0 ? 'text-slate-800' : 'text-slate-500'}`}>
+                                            <Award size={14} className={recHard > 0 ? 'text-amber-600' : 'text-slate-400'} />
+                                            Hard
+                                        </span>
+                                        <span className="text-[9px] font-bold text-slate-400 font-mono">
+                                            Cap: {capHard}
+                                        </span>
+                                    </div>
+                                    <p className="text-lg font-black text-slate-900">
+                                        {recHard} <span className="text-xs font-medium text-slate-600">Questions</span>
+                                    </p>
+                                    <p className="text-[10px] text-slate-500 leading-snug mt-1">
+                                        {recHard > 0
+                                            ? 'Invariants, boundary violations & causal proofs.'
+                                            : 'No deep causal invariants in lecture recording.'}
+                                    </p>
+                                </div>
+                                {onApplyQuestionCount && (
+                                    <button
+                                        type="button"
+                                        disabled={recHard === 0}
+                                        onClick={() => {
+                                            onApplyQuestionCount(recHard, 'Hard');
+                                            onClose();
+                                        }}
+                                        className="w-full py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold text-[11px] uppercase tracking-wider flex items-center justify-center gap-1 shadow-2xs active:scale-95 transition-all cursor-pointer disabled:cursor-not-allowed"
+                                    >
+                                        {recHard > 0 ? 'Apply Hard' : 'Not Supported'}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

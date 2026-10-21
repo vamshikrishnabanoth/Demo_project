@@ -1214,14 +1214,14 @@ export default function CreateQuizTopic() {
                                 type="button"
                                 onClick={() => setShowTeachingScoreModal(true)}
                                 className="bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 hover:border-purple-300 rounded-2xl px-4 py-2.5 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
-                                title="Click to view exact rubric explanation & point deductions breakdown"
+                                title="Click to view lecture quality score & recommended questions breakdown"
                             >
                                 <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-300/60 flex items-center justify-center text-purple-700 shrink-0 group-hover:scale-105 transition-transform">
                                     <Award size={20} />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] font-black text-purple-900 uppercase tracking-widest">Teaching Depth Score</p>
+                                        <p className="text-[10px] font-black text-purple-900 uppercase tracking-widest">Lecture Quality Score</p>
                                         <span className="text-[9px] font-bold text-purple-700 bg-purple-200/70 px-1.5 py-0.2 rounded-full group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center gap-1">
                                             <span>Instructional Digest</span>
                                             <Info size={10} className="shrink-0" />
@@ -2092,10 +2092,13 @@ export default function CreateQuizTopic() {
                 whatWasTaught={whatWasTaught}
                 recommendedQuestions={recommendedQuestions}
                 recommendedQuestionCount={recommendedQuestionCount}
+                recommendedByDifficulty={recommendedByDifficulty}
+                capacityByDifficulty={capacityByDifficulty}
                 lectureIntel={lectureIntel}
-                onApplyQuestionCount={(cnt) => {
+                onApplyQuestionCount={(cnt, diff) => {
                     setQuestionCount(cnt);
-                    toast.success(`Applied recommended ${cnt} questions!`);
+                    if (diff) setDifficulty(diff);
+                    toast.success(`Applied recommended ${cnt} questions${diff ? ` (${diff})` : ''}!`);
                 }}
             />
         </DashboardLayout>

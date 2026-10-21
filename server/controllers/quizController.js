@@ -4660,9 +4660,9 @@ exports.analyzeDepth = async (req, res) => {
             advisoryRationale = evCap.advisoryRationale || '';
             recommendedQuestionCount = evCap.recommendedQuestionCount || fallbackRecCount;
         } else {
-            const easyCount = Math.max(1, Math.round(fallbackRecCount * 0.4));
-            const medCount = Math.max(1, Math.round(fallbackRecCount * 0.4));
-            const hardCount = supportsHard ? Math.max(1, Math.round(fallbackRecCount * 0.2)) : 0;
+            const easyCount = Math.max(1, Math.round(fallbackRecCount * 0.85));
+            const medCount = Math.max(1, Math.round(fallbackRecCount * 0.85));
+            const hardCount = supportsHard ? Math.max(1, Math.round(fallbackRecCount * 0.4)) : 0;
             recommendedByDifficulty = {
                 easy: easyCount,
                 medium: medCount,

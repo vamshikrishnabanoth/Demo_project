@@ -155,6 +155,7 @@ class LectureIntelligence {
       };
     }
 
+    const wordCount = options.wordCount || 0;
     const explanatory = pedagogicalCritique?.explanatoryDepth || [];
     const reasoning = pedagogicalCritique?.reasoningDepth || [];
     const demonstrations = pedagogicalCritique?.practicalDemonstrations || [];
@@ -197,17 +198,29 @@ class LectureIntelligence {
 
       substantiveConceptCount++;
 
-      // Cognitive Operation 1: Easy Angle (Recall / Recognize / Define)
-      // Supported if valid definition or anchors exist
-      const supportsEasy = def.length >= 10 || anchors.length > 0;
-      if (supportsEasy) {
-        totalEasy += 1;
-      }
-
-      // Cognitive Operation 2: Medium Angles (Mechanism / Trace / Comparison)
+      // Identify mechanism, comparison, and rule characteristics
       const hasConceptMechanism = Boolean(mech && mech !== 'NOT_OBSERVED' && mech !== 'null' && mech.length >= 15);
       const isComparison = substanceType === 'COMPARISON' || /\b(versus|vs|difference|compare|tradeoff|unlike)\b/i.test(`${name} ${def}`);
       const isRuleOrProcedure = substanceType === 'RULE' || substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM' || /\b(algorithm|steps?|compute|formula|condition|pointer)\b/i.test(`${def} ${mech}`);
+
+      // Cognitive Operation 1: Easy Angle (Recall / Recognize / Define)
+      // Angle 1: Primary definition / terminology recall
+      const supportsEasy = def.length >= 10 || anchors.length > 0;
+      let conceptEasyAngles = 0;
+      if (supportsEasy) {
+        conceptEasyAngles += 1;
+        // Angle 2: Key property, characteristic, syntax, or parameter identification
+        // Grounded in verified mechanisms, rules, or comparative properties within the concept
+        const hasSemanticSubstance = (hasConceptMechanism && def.length >= 35) ||
+          (isRuleOrProcedure && def.length >= 40) ||
+          (isComparison && def.length >= 35);
+        if (hasSemanticSubstance) {
+          conceptEasyAngles += 1;
+        }
+      }
+      totalEasy += conceptEasyAngles;
+
+      // Cognitive Operation 2: Medium Angles (Mechanism / Trace / Comparison)
 
       let conceptMediumAngles = 0;
       if (hasConceptMechanism || isRuleOrProcedure || (hasMechanismsInLecture && def.length >= 40)) {
@@ -310,7 +323,6 @@ class LectureIntelligence {
       }
     }
 
-    const wordCount = options.wordCount || 0;
     const isBriefExcerpt = wordCount < 150 || (options.curricularSegmentsCount > 0 && options.curricularSegmentsCount <= 4);
 
     let totalHard = 0;
@@ -376,10 +388,36 @@ class LectureIntelligence {
       balancedRec = Math.min(totalDefensibleCapacity, recommendedCount);
     }
 
+    // Recommended count per individual difficulty tier:
+    // 1. Balanced: Highest recommended count across the entire lecture syllabus.
+    // 2. Easy: For introductory digest quizzes (especially long/1-hour lectures),
+    //    scales generously (e.g. 10-18 questions) without exceeding balancedRec.
+    // 3. Medium: Operational mechanism & comparative questions, well-proportioned to balancedRec.
+    // 4. Hard: Analytical questions requiring causal invariants; strictly 0 if lecture lacks deep reasoning.
+    let recEasy = 0;
+    let recMedium = 0;
+    let recHard = 0;
+
+    if (totalDefensibleCapacity > 0) {
+      recEasy = Math.min(totalEasy, Math.max(1, Math.min(balancedRec, Math.round(balancedRec * 0.85))));
+      recMedium = Math.min(totalMedium, Math.max(1, Math.min(balancedRec, Math.round(balancedRec * 0.85))));
+      recHard = totalHard > 0
+        ? Math.min(totalHard, Math.max(1, Math.round(balancedRec * 0.40)))
+        : 0;
+
+      // Ensure Balanced is strictly greater than or equal to each single-tier recommendation
+      balancedRec = Math.max(balancedRec, recEasy, recMedium, recHard);
+
+      // Bound Balanced by available tiers when Hard is 0
+      if (totalHard === 0) {
+        balancedRec = Math.min(totalEasy + totalMedium, balancedRec);
+      }
+    }
+
     const recommendedByDifficulty = {
-      easy: totalEasy,
-      medium: totalMedium,
-      hard: totalHard,
+      easy: recEasy,
+      medium: recMedium,
+      hard: recHard,
       balanced: balancedRec
     };
 
@@ -390,7 +428,7 @@ class LectureIntelligence {
       balanced: totalDefensibleCapacity
     };
 
-    const advisoryRationale = `Defensible assessment capacity of ${totalDefensibleCapacity} questions across ${substantiveConceptCount} substantive concepts (Easy: ${totalEasy}, Medium: ${totalMedium}, Hard: ${totalHard}, Balanced: ${balancedRec}). Recommended counts per difficulty: Easy=${totalEasy}, Medium=${totalMedium}, Hard=${totalHard}, Balanced=${balancedRec}.`;
+    const advisoryRationale = `Defensible assessment capacity of ${totalDefensibleCapacity} questions across ${substantiveConceptCount} substantive concepts (Easy: ${totalEasy}, Medium: ${totalMedium}, Hard: ${totalHard}, Balanced: ${balancedRec}). Recommended counts per difficulty: Easy=${recEasy}, Medium=${recMedium}, Hard=${recHard}, Balanced=${balancedRec}.`;
 
     return {
       distinctConceptCount: substantiveConceptCount,
