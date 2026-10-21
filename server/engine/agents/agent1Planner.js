@@ -355,9 +355,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
               targetDifficulty: t.targetDifficulty || requestedDifficulty,
               evidenceType: prov.evidenceType,
               supportingEvidence: t.supportingEvidence || t.evidenceSpan || '',
-              evidenceSpan: t.evidenceSpan || t.supportingEvidence || '',
               confidence: t.confidence || 'HIGH',
-              sourceChunks: (Array.isArray(t.sourceChunks) && t.sourceChunks.length > 0 && !t.sourceChunks.includes('chunk_01')) ? t.sourceChunks : prov.sourceChunks,
+              sourceChunks: (Array.isArray(t.sourceChunks) && t.sourceChunks.length > 0 && t.sourceChunks.every(cid => Boolean(evidencePackage?.hierarchicalStore?.childMap?.[cid] || evidencePackage?.multimodalStore?.childMap?.[cid]))) ? t.sourceChunks : prov.sourceChunks,
               requiresExactArtifact: Boolean(t.requiresExactArtifact),
               instruction: t.instruction || `Test understanding of ${t.concept}.`
             };

@@ -1156,6 +1156,11 @@ export default function CreateQuizTopic() {
                             finalValidation:    result.finalValidation || null,
                             representationMode: result.representation_mode || representationMode || 'BLUEPRINT',
                             pipelineResult:     result,
+                            lectureDepth:       result.lectureDepth || lectureDepth || null,
+                            capacityDeficitReport: result.capacityDeficitReport || result.difficultyReport?.capacityDeficitReport || null,
+                            whatWasTaught:      result.whatWasTaught || whatWasTaught || '',
+                            keyTopics:          result.keyTopics || keyTopics || [],
+                            requestedCount:     questionCount || 10,
                             executionMessages:  result.metadata?.executionMessages || []
                         }
                     });
@@ -1218,7 +1223,7 @@ export default function CreateQuizTopic() {
                                     <div className="flex items-center gap-1.5">
                                         <p className="text-[10px] font-black text-purple-900 uppercase tracking-widest">Teaching Depth Score</p>
                                         <span className="text-[9px] font-bold text-purple-700 bg-purple-200/70 px-1.5 py-0.2 rounded-full group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center gap-1">
-                                            <span>Why not 100?</span>
+                                            <span>Instructional Digest</span>
                                             <Info size={10} className="shrink-0" />
                                         </span>
                                     </div>
@@ -1719,7 +1724,7 @@ export default function CreateQuizTopic() {
                                             >
                                                 <span>Score: {lectureDepth.score}/100</span>
                                                 <span className="text-[10px] text-orange-700 font-bold bg-orange-100 px-1.5 py-0.2 rounded-full flex items-center gap-1">
-                                                    <span>Why not 100?</span>
+                                                    <span>Instructional Digest</span>
                                                     <Info size={10} className="shrink-0" />
                                                 </span>
                                             </button>

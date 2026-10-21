@@ -342,20 +342,31 @@ class LectureIntelligence {
     const totalDefensibleCapacity = totalEasy + totalMedium + totalHard;
 
     // Derive Recommended Question Count from defensible capacity:
-    // Decoupled from concept count!
-    let recommendedCount;
-    if (totalDefensibleCapacity <= 4) {
-      recommendedCount = Math.max(1, totalDefensibleCapacity);
-    } else if (totalDefensibleCapacity <= 10) {
-      recommendedCount = Math.min(totalDefensibleCapacity, Math.max(5, Math.round(totalDefensibleCapacity * 0.75)));
-    } else if (totalDefensibleCapacity <= 20) {
-      recommendedCount = Math.min(totalDefensibleCapacity, Math.max(8, Math.round(totalDefensibleCapacity * 0.65)));
-    } else {
-      recommendedCount = Math.min(30, Math.max(12, Math.round(totalDefensibleCapacity * 0.55)));
+    // Strictly monotonic marginal bracket formula (tax-bracket style):
+    // For every unit of defensible capacity, R(C+1) >= R(C) is guaranteed.
+    // - Units 1 to 4: marginal rate = 1.00 (direct conceptual baseline)
+    // - Units 5 to 10: marginal rate = 0.60 (mechanisms & distinctions)
+    // - Units 11 to 20: marginal rate = 0.50 (advanced procedural & application)
+    // - Units 21 to 35: marginal rate = 0.35 (comprehensive syllabus breadth)
+    // - Units 36+: marginal rate = 0.20 (saturation guard)
+    let marginalSum = 0;
+    for (let c = 1; c <= totalDefensibleCapacity; c++) {
+      if (c <= 4) {
+        marginalSum += 1.00;
+      } else if (c <= 10) {
+        marginalSum += 0.60;
+      } else if (c <= 20) {
+        marginalSum += 0.50;
+      } else if (c <= 35) {
+        marginalSum += 0.35;
+      } else {
+        marginalSum += 0.20;
+      }
     }
-
-    // Safety ceiling: 30 as a resource guard, never a target
-    recommendedCount = Math.max(1, Math.min(recommendedCount, 30));
+    let recommendedCount = Math.min(25, Math.max(1, Math.round(marginalSum)));
+    if (totalDefensibleCapacity === 0) {
+      recommendedCount = 0;
+    }
 
     // Balanced recommendation: distinct mixed-difficulty distribution grounded in available tiers
     let balancedRec = recommendedCount;

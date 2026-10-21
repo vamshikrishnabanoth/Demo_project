@@ -806,14 +806,46 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                 if (c.content) codeSnippets += (c.content + '\n\n');
             });
 
-            // 3. Multi-Document Consolidation: All companion materials are bundled as supporting materials
+            // 3. Multi-Document Consolidation: Supporting materials, notes, and auto-routed code/queries
             docInputs.forEach((inp, idx) => {
                 if (inp.commonDocumentModel) {
                     commonDocModel = inp.commonDocumentModel;
                 }
                 if (inp.content && inp.content.trim()) {
-                    docTexts.push(inp.content.trim());
-                    docNames.push(inp.name || inp.filename || inp.source_name || inp.title || `Supporting Material ${idx + 1}`);
+                    const rawText = inp.content.trim();
+                    // Front-door instruction filter: strip prompt-injection / teacher meta-directives
+                    const instructionRegexes = [
+                        /(?:please\s+)?(?:don'?t|do\s+not)\s+listen\s+to\s+(?:anything\s+in\s+)?(?:the\s+|my\s+)?audio[^\n.]*/gi,
+                        /(?:please\s+)?ignore\s+(?:the\s+|all\s+)?(?:audio|voice|recording)[^\n.]*/gi,
+                        /(?:i\s+want|make|generate|produce|create)\s+\d+\s+questions?[^\n.]*/gi,
+                        /(?:only\s+)?generate\s+questions?\s+from\s+(?:this|below|the\s+text)[^\n.]*/gi
+                    ];
+                    let sanitized = rawText;
+                    let stripped = false;
+                    for (const r of instructionRegexes) {
+                        if (r.test(sanitized)) {
+                            sanitized = sanitized.replace(r, ' ');
+                            stripped = true;
+                        }
+                    }
+                    if (stripped) {
+                        console.log('🛡️ [DocketFilter] Stripped meta-instructions from user text input');
+                        sanitized = sanitized.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+                    }
+
+                    // Auto-detect code/queries (e.g. pasted DBMS queries, WT code, shell commands)
+                    const isCodeOrQuery = /\b(SELECT\s+.+\s+FROM|INSERT\s+INTO|CREATE\s+TABLE|ALTER\s+TABLE|DROP\s+TABLE|WHERE\s+.+\s+=|GROUP\s+BY|ORDER\s+BY)\b/i.test(sanitized) ||
+                        /\b(db\.[a-zA-Z0-9_]+\.(find|aggregate|insertOne|insertMany|updateOne|deleteMany))\b/.test(sanitized) ||
+                        /\b(function\s*\(|def\s+[a-zA-Z0-9_]+\s*\(|class\s+[a-zA-Z0-9_]+|import\s+[a-zA-Z0-9_]+|#include\s*<)/.test(sanitized) ||
+                        /([{};]\s*\n){2,}/.test(sanitized);
+
+                    if (isCodeOrQuery && sanitized.length > 0) {
+                        console.log('💻 [DocketFilter] Auto-detected DBMS/programming queries in text box -> routed to codeSnippets');
+                        codeSnippets += (sanitized + '\n\n');
+                    } else if (sanitized.length > 0) {
+                        docTexts.push(sanitized);
+                        docNames.push(inp.name || inp.filename || inp.source_name || inp.title || `Supporting Material ${idx + 1}`);
+                    }
                 }
             });
         } else if (typeof content === 'string') {

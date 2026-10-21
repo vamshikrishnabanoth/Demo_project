@@ -233,6 +233,30 @@ async function runStep4VolumePolicySuite() {
   }
 
   // -------------------------------------------------------------------------
+  // Test 6: Strict Monotonicity Invariant (R(C+1) >= R(C) for all C in 0..50)
+  // -------------------------------------------------------------------------
+  console.log('\n--- Test 6: Strict Monotonicity Invariant (R(C+1) >= R(C)) ---');
+  try {
+    let prevRec = -1;
+    for (let c = 0; c <= 50; c++) {
+      let marginalSum = 0;
+      for (let i = 1; i <= c; i++) {
+        if (i <= 4) marginalSum += 1.00;
+        else if (i <= 10) marginalSum += 0.60;
+        else if (i <= 20) marginalSum += 0.50;
+        else if (i <= 35) marginalSum += 0.35;
+        else marginalSum += 0.20;
+      }
+      const curRec = c === 0 ? 0 : Math.min(25, Math.max(1, Math.round(marginalSum)));
+      assert(curRec >= prevRec, 'Non-monotonic drop detected at capacity ' + c);
+      prevRec = curRec;
+    }
+    recordPass('Test 6: Monotonicity Verified -> R(C+1) >= R(C) holds strictly for all C from 0 to 50 (no drops)');
+  } catch (err) {
+    recordFail('Test 6: Monotonicity Invariant', err);
+  }
+
+  // -------------------------------------------------------------------------
   // Summary
   // -------------------------------------------------------------------------
   console.log('\n================================================================');

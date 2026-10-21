@@ -180,6 +180,7 @@ export default function CreateQuizText() {
     const [isPartialYield, setIsPartialYield] = useState(false);
     const [requestedCount, setRequestedCount] = useState(null);
     const [representationMode, setRepresentationMode] = useState(null);
+    const [capacityDeficitReport, setCapacityDeficitReport] = useState(null);
     const [executionMessages, setExecutionMessages] = useState([]);
     const hasInjectedToastRef = useRef(false);
 
@@ -252,6 +253,13 @@ export default function CreateQuizText() {
             }
             if (location.state.lectureDepth) {
                 setLectureDepth(location.state.lectureDepth);
+            } else if (location.state.pipelineResult?.lectureDepth) {
+                setLectureDepth(location.state.pipelineResult.lectureDepth);
+            }
+            if (location.state.capacityDeficitReport) {
+                setCapacityDeficitReport(location.state.capacityDeficitReport);
+            } else if (location.state.pipelineResult?.capacityDeficitReport) {
+                setCapacityDeficitReport(location.state.pipelineResult.capacityDeficitReport);
             }
             if (location.state.whatWasTaught) {
                 setWhatWasTaught(location.state.whatWasTaught);
@@ -1116,6 +1124,29 @@ export default function CreateQuizText() {
                                 )}
 
 
+
+                                {/* ── Capacity Deficit Notice Banner ── */}
+                                {capacityDeficitReport && capacityDeficitReport.hasDeficit && (
+                                    <div className="p-4.5 bg-amber-50/90 border-2 border-amber-300/80 rounded-3xl space-y-2 shadow-xs animate-in fade-in duration-200">
+                                        <div className="flex items-center gap-2 text-amber-900 font-black text-xs uppercase tracking-wider">
+                                            <AlertTriangle size={16} className="text-amber-600 shrink-0" />
+                                            <span>Defensible Assessment Quota Applied</span>
+                                        </div>
+                                        <p className="text-xs text-amber-800 leading-relaxed font-medium">
+                                            Generated <strong>{questions.length}</strong> questions out of <strong>{requestedCount || (questions.length + (capacityDeficitReport.capacityDeficit || 0))}</strong> requested. 
+                                            The system preserved academic rigor by delivering only questions directly substantiated by lecture evidence, preventing redundant or speculative filler.
+                                        </p>
+                                        {capacityDeficitReport.deficitsByTier && (
+                                            <div className="flex gap-2 flex-wrap pt-1">
+                                                {Object.entries(capacityDeficitReport.deficitsByTier).map(([tier, cnt]) => cnt > 0 && (
+                                                    <span key={tier} className="text-[10px] font-mono bg-white/95 border border-amber-300 text-amber-900 px-2.5 py-0.5 rounded-lg font-bold">
+                                                        {cnt} {tier} slot{cnt > 1 ? 's' : ''} limited by available instructional depth
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
                                 {/* ── Agent Quality Badge (AI-generated quizzes only) ── */}
                                 {isGeneratedSource && agentReport && (

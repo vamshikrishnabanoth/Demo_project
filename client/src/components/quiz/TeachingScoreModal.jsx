@@ -77,10 +77,10 @@ export default function TeachingScoreModal({
                         </div>
                         <div>
                             <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                                <span>Teaching Depth Rubric & Score Breakdown</span>
+                                <span>Pedagogical Delivery & Assessment Digest</span>
                             </h2>
                             <p className="text-xs text-slate-500 font-medium">
-                                Objective collegiate rubric measuring definitions, reasoning, examples, and procedural progression.
+                                Objective educational digest summarizing instructional strengths, key topics, and quiz readiness.
                             </p>
                         </div>
                     </div>
@@ -111,7 +111,7 @@ export default function TeachingScoreModal({
                                     {ratingInfo.label}
                                 </span>
                                 <h3 className="text-sm font-bold text-slate-100">
-                                    Teaching Depth Score
+                                    Teaching Profile Rating
                                 </h3>
                                 <p className="text-xs text-slate-300 max-w-md leading-relaxed">
                                     {ratingInfo.desc}
@@ -136,10 +136,10 @@ export default function TeachingScoreModal({
                         <div className="flex items-center justify-between">
                             <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
                                 <span className="w-2 h-2 rounded-full bg-rose-500" />
-                                Why was the score not 100? ({deductions.length} Rubric Deduction{deductions.length === 1 ? '' : 's'})
+                                Instructional Enhancements & Next Steps ({deductions.length} Topic Recommendation{deductions.length === 1 ? '' : 's'})
                             </h4>
                             <span className="text-[11px] font-mono font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
-                                Total lost: -{totalLostPoints} points
+                                Coverage Optimization Tips
                             </span>
                         </div>
 
@@ -164,8 +164,8 @@ export default function TeachingScoreModal({
                                                     {d.factor}
                                                 </h5>
                                             </div>
-                                            <span className="px-2 py-0.5 rounded-lg bg-rose-100 text-rose-700 font-black text-xs shrink-0">
-                                                -{d.lostPoints} pts
+                                            <span className="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 font-bold text-xs shrink-0">
+                                                Enhancement
                                             </span>
                                         </div>
 
@@ -177,7 +177,7 @@ export default function TeachingScoreModal({
                                             <div className="ml-7 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/70 flex items-start gap-2 text-xs text-amber-900">
                                                 <Lightbulb size={14} className="text-amber-600 shrink-0 mt-0.5" />
                                                 <span>
-                                                    <strong className="font-bold">How to earn back these points:</strong> {d.actionableTip}
+                                                    <strong className="font-bold">Pedagogical Recommendation:</strong> {d.actionableTip}
                                                 </span>
                                             </div>
                                         )}
