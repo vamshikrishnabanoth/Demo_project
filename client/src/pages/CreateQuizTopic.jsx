@@ -1268,27 +1268,27 @@ export default function CreateQuizTopic() {
                             <button
                                 type="button"
                                 onClick={() => setShowTeachingScoreModal(true)}
-                                className="bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 hover:border-purple-300 rounded-2xl px-4 py-2.5 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
+                                className="bg-[#fff8f3] hover:bg-orange-100/80 border-2 border-[#f5d0b5] hover:border-orange-300 rounded-2xl px-4 py-2.5 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
                                 title="Click to view lecture quality score & recommended questions breakdown"
                             >
-                                <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-300/60 flex items-center justify-center text-purple-700 shrink-0 group-hover:scale-105 transition-transform">
+                                <div className="w-9 h-9 rounded-xl bg-orange-500/15 border border-orange-300/60 flex items-center justify-center text-[#ea580c] shrink-0 group-hover:scale-105 transition-transform">
                                     <Award size={20} />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] font-black text-purple-900 uppercase tracking-widest">Lecture Quality Score</p>
-                                        <span className="text-[9px] font-bold text-purple-700 bg-purple-200/70 px-1.5 py-0.2 rounded-full group-hover:bg-purple-600 group-hover:text-white transition-colors flex items-center gap-1">
+                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">Lecture Quality Score</p>
+                                        <span className="text-[9px] font-bold text-[#c2410c] bg-orange-100 px-1.5 py-0.2 rounded-full group-hover:bg-[#ea580c] group-hover:text-white transition-colors flex items-center gap-1">
                                             <span>Instructional Digest</span>
                                             <Info size={10} className="shrink-0" />
                                         </span>
                                     </div>
-                                    <p className="text-sm font-black text-purple-800">
+                                    <p className="text-sm font-black text-[#c2410c]">
                                         {lectureDepth.rating || 'Comprehensive'} ({lectureDepth.score}/100)
                                     </p>
                                 </div>
-                                <div className="w-16 bg-purple-200 h-2 rounded-full overflow-hidden shrink-0 hidden sm:block">
+                                <div className="w-16 bg-orange-200 h-2 rounded-full overflow-hidden shrink-0 hidden sm:block">
                                     <div 
-                                        className="bg-purple-600 h-full rounded-full transition-all duration-500" 
+                                        className="bg-[#ea580c] h-full rounded-full transition-all duration-500" 
                                         style={{ width: `${lectureDepth.score}%` }} 
                                     />
                                 </div>
@@ -1828,11 +1828,8 @@ export default function CreateQuizTopic() {
                                                 className="self-start sm:self-auto text-xs font-mono font-black text-[#9a3412] bg-white hover:bg-orange-100/80 px-3 py-1 rounded-full border border-[#f5d0b5] flex items-center gap-2 shadow-2xs transition-all cursor-pointer hover:scale-105 active:scale-95"
                                                 title="Click to view exact rubric explanation & point deductions breakdown"
                                             >
-                                                <span>Score: {lectureDepth.score}/100</span>
-                                                <span className="text-[10px] text-orange-700 font-bold bg-orange-100 px-1.5 py-0.2 rounded-full flex items-center gap-1">
-                                                    <span>Instructional Digest</span>
-                                                    <Info size={10} className="shrink-0" />
-                                                </span>
+                                                <span>Instructional Digest</span>
+                                                <Info size={11} className="text-[#ea580c] shrink-0" />
                                             </button>
                                         </div>
 
@@ -1840,7 +1837,7 @@ export default function CreateQuizTopic() {
                                         {lectureIntel?.title && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Tag size={13} className="text-[#c2410c] shrink-0" /> Academic Subject Topic
+                                                    <Tag size={13} className="text-[#c2410c] shrink-0" /> Main Topic
                                                 </p>
                                                 <p className="text-xs font-bold text-slate-900 leading-snug">
                                                     {lectureIntel.title}
@@ -1848,15 +1845,7 @@ export default function CreateQuizTopic() {
                                             </div>
                                         )}
 
-                                        {/* 1. What Was Taught (1-Line Pedagogical Overview) */}
-                                        <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
-                                            <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                <BookOpen size={13} className="text-[#c2410c] shrink-0" /> What Was Taught
-                                            </p>
-                                            <p className="text-xs font-semibold text-slate-800 leading-relaxed">
-                                                {lectureIntel?.summary || whatWasTaught || `A comprehensive lecture exploring ${inputs.map(i => i.source_name).filter(Boolean)[0] || 'core concepts'} with detailed conceptual foundations, operational mechanisms, and step-by-step traces.`}
-                                            </p>
-                                        </div>
+                                        
 
                                         {/* 2. Sequential Chapters Timeline */}
                                         {lectureIntel?.chapters && lectureIntel.chapters.length > 0 && (
@@ -1875,7 +1864,7 @@ export default function CreateQuizTopic() {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            {ch.summary && <p className="text-[11px] text-slate-600 leading-relaxed">{ch.summary}</p>}
+                                                            
                                                             {ch.key_concepts && ch.key_concepts.length > 0 && (
                                                                 <div className="flex flex-wrap gap-1 pt-0.5">
                                                                     {ch.key_concepts.map((kc, kci) => (

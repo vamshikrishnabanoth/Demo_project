@@ -1164,22 +1164,10 @@ export default function CreateQuizText() {
                                                 <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
                                                 Lecture Profile: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
                                             </span>
-                                            <span className="text-[10px] font-mono font-black text-[#9a3412] bg-[#fbf0e8] px-2.5 py-0.5 rounded-full border border-[#f5d0b5]">
-                                                Depth: {lectureDepth.score}/100
-                                            </span>
+                                            
                                         </div>
 
-                                        {/* What Was Taught */}
-                                        {whatWasTaught && (
-                                            <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
-                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <BookOpen size={13} className="text-[#c2410c] shrink-0" /> What Was Taught
-                                                </p>
-                                                <p className="text-xs font-semibold text-slate-800 leading-relaxed">
-                                                    {whatWasTaught}
-                                                </p>
-                                            </div>
-                                        )}
+                                        
 
                                         {/* Key Topics / Subtopics */}
                                         {keyTopics && keyTopics.length > 0 && (
@@ -1219,23 +1207,7 @@ export default function CreateQuizText() {
                                             </div>
                                         )}
 
-                                        {/* Characteristics */}
-                                        {lectureDepth.characteristics && (
-                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] font-bold text-slate-600">
-                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                                    Concepts: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.conceptExplanation || 'Strong'}</span>
-                                                </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                                    Reasoning: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.reasoning || 'Light'}</span>
-                                                </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                                    Examples: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.examples || 'Present'}</span>
-                                                </div>
-                                                <div className="bg-white/90 p-2 rounded-xl border border-orange-100 shadow-2xs text-center">
-                                                    Procedures: <span className="font-black text-[#c2410c]">{lectureDepth.characteristics.procedures || 'Strong'}</span>
-                                                </div>
-                                            </div>
-                                        )}
+                                        
                                     </div>
                                 )}
 
