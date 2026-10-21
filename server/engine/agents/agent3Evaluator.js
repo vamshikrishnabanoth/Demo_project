@@ -161,7 +161,15 @@ EVALUATION DIRECTIVES:
    - For each distractor: verify that it is plausible, clearly incorrect, and cannot be defended as true under a reasonable interpretation.
    - Reject any question where a distractor could also be considered correct (AMBIGUOUS_DISTRACTOR / ACCIDENTAL_CORRECT_DISTRACTOR).
    - Reject any question with ungrounded claims going beyond the provided evidence (UNGROUNDED_EVIDENCE_CLAIM).
-2. COGNITIVE CALIBRATION:
+2. CANONICAL DOMAIN TRUTH INVARIANT:
+   - The keyed option (correct answer) MUST be factually and technically true according to canonical Computer Science / academic principles.
+   - If a teacher in spoken audio made an inadvertent verbal slip (e.g. calling an array 1-indexed or misstating an asymptotic complexity), the technically sound answer is correct; do NOT fail a question for upholding canonical domain truth over a spoken verbal slip.
+3. ALGORITHMIC & CODE GROUNDING:
+   - For algorithmic/programming concepts taught in the lecture (loops, arrays, traversals, frequency counting), concise 3–7 line code snippets illustrating the taught algorithm are validly grounded derived evidence (EVIDENCE_DERIVED or DIRECT_EVIDENCE).
+   - Do NOT reject code snippets as UNGROUNDED_EVIDENCE_CLAIM merely because the lecture was delivered via audio transcript rather than written code.
+4. CONCISE MCQ FORMAT:
+   - Question stems should be crisp (strictly under 35 words plus code snippet). Options should be punchy (under 15 words).
+5. COGNITIVE CALIBRATION:
    - Evaluate the actual cognitive operation demanded by the question:
      * Easy (RECALL/RECOGNIZE): Factual recall, definition recognition.
      * Medium (COMPARE/TRACE/EXPLAIN_MECHANISM): Operational mechanism, sequential state transitions, comparative tradeoffs.

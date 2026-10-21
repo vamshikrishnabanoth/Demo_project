@@ -113,6 +113,11 @@ class Agent1Planner {
       codeBlock = `\n\n[CODE WALKTHROUGH & IMPLEMENTATION ARTIFACTS (CRITICAL EVIDENCE FOR CODE TARGETS)]\n` +
         codeSnippets.map((c, i) => `--- Snippet ${i + 1} ---\n${c}`).join('\n\n');
       lateFormatted += codeBlock;
+    } else {
+      const hasSpokenCodeEvidence = /\b(array|loop|nested|frequency|pointer|function|class|algorithm|index|variable|recursion|iteration|traversal|data structure)\b/i.test(textToUse || '');
+      if (hasSpokenCodeEvidence) {
+        lateFormatted += `\n\n[INSTRUCTIONAL CODE & ALGORITHM EMPHASIS]: The lecture teaches algorithmic programming logic (e.g. loops, arrays, traversals, state tracking). You are authorized and encouraged to plan code-level trace, output prediction, and implementation targets based on the spoken algorithms.`;
+      }
     }
 
     let formulaBlock = '';
@@ -250,6 +255,16 @@ CORE PRINCIPLES:
    - For every target, explicitly specify "trajectoryPhase": "EARLY" | "MID" | "LATE".
    - If Phase 3 contains a code walkthrough or implementation, plan at least one target testing the code behavior, parameter transitions, or base conditions.
    - If Phase 2 contains a real-world scenario (e.g. database indexing, IP routing, production systems), plan at least one target testing understanding of that taught scenario.
+
+8. PROGRAMMING & ALGORITHMIC INTENT UNDERSTANDING:
+   - When the lecture covers programming, algorithms, data structures, or code mechanics (e.g., loops, nested iterations, arrays, frequency counts, pointers, sorting, searching, recursion):
+     * Grounding means capturing the teacher's algorithmic logic and instructional goals.
+     * Tag relevant targets with "dimension": "Application" or "Flow / Trace", and "intendedCognitiveOperation": "TRACE", "DIAGNOSE", or "CODE_OR_TRACE".
+     * In "operationalGuidance", explicitly instruct Agent 2: "Assess through a concise 3–7 line code snippet (Python, Java, or C) demonstrating this algorithm—test loop iteration tracking, condition completion, output prediction, or duplicate handling."
+     * Do NOT require a pre-uploaded code file to plan code-based questions if the lecture teaches programming concepts! Spoken programming lectures teach algorithms that are directly testable via concise code snippets.
+
+9. CANONICAL DOMAIN TRUTH INSTRUCTION:
+   - Assessment targets must reflect canonical academic truth of the taught subject. If the speaker made an inadvertent verbal slip, plan the target around the true canonical concept, not the misstatement.
 
 JSON SCHEMA:
 {
@@ -612,6 +627,23 @@ Generate the curricular assessment plan strictly covering educational concepts w
           subtopic: `${cand.name} - Structural Defect & Violation Diagnosis`,
           guidance: `Assess diagnostic reasoning: identify structural defects or invariant violations for ${cand.name}.${isCodeExcluded ? ' [Do NOT ask for code syntax.]' : ''}`,
           instruction: `Assess fault diagnosis and constraint violation consequences for ${cand.name}.${isCodeExcluded ? ' [Do NOT ask for code syntax.]' : ''}`
+        });
+      }
+
+      // 6. ALGORITHMIC CODE TRACE / IMPLEMENTATION (Medium / Hard)
+      const isAlgoCand = /\b(array|loop|nested|frequency|sort|search|pointer|index|stack|queue|recursion|hash)\b/i.test(cand.name) ||
+        /\b(array|loop|nested|frequency|sort|search|pointer|index|stack|queue|recursion|hash)\b/i.test(cand.evidence || '');
+      if (isAlgoCand && !isCodeExcluded && (diffLower === 'hard' || diffLower === 'balanced' || diffLower === 'medium')) {
+        potentialFacets.push({
+          op: diffLower === 'easy' ? 'RECALL' : (diffLower === 'medium' ? 'TRACE' : 'DIAGNOSE'),
+          dimension: 'Flow / Trace',
+          tier: 'Core',
+          targetDifficulty: diffLower === 'hard' ? 'Hard' : (diffLower === 'easy' ? 'Easy' : 'Medium'),
+          bloomLevel: diffLower === 'hard' ? 'Evaluate' : 'Apply',
+          phase: 'LATE',
+          subtopic: `${cand.name} - Algorithmic Logic & Execution Trace`,
+          guidance: `Assess through a concise 3–7 line code snippet testing execution trace, output prediction, missing logic, or duplicate handling for ${cand.name}.`,
+          instruction: `Assess algorithmic implementation and trace behavior for ${cand.name} using a concise code snippet.`
         });
       }
 
@@ -1351,10 +1383,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
         if (substanceType && !categories.includes(substanceType)) categories.push(substanceType);
 
         const textToCheck = `${conceptLower} ${evidenceLower} ${mech.toLowerCase()} ${String(matched.definition || '').toLowerCase()}`;
-        const hasInvariant = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree|null pointer|equilibrium|threshold|conservation|saturation|homeostasis|allosteric|rate-limiting|feedback|precondition|counterfactual|bottleneck|dilemma|paradox|consequence|theorem|proof|derivative|differentiable|continuous|integral|hypothesis|hypotheses|lemma|corollary|axiom|limit|rate of change)\b/i.test(textToCheck);
-        const hasViolation = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid|denatur|mutat|dysfunction|inhibit|toxic|deplet|fail|collaps|breakdown|crisis|conflict|breach|contradict)\b/i.test(textToCheck);
+        const hasInvariant = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree|null pointer|equilibrium|threshold|conservation|saturation|homeostasis|allosteric|rate-limiting|feedback|precondition|counterfactual|bottleneck|dilemma|paradox|consequence|theorem|proof|derivative|differentiable|continuous|integral|hypothesis|hypotheses|lemma|corollary|axiom|limit|rate of change|frequency|duplicate|recount|occurrences?|visited|uniqueness|base case|off-by-one|bounds)\b/i.test(textToCheck);
+        const hasViolation = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid|denatur|mutat|dysfunction|inhibit|toxic|deplet|fail|collaps|breakdown|crisis|conflict|breach|contradict|duplicate|recount|infinite loop|redundant|unvisited|off-by-one)\b/i.test(textToCheck);
         const hasTradeoff = /\b(versus|vs|difference|compare|tradeoff|advantage|disadvantage|contrast|unlike|counterpart|opposed to|alternative)\b/i.test(textToCheck);
-        const hasProcedure = /\b(step|algorithm|procedure|transition|traverse|insert|delete|replace|swap|rotate|push|pop|catalyz|inhibit|regulat|bind|secret|synthesiz|activat|mediat|trigger|escalat|ratif|mobiliz|govern|differentiat|integrat|substitut|evaluat)\b/i.test(textToCheck);
+        const hasProcedure = /\b(step|algorithm|procedure|transition|traverse|insert|delete|replace|swap|rotate|push|pop|loop|nested|increment|decrement|iterate|count|accumulate|scan|flag|catalyz|inhibit|regulat|bind|secret|synthesiz|activat|mediat|trigger|escalat|ratif|mobiliz|govern|differentiat|integrat|substitut|evaluat)\b/i.test(textToCheck);
 
         const supportsHard = hasMechanism || hasInvariant || hasTradeoff || categories.includes('COMPARISON') || categories.includes('TRADEOFF') || categories.includes('SCENARIO') || categories.includes('RULE') || categories.includes('FORMAL_DERIVATION');
         return {
@@ -1371,9 +1403,9 @@ Generate the curricular assessment plan strictly covering educational concepts w
     }
 
     // 2. Check depth via textual indicators in supporting evidence and concept
-    const mechanismIndicators = /\b(computes?|calculat|translat|allocat|schedules?|converts?|decodes?|evaluates?|executes?|verif|generates?|transitions?|compares?|steps?|algorithm|procedure|condition|when|unless|if\s+[a-z]+|formula|difference between|versus|advantage|tradeoff|pointer|travers|insert|delet|catalyz|inhibit|regulat|bind|secret|synthesiz|activat|mediat|trigger|escalat|ratif|mobiliz|govern|differentiat|integrat|substitut)\b/i;
-    const invariantIndicators = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree|equilibrium|threshold|conservation|saturation|homeostasis|allosteric|rate-limiting|feedback|precondition|counterfactual|bottleneck|dilemma|paradox|consequence|theorem|proof|derivative|differentiable|continuous|integral|hypothesis|hypotheses|lemma|corollary|axiom|limit|rate of change)\b/i;
-    const violationIndicators = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid|denatur|mutat|dysfunction|inhibit|toxic|deplet|fail|collaps|breakdown|crisis|conflict|breach|contradict)\b/i;
+    const mechanismIndicators = /\b(computes?|calculat|translat|allocat|schedules?|converts?|decodes?|evaluates?|executes?|verif|generates?|transitions?|compares?|steps?|algorithm|procedure|condition|when|unless|if\s+[a-z]+|formula|difference between|versus|advantage|tradeoff|pointer|travers|insert|delet|loops?|nested|frequency|counter?|arrays?|iterations?|accumulat|increment|decrement|scan|catalyz|inhibit|regulat|bind|secret|synthesiz|activat|mediat|trigger|escalat|ratif|mobiliz|govern|differentiat|integrat|substitut)\b/i;
+    const invariantIndicators = /\b(invariant|boundary|balance|constraint|property|height|depth|strictly|at most|at least|exactly|left-to-right|packing|degree|equilibrium|threshold|conservation|saturation|homeostasis|allosteric|rate-limiting|feedback|precondition|counterfactual|bottleneck|dilemma|paradox|consequence|theorem|proof|derivative|differentiable|continuous|integral|hypothesis|hypotheses|lemma|corollary|axiom|limit|rate of change|frequency|duplicate|recount|occurrences?|visited|uniqueness|base case|off-by-one|bounds)\b/i;
+    const violationIndicators = /\b(violation|defect|mismatch|wrong|corrupt|break|diagnose|bug|edge case|missing|overflow|invalid|denatur|mutat|dysfunction|inhibit|toxic|deplet|fail|collaps|breakdown|crisis|conflict|breach|contradict|duplicate|recount|infinite loop|redundant|unvisited|off-by-one)\b/i;
     const tradeoffIndicators = /\b(versus|vs|difference between|compare|tradeoff|advantage|contrast|opposed to|counterpart|alternative)\b/i;
 
     const hasMechanismWords = mechanismIndicators.test(evidenceLower) || mechanismIndicators.test(conceptLower);
