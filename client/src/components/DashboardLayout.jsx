@@ -223,11 +223,11 @@ export default function DashboardLayout({ children, role }) {
                                     <UserProfileCard user={user} role={role} />
                                     <button
                                         onClick={handleLogout}
-                                        className="w-9 h-9 rounded-full bg-white hover:bg-red-50 text-slate-600 hover:text-red-600 flex items-center justify-center shadow-2xs border border-slate-200/90 hover:border-red-200 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
+                                        className="w-9 h-9 rounded-full bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white flex items-center justify-center shadow-sm border border-[var(--bg-accent)] hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
                                         aria-label="Log out"
                                         title="Log out"
                                     >
-                                        <LogOut size={16} className="ml-0.5 transition-colors" aria-hidden="true" />
+                                        <LogOut size={16} className="text-white ml-0.5" aria-hidden="true" />
                                     </button>
                                 </div>
                             )}
@@ -237,11 +237,11 @@ export default function DashboardLayout({ children, role }) {
                                 <div className="flex items-center gap-2 shrink-0">
                                     <button
                                         onClick={handleLogout}
-                                        className="w-9 h-9 rounded-full bg-white hover:bg-red-50 text-slate-600 hover:text-red-600 flex items-center justify-center shadow-2xs border border-slate-200/90 hover:border-red-200 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
+                                        className="w-9 h-9 rounded-full bg-[var(--bg-accent)] hover:bg-[var(--bg-accent-hover)] text-white flex items-center justify-center shadow-sm border border-[var(--bg-accent)] hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shrink-0"
                                         aria-label="Log out"
                                         title="Log out"
                                     >
-                                        <LogOut size={16} className="ml-0.5 transition-colors" aria-hidden="true" />
+                                        <LogOut size={16} className="text-white ml-0.5" aria-hidden="true" />
                                     </button>
                                     <button
                                         onClick={() => setMobileOpen(true)}
@@ -366,7 +366,7 @@ export default function DashboardLayout({ children, role }) {
 
                                 <button
                                     onClick={handleLogout}
-                                    className="w-full py-3.5 px-4 bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-2xs cursor-pointer shrink-0"
+                                    className="w-full py-3.5 px-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white border border-red-700/50 rounded-2xl font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-sm cursor-pointer shrink-0"
                                     aria-label="Log out"
                                 >
                                     <LogOut size={18} />

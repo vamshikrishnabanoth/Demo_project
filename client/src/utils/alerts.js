@@ -201,7 +201,7 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                             if (activeConfirmId === t.id) activeConfirmId = null;
                             safeResolve({ isConfirmed: false });
                         },
-                        className: 'px-6 py-2.5 rounded-full text-xs font-bold bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition-all cursor-pointer shadow-xs',
+                        className: 'px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider bg-white hover:bg-slate-100 border-2 border-slate-200 text-slate-700 transition-all cursor-pointer shadow-xs active:scale-95',
                         style: { color: '#334155' }
                     }, 'Cancel'),
                     React.createElement('button', {
@@ -211,8 +211,8 @@ export const showConfirm = (title, text, confirmText = 'Yes, Proceed') => {
                             if (activeConfirmId === t.id) activeConfirmId = null;
                             safeResolve({ isConfirmed: true });
                         },
-                        className: 'px-7 py-2.5 rounded-full text-xs font-black bg-gradient-to-r from-amber-600 via-orange-600 to-emerald-700 text-white shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all cursor-pointer',
-                        style: { color: '#ffffff' }
+                        className: 'flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm border-2 border-[#ea580c] cursor-pointer active:scale-95',
+                        style: { backgroundColor: '#ea580c', color: '#ffffff', borderColor: '#ea580c' }
                     }, confirmText)
                 ])
             ])
