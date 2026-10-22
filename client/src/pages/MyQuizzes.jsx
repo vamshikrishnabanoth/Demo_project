@@ -6,6 +6,7 @@ import { showConfirm, showError } from '../utils/alerts';
 import { getSectionsForBranch } from '../utils/sectionUtils';
 import toast from 'react-hot-toast';
 import { cleanQuizTitle } from '../utils/cleanTitle';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     FileText,
     Check,
@@ -30,7 +31,9 @@ import {
     Clock,
     Award,
     Target,
-    Radio
+    Radio,
+    ChevronDown,
+    X as XIcon
 } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
@@ -855,132 +858,141 @@ export default function MyQuizzes() {
                 onSuccess={fetchQuizzes}
             />
 
-            {/* Section-Specific Broadcast Modal */}
-            {broadcastModal.isOpen && broadcastModal.template && (
-                <div className="modal-overlay">
-                    <div className="modal-backdrop" onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} />
-                    
-                    <div className="modal-card w-full max-w-lg animate-in zoom-in-95">
-                        <div className="modal-header bg-slate-50/80">
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-amber-100 text-amber-700 rounded-2xl">
-                                    <Megaphone size={24} />
-                                </div>
-                                <div>
-                                    <h2 className="font-black text-lg text-slate-900 uppercase">
-                                        Section <span className="text-amber-600">Broadcasting</span>
-                                    </h2>
-                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
-                                        Target Live Session
-                                    </p>
-                                </div>
-                            </div>
-                            <button onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} className="modal-close-btn">
-                                <XCircle size={18} aria-hidden="true" />
-                            </button>
-                        </div>
-
-                        <div className="p-6 space-y-4">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-600 mb-1">Target Branch</label>
-                                <div className="relative">
-                                    <select
-                                        className="w-full appearance-none rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 pr-10 text-xs font-black uppercase tracking-[0.12em] text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-[#d7b48a] focus:border-[#d7b48a] focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20"
-                                        value={broadcastModal.branch}
-                                        onChange={e => setBroadcastModal(m => ({ ...m, branch: e.target.value }))}
-                                    >
-                                        <option value="CSE">CSE</option>
-                                        <option value="CSM">CSM</option>
-                                    </select>
-                                    <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-slate-700">
-                                        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-                                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
+            {/* ─── Section Broadcast Drawer (non-blocking floating panel) ─── */}
+            <AnimatePresence>
+                {broadcastModal.isOpen && broadcastModal.template && (
+                    <motion.div
+                        key="broadcast-drawer"
+                        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 40, scale: 0.97 }}
+                        transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+                        className="fixed bottom-6 right-6 z-50 w-full max-w-sm"
+                        role="dialog"
+                        aria-modal="false"
+                        aria-label="Broadcast to Section"
+                    >
+                        <div className="bg-white border border-slate-200 rounded-3xl shadow-[0_24px_60px_rgba(15,23,42,0.18)] overflow-hidden">
+                            {/* Drawer Header */}
+                            <div className="px-5 pt-5 pb-4 border-b border-slate-100 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-amber-100 text-amber-700 rounded-2xl">
+                                        <Megaphone size={18} />
+                                    </div>
+                                    <div>
+                                        <h2 className="font-black text-sm text-slate-900 uppercase tracking-wide">Section Broadcasting</h2>
+                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Target Live Session</p>
                                     </div>
                                 </div>
+                                <button
+                                    onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))}
+                                    className="p-1.5 text-slate-400 hover:text-slate-700 transition-colors hover:bg-slate-100 rounded-xl cursor-pointer"
+                                    aria-label="Close broadcast drawer"
+                                >
+                                    <XIcon size={16} />
+                                </button>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="px-5 py-4 space-y-3">
+                                {/* Branch */}
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-600 mb-1">Year</label>
+                                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Target Branch</label>
                                     <div className="relative">
                                         <select
-                                            className="w-full appearance-none rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 pr-9 text-xs font-black uppercase tracking-[0.12em] text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-[#d7b48a] focus:border-[#d7b48a] focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20"
-                                            value={broadcastModal.year}
-                                            onChange={e => setBroadcastModal(m => ({ ...m, year: e.target.value }))}
+                                            className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-9 text-xs font-black uppercase tracking-wider text-slate-800 transition-all duration-200 hover:border-slate-300 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 cursor-pointer"
+                                            value={broadcastModal.branch}
+                                            onChange={e => setBroadcastModal(m => ({ ...m, branch: e.target.value }))}
                                         >
-                                            <option value="1">Year 1</option>
-                                            <option value="2">Year 2</option>
-                                            <option value="3">Year 3</option>
-                                            <option value="4">Year 4</option>
+                                            <option value="CSE">CSE</option>
+                                            <option value="CSM">CSM</option>
                                         </select>
-                                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-700">
-                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-                                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
+                                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                            <ChevronDown size={14} className="text-slate-500" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-600 mb-1">Semester</label>
-                                    <div className="relative">
-                                        <select
-                                            className="w-full appearance-none rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 pr-9 text-xs font-black uppercase tracking-[0.12em] text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-[#d7b48a] focus:border-[#d7b48a] focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20"
-                                            value={broadcastModal.semester}
-                                            onChange={e => setBroadcastModal(m => ({ ...m, semester: e.target.value }))}
-                                        >
-                                            <option value="1">Sem 1</option>
-                                            <option value="2">Sem 2</option>
-                                        </select>
-                                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-700">
-                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-                                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
+                                {/* Year / Semester / Section Grid */}
+                                <div className="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Year</label>
+                                        <div className="relative">
+                                            <select
+                                                className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-7 text-xs font-black uppercase tracking-wider text-slate-800 transition-all hover:border-slate-300 focus:border-slate-900 focus:outline-none cursor-pointer"
+                                                value={broadcastModal.year}
+                                                onChange={e => setBroadcastModal(m => ({ ...m, year: e.target.value }))}
+                                            >
+                                                <option value="1">Y1</option>
+                                                <option value="2">Y2</option>
+                                                <option value="3">Y3</option>
+                                                <option value="4">Y4</option>
+                                            </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+                                                <ChevronDown size={12} className="text-slate-400" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Sem</label>
+                                        <div className="relative">
+                                            <select
+                                                className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-7 text-xs font-black uppercase tracking-wider text-slate-800 transition-all hover:border-slate-300 focus:border-slate-900 focus:outline-none cursor-pointer"
+                                                value={broadcastModal.semester}
+                                                onChange={e => setBroadcastModal(m => ({ ...m, semester: e.target.value }))}
+                                            >
+                                                <option value="1">S1</option>
+                                                <option value="2">S2</option>
+                                            </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+                                                <ChevronDown size={12} className="text-slate-400" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Sec</label>
+                                        <div className="relative">
+                                            <select
+                                                className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-7 text-xs font-black uppercase tracking-wider text-slate-800 transition-all hover:border-slate-300 focus:border-slate-900 focus:outline-none cursor-pointer"
+                                                value={broadcastModal.section}
+                                                onChange={e => setBroadcastModal(m => ({ ...m, section: e.target.value }))}
+                                            >
+                                                {getSectionsForBranch(broadcastModal.branch).map(sec => (
+                                                    <option key={sec} value={sec}>{sec}</option>
+                                                ))}
+                                            </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+                                                <ChevronDown size={12} className="text-slate-400" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-600 mb-1">Section</label>
-                                    <div className="relative">
-                                        <select
-                                            className="w-full appearance-none rounded-2xl border border-[#e4d6c3] bg-[#fffdfb] px-4 py-3 pr-9 text-xs font-black uppercase tracking-[0.12em] text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-[#d7b48a] focus:border-[#d7b48a] focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20"
-                                            value={broadcastModal.section}
-                                            onChange={e => setBroadcastModal(m => ({ ...m, section: e.target.value }))}
-                                        >
-                                            {getSectionsForBranch(broadcastModal.branch).map(sec => (
-                                                <option key={sec} value={sec}>Section {sec}</option>
-                                            ))}
-                                        </select>
-                                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-700">
-                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-                                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </div>
-                                    </div>
+                                {/* Info banner */}
+                                <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-[11px] text-amber-900 font-medium leading-relaxed">
+                                    <Target size={12} className="inline mr-1" aria-hidden="true" />
+                                    <strong>Target:</strong> {broadcastModal.branch} · Year {broadcastModal.year} · Section {broadcastModal.section}
                                 </div>
                             </div>
 
-                            <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 font-medium">
-                                <Target size={14} className="inline mr-1" aria-hidden="true" /> <strong>Targeting Info:</strong> Students in <strong>{broadcastModal.branch} - Year {broadcastModal.year} - Section {broadcastModal.section}</strong> will receive live access.
+                            {/* Drawer Footer */}
+                            <div className="px-5 pb-5 flex justify-end gap-2">
+                                <button
+                                    onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))}
+                                    className="px-4 py-2.5 border border-slate-200 rounded-xl font-bold text-xs text-slate-600 hover:bg-slate-50 cursor-pointer transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleCloneAndBroadcast}
+                                    className="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md cursor-pointer transition-all"
+                                >
+                                    <Megaphone size={14} /> Broadcast
+                                </button>
                             </div>
                         </div>
-
-                        <div className="flex justify-end gap-3 pt-2">
-                            <button onClick={() => setBroadcastModal(m => ({ ...m, isOpen: false }))} className="px-5 py-3 border border-slate-200 rounded-xl font-bold text-xs cursor-pointer">
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleCloneAndBroadcast}
-                                className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg cursor-pointer"
-                            >
-                                <Megaphone size={16} /> Broadcast to Section {broadcastModal.section}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </DashboardLayout>
     );
 }
