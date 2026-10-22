@@ -348,6 +348,7 @@ export default function AgentPipelineLoader({
     elapsed = 0,
     representationMode = null,
     sessionId = null,
+    standalone = true,
 }) {
     const stageList = PIPELINE_STAGES;
     const navigate = useNavigate();
@@ -379,21 +380,13 @@ export default function AgentPipelineLoader({
             ? stageLabel.replace(/^.*?\((.*?)\).*$/, "$1") || stageLabel
             : null;
 
-    return (
-        <div className="fixed inset-0 z-[200] overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 md:p-8 select-none">
-            {/* Ambient Background Glow */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-500/15 rounded-full blur-[140px]" />
-                <div className="absolute -bottom-[20%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-amber-500/10 rounded-full blur-[140px]" />
-            </div>
-
-            {/* Production Grade Modal Card */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: 12 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full max-w-5xl bg-white border-2 border-slate-200/90 rounded-[2.5rem] shadow-[0_30px_90px_rgba(15,23,42,0.28)] overflow-hidden relative z-10 flex flex-col my-auto"
-            >
+    const renderCard = () => (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.98, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className={`w-full max-w-5xl bg-white border-2 border-slate-200/90 rounded-[2.5rem] ${standalone ? 'shadow-[0_10px_35px_rgba(15,23,42,0.06)]' : 'shadow-[0_30px_90px_rgba(15,23,42,0.28)]'} overflow-hidden relative z-10 flex flex-col my-auto`}
+        >
                 {/* Top Subtle Status Strip */}
                 <div className="bg-slate-50 border-b border-slate-100 px-6 sm:px-8 py-4 flex items-center justify-between flex-wrap gap-3">
                     <div className="flex items-center gap-3">
@@ -589,6 +582,25 @@ export default function AgentPipelineLoader({
                     </div>
                 </div>
             </motion.div>
+        );
+
+    if (standalone) {
+        return (
+            <div className="w-full flex items-center justify-center py-4 sm:py-8 px-2 sm:px-4 select-none">
+                {renderCard()}
+            </div>
+        );
+    }
+
+    return (
+        <div className="fixed inset-0 z-[200] overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 md:p-8 select-none">
+            {/* Ambient Background Glow */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-500/15 rounded-full blur-[140px]" />
+                <div className="absolute -bottom-[20%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-amber-500/10 rounded-full blur-[140px]" />
+            </div>
+
+            {renderCard()}
         </div>
     );
 }

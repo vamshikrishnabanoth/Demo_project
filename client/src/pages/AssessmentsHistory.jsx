@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     History, 
@@ -15,13 +15,117 @@ import {
     Book,
     Brain,
     Activity,
-    Star
+    Star,
+    ChevronDown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useApiQuery from '../hooks/useApiQuery';
 import { ListSkeleton } from '../components/ui/ShimmerSkeleton';
 import DashboardLayout from '../components/DashboardLayout';
 import { cleanQuizTitle } from '../utils/cleanTitle';
+
+const statusOptions = [
+    { value: 'all', label: 'All Status' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'missed', label: 'Missed' },
+];
+
+function CustomSelect({ value, onChange, options, ariaLabel, icon: Icon }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef(null);
+
+    const selectedOption = options.find((option) => option.value === value) || options[0];
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            setIsOpen(false);
+            return;
+        }
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const currentIndex = options.findIndex((option) => option.value === value);
+            const direction = event.key === 'ArrowDown' ? 1 : -1;
+            const nextIndex = (currentIndex + direction + options.length) % options.length;
+            onChange(options[nextIndex].value);
+            setIsOpen(true);
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsOpen((prev) => !prev);
+        }
+    };
+
+    return (
+        <div ref={containerRef} className="relative w-full md:w-48">
+            <button
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                aria-label={ariaLabel}
+                onClick={() => setIsOpen((prev) => !prev)}
+                onKeyDown={handleKeyDown}
+                className="flex w-full items-center justify-between gap-2.5 rounded-2xl border border-[var(--student-border)] bg-[var(--student-surface-alt)] py-3 px-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-200 hover:border-[var(--bg-accent)] hover:shadow-[var(--student-shadow-soft)] focus:border-[var(--bg-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--bg-accent-glow)] cursor-pointer"
+            >
+                <div className="flex items-center gap-2 truncate">
+                    {Icon && <Icon className="text-[var(--text-accent)] shrink-0" size={15} />}
+                    <span className="truncate text-[11px] font-black uppercase tracking-[0.12em] text-[#0f172a]">
+                        {selectedOption.label}
+                    </span>
+                </div>
+                <ChevronDown className={`h-4 w-4 text-[#0f172a] shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <div className="absolute left-0 right-0 z-30 mt-2 overflow-hidden rounded-2xl border border-[var(--student-border)] bg-white shadow-xl ring-1 ring-slate-100 py-1.5">
+                    <ul role="listbox" aria-label={ariaLabel} className="p-1 space-y-0.5">
+                        {options.map((option) => {
+                            const isSelected = value === option.value;
+
+                            return (
+                                <li key={option.value}>
+                                    <button
+                                        type="button"
+                                        role="option"
+                                        aria-selected={isSelected}
+                                        onClick={() => {
+                                            onChange(option.value);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs font-black uppercase tracking-[0.12em] transition-all duration-150 cursor-pointer ${
+                                            isSelected
+                                                ? 'bg-[#ea580c] text-white shadow-xs'
+                                                : 'text-[#0f172a] hover:bg-orange-50 hover:text-[#c2410c]'
+                                        }`}
+                                    >
+                                        <span>{option.label}</span>
+                                        {isSelected && (
+                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 shrink-0" aria-hidden="true">
+                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
 const AssessmentsHistory = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
@@ -128,23 +232,13 @@ const AssessmentsHistory = () => {
                             className="w-full bg-[var(--student-surface)] border border-[var(--student-border)] rounded-2xl py-3.5 pl-12 pr-5 text-[#0f172a] text-sm font-bold placeholder:text-[#0f172a] placeholder:font-bold focus:outline-none focus:border-[var(--bg-accent)] transition-all shadow-[var(--student-shadow-soft)]"
                         />
                     </div>
-                    <div className="relative w-full md:w-48">
-                        <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-accent)]" size={15} />
-                        <select 
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="w-full appearance-none cursor-pointer rounded-2xl border border-[var(--student-border)] bg-[var(--student-surface-alt)] py-3.5 pl-11 pr-10 text-[11px] font-black uppercase tracking-[0.12em] text-[#0f172a] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] transition-all duration-200 hover:border-[var(--bg-accent)] hover:shadow-[var(--student-shadow-soft)] focus:border-[var(--bg-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--bg-accent-glow)]"
-                        >
-                            <option value="all">All Status</option>
-                            <option value="completed">Completed</option>
-                            <option value="missed">Missed</option>
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-[#0f172a]">
-                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </div>
-                    </div>
+                    <CustomSelect 
+                        value={filterStatus} 
+                        onChange={setFilterStatus} 
+                        options={statusOptions} 
+                        ariaLabel="Filter by status" 
+                        icon={Filter} 
+                    />
                 </div>
                 {/* Imperial Row List */}
                 <div className="space-y-6">

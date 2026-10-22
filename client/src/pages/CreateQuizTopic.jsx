@@ -1237,18 +1237,20 @@ export default function CreateQuizTopic() {
 
     return (
         <DashboardLayout role="teacher">
-            {isGenerating && (
-                <AgentPipelineLoader
-                    stage={stage}
-                    stageLabel={stageLabel}
-                    elapsed={elapsed}
-                    isVoice={inputs.some(inp => inp.type === 'voice' || inp.type === 'audio')}
-                    representationMode={representationMode}
-                    sessionId={currentTaskId}
-                />
-            )}
-
-            <div className="flex flex-col min-h-[calc(100vh-6.5rem)] w-full">
+            {isGenerating ? (
+                <div className="flex-1 w-full min-h-[calc(100vh-6.5rem)] flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300">
+                    <AgentPipelineLoader
+                        stage={stage}
+                        stageLabel={stageLabel}
+                        elapsed={elapsed}
+                        isVoice={inputs.some(inp => inp.type === 'voice' || inp.type === 'audio')}
+                        representationMode={representationMode}
+                        sessionId={currentTaskId}
+                        standalone={true}
+                    />
+                </div>
+            ) : (
+                <div className="flex flex-col min-h-[calc(100vh-6.5rem)] w-full">
                 
                 {/* Header branding & Lecture Depth Badge */}
                 <div className="p-6 pb-4 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -2010,6 +2012,7 @@ export default function CreateQuizTopic() {
                 </div>
 
             </div>
+            )}
 
             {/* TEXT PROMPT MODAL */}
             {showTextModal && (

@@ -50,34 +50,35 @@ export default function TeacherDashboard() {
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-[2rem] p-6 sm:p-7 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border border-amber-300/40 relative overflow-hidden"
+                        className="w-full bg-gradient-to-r from-orange-50/70 via-white to-amber-50/40 rounded-[2rem] p-6 sm:p-7 text-[#0f172a] shadow-[0_8px_30px_rgba(234,88,12,0.08)] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-2 border-orange-200/90 relative overflow-hidden"
                     >
                         <div className="flex items-center gap-4 z-10">
-                            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
-                                <Radio size={28} className="text-white animate-spin" />
+                            <div className="w-14 h-14 rounded-2xl bg-[#ea580c] text-white flex items-center justify-center shrink-0 shadow-md shadow-orange-500/25 border border-orange-400/40">
+                                <Radio size={28} className="text-white animate-pulse" />
                             </div>
                             <div>
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <span className="bg-white text-orange-950 font-black text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-sm">
+                                    <span className="inline-flex items-center gap-1.5 bg-orange-100/90 text-[#c2410c] border border-orange-200/90 font-black text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-2xs">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] animate-ping" />
                                         ⚡ Live Classroom In Progress
                                     </span>
-                                    <span className="font-mono text-xs font-bold bg-black/30 px-3 py-0.5 rounded-md border border-white/20">
+                                    <span className="font-mono text-xs font-black bg-slate-900 text-white px-3 py-1 rounded-lg border border-slate-800 tracking-wider shadow-2xs">
                                         PIN: {activeLiveQuiz.joinCode}
                                     </span>
                                 </div>
-                                <h3 className="text-xl font-black mt-1 text-white">
+                                <h3 className="text-xl sm:text-2xl font-black mt-1 text-[#0f172a] tracking-tight">
                                     {activeLiveQuiz.title}
                                 </h3>
-                                <p className="text-xs text-white/95 font-medium max-w-xl">
+                                <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-xl leading-relaxed mt-1">
                                     You have a live room active right now! If you navigated back by mistake, click below to immediately resume question control, view student responses, and control the live room.
                                 </p>
                             </div>
                         </div>
                         <button
                             onClick={() => navigate(`/live-room-teacher/${activeLiveQuiz.joinCode}`)}
-                            className="w-full md:w-auto px-7 py-4 rounded-2xl bg-white hover:bg-orange-50 text-orange-600 font-black text-xs uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer shrink-0 z-10 border-none"
+                            className="w-full md:w-auto px-7 py-4 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white font-black text-xs uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer shrink-0 z-10 border-none"
                         >
-                            <Play size={18} className="fill-current text-orange-600" />
+                            <Play size={16} className="fill-white text-white" />
                             <span>Revisit &amp; Control Live Room</span>
                         </button>
                     </motion.div>

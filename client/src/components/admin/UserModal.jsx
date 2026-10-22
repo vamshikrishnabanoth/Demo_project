@@ -1,86 +1,119 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { X as XIcon, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, KeyRound, Eye, EyeOff } from 'lucide-react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { X as XIcon, User, Mail, Lock, Shield, GraduationCap, UserCheck, Briefcase, KeyRound, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import AuthContext from '../../context/AuthContext';
 import { getSectionsForBranch } from '../../utils/sectionUtils';
 
-const ROLE_CONFIGS = {
-    student: {
-        icon: GraduationCap,
-        label: 'Student',
-        badgeBg: 'bg-sky-50 border-sky-300 text-sky-700',
-        dividerColor: 'border-sky-200',
-        dividerText: 'text-sky-600',
-        button: 'bg-sky-700 hover:bg-sky-800 text-white',
-    },
-    teacher: {
-        icon: UserCheck,
-        label: 'Teacher',
-        badgeBg: 'bg-emerald-50 border-emerald-300 text-emerald-700',
-        dividerColor: 'border-emerald-200',
-        dividerText: 'text-emerald-600',
-        button: 'bg-emerald-700 hover:bg-emerald-800 text-white',
-    },
-    admin: {
-        icon: Shield,
-        label: 'Admin',
-        badgeBg: 'bg-violet-50 border-violet-300 text-violet-700',
-        dividerColor: 'border-violet-200',
-        dividerText: 'text-violet-600',
-        button: 'bg-violet-700 hover:bg-violet-800 text-white',
-    },
-    none: {
-        icon: User,
-        label: 'None',
-        badgeBg: 'bg-slate-100 border-slate-300 text-slate-700',
-        dividerColor: 'border-slate-200',
-        dividerText: 'text-slate-500',
-        button: 'bg-slate-700 hover:bg-slate-800 text-white',
-    },
-};
+const BRANCH_OPTIONS = [
+    { value: 'CSE', label: 'CSE (Computer Science & Engg)' },
+    { value: 'CSM', label: 'CSM (CSE - AI & ML)' },
+];
 
-function FormField({ label, icon: Icon, required, children }) {
-    return (
-        <div className="space-y-1.5">
-            <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                {Icon && <Icon size={12} className="text-slate-500" />}
-                <span>{label}</span>
-                {required && <span className="text-rose-500 font-bold ml-0.5">*</span>}
-            </label>
-            {children}
-        </div>
-    );
-}
+const YEAR_OPTIONS = [
+    { value: '1', label: 'Year 1 (1st Year)' },
+    { value: '2', label: 'Year 2 (2nd Year)' },
+    { value: '3', label: 'Year 3 (3rd Year)' },
+    { value: '4', label: 'Year 4 (4th Year)' },
+];
 
-function Input({ value, onChange, placeholder, type = 'text', required, disabled, rightElement }) {
+const SEMESTER_OPTIONS = [
+    { value: '1', label: 'Semester 1' },
+    { value: '2', label: 'Semester 2' },
+];
+
+const FACULTY_DEPT_OPTIONS = [
+    { value: 'CSE', label: 'CSE - Computer Science & Engg' },
+    { value: 'CSM', label: 'CSM - AI & Machine Learning' },
+];
+
+function CustomSelect({ value, onChange, options, placeholder = 'Select', ariaLabel, disabled = false }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const ref = useRef(null);
+
+    const selectedOption = options.find((opt) => String(opt.value) === String(value)) || { value: '', label: placeholder };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (ref.current && !ref.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            setIsOpen(false);
+            return;
+        }
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            const currentIndex = options.findIndex((opt) => String(opt.value) === String(value));
+            const direction = event.key === 'ArrowDown' ? 1 : -1;
+            const nextIndex = (currentIndex + direction + options.length) % options.length;
+            onChange(options[nextIndex].value);
+            setIsOpen(true);
+        }
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsOpen((prev) => !prev);
+        }
+    };
+
     return (
-        <div className="relative">
-            <input
-                type={type}
-                value={value}
-                onChange={onChange}
-                placeholder={placeholder}
-                required={required}
+        <div ref={ref} className="relative w-full">
+            <button
+                type="button"
                 disabled={disabled}
-                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition-all disabled:opacity-40 disabled:bg-slate-50"
-            />
-            {rightElement && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
-                    {rightElement}
+                aria-label={ariaLabel}
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                onClick={() => !disabled && setIsOpen((prev) => !prev)}
+                onKeyDown={handleKeyDown}
+                className="w-full min-h-[42px] flex items-center justify-between gap-2 px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-black uppercase tracking-wider text-slate-800 shadow-xs transition-all duration-200 hover:border-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 disabled:opacity-40 disabled:bg-slate-50 cursor-pointer"
+            >
+                <span className="truncate text-left">{selectedOption.label}</span>
+                <ChevronDown className={`h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isOpen && (
+                <div className="absolute left-0 right-0 z-50 mt-1.5 max-h-52 overflow-y-auto rounded-xl border border-slate-300 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.15)] ring-1 ring-slate-100 py-1">
+                    <ul role="listbox" aria-label={ariaLabel} className="p-1 space-y-0.5">
+                        {options.map((option) => {
+                            const isSelected = String(option.value) === String(value);
+                            return (
+                                <li key={option.value}>
+                                    <button
+                                        type="button"
+                                        role="option"
+                                        aria-selected={isSelected}
+                                        onClick={() => {
+                                            onChange(option.value);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-black uppercase tracking-wider transition-all duration-150 cursor-pointer ${
+                                            isSelected
+                                                ? 'bg-[#ea580c] text-white shadow-xs'
+                                                : 'text-slate-700 hover:bg-orange-50 hover:text-[#c2410c]'
+                                        }`}
+                                    >
+                                        <span className="truncate">{option.label}</span>
+                                        {isSelected && (
+                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 shrink-0" aria-hidden="true">
+                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </div>
             )}
         </div>
-    );
-}
-
-function Select({ value, onChange, children }) {
-    return (
-        <select value={value} onChange={onChange}
-            className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition-all appearance-none cursor-pointer">
-            {children}
-        </select>
     );
 }
 
@@ -384,43 +417,47 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <FormField label="Branch / Dept" required>
-                                            <Select value={form.studentBranch} onChange={(e) => {
-                                                const newBranch = e.target.value;
-                                                const secs = getSectionsForBranch(newBranch);
-                                                setForm(prev => ({
-                                                    ...prev,
-                                                    studentBranch: newBranch,
-                                                    department: newBranch,
-                                                    section: secs.includes(prev.section) ? prev.section : secs[0]
-                                                }));
-                                            }}>
-                                                <option value="CSE">CSE (Computer Science & Engg)</option>
-                                                <option value="CSM">CSM (CSE - AI & ML)</option>
-                                            </Select>
+                                            <CustomSelect 
+                                                value={form.studentBranch} 
+                                                onChange={(newBranch) => {
+                                                    const secs = getSectionsForBranch(newBranch);
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        studentBranch: newBranch,
+                                                        department: newBranch,
+                                                        section: secs.includes(prev.section) ? prev.section : secs[0]
+                                                    }));
+                                                }}
+                                                options={BRANCH_OPTIONS}
+                                                ariaLabel="Select Branch or Department"
+                                            />
                                         </FormField>
 
                                         <FormField label="Section" required>
-                                            <Select value={form.section} onChange={set('section')}>
-                                                {getSectionsForBranch(form.studentBranch).map(s => (
-                                                    <option key={s} value={s}>Section {s}</option>
-                                                ))}
-                                            </Select>
+                                            <CustomSelect 
+                                                value={form.section} 
+                                                onChange={(val) => setForm(prev => ({ ...prev, section: val }))}
+                                                options={getSectionsForBranch(form.studentBranch).map(s => ({ value: s, label: `Section ${s}` }))}
+                                                ariaLabel="Select Section"
+                                            />
                                         </FormField>
 
                                         <FormField label="Year" required>
-                                            <Select value={form.year} onChange={set('year')}>
-                                                <option value="1">Year 1 (1st Year)</option>
-                                                <option value="2">Year 2 (2nd Year)</option>
-                                                <option value="3">Year 3 (3rd Year)</option>
-                                                <option value="4">Year 4 (4th Year)</option>
-                                            </Select>
+                                            <CustomSelect 
+                                                value={form.year} 
+                                                onChange={(val) => setForm(prev => ({ ...prev, year: val }))}
+                                                options={YEAR_OPTIONS}
+                                                ariaLabel="Select Year"
+                                            />
                                         </FormField>
 
                                         <FormField label="Semester" required>
-                                            <Select value={form.semester} onChange={set('semester')}>
-                                                <option value="1">Semester 1</option>
-                                                <option value="2">Semester 2</option>
-                                            </Select>
+                                            <CustomSelect 
+                                                value={form.semester} 
+                                                onChange={(val) => setForm(prev => ({ ...prev, semester: val }))}
+                                                options={SEMESTER_OPTIONS}
+                                                ariaLabel="Select Semester"
+                                            />
                                         </FormField>
                                     </div>
                                 </div>
@@ -438,10 +475,12 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
                                     </div>
 
                                     <FormField label="Department / Branch" icon={Briefcase} required>
-                                        <Select value={form.department} onChange={set('department')}>
-                                            <option value="CSE">CSE - Computer Science & Engg</option>
-                                            <option value="CSM">CSM - AI & Machine Learning</option>
-                                        </Select>
+                                        <CustomSelect 
+                                            value={form.department} 
+                                            onChange={(val) => setForm(prev => ({ ...prev, department: val }))}
+                                            options={FACULTY_DEPT_OPTIONS}
+                                            ariaLabel="Select Faculty Department"
+                                        />
                                     </FormField>
                                 </div>
                             )}

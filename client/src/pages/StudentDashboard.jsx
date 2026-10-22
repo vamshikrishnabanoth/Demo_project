@@ -388,14 +388,17 @@ export default function StudentDashboard() {
 
     return (
         <DashboardLayout role="student">
-            {isLoading && (
-                <AgentPipelineLoader
-                    stage={stage}
-                    stageLabel={stageLabel}
-                    elapsed={elapsed}
-                />
-            )}
-            <div className="relative min-h-[75vh] flex items-center justify-center py-10 font-inter overflow-hidden">
+            {isLoading ? (
+                <div className="flex-1 w-full min-h-[75vh] flex items-center justify-center py-6 sm:py-10 px-2 sm:px-4 animate-in fade-in duration-300">
+                    <AgentPipelineLoader
+                        stage={stage}
+                        stageLabel={stageLabel}
+                        elapsed={elapsed}
+                        standalone={true}
+                    />
+                </div>
+            ) : (
+                <div className="relative min-h-[75vh] flex items-center justify-center py-10 font-inter overflow-hidden">
                 
                 {/* ─── AMBIENT DECORATIONS ─────────────────────────────────── */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -970,6 +973,7 @@ export default function StudentDashboard() {
 
                 </motion.div>
             </div>
+            )}
         </DashboardLayout>
     );
 }

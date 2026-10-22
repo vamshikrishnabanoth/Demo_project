@@ -315,24 +315,25 @@ export default function MyQuizzes() {
 
                 {/* ── ACTIVE LIVE CLASSROOM SHELF (Handles 1 OR Multiple Concurrent Rooms Cleanly) ── */}
                 {activeLiveQuizzes.length === 1 && (
-                    <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-3xl p-6 sm:p-7 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 border border-amber-300/40">
+                    <div className="bg-gradient-to-r from-orange-50/70 via-white to-amber-50/40 rounded-3xl p-6 sm:p-7 text-[#0f172a] shadow-[0_8px_30px_rgba(234,88,12,0.08)] flex flex-col md:flex-row items-start md:items-center justify-between gap-5 border-2 border-orange-200/90 relative overflow-hidden">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
-                                <Radio size={28} className="text-white animate-spin" />
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#ea580c] text-white flex items-center justify-center shrink-0 shadow-md shadow-orange-500/25 border border-orange-400/40">
+                                <Radio size={28} className="text-white animate-pulse" />
                             </div>
                             <div>
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <span className="bg-white text-orange-950 font-black text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-sm">
+                                    <span className="inline-flex items-center gap-1.5 bg-orange-100/90 text-[#c2410c] border border-orange-200/90 font-black text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-2xs">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] animate-ping" />
                                         ⚡ Live Quiz In Progress
                                     </span>
-                                    <span className="font-mono text-xs font-bold bg-black/30 px-3 py-0.5 rounded-md border border-white/20">
+                                    <span className="font-mono text-xs font-black bg-slate-900 text-white px-3 py-1 rounded-lg border border-slate-800 tracking-wider shadow-2xs">
                                         PIN: {activeLiveQuizzes[0].joinCode}
                                     </span>
                                 </div>
-                                <h3 className="text-lg sm:text-xl font-black mt-1 text-white drop-shadow-sm">
+                                <h3 className="text-lg sm:text-xl font-black mt-1 text-[#0f172a] tracking-tight">
                                     {cleanQuizTitle(activeLiveQuizzes[0].title)}
                                 </h3>
-                                <p className="text-xs text-white/95 font-medium leading-relaxed max-w-2xl">
+                                <p className="text-xs sm:text-sm text-slate-600 font-semibold leading-relaxed max-w-2xl mt-1">
                                     You have a live room active right now! If you navigated back by mistake, click below to immediately resume question control, view student responses, or advance questions.
                                 </p>
                             </div>
@@ -340,14 +341,14 @@ export default function MyQuizzes() {
                         <div className="flex items-center gap-2 w-full md:w-auto shrink-0">
                             <button
                                 onClick={() => navigate(`/live-room-teacher/${activeLiveQuizzes[0].joinCode}`)}
-                                className="flex-1 md:flex-none px-7 py-4 rounded-2xl bg-white hover:bg-orange-50 text-orange-600 font-black text-xs uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer border-none"
+                                className="flex-1 md:flex-none px-7 py-4 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white font-black text-xs uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer border-none"
                             >
-                                <Play size={17} className="fill-current text-orange-600" />
+                                <Play size={16} className="fill-white text-white" />
                                 <span>Revisit &amp; Control Live Room</span>
                             </button>
                             <button
                                 onClick={() => handleEndLiveQuiz(activeLiveQuizzes[0].id, activeLiveQuizzes[0].title)}
-                                className="px-5 py-4 rounded-2xl bg-black/25 hover:bg-rose-900/80 text-white font-black text-xs uppercase tracking-wider border border-white/20 cursor-pointer transition-all active:scale-95"
+                                className="px-5 py-4 rounded-2xl bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 font-black text-xs uppercase tracking-wider border border-slate-300 hover:border-rose-300 shadow-xs cursor-pointer transition-all active:scale-95"
                                 title="End this live classroom"
                             >
                                 End Room

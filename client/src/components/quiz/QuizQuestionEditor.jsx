@@ -6,7 +6,7 @@ import FormattedQuestionText from './FormattedQuestionText';
 
 const kahootColors = [
     'border-red-200 bg-red-50/60',
-    'border-orange-200 bg-orange-50/70',
+    'border-[#93C5FD] bg-[#EFF6FF] hover:bg-[#DBEAFE] hover:border-[#60A5FA]',
     'border-amber-200 bg-amber-50/70',
     'border-emerald-200 bg-emerald-50/70',
     'border-violet-200 bg-violet-50/70',
@@ -15,7 +15,7 @@ const kahootColors = [
 
 const kahootBadgeColors = [
     '#ef4444',
-    '#f97316',
+    '#2563EB',
     '#f59e0b',
     '#22c55e',
     '#8b5cf6',
@@ -24,7 +24,7 @@ const kahootBadgeColors = [
 
 const kahootSelectedBorders = [
     'ring-2 ring-red-200 !border-red-400 shadow-[0_0_0_1px_rgba(239,68,68,0.12)]',
-    'ring-2 ring-orange-200 !border-orange-400 shadow-[0_0_0_1px_rgba(249,115,22,0.12)]',
+    'ring-2 ring-[#93C5FD] !border-[#2563EB] shadow-[0_0_0_1px_rgba(37,99,235,0.12)]',
     'ring-2 ring-amber-200 !border-amber-400 shadow-[0_0_0_1px_rgba(245,158,11,0.12)]',
     'ring-2 ring-emerald-200 !border-emerald-400 shadow-[0_0_0_1px_rgba(34,197,94,0.12)]',
     'ring-2 ring-violet-200 !border-violet-400 shadow-[0_0_0_1px_rgba(139,92,246,0.12)]',
@@ -191,7 +191,7 @@ export default function QuizQuestionEditor({
                                 onChange={(e) => onUpdateOption(index, oIndex, e.target.value)}
                                 placeholder={`Option ${oIndex + 1}`}
                                 className="flex-1 bg-transparent border-none focus:ring-0 font-bold py-2 text-base leading-snug w-full"
-                                style={{ color: '#1f2937', minHeight: '2.5rem' }}
+                                style={{ color: '#172033', minHeight: '2.5rem' }}
                             />
 
                             <div className="flex items-center gap-2 shrink-0 pt-1">
