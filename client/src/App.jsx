@@ -26,6 +26,7 @@ const RoleSelection     = lazyWithSuspense(() => import('./pages/RoleSelection')
 const TeacherDashboard  = lazyWithSuspense(() => import('./pages/TeacherDashboard'));
 const CreateQuizText    = lazyWithSuspense(() => import('./pages/CreateQuizText'));
 const CreateQuizTopic   = lazyWithSuspense(() => import('./pages/CreateQuizTopic'));
+const CreateQuizMode    = lazyWithSuspense(() => import('./pages/CreateQuizMode'));
 const StudentDashboard  = lazyWithSuspense(() => import('./pages/StudentDashboard'));
 const Assessments       = lazyWithSuspense(() => import('./pages/Assessments'));
 const MyQuizzes         = lazyWithSuspense(() => import('./pages/MyQuizzes'));
@@ -92,6 +93,7 @@ function AnimatedRoutes() {
 
                     {/* Teacher pages — standard slide transition */}
                     <Route path="/teacher-dashboard" element={<PageTransition><ProtectedRoute roles={['teacher']}><TeacherDashboard /></ProtectedRoute></PageTransition>} />
+                    <Route path="/create-quiz"       element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizMode /></ProtectedRoute></PageTransition>} />
                     <Route path="/create-quiz/text"  element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizText /></ProtectedRoute></PageTransition>} />
                     <Route path="/create-quiz/pdf"   element={<Navigate to="/create-quiz/topic" replace />} />
                     <Route path="/create-quiz/topic" element={<PageTransition><ProtectedRoute roles={['teacher']}><CreateQuizTopic /></ProtectedRoute></PageTransition>} />

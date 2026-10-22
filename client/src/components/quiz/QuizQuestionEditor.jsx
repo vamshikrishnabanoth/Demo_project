@@ -5,28 +5,28 @@ import { PremiumInput, GlassCard } from '../ui/Primitives';
 import FormattedQuestionText from './FormattedQuestionText';
 
 const kahootColors = [
-    'border-red-200 bg-red-50/60',
+    'border-[#FEB2B2] bg-[#FFF5F5] hover:bg-[#FEE2E2] hover:border-[#F87171]',
     'border-[#93C5FD] bg-[#EFF6FF] hover:bg-[#DBEAFE] hover:border-[#60A5FA]',
-    'border-amber-200 bg-amber-50/70',
-    'border-emerald-200 bg-emerald-50/70',
+    'border-[#FCD34D] bg-[#FFFCF0] hover:bg-[#FEF3C7] hover:border-[#FBBF24]',
+    'border-[#86EFAC] bg-[#F0FDF4] hover:bg-[#D1FAE5] hover:border-[#34D399]',
     'border-violet-200 bg-violet-50/70',
     'border-pink-200 bg-pink-50/70',
 ];
 
 const kahootBadgeColors = [
-    '#ef4444',
+    '#EF4444',
     '#2563EB',
-    '#f59e0b',
-    '#22c55e',
+    '#F59E0B',
+    '#10B981',
     '#8b5cf6',
     '#ec4899',
 ];
 
 const kahootSelectedBorders = [
-    'ring-2 ring-red-200 !border-red-400 shadow-[0_0_0_1px_rgba(239,68,68,0.12)]',
+    'ring-2 ring-[#FEB2B2] !border-[#EF4444] shadow-[0_0_0_1px_rgba(239,68,68,0.12)]',
     'ring-2 ring-[#93C5FD] !border-[#2563EB] shadow-[0_0_0_1px_rgba(37,99,235,0.12)]',
-    'ring-2 ring-amber-200 !border-amber-400 shadow-[0_0_0_1px_rgba(245,158,11,0.12)]',
-    'ring-2 ring-emerald-200 !border-emerald-400 shadow-[0_0_0_1px_rgba(34,197,94,0.12)]',
+    'ring-2 ring-[#FCD34D] !border-[#F59E0B] shadow-[0_0_0_1px_rgba(245,158,11,0.12)]',
+    'ring-2 ring-[#86EFAC] !border-[#10B981] shadow-[0_0_0_1px_rgba(16,185,129,0.12)]',
     'ring-2 ring-violet-200 !border-violet-400 shadow-[0_0_0_1px_rgba(139,92,246,0.12)]',
     'ring-2 ring-pink-200 !border-pink-400 shadow-[0_0_0_1px_rgba(236,72,153,0.12)]',
 ];
@@ -174,13 +174,13 @@ export default function QuizQuestionEditor({
                             key={oIndex}
                             layout
                             className={`
-                                flex items-start gap-4 p-4 rounded-2xl border transition-all group/opt relative h-auto bg-[var(--bg-primary)]
+                                flex items-start gap-4 p-4 rounded-2xl border transition-all group/opt relative h-auto
                                 ${kahootColors[oIndex % 6]}
-                                ${question.correctAnswer === opt && opt !== '' ? kahootSelectedBorders[oIndex % 6] : 'border-slate-200'}
+                                ${question.correctAnswer === opt && opt !== '' ? kahootSelectedBorders[oIndex % 6] : ''}
                             `}
                         >
                             <div
-                                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-base shrink-0 shadow-sm mt-0.5"
+                                className="w-10 h-10 rounded-full flex items-center justify-center font-black text-base shrink-0 shadow-sm mt-0.5"
                                 style={{ backgroundColor: kahootBadgeColors[oIndex % 6], color: '#ffffff' }}
                             >
                                 {String.fromCharCode(65 + oIndex)}

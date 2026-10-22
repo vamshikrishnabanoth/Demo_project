@@ -983,10 +983,10 @@ if (socket.connected) {
                                 {quiz.questions[currentQuestion].options?.map((option, idx) => {
                                     const label = String.fromCharCode(65 + idx);
                                     const optionThemes = [
-                                        { badge: 'bg-red-500 text-white', border: 'border-red-200 bg-red-50/70 hover:border-red-300' },
+                                        { badge: 'text-white', badgeStyle: { backgroundColor: '#EF4444' }, border: 'border-[#FEB2B2] bg-[#FFF5F5] hover:bg-[#FEE2E2] hover:border-[#F87171]' },
                                         { badge: 'text-white', badgeStyle: { backgroundColor: '#2563EB' }, border: 'border-[#93C5FD] bg-[#EFF6FF] hover:bg-[#DBEAFE] hover:border-[#60A5FA]' },
-                                        { badge: 'bg-amber-500 text-white', border: 'border-amber-200 bg-amber-50/70 hover:border-amber-300' },
-                                        { badge: 'bg-emerald-500 text-white', border: 'border-emerald-200 bg-emerald-50/70 hover:border-emerald-300' },
+                                        { badge: 'text-white', badgeStyle: { backgroundColor: '#F59E0B' }, border: 'border-[#FCD34D] bg-[#FFFCF0] hover:bg-[#FEF3C7] hover:border-[#FBBF24]' },
+                                        { badge: 'text-white', badgeStyle: { backgroundColor: '#10B981' }, border: 'border-[#86EFAC] bg-[#F0FDF4] hover:bg-[#D1FAE5] hover:border-[#34D399]' },
                                         { badge: 'bg-violet-500 text-white', border: 'border-violet-200 bg-violet-50/70 hover:border-violet-300' },
                                         { badge: 'bg-pink-500 text-white', border: 'border-pink-200 bg-pink-50/70 hover:border-pink-300' },
                                     ];
@@ -996,10 +996,10 @@ if (socket.connected) {
                                             key={idx}
                                             className={`flex items-center gap-3.5 border-2 rounded-2xl p-4 transition-all shadow-xs ${theme.border}`}
                                         >
-                                            <div className={`w-9 h-9 rounded-xl ${theme.badge} flex items-center justify-center font-black text-sm flex-shrink-0 shadow-xs`} style={theme.badgeStyle || {}}>
+                                            <div className={`w-9 h-9 rounded-full ${theme.badge} flex items-center justify-center font-black text-sm flex-shrink-0 shadow-xs`} style={theme.badgeStyle || {}}>
                                                 {label}
                                             </div>
-                                            <span className="font-bold text-slate-800 text-sm leading-snug">{option}</span>
+                                            <span className="font-bold text-sm leading-snug" style={{ color: '#172033' }}>{option}</span>
                                         </div>
                                     );
                                 })}
