@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import AttemptQuiz from './AttemptQuiz';
-import AssessmentAttempt from './AssessmentAttempt';
 import WaitingRoomLoader from '../components/loaders/WaitingRoomLoader';
 import { Check, Trophy, Zap, Puzzle } from 'lucide-react';
 

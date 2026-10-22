@@ -363,6 +363,7 @@ async function safeDeleteUser(userId) {
         await prisma.quiz.deleteMany({ where: { id: { in: quizIds } } });
     }
     // 4. Delete user record
+    auth.clearUserCache?.(userId);
     return await prisma.user.delete({ where: { id: userId } });
 }
 
@@ -381,6 +382,8 @@ const handleUserSuspendToggle = async (req, res) => {
             },
             select: USER_SELECT
         });
+
+        auth.clearUserCache?.(req.params.id);
 
         const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
         logActivity(
@@ -421,6 +424,8 @@ router.post('/users/bulk-suspend', auth, adminOnly, async (req, res) => {
                 tokenVersion: { increment: 1 }
             }
         });
+
+        validIds.forEach(id => auth.clearUserCache?.(id));
 
         const adminUser = await prisma.user.findUnique({ where: { id: req.user.id } });
         logActivity(

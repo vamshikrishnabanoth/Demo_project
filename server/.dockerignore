@@ -1,0 +1,13 @@
+node_modules
+*.log
+.env
+.env.*
+!.env.example
+*-player-script.js
+test_*.js
+check_*.js
+test_materials/
+test.pptx
+create_test_assets.py
+find_recent_files.py
+local_whisper_server.py

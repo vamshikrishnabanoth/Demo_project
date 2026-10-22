@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
+import { useAdmin } from '../context/AdminContext';
 import DashboardLayout from '../components/DashboardLayout';
 import { getSectionsForBranch } from '../utils/sectionUtils';
 import { showConfirm } from '../utils/alerts';
@@ -15,6 +16,7 @@ const BRANCHES = ['ALL', 'CSE', 'CSM'];
 
 export default function AdminStudentPromote() {
     const navigate = useNavigate();
+    const { invalidate } = useAdmin() || {};
 
     // Source Scope Filters
     const [dept, setDept] = useState('ALL');
@@ -139,6 +141,7 @@ export default function AdminStudentPromote() {
             });
 
             toast.success(res.data.msg || 'Batch promotion executed successfully!');
+            invalidate?.();
             navigate('/admin-dashboard?tab=students');
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Batch promotion failed');

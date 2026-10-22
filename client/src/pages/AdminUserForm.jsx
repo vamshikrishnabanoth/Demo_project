@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
+import { useAdmin } from '../context/AdminContext';
 import DashboardLayout from '../components/DashboardLayout';
 import { getSectionsForBranch } from '../utils/sectionUtils';
 
@@ -121,6 +122,7 @@ export default function AdminUserForm() {
     const { id } = useParams();
     const [searchParams] = useSearchParams();
     const { user: currentUser, updateUser } = useContext(AuthContext);
+    const { invalidate } = useAdmin() || {};
 
     const isEditMode = Boolean(id);
     const passedRole = searchParams.get('role') || location.state?.defaultRole || location.state?.user?.role || 'student';
@@ -273,6 +275,7 @@ export default function AdminUserForm() {
                 await api.post(endpoint, payload);
                 toast.success(`${activeConfig.label} account created successfully!`);
             }
+            invalidate?.();
             navigate(returnUrl);
         } catch (err) {
             const msg = err.response?.data?.msg || err.response?.data?.error || 'Operation failed';

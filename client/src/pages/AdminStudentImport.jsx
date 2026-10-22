@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
+import { useAdmin } from '../context/AdminContext';
 import DashboardLayout from '../components/DashboardLayout';
 
 const REQUIRED_FIELDS = [
@@ -29,6 +30,7 @@ const OPTIONAL_FIELDS = [
 
 export default function AdminStudentImport() {
     const navigate = useNavigate();
+    const { invalidate } = useAdmin() || {};
     const [rawText, setRawText] = useState('');
     const [fileName, setFileName] = useState('');
     const [validStudents, setValidStudents] = useState([]);
@@ -113,6 +115,7 @@ export default function AdminStudentImport() {
         try {
             const res = await api.post('/admin/import', { students: validStudents });
             toast.success(res.data.msg || `Successfully imported ${res.data.successCount} students!`);
+            invalidate?.();
             navigate('/admin-dashboard?tab=students');
         } catch (err) {
             toast.error(err.response?.data?.msg || 'Import execution failed');

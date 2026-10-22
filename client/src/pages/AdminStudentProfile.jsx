@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
+import { useAdmin } from '../context/AdminContext';
 import DashboardLayout from '../components/DashboardLayout';
 import { showConfirm } from '../utils/alerts';
 
@@ -39,6 +40,7 @@ export default function AdminStudentProfile() {
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const { invalidate } = useAdmin() || {};
 
     const [student, setStudent] = useState(location.state?.student || null);
     const [loading, setLoading] = useState(!location.state?.student);
@@ -89,6 +91,7 @@ export default function AdminStudentProfile() {
         try {
             await api.patch(`/admin/users/${student.id}/suspend`);
             setStudent(prev => ({ ...prev, isSuspended: !prev.isSuspended }));
+            invalidate?.();
             toast.success(willSuspend ? 'Student account suspended' : 'Student account reinstated');
         } catch {
             toast.error('Failed to update suspension status');
