@@ -112,7 +112,6 @@ const SQL_INJECTION_PATTERNS = [
     /(\b(EXEC\s*\(|EXEC\s+(sp_|xp_|sys\.)|EXECUTE\s*\(|EXECUTE\s+IMMEDIATE\b))/i,
     /(;\s*(DROP|DELETE|UPDATE|INSERT|ALTER|CREATE|EXEC)\b)/i,
     /(';\s*--)/,
-    /(\b(OR|AND)\s+\d+\s*=\s*\d+)/i,
     /(\/\*![\s\S]*?\*\/)/,  // SQL-specific conditional comments like /*!50000 SELECT */
     /(\bWAITFOR\s+DELAY\b)/i,
     /(\bBENCHMARK\s*\()/i,

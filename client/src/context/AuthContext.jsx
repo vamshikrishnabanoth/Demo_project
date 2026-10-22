@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
             // If the server explicitly tells us the token is invalid/expired (401 or 403)
             if (err.response?.status === 401 || err.response?.status === 403) {
                 setUser(null);
-                try { localStorage.removeItem('token'); } catch (_) {}
             } else {
                 console.error('[AuthContext] Network or server error during auth hydration:', err);
                 setAuthError(err);
@@ -57,9 +56,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = useCallback(async (email, password) => {
         const res = await api.post('/auth/login', { email, password });
-        if (res.data?.token) {
-            try { localStorage.setItem('token', res.data.token); } catch (_) {}
-        }
+        // Token is set as an HttpOnly cookie by the server — do NOT store in localStorage (XSS risk)
         const userData = res.data.user ?? (await api.get('/auth/me')).data;
         setUser(userData);
         if (socket.connected) {
@@ -72,9 +69,7 @@ export const AuthProvider = ({ children }) => {
 
     const setRole = useCallback(async (role) => {
         const res = await api.post('/auth/set-role', { role });
-        if (res.data?.token) {
-            try { localStorage.setItem('token', res.data.token); } catch (_) {}
-        }
+        // Token refresh is handled via HttpOnly cookie by the server
         setUser(prev => ({ ...prev, role: res.data.role }));
         return res.data;
     }, []);
@@ -97,13 +92,14 @@ export const AuthProvider = ({ children }) => {
 
         // ── Strict Account Isolation & Session Security ─────────────────────────
         try {
+            // Clear any lingering legacy token (no longer stored but clean up if it exists)
             localStorage.removeItem('token');
             localStorage.removeItem('quiz_docket_inputs'); // Clean legacy un-scoped key
             if (window.indexedDB) {
                 window.indexedDB.deleteDatabase('pending_audio_recordings');
             }
         } catch (e) {
-            console.error('Failed to purge un-scoped session storage on logout:', e);
+            console.error('Failed to purge session storage on logout:', e);
         }
 
         setUser(null);

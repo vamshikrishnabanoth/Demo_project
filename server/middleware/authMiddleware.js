@@ -49,7 +49,7 @@ const authMiddleware = async function (req, res, next) {
                     const graceWindow = 2 * 60 * 1000; // 2 minute grace period (covers slow page loads only)
                     
                     if (decoded && decoded.user && (Date.now() - expiredAt < graceWindow)) {
-                        // Issue sliding refresh token header and cookie for client synchronization
+                        // Issue sliding refresh token via cookie only — never expose raw JWT in headers
                         const newToken = jwt.sign({ user: decoded.user }, process.env.JWT_SECRET, { expiresIn: '12h' });
                         const isProduction = process.env.NODE_ENV === 'production';
                         res.cookie('token', newToken, {
@@ -59,7 +59,7 @@ const authMiddleware = async function (req, res, next) {
                             maxAge: 12 * 60 * 60 * 1000,
                             path: '/'
                         });
-                        res.setHeader('X-Refreshed-Token', newToken);
+                        // NOTE: X-Refreshed-Token header removed — raw JWT must never appear in response headers
                     } else {
                         return res.status(401).json({ msg: 'Token expired. Please login again.', code: 'TOKEN_EXPIRED' });
                     }

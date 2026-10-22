@@ -54,7 +54,10 @@ const PremiumError = ({
                         </button>
                     )}
                     <button 
-                        onClick={onBack || (() => navigate(-1))}
+                        onClick={onBack || (() => {
+                            if (window.history.length > 1) navigate(-1);
+                            else navigate('/');
+                        })}
                         className="w-full sm:w-auto px-8 py-3.5 bg-[var(--bg-accent)] text-[var(--text-on-accent)] rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[var(--bg-accent-hover)] transition-all shadow-xl shadow-[var(--bg-accent-glow)] flex items-center justify-center gap-2 btn-press"
                     >
                         <ArrowLeft size={14} /> Return to Base

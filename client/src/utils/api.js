@@ -30,16 +30,8 @@ async function request(endpoint, options = {}, retryCount = 0) {
         }
     }
 
-    let token = null;
-    try {
-        if (typeof window !== 'undefined') {
-            token = localStorage.getItem('token');
-        }
-    } catch (_) {}
-
     const headers = {
         'Content-Type': 'application/json',
-        ...(token ? { 'x-auth-token': token, 'Authorization': `Bearer ${token}` } : {}),
         ...(options.headers || {}),
     };
 
@@ -81,7 +73,6 @@ async function request(endpoint, options = {}, retryCount = 0) {
                     resolve({ data, status: xhr.status });
                 } else {
                     if (xhr.status === 401 && !endpoint.includes('/auth/me') && typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-                        try { localStorage.removeItem('token'); } catch (_) {}
                         window.location.href = '/login';
                     }
                     const err = new Error(data?.message || data?.msg || data?.error || `HTTP Error ${xhr.status}`);
@@ -147,7 +138,6 @@ async function request(endpoint, options = {}, retryCount = 0) {
             if (response.status === 401) {
                 const isAuthCheck = endpoint.includes('/auth/me');
                 if (!isAuthCheck && typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-                    try { localStorage.removeItem('token'); } catch (_) {}
                     window.location.href = '/login';
                 }
             }

@@ -71,13 +71,22 @@ export default function Profile() {
         { icon: Calendar, label: 'Member Since', value: memberSince },
     ];
 
+    const handleBack = () => {
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            const fallback = role === 'admin' ? '/admin-dashboard' : role === 'teacher' ? '/teacher-dashboard' : '/student-dashboard';
+            navigate(fallback);
+        }
+    };
+
     return (
         <DashboardLayout role={role}>
             <div className="admin-shell max-w-5xl space-y-8">
 
                 {/* Back */}
                 <button
-                    onClick={() => navigate(-1)}
+                    onClick={handleBack}
                     className="group flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-full font-black text-xs uppercase tracking-[0.2em] transition-all btn-press w-fit shadow-sm hover:border-slate-300"
                     style={{ color: '#0f172a' }}
                 >

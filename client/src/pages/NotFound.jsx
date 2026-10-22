@@ -102,7 +102,10 @@ export default function NotFound() {
                     <motion.button
                         whileHover={{ scale: 1.04, y: -2 }}
                         whileTap={{ scale: 0.97 }}
-                        onClick={() => navigate(-1)}
+                        onClick={() => {
+                            if (window.history.length > 1) navigate(-1);
+                            else navigate('/');
+                        }}
                         className="flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm bg-white border-2 border-[#0f172a] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bg-accent)] shadow-md"
                         style={{ color: '#0f172a' }}
                         aria-label="Go back to previous page"

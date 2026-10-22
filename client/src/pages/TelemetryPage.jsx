@@ -138,6 +138,14 @@ export default function TelemetryPage() {
 
   const isRejected = pipelineOverallStatus === "REJECTED" || stagesMap[4]?.status === "REJECTED";
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/teacher-dashboard');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -146,7 +154,7 @@ export default function TelemetryPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <button
-                onClick={() => navigate(-1)}
+                onClick={handleBack}
                 className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition"
               >
                 <ArrowLeft className="h-4 w-4" />

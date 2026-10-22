@@ -561,7 +561,10 @@ export default function CreateQuizText() {
                 {/* Header System */}
                 <div className="relative flex items-center justify-between mb-6 min-h-[3rem]">
                     <div className="z-10">
-                        <PremiumButton variant="ghost" icon={ArrowLeft} onClick={() => navigate(-1)}>
+                        <PremiumButton variant="ghost" icon={ArrowLeft} onClick={() => {
+                            if (window.history.length > 1) navigate(-1);
+                            else navigate('/teacher-dashboard');
+                        }}>
                             Back
                         </PremiumButton>
                     </div>

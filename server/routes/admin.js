@@ -5,12 +5,13 @@ const auth    = require('../middleware/authMiddleware');
 const prisma  = require('../lib/prisma');
 
 // ─── Admin-only middleware ────────────────────────────────────────────────────
-const adminOnly = async (req, res, next) => {
-    try {
-        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-        if (!user || user.role !== 'admin') return res.status(403).json({ msg: 'Admin access required' });
-        next();
-    } catch { res.status(500).json({ msg: 'Server error' }); }
+// SECURITY: role is already validated & embedded in the JWT by authMiddleware.
+// No DB round-trip needed here — saves a DB query on every admin API call.
+const adminOnly = (req, res, next) => {
+    if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ msg: 'Admin access required' });
+    }
+    next();
 };
 
 // ─── Activity logger helper ──────────────────────────────────────────────────

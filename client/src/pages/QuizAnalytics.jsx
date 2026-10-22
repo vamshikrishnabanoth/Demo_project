@@ -290,7 +290,10 @@ export default function QuizAnalytics() {
                             </button>
                         )}
                         <button
-                            onClick={() => navigate(-1)}
+                            onClick={() => {
+                                if (window.history.length > 1) navigate(-1);
+                                else navigate(userRole === 'teacher' ? '/teacher-dashboard' : '/student-dashboard');
+                            }}
                             className="px-6 py-3 rounded-xl font-bold text-sm transition-all"
                             style={{ background: 'var(--glass-bg)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}
                         >
