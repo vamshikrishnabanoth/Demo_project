@@ -1511,10 +1511,11 @@ export default function CreateQuizTopic() {
                                         <button
                                             type="button"
                                             onClick={stopRecording}
-                                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-1.5 shadow-sm border border-purple-500 cursor-pointer"
+                                            className="px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center gap-2 shadow-md hover:shadow-lg border-2 border-[#6d28d9] cursor-pointer hover:brightness-110"
+                                            style={{ backgroundColor: '#7c3aed', color: '#ffffff' }}
                                         >
-                                            <StopCircle size={15} />
-                                            <span>Stop & Transcribe</span>
+                                            <StopCircle size={16} className="text-white shrink-0" style={{ stroke: '#ffffff' }} />
+                                            <span className="text-white font-black" style={{ color: '#ffffff' }}>Stop & Transcribe</span>
                                         </button>
 
                                         <button

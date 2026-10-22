@@ -1293,7 +1293,7 @@ export default function AttemptQuiz() {
                     {(result || isReviewMode) && (
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-[10px] sm:text-xs uppercase tracking-wider shadow-sm active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap ml-1 sm:ml-2"
+                            className="flex items-center gap-1.5 px-3 py-1.5 sm:py-2 bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded-xl font-black text-[10px] sm:text-xs uppercase tracking-wider shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0 whitespace-nowrap ml-1 sm:ml-2"
                             aria-label="Log out"
                             title="Log out"
                         >

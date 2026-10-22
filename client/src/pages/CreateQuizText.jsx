@@ -457,9 +457,14 @@ export default function CreateQuizText() {
                 autoBroadcast: autoBroadcast !== false,
             });
             toast.dismiss();
+            const targetJoinCode = res.data?.joinCode || res.data?.quiz?.joinCode;
             if (!isAssessment) {
-                toast.success('Mission Published & Data Encrypted (SHA-256)');
-                navigate(`/live-room-teacher/${res.data.joinCode}`);
+                toast.success('Live Quiz Published & Ready!');
+                if (targetJoinCode) {
+                    navigate(`/live-room-teacher/${targetJoinCode}`, { state: { quiz: res.data } });
+                } else {
+                    navigate('/teacher-dashboard');
+                }
             } else {
                 const gameNames = {
                     cyber_quest: 'Cyber Quest Arena',
@@ -570,11 +575,11 @@ export default function CreateQuizText() {
                             <button
                                 type="button"
                                 onClick={handleViewPipeline}
-                                className="px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 active:scale-[0.98] text-white font-black text-[10px] uppercase tracking-[0.18em] shadow-[0_4px_14px_rgba(234,88,12,0.35)] flex items-center gap-2 cursor-pointer transition-all border border-orange-400 shrink-0"
+                                className="group px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 hover:from-orange-500 hover:via-amber-500 hover:to-orange-400 hover:scale-105 active:scale-95 text-white font-black text-[10px] uppercase tracking-[0.18em] shadow-[0_4px_14px_rgba(234,88,12,0.35)] hover:shadow-[0_8px_25px_rgba(234,88,12,0.6)] flex items-center gap-2 cursor-pointer transition-all duration-300 border-2 border-orange-400 hover:border-amber-200 shrink-0"
                                 title="Inspect 16-Stage Observability Pipeline"
                             >
-                                <Activity size={15} className="stroke-[2.5] text-amber-200 animate-pulse" />
-                                <span>Inspect Pipeline</span>
+                                <Activity size={15} className="stroke-[2.5] text-amber-200 animate-pulse group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300" />
+                                <span className="tracking-[0.18em] group-hover:tracking-[0.22em] transition-all duration-300">Inspect Pipeline</span>
                             </button>
                         )}
                         {(aikenLoaded || isGeneratedSource) && (

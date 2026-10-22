@@ -1937,9 +1937,17 @@ exports.getQuizById = async (req, res) => {
         let quiz = await getCache(cacheKey);
 
         if (!quiz) {
-            quiz = await prisma.quiz.findUnique({
-                where: { id: req.params.id }
-            });
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(req.params.id);
+            if (isUuid) {
+                quiz = await prisma.quiz.findUnique({
+                    where: { id: req.params.id }
+                });
+            }
+            if (!quiz) {
+                quiz = await prisma.quiz.findFirst({
+                    where: { joinCode: req.params.id.toString() }
+                });
+            }
             if (quiz) {
                 await setCache(cacheKey, quiz, 30000); // Cache for 30 seconds
             }
@@ -1948,6 +1956,9 @@ exports.getQuizById = async (req, res) => {
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
+
+        const isCreator = quiz.createdById === req.user.id;
+        const isAdmin = req.user.role === 'admin';
 
         // ── INTEGRITY CHECK: Verify frozen payload has not been tampered ──────
         if (quiz.isLocked && quiz.quizHash) {
@@ -1959,25 +1970,24 @@ exports.getQuizById = async (req, res) => {
                     `Computed: ${integrity.computed?.slice(0, 16)}...`,
                     `Reason: ${integrity.reason}`
                 );
-                return res.status(500).json({
-                    msg: 'Quiz integrity check failed. This quiz may have been tampered with.',
-                    code: 'INTEGRITY_VIOLATION'
-                });
+                if (!isCreator && !isAdmin) {
+                    return res.status(500).json({
+                        msg: 'Quiz integrity check failed. This quiz may have been tampered with.',
+                        code: 'INTEGRITY_VIOLATION'
+                    });
+                }
             }
         }
 
         // Attach previous result if it exists (for resume functionality)
         const previousResult = await prisma.result.findFirst({
-            where: { quizId: req.params.id, studentId: req.user.id }
+            where: { quizId: quiz.id, studentId: req.user.id }
         });
 
         // Normalize questions to guarantee options are plain strings
         let normalizedQuestions = normalizeQuestions(quiz.questions);
 
         // SECURITY: Strip correct answers if user is not the creator or an admin
-        const isCreator = quiz.createdById === req.user.id;
-        const isAdmin = req.user.role === 'admin';
-        
         if (!isCreator && !isAdmin) {
             // Audience Restriction Check (Year, Branch, Section, Assigned Students)
             const studentUser = await prisma.user.findUnique({ where: { id: req.user.id } });

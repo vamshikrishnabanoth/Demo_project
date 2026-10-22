@@ -203,9 +203,10 @@ router.get('/users', auth, adminOnly, async (req, res) => {
     }
 });
 
-// POST create new user
-router.post('/users', auth, adminOnly, async (req, res) => {
-    const { username, email, password, role, name, studentBranch, section, year, semester, academicYear } = req.body;
+// Helper for creating user with optional role override
+async function handleCreateUser(req, res, forcedRole = null) {
+    const role = forcedRole || req.body.role;
+    const { username, email, password, name, studentBranch, section, year, semester, academicYear } = req.body;
 
     if (!username || !email || !password || !role) {
         return res.status(400).json({ msg: 'Username, email, password, and role are required' });
@@ -255,7 +256,18 @@ router.post('/users', auth, adminOnly, async (req, res) => {
         console.error('Error creating user:', err.message);
         res.status(500).json({ msg: 'Server error: ' + err.message });
     }
-});
+}
+
+// POST create new user (general)
+router.post('/users', auth, adminOnly, (req, res) => handleCreateUser(req, res));
+
+// Dedicated role-based endpoints for adding a user [student, teacher, admin]
+router.post('/students', auth, adminOnly, (req, res) => handleCreateUser(req, res, 'student'));
+router.post('/student', auth, adminOnly, (req, res) => handleCreateUser(req, res, 'student'));
+router.post('/teachers', auth, adminOnly, (req, res) => handleCreateUser(req, res, 'teacher'));
+router.post('/teacher', auth, adminOnly, (req, res) => handleCreateUser(req, res, 'teacher'));
+router.post('/admins', auth, adminOnly, (req, res) => handleCreateUser(req, res, 'admin'));
+router.post('/admin', auth, adminOnly, (req, res) => handleCreateUser(req, res, 'admin'));
 
 // PUT update user
 router.put('/users/:id', auth, adminOnly, async (req, res) => {

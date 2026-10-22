@@ -28,6 +28,33 @@ const FACULTY_DEPT_OPTIONS = [
     { value: 'CSM', label: 'CSM - AI & Machine Learning' },
 ];
 
+const ROLE_CONFIGS = {
+    student: {
+        label: 'Student',
+        icon: GraduationCap,
+        badgeBg: 'bg-sky-50 border-sky-200 text-sky-700',
+        dividerColor: 'border-sky-200',
+        dividerText: 'text-sky-600',
+        button: 'bg-[#ea580c] hover:bg-[#c2410c]',
+    },
+    teacher: {
+        label: 'Teacher',
+        icon: UserCheck,
+        badgeBg: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+        dividerColor: 'border-emerald-200',
+        dividerText: 'text-emerald-600',
+        button: 'bg-[#ea580c] hover:bg-[#c2410c]',
+    },
+    admin: {
+        label: 'Admin',
+        icon: Shield,
+        badgeBg: 'bg-purple-50 border-purple-200 text-purple-700',
+        dividerColor: 'border-purple-200',
+        dividerText: 'text-purple-600',
+        button: 'bg-[#ea580c] hover:bg-[#c2410c]',
+    },
+};
+
 function CustomSelect({ value, onChange, options, placeholder = 'Select', ariaLabel, disabled = false }) {
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef(null);
@@ -229,7 +256,11 @@ export default function UserModal({ isNew, user = null, defaultRole = 'student',
         try {
             let res;
             if (isNewUser) {
-                res = await api.post('/admin/users', payload);
+                const endpoint = form.role === 'student' ? '/admin/students' :
+                                 form.role === 'teacher' ? '/admin/teachers' :
+                                 form.role === 'admin'   ? '/admin/admins' :
+                                 '/admin/users';
+                res = await api.post(endpoint, payload);
                 toast.success(`${ROLE_CONFIGS[form.role]?.label || 'User'} created successfully!`);
                 onSave(res.data, 'created');
             } else {

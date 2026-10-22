@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus, ShieldAlert, ShieldCheck, AlertTriangle } from 'lucide-react';
 import api from '../utils/api';
 import socket, { ensureSocketConnected } from '../utils/socket';
@@ -15,7 +15,9 @@ import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 
 export default function LiveRoomTeacher() {
     const { joinCode } = useParams();
-    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { user, loading: authLoading } = useContext(AuthContext);
     const [participants, setParticipants] = useState([]);
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -34,30 +36,58 @@ export default function LiveRoomTeacher() {
     const hasInitializedTimer = useRef(false);
     const isTransitioning = useRef(false);
     const quizRef = useRef(null); // Always holds latest quiz value for use in socket callbacks
-    const navigate = useNavigate();
 
     // Keep quizRef in sync with quiz state so socket callbacks always have latest value
     useEffect(() => { quizRef.current = quiz; }, [quiz]);
 
     useEffect(() => {
+        if (authLoading) return;
+
+        let isMounted = true;
         const fetchQuiz = async () => {
             try {
-                const res = await api.post('/quiz/join', { code: joinCode });
-                const quizRes = await api.get(`/quiz/${res.data.quizId}`);
-                setQuiz(quizRes.data);
-                quizRef.current = quizRes.data; // Sync ref immediately for socket callbacks
+                let quizData = location.state?.quiz && String(location.state.quiz.joinCode) === String(joinCode)
+                    ? location.state.quiz
+                    : null;
+
+                if (quizData && isMounted) {
+                    setQuiz(quizData);
+                    quizRef.current = quizData;
+                    setLoading(false);
+                }
+
+                // Attempt direct quiz fetch by code/id first (fastest and cleanest for teacher)
+                try {
+                    const directRes = await api.get(`/quiz/${joinCode}`);
+                    if (directRes.data && directRes.data.id) {
+                        quizData = directRes.data;
+                    }
+                } catch (dErr) {
+                    console.log('Direct quiz fetch fallback to join code:', dErr?.message);
+                }
+
+                if (!quizData) {
+                    const res = await api.post('/quiz/join', { code: joinCode });
+                    const quizRes = await api.get(`/quiz/${res.data.quizId}`);
+                    quizData = quizRes.data;
+                }
+
+                if (!isMounted) return;
+                setQuiz(quizData);
+                quizRef.current = quizData; // Sync ref immediately for socket callbacks
                 
-                // Persist Teacher Session
+                // Safe Teacher Session persistence
+                const teacherUsername = user?.username || user?.name || 'teacher';
                 const sessionData = {
-                    quizId: quizRes.data.id,
-                    username: user.username,
+                    quizId: quizData.id,
+                    username: teacherUsername,
                     role: 'teacher'
                 };
                 localStorage.setItem(`live_quiz_session_teacher_${joinCode}`, JSON.stringify(sessionData));
 
                 // Fetch persistent suspicious activity logs from DB
                 try {
-                    const logsRes = await api.get(`/quiz/${quizRes.data.id}/suspicious-activities`);
+                    const logsRes = await api.get(`/quiz/${quizData.id}/suspicious-activities`);
                     if (Array.isArray(logsRes.data)) {
                         setCheatAlerts(logsRes.data);
                     }
@@ -67,18 +97,24 @@ export default function LiveRoomTeacher() {
 
                 // Emit join_room — works whether socket is already connected or just connecting
                 ensureSocketConnected();
-                socket.emit('join_room', { quizId: quizRes.data.id, user: { username: user.username, role: user.role || 'teacher' } });
+                socket.emit('join_room', { 
+                    quizId: quizData.id, 
+                    user: { username: teacherUsername, role: user?.role || 'teacher' } 
+                });
             } catch (err) {
-                console.error(err);
+                console.error('Live room load error:', err);
                 showError('Error', 'Error loading quiz');
                 navigate('/teacher-dashboard');
             } finally {
-                setLoading(false);
+                if (isMounted) setLoading(false);
             }
         };
 
         fetchQuiz();
+        return () => { isMounted = false; };
+    }, [joinCode, authLoading, user, location.state]);
 
+    useEffect(() => {
         const handleParticipantsUpdate = throttle((participantsList = []) => {
             console.log('Participants Update:', participantsList);
             const isLiveActive = quizRef.current?.status === 'started';
