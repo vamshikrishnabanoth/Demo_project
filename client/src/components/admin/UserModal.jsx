@@ -144,6 +144,40 @@ function CustomSelect({ value, onChange, options, placeholder = 'Select', ariaLa
     );
 }
 
+function FormField({ label, icon: Icon, required = false, children }) {
+    return (
+        <div className="space-y-1.5">
+            <label className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-slate-700">
+                {Icon && <Icon size={14} className="text-slate-500 shrink-0" />}
+                <span>{label}</span>
+                {required && <span className="text-rose-500 font-bold">*</span>}
+            </label>
+            {children}
+        </div>
+    );
+}
+
+function Input({ value, onChange, placeholder, type = 'text', required = false, disabled = false, rightElement = null }) {
+    return (
+        <div className="relative w-full">
+            <input
+                type={type}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                required={required}
+                disabled={disabled}
+                className={`w-full min-h-[42px] px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 placeholder:font-medium focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition-all disabled:opacity-40 disabled:bg-slate-50 ${rightElement ? 'pr-10' : ''}`}
+            />
+            {rightElement && (
+                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
+                    {rightElement}
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function UserModal({ isNew, user = null, defaultRole = 'student', onClose, onSave }) {
     const { user: currentUser, updateUser } = useContext(AuthContext);
     const [tab, setTab] = useState('details'); // 'details' | 'reset-password'
