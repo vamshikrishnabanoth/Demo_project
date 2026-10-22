@@ -325,8 +325,8 @@ export default function AdminUserForm() {
                     </span>
                 </div>
 
-                {/* ── Header Card & Action Bar ── */}
-                <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                {/* ── Header Card ── */}
+                <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
                         <button
                             type="button"
@@ -355,35 +355,6 @@ export default function AdminUserForm() {
                                 {activeConfig.description}
                             </p>
                         </div>
-                    </div>
-
-                    {/* Top Action Buttons */}
-                    <div className="flex items-center gap-3 w-full md:w-auto">
-                        <button
-                            type="button"
-                            onClick={() => navigate(returnUrl)}
-                            className="flex-1 md:flex-none px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 text-xs font-black uppercase tracking-wider border-2 border-slate-200 transition-all cursor-pointer shadow-xs active:scale-95"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleSubmit}
-                            disabled={saving}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm border-2 border-[#ea580c] cursor-pointer active:scale-95 disabled:opacity-50"
-                        >
-                            {saving ? (
-                                <>
-                                    <RefreshCw className="animate-spin text-amber-300" size={16} />
-                                    <span>Saving...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <CheckCircle2 size={16} />
-                                    <span>{isEditMode ? 'Save Changes' : `Provision ${activeConfig.label}`}</span>
-                                </>
-                            )}
-                        </button>
                     </div>
                 </div>
 

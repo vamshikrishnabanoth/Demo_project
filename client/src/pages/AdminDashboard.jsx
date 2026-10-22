@@ -345,7 +345,7 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
 }
 
 // ─── TAB 2: STUDENTS DIRECTORY ─────────────────────────────────────────────
-function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModal, setViewingProfile }) {
+function AdminStudentsTab() {
     const navigate = useNavigate();
     const { user: currentUser } = useContext(AuthContext);
     const { invalidate } = useAdmin();
@@ -493,9 +493,6 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
-                    <button onClick={() => navigate('/admin/users/new?role=student')} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
-                        <Plus size={18} /> Add Student
-                    </button>
                     <button onClick={() => navigate('/admin/students/import')} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                         <Upload size={18} /> Import CSV
                     </button>
@@ -505,59 +502,67 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                 </div>
             </div>
 
-            {/* Filter Toolbar */}
-            <div className="bg-slate-100 p-5 rounded-3xl border-2 border-slate-200 text-[#0f172a] flex flex-wrap items-center gap-4 text-xs font-black">
-                <div className="flex items-center gap-2 text-slate-800 font-black uppercase tracking-widest text-xs">
+            {/* Filter Toolbar — Inline Horizontal [Filter1 Filter2 ... FilterN] Layout */}
+            <div className="bg-slate-100 p-4 sm:p-5 rounded-3xl border-2 border-slate-200 text-[#0f172a] flex flex-wrap items-center gap-3 text-xs font-black">
+                <div className="flex items-center gap-2 text-slate-800 font-black uppercase tracking-widest text-xs shrink-0">
                     <Filter size={16} /> Filters:
                 </div>
-                <CustomSelect
-                    value={yearF}
-                    onChange={(value) => { setYearF(value); setPage(1); }}
-                    ariaLabel="Filter by year"
-                    placeholder="All Years"
-                    options={[(filterOptions.years || []).map(y => ({ value: String(y), label: `Year ${y}` }))].flat()}
-                />
-                <CustomSelect
-                    value={semF}
-                    onChange={(value) => { setSemF(value); setPage(1); }}
-                    ariaLabel="Filter by semester"
-                    placeholder="All Semesters"
-                    options={[(filterOptions.semesters || []).map(s => ({ value: String(s), label: `Semester ${s}` }))].flat()}
-                />
-                <CustomSelect
-                    value={branchF}
-                    onChange={(value) => {
-                        const newBranch = value;
-                        setBranchF(newBranch);
-                        setPage(1);
-                        const validSecs = getSectionsForBranch(newBranch, filterOptions.sections);
-                        if (sectionF && !validSecs.includes(sectionF)) {
-                            setSectionF('');
-                        }
-                    }}
-                    ariaLabel="Filter by branch"
-                    placeholder="All Branches"
-                    options={[{ value: '', label: 'All Branches' }, ...['CSE', 'CSM'].map(b => ({ value: b, label: b }))]}
-                />
-                <CustomSelect
-                    value={sectionF}
-                    onChange={(value) => { setSectionF(value); setPage(1); }}
-                    ariaLabel="Filter by section"
-                    placeholder="All Sections"
-                    options={[{ value: '', label: 'All Sections' }, ...getSectionsForBranch(branchF, filterOptions.sections).map(sec => ({ value: sec, label: `Section ${sec}` }))]}
-                />
-                <CustomSelect
-                    value={statusF}
-                    onChange={(value) => { setStatusF(value); setPage(1); }}
-                    ariaLabel="Filter by status"
-                    placeholder="All Statuses"
-                    options={[{ value: '', label: 'All Statuses' }, { value: 'active', label: 'Active' }, { value: 'suspended', label: 'Suspended' }]}
-                />
+                
+                <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
+                    <CustomSelect
+                        className="flex-1 min-w-[130px] sm:min-w-[140px]"
+                        value={yearF}
+                        onChange={(value) => { setYearF(value); setPage(1); }}
+                        ariaLabel="Filter by year"
+                        placeholder="All Years"
+                        options={[{ value: '', label: 'All Years' }, ...(filterOptions.years || []).map(y => ({ value: String(y), label: `Year ${y}` }))]}
+                    />
+                    <CustomSelect
+                        className="flex-1 min-w-[130px] sm:min-w-[140px]"
+                        value={semF}
+                        onChange={(value) => { setSemF(value); setPage(1); }}
+                        ariaLabel="Filter by semester"
+                        placeholder="All Semesters"
+                        options={[{ value: '', label: 'All Semesters' }, ...(filterOptions.semesters || []).map(s => ({ value: String(s), label: `Semester ${s}` }))]}
+                    />
+                    <CustomSelect
+                        className="flex-1 min-w-[130px] sm:min-w-[140px]"
+                        value={branchF}
+                        onChange={(value) => {
+                            const newBranch = value;
+                            setBranchF(newBranch);
+                            setPage(1);
+                            const validSecs = getSectionsForBranch(newBranch, filterOptions.sections);
+                            if (sectionF && !validSecs.includes(sectionF)) {
+                                setSectionF('');
+                            }
+                        }}
+                        ariaLabel="Filter by branch"
+                        placeholder="All Branches"
+                        options={[{ value: '', label: 'All Branches' }, ...['CSE', 'CSM'].map(b => ({ value: b, label: b }))]}
+                    />
+                    <CustomSelect
+                        className="flex-1 min-w-[130px] sm:min-w-[140px]"
+                        value={sectionF}
+                        onChange={(value) => { setSectionF(value); setPage(1); }}
+                        ariaLabel="Filter by section"
+                        placeholder="All Sections"
+                        options={[{ value: '', label: 'All Sections' }, ...getSectionsForBranch(branchF, filterOptions.sections).map(sec => ({ value: sec, label: `Section ${sec}` }))]}
+                    />
+                    <CustomSelect
+                        className="flex-1 min-w-[130px] sm:min-w-[140px]"
+                        value={statusF}
+                        onChange={(value) => { setStatusF(value); setPage(1); }}
+                        ariaLabel="Filter by status"
+                        placeholder="All Statuses"
+                        options={[{ value: '', label: 'All Statuses' }, { value: 'active', label: 'Active' }, { value: 'suspended', label: 'Suspended' }]}
+                    />
+                </div>
 
                 {isFiltered && (
                     <button 
                         onClick={resetAllFilters}
-                        className="px-3.5 py-2 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                        className="px-3.5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer active:scale-95"
                     >
                         <RotateCcw size={14} /> Reset Filters
                     </button>
@@ -693,7 +698,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
 }
 
 // ─── TAB 3: TEACHERS DIRECTORY ─────────────────────────────────────────────
-function AdminTeachersTab({ setUserModal }) {
+function AdminTeachersTab() {
     const navigate = useNavigate();
     const { user: currentUser } = useContext(AuthContext);
     const { invalidate } = useAdmin();
@@ -789,6 +794,7 @@ function AdminTeachersTab({ setUserModal }) {
                         )}
                     </div>
                     <CustomSelect
+                        className="w-full sm:w-48 shrink-0"
                         value={deptFilter}
                         onChange={(value) => { setDeptFilter(value); setPage(1); }}
                         ariaLabel="Filter teachers by department"
@@ -796,6 +802,7 @@ function AdminTeachersTab({ setUserModal }) {
                         options={[{ value: '', label: 'All Departments' }, ...(filterOptions.departments || []).map((d) => ({ value: d, label: d }))]}
                     />
                     <CustomSelect
+                        className="w-full sm:w-40 shrink-0"
                         value={statusF}
                         onChange={(value) => { setStatusF(value); setPage(1); }}
                         ariaLabel="Filter teachers by status"
@@ -806,24 +813,21 @@ function AdminTeachersTab({ setUserModal }) {
                         <>
                             <button 
                                 onClick={resetAllFilters}
-                                className="px-3.5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                                className="px-3.5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer active:scale-95"
                             >
                                 <RotateCcw size={14} /> Reset
                             </button>
-                            <span className="px-4 py-2.5 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-xs">
+                            <span className="px-4 py-2.5 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-xs shrink-0">
                                 <CheckCircle2 size={16} className="text-emerald-700" />
                                 Found {totalCount} matching faculty
                             </span>
                         </>
                     ) : (
-                        <span className="px-3.5 py-2.5 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider">
+                        <span className="px-3.5 py-2.5 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider shrink-0">
                             {totalCount} Total Teachers
                         </span>
                     )}
                 </div>
-                <button onClick={() => navigate('/admin/users/new?role=teacher')} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
-                    <Plus size={18} /> Add Faculty Member
-                </button>
             </div>
 
             <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
@@ -897,7 +901,7 @@ function AdminTeachersTab({ setUserModal }) {
 }
 
 // ─── TAB 4: ADMINS DIRECTORY ─────────────────────────────────────────────
-function AdminAdminsTab({ setUserModal }) {
+function AdminAdminsTab() {
     const navigate = useNavigate();
     const { user: currentUser } = useContext(AuthContext);
     const { invalidate } = useAdmin();
@@ -977,6 +981,7 @@ function AdminAdminsTab({ setUserModal }) {
                         )}
                     </div>
                     <CustomSelect
+                        className="w-full sm:w-44 shrink-0"
                         value={statusF}
                         onChange={(value) => setStatusF(value)}
                         ariaLabel="Filter administrators by status"
@@ -986,15 +991,12 @@ function AdminAdminsTab({ setUserModal }) {
                     {isFiltered && (
                         <button 
                             onClick={resetAllFilters}
-                            className="px-3.5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                            className="px-3.5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer active:scale-95"
                         >
                             <RotateCcw size={14} /> Reset
                         </button>
                     )}
                 </div>
-                <button onClick={() => navigate('/admin/users/new?role=admin')} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
-                    <Plus size={18} /> Add Administrator
-                </button>
             </div>
 
             <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
@@ -1068,7 +1070,7 @@ function AdminAdminsTab({ setUserModal }) {
 }
 
 // ─── TAB 5: ALL USERS DIRECTORY ───────────────────────────────────────────
-function AdminDirectoryTab({ setUserModal }) {
+function AdminDirectoryTab() {
     const navigate = useNavigate();
     const { user: currentUser } = useContext(AuthContext);
     const { invalidate } = useAdmin();
@@ -1265,8 +1267,9 @@ function AdminDirectoryTab({ setUserModal }) {
                     )}
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                     <CustomSelect
+                        className="w-full sm:w-40 shrink-0"
                         value={roleFilter}
                         onChange={(value) => { setRoleFilter(value); setPage(1); }}
                         ariaLabel="Filter users by role"
@@ -1274,6 +1277,7 @@ function AdminDirectoryTab({ setUserModal }) {
                         options={[{ value: 'all', label: 'All Roles' }, { value: 'student', label: 'Student' }, { value: 'teacher', label: 'Teacher' }, { value: 'admin', label: 'Admin' }]}
                     />
                     <CustomSelect
+                        className="w-full sm:w-40 shrink-0"
                         value={statusFilter}
                         onChange={(value) => { setStatusFilter(value); setPage(1); }}
                         ariaLabel="Filter users by status"
@@ -1284,23 +1288,20 @@ function AdminDirectoryTab({ setUserModal }) {
                         <>
                             <button 
                                 onClick={resetAllFilters}
-                                className="px-3.5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs"
+                                className="px-3.5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer active:scale-95"
                             >
                                 <RotateCcw size={14} /> Reset
                             </button>
-                            <span className="px-4 py-2.5 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-xs">
+                            <span className="px-4 py-2.5 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-xs shrink-0">
                                 <CheckCircle2 size={16} className="text-emerald-700" />
                                 Found {totalCount} matching {totalCount === 1 ? 'user' : 'users'}
                             </span>
                         </>
                     ) : (
-                        <span className="px-3.5 py-2.5 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider">
+                        <span className="px-3.5 py-2.5 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider shrink-0">
                             {totalCount} Total Users
                         </span>
                     )}
-                    <button onClick={() => navigate('/admin/users/new')} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
-                        <Plus size={18} /> Create User
-                    </button>
                 </div>
             </div>
 
@@ -1391,25 +1392,14 @@ function AdminDirectoryTab({ setUserModal }) {
 
 // ─── MASTER ADMIN COMMAND CENTER MAIN PAGE ──────────────────────────────────
 export default function AdminDashboard() {
+    const navigate = useNavigate();
     const { user } = useContext(AuthContext);
-    const { stats, loadingStats, refreshStats, invalidate } = useAdmin();
+    const { stats, loadingStats, refreshStats } = useAdmin();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const activeTab = searchParams.get('tab') || 'overview';
     const setActiveTab = (tab) => {
         setSearchParams({ tab });
-    };
-
-    // Shared Modals
-    const [userModal, setUserModal] = useState(null);
-    const [showImportModal, setShowImportModal] = useState(false);
-    const [showPromoteModal, setShowPromoteModal] = useState(false);
-    const [viewingProfile, setViewingProfile] = useState(null);
-
-    const handleSaveUser = () => {
-        setUserModal(null);
-        invalidate();
-        refreshStats();
     };
 
     return (
@@ -1431,13 +1421,23 @@ export default function AdminDashboard() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-wrap">
                         <button 
                             onClick={refreshStats} 
                             className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm border-2 border-[#ea580c] cursor-pointer active:scale-95"
                         >
                             <RefreshCw size={16} className={loadingStats ? 'animate-spin text-amber-400' : 'text-amber-400'} /> 
                             <span>Sync Live Data</span>
+                        </button>
+                        <button
+                            onClick={() => {
+                                const targetRole = activeTab === 'teachers' ? 'teacher' : activeTab === 'admins' ? 'admin' : 'student';
+                                navigate(`/admin/users/new?role=${targetRole}`);
+                            }}
+                            className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider transition-all shadow-sm border-2 border-[#ea580c] cursor-pointer active:scale-95"
+                        >
+                            <Plus size={18} />
+                            <span>Create User</span>
                         </button>
                     </div>
                 </div>
@@ -1516,66 +1516,21 @@ export default function AdminDashboard() {
                     )}
 
                     {activeTab === 'students' && (
-                        <AdminStudentsTab
-                            setUserModal={setUserModal}
-                            setShowImportModal={setShowImportModal}
-                            setShowPromoteModal={setShowPromoteModal}
-                            setViewingProfile={setViewingProfile}
-                        />
+                        <AdminStudentsTab />
                     )}
 
                     {activeTab === 'teachers' && (
-                        <AdminTeachersTab setUserModal={setUserModal} />
+                        <AdminTeachersTab />
                     )}
 
                     {activeTab === 'admins' && (
-                        <AdminAdminsTab setUserModal={setUserModal} />
+                        <AdminAdminsTab />
                     )}
 
                     {activeTab === 'directory' && (
-                        <AdminDirectoryTab setUserModal={setUserModal} />
+                        <AdminDirectoryTab />
                     )}
                 </div>
-
-                {/* Shared Modals */}
-                {userModal && (
-                    <UserModal
-                        isNew={userModal.isNew !== undefined ? userModal.isNew : !userModal.user}
-                        user={userModal.user}
-                        defaultRole={userModal.defaultRole || userModal.user?.role || 'student'}
-                        onClose={() => setUserModal(null)}
-                        onSave={handleSaveUser}
-                    />
-                )}
-
-                {showImportModal && (
-                    <BulkImportModal
-                        onClose={() => setShowImportModal(false)}
-                        onSuccess={() => {
-                            setShowImportModal(false);
-                            invalidate();
-                            refreshStats();
-                        }}
-                    />
-                )}
-
-                {showPromoteModal && (
-                    <PromoteModal
-                        onClose={() => setShowPromoteModal(false)}
-                        onSuccess={() => {
-                            setShowPromoteModal(false);
-                            invalidate();
-                            refreshStats();
-                        }}
-                    />
-                )}
-
-                {viewingProfile && (
-                    <StudentProfileModal
-                        studentId={viewingProfile}
-                        onClose={() => setViewingProfile(null)}
-                    />
-                )}
             </div>
         </DashboardLayout>
     );
