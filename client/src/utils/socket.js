@@ -67,8 +67,10 @@ socket.on('error_alert', (data) => {
 });
 
 export const ensureSocketConnected = () => {
+    const currentToken = getToken();
+    socket.auth = { token: currentToken };
     if (!socket.connected) {
-        console.log('[SOCKET] Connecting socket...');
+        console.log('[SOCKET] Connecting socket with auth token...');
         socket.connect();
     }
     return socket;

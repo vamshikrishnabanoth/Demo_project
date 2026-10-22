@@ -30,8 +30,18 @@ async function request(endpoint, options = {}, retryCount = 0) {
         }
     }
 
+    // Retrieve stored JWT token for cross-origin authentication (e.g. Vercel -> Render)
+    let token = null;
+    try {
+        token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    } catch (_) {}
+
     const headers = {
         'Content-Type': 'application/json',
+        ...(token ? {
+            'Authorization': `Bearer ${token}`,
+            'x-auth-token': token
+        } : {}),
         ...(options.headers || {}),
     };
 
@@ -72,7 +82,9 @@ async function request(endpoint, options = {}, retryCount = 0) {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     resolve({ data, status: xhr.status });
                 } else {
-                    if (xhr.status === 401 && !endpoint.includes('/auth/me') && typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+                    const isAuthEndpoint = endpoint.includes('/auth/me') || endpoint.includes('/auth/login');
+                    if (xhr.status === 401 && !isAuthEndpoint && typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+                        try { localStorage.removeItem('token'); } catch (_) {}
                         window.location.href = '/login';
                     }
                     const err = new Error(data?.message || data?.msg || data?.error || `HTTP Error ${xhr.status}`);
@@ -136,8 +148,9 @@ async function request(endpoint, options = {}, retryCount = 0) {
 
         if (!response.ok) {
             if (response.status === 401) {
-                const isAuthCheck = endpoint.includes('/auth/me');
+                const isAuthCheck = endpoint.includes('/auth/me') || endpoint.includes('/auth/login');
                 if (!isAuthCheck && typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+                    try { localStorage.removeItem('token'); } catch (_) {}
                     window.location.href = '/login';
                 }
             }

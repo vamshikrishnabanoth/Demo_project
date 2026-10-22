@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [authError, setAuthError] = useState(null);
 
-    // ── Restore session on mount via secure cookie ────────────────────────────
+    // ── Restore session on mount via secure cookie or Authorization token ─────
     const checkUser = useCallback(async () => {
         try {
             const res = await api.get('/auth/me');
@@ -18,6 +18,9 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             // If the server explicitly tells us the token is invalid/expired (401 or 403)
             if (err.response?.status === 401 || err.response?.status === 403) {
+                try {
+                    localStorage.removeItem('token');
+                } catch (_) {}
                 setUser(null);
             } else {
                 console.error('[AuthContext] Network or server error during auth hydration:', err);
@@ -56,7 +59,13 @@ export const AuthProvider = ({ children }) => {
 
     const login = useCallback(async (email, password) => {
         const res = await api.post('/auth/login', { email, password });
-        // Token is set as an HttpOnly cookie by the server — do NOT store in localStorage (XSS risk)
+        // Store token in localStorage for cross-domain stability (Vercel frontend -> Render backend)
+        // Works alongside HttpOnly cookies for environments (Safari/Chrome Incognito/Brave) that block third-party cookies
+        if (res.data.token) {
+            try {
+                localStorage.setItem('token', res.data.token);
+            } catch (_) {}
+        }
         const userData = res.data.user ?? (await api.get('/auth/me')).data;
         setUser(userData);
         if (socket.connected) {
@@ -69,7 +78,11 @@ export const AuthProvider = ({ children }) => {
 
     const setRole = useCallback(async (role) => {
         const res = await api.post('/auth/set-role', { role });
-        // Token refresh is handled via HttpOnly cookie by the server
+        if (res.data.token) {
+            try {
+                localStorage.setItem('token', res.data.token);
+            } catch (_) {}
+        }
         setUser(prev => ({ ...prev, role: res.data.role }));
         return res.data;
     }, []);
@@ -92,8 +105,8 @@ export const AuthProvider = ({ children }) => {
 
         // ── Strict Account Isolation & Session Security ─────────────────────────
         try {
-            // Clear any lingering legacy token (no longer stored but clean up if it exists)
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
             localStorage.removeItem('quiz_docket_inputs'); // Clean legacy un-scoped key
             if (window.indexedDB) {
                 window.indexedDB.deleteDatabase('pending_audio_recordings');

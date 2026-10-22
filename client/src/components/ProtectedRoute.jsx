@@ -34,22 +34,25 @@ const ProtectedRoute = ({ children, roles = [], allowNone = false }) => {
     }
 
     // Role-selection page: redirect already-assigned users to their dashboard
+    const userRole = (user.role || '').toLowerCase().trim();
+
     if (allowNone) {
-        if (user.role !== 'none') {
-            const redirectPath = ROLE_HOME[user.role] ?? '/login';
+        if (userRole !== 'none') {
+            const redirectPath = ROLE_HOME[userRole] ?? '/login';
             return <Navigate to={redirectPath} replace />;
         }
         return children;
     }
 
     // Role not set yet → force role selection
-    if (user.role === 'none') {
+    if (userRole === 'none') {
         return <Navigate to="/select-role" replace />;
     }
 
     // Wrong role → redirect to their correct dashboard
-    if (roles.length > 0 && !roles.includes(user.role)) {
-        const fallbackPath = ROLE_HOME[user.role] ?? '/login';
+    const normalizedRoles = roles.map(r => r.toLowerCase().trim());
+    if (normalizedRoles.length > 0 && !normalizedRoles.includes(userRole)) {
+        const fallbackPath = ROLE_HOME[userRole] ?? '/login';
         if (isDev) console.warn(`[ProtectedRoute] Role mismatch. Required: [${roles.join(',')}], User has: "${user.role}". Redirecting to ${fallbackPath}`);
         return <Navigate to={fallbackPath} replace />;
     }

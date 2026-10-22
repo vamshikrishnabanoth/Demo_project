@@ -102,10 +102,13 @@ export default function Login() {
         coldStartTimer.current = setTimeout(() => setIsColdStart(true), 5000);
 
         try {
-            await login(email, password);
+            const loggedInUser = await login(email, password);
             clearTimeout(coldStartTimer.current);
             setSubmitStatus('success');
-            setTimeout(() => navigate('/'), 800);
+            const targetRole = (loggedInUser?.role || '').toLowerCase().trim();
+            const homeMap = { teacher: '/teacher-dashboard', student: '/student-dashboard', admin: '/admin-dashboard' };
+            const destination = homeMap[targetRole] || (targetRole === 'none' ? '/select-role' : '/');
+            setTimeout(() => navigate(destination, { replace: true }), 800);
         } catch (err) {
             clearTimeout(coldStartTimer.current);
             setIsColdStart(false);

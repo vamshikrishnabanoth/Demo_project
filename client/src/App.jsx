@@ -54,9 +54,10 @@ const Home = () => {
     const { user, loading } = useContext(AuthContext);
     if (loading) return null;
     if (!user) return <Navigate to="/login" replace />;
+    const role = (user.role || '').toLowerCase().trim();
     const homes = { teacher: '/teacher-dashboard', student: '/student-dashboard', admin: '/admin-dashboard' };
-    if (user.role === 'none') return <Navigate to="/select-role" replace />;
-    return <Navigate to={homes[user.role] ?? '/login'} replace />;
+    if (role === 'none') return <Navigate to="/select-role" replace />;
+    return <Navigate to={homes[role] ?? '/login'} replace />;
 };
 
 // ─── Toast Cleanup on Navigation ─────────────────────────────────────────────
@@ -150,61 +151,63 @@ function AnimatedRoutes() {
 // ─── App Root ─────────────────────────────────────────────────────────────────
 function App() {
     return (
-        <AuthProvider>
-            <Toaster
-                position="top-right"
-                reverseOrder={false}
-                gutter={8}
-                limit={2}
-                containerStyle={{ top: 20, right: 20 }}
-                toastOptions={{
-                    duration: 2400,
-                    style: {
-                        background: 'rgba(15, 23, 42, 0.95)',
-                        backdropFilter: 'blur(16px)',
-                        color: '#ffffff',
-                        borderRadius: '16px',
-                        border: '1px solid rgba(255, 255, 255, 0.12)',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        padding: '14px 20px',
-                        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 255, 255, 0.03)',
-                        fontFamily: 'var(--app-font, system-ui, sans-serif)',
-                        maxWidth: '440px',
-                    },
-                    success: {
-                        style: {
-                            border: '1px solid rgba(16, 185, 129, 0.35)',
-                            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.15)',
-                        },
-                        iconTheme: {
-                            primary: '#10b981',
-                            secondary: '#0f172a',
-                        }
-                    },
-                    error: {
-                        style: {
-                            border: '1px solid rgba(244, 63, 94, 0.35)',
-                            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(244, 63, 94, 0.15)',
-                        },
-                        iconTheme: {
-                            primary: '#f43f5e',
-                            secondary: '#0f172a',
-                        }
-                    }
-                }}
-            />
-            <AdminProvider>
-                <Router>
-                    {/* ErrorBoundary catches runtime JS errors — prevents white screen crashes */}
-                    <ErrorBoundary>
-                        <Suspense fallback={<NavigationSkeleton />}>
-                            <AnimatedRoutes />
-                        </Suspense>
-                    </ErrorBoundary>
-                </Router>
-            </AdminProvider>
-        </AuthProvider>
+        <ErrorBoundary>
+            <AuthProvider>
+                <AdminProvider>
+                    <Router>
+                        <Toaster
+                            position="top-right"
+                            reverseOrder={false}
+                            gutter={8}
+                            limit={2}
+                            containerStyle={{ top: 20, right: 20 }}
+                            toastOptions={{
+                                duration: 2400,
+                                style: {
+                                    background: 'rgba(15, 23, 42, 0.95)',
+                                    backdropFilter: 'blur(16px)',
+                                    color: '#ffffff',
+                                    borderRadius: '16px',
+                                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    padding: '14px 20px',
+                                    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 255, 255, 0.03)',
+                                    fontFamily: 'var(--app-font, system-ui, sans-serif)',
+                                    maxWidth: '440px',
+                                },
+                                success: {
+                                    style: {
+                                        border: '1px solid rgba(16, 185, 129, 0.35)',
+                                        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.15)',
+                                    },
+                                    iconTheme: {
+                                        primary: '#10b981',
+                                        secondary: '#0f172a',
+                                    }
+                                },
+                                error: {
+                                    style: {
+                                        border: '1px solid rgba(244, 63, 94, 0.35)',
+                                        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(244, 63, 94, 0.15)',
+                                    },
+                                    iconTheme: {
+                                        primary: '#f43f5e',
+                                        secondary: '#0f172a',
+                                    }
+                                }
+                            }}
+                        />
+                        {/* ErrorBoundary catches runtime JS errors — prevents white screen crashes */}
+                        <ErrorBoundary>
+                            <Suspense fallback={<NavigationSkeleton />}>
+                                <AnimatedRoutes />
+                            </Suspense>
+                        </ErrorBoundary>
+                    </Router>
+                </AdminProvider>
+            </AuthProvider>
+        </ErrorBoundary>
     );
 }
 
