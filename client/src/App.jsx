@@ -46,6 +46,7 @@ const SprintArena       = lazyWithSuspense(() => import('./pages/SprintArena'));
 const MatchUpArena      = lazyWithSuspense(() => import('./pages/MatchUpArena'));
 const TelemetryPage     = lazyWithSuspense(() => import('./pages/TelemetryPage'));
 const PipelineOutput    = lazyWithSuspense(() => import('./pages/PipelineOutput'));
+const AdminUserForm     = lazyWithSuspense(() => import('./pages/AdminUserForm'));
 
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
@@ -119,6 +120,11 @@ function AnimatedRoutes() {
 
                     {/* Unified Admin Master Route & Legacy Sub-route Redirects */}
                     <Route path="/admin-dashboard" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/users/new" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminUserForm /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/users/:id/edit" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminUserForm /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/students/new" element={<Navigate to="/admin/users/new?role=student" replace />} />
+                    <Route path="/admin/teachers/new" element={<Navigate to="/admin/users/new?role=teacher" replace />} />
+                    <Route path="/admin/admins/new" element={<Navigate to="/admin/users/new?role=admin" replace />} />
                     <Route path="/admin/students"  element={<Navigate to="/admin-dashboard?tab=students" replace />} />
                     <Route path="/admin/teachers"  element={<Navigate to="/admin-dashboard?tab=teachers" replace />} />
                     <Route path="/admin/admins"    element={<Navigate to="/admin-dashboard?tab=admins" replace />} />
