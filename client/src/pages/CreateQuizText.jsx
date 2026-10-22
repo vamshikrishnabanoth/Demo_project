@@ -184,6 +184,11 @@ export default function CreateQuizText() {
     const [executionMessages, setExecutionMessages] = useState([]);
     const hasInjectedToastRef = useRef(false);
 
+    // ─── EDIT MODE (Teacher editing a live/active quiz) ─────────────────────
+    const editMode = !!location.state?.editMode;       // true when editing existing quiz
+    const editQuizId = location.state?.editQuizId || null;
+    const editJoinCode = location.state?.editJoinCode || null;
+
     const computedAssignedGroups = useCallback(() => {
         if (assignedGroups && assignedGroups.length > 0) return assignedGroups;
         if (!targetYear && !targetBranch && targetSections.length === 0) {
@@ -307,6 +312,13 @@ export default function CreateQuizText() {
 
             if (location.state.executionMessages && Array.isArray(location.state.executionMessages)) {
                 setExecutionMessages(location.state.executionMessages);
+            }
+            // Edit-mode pre-population: when teacher clicks "Edit Live Quiz"
+            if (location.state?.assignedGroups && Array.isArray(location.state.assignedGroups)) {
+                setAssignedGroups(location.state.assignedGroups);
+            }
+            if (location.state?.assignedStudents && Array.isArray(location.state.assignedStudents)) {
+                setAssignedStudents(location.state.assignedStudents);
             }
         }
     }, [location.state]);
@@ -483,6 +495,40 @@ export default function CreateQuizText() {
         }
     };
 
+    // ─── UPDATE LIVE QUIZ (edit mode — PUT to existing quiz) ─────────────────
+    const handleUpdateLiveQuiz = async () => {
+        if (!editQuizId) return toast.error('Quiz ID missing — cannot update.');
+        if (!title.trim()) return toast.error('Please enter a quiz title.');
+        const invalidIdx = questions.findIndex(q => !q.questionText.trim() || !q.correctAnswer || q.options.some(o => !o.trim()));
+        if (invalidIdx !== -1) return toast.error(`Question ${invalidIdx + 1} is incomplete — fill all fields before saving.`);
+        if (questions.length === 0) return toast.error('At least one question is required.');
+
+        setLoading(true);
+        const toastId = toast.loading('Saving changes to live quiz...');
+        try {
+            await api.put(`/quiz/${editQuizId}`, {
+                title: title.trim(),
+                questions,
+                timerPerQuestion: parseInt(timerPerQuestion) || 30,
+                assignedGroups: computedAssignedGroups(),
+                assignedStudents: assignedStudents || [],
+                accessType: accessType || 'private',
+            });
+            toast.success('Live quiz updated successfully! Changes are live now.', { id: toastId });
+            // Navigate back to the live room
+            if (editJoinCode) {
+                navigate(`/live-room-teacher/${editJoinCode}`);
+            } else {
+                navigate('/my-quizzes');
+            }
+        } catch (err) {
+            const serverMsg = err.response?.data?.msg || err.response?.data?.message;
+            toast.error(serverMsg || 'Failed to update quiz. Please try again.', { id: toastId });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // ─── FINALIZE (directly publishes) ─────────────────────────────────────────
     const handleFinalizeClick = (e) => {
         e.preventDefault();
@@ -570,7 +616,7 @@ export default function CreateQuizText() {
                     </div>
                     <div className="flex-1 flex justify-center items-center">
                         <h1 className="text-[1.9rem] sm:text-[2.35rem] font-black text-[var(--text-primary)] italic uppercase tracking-[-0.04em] m-0">
-                            <span>{uiTerminology.creationMethods.text.toUpperCase()}</span>
+                            <span>{editMode ? 'Edit Live Quiz' : uiTerminology.creationMethods.text.toUpperCase()}</span>
                         </h1>
                     </div>
                     <div className="flex items-center gap-3 z-10">
@@ -615,6 +661,30 @@ export default function CreateQuizText() {
                         <span className="text-[10px] font-black uppercase tracking-[0.18em] hidden sm:inline-block px-2.5 py-1 rounded-md bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-secondary)] shrink-0">
                             Architecture E Verified
                         </span>
+                    </div>
+                )}
+
+                {/* Edit Live Quiz Warning Banner */}
+                {editMode && (
+                    <div className="mb-6 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-400 rounded-2xl p-4 shadow-md flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center shrink-0">
+                                <AlertTriangle size={20} className="text-white" />
+                            </div>
+                            <div>
+                                <p className="text-orange-900 font-black text-sm uppercase tracking-wide">Editing a Live Quiz</p>
+                                <p className="text-orange-700 text-xs font-medium mt-0.5">
+                                    Changes to questions, people &amp; settings take effect immediately. Students already in the room will see updated content on their next question load.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => editJoinCode ? navigate(`/live-room-teacher/${editJoinCode}`) : navigate('/my-quizzes')}
+                            className="shrink-0 px-4 py-2 rounded-xl bg-orange-100 hover:bg-orange-200 border border-orange-300 text-orange-800 font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
+                        >
+                            ← Back to Live Room
+                        </button>
                     </div>
                 )}
 
@@ -1237,26 +1307,34 @@ export default function CreateQuizText() {
 
                                 {/* Final Execution */}
                                 <div className="flex justify-center pt-8 border-t border-slate-200">
-                                    <button
-                                        type="button"
-                                        onClick={handleFinalizeClick}
-                                        disabled={loading}
-                                        className={`button-fly button-fly-reversed ${loading ? 'is-loading' : ''} disabled:opacity-80 disabled:cursor-not-allowed`}
-                                    >
-                                        {loading ? (
-                                            <>
-                                                <Loader2 className="animate-spin" size={18} />
-                                                <span>PUBLISHING...</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <span>PUBLISH</span>
-                                                <div className="svg-wrapper">
-                                                    <Send size={18} />
-                                                </div>
-                                            </>
-                                        )}
-                                    </button>
+                                    {editMode ? (
+                                        <button
+                                            type="button"
+                                            id="update-live-quiz-btn"
+                                            onClick={handleUpdateLiveQuiz}
+                                            disabled={loading}
+                                            className="px-10 py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-sm uppercase tracking-widest shadow-xl shadow-orange-500/30 flex items-center gap-3 cursor-pointer transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        >
+                                            {loading ? (
+                                                <><Loader2 className="animate-spin" size={18} /><span>SAVING CHANGES...</span></>
+                                            ) : (
+                                                <><Save size={18} /><span>UPDATE LIVE QUIZ</span></>
+                                            )}
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={handleFinalizeClick}
+                                            disabled={loading}
+                                            className={`button-fly button-fly-reversed ${loading ? 'is-loading' : ''} disabled:opacity-80 disabled:cursor-not-allowed`}
+                                        >
+                                            {loading ? (
+                                                <><Loader2 className="animate-spin" size={18} /><span>PUBLISHING...</span></>
+                                            ) : (
+                                                <><span>PUBLISH</span><div className="svg-wrapper"><Send size={18} /></div></>
+                                            )}
+                                        </button>
+                                    )}
                                 </div>
                             </form>
                         </motion.div>

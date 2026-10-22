@@ -27,7 +27,14 @@ export default function LiveRoomTeacher() {
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [leaderboard, setLeaderboard] = useState([]);
     const [liveInsights, setLiveInsights] = useState(null);
-    const [currentQuestion, setCurrentQuestion] = useState(0);
+    // Layer 1: Initialize from localStorage so revisit never flickers back to Q1
+    const [currentQuestion, setCurrentQuestion] = useState(() => {
+        try {
+            const saved = localStorage.getItem(`teacher_q_idx_${joinCode}`);
+            const parsed = parseInt(saved);
+            return (!isNaN(parsed) && parsed >= 0) ? parsed : 0;
+        } catch { return 0; }
+    });
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [isQuizEnded, setIsQuizEnded] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -234,11 +241,19 @@ export default function LiveRoomTeacher() {
         });
         socket.on('quiz_started', () => {
             setQuiz(prev => prev ? { ...prev, status: 'started' } : null);
+            // EC4: Reset persisted question index when quiz starts fresh.
+            // Guards against stale localStorage from a previous incomplete session.
+            try { localStorage.setItem(`teacher_q_idx_${joinCode}`, 0); } catch {}
         });
         socket.on('student_progress_update', handleProgressUpdate);
 
         socket.on('change_question', ({ questionIndex }) => {
-            setCurrentQuestion(parseInt(questionIndex));
+            const idx = parseInt(questionIndex);
+            if (!isNaN(idx) && idx >= 0) {
+                setCurrentQuestion(idx);
+                // Layer 2: Persist so revisit remount gets the right question instantly
+                try { localStorage.setItem(`teacher_q_idx_${joinCode}`, idx); } catch {}
+            }
         });
 
         socket.on('student_focus_update', handleFocusUpdate);
@@ -250,7 +265,12 @@ export default function LiveRoomTeacher() {
 
         socket.on('restoreState', (state) => {
             console.log('Restoring State on Reconnect:', state);
-            setCurrentQuestion(state.currentQuestionIndex);
+            // Layer 3: Guard against undefined/NaN from server
+            const restoredIdx = parseInt(state.currentQuestionIndex);
+            if (!isNaN(restoredIdx) && restoredIdx >= 0) {
+                setCurrentQuestion(restoredIdx);
+                try { localStorage.setItem(`teacher_q_idx_${joinCode}`, restoredIdx); } catch {}
+            }
             
             // Re-sync leaderboards and participants
             if (state.leaderboard && state.leaderboard.length > 0) {
@@ -298,6 +318,8 @@ export default function LiveRoomTeacher() {
         socket.on('quiz_ended', () => {
             setIsQuizEnded(true);
             setIsTimerRunning(false);
+            // Clean up persisted question index — quiz is over, don't carry stale index into a future session
+            try { localStorage.removeItem(`teacher_q_idx_${joinCode}`); } catch {}
         });
 
         // When a student logs out, mark them offline in participants list (do NOT remove)
@@ -457,6 +479,8 @@ if (socket.connected) {
             const nextIdx = currentQuestion + 1;
             // Optimistic UI update so teacher dashboard immediately advances without network latency
             setCurrentQuestion(nextIdx);
+            // Layer 2: Persist advance so revisit remount shows correct question
+            try { localStorage.setItem(`teacher_q_idx_${joinCode}`, nextIdx); } catch {}
             socket.emit('change_question', { quizId: quiz.id, questionIndex: nextIdx });
             setTimeout(() => {
                 isTransitioning.current = false;
@@ -485,6 +509,8 @@ if (socket.connected) {
             if (targetIdx !== -1) {
                 isTransitioning.current = true;
                 setCurrentQuestion(targetIdx);
+                // Layer 2: Persist rollback so revisit remount shows correct question
+                try { localStorage.setItem(`teacher_q_idx_${joinCode}`, targetIdx); } catch {}
                 socket.emit('change_question', { quizId: quiz.id, questionIndex: targetIdx });
                 toast.success(`Rolling back to skipped Question ${targetIdx + 1}`);
                 setTimeout(() => {

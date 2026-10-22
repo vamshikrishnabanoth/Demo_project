@@ -33,7 +33,8 @@ import {
     Target,
     Radio,
     ChevronDown,
-    X as XIcon
+    X as XIcon,
+    Pencil
 } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import ScheduleEditModal from '../components/quiz/ScheduleEditModal';
@@ -684,7 +685,7 @@ export default function MyQuizzes() {
 
                                             {/* STEP 2: ROOM / LAUNCH BUTTON */}
                                             {quiz.isLive && quiz.isActive && quiz.status !== 'finished' ? (
-                                                <div className="flex items-center gap-1.5">
+                                                <div className="flex items-center gap-1.5 flex-wrap">
                                                     <Link
                                                         to={`/live-room-teacher/${quiz.joinCode}`}
                                                         className="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-1.5 cursor-pointer transition-all bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 ring-2 ring-amber-400/50 shadow-amber-500/20"
@@ -692,6 +693,26 @@ export default function MyQuizzes() {
                                                     >
                                                         <Play size={14} className="fill-current animate-pulse text-white" />
                                                         <span>▶ Revisit Live Room ({quiz.joinCode})</span>
+                                                    </Link>
+                                                    {/* Edit Live Quiz — allows teacher to add/remove questions, people & settings without ending the session */}
+                                                    <Link
+                                                        to="/create-quiz/text"
+                                                        state={{
+                                                            editMode: true,
+                                                            editQuizId: quiz.id,
+                                                            editJoinCode: quiz.joinCode,
+                                                            questions: Array.isArray(quiz.questions) ? quiz.questions : [],
+                                                            title: quiz.title || '',
+                                                            timerPerQuestion: quiz.timerPerQuestion || 30,
+                                                            accessType: quiz.accessType || 'private',
+                                                            assignedGroups: quiz.assignedGroups || [],
+                                                            assignedStudents: quiz.assignedStudents || [],
+                                                        }}
+                                                        className="px-3 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-black text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
+                                                        title="Edit questions, people & settings for this live quiz"
+                                                    >
+                                                        <Pencil size={13} />
+                                                        <span>Edit Live Quiz</span>
                                                     </Link>
                                                     <button
                                                         type="button"
