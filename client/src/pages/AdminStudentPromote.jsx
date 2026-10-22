@@ -9,6 +9,7 @@ import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import { getSectionsForBranch } from '../utils/sectionUtils';
 import { showConfirm } from '../utils/alerts';
+import CustomSelect from '../components/admin/CustomSelect';
 
 const BRANCHES = ['ALL', 'CSE', 'CSM'];
 
@@ -35,6 +36,44 @@ export default function AdminStudentPromote() {
 
     // Active dynamic sections for current department choice
     const activeSections = getSectionsForBranch(dept, availableDBSections);
+
+    const deptOptions = BRANCHES.map(b => ({
+        value: b,
+        label: b === 'ALL' ? 'All Branches (CSE & CSM)' : b
+    }));
+
+    const curYearOptions = [
+        { value: 'ALL', label: 'All Years' },
+        { value: '1', label: 'Year 1 (Freshmen)' },
+        { value: '2', label: 'Year 2 (Sophomores)' },
+        { value: '3', label: 'Year 3 (Juniors)' },
+        { value: '4', label: 'Year 4 (Seniors)' },
+    ];
+
+    const curSemOptions = [
+        { value: 'ALL', label: 'All Semesters' },
+        ...[1, 2, 3, 4, 5, 6, 7, 8].map(s => ({ value: String(s), label: `Semester ${s}` }))
+    ];
+
+    const curSecOptions = [
+        { value: 'ALL', label: 'All Sections' },
+        ...activeSections.map(s => ({ value: s, label: `Section ${s}` }))
+    ];
+
+    const targetYearOptions = [
+        { value: '1', label: 'Year 1 (1st Year)' },
+        { value: '2', label: 'Year 2 (2nd Year)' },
+        { value: '3', label: 'Year 3 (3rd Year)' },
+        { value: '4', label: 'Year 4 (4th Year)' },
+        { value: 'graduated', label: 'Graduated (Alumni)' },
+    ];
+
+    const targetSemOptions = [1, 2, 3, 4, 5, 6, 7, 8].map(s => ({ value: String(s), label: `Semester ${s}` }));
+
+    const targetSecOptions = [
+        { value: 'keep', label: 'Keep Existing Section' },
+        ...activeSections.map(s => ({ value: s, label: `Section ${s}` }))
+    ];
 
     // Auto-compute recommended target state when current year changes
     const handleCurYearChange = (y) => {
@@ -180,15 +219,12 @@ export default function AdminStudentPromote() {
                                     <label className="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5">
                                         Branch / Department
                                     </label>
-                                    <select 
-                                        value={dept} 
-                                        onChange={e => setDept(e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900 transition-all cursor-pointer"
-                                    >
-                                        {BRANCHES.map(b => (
-                                            <option key={b} value={b}>{b === 'ALL' ? 'All Branches (CSE & CSM)' : b}</option>
-                                        ))}
-                                    </select>
+                                    <CustomSelect
+                                        value={dept}
+                                        onChange={setDept}
+                                        options={deptOptions}
+                                        ariaLabel="Select Branch"
+                                    />
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -196,33 +232,24 @@ export default function AdminStudentPromote() {
                                         <label className="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5">
                                             Current Academic Year
                                         </label>
-                                        <select 
-                                            value={curYear} 
-                                            onChange={e => handleCurYearChange(e.target.value)}
-                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900 transition-all cursor-pointer"
-                                        >
-                                            <option value="ALL">All Years</option>
-                                            <option value="1">Year 1 (Freshmen)</option>
-                                            <option value="2">Year 2 (Sophomores)</option>
-                                            <option value="3">Year 3 (Juniors)</option>
-                                            <option value="4">Year 4 (Seniors)</option>
-                                        </select>
+                                        <CustomSelect
+                                            value={curYear}
+                                            onChange={handleCurYearChange}
+                                            options={curYearOptions}
+                                            ariaLabel="Select Current Academic Year"
+                                        />
                                     </div>
 
                                     <div>
                                         <label className="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5">
                                             Current Semester
                                         </label>
-                                        <select 
-                                            value={curSem} 
-                                            onChange={e => setCurSem(e.target.value)}
-                                            className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900 transition-all cursor-pointer"
-                                        >
-                                            <option value="ALL">All Semesters</option>
-                                            {[1,2,3,4,5,6,7,8].map(s => (
-                                                <option key={s} value={String(s)}>Semester {s}</option>
-                                            ))}
-                                        </select>
+                                        <CustomSelect
+                                            value={curSem}
+                                            onChange={setCurSem}
+                                            options={curSemOptions}
+                                            ariaLabel="Select Current Semester"
+                                        />
                                     </div>
                                 </div>
 
@@ -230,16 +257,12 @@ export default function AdminStudentPromote() {
                                     <label className="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5">
                                         Current Section
                                     </label>
-                                    <select 
-                                        value={sec} 
-                                        onChange={e => setSec(e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900 transition-all cursor-pointer"
-                                    >
-                                        <option value="ALL">All Sections</option>
-                                        {activeSections.map(s => (
-                                            <option key={s} value={s}>Section {s}</option>
-                                        ))}
-                                    </select>
+                                    <CustomSelect
+                                        value={sec}
+                                        onChange={setSec}
+                                        options={curSecOptions}
+                                        ariaLabel="Select Current Section"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -259,17 +282,12 @@ export default function AdminStudentPromote() {
                                     <label className="block text-xs font-black text-amber-900 uppercase tracking-wider mb-1.5">
                                         Target Academic Year
                                     </label>
-                                    <select 
-                                        value={targetYear} 
-                                        onChange={e => setTargetYear(e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border-2 border-amber-300 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-600 transition-all cursor-pointer"
-                                    >
-                                        <option value="1">Year 1 (1st Year)</option>
-                                        <option value="2">Year 2 (2nd Year)</option>
-                                        <option value="3">Year 3 (3rd Year)</option>
-                                        <option value="4">Year 4 (4th Year)</option>
-                                        <option value="graduated">Graduated (Alumni)</option>
-                                    </select>
+                                    <CustomSelect
+                                        value={targetYear}
+                                        onChange={setTargetYear}
+                                        options={targetYearOptions}
+                                        ariaLabel="Select Target Academic Year"
+                                    />
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -277,33 +295,26 @@ export default function AdminStudentPromote() {
                                         <label className="block text-xs font-black text-amber-900 uppercase tracking-wider mb-1.5">
                                             Target Semester
                                         </label>
-                                        <select 
-                                            value={targetSem} 
-                                            onChange={e => setTargetSem(e.target.value)}
+                                        <CustomSelect
+                                            value={targetSem}
+                                            onChange={setTargetSem}
+                                            options={targetSemOptions}
                                             disabled={targetYear === 'graduated'}
-                                            className="w-full px-4 py-3 bg-white border-2 border-amber-300 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-600 transition-all cursor-pointer disabled:opacity-40"
-                                        >
-                                            {[1,2,3,4,5,6,7,8].map(s => (
-                                                <option key={s} value={String(s)}>Semester {s}</option>
-                                            ))}
-                                        </select>
+                                            ariaLabel="Select Target Semester"
+                                        />
                                     </div>
 
                                     <div>
                                         <label className="block text-xs font-black text-amber-900 uppercase tracking-wider mb-1.5">
                                             Target Section
                                         </label>
-                                        <select 
-                                            value={targetSec} 
-                                            onChange={e => setTargetSec(e.target.value)}
+                                        <CustomSelect
+                                            value={targetSec}
+                                            onChange={setTargetSec}
+                                            options={targetSecOptions}
                                             disabled={targetYear === 'graduated'}
-                                            className="w-full px-4 py-3 bg-white border-2 border-amber-300 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-600 transition-all cursor-pointer disabled:opacity-40"
-                                        >
-                                            <option value="keep">Keep Existing Section</option>
-                                            {activeSections.map(s => (
-                                                <option key={s} value={s}>Section {s}</option>
-                                            ))}
-                                        </select>
+                                            ariaLabel="Select Target Section"
+                                        />
                                     </div>
                                 </div>
 

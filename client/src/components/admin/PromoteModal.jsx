@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import { getSectionsForBranch } from '../../utils/sectionUtils';
 import { showConfirm } from '../../utils/alerts';
+import CustomSelect from './CustomSelect';
 
 const BRANCHES = ['ALL', 'CSE', 'CSM'];
 
@@ -33,6 +34,44 @@ export default function PromoteModal({ onClose, onSuccess }) {
 
     // Active dynamic sections for current department choice
     const activeSections = getSectionsForBranch(dept, availableDBSections);
+
+    const deptOptions = BRANCHES.map(b => ({
+        value: b,
+        label: b === 'ALL' ? 'All Branches' : b
+    }));
+
+    const curYearOptions = [
+        { value: 'ALL', label: 'All Years' },
+        { value: '1', label: 'Year 1 (Freshmen)' },
+        { value: '2', label: 'Year 2 (Sophomores)' },
+        { value: '3', label: 'Year 3 (Juniors)' },
+        { value: '4', label: 'Year 4 (Seniors)' },
+    ];
+
+    const curSemOptions = [
+        { value: 'ALL', label: 'All Semesters' },
+        ...[1, 2, 3, 4, 5, 6, 7, 8].map(s => ({ value: String(s), label: `Semester ${s}` }))
+    ];
+
+    const curSecOptions = [
+        { value: 'ALL', label: 'All Sections' },
+        ...activeSections.map(s => ({ value: s, label: `Section ${s}` }))
+    ];
+
+    const targetYearOptions = [
+        { value: '1', label: 'Year 1 (1st Year)' },
+        { value: '2', label: 'Year 2 (2nd Year)' },
+        { value: '3', label: 'Year 3 (3rd Year)' },
+        { value: '4', label: 'Year 4 (4th Year)' },
+        { value: 'graduated', label: 'Graduated (Alumni)' },
+    ];
+
+    const targetSemOptions = [1, 2, 3, 4, 5, 6, 7, 8].map(s => ({ value: String(s), label: `Semester ${s}` }));
+
+    const targetSecOptions = [
+        { value: 'keep', label: 'Keep Current Section' },
+        ...activeSections.map(s => ({ value: s, label: `Section ${s}` }))
+    ];
 
     // Auto-compute recommended target state when current year changes
     const handleCurYearChange = (y) => {
@@ -159,55 +198,45 @@ export default function PromoteModal({ onClose, onSuccess }) {
                                 <span className="text-[11px] text-slate-500 font-semibold">Which students are you promoting?</span>
                             </div>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                                 <div>
                                     <label className="block text-[10px] font-black text-slate-700 uppercase tracking-wider mb-1">Branch / Dept</label>
-                                    <select 
-                                        value={dept} 
-                                        onChange={e => setDept(e.target.value)}
-                                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
-                                    >
-                                        {BRANCHES.map(b => <option key={b} value={b}>{b === 'ALL' ? 'All Branches' : b}</option>)}
-                                    </select>
+                                    <CustomSelect
+                                        value={dept}
+                                        onChange={setDept}
+                                        options={deptOptions}
+                                        ariaLabel="Select Branch"
+                                    />
                                 </div>
 
                                 <div>
                                     <label className="block text-[10px] font-black text-slate-700 uppercase tracking-wider mb-1">Current Year</label>
-                                    <select 
-                                        value={curYear} 
-                                        onChange={e => handleCurYearChange(e.target.value)}
-                                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
-                                    >
-                                        <option value="ALL">All Years</option>
-                                        <option value="1">Year 1 (Freshmen)</option>
-                                        <option value="2">Year 2 (Sophomores)</option>
-                                        <option value="3">Year 3 (Juniors)</option>
-                                        <option value="4">Year 4 (Seniors)</option>
-                                    </select>
+                                    <CustomSelect
+                                        value={curYear}
+                                        onChange={handleCurYearChange}
+                                        options={curYearOptions}
+                                        ariaLabel="Select Current Year"
+                                    />
                                 </div>
 
                                 <div>
                                     <label className="block text-[10px] font-black text-slate-700 uppercase tracking-wider mb-1">Current Semester</label>
-                                    <select 
-                                        value={curSem} 
-                                        onChange={e => setCurSem(e.target.value)}
-                                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
-                                    >
-                                        <option value="ALL">All Semesters</option>
-                                        {[1,2,3,4,5,6,7,8].map(s => <option key={s} value={String(s)}>Semester {s}</option>)}
-                                    </select>
+                                    <CustomSelect
+                                        value={curSem}
+                                        onChange={setCurSem}
+                                        options={curSemOptions}
+                                        ariaLabel="Select Current Semester"
+                                    />
                                 </div>
 
                                 <div>
                                     <label className="block text-[10px] font-black text-slate-700 uppercase tracking-wider mb-1">Current Section</label>
-                                    <select 
-                                        value={sec} 
-                                        onChange={e => setSec(e.target.value)}
-                                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
-                                    >
-                                        <option value="ALL">All Sections</option>
-                                        {activeSections.map(s => <option key={s} value={s}>Section {s}</option>)}
-                                    </select>
+                                    <CustomSelect
+                                        value={sec}
+                                        onChange={setSec}
+                                        options={curSecOptions}
+                                        ariaLabel="Select Current Section"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -225,42 +254,34 @@ export default function PromoteModal({ onClose, onSuccess }) {
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-amber-50/70 p-4 rounded-2xl border border-amber-200">
                                 <div>
                                     <label className="block text-[10px] font-black text-amber-900 uppercase tracking-wider mb-1">Target Year</label>
-                                    <select 
-                                        value={targetYear} 
-                                        onChange={e => setTargetYear(e.target.value)}
-                                        className="w-full px-3 py-2 bg-white border border-amber-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer"
-                                    >
-                                        <option value="1">Year 1 (1st Year)</option>
-                                        <option value="2">Year 2 (2nd Year)</option>
-                                        <option value="3">Year 3 (3rd Year)</option>
-                                        <option value="4">Year 4 (4th Year)</option>
-                                        <option value="graduated">Graduated (Alumni)</option>
-                                    </select>
+                                    <CustomSelect
+                                        value={targetYear}
+                                        onChange={setTargetYear}
+                                        options={targetYearOptions}
+                                        ariaLabel="Select Target Year"
+                                    />
                                 </div>
 
                                 <div>
                                     <label className="block text-[10px] font-black text-amber-900 uppercase tracking-wider mb-1">Target Semester</label>
-                                    <select 
-                                        value={targetSem} 
-                                        onChange={e => setTargetSem(e.target.value)}
+                                    <CustomSelect
+                                        value={targetSem}
+                                        onChange={setTargetSem}
+                                        options={targetSemOptions}
                                         disabled={targetYear === 'graduated'}
-                                        className="w-full px-3 py-2 bg-white border border-amber-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer disabled:opacity-50"
-                                    >
-                                        {[1,2,3,4,5,6,7,8].map(s => <option key={s} value={String(s)}>Semester {s}</option>)}
-                                    </select>
+                                        ariaLabel="Select Target Semester"
+                                    />
                                 </div>
 
                                 <div>
                                     <label className="block text-[10px] font-black text-amber-900 uppercase tracking-wider mb-1">Target Section</label>
-                                    <select 
-                                        value={targetSec} 
-                                        onChange={e => setTargetSec(e.target.value)}
+                                    <CustomSelect
+                                        value={targetSec}
+                                        onChange={setTargetSec}
+                                        options={targetSecOptions}
                                         disabled={targetYear === 'graduated'}
-                                        className="w-full px-3 py-2 bg-white border border-amber-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer disabled:opacity-50"
-                                    >
-                                        <option value="keep">Keep Current Section</option>
-                                        {activeSections.map(s => <option key={s} value={s}>Section {s}</option>)}
-                                    </select>
+                                        ariaLabel="Select Target Section"
+                                    />
                                 </div>
                             </div>
                         </div>

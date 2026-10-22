@@ -121,10 +121,10 @@ function CustomSelect({ value, onChange, options, placeholder = 'Select', ariaLa
                                             onChange(option.value);
                                             setIsOpen(false);
                                         }}
-                                        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-black uppercase tracking-wider transition-all duration-150 cursor-pointer ${
+                                        className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-xs font-black uppercase tracking-wider transition-all duration-150 cursor-pointer ${
                                             isSelected
-                                                ? 'bg-[#ea580c] text-white shadow-xs'
-                                                : 'text-slate-700 hover:bg-orange-50 hover:text-[#c2410c]'
+                                                ? 'bg-gradient-to-r from-[#ea580c] to-[#2e7d32] text-white shadow-xs'
+                                                : 'text-slate-800 hover:bg-orange-50 hover:text-[#c2410c]'
                                         }`}
                                     >
                                         <span className="truncate">{option.label}</span>

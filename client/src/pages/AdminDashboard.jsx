@@ -89,19 +89,19 @@ function CustomSelect({ value, onChange, options, placeholder = 'Select', ariaLa
                 aria-expanded={isOpen}
                 onClick={() => setIsOpen(prev => !prev)}
                 onKeyDown={handleKeyDown}
-                className="flex min-w-[130px] items-center justify-between gap-2 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-left text-xs font-black uppercase tracking-wider text-slate-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] transition-all duration-200 hover:border-slate-400 hover:shadow-[0_8px_18px_rgba(15,23,42,0.04)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                className="flex min-w-[130px] items-center justify-between gap-2 rounded-2xl border border-slate-300 bg-white px-3.5 py-2 text-left text-xs font-black uppercase tracking-wider text-slate-700 shadow-xs transition-all duration-200 hover:border-slate-400 focus:outline-none focus:border-slate-900 cursor-pointer"
             >
                 <span className="truncate">{selectedOption.label}</span>
                 <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isOpen && (
-                <div className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-[0_18px_36px_rgba(15,23,42,0.08)] ring-1 ring-slate-100">
-                    <ul role="listbox" aria-label={ariaLabel} className="py-1.5">
+                <div className="absolute left-0 right-0 z-30 mt-1.5 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_16px_36px_rgba(15,23,42,0.12)] ring-1 ring-slate-100">
+                    <ul role="listbox" aria-label={ariaLabel} className="space-y-1">
                         {options.map((option) => {
-                            const isSelected = option.value === value;
+                            const isSelected = String(option.value) === String(value);
                             return (
-                                <li key={option.value || 'empty'} className="px-1.5">
+                                <li key={option.value || 'empty'}>
                                     <button
                                         type="button"
                                         role="option"
@@ -110,14 +110,14 @@ function CustomSelect({ value, onChange, options, placeholder = 'Select', ariaLa
                                             onChange(option.value);
                                             setIsOpen(false);
                                         }}
-                                        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-[11px] font-black uppercase tracking-wider transition-all duration-200 ${
-                                            isSelected ? 'bg-[#ea580c] text-white' : 'text-slate-700 hover:bg-orange-50 hover:text-[#c2410c]'
+                                        className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2 text-left text-xs font-black uppercase tracking-wider transition-all duration-150 cursor-pointer ${
+                                            isSelected ? 'bg-gradient-to-r from-[#ea580c] to-[#2e7d32] text-white shadow-xs' : 'text-slate-800 hover:bg-orange-50 hover:text-[#c2410c]'
                                         }`}
                                     >
-                                        <span>{option.label}</span>
+                                        <span className="truncate">{option.label}</span>
                                         {isSelected && (
-                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 text-white shrink-0" aria-hidden="true">
+                                                <path d="M5 10.5L8.2 13.7L15 6.9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         )}
                                     </button>

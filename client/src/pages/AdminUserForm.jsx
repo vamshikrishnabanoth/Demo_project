@@ -102,20 +102,16 @@ function Input({ value, onChange, placeholder, type = 'text', required = false, 
     );
 }
 
+import CustomSelect from '../components/admin/CustomSelect';
+
 function SelectInput({ value, onChange, options, disabled = false }) {
     return (
-        <select
+        <CustomSelect
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={onChange}
+            options={options}
             disabled={disabled}
-            className="w-full min-h-[44px] px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all disabled:opacity-40 cursor-pointer"
-        >
-            {options.map((opt) => (
-                <option key={opt.value} value={opt.value} className="text-slate-800 py-1">
-                    {opt.label}
-                </option>
-            ))}
-        </select>
+        />
     );
 }
 
