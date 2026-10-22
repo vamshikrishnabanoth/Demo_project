@@ -47,6 +47,9 @@ const MatchUpArena      = lazyWithSuspense(() => import('./pages/MatchUpArena'))
 const TelemetryPage     = lazyWithSuspense(() => import('./pages/TelemetryPage'));
 const PipelineOutput    = lazyWithSuspense(() => import('./pages/PipelineOutput'));
 const AdminUserForm     = lazyWithSuspense(() => import('./pages/AdminUserForm'));
+const AdminStudentImport  = lazyWithSuspense(() => import('./pages/AdminStudentImport'));
+const AdminStudentPromote = lazyWithSuspense(() => import('./pages/AdminStudentPromote'));
+const AdminStudentProfile = lazyWithSuspense(() => import('./pages/AdminStudentProfile'));
 
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
@@ -118,10 +121,13 @@ function AnimatedRoutes() {
                     <Route path="/sprint-arena"       element={<FadeTransition><ProtectedRoute roles={['student']}><SprintArena /></ProtectedRoute></FadeTransition>} />
                     <Route path="/match-up-arena"     element={<FadeTransition><ProtectedRoute roles={['student']}><MatchUpArena /></ProtectedRoute></FadeTransition>} />
 
-                    {/* Unified Admin Master Route & Legacy Sub-route Redirects */}
+                    {/* Unified Admin Master Route & Dedicated Management Pages */}
                     <Route path="/admin-dashboard" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute></PageTransition>} />
                     <Route path="/admin/users/new" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminUserForm /></ProtectedRoute></PageTransition>} />
                     <Route path="/admin/users/:id/edit" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminUserForm /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/students/import" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminStudentImport /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/students/promote" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminStudentPromote /></ProtectedRoute></PageTransition>} />
+                    <Route path="/admin/students/:id/profile" element={<PageTransition><ProtectedRoute roles={['admin']}><AdminStudentProfile /></ProtectedRoute></PageTransition>} />
                     <Route path="/admin/students/new" element={<Navigate to="/admin/users/new?role=student" replace />} />
                     <Route path="/admin/teachers/new" element={<Navigate to="/admin/users/new?role=teacher" replace />} />
                     <Route path="/admin/admins/new" element={<Navigate to="/admin/users/new?role=admin" replace />} />

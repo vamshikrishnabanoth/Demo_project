@@ -588,10 +588,10 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                     <button onClick={() => navigate('/admin/users/new?role=student')} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                         <Plus size={18} /> Add Student
                     </button>
-                    <button onClick={() => setShowImportModal(true)} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
+                    <button onClick={() => navigate('/admin/students/import')} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                         <Upload size={18} /> Import CSV
                     </button>
-                    <button onClick={() => setShowPromoteModal(true)} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
+                    <button onClick={() => navigate('/admin/students/promote')} className="px-5 py-3 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-sm border-2 border-[#ea580c] transition-all cursor-pointer">
                         <Award size={18} /> Batch Promote
                     </button>
                 </div>
@@ -729,7 +729,7 @@ function AdminStudentsTab({ setUserModal, setShowImportModal, setShowPromoteModa
                                         <td className="p-4 text-center whitespace-nowrap">
                                             <div className="flex items-center justify-center gap-2 min-w-[140px] shrink-0">
                                                 <button 
-                                                    onClick={() => setViewingProfile(s.id)} 
+                                                    onClick={() => navigate(`/admin/students/${s.id}/profile`, { state: { student: s } })} 
                                                     className="p-2.5 rounded-xl border-2 border-[#7dd3fc] bg-[#eff6ff] text-[#0284c7] hover:bg-[#e0f2fe] hover:border-[#38bdf8] transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
                                                     title="View Student Analytics"
                                                     aria-label="View Student Analytics"
