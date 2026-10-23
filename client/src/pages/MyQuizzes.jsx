@@ -684,7 +684,7 @@ export default function MyQuizzes() {
                                             </button>
 
                                             {/* STEP 2: ROOM / LAUNCH BUTTON */}
-                                            {quiz.isLive && quiz.isActive && quiz.status !== 'finished' ? (
+                                            {(quiz.isLive || (!quiz.isAssessment && quiz.joinCode)) && quiz.status !== 'finished' ? (
                                                 <div className="flex items-center gap-1.5 flex-wrap">
                                                     <Link
                                                         to={`/live-room-teacher/${quiz.joinCode}`}

@@ -237,6 +237,7 @@ export default function CreateQuizText() {
 
                 return {
                     ...q,
+                    tempId: q.tempId || q._id || q.id || `q_${Date.now()}_${idx}_${Math.random().toString(36).slice(2, 7)}`,
                     questionText: q.questionText || q.prompt_text || q.question || '',
                     options: cleanOpts,
                     correctAnswer: correctVal,
@@ -336,12 +337,45 @@ export default function CreateQuizText() {
 
     // ─── QUESTION ACTIONS ───────────────────────────────────────────────────
     const addQuestion = () => {
-        setQuestions([...questions, { questionText: '', options: ['', ''], correctAnswer: '', points: 10 }]);
+        const newQ = { 
+            tempId: `q_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            questionText: '', 
+            options: ['', '', '', ''], 
+            correctAnswer: '', 
+            points: 10 
+        };
+        const updated = [...questions, newQ];
+        setQuestions(updated);
+        if (location.state) {
+            navigate(location.pathname, {
+                replace: true,
+                state: {
+                    ...location.state,
+                    questions: updated,
+                    generatedQuestions: updated
+                }
+            });
+        }
     };
 
     const deleteQuestion = (index) => {
-        if (questions.length <= 1) return;
-        setQuestions(questions.filter((_, i) => i !== index));
+        if (questions.length <= 1) {
+            toast.error('Quiz must have at least one question.');
+            return;
+        }
+        const updated = questions.filter((_, i) => i !== index);
+        setQuestions(updated);
+        if (location.state) {
+            navigate(location.pathname, {
+                replace: true,
+                state: {
+                    ...location.state,
+                    questions: updated,
+                    generatedQuestions: updated
+                }
+            });
+        }
+        toast.success(`Question ${index + 1} deleted`);
     };
 
     const updateQuestion = (index, field, value) => {
@@ -812,7 +846,7 @@ export default function CreateQuizText() {
                     )}
                     {activeTab === 'manual' && (
                         <motion.div key="manual" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                            <form onSubmit={(e) => { e.preventDefault(); }} onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); }} className="space-y-6">
                                 
                                 {/* Unified Config Row — 3 Equal Columns */}
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -1273,7 +1307,7 @@ export default function CreateQuizText() {
                                 {/* Questions Matrix */}
                                 <div className="space-y-10">
                                     {questions.map((q, idx) => (
-                                        <div key={idx} className="relative">
+                                        <div key={q.tempId || q._id || q.id || idx} className="relative">
                                             {/* Regenerating overlay */}
                                             {regeneratingIdx === idx && (
                                                 <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[2.5rem] bg-[var(--bg-primary)]/80 backdrop-blur-sm border border-[var(--bg-accent)]/30">

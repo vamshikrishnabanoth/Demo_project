@@ -79,54 +79,59 @@ export default function QuizQuestionEditor({
     onUpdateOption 
 }) {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const confirmRef = useRef(null);
+
+    // Auto-dismiss confirmation when clicking outside
+    useEffect(() => {
+        if (!showConfirmDelete) return;
+        const handleOutsideClick = (e) => {
+            if (confirmRef.current && !confirmRef.current.contains(e.target)) {
+                setShowConfirmDelete(false);
+            }
+        };
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => document.removeEventListener('mousedown', handleOutsideClick);
+    }, [showConfirmDelete]);
 
     return (
         <GlassCard className="relative overflow-hidden">
-            {/* Clean, Professional Top-Right Delete Action Button */}
-            <div className="absolute top-6 right-6 z-10">
-                <button
-                    type="button"
-                    onClick={() => setShowConfirmDelete(true)}
-                    className="w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
-                    title="Remove Question"
-                    aria-label="Remove Question"
-                >
-                    <Trash2 size={18} />
-                </button>
-            </div>
-
-            <AnimatePresence>
-                {showConfirmDelete && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-20 flex items-center justify-center rounded-[2rem] bg-white/90 backdrop-blur-sm border border-red-500/30"
+            {/* Clean, Non-Intrusive Inline Delete Action — No Layered Modals */}
+            <div className="absolute top-6 right-6 z-10" ref={confirmRef}>
+                {showConfirmDelete ? (
+                    <div className="flex items-center gap-2 bg-rose-50 border border-rose-200 rounded-xl px-3 py-1.5 shadow-sm animate-in fade-in zoom-in-95 duration-150">
+                        <span className="text-xs font-black text-rose-700 whitespace-nowrap">
+                            Delete Q{index + 1}?
+                        </span>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setShowConfirmDelete(false);
+                                onDelete(index);
+                            }}
+                            className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-black text-xs rounded-lg shadow-xs transition-all cursor-pointer"
+                        >
+                            Yes, Delete
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmDelete(false)}
+                            className="px-2 py-1 bg-white hover:bg-slate-100 active:scale-95 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-all cursor-pointer"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        type="button"
+                        onClick={() => setShowConfirmDelete(true)}
+                        className="w-10 h-10 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
+                        title={`Delete Question ${index + 1}`}
+                        aria-label={`Delete Question ${index + 1}`}
                     >
-                        <div className="bg-white p-6 rounded-2xl shadow-2xl border border-slate-200 text-center max-w-sm">
-                            <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight mb-2">Delete Question?</h3>
-                            <p className="text-sm text-slate-500 mb-6 font-medium">This action cannot be undone. Are you sure you want to remove this data point?</p>
-                            <div className="flex gap-3 justify-center">
-                                <button
-                                    onClick={() => setShowConfirmDelete(false)}
-                                    className="px-6 py-2 rounded-xl text-slate-500 font-bold hover:bg-slate-100 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setShowConfirmDelete(false);
-                                        onDelete(index);
-                                    }}
-                                    className="px-6 py-2 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-colors shadow-md shadow-red-500/20"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
+                        <Trash2 size={18} />
+                    </button>
                 )}
-            </AnimatePresence>
+            </div>
 
             <div className="space-y-10">
                 <div className="flex items-start gap-6 pr-14">
