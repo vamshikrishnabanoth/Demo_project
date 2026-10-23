@@ -26,8 +26,8 @@ const { PrismaClient } = require('@prisma/client');
 // divided by the number of server instances.
 
 const rawPoolSize = parseInt(process.env.DATABASE_POOL_SIZE, 10);
-const poolSize = (!isNaN(rawPoolSize) && rawPoolSize > 0) ? rawPoolSize : 5;
-const poolTimeout = parseInt(process.env.DATABASE_POOL_TIMEOUT, 10) || 15; // seconds
+const poolSize = (!isNaN(rawPoolSize) && rawPoolSize > 0) ? rawPoolSize : 20; // Default 20 lanes to safely handle concurrent FLUSH_CONCURRENCY=10 writes + active API traffic
+const poolTimeout = parseInt(process.env.DATABASE_POOL_TIMEOUT, 10) || 20; // 20 seconds
 
 const prisma = new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],

@@ -10,7 +10,9 @@ const isProductionDomain = typeof window !== 'undefined' && (
 
 // Guard against stale suspended render instances configured in Vercel environment variables
 const rawSocketUrl = import.meta.env.VITE_SOCKET_URL;
-const validSocketUrl = (rawSocketUrl && !rawSocketUrl.includes('demo-project-3izc')) ? rawSocketUrl : null;
+const rawApiUrl = import.meta.env.VITE_API_URL;
+const derivedFromApi = (rawApiUrl && !rawApiUrl.includes('demo-project-3izc')) ? rawApiUrl.replace(/\/api\/?$/, '') : null;
+const validSocketUrl = (rawSocketUrl && !rawSocketUrl.includes('demo-project-3izc')) ? rawSocketUrl : derivedFromApi;
 
 const SOCKET_URL = validSocketUrl || (isProductionDomain ? PRODUCTION_SOCKET_URL : 'http://localhost:5000');
 

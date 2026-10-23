@@ -5,6 +5,7 @@ import { LogIn, Mail, Lock, Eye, EyeOff, Loader2, XCircle, Brain, Zap, Target, T
 import { motion } from 'framer-motion';
 import CinematicBackground from '../components/CinematicBackground';
 import { PremiumInput, GlassCard } from '../components/ui/Primitives';
+import { API_BASE_URL } from '../utils/api';
 
 /* ── Floating background icon ────────────────────────────────────────────── */
 const FloatingIcon = ({ Icon, size, top, left, delay, duration }) => (
@@ -68,12 +69,13 @@ export default function Login() {
     useEffect(() => {
         const wakeUp = async () => {
             try {
-                let rawBackend = import.meta.env.VITE_API_URL?.replace('/api', '');
-                const BACKEND = (rawBackend && !rawBackend.includes('demo-project-3izc')) ? rawBackend : 'https://quiz-backend-qgro.onrender.com';
-                await fetch(`${BACKEND}/health`, {
-                    method: 'GET',
-                    signal: AbortSignal.timeout(90000),
-                });
+                const backendOrigin = (API_BASE_URL || '').replace(/\/api\/?$/, '');
+                if (backendOrigin) {
+                    await fetch(`${backendOrigin}/health`, {
+                        method: 'GET',
+                        signal: AbortSignal.timeout(90000),
+                    });
+                }
             } catch {
                 // Silently ignore — this is just a warm-up ping
             }

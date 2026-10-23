@@ -164,24 +164,35 @@ app.use((req, res, next) => {
 
 const isDevRateLimitDisabled = process.env.NODE_ENV !== 'production' && process.env.DISABLE_LIMITS === 'true';
 
-// 3. Rate Limiting (Brute Force / DOS protection)
-// 500 req / 15 min per IP: enough for a full class session (login + quiz join + answers = ~4 req/action)
-// while still blocking automated brute-force attacks (which hit thousands of req/min)
+// 3. Rate Limiting (Campus NAT & Multi-Student Safe)
+// 3000 req / 15 min per IP allows 100+ students on the same college WiFi to take simultaneous quizzes
+// while still shutting down aggressive denial-of-service botnets
+const getClientIdentifier = (req) => {
+    const token = req.headers['x-auth-token'] || req.headers.authorization?.replace(/^Bearer\s+/i, '');
+    if (token) {
+        // Scope limit to unique authenticated user token
+        return `user_${token.slice(-16)}`;
+    }
+    return req.ip || req.connection?.remoteAddress || 'unknown';
+};
+
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: isDevRateLimitDisabled ? 100000000 : 500, // limit each IP to 500 requests per windowMs
-    message: 'Too many requests from this IP, please try again after 15 minutes',
+    max: isDevRateLimitDisabled ? 100000000 : 3000, // accommodate multi-student lab WiFi
+    keyGenerator: getClientIdentifier,
+    message: 'Too many requests, please try again after a few minutes',
     standardHeaders: true,  // Return rate limit info in `RateLimit-*` headers
     legacyHeaders: false,   // Disable `X-RateLimit-*` headers
 });
 app.use('/api/', limiter); // Apply to all API routes
 
-// 3.5 Progressive Speed Limiting (DDoS mitigation — slows down repeat offenders)
+// 3.5 Progressive Speed Limiting (DDoS mitigation — slows down repeat offenders without blocking campus classes)
 const speedLimiter = slowDown({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    delayAfter: isDevRateLimitDisabled ? 100000000 : 300, // allow 300 requests per windowMs without delay
-    delayMs: (hits) => (hits - 300) * 100, // add 100ms delay per request above 300
-    maxDelayMs: 5000, // max 5 second delay
+    delayAfter: isDevRateLimitDisabled ? 100000000 : 1500, // allow 1500 requests per window before applying micro-delays
+    delayMs: (hits) => (hits - 1500) * 50, // subtle 50ms delay per request above 1500
+    maxDelayMs: 2000, // max 2 second delay
+    keyGenerator: getClientIdentifier,
 });
 app.use('/api/', speedLimiter);
 
@@ -1965,16 +1976,22 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
             userSockets.delete(socket.userId);
 
             // Fire-and-forget: same pattern as the connect handler.
-            // Many students disconnecting at once (quiz end) must not cause a DB burst.
+            // Many students disconnecting at once (quiz end) must not cause a DB burst or socket packet storm.
             if (!socket.userId.startsWith('sim') && socket.user?.role !== 'simulation') {
+                const disconnectedUserId = socket.userId;
                 prisma.user.update({
-                    where: { id: socket.userId },
+                    where: { id: disconnectedUserId },
                     data: { isOnline: false }
                 }).then(() => {
-                    io.emit('user_status_change', {
-                        userId: socket.userId,
-                        isOnline: false
-                    });
+                    // Scoped broadcast: only emit to rooms this user participated in (avoids 90,000 packet storm)
+                    for (const [quizId, participants] of roomParticipants.entries()) {
+                        if (participants.some(p => (p._id || p.id) === disconnectedUserId)) {
+                            io.to(quizId).emit('user_status_change', {
+                                userId: disconnectedUserId,
+                                isOnline: false
+                            });
+                        }
+                    }
                 }).catch(err => {
                     console.error('Error updating offline status on disconnect:', err.message);
                 });

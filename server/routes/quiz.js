@@ -294,13 +294,20 @@ router.post('/analyze-depth', auth, quizController.analyzeDepth);
 // @desc    Get total pages / slides metadata for an uploaded file
 router.post('/file-metadata', auth, upload.single('file'), verifyUploadedFile, quizController.getFileMetadata);
 
+// Middleware: Prevents socket termination on long-running AI operations (5 min max)
+const extendTimeout = (ms = 300000) => (req, res, next) => {
+    if (req.setTimeout) req.setTimeout(ms);
+    if (res.setTimeout) res.setTimeout(ms);
+    next();
+};
+
 // @route   POST api/quiz/generate-voice
 // @desc    Transcribe audio (with optional companion slides/notes) and generate quiz questions via Architecture E
-router.post('/generate-voice', auth, voiceUploadFields, verifyUploadedFiles, normalizeVoiceUploads, quizController.generateQuizFromVoice);
+router.post('/generate-voice', auth, extendTimeout(), voiceUploadFields, verifyUploadedFiles, normalizeVoiceUploads, quizController.generateQuizFromVoice);
 
 // @route   POST api/quiz/analyze-lecture
 // @desc    Two-Task Lecture Understanding: Clean non-academic content & Reconstruct pedagogical structure
-router.post('/analyze-lecture', auth, upload.single('file'), verifyUploadedFile, quizController.analyzeLectureRecording);
+router.post('/analyze-lecture', auth, extendTimeout(), upload.single('file'), verifyUploadedFile, quizController.analyzeLectureRecording);
 
 // @route   GET api/quiz/lecture-analysis/:taskId
 // @desc    Poll status for two-task lecture analysis
@@ -308,7 +315,7 @@ router.get('/lecture-analysis/:taskId', auth, quizController.getLectureAnalysisS
 
 // @route   POST api/quiz/generate-from-lecture
 // @desc    Generate quiz from cleaned lecture concepts & transcript
-router.post('/generate-from-lecture', auth, teacherOrAdmin, quizController.generateQuizFromCleanedLecture);
+router.post('/generate-from-lecture', auth, teacherOrAdmin, extendTimeout(), quizController.generateQuizFromCleanedLecture);
 
 // @route   GET api/quiz/docket
 // @desc    Retrieve persistent user docket items
@@ -325,7 +332,7 @@ router.delete('/docket/:id', auth, quizController.deleteDocketItem);
 
 // @route   POST api/quiz/create
 // @desc    Create a new quiz (Manual or AI generated)
-router.post('/create', auth, teacherOrAdmin, upload.single('file'), verifyUploadedFile, quizValidation, validate, quizController.createQuiz);
+router.post('/create', auth, teacherOrAdmin, extendTimeout(), upload.single('file'), verifyUploadedFile, quizValidation, validate, quizController.createQuiz);
 
 // @route   POST api/quiz/join
 // @desc    Join a quiz by code
@@ -337,7 +344,7 @@ router.post('/submit', auth, quizController.submitAttempt);
 
 // @route   POST api/quiz/generate
 // @desc    Generate quiz questions (async — returns taskId immediately)
-router.post('/generate', auth, teacherOrAdmin, generationLimiter, upload.fields([{ name: 'files', maxCount: 10 }, { name: 'file', maxCount: 10 }]), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
+router.post('/generate', auth, teacherOrAdmin, extendTimeout(), generationLimiter, upload.fields([{ name: 'files', maxCount: 10 }, { name: 'file', maxCount: 10 }]), verifyUploadedFiles, quizValidation, validate, quizController.generateQuizQuestions);
 // SECURITY: Require auth on callback to prevent injection of fake task results
 router.post('/generate/callback/:taskId', auth, quizController.taskCompleteCallback);
 

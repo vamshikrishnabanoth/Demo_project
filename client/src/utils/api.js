@@ -11,7 +11,7 @@ const isProductionDomain = typeof window !== 'undefined' && (
 const rawApiUrl = import.meta.env.VITE_API_URL;
 const validApiUrl = (rawApiUrl && !rawApiUrl.includes('demo-project-3izc')) ? rawApiUrl : null;
 
-const API_BASE_URL = validApiUrl || (isProductionDomain ? PRODUCTION_API_URL : 'http://localhost:5000/api');
+export const API_BASE_URL = validApiUrl || (isProductionDomain ? PRODUCTION_API_URL : 'http://localhost:5000/api');
 
 async function request(endpoint, options = {}, retryCount = 0) {
     let url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
@@ -198,5 +198,4 @@ const api = {
     }
 };
 
-export { API_BASE_URL };
 export default api;

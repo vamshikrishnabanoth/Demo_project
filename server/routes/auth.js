@@ -4,12 +4,13 @@ const rateLimit = require('express-rate-limit');
 const { check, validationResult } = require('express-validator');
 const { logSecurityEvent } = require('../middleware/security');
 
-// Rate limiter for authentication (Brute force protection)
+// Rate limiter for authentication (Campus WiFi & NAT safe: only penalizes FAILED login attempts)
 const isDevRateLimitDisabled = process.env.NODE_ENV !== 'production' && process.env.DISABLE_LIMITS === 'true';
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: isDevRateLimitDisabled ? 100000000 : 15, // limit each IP to 15 login attempts per window
-    message: 'Too many login attempts from this IP, please try again after 15 minutes'
+    max: isDevRateLimitDisabled ? 100000000 : 300, // Raised for campus NAT/WiFi environments
+    skipSuccessfulRequests: true, // CRITICAL: Successful student logins NEVER count towards the limit!
+    message: 'Too many failed login attempts from this network. Please try again after 15 minutes.'
 });
 
 const bcrypt = require('bcryptjs');
