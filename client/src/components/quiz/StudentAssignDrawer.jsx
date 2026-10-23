@@ -1,20 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
     X as XIcon,
     Search,
     Users,
-    UserCheck,
     Check,
-    ChevronRight, ChevronDown,
+    ChevronDown,
     SlidersHorizontal,
     GraduationCap,
     CheckSquare,
     Loader2,
     Trash2,
-    Sparkles
+    Sparkles,
+    Calendar
 } from 'lucide-react';
 
 export default function StudentAssignDrawer({ 
@@ -30,7 +29,7 @@ export default function StudentAssignDrawer({
     // Dynamic DB Filter Options
     const [branches, setBranches] = useState([]);
     const [sections, setSections] = useState([]);
-    const [years, setYears] = useState([]);
+    const [years, setYears] = useState(['1st Year', '2nd Year', '3rd Year', '4th Year']);
     const [semesters, setSemesters] = useState([]);
 
     // Selection Filter State
@@ -80,9 +79,15 @@ export default function StudentAssignDrawer({
                     api.get('/students/years'),
                     api.get('/students/semesters')
                 ]);
-                setBranches(branchesRes.data || []);
-                setYears(yearsRes.data || []);
-                setSemesters(semestersRes.data || []);
+                const defaultBranches = ['CSE', 'CSM', 'CSD', 'IT', 'ECE', 'EEE', 'MECH', 'CIVIL'];
+                const fetchedBranches = branchesRes.data || [];
+                const mergedBranches = Array.from(new Set([...defaultBranches, ...fetchedBranches]));
+                setBranches(mergedBranches);
+
+                if (yearsRes.data && yearsRes.data.length > 0) {
+                    setYears(yearsRes.data);
+                }
+                setSemesters(semestersRes.data || ['Semester 1', 'Semester 2']);
             } catch (err) {
                 console.error('Error loading filters from database:', err);
             }
@@ -122,7 +127,7 @@ export default function StudentAssignDrawer({
         }
     }, [isOpen, quiz, initialGroups, initialStudents]);
 
-    // Dynamically Load Sections when Branches change
+    // Dynamically Load Sections when selected branches change
     useEffect(() => {
         if (!isOpen) return;
 
@@ -130,7 +135,7 @@ export default function StudentAssignDrawer({
             try {
                 const params = {};
                 if (selectedBranches.length > 0) {
-                    params.branch = selectedBranches;
+                    params.branch = selectedBranches.join(',');
                 }
                 const res = await api.get('/students/sections', { params });
                 setSections(res.data || []);
@@ -148,7 +153,7 @@ export default function StudentAssignDrawer({
 
         const delayDebounce = setTimeout(() => {
             fetchStudents(1, true);
-        }, 300);
+        }, 250);
 
         return () => clearTimeout(delayDebounce);
     }, [searchQuery, selectedBranches, selectedSections, selectedYear, selectedSemester, isOpen]);
@@ -161,8 +166,8 @@ export default function StudentAssignDrawer({
                 page: pageNum,
                 limit: 15
             };
-            if (selectedBranches.length > 0) params.branch = selectedBranches;
-            if (selectedSections.length > 0) params.section = selectedSections;
+            if (selectedBranches.length > 0) params.branch = selectedBranches.join(',');
+            if (selectedSections.length > 0) params.section = selectedSections.join(',');
             if (selectedYear) params.year = selectedYear;
             if (selectedSemester) params.semester = selectedSemester;
 
@@ -218,17 +223,13 @@ export default function StudentAssignDrawer({
         api.get('/students/search', {
             params: { branch, section, limit: 1 }
         }).then(res => {
-            const count = res.data.pagination.total;
+            const count = res.data?.pagination?.total || 0;
             setAssignedGroups(prev => [...prev, { branch, section, count }]);
             toast.success(`Targeted Entire ${branch}-${section} (${count} students)`);
         }).catch(err => {
             console.error(err);
             setAssignedGroups(prev => [...prev, { branch, section, count: 0 }]);
         });
-    };
-
-    const removeGroup = (branch, section) => {
-        setAssignedGroups(prev => prev.filter(g => !(g.branch === branch && g.section === section)));
     };
 
     const toggleStudentSelection = (student) => {
@@ -248,8 +249,8 @@ export default function StudentAssignDrawer({
                 q: searchQuery,
                 limit: 500
             };
-            if (selectedBranches.length > 0) params.branch = selectedBranches;
-            if (selectedSections.length > 0) params.section = selectedSections;
+            if (selectedBranches.length > 0) params.branch = selectedBranches.join(',');
+            if (selectedSections.length > 0) params.section = selectedSections.join(',');
             if (selectedYear) params.year = selectedYear;
             if (selectedSemester) params.semester = selectedSemester;
 
@@ -335,11 +336,11 @@ export default function StudentAssignDrawer({
         return shortcuts;
     };
 
-    // Inner Content (Shared between inline & modal layout)
+    // Inner Content
     const content = (
-        <div className="space-y-5">
+        <div className="space-y-4">
             {/* Panel Top Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
                 <div className="flex items-center gap-3">
                     <div className="p-2.5 bg-orange-50 border border-orange-200 rounded-xl text-[#ea580c] shrink-0">
                         <Users size={20} />
@@ -349,14 +350,25 @@ export default function StudentAssignDrawer({
                             Advanced Student Targeting
                         </h3>
                         <p className="text-slate-500 font-semibold text-xs mt-0.5">
-                            Target specific branches, sections, or hand-pick individual students from the directory.
+                            Filter by year, department, and section, or hand-pick individual students from the directory.
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
                     <span className="bg-orange-50 border border-orange-200 text-[#ea580c] px-3.5 py-1.5 rounded-full text-xs font-black shadow-2xs">
                         {calculateLiveTargetCount()} Targeted
                     </span>
+                    {(assignedGroups.length > 0 || assignedStudents.length > 0) && (
+                        <button
+                            type="button"
+                            onClick={clearAll}
+                            className="text-[10px] font-black text-red-600 hover:text-red-700 uppercase tracking-widest px-2.5 py-1 bg-red-50 hover:bg-red-100 rounded-lg border border-red-200 transition-colors cursor-pointer flex items-center gap-1"
+                            title="Clear all selections"
+                        >
+                            <Trash2 size={11} />
+                            <span>Clear All</span>
+                        </button>
+                    )}
                     {onClose && (
                         <button
                             type="button"
@@ -371,94 +383,71 @@ export default function StudentAssignDrawer({
                 </div>
             </div>
 
-            {/* Targeting Overview Card */}
-            <div className="bg-orange-50/50 border border-orange-200/80 rounded-2xl p-4 sm:p-5 space-y-3">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-2">
-                        <UserCheck size={16} className="text-[#ea580c]" />
-                        <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
-                            Active Targeting Overview
-                        </h4>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                        <span className="text-[11px] font-bold text-slate-600">
-                            Total: <strong className="text-slate-900 font-black">{calculateLiveTargetCount()}</strong> students
-                        </span>
-                        {(assignedGroups.length > 0 || assignedStudents.length > 0) && (
-                            <button
-                                type="button"
-                                onClick={clearAll}
-                                className="text-[10px] font-black text-red-600 hover:text-red-700 uppercase tracking-widest flex items-center gap-1 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                            >
-                                <Trash2 size={11} /> Clear All
-                            </button>
-                        )}
-                    </div>
+            {/* ── 1. YEAR-WISE FILTER ── */}
+            <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-3 sm:p-3.5 space-y-2">
+                <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Calendar size={13} className="text-[#ea580c]" />
+                        <span>Filter By Academic Year</span>
+                    </h4>
+                    <span className="text-[10px] font-bold text-slate-500">
+                        {selectedYear ? `Filtered: ${selectedYear}` : 'All Years (No Restriction)'}
+                    </span>
                 </div>
-
-                {/* Target Chips */}
-                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
-                    {assignedGroups.map(g => (
-                        <div
-                            key={`grp-${g.branch}-${g.section}`}
-                            className="inline-flex items-center gap-1.5 bg-white border border-orange-300 text-orange-900 rounded-lg px-2.5 py-1 text-xs font-bold shadow-2xs"
-                        >
-                            <Users size={12} className="text-[#ea580c] shrink-0" />
-                            <span>{g.branch}-{g.section}</span>
-                            <span className="text-[10px] text-orange-600 font-semibold">({g.count || 0})</span>
+                <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                        type="button"
+                        onClick={() => setSelectedYear('')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                            !selectedYear
+                                ? 'bg-slate-900 text-white shadow-2xs'
+                                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                        }`}
+                    >
+                        All Years
+                    </button>
+                    {years.map((yr) => {
+                        const isSel = selectedYear === yr;
+                        return (
                             <button
+                                key={yr}
                                 type="button"
-                                onClick={() => removeGroup(g.branch, g.section)}
-                                className="text-slate-400 hover:text-red-600 transition-colors ml-0.5 cursor-pointer"
-                                title={`Remove group ${g.branch}-${g.section}`}
+                                onClick={() => setSelectedYear(isSel ? '' : yr)}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                                    isSel
+                                        ? 'bg-[#ea580c] text-white shadow-2xs'
+                                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
+                                }`}
                             >
-                                <XIcon size={12} />
+                                {yr}
                             </button>
-                        </div>
-                    ))}
-
-                    {assignedStudents.map(s => (
-                        <div
-                            key={`stud-${s.id}`}
-                            className="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-800 rounded-lg px-2.5 py-1 text-xs font-bold shadow-2xs"
-                        >
-                            <div className="w-4 h-4 rounded-full bg-orange-100 text-[#ea580c] flex items-center justify-center text-[9px] font-black uppercase shrink-0">
-                                {s.name ? s.name[0] : (s.username ? s.username[0] : 'S')}
-                            </div>
-                            <span>{s.username || s.name}</span>
-                            {s.studentBranch && (
-                                <span className="text-[10px] text-slate-400 font-medium">({s.studentBranch}-{s.section})</span>
-                            )}
-                            <button
-                                type="button"
-                                onClick={() => toggleStudentSelection(s)}
-                                className="text-slate-400 hover:text-red-600 transition-colors ml-0.5 cursor-pointer"
-                                title="Remove student"
-                            >
-                                <XIcon size={12} />
-                            </button>
-                        </div>
-                    ))}
-
-                    {assignedGroups.length === 0 && assignedStudents.length === 0 && (
-                        <p className="text-slate-500 text-xs italic py-1">
-                            No custom targets configured yet. Use the filters below or search students to target.
-                        </p>
-                    )}
+                        );
+                    })}
                 </div>
             </div>
 
-            {/* Dynamic Branch-wise Structuring Accordions */}
-            <div className="space-y-3">
-                <div className="flex items-center justify-between">
+            {/* ── 2. DEPARTMENT & SECTION FILTER ── */}
+            <div className="space-y-2.5">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                     <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                         <SlidersHorizontal size={13} className="text-[#ea580c]" />
                         <span>Filter By Department & Section</span>
                     </h4>
-                    <span className="text-[10px] font-bold text-slate-400">Click a branch to filter or expand</span>
+                    <div className="flex items-center gap-2">
+                        {selectedBranches.length > 0 && (
+                            <button
+                                type="button"
+                                onClick={() => { setSelectedBranches([]); setSelectedSections([]); }}
+                                className="text-[10px] font-black text-rose-600 hover:text-rose-700 uppercase tracking-wider px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer"
+                            >
+                                Reset Branches ({selectedBranches.length})
+                            </button>
+                        )}
+                        <span className="text-[10px] font-bold text-slate-400">Select one or multiple departments</span>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {branches.map(b => {
                         const isSelected = selectedBranches.includes(b);
                         const isExpanded = expandedBranch === b;
@@ -466,9 +455,9 @@ export default function StudentAssignDrawer({
                         return (
                             <div
                                 key={b}
-                                className={`rounded-xl border transition-all p-3 ${
+                                className={`rounded-xl border transition-all p-2.5 ${
                                     isSelected
-                                        ? 'bg-orange-50/40 border-orange-300'
+                                        ? 'bg-orange-50/50 border-orange-300'
                                         : 'bg-white border-slate-200 hover:border-slate-300'
                                 }`}
                             >
@@ -484,6 +473,7 @@ export default function StudentAssignDrawer({
                                     >
                                         <GraduationCap size={13} />
                                         <span>{b}</span>
+                                        {isSelected && <span className="text-[10px] font-bold opacity-90">✓ Active</span>}
                                     </button>
 
                                     <button
@@ -491,7 +481,7 @@ export default function StudentAssignDrawer({
                                         onClick={() => setExpandedBranch(isExpanded ? null : b)}
                                         className="text-[11px] font-bold text-[#ea580c] hover:text-[#c2410c] transition-colors flex items-center gap-1 cursor-pointer"
                                     >
-                                        <span>{isExpanded ? 'Collapse' : 'Sem / Sec'}</span>
+                                        <span>{isExpanded ? 'Hide Sec' : 'Sections'}</span>
                                         <ChevronDown
                                             size={13}
                                             className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
@@ -500,57 +490,41 @@ export default function StudentAssignDrawer({
                                 </div>
 
                                 {isExpanded && (
-                                    <div className="pt-3 mt-3 border-t border-slate-200 space-y-3">
-                                        {/* Semesters */}
-                                        <div className="space-y-1.5">
-                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Semester</p>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {semesters.map(s => {
-                                                    const isSemSelected = selectedSemester === s;
+                                    <div className="pt-2.5 mt-2.5 border-t border-slate-200 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                Sections for {b}
+                                            </p>
+                                            <button
+                                                type="button"
+                                                onClick={() => assignGroup(b, 'All')}
+                                                className="text-[10px] font-black text-[#ea580c] hover:underline cursor-pointer"
+                                            >
+                                                Target Entire {b}
+                                            </button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {sections.length > 0 ? (
+                                                sections.map(sec => {
+                                                    const isSecSelected = selectedSections.includes(sec);
                                                     return (
                                                         <button
-                                                            key={s}
+                                                            key={sec}
                                                             type="button"
-                                                            onClick={() => setSelectedSemester(isSemSelected ? '' : s)}
+                                                            onClick={() => toggleSectionFilter(sec)}
                                                             className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-                                                                isSemSelected
-                                                                    ? 'bg-slate-900 text-white shadow-2xs'
-                                                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                                                isSecSelected
+                                                                    ? 'bg-[#ea580c] text-white shadow-2xs'
+                                                                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
                                                             }`}
                                                         >
-                                                            Sem {s}
+                                                            Sec {sec}
                                                         </button>
                                                     );
-                                                })}
-                                            </div>
-                                        </div>
-
-                                        {/* Sections */}
-                                        <div className="space-y-1.5">
-                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Sections</p>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {sections.length > 0 ? (
-                                                    sections.map(sec => {
-                                                        const isSecSelected = selectedSections.includes(sec);
-                                                        return (
-                                                            <button
-                                                                key={sec}
-                                                                type="button"
-                                                                onClick={() => toggleSectionFilter(sec)}
-                                                                className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-                                                                    isSecSelected
-                                                                        ? 'bg-[#ea580c] text-white shadow-2xs'
-                                                                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-                                                                }`}
-                                                            >
-                                                                Sec {sec}
-                                                            </button>
-                                                        );
-                                                    })
-                                                ) : (
-                                                    <p className="text-[11px] text-slate-400 italic">Select branch above to view sections</p>
-                                                )}
-                                            </div>
+                                                })
+                                            ) : (
+                                                <p className="text-[11px] text-slate-400 italic">No specific sections found for {b}</p>
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -560,12 +534,12 @@ export default function StudentAssignDrawer({
                 </div>
             </div>
 
-            {/* Student Directory Search & Individual Picking */}
-            <div className="space-y-3 pt-2 border-t border-slate-200">
+            {/* ── 3. STUDENT DIRECTORY SEARCH & INDIVIDUAL SELECTION ── */}
+            <div className="space-y-2.5 pt-2 border-t border-slate-200">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                     <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                         <GraduationCap size={14} className="text-[#ea580c]" />
-                        <span>Student Verification & Directory ({totalStudentsCount} Found)</span>
+                        <span>Enrolled Students ({totalStudentsCount} Found)</span>
                     </h4>
                     {totalStudentsCount > 0 && (
                         <button
@@ -587,7 +561,7 @@ export default function StudentAssignDrawer({
                     />
                     <input
                         type="text"
-                        placeholder="Search student by name or roll number..."
+                        placeholder="Search student by name, roll number, or email..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:border-[#ea580c] focus:ring-2 focus:ring-orange-500/10 transition-all text-xs"
@@ -647,10 +621,13 @@ export default function StudentAssignDrawer({
                                     </div>
                                     <div>
                                         <h5 className="font-bold text-slate-900 text-xs tracking-tight">
-                                            {student.name || 'Enrolled Student'}
+                                            {student.name || student.username}
                                         </h5>
                                         <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
-                                            {student.username} • <span className="text-slate-600">{student.studentBranch}-{student.section}</span>
+                                            <span className="font-mono text-slate-700">{student.username}</span>
+                                            {student.studentBranch && ` • ${student.studentBranch}`}
+                                            {student.section && `-${student.section}`}
+                                            {student.year && ` • ${student.year}`}
                                         </p>
                                     </div>
                                 </div>
@@ -683,13 +660,13 @@ export default function StudentAssignDrawer({
                         <div className="text-center py-8 space-y-1.5">
                             <Users size={24} className="text-slate-300 mx-auto" />
                             <h5 className="font-bold text-slate-600 text-xs">No Students Found</h5>
-                            <p className="text-[11px] text-slate-400 font-medium">Try adjusting your department or section filters above.</p>
+                            <p className="text-[11px] text-slate-400 font-medium">Try selecting different department or year filters above.</p>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Bottom Actions */}
+            {/* ── 4. BOTTOM ACTIONS ── */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200">
                 <p className="text-[11px] text-slate-500 font-medium">
                     Targeting will apply to this quiz's broadcast access.

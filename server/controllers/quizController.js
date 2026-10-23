@@ -1636,6 +1636,11 @@ exports.getActiveTeacherLiveQuiz = async (req, res) => {
                 isActive: true,
                 difficulty: true,
                 timerPerQuestion: true,
+                questions: true,
+                assignedGroups: true,
+                assignedStudents: true,
+                accessType: true,
+                duration: true,
                 createdAt: true,
                 joinedStudentsCount: true
             }
@@ -2709,7 +2714,7 @@ exports.updateQuiz = async (req, res) => {
             }
             if (!isAdmin) {
                 // Non-admin teachers can only update non-content fields on locked quizzes
-                const allowedFields = ['title', 'description', 'startTime', 'endTime', 'timerPerQuestion', 'duration', 'timerType', 'accessType', 'gameType', 'assignedGroups', 'assignedStudents'];
+                const allowedFields = ['title', 'description', 'startTime', 'endTime', 'timerPerQuestion', 'duration', 'timerType', 'accessType', 'gameType', 'assignedGroups', 'assignedStudents', 'status'];
                 const requestedFields = Object.keys(req.body);
                 const forbidden = requestedFields.filter(f => !allowedFields.includes(f) && !['isActive', 'isAssessment', 'isLive', 'gameType'].includes(f));
                 if (forbidden.length > 0) {
@@ -2755,6 +2760,10 @@ exports.updateQuiz = async (req, res) => {
         if (startTime !== undefined) updateData.startTime = startTime ? new Date(startTime) : null;
         if (endTime !== undefined) updateData.endTime = endTime ? new Date(endTime) : null;
 
+        if (req.body.status) {
+            updateData.status = req.body.status;
+        }
+
         if (isActive !== undefined) {
             const requestedActive = isActive === 'true' || isActive === true;
             if (requestedActive && !quiz.isActive) {
@@ -2770,16 +2779,20 @@ exports.updateQuiz = async (req, res) => {
                     }
                 });
                 updateData.isActive = true;
-                updateData.status = quiz.isLive ? 'waiting' : 'started';
+                if (!updateData.status) {
+                    updateData.status = quiz.isLive ? 'waiting' : 'started';
+                }
             } else if (!requestedActive) {
                 updateData.isActive = false;
-                if (quiz.isLive) updateData.status = 'finished';
+                if (!updateData.status && quiz.isLive) {
+                    updateData.status = 'finished';
+                }
             }
         }
 
         if (isLive !== undefined) {
             updateData.isLive = isLive === 'true' || isLive === true;
-            if (quiz.isActive || updateData.isActive) {
+            if (!updateData.status && (quiz.isActive || updateData.isActive)) {
                 updateData.status = updateData.isLive ? 'waiting' : 'started';
             }
         }
@@ -2788,6 +2801,20 @@ exports.updateQuiz = async (req, res) => {
             where: { id: req.params.id },
             data: updateData
         });
+
+        // If status became finished, notify connected sockets
+        if (updateData.status === 'finished') {
+            try {
+                const io = req.app.get('io');
+                if (io) {
+                    io.to(req.params.id).emit('quiz_ended', { quizId: req.params.id, status: 'finished' });
+                    io.to(req.params.id).emit('quiz_ended_success', { quizId: req.params.id });
+                }
+            } catch (err) {
+                console.warn('[QuizEnd] Socket notification warning:', err.message);
+            }
+        }
+
         res.json(updated);
     } catch (err) {
         console.error(err.message);
@@ -5346,6 +5373,59 @@ exports.generateQuizFromCleanedLecture = async (req, res) => {
     } catch (err) {
         console.error('Error generating quiz from lecture:', err);
         res.status(500).json({ msg: 'Server error generating quiz from cleaned lecture.' });
+    }
+};
+
+exports.endQuiz = async (req, res) => {
+    try {
+        const quizId = req.params.id;
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: quizId }
+        });
+
+        if (!quiz) {
+            return res.status(404).json({ msg: 'Quiz not found' });
+        }
+
+        if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({ msg: 'Not authorized to end this quiz room' });
+        }
+
+        // Close in-memory quiz state if active
+        try {
+            const quizState = require('../lib/quizState');
+            if (quizState && typeof quizState.closeQuiz === 'function') {
+                quizState.closeQuiz(quizId);
+            }
+        } catch (e) {
+            console.warn('[QuizEnd] quizState close warning:', e.message);
+        }
+
+        // Update database to finished & inactive
+        const updated = await prisma.quiz.update({
+            where: { id: quizId },
+            data: {
+                status: 'finished',
+                isActive: false,
+                isLive: false
+            }
+        });
+
+        // Notify all sockets in this quiz room
+        try {
+            const io = req.app.get('io');
+            if (io) {
+                io.to(quizId).emit('quiz_ended', { quizId, status: 'finished' });
+                io.to(quizId).emit('quiz_ended_success', { quizId });
+            }
+        } catch (socketErr) {
+            console.warn('[QuizEnd] Socket notify error:', socketErr.message);
+        }
+
+        return res.json({ msg: 'Live room ended successfully', quiz: updated });
+    } catch (err) {
+        console.error('Error ending live quiz:', err);
+        return res.status(500).json({ msg: 'Server error ending live room' });
     }
 };
 

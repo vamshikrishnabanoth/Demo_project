@@ -253,12 +253,19 @@ export default function MyQuizzes() {
         );
         if (!result.isConfirmed) return;
         try {
-            await api.put(`/quiz/${quizId}`, { isActive: false, isLive: false, status: 'finished' });
+            await api.post(`/quiz/${quizId}/end`);
             setQuizzes(prev => prev.map(q => q.id === quizId ? { ...q, isActive: false, isLive: false, status: 'finished' } : q));
             toast.success('Live room ended successfully.');
-            refetch();
+            if (refetch) refetch();
         } catch (err) {
-            toast.error(err.response?.data?.msg || 'Failed to end live room.');
+            try {
+                await api.put(`/quiz/${quizId}`, { isActive: false, isLive: false, status: 'finished' });
+                setQuizzes(prev => prev.map(q => q.id === quizId ? { ...q, isActive: false, isLive: false, status: 'finished' } : q));
+                toast.success('Live room ended successfully.');
+                if (refetch) refetch();
+            } catch (err2) {
+                toast.error(err.response?.data?.msg || err2.response?.data?.msg || 'Failed to end live room.');
+            }
         }
     };
 

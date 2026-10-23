@@ -324,6 +324,54 @@ export default function CreateQuizText() {
         }
     }, [location.state]);
 
+    // Resilient fallback: fetch live quiz questions directly from API if editMode was entered with empty questions
+    useEffect(() => {
+        if (editMode && editQuizId && questions.length === 0) {
+            api.get(`/quiz/${editQuizId}`).then(res => {
+                const qData = res.data;
+                if (qData) {
+                    if (qData.questions && Array.isArray(qData.questions) && qData.questions.length > 0) {
+                        const normalized = qData.questions.map((q, qIndex) => {
+                            let opts = q.options;
+                            if (!Array.isArray(opts)) {
+                                if (opts && typeof opts === 'object') {
+                                    const keys = Object.keys(opts).sort();
+                                    opts = keys.map(k => opts[k]);
+                                } else {
+                                    opts = ['', '', '', ''];
+                                }
+                            }
+                            while (opts.length < 4) {
+                                opts.push(`Option ${opts.length + 1}`);
+                            }
+                            const cleanOpts = opts.slice(0, 4).map(String);
+                            let correctVal = q.correctAnswer || q.correct_answer || q.correct_ans || '';
+                            if (correctVal === 'A' || correctVal === 'B' || correctVal === 'C' || correctVal === 'D') {
+                                const optIdx = correctVal.charCodeAt(0) - 65;
+                                correctVal = cleanOpts[optIdx] || '';
+                            }
+                            return {
+                                ...q,
+                                tempId: q.tempId || q._id || q.id || `q_${Date.now()}_${qIndex}_${Math.random().toString(36).slice(2, 7)}`,
+                                questionText: q.questionText || q.prompt_text || q.question || '',
+                                options: cleanOpts,
+                                correctAnswer: correctVal,
+                                points: q.points || 10
+                            };
+                        });
+                        setQuestions(normalized);
+                        setIsGeneratedSource(true);
+                    }
+                    if (qData.title) setTitle(qData.title);
+                    if (qData.timerPerQuestion) setTimerPerQuestion(qData.timerPerQuestion);
+                    if (qData.assignedGroups && Array.isArray(qData.assignedGroups)) setAssignedGroups(qData.assignedGroups);
+                    if (qData.assignedStudents && Array.isArray(qData.assignedStudents)) setAssignedStudents(qData.assignedStudents);
+                    if (qData.accessType) setAccessType(qData.accessType);
+                }
+            }).catch(err => console.error('Failed to load quiz in edit mode:', err));
+        }
+    }, [editMode, editQuizId, questions.length]);
+
     useEffect(() => {
         if (isAssessment) {
             setTimerType('totalTime');

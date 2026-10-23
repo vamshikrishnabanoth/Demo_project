@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import { 
     FileText, Type, Book, Cpu, Sparkles, Mic, ArrowRight,
-    Activity, Radio, Play, Pencil
+    Activity, Radio, Play, Pencil, MinusCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../utils/api';
+import toast from 'react-hot-toast';
+import { showConfirm } from '../utils/alerts';
 
 export default function TeacherDashboard() {
     const [activeLiveQuiz, setActiveLiveQuiz] = useState(null);
@@ -26,6 +28,29 @@ export default function TeacherDashboard() {
         };
         fetchActive();
     }, []);
+
+    const handleEndRoom = async () => {
+        if (!activeLiveQuiz) return;
+        const result = await showConfirm(
+            'End Live Classroom?',
+            `Conclude the active live room for "${activeLiveQuiz.title}"? Students will no longer be able to answer questions and the room will be closed.`,
+            'Yes, End Room'
+        );
+        if (!result.isConfirmed) return;
+        try {
+            await api.post(`/quiz/${activeLiveQuiz.id || activeLiveQuiz._id}/end`);
+            setActiveLiveQuiz(null);
+            toast.success('Live room ended successfully.');
+        } catch (err) {
+            try {
+                await api.put(`/quiz/${activeLiveQuiz.id || activeLiveQuiz._id}`, { isActive: false, isLive: false, status: 'finished' });
+                setActiveLiveQuiz(null);
+                toast.success('Live room ended successfully.');
+            } catch (err2) {
+                toast.error(err.response?.data?.msg || err2.response?.data?.msg || 'Failed to end live room.');
+            }
+        }
+    };
 
     return (
         <DashboardLayout role="teacher">
@@ -56,7 +81,7 @@ export default function TeacherDashboard() {
                                     {activeLiveQuiz.title}
                                 </h3>
                                 <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-xl leading-relaxed mt-1">
-                                    You have a live room active right now! If you navigated back by mistake, click below to immediately resume question control, view student responses, and control the live room.
+                                    You have a live room active right now! If you navigated back by mistake, click below to immediately resume question control, view student responses, or advance questions.
                                 </p>
                             </div>
                         </div>
@@ -72,7 +97,7 @@ export default function TeacherDashboard() {
                                 onClick={() => navigate('/create-quiz/text', {
                                     state: {
                                         editMode: true,
-                                        editQuizId: activeLiveQuiz.id,
+                                        editQuizId: activeLiveQuiz.id || activeLiveQuiz._id,
                                         editJoinCode: activeLiveQuiz.joinCode,
                                         questions: Array.isArray(activeLiveQuiz.questions) ? activeLiveQuiz.questions : [],
                                         title: activeLiveQuiz.title || '',
@@ -87,6 +112,14 @@ export default function TeacherDashboard() {
                             >
                                 <Pencil size={15} />
                                 <span>Edit Live Quiz</span>
+                            </button>
+                            <button
+                                onClick={handleEndRoom}
+                                className="w-full sm:w-auto px-4 py-3.5 rounded-2xl bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 border border-slate-300 hover:border-rose-300 font-black text-xs uppercase tracking-wider shadow-xs hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                title="End this live classroom"
+                            >
+                                <MinusCircle size={15} className="text-rose-600" />
+                                <span>End Room</span>
                             </button>
                         </div>
                     </motion.div>

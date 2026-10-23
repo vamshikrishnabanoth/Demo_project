@@ -543,6 +543,11 @@ router.put('/publish/:id', auth, teacherOrAdmin, quizController.publishQuiz);
 // @desc    Delete a quiz
 router.delete('/:id', auth, teacherOrAdmin, quizController.deleteQuiz);
 
+// @route   POST api/quiz/:id/end
+// @desc    End/conclude an active live quiz room
+router.post('/:id/end', auth, teacherOrAdmin, quizController.endQuiz);
+router.put('/:id/end', auth, teacherOrAdmin, quizController.endQuiz);
+
 // @route   PUT api/quiz/:id
 // @desc    Update a quiz
 router.put('/:id', auth, teacherOrAdmin, quizController.updateQuiz);

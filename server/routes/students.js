@@ -26,18 +26,23 @@ router.get('/branches', auth, async (req, res) => {
 // @desc    Fetch unique sections dynamically based on selected branch
 router.get('/sections', auth, async (req, res) => {
     try {
-        const { branch } = req.query;
+        const branchParam = req.query.branch || req.query['branch[]'];
         const whereClause = {
             role: 'student',
             section: { not: null }
         };
 
-        if (branch) {
-            if (Array.isArray(branch)) {
-                whereClause.studentBranch = { in: branch };
-            } else {
-                whereClause.studentBranch = branch;
-            }
+        const rawBranches = Array.isArray(branchParam)
+            ? branchParam
+            : (typeof branchParam === 'string' && branchParam.includes(','))
+                ? branchParam.split(',').map(b => b.trim()).filter(Boolean)
+                : branchParam ? [branchParam] : [];
+
+        if (rawBranches.length > 0) {
+            whereClause.OR = rawBranches.flatMap(b => [
+                { studentBranch: { equals: b, mode: 'insensitive' } },
+                { studentBranch: { equals: b.toUpperCase() } }
+            ]);
         }
 
         const sections = await prisma.user.groupBy({
@@ -64,8 +69,10 @@ router.get('/years', auth, async (req, res) => {
             }
         });
         const yearList = years.map(y => y.year).filter(Boolean);
-        // Fallback to "1st Year" if database years aren't populated yet
-        res.json(yearList.length > 0 ? yearList : ['1st Year']);
+        // Fallback to ["1st Year", "2nd Year", "3rd Year", "4th Year"] if database years aren't fully populated yet
+        const defaultYears = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+        const combined = Array.from(new Set([...yearList, ...defaultYears]));
+        res.json(combined);
     } catch (err) {
         console.error('Error fetching years:', err);
         res.status(500).json({ error: 'Server error fetching years' });
@@ -84,8 +91,10 @@ router.get('/semesters', auth, async (req, res) => {
             }
         });
         const semesterList = semesters.map(s => s.semester).filter(Boolean);
-        // Fallback to "Semester 2" if database semesters aren't populated yet
-        res.json(semesterList.length > 0 ? semesterList : ['Semester 2']);
+        // Fallback to default semesters if database semesters aren't populated yet
+        const defaultSems = ['Semester 1', 'Semester 2'];
+        const combined = Array.from(new Set([...semesterList, ...defaultSems]));
+        res.json(combined);
     } catch (err) {
         console.error('Error fetching semesters:', err);
         res.status(500).json({ error: 'Server error fetching semesters' });
@@ -93,10 +102,15 @@ router.get('/semesters', auth, async (req, res) => {
 });
 
 // @route   GET api/students/search
-// @desc    Production-grade dynamic database query and search matching rollNo, name, email, branch, section
+// @desc    Production-grade dynamic database query and search matching rollNo, name, email, branch, section, year, semester
 router.get('/search', auth, async (req, res) => {
     try {
-        const { q, branch, section, year, semester, page = 1, limit = 20 } = req.query;
+        const { q, page = 1, limit = 20 } = req.query;
+        const branchParam = req.query.branch || req.query['branch[]'];
+        const sectionParam = req.query.section || req.query['section[]'];
+        const yearParam = req.query.year || req.query['year[]'];
+        const semesterParam = req.query.semester || req.query['semester[]'];
+
         const pageNum = parseInt(page);
         const limitNum = parseInt(limit);
         const skip = (pageNum - 1) * limitNum;
@@ -104,33 +118,107 @@ router.get('/search', auth, async (req, res) => {
         // Build filtering clauses dynamically
         const andClauses = [{ role: 'student' }];
 
-        if (branch) {
-            if (Array.isArray(branch)) {
-                andClauses.push({ studentBranch: { in: branch } });
-            } else {
-                andClauses.push({ studentBranch: branch });
+        // 1. Branch filter (supports single, multiple, array, or comma-separated e.g. "CSE,CSM")
+        const rawBranches = Array.isArray(branchParam)
+            ? branchParam
+            : (typeof branchParam === 'string' && branchParam.includes(','))
+                ? branchParam.split(',').map(b => b.trim()).filter(Boolean)
+                : branchParam ? [branchParam] : [];
+
+        if (rawBranches.length > 0) {
+            andClauses.push({
+                OR: rawBranches.flatMap(b => [
+                    { studentBranch: { equals: b, mode: 'insensitive' } },
+                    { studentBranch: { equals: b.toUpperCase() } },
+                    { studentBranch: { equals: b.toLowerCase() } }
+                ])
+            });
+        }
+
+        // 2. Section filter (supports single, multiple, array, or comma-separated)
+        const rawSections = Array.isArray(sectionParam)
+            ? sectionParam
+            : (typeof sectionParam === 'string' && sectionParam.includes(','))
+                ? sectionParam.split(',').map(s => s.trim()).filter(Boolean)
+                : sectionParam ? [sectionParam] : [];
+
+        if (rawSections.length > 0) {
+            andClauses.push({
+                OR: rawSections.flatMap(sec => [
+                    { section: { equals: sec, mode: 'insensitive' } },
+                    { section: { equals: sec.toUpperCase() } }
+                ])
+            });
+        }
+
+        // 3. Year filter (handles variations like "1", "1st Year", "Year 1", etc.)
+        if (yearParam) {
+            const rawYears = Array.isArray(yearParam)
+                ? yearParam
+                : (typeof yearParam === 'string' && yearParam.includes(','))
+                    ? yearParam.split(',').map(y => y.trim()).filter(Boolean)
+                    : [yearParam];
+
+            const yearClauses = [];
+            for (const y of rawYears) {
+                const strY = y.toString().trim();
+                const digitMatch = strY.match(/\d+/);
+                const digit = digitMatch ? digitMatch[0] : strY;
+                const suffixes = { '1': 'st', '2': 'nd', '3': 'rd', '4': 'th' };
+                const suffix = suffixes[digit] || 'th';
+
+                const variations = Array.from(new Set([
+                    strY,
+                    digit,
+                    `${digit}${suffix} Year`,
+                    `${digit} Year`,
+                    `Year ${digit}`
+                ]));
+
+                variations.forEach(v => {
+                    yearClauses.push({ year: { equals: v, mode: 'insensitive' } });
+                });
+            }
+
+            if (yearClauses.length > 0) {
+                andClauses.push({ OR: yearClauses });
             }
         }
 
-        if (section) {
-            if (Array.isArray(section)) {
-                andClauses.push({ section: { in: section } });
-            } else {
-                andClauses.push({ section: section });
+        // 4. Semester filter (handles variations like "1", "Semester 1", "Sem 1")
+        if (semesterParam) {
+            const rawSems = Array.isArray(semesterParam)
+                ? semesterParam
+                : (typeof semesterParam === 'string' && semesterParam.includes(','))
+                    ? semesterParam.split(',').map(s => s.trim()).filter(Boolean)
+                    : [semesterParam];
+
+            const semClauses = [];
+            for (const s of rawSems) {
+                const strS = s.toString().trim();
+                const semDigitMatch = strS.match(/\d+/);
+                const semDigit = semDigitMatch ? semDigitMatch[0] : strS;
+
+                const variations = Array.from(new Set([
+                    strS,
+                    semDigit,
+                    `Semester ${semDigit}`,
+                    `Sem ${semDigit}`
+                ]));
+
+                variations.forEach(v => {
+                    semClauses.push({ semester: { equals: v, mode: 'insensitive' } });
+                });
+            }
+
+            if (semClauses.length > 0) {
+                andClauses.push({ OR: semClauses });
             }
         }
 
-        if (year) {
-            andClauses.push({ year: year });
-        }
-
-        if (semester) {
-            andClauses.push({ semester: semester });
-        }
-
+        // 5. Search query (username/rollNo, name, email)
         if (q && q.trim().length > 0) {
             const queryText = q.trim();
-            // Typo-tolerant and flexible case-insensitive matching across rollNo (username), name, email
             andClauses.push({
                 OR: [
                     { username: { contains: queryText, mode: 'insensitive' } },
