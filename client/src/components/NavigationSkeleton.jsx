@@ -22,13 +22,14 @@ const shimmer = {
     },
 };
 
-const ShimmerBlock = ({ className = '' }) => (
+const ShimmerBlock = ({ className = '', style = {} }) => (
     <motion.div
         {...shimmer}
         className={`rounded-2xl ${className}`}
         style={{
-            background: 'linear-gradient(90deg, var(--glass-bg) 25%, rgba(255,255,255,0.06) 50%, var(--glass-bg) 75%)',
+            background: 'linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)',
             backgroundSize: '400% 100%',
+            ...style,
         }}
     />
 );
@@ -36,17 +37,11 @@ const ShimmerBlock = ({ className = '' }) => (
 // Dashboard skeleton — navbar + content cards
 const DashboardSkeleton = () => (
     <div
-        className="min-h-screen flex flex-col"
-        style={{ background: 'var(--bg-primary)' }}
+        className="min-h-screen flex flex-col bg-white"
     >
         {/* Navbar skeleton */}
         <div
-            className="h-20 border-b sticky top-0 z-50 flex items-center px-8 gap-8"
-            style={{
-                background: 'rgba(255,255,255,0.02)',
-                borderColor: 'var(--border-color)',
-                backdropFilter: 'blur(20px)',
-            }}
+            className="h-20 border-b border-slate-200 sticky top-0 z-50 flex items-center px-8 gap-8 bg-white/80 backdrop-blur-md"
         >
             {/* Logo */}
             <ShimmerBlock className="h-10 w-32" />

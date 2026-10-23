@@ -25,39 +25,60 @@ const PLANNER_CONFIG = {
     HARD:   { level: "ANALYZE",  verbs: ["Analyze", "Evaluate", "Compare", "Diagnose"] }
   },
   FRAMING_PROFILES: {
-    DEFINITION: {
-      allowNumerical: false,
+    CONCEPTUAL: {
+      allowNumerical: true,
       requiresEvidence: true,
-      allowCode: false,
-      maxStemLength: 150,
+      allowCode: true,
+      maxStemLength: 600,
       distractorStyle: "peer_concept"
     },
     SCENARIO: {
-      allowNumerical: false,
+      allowNumerical: true,
       requiresEvidence: true,
-      allowCode: false,
-      maxStemLength: 220,
+      allowCode: true,
+      maxStemLength: 800,
       distractorStyle: "plausible_misconception"
     },
-    COMPARATIVE: {
-      allowNumerical: false,
+    DIAGNOSTIC: {
+      allowNumerical: true,
       requiresEvidence: true,
-      allowCode: false,
-      maxStemLength: 180,
+      allowCode: true,
+      maxStemLength: 700,
+      distractorStyle: "diagnostic_flaw"
+    },
+    TRADE_OFF: {
+      allowNumerical: true,
+      requiresEvidence: true,
+      allowCode: true,
+      maxStemLength: 600,
+      distractorStyle: "contrasting_concept"
+    },
+    DEFINITION: {
+      allowNumerical: true,
+      requiresEvidence: true,
+      allowCode: true,
+      maxStemLength: 450,
+      distractorStyle: "peer_concept"
+    },
+    COMPARATIVE: {
+      allowNumerical: true,
+      requiresEvidence: true,
+      allowCode: true,
+      maxStemLength: 600,
       distractorStyle: "contrasting_concept"
     },
     CALCULATION: {
       allowNumerical: true,
       requiresEvidence: true,
       allowCode: true,
-      maxStemLength: 200,
+      maxStemLength: 650,
       distractorStyle: "computational_error"
     },
     TROUBLESHOOTING: {
-      allowNumerical: false,
+      allowNumerical: true,
       requiresEvidence: true,
       allowCode: true,
-      maxStemLength: 250,
+      maxStemLength: 750,
       distractorStyle: "diagnostic_flaw"
     }
   }

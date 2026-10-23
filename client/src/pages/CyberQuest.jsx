@@ -8,7 +8,7 @@ import {
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
+import FormattedQuestionText, { FormattedOptionText } from '../components/quiz/FormattedQuestionText';
 
 // Dynamically generate the ladder based on total levels (question count)
 function buildLadder(totalLevels) {
@@ -553,7 +553,9 @@ export default function CyberQuest() {
                                                         <span className="font-mono uppercase text-cyan-400 font-black text-xs border border-cyan-400/40 px-2 py-0.5 rounded bg-cyan-950/50 shrink-0">
                                                             {['A', 'B', 'C', 'D'][idx]}
                                                         </span>
-                                                        <span className="break-words whitespace-normal min-w-0 text-white font-bold text-base">{option}</span>
+                                                        <div className="break-words whitespace-normal min-w-0 text-white font-bold text-base flex-1">
+                                                            <FormattedOptionText optionText={option} />
+                                                        </div>
                                                     </span>
                                                     {feedbackState === 'correct' && isCorrectChoice && <CheckCircle size={16} className="text-emerald-400 shrink-0" />}
                                                 </button>

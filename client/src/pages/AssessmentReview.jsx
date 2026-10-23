@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
+import FormattedQuestionText, { FormattedOptionText } from '../components/quiz/FormattedQuestionText';
 import {
     CheckCircle, XCircle, ArrowLeft, Trophy, BookOpen,
     Loader2, AlertCircle, RotateCcw
@@ -54,7 +54,9 @@ function ReviewCard({ question, answer, index }) {
                                 ${isThisCorrect ? 'bg-green-500 text-white' : isSelected && !isThisCorrect ? 'bg-red-500 text-white' : 'bg-white/10 text-slate-500'}`}>
                                 {LETTERS[oi]}
                             </span>
-                            <span className="text-sm flex-1">{opt}</span>
+                            <div className="text-sm flex-1">
+                                <FormattedOptionText optionText={opt} />
+                            </div>
                             {isThisCorrect && <CheckCircle size={15} className="text-green-400 shrink-0" />}
                             {isSelected && !isThisCorrect && <XCircle size={15} className="text-red-400 shrink-0" />}
                         </div>

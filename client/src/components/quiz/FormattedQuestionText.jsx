@@ -1,6 +1,29 @@
 import React, { useState } from 'react';
 import { Terminal, Database, FileCode, Layers, Copy, Check, Maximize2, Minimize2, ChevronRight, ImageOff } from 'lucide-react';
 import { parseQuestionContent } from '../../utils/questionFormatter';
+import katex from 'katex';
+
+/**
+ * Render LaTeX math formulas safely using KaTeX
+ */
+function MathSpan({ formula, displayMode = false }) {
+    if (!formula) return null;
+    try {
+        const cleanFormula = formula.trim();
+        const html = katex.renderToString(cleanFormula, {
+            displayMode,
+            throwOnError: false,
+        });
+        return (
+            <span
+                className={displayMode ? "block my-2 text-center overflow-x-auto py-1" : "inline-block mx-0.5 align-middle select-text"}
+                dangerouslySetInnerHTML={{ __html: html }}
+            />
+        );
+    } catch (e) {
+        return <span className="font-mono text-amber-600 font-bold">{formula}</span>;
+    }
+}
 
 const getLangIcon = (lang) => {
     switch ((lang || '').toLowerCase()) {
@@ -20,11 +43,11 @@ const getLangIcon = (lang) => {
 };
 
 /**
- * Safely renders text with basic formatting support:
+ * Safely renders text with rich formatting support:
+ * - LaTeX Mathematics: $$block$$ or $inline$ or \[block\] or \(inline\)
  * - **bold**, *italic*, `inline code`
  * - Markdown images: ![alt](url)
  * - Line breaks preserved via whitespace-pre-wrap
- * Does NOT use dangerouslySetInnerHTML — all content is React elements.
  */
 function SafeRichText({ content, className = '' }) {
     if (!content) return null;
@@ -59,32 +82,40 @@ function SafeRichText({ content, className = '' }) {
 }
 
 /**
- * Renders inline formatting: **bold**, *italic*, `code`
- * Safe — no HTML injection.
+ * Renders inline math, bold, italic, code, and text spans
  */
-function FormattedTextSpan({ text }) {
+function FormattedTextSpan({ text, inlineCodeClass = '' }) {
     if (!text) return null;
-    
-    // Process inline formatting tokens
+
+    // Match block math ($$...$$ or \[...\]), inline math ($...$ or \(...\)), bold, italic, and inline code
+    const combinedRegex = /(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\$[^\$\n]+?\$|\\\([\s\S]+?\\\)|\*\*(.+?)\*\*|\*(.+?)\*|`([^`]+)`)/g;
     const tokens = [];
-    // Combined regex for **bold**, *italic*, and `code`
-    const inlineRegex = /(\*\*(.+?)\*\*|\*(.+?)\*|`([^`]+)`)/g;
     let lastIdx = 0;
     let m;
 
-    while ((m = inlineRegex.exec(text)) !== null) {
+    while ((m = combinedRegex.exec(text)) !== null) {
         if (m.index > lastIdx) {
             tokens.push({ type: 'plain', content: text.slice(lastIdx, m.index) });
         }
-        if (m[2]) {
+        const fullMatch = m[0];
+        if (fullMatch.startsWith('$$') && fullMatch.endsWith('$$')) {
+            tokens.push({ type: 'blockMath', content: fullMatch.slice(2, -2) });
+        } else if (fullMatch.startsWith('\\[') && fullMatch.endsWith('\\]')) {
+            tokens.push({ type: 'blockMath', content: fullMatch.slice(2, -2) });
+        } else if (fullMatch.startsWith('$') && fullMatch.endsWith('$')) {
+            tokens.push({ type: 'inlineMath', content: fullMatch.slice(1, -1) });
+        } else if (fullMatch.startsWith('\\(') && fullMatch.endsWith('\\)')) {
+            tokens.push({ type: 'inlineMath', content: fullMatch.slice(2, -2) });
+        } else if (m[2]) {
             tokens.push({ type: 'bold', content: m[2] });
         } else if (m[3]) {
             tokens.push({ type: 'italic', content: m[3] });
         } else if (m[4]) {
             tokens.push({ type: 'inlineCode', content: m[4] });
         }
-        lastIdx = m.index + m[0].length;
+        lastIdx = m.index + fullMatch.length;
     }
+
     if (lastIdx < text.length) {
         tokens.push({ type: 'plain', content: text.slice(lastIdx) });
     }
@@ -97,13 +128,17 @@ function FormattedTextSpan({ text }) {
         <>
             {tokens.map((token, i) => {
                 switch (token.type) {
+                    case 'blockMath':
+                        return <MathSpan key={i} formula={token.content} displayMode={true} />;
+                    case 'inlineMath':
+                        return <MathSpan key={i} formula={token.content} displayMode={false} />;
                     case 'bold':
                         return <strong key={i} className="font-bold">{token.content}</strong>;
                     case 'italic':
                         return <em key={i}>{token.content}</em>;
                     case 'inlineCode':
                         return (
-                            <code key={i} className="px-1.5 py-0.5 bg-slate-100 text-rose-600 rounded text-[0.85em] font-mono border border-slate-200">
+                            <code key={i} className={`px-1.5 py-0.5 bg-slate-100 text-rose-600 rounded text-[0.85em] font-mono border border-slate-200 select-text ${inlineCodeClass}`}>
                                 {token.content}
                             </code>
                         );
@@ -112,6 +147,41 @@ function FormattedTextSpan({ text }) {
                 }
             })}
         </>
+    );
+}
+
+/**
+ * Formats option choices (A, B, C, D) supporting math expressions,
+ * code statements, and clean formatting.
+ */
+function FormattedOptionText({ optionText = '', className = '' }) {
+    if (!optionText || typeof optionText !== 'string') {
+        return <span className={className}>{String(optionText || '')}</span>;
+    }
+
+    const trimmed = optionText.trim();
+
+    // Pure math formula
+    if (trimmed.startsWith('$') && trimmed.endsWith('$') && !trimmed.slice(1, -1).includes('$')) {
+        return <MathSpan formula={trimmed.slice(1, -1)} displayMode={false} />;
+    }
+    if (trimmed.startsWith('$$') && trimmed.endsWith('$$')) {
+        return <MathSpan formula={trimmed.slice(2, -2)} displayMode={false} />;
+    }
+
+    // Pure code snippet
+    if (trimmed.startsWith('`') && trimmed.endsWith('`') && !trimmed.slice(1, -1).includes('`')) {
+        return (
+            <code className="px-2 py-0.5 rounded bg-slate-100 font-mono text-[0.9em] text-cyan-800 font-bold border border-slate-200">
+                {trimmed.slice(1, -1)}
+            </code>
+        );
+    }
+
+    return (
+        <span className={className}>
+            <FormattedTextSpan text={optionText} />
+        </span>
     );
 }
 
@@ -317,4 +387,4 @@ export default function FormattedQuestionText({
 }
 
 // Export for reuse in other components
-export { SafeRichText, QuestionImage };
+export { SafeRichText, QuestionImage, FormattedOptionText, MathSpan };

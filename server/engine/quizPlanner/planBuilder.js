@@ -20,7 +20,8 @@ function buildPlanSlots(opts) {
 
     const distInfo = slotDistributions[idx] || { targetDifficulty: "EASY", targetBloom: "RECALL" };
     const expectedFraming = slotFramings[idx] || "Conceptual";
-    const promptProfile = PLANNER_CONFIG.FRAMING_PROFILES[expectedFraming] || PLANNER_CONFIG.FRAMING_PROFILES.DEFINITION;
+    const framingKey = String(expectedFraming).toUpperCase().replace(/[^A-Z0-9]/g, '_');
+    const promptProfile = PLANNER_CONFIG.FRAMING_PROFILES[framingKey] || PLANNER_CONFIG.FRAMING_PROFILES[expectedFraming] || PLANNER_CONFIG.FRAMING_PROFILES.CONCEPTUAL || PLANNER_CONFIG.FRAMING_PROFILES.DEFINITION;
 
     const evidenceBounds = conceptIndex[conceptId] || node.evidenceOffsets || [[0, 50]];
     const summaryContext = node.summaryContext || node.evidenceText || `Source context for concept ${node.label || conceptId}.`;

@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import SubmissionSequence from '../components/quiz/SubmissionSequence';
 import AdaptiveQuestionContainer from '../components/quiz/AdaptiveQuestionContainer';
-import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
+import FormattedQuestionText, { FormattedOptionText } from '../components/quiz/FormattedQuestionText';
 import { showError, showSuccess } from '../utils/alerts';
 import useExamProctoring from '../hooks/useExamProctoring';
 import throttle from '../utils/throttle';
@@ -1459,7 +1459,7 @@ export default function AttemptQuiz() {
                                                 <ShapeIcon size={20} fill={shapeFill} strokeWidth={0} />
                                             </div>
                                             <span className="text-sm sm:text-base font-bold leading-relaxed break-words whitespace-pre-wrap min-w-0 flex-1 select-text" style={{ color: textColor }}>
-                                                {option}
+                                                <FormattedOptionText optionText={option} />
                                             </span>
 
                                             {isSelected && !isReviewMode && (
@@ -1488,7 +1488,9 @@ export default function AttemptQuiz() {
                                 <CheckCircle size={20} className="text-emerald-700 flex-shrink-0 mt-0.5" />
                                 <div className="min-w-0 flex-1">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-emerald-800 mb-1">CORRECT ANSWER</p>
-                                    <p className="text-sm sm:text-base font-bold leading-relaxed text-emerald-950 break-words whitespace-pre-wrap">{questionResult?.correctOption}</p>
+                                    <div className="text-sm sm:text-base font-bold leading-relaxed text-emerald-950 break-words whitespace-pre-wrap">
+                                        <FormattedOptionText optionText={questionResult?.correctOption} />
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -1597,7 +1599,7 @@ export default function AttemptQuiz() {
                                             }}
                                             className="w-full text-left p-4 rounded-xl border-2 border-indigo-200 hover:border-indigo-600 hover:bg-indigo-50 transition-all font-medium text-gray-700 break-words whitespace-pre-wrap"
                                         >
-                                            {option}
+                                            <FormattedOptionText optionText={option} />
                                         </button>
                                     ))}
                                 </div>

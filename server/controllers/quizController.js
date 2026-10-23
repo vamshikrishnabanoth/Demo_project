@@ -902,7 +902,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             commonDocumentModel: commonDocModel,
             difficulty: difficulty,
             count: parseInt(count),
-            deficitPolicy: deficitPolicy || null
+            deficitPolicy: deficitPolicy || 'FILL_WITH_MEDIUM'
         };
 
         const stageLabelMap = {

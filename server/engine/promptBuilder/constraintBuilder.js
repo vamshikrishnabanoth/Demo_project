@@ -46,6 +46,14 @@ function buildConstraintText(slot) {
     lines.push(`- TARGET LEARNING OBJECTIVE: "${slot.learningObjective}"`);
   }
 
+  if (profile.allowCode || slot.hasCodeOrMath || slot.executable || slot.canGenerateSyntaxQuestion) {
+    lines.push(`- CODE & SYNTAX DIRECTIVE: When framing programming, algorithmic, or technical questions, embed the code snippet directly in the question stem using standard markdown code fences (e.g. \`\`\`cpp ... \`\`\` or \`\`\`python ... \`\`\`). Keep option choices clear and syntactically valid.`);
+  }
+
+  if (profile.allowNumerical || profile.requiresCalculation) {
+    lines.push(`- MATHEMATICAL & CALCULATION DIRECTIVE: For mathematical formulas, variables, and calculations, format equations using standard LaTeX notation (e.g. $E = mc^2$, $\\frac{a}{b}$, $x^2$) or clean mathematical expressions.`);
+  }
+
   return lines.join('\n');
 }
 

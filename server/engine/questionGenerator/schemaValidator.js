@@ -26,10 +26,49 @@ function validateParsedMCQSchema(parsedObj) {
     return { isValid: false, status: "SCHEMA_MISMATCH", reason: "Options array must contain exactly 4 non-empty strings." };
   }
 
+  let resolvedCorrectAnswer = null;
   const cleanAns = String(correctAnswer || '').trim();
-  const verbatimMatch = options.some(opt => String(opt).trim() === cleanAns);
-  if (!correctAnswer || !verbatimMatch) {
-    return { isValid: false, status: "SCHEMA_MISMATCH", reason: "Correct answer does not match any of the 4 options verbatim." };
+
+  // 1. Verbatim exact match
+  if (options.some(opt => String(opt).trim() === cleanAns)) {
+    resolvedCorrectAnswer = cleanAns;
+  }
+
+  // 2. Letter/Index key: "A", "B", "C", "D", "Option A", "1", "(A)"
+  if (!resolvedCorrectAnswer && cleanAns) {
+    const letterMatch = cleanAns.match(/^(?:option\s+)?\(?([a-d1-4])\)?(?:\.|\:|\s|\-|\)|$)/i);
+    if (letterMatch) {
+      const char = letterMatch[1].toUpperCase();
+      const map = { 'A': 0, '1': 0, 'B': 1, '2': 1, 'C': 2, '3': 2, 'D': 3, '4': 3 };
+      const idx = map[char];
+      if (idx !== undefined && options[idx]) {
+        resolvedCorrectAnswer = String(options[idx]).trim();
+      }
+    }
+  }
+
+  // 3. Case-insensitive or trimmed match
+  if (!resolvedCorrectAnswer && cleanAns) {
+    const lower = cleanAns.toLowerCase();
+    const matched = options.find(opt => String(opt).trim().toLowerCase() === lower);
+    if (matched) {
+      resolvedCorrectAnswer = String(matched).trim();
+    }
+  }
+
+  // 4. Substring without letter prefix (e.g., "(A) Quick Sort" -> "Quick Sort")
+  if (!resolvedCorrectAnswer && cleanAns) {
+    const stripped = cleanAns.replace(/^(?:option\s+[a-d1-4]|(?:\(?[a-d1-4]\)?[\)\.\:\s\-]+))\s*/i, '').trim().toLowerCase();
+    if (stripped) {
+      const subMatch = options.find(opt => String(opt).trim().toLowerCase() === stripped);
+      if (subMatch) {
+        resolvedCorrectAnswer = String(subMatch).trim();
+      }
+    }
+  }
+
+  if (!resolvedCorrectAnswer) {
+    return { isValid: false, status: "SCHEMA_MISMATCH", reason: "Correct answer does not match any of the 4 options verbatim or by index." };
   }
 
   if (!explanation || typeof explanation !== 'string' || explanation.trim().length === 0) {
@@ -41,7 +80,7 @@ function validateParsedMCQSchema(parsedObj) {
     status: "SUCCESS",
     stem: stem.trim(),
     options: options.map(o => String(o).trim()),
-    correctAnswer: cleanAns,
+    correctAnswer: resolvedCorrectAnswer,
     explanation: explanation.trim()
   };
 }

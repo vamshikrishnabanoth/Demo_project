@@ -52,7 +52,7 @@ const AdminStudentProfile = lazyWithSuspense(() => import('./pages/AdminStudentP
 // ─── Home redirect ────────────────────────────────────────────────────────────
 const Home = () => {
     const { user, loading } = useContext(AuthContext);
-    if (loading) return null;
+    if (loading) return <NavigationSkeleton />;
     if (!user) return <Navigate to="/login" replace />;
     const role = (user.role || '').toLowerCase().trim();
     const homes = { teacher: '/teacher-dashboard', student: '/student-dashboard', admin: '/admin-dashboard' };

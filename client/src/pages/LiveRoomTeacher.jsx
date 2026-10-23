@@ -11,7 +11,7 @@ import throttle from '../utils/throttle';
 import { cleanQuizTitle } from '../utils/cleanTitle';
 import { SecurityDashboard } from '../components/SecurityDashboard';
 
-import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
+import FormattedQuestionText, { FormattedOptionText } from '../components/quiz/FormattedQuestionText';
 
 export default function LiveRoomTeacher() {
     const { joinCode } = useParams();
@@ -1061,7 +1061,9 @@ if (socket.connected) {
                                             <div className={`w-9 h-9 rounded-full ${theme.badge} flex items-center justify-center font-black text-sm flex-shrink-0 shadow-xs`} style={theme.badgeStyle || {}}>
                                                 {label}
                                             </div>
-                                            <span className="font-bold text-sm leading-snug" style={{ color: '#172033' }}>{option}</span>
+                                            <div className="font-bold text-sm leading-snug flex-1" style={{ color: '#172033' }}>
+                                                <FormattedOptionText optionText={option} />
+                                            </div>
                                         </div>
                                     );
                                 })}

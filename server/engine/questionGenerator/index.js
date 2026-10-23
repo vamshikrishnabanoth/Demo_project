@@ -137,14 +137,27 @@ async function generateQuestions(promptPayloads = [], pipelineContext = {}) {
           } else {
             if (validation.status === "INSUFFICIENT_EVIDENCE") {
               insufficientEvidenceSkipped++;
+              failedSlots.push({
+                slotId,
+                reason: validation.status,
+                attempts
+              });
+              return;
             }
-            
-            failedSlots.push({
-              slotId,
-              reason: validation.status || "SCHEMA_MISMATCH",
-              attempts
-            });
-            return;
+
+            retryHistory.push({ attempt: attempts, error: validation.reason || validation.status, timestamp: Date.now() });
+            if (attempts <= GENERATOR_CONFIG.MAX_RETRIES_PER_SLOT) {
+              retriesPerformed++;
+              await waitWithJitter(attempts);
+              continue;
+            } else {
+              failedSlots.push({
+                slotId,
+                reason: validation.status || "SCHEMA_MISMATCH",
+                attempts
+              });
+              return;
+            }
           }
         } catch (err) {
           const errMessage = err.message || String(err);

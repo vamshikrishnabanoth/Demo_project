@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
-import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
+import FormattedQuestionText, { FormattedOptionText } from '../components/quiz/FormattedQuestionText';
 
 const FALLBACK_QUESTIONS = [
     {
@@ -542,7 +542,9 @@ export default function SprintArena() {
                                                 <span className="font-mono uppercase text-pink-400 font-black text-xs border border-pink-500/20 px-2 py-0.5 rounded bg-white/5 shrink-0">
                                                     {['A', 'B', 'C', 'D'][idx]}
                                                 </span>
-                                                <span className="break-words whitespace-normal min-w-0">{option}</span>
+                                                <div className="break-words whitespace-normal min-w-0 flex-1">
+                                                    <FormattedOptionText optionText={option} />
+                                                </div>
                                             </span>
                                             {feedbackType === 'correct' && isCorrectChoice && <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />}
                                             {feedbackType === 'wrong' && isSelected && <XCircle size={16} className="text-pink-400 shrink-0" />}
