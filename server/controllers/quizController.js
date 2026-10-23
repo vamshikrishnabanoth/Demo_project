@@ -113,6 +113,29 @@ function isStudentTargeted(student, assignedGroups, assignedStudents) {
  * Transcribes audio files (including 3-4 hour / 300MB-500MB lectures) locally or via Cloud STT
  * with automatic model failovers (Groq Whisper Turbo -> Groq Whisper Large-v3 -> Google Gemini Multimodal AI).
  */
+/**
+ * Retrieves all available Groq API keys for Whisper transcription load balancing.
+ */
+function getGroqWhisperPool() {
+    const keys = [];
+    for (const [name, val] of Object.entries(process.env)) {
+        if (name.startsWith("GROQ_API_KEY") && typeof val === "string" && val.trim().length > 10) {
+            keys.push(val.trim());
+        }
+    }
+    if (process.env.GROQ_API_KEYS) {
+        keys.push(...process.env.GROQ_API_KEYS.split(",").map(k => k.trim()).filter(k => k.length > 10));
+    }
+    const uniqueKeys = [...new Set(keys)];
+    if (uniqueKeys.length === 0 && process.env.GROQ_API_KEY) {
+        uniqueKeys.push(process.env.GROQ_API_KEY);
+    }
+    return uniqueKeys.map(k => ({
+        keyHint: k.slice(0, 8) + "...",
+        client: new Groq({ apiKey: k })
+    }));
+}
+
 const _rawTranscribeAudioWithTimestamps = async (filePath) => {
     // 1. Try local Python faster-whisper service ONLY if ENABLE_LOCAL_STT === 'true'
     if (process.env.ENABLE_LOCAL_STT === 'true') {
@@ -157,16 +180,15 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
     }
     }
 
-    // 2. Production STT: Groq Whisper Turbo / Large-v3 with Gemini Multimodal Fallback
-    const groqKey = process.env.GROQ_API_KEY;
+    // 2. Production STT: Multi-Key Groq Whisper Turbo / Large-v3 with Gemini Multimodal Fallback
+    const whisperPool = getGroqWhisperPool();
     const geminiKey = process.env.GEMINI_API_KEY;
 
-    if (!groqKey && !geminiKey) {
-        console.error('❌ Neither GROQ_API_KEY nor GEMINI_API_KEY is configured in environment variables.');
+    if (whisperPool.length === 0 && !geminiKey) {
+        console.error("❌ Neither GROQ_API_KEY nor GEMINI_API_KEY is configured in environment variables.");
         return null;
     }
 
-    const groqClient = groqKey ? (groq || new Groq({ apiKey: groqKey })) : null;
     const stats = fs.existsSync(filePath) ? fs.statSync(filePath) : null;
     const fileSizeBytes = stats ? stats.size : 0;
     const ext = path.extname(filePath).toLowerCase();
@@ -176,29 +198,31 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
         const h = Math.floor(total / 3600);
         const m = Math.floor((total % 3600) / 60);
         const sc = total % 60;
-        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${sc.toString().padStart(2, '0')}`;
+        return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${sc.toString().padStart(2, "0")}`;
     };
 
-    // Helper: Call Groq with model fallback (whisper-large-v3-turbo -> whisper-large-v3) & retry on 429
-    const callGroqWhisper = async (uploadFile, preferredModel = 'whisper-large-v3-turbo') => {
-        if (!groqClient) throw new Error('Groq client not configured');
-        const modelsToTry = [preferredModel, 'whisper-large-v3-turbo'].filter((v, i, a) => a.indexOf(v) === i);
+    // Helper: Call Groq with key pool rotation, model fallback (whisper-large-v3-turbo -> whisper-large-v3) & retry on 429
+    const callGroqWhisper = async (uploadFile, preferredModel = "whisper-large-v3-turbo", keyHintIndex = 0) => {
+        if (whisperPool.length === 0) throw new Error("Groq client not configured");
+        const modelsToTry = [preferredModel, "whisper-large-v3-turbo"].filter((v, i, a) => a.indexOf(v) === i);
         let lastError = null;
 
         for (const modelName of modelsToTry) {
-            for (let attempt = 0; attempt <= 2; attempt++) {
+            const maxAttempts = Math.max(whisperPool.length, 2);
+            for (let attempt = 0; attempt <= maxAttempts; attempt++) {
+                const clientEntry = whisperPool[(keyHintIndex + attempt) % whisperPool.length];
                 try {
-                    return await groqClient.audio.transcriptions.create({
+                    return await clientEntry.client.audio.transcriptions.create({
                         file: uploadFile,
                         model: modelName,
-                        response_format: 'verbose_json'
+                        response_format: "verbose_json"
                     });
                 } catch (err) {
                     lastError = err;
                     const status = err.status || err.statusCode || (err.response && err.response.status);
-                    const is429 = status === 429 || (err.message && err.message.includes('429'));
-                    const is413 = status === 413 || (err.message && (err.message.includes('413') || err.message.includes('Request too large')));
-                    const is404 = status === 404 || (err.message && (err.message.includes('model_not_found') || err.message.includes('does not exist')));
+                    const is429 = status === 429 || (err.message && err.message.includes("429"));
+                    const is413 = status === 413 || (err.message && (err.message.includes("413") || err.message.includes("Request too large")));
+                    const is404 = status === 404 || (err.message && (err.message.includes("model_not_found") || err.message.includes("does not exist")));
 
                     if (is404) {
                         console.warn(`⚠️ Model "${modelName}" not found on Groq. Trying next fallback model...`);
@@ -210,16 +234,14 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                         break;
                     }
 
-                    if (is429 && attempt < 2) {
-                        const retryAfterHeader = err.headers?.['retry-after'] || err.response?.headers?.['retry-after'];
-                        let delayMs = 1500 * Math.pow(2, attempt);
-                        if (retryAfterHeader) {
-                            const parsed = parseFloat(retryAfterHeader);
-                            if (!isNaN(parsed) && parsed > 0 && parsed <= 10) {
-                                delayMs = Math.ceil(parsed * 1000);
-                            }
-                        }
-                        console.warn(`⏳ Groq Whisper rate limit (429). Bounded retry ${attempt + 1}/2 after ${delayMs}ms...`);
+                    if (is429 && attempt < whisperPool.length) {
+                        console.warn(`⏳ Groq Whisper rate limit on key ${clientEntry.keyHint}. Rotating to next key in pool...`);
+                        continue;
+                    }
+
+                    if (is429 && attempt >= whisperPool.length) {
+                        const delayMs = 1500 * Math.pow(2, attempt - whisperPool.length);
+                        console.warn(`⏳ All Groq Whisper keys busy (429). Retrying after ${delayMs}ms...`);
                         await new Promise(res => setTimeout(res, delayMs));
                         continue;
                     }
@@ -229,7 +251,6 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
         }
         throw lastError;
     };
-
     // Determine actual or probed audio duration
     const probedDuration = getAudioDuration(filePath);
     // Groq Whisper supports payloads up to 25 MB directly without ffmpeg slicing overhead.
@@ -314,12 +335,12 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
         }
 
         // ── Tier B: Universal Multi-Hour Chunking Pass (Files > 10 mins or > 18 MB, up to 4 Hours) ──
-        console.log(`🎙️ Multi-Hour / Oversized Audio (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB, duration: ${probedDuration ? probedDuration.toFixed(1) + 's' : 'probing...'}). Slicing into clean 10-minute 16kHz mono chunks...`);
+        console.log(`🎙️ Multi-Hour / Oversized Audio (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB, duration: ${probedDuration ? probedDuration.toFixed(1) + 's' : 'probing...'}). Slicing into clean 20-minute 16kHz mono chunks (Async)...`);
 
         let chunks = [];
         try {
-            chunks = segmentAudioUniversal(filePath, {
-                segmentTimeSeconds: 600, // 10 minutes per chunk (~3.6 MB at 48k mono AAC)
+            chunks = await segmentAudioUniversal(filePath, {
+                segmentTimeSeconds: 1200, // 20 minutes per chunk (~7.2 MB at 48k mono AAC)
                 outputDir: path.dirname(filePath)
             });
         } catch (segmentErr) {
@@ -346,9 +367,9 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
         const textParts = [];
         let cumulativeDuration = 0;
 
-        const maxConcurrency = Math.max(1, parseInt(process.env.WHISPER_CONCURRENCY, 10) || 2);
+        const maxConcurrency = Math.min(Math.max(whisperPool.length, parseInt(process.env.WHISPER_CONCURRENCY, 10) || 2), 4);
         const poolSize = Math.min(maxConcurrency, chunks.length);
-        console.log(`🎙️ [Multi-Hour STT] Launching bounded transcription for ${chunks.length} chunks (concurrency: ${poolSize}, max: ${maxConcurrency})...`);
+        console.log(`🎙️ [Multi-Hour STT] Launching bounded transcription for ${chunks.length} chunks (concurrency: ${poolSize}, key pool: ${whisperPool.length} keys)...`);
 
         const chunkResults = new Array(chunks.length);
         let nextChunkIndex = 0;
@@ -364,16 +385,16 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
 
                 let chunkText = '';
                 let chunkSegs = [];
-                let chunkDuration = chunk.durationEstimate || 600;
+                let chunkDuration = chunk.durationEstimate || 1200;
                 let transcribed = false;
                 let chunkModel = 'whisper-large-v3-turbo';
                 let chunkProvider = 'groq';
 
                 // 1. Try Groq Whisper Large-v3-turbo / Large-v3
-                if (groqKey) {
+                if (whisperPool.length > 0) {
                     try {
                         const chunkUploadFile = await toFile(fs.createReadStream(chunk.filePath), path.basename(chunk.filePath));
-                        const chunkData = await callGroqWhisper(chunkUploadFile, 'whisper-large-v3-turbo');
+                        const chunkData = await callGroqWhisper(chunkUploadFile, 'whisper-large-v3-turbo', workerId);
                         chunkText = sanitizeTranscriptEchoes((chunkData.text || '').trim());
                         chunkSegs = Array.isArray(chunkData.segments) ? chunkData.segments : [];
                         chunkDuration = chunkData.duration || (chunkSegs.length > 0 ? chunkSegs[chunkSegs.length - 1].end : chunkDuration);

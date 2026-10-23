@@ -22,6 +22,7 @@ import {
     deleteSessionRecord 
 } from '../utils/audioDB';
 import { createTimerWorker } from '../utils/timerWorker';
+import { preflightAudioFile } from '../utils/audioPreflight';
 
 export default function CreateQuizTopic() {
     const { user, loading: authLoading } = useContext(AuthContext);
@@ -478,12 +479,24 @@ export default function CreateQuizTopic() {
             return { ...item, progress: 5, stepText: 'Preparing audio upload...', phaseLabel: 'Starting' };
         }));
 
+        let uploadFile = file;
+        try {
+            uploadFile = await preflightAudioFile(file, (msg) => {
+                setInputs(prev => prev.map(item => {
+                    if (item.id !== id || item.status !== 'transcribing') return item;
+                    return { ...item, progress: 10, stepText: msg, phaseLabel: 'Optimizing' };
+                }));
+            });
+        } catch (pfErr) {
+            console.warn('Audio preflight failed:', pfErr);
+        }
+
         try {
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', uploadFile);
 
             // Scale timeout with file size: 30 min base + 1 min per 10 MB (for slow connections & deep local Whisper CPU inference)
-            const uploadTimeoutMs = Math.max(1800000, 1800000 + Math.floor((file.size / (10 * 1024 * 1024)) * 60000));
+            const uploadTimeoutMs = Math.max(1800000, 1800000 + Math.floor((uploadFile.size / (10 * 1024 * 1024)) * 60000));
 
             const transcribeRes = await api.post('/quiz/transcribe', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },

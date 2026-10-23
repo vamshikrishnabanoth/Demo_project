@@ -394,11 +394,11 @@ function chunkM4a(inputPath, options = {}) {
  * @param {string} [options.outputDir] - Output directory for chunk files
  * @returns {Array<{ chunkIndex: number, filePath: string, sizeBytes: number, startTimeOffset: number, durationEstimate: number, isFinal: boolean }>}
  */
-function segmentAudioUniversal(inputPath, options = {}) {
-    const ffmpeg = require('@ffmpeg-installer/ffmpeg');
-    const { execSync } = require('child_process');
+async function segmentAudioUniversal(inputPath, options = {}) {
+    const ffmpeg = require("@ffmpeg-installer/ffmpeg");
+    const { execFile } = require("child_process");
 
-    const segmentSeconds = options.segmentTimeSeconds || 600; // 10 minutes per chunk
+    const segmentSeconds = options.segmentTimeSeconds || 1200; // 20 minutes per chunk (~7.2 MB at 48k mono AAC)
     const outputDir = options.outputDir || path.dirname(inputPath);
     const baseName = `speech_seg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
     const pattern = path.join(outputDir, `${baseName}_%03d.m4a`);
@@ -408,38 +408,52 @@ function segmentAudioUniversal(inputPath, options = {}) {
     }
 
     const startTime = Date.now();
-    console.log(`🎙️ [UniversalAudioChunker] Slicing ${path.basename(inputPath)} into ${segmentSeconds}s 16kHz mono voice chunks...`);
+    console.log(`🎙️ [UniversalAudioChunker] Slicing ${path.basename(inputPath)} into ${segmentSeconds}s 16kHz mono voice chunks (Async non-blocking)...`);
+
+    const runFfmpeg = (args, timeoutMs = 300000) => {
+        return new Promise((resolve, reject) => {
+            execFile(ffmpeg.path, args, { timeout: timeoutMs, windowsHide: true }, (err, stdout, stderr) => {
+                if (err) return reject(err);
+                resolve({ stdout, stderr });
+            });
+        });
+    };
 
     let sliceSucceeded = false;
     try {
-        execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -vn -ar 16000 -ac 1 -c:a aac -b:a 48k -f segment -segment_time ${segmentSeconds} -reset_timestamps 1 "${pattern}"`, {
-            stdio: ['ignore', 'pipe', 'pipe'],
-            timeout: 300000 // 5 minutes max for slicing 4-hour audio
-        });
+        await runFfmpeg([
+            "-y", "-i", inputPath,
+            "-vn", "-ar", "16000", "-ac", "1",
+            "-c:a", "aac", "-b:a", "48k",
+            "-f", "segment", "-segment_time", String(segmentSeconds),
+            "-reset_timestamps", "1", pattern
+        ], 300000);
         sliceSucceeded = true;
     } catch (err) {
         console.warn(`⚠️ [UniversalAudioChunker] AAC segment failed (${err.message}). Trying MP3 segment fallback...`);
         const mp3Pattern = path.join(outputDir, `${baseName}_%03d.mp3`);
         try {
-            execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -vn -ar 16000 -ac 1 -c:a libmp3lame -b:a 48k -f segment -segment_time ${segmentSeconds} -reset_timestamps 1 "${mp3Pattern}"`, {
-                stdio: ['ignore', 'pipe', 'pipe'],
-                timeout: 300000
-            });
+            await runFfmpeg([
+                "-y", "-i", inputPath,
+                "-vn", "-ar", "16000", "-ac", "1",
+                "-c:a", "libmp3lame", "-b:a", "48k",
+                "-f", "segment", "-segment_time", String(segmentSeconds),
+                "-reset_timestamps", "1", mp3Pattern
+            ], 300000);
             sliceSucceeded = true;
         } catch (mp3Err) {
-            console.error('❌ [UniversalAudioChunker] MP3 segment fallback also failed:', mp3Err.message);
+            console.error("❌ [UniversalAudioChunker] MP3 segment fallback also failed:", mp3Err.message);
         }
     }
 
     const files = fs.readdirSync(outputDir)
-        .filter(f => f.startsWith(baseName) && (f.endsWith('.m4a') || f.endsWith('.mp3')))
+        .filter(f => f.startsWith(baseName) && (f.endsWith(".m4a") || f.endsWith(".mp3")))
         .sort();
 
     if (!sliceSucceeded || files.length === 0) {
-        // Fallback to pure-JS chunkMp3 if input is MP3
         const ext = path.extname(inputPath).toLowerCase();
-        if (ext === '.mp3') {
-            console.log('ℹ️ Falling back to streaming pure-JS MP3 chunker...');
+        if (ext === ".mp3") {
+            console.log("ℹ️ Falling back to streaming pure-JS MP3 chunker...");
             return chunkMp3(inputPath, {
                 targetChunkBytes: 10 * 1024 * 1024,
                 overlapSeconds: 1.5,
@@ -453,7 +467,7 @@ function segmentAudioUniversal(inputPath, options = {}) {
     for (let i = 0; i < files.length; i++) {
         const fullPath = path.join(outputDir, files[i]);
         const stats = fs.statSync(fullPath);
-        if (stats.size > 2048) { // Ignore tiny empty silence fragments
+        if (stats.size > 2048) {
             chunks.push({
                 chunkIndex: chunks.length + 1,
                 filePath: fullPath,
@@ -477,25 +491,25 @@ function segmentAudioUniversal(inputPath, options = {}) {
     return chunks;
 }
 
-/**
- * Fast mono voice pre-compression pass for Whisper models.
- * Downsamples audio to 16kHz mono 48kbps AAC.
- *
- * @param {string} inputPath
- * @param {Object} options
- * @returns {{ compressedPath: string, sizeBytes: number } | null}
- */
-function compressForWhisper(inputPath, options = {}) {
-    const ffmpeg = require('@ffmpeg-installer/ffmpeg');
-    const { execSync } = require('child_process');
+/** Fast mono voice pre-compression pass for Whisper models (Async). */
+async function compressForWhisper(inputPath, options = {}) {
+    const ffmpeg = require("@ffmpeg-installer/ffmpeg");
+    const { execFile } = require("child_process");
     const outputDir = options.outputDir || path.dirname(inputPath);
     const targetPath = path.join(outputDir, `whisper_opt_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.m4a`);
 
     try {
         const startTime = Date.now();
-        execSync(`"${ffmpeg.path}" -y -i "${inputPath}" -vn -ar 16000 -ac 1 -c:a aac -b:a 48k "${targetPath}"`, {
-            stdio: ['ignore', 'pipe', 'pipe'],
-            timeout: 180000
+        await new Promise((resolve, reject) => {
+            execFile(ffmpeg.path, [
+                "-y", "-i", inputPath,
+                "-vn", "-ar", "16000", "-ac", "1",
+                "-c:a", "aac", "-b:a", "48k",
+                targetPath
+            ], { timeout: 180000, windowsHide: true }, (err, stdout, stderr) => {
+                if (err) return reject(err);
+                resolve({ stdout, stderr });
+            });
         });
         const stats = fs.statSync(targetPath);
         console.log(`⚡ [AudioOptimizer] Compressed ${path.basename(inputPath)} in ${((Date.now() - startTime) / 1000).toFixed(1)}s -> ${(stats.size / (1024 * 1024)).toFixed(2)} MB`);
@@ -504,19 +518,12 @@ function compressForWhisper(inputPath, options = {}) {
             sizeBytes: stats.size
         };
     } catch (err) {
-        console.warn('⚠️ [AudioOptimizer] Pre-compression failed or timed out, falling back to original audio:', err.message);
+        console.warn("⚠️ [AudioOptimizer] Pre-compression failed or timed out, falling back to original audio:", err.message);
         try { if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath); } catch (_) {}
         return null;
     }
 }
 
-/**
- * Transcribes an audio chunk using Google Gemini (gemini-1.5-flash / gemini-2.0-flash)
- * as a robust fallback when Groq hits ASPH limits or 429 rate limits.
- *
- * @param {string} filePath - Path to audio chunk
- * @returns {Promise<{ text: string, segments: Array } | null>}
- */
 async function transcribeChunkWithGemini(filePath) {
     const geminiKey = process.env.GEMINI_API_KEY;
     if (!geminiKey) return null;
