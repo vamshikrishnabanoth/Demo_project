@@ -13,10 +13,20 @@ import {
     GraduationCap,
     CheckSquare,
     Loader2,
-    Trash2
+    Trash2,
+    Sparkles
 } from 'lucide-react';
 
-export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuccess, initialGroups, initialStudents, onSave }) {
+export default function StudentAssignDrawer({ 
+    quiz, 
+    isOpen = true, 
+    onClose, 
+    onAssignSuccess, 
+    initialGroups, 
+    initialStudents, 
+    onSave,
+    inline = true 
+}) {
     // Dynamic DB Filter Options
     const [branches, setBranches] = useState([]);
     const [sections, setSections] = useState([]);
@@ -47,16 +57,17 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
     const [isSaving, setIsSaving] = useState(false);
     const listContainerRef = useRef(null);
 
-    // Listen for Escape key to close
+    // Listen for Escape key to close (if modal mode)
     useEffect(() => {
+        if (inline) return;
         const handleKeyDown = (e) => {
-            if (e.key === 'Escape' && isOpen) {
+            if (e.key === 'Escape' && isOpen && onClose) {
                 onClose();
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, inline]);
 
     // Load Initial DB-Driven Filter Options
     useEffect(() => {
@@ -69,12 +80,11 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
                     api.get('/students/years'),
                     api.get('/students/semesters')
                 ]);
-                setBranches(branchesRes.data);
-                setYears(yearsRes.data);
-                setSemesters(semestersRes.data);
+                setBranches(branchesRes.data || []);
+                setYears(yearsRes.data || []);
+                setSemesters(semestersRes.data || []);
             } catch (err) {
                 console.error('Error loading filters from database:', err);
-                toast.error('Could not load filters from database.');
             }
         };
 
@@ -86,7 +96,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
                 api.get(`/students/search`, {
                     params: { limit: 100 }
                 }).then(res => {
-                    const matched = res.data.students.filter(s => quiz.assignedStudents.includes(s.id));
+                    const matched = (res.data?.students || []).filter(s => quiz.assignedStudents.includes(s.id));
                     setAssignedStudents(matched);
                 }).catch(err => console.error(err));
             } else {
@@ -95,12 +105,17 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         } else {
             setAssignedGroups(initialGroups || []);
             if (initialStudents && initialStudents.length > 0) {
-                api.get(`/students/search`, {
-                    params: { limit: 100 }
-                }).then(res => {
-                    const matched = res.data.students.filter(s => initialStudents.includes(s.id));
-                    setAssignedStudents(matched);
-                }).catch(err => console.error(err));
+                const hasObjects = typeof initialStudents[0] === 'object' && initialStudents[0]?.id;
+                if (hasObjects) {
+                    setAssignedStudents(initialStudents);
+                } else {
+                    api.get(`/students/search`, {
+                        params: { limit: 100 }
+                    }).then(res => {
+                        const matched = (res.data?.students || []).filter(s => initialStudents.includes(s.id));
+                        setAssignedStudents(matched);
+                    }).catch(err => console.error(err));
+                }
             } else {
                 setAssignedStudents([]);
             }
@@ -118,7 +133,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
                     params.branch = selectedBranches;
                 }
                 const res = await api.get('/students/sections', { params });
-                setSections(res.data);
+                setSections(res.data || []);
             } catch (err) {
                 console.error('Error loading sections:', err);
             }
@@ -155,14 +170,14 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
             const { students: newStudents, pagination } = res.data;
 
             if (isNewSearch) {
-                setStudents(newStudents);
+                setStudents(newStudents || []);
             } else {
-                setStudents(prev => [...prev, ...newStudents]);
+                setStudents(prev => [...prev, ...(newStudents || [])]);
             }
 
-            setPage(pagination.page);
-            setHasMore(pagination.page < pagination.pages);
-            setTotalStudentsCount(pagination.total);
+            setPage(pagination?.page || 1);
+            setHasMore((pagination?.page || 1) < (pagination?.pages || 1));
+            setTotalStudentsCount(pagination?.total || 0);
         } catch (err) {
             console.error('Error fetching students:', err);
         } finally {
@@ -239,7 +254,7 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
             if (selectedSemester) params.semester = selectedSemester;
 
             const res = await api.get('/students/search', { params });
-            const allMatched = res.data.students;
+            const allMatched = res.data.students || [];
 
             setAssignedStudents(prev => {
                 const existingIds = new Set(prev.map(s => s.id));
@@ -259,28 +274,33 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
     const clearAll = () => {
         setAssignedGroups([]);
         setAssignedStudents([]);
-        toast.success('Cleared all targeted targets.');
+        toast.success('Cleared all targeted students & groups.');
     };
 
     const handleSaveAssignment = async () => {
         setIsSaving(true);
         try {
             const payload = {
-                assignedGroups: assignedGroups.map(g => ({ branch: g.branch, section: g.section })),
-                assignedStudents: assignedStudents.map(s => s.id)
+                assignedGroups: assignedGroups.map(g => ({ branch: g.branch, section: g.section, count: g.count || 0 })),
+                assignedStudents: assignedStudents.map(s => typeof s === 'string' ? s : s.id)
             };
 
             if (onSave) {
-                onSave(payload);
-                toast.success('Assignment targeting staged successfully!');
-                onClose();
+                onSave({
+                    assignedGroups,
+                    assignedStudents
+                });
+                toast.success('Student targeting applied successfully!');
+                if (onClose) onClose();
                 return;
             }
 
-            await api.post(`/quiz/assign/${quiz.id}`, payload);
-            toast.success('Assignment targeting saved successfully!');
-            if (onAssignSuccess) onAssignSuccess();
-            onClose();
+            if (quiz?.id) {
+                await api.post(`/quiz/assign/${quiz.id}`, payload);
+                toast.success('Student targeting saved successfully!');
+                if (onAssignSuccess) onAssignSuccess();
+                if (onClose) onClose();
+            }
         } catch (err) {
             console.error('Error saving assignments:', err);
             toast.error(err.response?.data?.msg || 'Could not save targeting parameters.');
@@ -315,330 +335,410 @@ export default function StudentAssignDrawer({ quiz, isOpen, onClose, onAssignSuc
         return shortcuts;
     };
 
-    return (
-        <div className="fixed inset-0 z-50 flex justify-end">
-            {/* Backdrop Overlay */}
-            <div 
-                className="absolute inset-0 bg-[#020617]/80 backdrop-blur-md transition-opacity" 
-                onClick={onClose}
-            />
-
-            {/* Sliding Drawer Container */}
-            <div className="relative w-full max-w-3xl h-full bg-[#0b0f19] border-l border-white/10 shadow-2xl flex flex-col z-10 overflow-hidden">
-                
-                {/* Header */}
-                <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02] shrink-0">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-amber-400/10 border border-amber-400/20 rounded-2xl text-amber-400">
-                            <Users size={22} />
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">Student Targeting</h2>
-                            <p className="text-slate-500 font-bold text-[10px] uppercase tracking-widest mt-0.5">Assign: <span className="text-amber-400 italic">{quiz?.title || 'Active Quiz'}</span></p>
-                        </div>
+    // Inner Content (Shared between inline & modal layout)
+    const content = (
+        <div className="space-y-5">
+            {/* Panel Top Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
+                <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-orange-50 border border-orange-200 rounded-xl text-[#ea580c] shrink-0">
+                        <Users size={20} />
                     </div>
-                    <button 
-                        onClick={onClose} 
-                        className="p-2.5 hover:bg-white/5 rounded-2xl text-slate-400 hover:text-white transition-all active:scale-95"
-                        aria-label="Close targeting drawer"
-                    >
-                        <XIcon size={18} />
-                    </button>
+                    <div>
+                        <h3 className="text-sm sm:text-base font-black text-slate-900 uppercase tracking-tight">
+                            Advanced Student Targeting
+                        </h3>
+                        <p className="text-slate-500 font-semibold text-xs mt-0.5">
+                            Target specific branches, sections, or hand-pick individual students from the directory.
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2.5 self-start sm:self-auto">
+                    <span className="bg-orange-50 border border-orange-200 text-[#ea580c] px-3.5 py-1.5 rounded-full text-xs font-black shadow-2xs">
+                        {calculateLiveTargetCount()} Targeted
+                    </span>
+                    {onClose && (
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                            title="Collapse targeting details"
+                            aria-label="Close targeting details"
+                        >
+                            <XIcon size={18} />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Targeting Overview Card */}
+            <div className="bg-orange-50/50 border border-orange-200/80 rounded-2xl p-4 sm:p-5 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2">
+                        <UserCheck size={16} className="text-[#ea580c]" />
+                        <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                            Active Targeting Overview
+                        </h4>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                        <span className="text-[11px] font-bold text-slate-600">
+                            Total: <strong className="text-slate-900 font-black">{calculateLiveTargetCount()}</strong> students
+                        </span>
+                        {(assignedGroups.length > 0 || assignedStudents.length > 0) && (
+                            <button
+                                type="button"
+                                onClick={clearAll}
+                                className="text-[10px] font-black text-red-600 hover:text-red-700 uppercase tracking-widest flex items-center gap-1 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                            >
+                                <Trash2 size={11} /> Clear All
+                            </button>
+                        )}
+                    </div>
                 </div>
 
-                {/* Main Content Area (Layout split to secure infinite scroll list viewport space) */}
-                <div className="flex-1 flex flex-col overflow-hidden p-6 space-y-6">
-                    
-                    {/* Top Section: Filters and Targeting Preview (Scrolls internally up to 45% height) */}
-                    <div className="space-y-6 overflow-y-auto max-h-[45vh] pr-2 custom-scrollbar shrink-0">
-                        
-                        {/* Dynamic Collapsible Hierarchical Filters */}
-                        <div className="space-y-4">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 italic">
-                                <SlidersHorizontal size={12} className="text-amber-400" /> Dynamic Branch-wise Structuring
-                            </h3>
-                            
-                            <div className="space-y-3">
-                                {branches.map(b => {
-                                    const isSelected = selectedBranches.includes(b);
-                                    const isExpanded = expandedBranch === b;
-
-                                    return (
-                                        <div key={b} className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 transition-all hover:border-white/10">
-                                            <div className="flex items-center justify-between">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => toggleBranchFilter(b)}
-                                                    className={`flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider italic transition-all ${isSelected ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/20' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
-                                                >
-                                                    <GraduationCap size={14} />
-                                                    {b} Branch
-                                                </button>
-                                                
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setExpandedBranch(isExpanded ? null : b)}
-                                                    className="text-[10px] font-black uppercase tracking-widest text-[var(--text-accent)] hover:text-white transition-colors"
-                                                >
-                                                    <span className="inline-flex items-center gap-1">{isExpanded ? 'Collapse' : 'Structure Sem/Sec'} {!isExpanded && <ChevronDown size={13} aria-hidden="true" />}</span>
-                                                </button>
-                                            </div>
-
-                                            {/* Structured Semester & Section selection below branch name */}
-                                            {isExpanded && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, height: 0 }}
-                                                    animate={{ opacity: 1, height: 'auto' }}
-                                                    className="pl-4 border-l border-white/10 space-y-4 mt-4 overflow-hidden"
-                                                >
-                                                    {/* Semesters under this branch */}
-                                                    <div className="space-y-2">
-                                                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Semester</p>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {semesters.map(s => {
-                                                                const isSemSelected = selectedSemester === s;
-                                                                return (
-                                                                    <button
-                                                                        key={s}
-                                                                        type="button"
-                                                                        onClick={() => setSelectedSemester(isSemSelected ? '' : s)}
-                                                                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${isSemSelected ? 'bg-indigo-600 text-white shadow-md' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
-                                                                    >
-                                                                        Semester {s}
-                                                                    </button>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Sections under this branch */}
-                                                    <div className="space-y-2">
-                                                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Section</p>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {sections.length > 0 ? (
-                                                                sections.map(sec => {
-                                                                    const isSecSelected = selectedSections.includes(sec);
-                                                                    return (
-                                                                        <button
-                                                                            key={sec}
-                                                                            type="button"
-                                                                            onClick={() => toggleSectionFilter(sec)}
-                                                                            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${isSecSelected ? 'bg-purple-600 text-white shadow-md' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
-                                                                        >
-                                                                            Section {sec}
-                                                                        </button>
-                                                                    );
-                                                                })
-                                                            ) : (
-                                                                <p className="text-[10px] font-bold text-slate-600 italic">Please select a branch above to display sections...</p>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                {/* Target Chips */}
+                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
+                    {assignedGroups.map(g => (
+                        <div
+                            key={`grp-${g.branch}-${g.section}`}
+                            className="inline-flex items-center gap-1.5 bg-white border border-orange-300 text-orange-900 rounded-lg px-2.5 py-1 text-xs font-bold shadow-2xs"
+                        >
+                            <Users size={12} className="text-[#ea580c] shrink-0" />
+                            <span>{g.branch}-{g.section}</span>
+                            <span className="text-[10px] text-orange-600 font-semibold">({g.count || 0})</span>
+                            <button
+                                type="button"
+                                onClick={() => removeGroup(g.branch, g.section)}
+                                className="text-slate-400 hover:text-red-600 transition-colors ml-0.5 cursor-pointer"
+                                title={`Remove group ${g.branch}-${g.section}`}
+                            >
+                                <XIcon size={12} />
+                            </button>
                         </div>
+                    ))}
 
-                        {/* Target Selected Overview Card */}
-                        <div className="bg-white/[0.01] border border-white/10 rounded-2xl p-5 space-y-4">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <UserCheck size={16} className="text-amber-400" />
-                                    <h4 className="text-xs font-black text-white uppercase tracking-wider italic">Targeting Overview</h4>
+                    {assignedStudents.map(s => (
+                        <div
+                            key={`stud-${s.id}`}
+                            className="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-800 rounded-lg px-2.5 py-1 text-xs font-bold shadow-2xs"
+                        >
+                            <div className="w-4 h-4 rounded-full bg-orange-100 text-[#ea580c] flex items-center justify-center text-[9px] font-black uppercase shrink-0">
+                                {s.name ? s.name[0] : (s.username ? s.username[0] : 'S')}
+                            </div>
+                            <span>{s.username || s.name}</span>
+                            {s.studentBranch && (
+                                <span className="text-[10px] text-slate-400 font-medium">({s.studentBranch}-{s.section})</span>
+                            )}
+                            <button
+                                type="button"
+                                onClick={() => toggleStudentSelection(s)}
+                                className="text-slate-400 hover:text-red-600 transition-colors ml-0.5 cursor-pointer"
+                                title="Remove student"
+                            >
+                                <XIcon size={12} />
+                            </button>
+                        </div>
+                    ))}
+
+                    {assignedGroups.length === 0 && assignedStudents.length === 0 && (
+                        <p className="text-slate-500 text-xs italic py-1">
+                            No custom targets configured yet. Use the filters below or search students to target.
+                        </p>
+                    )}
+                </div>
+            </div>
+
+            {/* Dynamic Branch-wise Structuring Accordions */}
+            <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <SlidersHorizontal size={13} className="text-[#ea580c]" />
+                        <span>Filter By Department & Section</span>
+                    </h4>
+                    <span className="text-[10px] font-bold text-slate-400">Click a branch to filter or expand</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {branches.map(b => {
+                        const isSelected = selectedBranches.includes(b);
+                        const isExpanded = expandedBranch === b;
+
+                        return (
+                            <div
+                                key={b}
+                                className={`rounded-xl border transition-all p-3 ${
+                                    isSelected
+                                        ? 'bg-orange-50/40 border-orange-300'
+                                        : 'bg-white border-slate-200 hover:border-slate-300'
+                                }`}
+                            >
+                                <div className="flex items-center justify-between gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => toggleBranchFilter(b)}
+                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                                            isSelected
+                                                ? 'bg-[#ea580c] text-white shadow-xs'
+                                                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                        }`}
+                                    >
+                                        <GraduationCap size={13} />
+                                        <span>{b}</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setExpandedBranch(isExpanded ? null : b)}
+                                        className="text-[11px] font-bold text-[#ea580c] hover:text-[#c2410c] transition-colors flex items-center gap-1 cursor-pointer"
+                                    >
+                                        <span>{isExpanded ? 'Collapse' : 'Sem / Sec'}</span>
+                                        <ChevronDown
+                                            size={13}
+                                            className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                                        />
+                                    </button>
                                 </div>
+
+                                {isExpanded && (
+                                    <div className="pt-3 mt-3 border-t border-slate-200 space-y-3">
+                                        {/* Semesters */}
+                                        <div className="space-y-1.5">
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Semester</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {semesters.map(s => {
+                                                    const isSemSelected = selectedSemester === s;
+                                                    return (
+                                                        <button
+                                                            key={s}
+                                                            type="button"
+                                                            onClick={() => setSelectedSemester(isSemSelected ? '' : s)}
+                                                            className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
+                                                                isSemSelected
+                                                                    ? 'bg-slate-900 text-white shadow-2xs'
+                                                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                                            }`}
+                                                        >
+                                                            Sem {s}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        {/* Sections */}
+                                        <div className="space-y-1.5">
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Sections</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {sections.length > 0 ? (
+                                                    sections.map(sec => {
+                                                        const isSecSelected = selectedSections.includes(sec);
+                                                        return (
+                                                            <button
+                                                                key={sec}
+                                                                type="button"
+                                                                onClick={() => toggleSectionFilter(sec)}
+                                                                className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
+                                                                    isSecSelected
+                                                                        ? 'bg-[#ea580c] text-white shadow-2xs'
+                                                                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                                                                }`}
+                                                            >
+                                                                Sec {sec}
+                                                            </button>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <p className="text-[11px] text-slate-400 italic">Select branch above to view sections</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Student Directory Search & Individual Picking */}
+            <div className="space-y-3 pt-2 border-t border-slate-200">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                    <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <GraduationCap size={14} className="text-[#ea580c]" />
+                        <span>Student Verification & Directory ({totalStudentsCount} Found)</span>
+                    </h4>
+                    {totalStudentsCount > 0 && (
+                        <button
+                            type="button"
+                            onClick={selectAllFiltered}
+                            className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                        >
+                            <CheckSquare size={12} className="text-[#ea580c]" />
+                            <span>Select All Filtered ({totalStudentsCount})</span>
+                        </button>
+                    )}
+                </div>
+
+                {/* Search Input */}
+                <div className="relative group">
+                    <Search
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#ea580c] transition-colors"
+                        size={16}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Search student by name or roll number..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:border-[#ea580c] focus:ring-2 focus:ring-orange-500/10 transition-all text-xs"
+                    />
+                </div>
+
+                {/* Contextual Shortcut Buttons */}
+                {getShortcutTargets().length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 py-0.5">
+                        {getShortcutTargets().map((sc, sci) => (
+                            <button
+                                key={sci}
+                                type="button"
+                                onClick={() => sc.section && assignGroup(sc.branch, sc.section)}
+                                className="bg-orange-50 hover:bg-orange-100 border border-orange-200 text-[#ea580c] text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md transition-all flex items-center gap-1 cursor-pointer"
+                            >
+                                <Sparkles size={11} />
+                                <span>Target Entire '{sc.branch}-{sc.section || 'All'}'</span>
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {/* Scrollable Student List */}
+                <div
+                    ref={listContainerRef}
+                    onScroll={handleScroll}
+                    className="bg-slate-50/60 border border-slate-200 rounded-xl max-h-[300px] overflow-y-auto p-2 space-y-1.5"
+                >
+                    {students.map((student) => {
+                        const isManuallySelected = assignedStudents.some(s => s.id === student.id);
+                        const isGroupSelected = assignedGroups.some(g => g.branch === student.studentBranch && g.section === student.section);
+
+                        return (
+                            <div
+                                key={student.id}
+                                onClick={() => !isGroupSelected && toggleStudentSelection(student)}
+                                className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
+                                    isGroupSelected
+                                        ? 'bg-slate-100 border-slate-200 opacity-70 cursor-not-allowed'
+                                        : isManuallySelected
+                                        ? 'bg-orange-50 border-orange-300 shadow-2xs cursor-pointer'
+                                        : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 cursor-pointer'
+                                }`}
+                            >
                                 <div className="flex items-center gap-3">
-                                    <span className="bg-amber-400/10 border border-amber-400/20 text-amber-400 px-3.5 py-1 rounded-full text-[10px] font-black italic">
-                                        {calculateLiveTargetCount()} Targeted Students
-                                    </span>
-                                    {(assignedGroups.length > 0 || assignedStudents.length > 0) && (
-                                        <button 
-                                            onClick={clearAll} 
-                                            className="text-[10px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest flex items-center gap-1 transition-colors"
-                                        >
-                                            <Trash2 size={12} /> Clear
-                                        </button>
+                                    <div
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs shrink-0 ${
+                                            isGroupSelected
+                                                ? 'bg-slate-200 text-slate-500'
+                                                : isManuallySelected
+                                                ? 'bg-[#ea580c] text-white shadow-xs'
+                                                : 'bg-slate-100 text-slate-700 border border-slate-200'
+                                        }`}
+                                    >
+                                        {student.name ? student.name[0] : (student.username ? student.username[0] : 'S')}
+                                    </div>
+                                    <div>
+                                        <h5 className="font-bold text-slate-900 text-xs tracking-tight">
+                                            {student.name || 'Enrolled Student'}
+                                        </h5>
+                                        <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                                            {student.username} • <span className="text-slate-600">{student.studentBranch}-{student.section}</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    {isGroupSelected ? (
+                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider bg-slate-200 px-2 py-0.5 rounded">
+                                            Group Targeted
+                                        </span>
+                                    ) : isManuallySelected ? (
+                                        <div className="w-5 h-5 rounded-md bg-[#ea580c] text-white flex items-center justify-center shadow-2xs">
+                                            <Check size={13} strokeWidth={3} />
+                                        </div>
+                                    ) : (
+                                        <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white hover:border-slate-400 transition-colors" />
                                     )}
                                 </div>
                             </div>
+                        );
+                    })}
 
-                            {/* Group selection chips */}
-                            <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto pr-1 custom-scrollbar">
-                                {assignedGroups.map(g => (
-                                    <div key={`grp-${g.branch}-${g.section}`} className="flex items-center gap-2 bg-gradient-to-r from-amber-400/10 to-amber-500/5 border border-amber-400/20 rounded-lg px-3 py-1.5 text-[10px] font-black text-white italic">
-                                        <Users size={10} className="text-amber-400 shrink-0" />
-                                        <span>{g.branch}-{g.section} ({g.count || 0} students)</span>
-                                        <button 
-                                            onClick={() => removeGroup(g.branch, g.section)}
-                                            className="text-slate-400 hover:text-red-400 transition-colors ml-1"
-                                        >
-                                            <XIcon size={10} />
-                                        </button>
-                                    </div>
-                                ))}
-
-                                {assignedStudents.map(s => (
-                                    <div key={`stud-${s.id}`} className="flex items-center gap-2 bg-gradient-to-r from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-lg px-3 py-1.5 text-[10px] font-black text-white italic">
-                                        <div className="w-3.5 h-3.5 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[7px] font-bold uppercase shrink-0">
-                                            {s.name ? s.name[0] : s.username[0]}
-                                        </div>
-                                        <span>{s.username}</span>
-                                        <span className="opacity-40 font-medium text-[8px]">({s.studentBranch}-{s.section})</span>
-                                        <button 
-                                            onClick={() => toggleStudentSelection(s)}
-                                            className="text-slate-400 hover:text-red-400 transition-colors ml-1"
-                                        >
-                                            <XIcon size={10} />
-                                        </button>
-                                    </div>
-                                ))}
-
-                                {assignedGroups.length === 0 && assignedStudents.length === 0 && (
-                                    <p className="text-slate-600 text-[10px] font-bold italic py-1">No targets configured. Use the filters or scroll below to pick.</p>
-                                )}
-                            </div>
+                    {loadingStudents && (
+                        <div className="flex items-center justify-center py-5 gap-2.5">
+                            <Loader2 className="animate-spin text-[#ea580c]" size={15} />
+                            <span className="text-xs font-bold text-slate-500">Loading student directory...</span>
                         </div>
+                    )}
 
-                    </div>
-
-                    {/* Bottom Section: Expandable Search and Infinite Scroll Viewport (Takes up 100% of remaining height) */}
-                    <div className="flex-1 flex flex-col overflow-hidden space-y-4">
-                        
-                        <div className="flex items-center justify-between shrink-0">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 italic">
-                                <GraduationCap size={14} className="text-purple-400" /> Student Verification & Targeting
-                            </h3>
-                            {totalStudentsCount > 0 && (
-                                <button 
-                                    onClick={selectAllFiltered}
-                                    className="bg-white/5 border border-white/10 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-xl transition-all active:scale-95 flex items-center gap-1"
-                                >
-                                    <CheckSquare size={10} /> Select All Filtered ({totalStudentsCount})
-                                </button>
-                            )}
+                    {students.length === 0 && !loadingStudents && (
+                        <div className="text-center py-8 space-y-1.5">
+                            <Users size={24} className="text-slate-300 mx-auto" />
+                            <h5 className="font-bold text-slate-600 text-xs">No Students Found</h5>
+                            <p className="text-[11px] text-slate-400 font-medium">Try adjusting your department or section filters above.</p>
                         </div>
-
-                        {/* Sticky Search bar */}
-                        <div className="relative group shrink-0">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-amber-400 transition-colors" size={16} />
-                            <input
-                                type="text"
-                                placeholder="SEARCH BY STUDENT NAME OR ROLL NUMBER..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-5 text-white font-black italic placeholder:text-slate-600 focus:outline-none focus:border-amber-400/30 transition-all text-xs uppercase tracking-wider"
-                            />
-                        </div>
-
-                        {/* Contextual "Target Entire CSE-A" dynamic shortcut tags */}
-                        {getShortcutTargets().length > 0 && (
-                            <div className="flex flex-wrap gap-2 shrink-0 py-1">
-                                {getShortcutTargets().map((sc, sci) => (
-                                    <button
-                                        key={sci}
-                                        onClick={() => sc.section && assignGroup(sc.branch, sc.section)}
-                                        className="bg-amber-400/5 hover:bg-amber-400/10 border border-amber-400/20 text-amber-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg transition-all italic flex items-center gap-1.5"
-                                    >
-                                        Target Entire '{sc.branch}-{sc.section || 'All'}'
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Custom viewport for Infinite Scroll Student List */}
-                        <div 
-                            ref={listContainerRef}
-                            onScroll={handleScroll}
-                            className="flex-1 bg-white/[0.01] border border-white/5 rounded-2xl overflow-y-auto custom-scrollbar p-2"
-                        >
-                            {students.map((student) => {
-                                const isManuallySelected = assignedStudents.some(s => s.id === student.id);
-                                const isGroupSelected = assignedGroups.some(g => g.branch === student.studentBranch && g.section === student.section);
-
-                                return (
-                                    <div 
-                                        key={student.id}
-                                        onClick={() => !isGroupSelected && toggleStudentSelection(student)}
-                                        className={`flex items-center justify-between p-3.5 rounded-xl transition-all mb-2 cursor-pointer ${isGroupSelected ? 'bg-amber-400/5 border border-amber-400/10 opacity-70 cursor-not-allowed' : isManuallySelected ? 'bg-purple-500/10 border border-purple-500/20' : 'hover:bg-white/[0.03] border border-transparent'}`}
-                                    >
-                                        <div className="flex items-center gap-3.5">
-                                            <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-xs shrink-0 shadow-lg ${isGroupSelected ? 'bg-amber-400/20 text-amber-300' : isManuallySelected ? 'bg-purple-600 text-white' : 'bg-white/5 text-slate-400'}`}>
-                                                {student.name ? student.name[0] : student.username[0]}
-                                            </div>
-                                            <div>
-                                                <h4 className="font-black text-white text-xs tracking-wide uppercase italic">
-                                                    {student.name || 'Enrolled Student'}
-                                                </h4>
-                                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">
-                                                    {student.username} • <span className="text-slate-400 italic">{student.studentBranch}-{student.section}</span>
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-2">
-                                            {isGroupSelected ? (
-                                                <span className="text-[8px] font-black text-amber-400 uppercase tracking-wider italic bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
-                                                    Targeted
-                                                </span>
-                                            ) : isManuallySelected ? (
-                                                <div className="w-5 h-5 rounded-lg bg-purple-600 text-white flex items-center justify-center shrink-0">
-                                                    <Check size={12} strokeWidth={3} />
-                                                </div>
-                                            ) : (
-                                                <div className="w-5 h-5 rounded-lg border-2 border-slate-700 shrink-0"></div>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-
-                            {loadingStudents && (
-                                <div className="flex items-center justify-center py-6 gap-3">
-                                    <Loader2 className="animate-spin text-amber-400" size={14} />
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic animate-pulse">Syncing student database...</span>
-                                </div>
-                            )}
-
-                            {students.length === 0 && !loadingStudents && (
-                                <div className="text-center py-12 space-y-2">
-                                    <Users size={28} className="text-slate-700 mx-auto" />
-                                    <h4 className="font-black text-slate-500 uppercase tracking-wider italic text-[10px]">No DB Students Found</h4>
-                                    <p className="text-[10px] text-slate-600 font-bold">Try adjusting your filters above.</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
+                    )}
                 </div>
+            </div>
 
-                {/* Footer Save Actions (Always pinned at bottom) */}
-                <div className="p-6 border-t border-white/10 bg-white/[0.02] flex items-center justify-between gap-4 shrink-0">
-                    <button 
-                        onClick={onClose}
-                        className="bg-white/5 border border-white/10 hover:bg-white/10 text-white px-6 py-3.5 rounded-2xl font-black italic uppercase tracking-tighter text-xs transition-all active:scale-95"
-                    >
-                        Cancel
-                    </button>
-                    <button 
+            {/* Bottom Actions */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200">
+                <p className="text-[11px] text-slate-500 font-medium">
+                    Targeting will apply to this quiz's broadcast access.
+                </p>
+                <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                    {onClose && (
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 sm:flex-initial px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
+                        >
+                            Collapse
+                        </button>
+                    )}
+                    <button
+                        type="button"
                         onClick={handleSaveAssignment}
                         disabled={isSaving}
-                        className="flex-1 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 px-6 py-3.5 rounded-2xl font-black italic uppercase tracking-tighter text-xs transition-all active:scale-95 shadow-xl shadow-amber-400/10 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+                        className="flex-1 sm:flex-initial px-5 py-2 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                         {isSaving ? (
-                            <>
-                                <Loader2 className="animate-spin" size={14} />
-                                Saving Assignment...
-                            </>
+                            <><Loader2 className="animate-spin" size={14} /><span>Applying...</span></>
                         ) : (
-                            <>
-                                Save Assignment Target ({calculateLiveTargetCount()} Students)
-                            </>
+                            <><Check size={14} /><span>Done & Apply ({calculateLiveTargetCount()} Students)</span></>
                         )}
                     </button>
                 </div>
+            </div>
+        </div>
+    );
 
+    // If rendered inline: sits directly within the parent container without modal overlay!
+    if (inline) {
+        return (
+            <div className="w-full bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs transition-all mt-3">
+                {content}
+            </div>
+        );
+    }
+
+    // Modal fallback (if ever called as a modal, but with light clean theme)
+    return (
+        <div className="fixed inset-0 z-50 flex justify-end">
+            <div
+                className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+                onClick={onClose}
+            />
+            <div className="relative w-full max-w-2xl h-full bg-white border-l border-slate-200 shadow-2xl flex flex-col z-10 overflow-y-auto p-6">
+                {content}
             </div>
         </div>
     );

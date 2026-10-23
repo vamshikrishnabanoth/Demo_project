@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
-import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, ChevronRight, Activity, Layers, FileText, Target, BarChart3 } from 'lucide-react';
+import { Type, Loader2, Plus, CheckCircle, Clock, Upload, ArrowLeft, Users, Clipboard, Code, Zap, BookOpen, AlertTriangle, Send, Save, Sparkles, Award, X, ShieldCheck, ClipboardList, Trophy, Puzzle, Info, ChevronDown, ChevronUp, ChevronRight, Activity, Layers, FileText, Target, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StudentAssignDrawer from '../components/quiz/StudentAssignDrawer';
 import toast from 'react-hot-toast';
@@ -499,7 +499,7 @@ export default function CreateQuizText() {
                 gameType: isAssessment ? gameType : 'standard',
                 isLive: !isAssessment,
                 assignedGroups: computedAssignedGroups(),
-                assignedStudents: assignedStudents || [],
+                assignedStudents: (assignedStudents || []).map(s => typeof s === 'string' ? s : (s.id || s)),
                 autoBroadcast: autoBroadcast !== false,
             });
             toast.dismiss();
@@ -545,7 +545,7 @@ export default function CreateQuizText() {
                 questions,
                 timerPerQuestion: parseInt(timerPerQuestion) || 30,
                 assignedGroups: computedAssignedGroups(),
-                assignedStudents: assignedStudents || [],
+                assignedStudents: (assignedStudents || []).map(s => typeof s === 'string' ? s : (s.id || s)),
                 accessType: accessType || 'private',
             });
             toast.success('Live quiz updated successfully! Changes are live now.', { id: toastId });
@@ -958,13 +958,18 @@ export default function CreateQuizText() {
                                         <div className="flex items-center gap-2">
                                             <button
                                                 type="button"
-                                                onClick={() => setIsAssignDrawerOpen(true)}
-                                                className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:border-[var(--bg-accent)] text-slate-700 hover:text-[var(--text-accent)] text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95"
+                                                onClick={() => setIsAssignDrawerOpen(prev => !prev)}
+                                                className={`px-3.5 py-2 rounded-xl border text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95 ${
+                                                    isAssignDrawerOpen
+                                                        ? 'bg-orange-50 border-[#ea580c] text-[#ea580c]'
+                                                        : 'bg-white border-slate-300 hover:border-[#ea580c] text-slate-700 hover:text-[#ea580c]'
+                                                }`}
                                             >
                                                 <Users size={14} />
-                                                <span>Advanced / Pick Students</span>
+                                                <span>{isAssignDrawerOpen ? 'Hide Student Selection' : 'Advanced / Pick Students'}</span>
+                                                {isAssignDrawerOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                                                 {(assignedStudents.length > 0 || assignedGroups.length > 0) && (
-                                                    <span className="w-2 h-2 rounded-full bg-[var(--bg-accent)] animate-pulse" />
+                                                    <span className="w-2 h-2 rounded-full bg-[#ea580c] animate-pulse" />
                                                 )}
                                             </button>
                                         </div>
@@ -1106,6 +1111,31 @@ export default function CreateQuizText() {
                                             </span>
                                         </div>
                                     </div>
+
+                                    {/* Inline Advanced Student Targeting Details (Optimal Solution: No Modal Overlays) */}
+                                    <AnimatePresence>
+                                        {isAssignDrawerOpen && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                transition={{ duration: 0.25, ease: 'easeInOut' }}
+                                                className="overflow-hidden pt-2"
+                                            >
+                                                <StudentAssignDrawer
+                                                    isOpen={isAssignDrawerOpen}
+                                                    inline={true}
+                                                    onClose={() => setIsAssignDrawerOpen(false)}
+                                                    onSave={({ assignedGroups: groups, assignedStudents: studs }) => {
+                                                        setAssignedGroups(groups || []);
+                                                        setAssignedStudents(studs || []);
+                                                    }}
+                                                    initialGroups={computedAssignedGroups()}
+                                                    initialStudents={assignedStudents}
+                                                />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
 
                                 {/* Assessment-Only: Games Arena Mode Selection */}
@@ -1375,17 +1405,6 @@ export default function CreateQuizText() {
                     )}
                 </AnimatePresence>
             </div>
-
-            <StudentAssignDrawer
-                isOpen={isAssignDrawerOpen}
-                onClose={() => setIsAssignDrawerOpen(false)}
-                onSave={({ assignedGroups: groups, assignedStudents: studs }) => {
-                    setAssignedGroups(groups || []);
-                    setAssignedStudents(studs || []);
-                }}
-                initialGroups={computedAssignedGroups()}
-                initialStudents={assignedStudents}
-            />
         </DashboardLayout>
     );
 }
