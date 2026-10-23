@@ -212,7 +212,7 @@ export default function CreateQuizText() {
         // Support both key names: 'questions' (from AI generator) and 'generatedQuestions' (legacy)
         const incoming = location.state?.questions || location.state?.generatedQuestions;
         if (incoming && Array.isArray(incoming)) {
-            const normalized = incoming.map((q) => {
+            const normalized = incoming.map((q, qIndex) => {
                 let opts = q.options;
                 if (!Array.isArray(opts)) {
                     if (opts && typeof opts === 'object') {
@@ -231,13 +231,13 @@ export default function CreateQuizText() {
                 // Map correctAnswer values to exact match in options list
                 let correctVal = q.correctAnswer || q.correct_answer || q.correct_ans || '';
                 if (correctVal === 'A' || correctVal === 'B' || correctVal === 'C' || correctVal === 'D') {
-                    const idx = correctVal.charCodeAt(0) - 65;
-                    correctVal = cleanOpts[idx] || '';
+                    const optIdx = correctVal.charCodeAt(0) - 65;
+                    correctVal = cleanOpts[optIdx] || '';
                 }
 
                 return {
                     ...q,
-                    tempId: q.tempId || q._id || q.id || `q_${Date.now()}_${idx}_${Math.random().toString(36).slice(2, 7)}`,
+                    tempId: q.tempId || q._id || q.id || `q_${Date.now()}_${qIndex}_${Math.random().toString(36).slice(2, 7)}`,
                     questionText: q.questionText || q.prompt_text || q.question || '',
                     options: cleanOpts,
                     correctAnswer: correctVal,
