@@ -210,8 +210,12 @@ export default function CreateQuizText() {
     // ─── INITIALIZATION ─────────────────────────────────────────────────────
     useEffect(() => {
         // Support both key names: 'questions' (from AI generator) and 'generatedQuestions' (legacy)
-        const incoming = location.state?.questions || location.state?.generatedQuestions;
-        if (incoming && Array.isArray(incoming)) {
+        let incoming = location.state?.questions || location.state?.generatedQuestions;
+        // Handle case where Prisma Json field arrives as stringified JSON
+        if (typeof incoming === 'string') {
+            try { incoming = JSON.parse(incoming); } catch { incoming = null; }
+        }
+        if (incoming && Array.isArray(incoming) && incoming.length > 0) {
             const normalized = incoming.map((q, qIndex) => {
                 let opts = q.options;
                 if (!Array.isArray(opts)) {
@@ -324,9 +328,10 @@ export default function CreateQuizText() {
         }
     }, [location.state]);
 
-    // Resilient fallback: fetch live quiz questions directly from API if editMode was entered with empty questions
+    // Resilient fallback: fetch live quiz questions directly from API if editMode was entered with empty/placeholder questions
     useEffect(() => {
-        if (editMode && editQuizId && questions.length === 0) {
+        const isPlaceholder = questions.length === 0 || (questions.length === 1 && !questions[0].questionText?.trim());
+        if (editMode && editQuizId && isPlaceholder) {
             api.get(`/quiz/${editQuizId}`).then(res => {
                 const qData = res.data;
                 if (qData) {
@@ -370,7 +375,8 @@ export default function CreateQuizText() {
                 }
             }).catch(err => console.error('Failed to load quiz in edit mode:', err));
         }
-    }, [editMode, editQuizId, questions.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editMode, editQuizId]);
 
     useEffect(() => {
         if (isAssessment) {
@@ -392,18 +398,7 @@ export default function CreateQuizText() {
             correctAnswer: '', 
             points: 10 
         };
-        const updated = [...questions, newQ];
-        setQuestions(updated);
-        if (location.state) {
-            navigate(location.pathname, {
-                replace: true,
-                state: {
-                    ...location.state,
-                    questions: updated,
-                    generatedQuestions: updated
-                }
-            });
-        }
+        setQuestions(prev => [...prev, newQ]);
     };
 
     const deleteQuestion = (index) => {
@@ -411,18 +406,7 @@ export default function CreateQuizText() {
             toast.error('Quiz must have at least one question.');
             return;
         }
-        const updated = questions.filter((_, i) => i !== index);
-        setQuestions(updated);
-        if (location.state) {
-            navigate(location.pathname, {
-                replace: true,
-                state: {
-                    ...location.state,
-                    questions: updated,
-                    generatedQuestions: updated
-                }
-            });
-        }
+        setQuestions(prev => prev.filter((_, i) => i !== index));
         toast.success(`Question ${index + 1} deleted`);
     };
 
