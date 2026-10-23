@@ -902,6 +902,7 @@ STRICT CONSTRAINTS:
 3. Exactly 4 distinct, plausible options. All options MUST be well-balanced in length (within 2x length ratio between longest and shortest) and grammatical structure. Do NOT make the correct answer substantially longer, more descriptive, or formatted differently than the distractors.
    - OPTION LENGTH RULE: 3 to 15 words per option. Crisp, punchy, and grammatically parallel.
    - STEM LENGTH & CREATIVE SCENARIO RULE: 1 to 2 crisp sentences (strictly 20–45 words max), followed by an optional clean 3–6 line code block. Realistic engineering scenarios (e.g. streaming pipelines, transaction monitors, cache deduplication) are STRONGLY ENCOURAGED to make questions feel authentic, interesting, and applied rather than dry textbook recall—just ensure the scenario is concise (1 short sentence setting the real-world context) rather than a rambling paragraph. End with a clear question mark (?).
+   - CRITICAL ANTI-PERMUTATION RULE: Absolutely NEVER generate options that are merely permutations, word-reorderings, anagrams, or trivial paraphrases of another option or the correct answer. For example, if one option lists "A, B, C, and D", NO other option may list "D, C, B, and A". All 4 choices must present fundamentally distinct technical ideas or distinct misconceptions.
 4. COGNITIVE SCAFFOLDING & DIFFICULTY CALIBRATION:
    - Target Difficulty: ${tier} | Intended Operation: ${op}
    - Operational Guidance: ${target.operationalGuidance || target.instruction}
@@ -938,6 +939,11 @@ STRICT CONSTRAINTS:
    - The correctAnswer MUST ALWAYS BE FACTUALLY, LOGICALLY, AND TECHNICALLY TRUE according to canonical Computer Science / academic domain principles.
    - If a teacher inadvertently made a verbal slip in spoken audio (e.g. calling an array 1-indexed, claiming O(N^2) is linear, or confusing < with <=), that slip MUST NEVER be the correct answer!
    - The teacher's slip or common misconception may serve as an authentic distractor, but the correctAnswer MUST assert the technically sound, factually correct behavior.
+   - CANONICAL COMPUTER SCIENCE & ENGINEERING FORMULATIONS:
+     * Banker's Algorithm: The safety check condition is STRICTLY "Finish[i] == false AND Need[i] <= Work". If true, Work = Work + Allocation[i] and Finish[i] = true. The Resource-Request step checks "Request[i] <= Need[i]" and "Request[i] <= Available". Do NOT confuse Request with Need or Work!
+     * Resource Allocation Graphs (RAG): A cycle is a SUFFICIENT condition for deadlock ONLY if every resource type has exactly ONE instance. If resource types have MULTIPLE instances, a cycle is a necessary condition but does NOT guarantee deadlock!
+     * System V IPC calls: When testing msgget(), options must strictly focus on message queue keys, flags (IPC_CREAT, IPC_EXCL), and octal permissions. NEVER mix FIFO/mkfifo, named pipes, or file pathname parameters into msgget options unless the question stem explicitly compares message queues to pipes.
+     * Synchronization vs Speed: Shared memory provides highest throughput by avoiding OS kernel copy overhead, but DOES NOT eliminate race conditions or synchronization requirements—processes must still use semaphores or mutexes to serialize access.
 11. PROGRAMMING & ALGORITHMIC QUESTION STRATEGIES:
    - When assessing programming or algorithmic topics, you ARE STRONGLY ENCOURAGED to include a concise 3–7 line code snippet (Python, Java, C, or standard pseudocode).
    - Employ creative questioning strategies across quizzes:

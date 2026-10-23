@@ -123,9 +123,9 @@ class DifficultyAwareDistractorValidator {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Dimension 6: No Duplicate Reasoning (No synonymous or subset distractors)
+    // Dimension 6: No Duplicate Reasoning (No synonymous or subset distractors across all options)
     // ─────────────────────────────────────────────────────────────────────────
-    const duplicateDim = this._validateNoDuplicateReasoning(distractors, stem);
+    const duplicateDim = this._validateNoDuplicateReasoning(options, stem);
     if (!duplicateDim.passed) {
       flaws.push({ dimension: 'NO_DUPLICATE_REASONING', code: duplicateDim.code, message: duplicateDim.message });
       repairHints.push(`DIFFERENTIATE_DISTRACTOR_REASONING: ${duplicateDim.details}`);
@@ -334,7 +334,7 @@ class DifficultyAwareDistractorValidator {
     confirms: 'validates'
   };
 
-  static _validateNoDuplicateReasoning(distractors, stem) {
+  static _validateNoDuplicateReasoning(options, stem) {
     const normalizeToken = w => this.SYNONYM_MAP[w] || w;
     const cleanTokens = s => s.toLowerCase()
       .replace(/[^\w\s]/g, '')
@@ -342,14 +342,14 @@ class DifficultyAwareDistractorValidator {
       .filter(w => w.length > 2 && !['the', 'and', 'for', 'with', 'that', 'this', 'will', 'from', 'all'].includes(w))
       .map(normalizeToken);
 
-    for (let i = 0; i < distractors.length; i++) {
-      for (let j = i + 1; j < distractors.length; j++) {
-        const d1 = distractors[i];
-        const d2 = distractors[j];
-        const t1 = cleanTokens(d1);
-        const t2 = cleanTokens(d2);
+    for (let i = 0; i < options.length; i++) {
+      for (let j = i + 1; j < options.length; j++) {
+        const o1 = options[i];
+        const o2 = options[j];
+        const t1 = cleanTokens(o1);
+        const t2 = cleanTokens(o2);
 
-        if (t1.length >= 3 && t2.length >= 3) {
+        if (t1.length >= 2 && t2.length >= 2) {
           const s1 = new Set(t1);
           const s2 = new Set(t2);
           let intersection = 0;
@@ -359,20 +359,21 @@ class DifficultyAwareDistractorValidator {
           const union = new Set([...s1, ...s2]).size;
           const jaccard = union > 0 ? (intersection / union) : 0;
           const containment = Math.min(s1.size, s2.size) > 0 ? (intersection / Math.min(s1.size, s2.size)) : 0;
+          const isExactWordPermutation = (s1.size === s2.size && intersection === s1.size);
 
-          // If two distractors share >= 60% Jaccard or >= 65% core semantic containment
-          if (jaccard >= 0.60 || (intersection >= 3 && containment >= 0.65)) {
+          // If two options are exact permutations of words, or share >= 60% Jaccard or >= 65% core semantic containment
+          if (isExactWordPermutation || jaccard >= 0.60 || (intersection >= 3 && containment >= 0.65)) {
             return {
               passed: false,
               code: 'SYNONYMOUS_DISTRACTORS',
-              message: `Distractors [${i}] and [${j}] represent duplicate reasoning (Jaccard: ${jaccard.toFixed(2)}, Containment: ${containment.toFixed(2)}): "${d1}" vs "${d2}"`,
-              details: `Duplicate distractor reasoning between options [${i}] and [${j}]`
+              message: `Option choices [${i}] and [${j}] represent duplicate reasoning or permuted wording (Jaccard: ${jaccard.toFixed(2)}, Containment: ${containment.toFixed(2)}): "${o1}" vs "${o2}"`,
+              details: `Duplicate/synonymous reasoning between option choices [${i}] and [${j}]`
             };
           }
         }
       }
     }
-    return { passed: true, details: 'Distractors represent distinct, non-overlapping conceptual choices' };
+    return { passed: true, details: 'Option choices represent distinct, non-overlapping conceptual choices' };
   }
 
   static _validateNoAccidentalSecondKey(options, correctAnswer, stem) {

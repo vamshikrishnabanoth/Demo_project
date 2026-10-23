@@ -158,6 +158,35 @@ class DeterministicValidator {
             details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j] }
           });
         }
+        // Permuted list duplicate or identical bag-of-words
+        else {
+          const t1 = this._tokenize(options[i]);
+          const t2 = this._tokenize(options[j]);
+          if (t1.size >= 2 && t2.size >= 2) {
+            let intersection = 0;
+            for (const token of t1) {
+              if (t2.has(token)) intersection++;
+            }
+            const isExactWordPermutation = (t1.size === t2.size && intersection === t1.size);
+            const unionSize = new Set([...t1, ...t2]).size;
+            const jaccard = unionSize > 0 ? (intersection / unionSize) : 0;
+
+            if (isExactWordPermutation) {
+              errors.push({
+                code: this.OPTION_SET_CONTRACT.hardRejectionCodes.PERMUTED_DUPLICATE_OPTION || 'PERMUTED_DUPLICATE_OPTION',
+                message: `Permuted duplicate option choices detected: "${options[i]}" and "${options[j]}" contain identical words in permuted order`,
+                details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j] }
+              });
+            } else if (jaccard >= 0.60 || (intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.65)) {
+              const containment = intersection / Math.min(t1.size, t2.size);
+              errors.push({
+                code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SYNONYMOUS_DISTRACTOR_OPTION || 'SYNONYMOUS_DISTRACTOR_OPTION',
+                message: `Synonymous duplicate option choices detected: "${options[i]}" and "${options[j]}" share ${(containment * 100).toFixed(0)}% core vocabulary`,
+                details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j], jaccard, containment }
+              });
+            }
+          }
+        }
       }
     }
 
@@ -685,6 +714,29 @@ class DeterministicValidator {
       const err = new Error('KEY_ASSIGNMENT_INTEGRITY_ERROR: Distractors contain duplicate choices');
       err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
       throw err;
+    }
+
+    // Invariant: Distractors must be mutually distinct from the correct answer
+    for (let dIdx = 0; dIdx < distractorTexts.length; dIdx++) {
+      const dText = distractorTexts[dIdx];
+      if (dText.toLowerCase() === exactCorrectText.toLowerCase()) {
+        const err = new Error('KEY_ASSIGNMENT_INTEGRITY_ERROR: A distractor is identical to the correct answer');
+        err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+        throw err;
+      }
+      const t1 = this._tokenize(exactCorrectText);
+      const t2 = this._tokenize(dText);
+      if (t1.size >= 2 && t2.size >= 2) {
+        let intersection = 0;
+        for (const token of t1) {
+          if (t2.has(token)) intersection++;
+        }
+        if (t1.size === t2.size && intersection === t1.size) {
+          const err = new Error(`KEY_ASSIGNMENT_INTEGRITY_ERROR: Distractor "${dText}" is a permuted duplicate of the correct answer "${exactCorrectText}"`);
+          err.code = 'KEY_ASSIGNMENT_INTEGRITY_ERROR';
+          throw err;
+        }
+      }
     }
 
     mcq.semanticIdentity = {

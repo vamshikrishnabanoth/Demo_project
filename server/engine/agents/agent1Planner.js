@@ -266,6 +266,12 @@ CORE PRINCIPLES:
 9. CANONICAL DOMAIN TRUTH INSTRUCTION:
    - Assessment targets must reflect canonical academic truth of the taught subject. If the speaker made an inadvertent verbal slip, plan the target around the true canonical concept, not the misstatement.
 
+10. DIVERSE CONCEPT DISPERSION (ANTI-REPETITION MANDATE):
+   - Every planned target MUST test a distinctly DIFFERENT subtopic or mechanism from the lecture.
+   - For an N-question quiz, you must NEVER plan more than 1 target on the basic definition of the overarching subject (e.g. at most ONE target defining "What is IPC?").
+   - The remaining targets MUST explore distinct sub-mechanisms (e.g. Target 2: Shared memory vs message passing tradeoffs; Target 3: Semaphore synchronization operations; Target 4: FIFO / named pipe filesystem persistence; Target 5: Deadlock prevention vs avoidance; Target 6: Banker's algorithm safe sequence constraints).
+   - Reject redundant concept targets—explore the full breadth of the lecture materials!
+
 JSON SCHEMA:
 {
   "subject": "string",

@@ -587,7 +587,7 @@ ${evidenceContext}
     // 3b. Step 6 Difficulty-Aware Distractor Fitness Gate
     const pkg = (evidencePackage && typeof evidencePackage === 'object') ? evidencePackage : { unifiedRawContent: evidenceText, curricularContent: evidenceText };
     const distractorFitness = DifficultyAwareDistractorValidator.validate(candidateMCQ, target, pkg);
-    if (distractorFitness.verdict === 'REJECT') {
+    if (distractorFitness.verdict === 'REJECT' || distractorFitness.verdict === 'REPAIR') {
       for (const flaw of distractorFitness.flaws) {
         if (flaw.code === 'ABSURD_DISTRACTOR' && !failureReasons.includes('IMPLAUSIBLE_DISTRACTOR')) {
           failureReasons.push('IMPLAUSIBLE_DISTRACTOR');
@@ -597,6 +597,12 @@ ${evidenceContext}
         }
         if (flaw.code === 'POTENTIAL_MULTI_KEY' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR)) {
           failureReasons.push(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
+        }
+        if (flaw.code === 'SYNONYMOUS_DISTRACTORS' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
+        }
+        if (flaw.code === 'GIVEAWAY_LENGTH_BIAS' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR);
         }
       }
     }

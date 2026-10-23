@@ -20,7 +20,8 @@ const SUITES = [
   { name: 'Step 2: Honest Telemetry', file: 'test_honest_telemetry.js' },
   { name: 'Step 3: Trace Linkage', file: 'test_trace_linkage.js' },
   { name: 'Step 4A: Grounding Gate Contract', file: 'test_grounding_gate_contract.js' },
-  { name: 'Step 4B: Plumbing Hardening', file: 'test_plumbing_hardening.js' }
+  { name: 'Step 4B: Plumbing Hardening', file: 'test_plumbing_hardening.js' },
+  { name: 'Step 4C: Audit Defect Prevention', file: 'test_audit_failure_prevention.js' }
 ];
 
 async function runChildSuite(suite) {
