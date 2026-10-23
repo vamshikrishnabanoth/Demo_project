@@ -1566,8 +1566,8 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                 return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
             }
 
-            // IMMUTABILITY GUARD: Cannot add questions to a locked (published) quiz
-            if (quiz.isLocked) {
+            // IMMUTABILITY GUARD: Cannot add questions to a locked quiz unless it is an active/waiting live quiz
+            if (quiz.isLocked && (!quiz.isLive || quiz.status === 'finished')) {
                 console.warn(`[ImmutabilityBlock] add_question blocked for locked quiz ${quizId} by ${socket.user.id}`);
                 return socket.emit('error_alert', {
                     msg: 'Quiz is locked after publishing. Questions cannot be added or modified.',

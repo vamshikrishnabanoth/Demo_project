@@ -688,11 +688,11 @@ export default function MyQuizzes() {
                                                 <div className="flex items-center gap-1.5 flex-wrap">
                                                     <Link
                                                         to={`/live-room-teacher/${quiz.joinCode}`}
-                                                        className="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-1.5 cursor-pointer transition-all bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 ring-2 ring-amber-400/50 shadow-amber-500/20"
+                                                        className="px-4 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-1.5 cursor-pointer transition-all"
                                                         title="Revisit and control live quiz classroom"
                                                     >
-                                                        <Play size={14} className="fill-current animate-pulse text-white" />
-                                                        <span>▶ Revisit Live Room ({quiz.joinCode})</span>
+                                                        <Play size={14} className="fill-white text-white" />
+                                                        <span>Revisit Live Room ({quiz.joinCode})</span>
                                                     </Link>
                                                     {/* Edit Live Quiz — allows teacher to add/remove questions, people & settings without ending the session */}
                                                     <Link

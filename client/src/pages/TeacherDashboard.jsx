@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import { 
     FileText, Type, Book, Cpu, Sparkles, Mic, ArrowRight,
-    Activity, Radio, Play
+    Activity, Radio, Play, Pencil
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../utils/api';
@@ -60,13 +60,35 @@ export default function TeacherDashboard() {
                                 </p>
                             </div>
                         </div>
-                        <button
-                            onClick={() => navigate(`/live-room-teacher/${activeLiveQuiz.joinCode}`)}
-                            className="w-full md:w-auto px-7 py-4 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white font-black text-xs uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer shrink-0 z-10 border-none"
-                        >
-                            <Play size={16} className="fill-white text-white" />
-                            <span>Revisit &amp; Control Live Room</span>
-                        </button>
+                        <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto shrink-0 z-10">
+                            <button
+                                onClick={() => navigate(`/live-room-teacher/${activeLiveQuiz.joinCode}`)}
+                                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white font-black text-xs uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer border-none"
+                            >
+                                <Play size={16} className="fill-white text-white" />
+                                <span>Revisit Live Room</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/create-quiz/text', {
+                                    state: {
+                                        editMode: true,
+                                        editQuizId: activeLiveQuiz.id,
+                                        editJoinCode: activeLiveQuiz.joinCode,
+                                        questions: Array.isArray(activeLiveQuiz.questions) ? activeLiveQuiz.questions : [],
+                                        title: activeLiveQuiz.title || '',
+                                        timerPerQuestion: activeLiveQuiz.timerPerQuestion || 30,
+                                        accessType: activeLiveQuiz.accessType || 'private',
+                                        assignedGroups: activeLiveQuiz.assignedGroups || [],
+                                        assignedStudents: activeLiveQuiz.assignedStudents || [],
+                                    }
+                                })}
+                                className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-black text-xs uppercase tracking-wider shadow-sm hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                title="Edit questions, delete duplicates, or manage assigned students"
+                            >
+                                <Pencil size={15} />
+                                <span>Edit Live Quiz</span>
+                            </button>
+                        </div>
                     </motion.div>
                 )}
 

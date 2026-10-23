@@ -658,11 +658,11 @@ export default function CreateQuizText() {
                             <button
                                 type="button"
                                 onClick={handleViewPipeline}
-                                className="group px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 hover:from-orange-500 hover:via-amber-500 hover:to-orange-400 hover:scale-105 active:scale-95 text-white font-black text-[10px] uppercase tracking-[0.18em] shadow-[0_4px_14px_rgba(234,88,12,0.35)] hover:shadow-[0_8px_25px_rgba(234,88,12,0.6)] flex items-center gap-2 cursor-pointer transition-all duration-300 border-2 border-orange-400 hover:border-amber-200 shrink-0"
+                                className="px-5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 cursor-pointer transition-all shrink-0"
                                 title="Inspect 16-Stage Observability Pipeline"
                             >
-                                <Activity size={15} className="stroke-[2.5] text-amber-200 animate-pulse group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300" />
-                                <span className="tracking-[0.18em] group-hover:tracking-[0.22em] transition-all duration-300">Inspect Pipeline</span>
+                                <Activity size={15} className="stroke-[2.5] text-white" />
+                                <span>Inspect Pipeline</span>
                             </button>
                         )}
                         {(aikenLoaded || isGeneratedSource) && (
@@ -1347,7 +1347,7 @@ export default function CreateQuizText() {
                                             id="update-live-quiz-btn"
                                             onClick={handleUpdateLiveQuiz}
                                             disabled={loading}
-                                            className="px-10 py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-sm uppercase tracking-widest shadow-xl shadow-orange-500/30 flex items-center gap-3 cursor-pointer transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                                            className="px-8 py-3.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-2.5 cursor-pointer transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                                         >
                                             {loading ? (
                                                 <><Loader2 className="animate-spin" size={18} /><span>SAVING CHANGES...</span></>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useRef, useMemo } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus, ShieldAlert, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { Award, Users, Play, Copy, Loader2, Clock, MinusCircle, WifiOff, Trophy, CheckCircle, XCircle, ChevronRight, ChevronLeft, Minus, ShieldAlert, ShieldCheck, AlertTriangle, Pencil } from 'lucide-react';
 import api from '../utils/api';
 import socket, { ensureSocketConnected } from '../utils/socket';
 import AuthContext from '../context/AuthContext';
@@ -787,14 +787,38 @@ if (socket.connected) {
                                 </div>
                             </div>
                             <div className="pt-4 flex flex-col items-center gap-5">
-                                <button
-                                    onClick={handleStartQuiz}
-                                    disabled={participants.length === 0}
-                                    className="btn-start-game group flex flex-row items-center justify-center gap-3 text-white px-8 sm:px-12 py-4 rounded-[1.5rem] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                                >
-                                    <Play size={22} className="group-hover:translate-x-1.5 transition-transform text-white fill-white" />
-                                    <span>START GAME</span>
-                                </button>
+                                <div className="flex flex-wrap items-center justify-center gap-4">
+                                    <button
+                                        onClick={handleStartQuiz}
+                                        disabled={participants.length === 0}
+                                        className="btn-start-game group flex flex-row items-center justify-center gap-3 text-white px-8 sm:px-12 py-4 rounded-[1.5rem] font-black text-lg sm:text-xl italic uppercase tracking-[0.12em] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    >
+                                        <Play size={22} className="group-hover:translate-x-1.5 transition-transform text-white fill-white" />
+                                        <span>START GAME</span>
+                                    </button>
+
+                                    {quiz && (
+                                        <Link
+                                            to="/create-quiz/text"
+                                            state={{
+                                                editMode: true,
+                                                editQuizId: quiz.id,
+                                                editJoinCode: quiz.joinCode || joinCode,
+                                                questions: Array.isArray(quiz.questions) ? quiz.questions : [],
+                                                title: quiz.title || '',
+                                                timerPerQuestion: quiz.timerPerQuestion || 30,
+                                                accessType: quiz.accessType || 'private',
+                                                assignedGroups: quiz.assignedGroups || [],
+                                                assignedStudents: quiz.assignedStudents || [],
+                                            }}
+                                            className="px-7 py-4 rounded-[1.5rem] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-2 border-indigo-200 font-black text-base italic uppercase tracking-[0.12em] flex items-center gap-2.5 cursor-pointer transition-all active:scale-95 shadow-sm"
+                                            title="Edit questions, delete duplicates, or manage assigned students"
+                                        >
+                                            <Pencil size={20} />
+                                            <span>EDIT LIVE QUIZ</span>
+                                        </Link>
+                                    )}
+                                </div>
                                 <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.18em] text-[10px]">{participants.length} {participants.length === 1 ? 'Student' : 'Students'} Joined</p>
                             </div>
                         </div>
@@ -933,6 +957,29 @@ if (socket.connected) {
                                 <Clock size={14} />
                                 +30s
                             </button>
+
+                            {/* Edit Live Quiz */}
+                            {quiz && (
+                                <Link
+                                    to="/create-quiz/text"
+                                    state={{
+                                        editMode: true,
+                                        editQuizId: quiz.id,
+                                        editJoinCode: quiz.joinCode || joinCode,
+                                        questions: Array.isArray(quiz.questions) ? quiz.questions : [],
+                                        title: quiz.title || '',
+                                        timerPerQuestion: quiz.timerPerQuestion || 30,
+                                        accessType: quiz.accessType || 'private',
+                                        assignedGroups: quiz.assignedGroups || [],
+                                        assignedStudents: quiz.assignedStudents || [],
+                                    }}
+                                    className="h-9 px-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-xs"
+                                    title="Edit questions, duplicates, or allowed students"
+                                >
+                                    <Pencil size={13} />
+                                    <span>Edit Quiz</span>
+                                </Link>
+                            )}
 
                             {/* End Session — separated visually to reduce mis-clicks */}
                             <button

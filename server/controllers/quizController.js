@@ -2693,7 +2693,11 @@ exports.updateQuiz = async (req, res) => {
         }
 
         // ── IMMUTABILITY GUARD: Locked (published) quizzes cannot be edited ──────
-        if (quiz.isLocked) {
+        // EXCEPTION: Teachers can edit live quizzes before they conclude ('finished')
+        // to fix duplicate questions, typos, or add students/groups who forgot to be assigned.
+        const isLiveEditable = quiz.isLive && quiz.status !== 'finished';
+
+        if (quiz.isLocked && !isLiveEditable) {
             // Admin override allowed only for metadata — never for questions
             const isAdmin = req.user.role === 'admin';
             if (questions !== undefined) {
@@ -2705,7 +2709,7 @@ exports.updateQuiz = async (req, res) => {
             }
             if (!isAdmin) {
                 // Non-admin teachers can only update non-content fields on locked quizzes
-                const allowedFields = ['title', 'description', 'startTime', 'endTime', 'timerPerQuestion', 'duration', 'timerType', 'accessType', 'gameType'];
+                const allowedFields = ['title', 'description', 'startTime', 'endTime', 'timerPerQuestion', 'duration', 'timerType', 'accessType', 'gameType', 'assignedGroups', 'assignedStudents'];
                 const requestedFields = Object.keys(req.body);
                 const forbidden = requestedFields.filter(f => !allowedFields.includes(f) && !['isActive', 'isAssessment', 'isLive', 'gameType'].includes(f));
                 if (forbidden.length > 0) {
@@ -2722,7 +2726,24 @@ exports.updateQuiz = async (req, res) => {
         if (title) updateData.title = title;
         if (description) updateData.description = description;
         if (questions) {
-            updateData.questions = Array.isArray(questions) ? questions : JSON.parse(questions);
+            const parsedQuestions = Array.isArray(questions) ? questions : JSON.parse(questions);
+            updateData.questions = parsedQuestions;
+            if (quiz.isLocked) {
+                const newVersion = (quiz.version || 1) + 1;
+                updateData.version = newVersion;
+                updateData.quizHash = hashQuiz(parsedQuestions, new Date(), req.user.id, newVersion);
+                updateData.publishedAt = new Date();
+            }
+        }
+        if (req.body.assignedGroups !== undefined) {
+            updateData.assignedGroups = typeof req.body.assignedGroups === 'string'
+                ? JSON.parse(req.body.assignedGroups)
+                : req.body.assignedGroups;
+        }
+        if (req.body.assignedStudents !== undefined) {
+            updateData.assignedStudents = typeof req.body.assignedStudents === 'string'
+                ? JSON.parse(req.body.assignedStudents)
+                : req.body.assignedStudents;
         }
         if (difficulty) updateData.difficulty = difficulty;
         if (timerPerQuestion !== undefined) updateData.timerPerQuestion = parseInt(timerPerQuestion);
