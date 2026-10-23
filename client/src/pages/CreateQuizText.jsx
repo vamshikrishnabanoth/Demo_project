@@ -1180,6 +1180,9 @@ export default function CreateQuizText() {
                                                     }}
                                                     initialGroups={computedAssignedGroups()}
                                                     initialStudents={assignedStudents}
+                                                    targetYear={targetYear}
+                                                    targetBranch={targetBranch}
+                                                    targetSections={targetSections}
                                                 />
                                             </motion.div>
                                         )}

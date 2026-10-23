@@ -6,14 +6,10 @@ import {
     Search,
     Users,
     Check,
-    ChevronDown,
-    SlidersHorizontal,
     GraduationCap,
     CheckSquare,
     Loader2,
-    Trash2,
-    Sparkles,
-    Calendar
+    Trash2
 } from 'lucide-react';
 
 export default function StudentAssignDrawer({ 
@@ -24,23 +20,11 @@ export default function StudentAssignDrawer({
     initialGroups, 
     initialStudents, 
     onSave,
-    inline = true 
+    inline = true,
+    targetYear = '',
+    targetBranch = '',
+    targetSections = []
 }) {
-    // Dynamic DB Filter Options
-    const [branches, setBranches] = useState([]);
-    const [sections, setSections] = useState([]);
-    const [years, setYears] = useState(['1st Year', '2nd Year', '3rd Year', '4th Year']);
-    const [semesters, setSemesters] = useState([]);
-
-    // Selection Filter State
-    const [selectedBranches, setSelectedBranches] = useState([]);
-    const [selectedSections, setSelectedSections] = useState([]);
-    const [selectedYear, setSelectedYear] = useState('');
-    const [selectedSemester, setSelectedSemester] = useState('');
-
-    // Accordion expand/collapse branch state
-    const [expandedBranch, setExpandedBranch] = useState(null);
-
     // Real-Time DB Search
     const [searchQuery, setSearchQuery] = useState('');
     const [students, setStudents] = useState([]);
@@ -68,32 +52,9 @@ export default function StudentAssignDrawer({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose, inline]);
 
-    // Load Initial DB-Driven Filter Options
+    // Initialize state from quiz or props
     useEffect(() => {
         if (!isOpen) return;
-
-        const loadFilterOptions = async () => {
-            try {
-                const [branchesRes, yearsRes, semestersRes] = await Promise.all([
-                    api.get('/students/branches'),
-                    api.get('/students/years'),
-                    api.get('/students/semesters')
-                ]);
-                const defaultBranches = ['CSE', 'CSM', 'CSD', 'IT', 'ECE', 'EEE', 'MECH', 'CIVIL'];
-                const fetchedBranches = branchesRes.data || [];
-                const mergedBranches = Array.from(new Set([...defaultBranches, ...fetchedBranches]));
-                setBranches(mergedBranches);
-
-                if (yearsRes.data && yearsRes.data.length > 0) {
-                    setYears(yearsRes.data);
-                }
-                setSemesters(semestersRes.data || ['Semester 1', 'Semester 2']);
-            } catch (err) {
-                console.error('Error loading filters from database:', err);
-            }
-        };
-
-        loadFilterOptions();
 
         if (quiz) {
             setAssignedGroups(quiz.assignedGroups || []);
@@ -127,27 +88,7 @@ export default function StudentAssignDrawer({
         }
     }, [isOpen, quiz, initialGroups, initialStudents]);
 
-    // Dynamically Load Sections when selected branches change
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const loadSections = async () => {
-            try {
-                const params = {};
-                if (selectedBranches.length > 0) {
-                    params.branch = selectedBranches.join(',');
-                }
-                const res = await api.get('/students/sections', { params });
-                setSections(res.data || []);
-            } catch (err) {
-                console.error('Error loading sections:', err);
-            }
-        };
-
-        loadSections();
-    }, [selectedBranches, isOpen]);
-
-    // Search and Filter Students (Debounced Querying)
+    // Search and Filter Students (Debounced Querying based on active class targeting & search query)
     useEffect(() => {
         if (!isOpen) return;
 
@@ -156,7 +97,7 @@ export default function StudentAssignDrawer({
         }, 250);
 
         return () => clearTimeout(delayDebounce);
-    }, [searchQuery, selectedBranches, selectedSections, selectedYear, selectedSemester, isOpen]);
+    }, [searchQuery, targetBranch, targetSections, targetYear, isOpen]);
 
     const fetchStudents = async (pageNum = 1, isNewSearch = false) => {
         setLoadingStudents(true);
@@ -164,12 +105,11 @@ export default function StudentAssignDrawer({
             const params = {
                 q: searchQuery,
                 page: pageNum,
-                limit: 15
+                limit: 20
             };
-            if (selectedBranches.length > 0) params.branch = selectedBranches.join(',');
-            if (selectedSections.length > 0) params.section = selectedSections.join(',');
-            if (selectedYear) params.year = selectedYear;
-            if (selectedSemester) params.semester = selectedSemester;
+            if (targetBranch) params.branch = targetBranch;
+            if (targetSections && targetSections.length > 0) params.section = targetSections.join(',');
+            if (targetYear) params.year = targetYear;
 
             const res = await api.get('/students/search', { params });
             const { students: newStudents, pagination } = res.data;
@@ -197,41 +137,6 @@ export default function StudentAssignDrawer({
         }
     };
 
-    // Toggle Branch Selection
-    const toggleBranchFilter = (branch) => {
-        setSelectedBranches(prev =>
-            prev.includes(branch) ? prev.filter(b => b !== branch) : [...prev, branch]
-        );
-        setSelectedSections([]);
-    };
-
-    // Toggle Section Selection
-    const toggleSectionFilter = (section) => {
-        setSelectedSections(prev =>
-            prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]
-        );
-    };
-
-    // Add Entire Section / Group
-    const assignGroup = (branch, section) => {
-        const exists = assignedGroups.some(g => g.branch === branch && g.section === section);
-        if (exists) {
-            toast.error(`Group ${branch}-${section} is already targeted.`);
-            return;
-        }
-
-        api.get('/students/search', {
-            params: { branch, section, limit: 1 }
-        }).then(res => {
-            const count = res.data?.pagination?.total || 0;
-            setAssignedGroups(prev => [...prev, { branch, section, count }]);
-            toast.success(`Targeted Entire ${branch}-${section} (${count} students)`);
-        }).catch(err => {
-            console.error(err);
-            setAssignedGroups(prev => [...prev, { branch, section, count: 0 }]);
-        });
-    };
-
     const toggleStudentSelection = (student) => {
         const isTargeted = assignedStudents.some(s => s.id === student.id);
         if (isTargeted) {
@@ -249,10 +154,9 @@ export default function StudentAssignDrawer({
                 q: searchQuery,
                 limit: 500
             };
-            if (selectedBranches.length > 0) params.branch = selectedBranches.join(',');
-            if (selectedSections.length > 0) params.section = selectedSections.join(',');
-            if (selectedYear) params.year = selectedYear;
-            if (selectedSemester) params.semester = selectedSemester;
+            if (targetBranch) params.branch = targetBranch;
+            if (targetSections && targetSections.length > 0) params.section = targetSections.join(',');
+            if (targetYear) params.year = targetYear;
 
             const res = await api.get('/students/search', { params });
             const allMatched = res.data.students || [];
@@ -273,9 +177,8 @@ export default function StudentAssignDrawer({
     };
 
     const clearAll = () => {
-        setAssignedGroups([]);
         setAssignedStudents([]);
-        toast.success('Cleared all targeted students & groups.');
+        toast.success('Cleared all individually selected students.');
     };
 
     const handleSaveAssignment = async () => {
@@ -321,22 +224,7 @@ export default function StudentAssignDrawer({
 
     if (!isOpen) return null;
 
-    // Helper to get active targeting shortcut names
-    const getShortcutTargets = () => {
-        const shortcuts = [];
-        selectedBranches.forEach(b => {
-            if (selectedSections.length > 0) {
-                selectedSections.forEach(sec => {
-                    shortcuts.push({ label: `Target Entire ${b}-${sec}`, branch: b, section: sec });
-                });
-            } else {
-                shortcuts.push({ label: `Target Entire ${b}`, branch: b, section: '' });
-            }
-        });
-        return shortcuts;
-    };
-
-    // Inner Content
+    // Inner Content (Focused and free of redundant duplicate filters)
     const content = (
         <div className="space-y-4">
             {/* Panel Top Header */}
@@ -347,26 +235,26 @@ export default function StudentAssignDrawer({
                     </div>
                     <div>
                         <h3 className="text-sm sm:text-base font-black text-slate-900 uppercase tracking-tight">
-                            Advanced Student Targeting
+                            Hand-Pick Individual Students
                         </h3>
                         <p className="text-slate-500 font-semibold text-xs mt-0.5">
-                            Filter by year, department, and section, or hand-pick individual students from the directory.
+                            Filter Scope: <strong className="text-slate-800">{targetYear ? `${targetYear}th Year` : 'All Years'} • {targetBranch || 'All Branches'} • {targetSections.length > 0 ? `Sec ${targetSections.join(', ')}` : 'All Sections'}</strong>
                         </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
                     <span className="bg-orange-50 border border-orange-200 text-[#ea580c] px-3.5 py-1.5 rounded-full text-xs font-black shadow-2xs">
-                        {calculateLiveTargetCount()} Targeted
+                        {assignedStudents.length} Students Picked
                     </span>
-                    {(assignedGroups.length > 0 || assignedStudents.length > 0) && (
+                    {assignedStudents.length > 0 && (
                         <button
                             type="button"
                             onClick={clearAll}
                             className="text-[10px] font-black text-red-600 hover:text-red-700 uppercase tracking-widest px-2.5 py-1 bg-red-50 hover:bg-red-100 rounded-lg border border-red-200 transition-colors cursor-pointer flex items-center gap-1"
-                            title="Clear all selections"
+                            title="Clear all individually selected students"
                         >
                             <Trash2 size={11} />
-                            <span>Clear All</span>
+                            <span>Clear Selection</span>
                         </button>
                     )}
                     {onClose && (
@@ -383,163 +271,12 @@ export default function StudentAssignDrawer({
                 </div>
             </div>
 
-            {/* ── 1. YEAR-WISE FILTER ── */}
-            <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-3 sm:p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                        <Calendar size={13} className="text-[#ea580c]" />
-                        <span>Filter By Academic Year</span>
-                    </h4>
-                    <span className="text-[10px] font-bold text-slate-500">
-                        {selectedYear ? `Filtered: ${selectedYear}` : 'All Years (No Restriction)'}
-                    </span>
-                </div>
-                <div className="flex flex-wrap items-center gap-1.5">
-                    <button
-                        type="button"
-                        onClick={() => setSelectedYear('')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                            !selectedYear
-                                ? 'bg-slate-900 text-white shadow-2xs'
-                                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-                        }`}
-                    >
-                        All Years
-                    </button>
-                    {years.map((yr) => {
-                        const isSel = selectedYear === yr;
-                        return (
-                            <button
-                                key={yr}
-                                type="button"
-                                onClick={() => setSelectedYear(isSel ? '' : yr)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                                    isSel
-                                        ? 'bg-[#ea580c] text-white shadow-2xs'
-                                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
-                                }`}
-                            >
-                                {yr}
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* ── 2. DEPARTMENT & SECTION FILTER ── */}
-            <div className="space-y-2.5">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                    <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                        <SlidersHorizontal size={13} className="text-[#ea580c]" />
-                        <span>Filter By Department & Section</span>
-                    </h4>
-                    <div className="flex items-center gap-2">
-                        {selectedBranches.length > 0 && (
-                            <button
-                                type="button"
-                                onClick={() => { setSelectedBranches([]); setSelectedSections([]); }}
-                                className="text-[10px] font-black text-rose-600 hover:text-rose-700 uppercase tracking-wider px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors cursor-pointer"
-                            >
-                                Reset Branches ({selectedBranches.length})
-                            </button>
-                        )}
-                        <span className="text-[10px] font-bold text-slate-400">Select one or multiple departments</span>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {branches.map(b => {
-                        const isSelected = selectedBranches.includes(b);
-                        const isExpanded = expandedBranch === b;
-
-                        return (
-                            <div
-                                key={b}
-                                className={`rounded-xl border transition-all p-2.5 ${
-                                    isSelected
-                                        ? 'bg-orange-50/50 border-orange-300'
-                                        : 'bg-white border-slate-200 hover:border-slate-300'
-                                }`}
-                            >
-                                <div className="flex items-center justify-between gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => toggleBranchFilter(b)}
-                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                                            isSelected
-                                                ? 'bg-[#ea580c] text-white shadow-xs'
-                                                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                                        }`}
-                                    >
-                                        <GraduationCap size={13} />
-                                        <span>{b}</span>
-                                        {isSelected && <span className="text-[10px] font-bold opacity-90">✓ Active</span>}
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setExpandedBranch(isExpanded ? null : b)}
-                                        className="text-[11px] font-bold text-[#ea580c] hover:text-[#c2410c] transition-colors flex items-center gap-1 cursor-pointer"
-                                    >
-                                        <span>{isExpanded ? 'Hide Sec' : 'Sections'}</span>
-                                        <ChevronDown
-                                            size={13}
-                                            className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-                                        />
-                                    </button>
-                                </div>
-
-                                {isExpanded && (
-                                    <div className="pt-2.5 mt-2.5 border-t border-slate-200 space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                                                Sections for {b}
-                                            </p>
-                                            <button
-                                                type="button"
-                                                onClick={() => assignGroup(b, 'All')}
-                                                className="text-[10px] font-black text-[#ea580c] hover:underline cursor-pointer"
-                                            >
-                                                Target Entire {b}
-                                            </button>
-                                        </div>
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {sections.length > 0 ? (
-                                                sections.map(sec => {
-                                                    const isSecSelected = selectedSections.includes(sec);
-                                                    return (
-                                                        <button
-                                                            key={sec}
-                                                            type="button"
-                                                            onClick={() => toggleSectionFilter(sec)}
-                                                            className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-                                                                isSecSelected
-                                                                    ? 'bg-[#ea580c] text-white shadow-2xs'
-                                                                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-                                                            }`}
-                                                        >
-                                                            Sec {sec}
-                                                        </button>
-                                                    );
-                                                })
-                                            ) : (
-                                                <p className="text-[11px] text-slate-400 italic">No specific sections found for {b}</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* ── 3. STUDENT DIRECTORY SEARCH & INDIVIDUAL SELECTION ── */}
-            <div className="space-y-2.5 pt-2 border-t border-slate-200">
+            {/* Student Directory Search & Individual Picking */}
+            <div className="space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                     <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                         <GraduationCap size={14} className="text-[#ea580c]" />
-                        <span>Enrolled Students ({totalStudentsCount} Found)</span>
+                        <span>Enrolled Students Directory ({totalStudentsCount} Matching)</span>
                     </h4>
                     {totalStudentsCount > 0 && (
                         <button
@@ -568,28 +305,11 @@ export default function StudentAssignDrawer({
                     />
                 </div>
 
-                {/* Contextual Shortcut Buttons */}
-                {getShortcutTargets().length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 py-0.5">
-                        {getShortcutTargets().map((sc, sci) => (
-                            <button
-                                key={sci}
-                                type="button"
-                                onClick={() => sc.section && assignGroup(sc.branch, sc.section)}
-                                className="bg-orange-50 hover:bg-orange-100 border border-orange-200 text-[#ea580c] text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md transition-all flex items-center gap-1 cursor-pointer"
-                            >
-                                <Sparkles size={11} />
-                                <span>Target Entire '{sc.branch}-{sc.section || 'All'}'</span>
-                            </button>
-                        ))}
-                    </div>
-                )}
-
                 {/* Scrollable Student List */}
                 <div
                     ref={listContainerRef}
                     onScroll={handleScroll}
-                    className="bg-slate-50/60 border border-slate-200 rounded-xl max-h-[300px] overflow-y-auto p-2 space-y-1.5"
+                    className="bg-slate-50/60 border border-slate-200 rounded-xl max-h-[320px] overflow-y-auto p-2 space-y-1.5"
                 >
                     {students.map((student) => {
                         const isManuallySelected = assignedStudents.some(s => s.id === student.id);
@@ -635,7 +355,7 @@ export default function StudentAssignDrawer({
                                 <div className="flex items-center gap-2">
                                     {isGroupSelected ? (
                                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider bg-slate-200 px-2 py-0.5 rounded">
-                                            Group Targeted
+                                            Class Targeted
                                         </span>
                                     ) : isManuallySelected ? (
                                         <div className="w-5 h-5 rounded-md bg-[#ea580c] text-white flex items-center justify-center shadow-2xs">
@@ -660,16 +380,16 @@ export default function StudentAssignDrawer({
                         <div className="text-center py-8 space-y-1.5">
                             <Users size={24} className="text-slate-300 mx-auto" />
                             <h5 className="font-bold text-slate-600 text-xs">No Students Found</h5>
-                            <p className="text-[11px] text-slate-400 font-medium">Try selecting different department or year filters above.</p>
+                            <p className="text-[11px] text-slate-400 font-medium">Try typing a student's roll number or name above.</p>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* ── 4. BOTTOM ACTIONS ── */}
+            {/* Bottom Actions */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200">
                 <p className="text-[11px] text-slate-500 font-medium">
-                    Targeting will apply to this quiz's broadcast access.
+                    Selected students will have guaranteed access to this quiz.
                 </p>
                 <div className="flex items-center gap-2.5 w-full sm:w-auto">
                     {onClose && (
@@ -690,7 +410,7 @@ export default function StudentAssignDrawer({
                         {isSaving ? (
                             <><Loader2 className="animate-spin" size={14} /><span>Applying...</span></>
                         ) : (
-                            <><Check size={14} /><span>Done & Apply ({calculateLiveTargetCount()} Students)</span></>
+                            <><Check size={14} /><span>Done & Apply ({assignedStudents.length} Students)</span></>
                         )}
                     </button>
                 </div>
@@ -698,7 +418,7 @@ export default function StudentAssignDrawer({
         </div>
     );
 
-    // If rendered inline: sits directly within the parent container without modal overlay!
+    // If rendered inline: sits directly within the parent container without modal overlay
     if (inline) {
         return (
             <div className="w-full bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs transition-all mt-3">
@@ -707,7 +427,7 @@ export default function StudentAssignDrawer({
         );
     }
 
-    // Modal fallback (if ever called as a modal, but with light clean theme)
+    // Modal fallback (if ever called as a modal)
     return (
         <div className="fixed inset-0 z-50 flex justify-end">
             <div
