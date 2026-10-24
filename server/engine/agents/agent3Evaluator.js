@@ -61,6 +61,37 @@ class Agent3Evaluator {
    * @returns {Object} Structured evaluation result
    */
   async evaluateQuestion(candidateMCQ, target = {}, evidencePackage = {}, options = {}) {
+    const isTopicMode = target.isTopicMode || 
+      evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' || 
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+
+    const cleanPrefix = (str) => {
+      if (typeof str !== 'string') return str;
+      return str
+        .replace(/^(?:according\s+to\s+the\s+lecture|as\s+discussed\s+in\s+the\s+lecture|in\s+the\s+lecture|based\s+on\s+the\s+lecture|as\s+taught\s+in\s+the\s+lecture|according\s+to\s+the\s+transcript)[,\s:]*/i, '')
+        .replace(/^(?:according\s+to\s+the\s+notes|as\s+explained\s+in\s+the\s+lecture)[,\s:]*/i, '');
+    };
+    if (candidateMCQ && typeof candidateMCQ === 'object') {
+      if (candidateMCQ.questionText) {
+        let q = cleanPrefix(candidateMCQ.questionText).trim();
+        candidateMCQ.questionText = q.charAt(0).toUpperCase() + q.slice(1);
+      }
+      if (candidateMCQ.question) {
+        let q = cleanPrefix(candidateMCQ.question).trim();
+        candidateMCQ.question = q.charAt(0).toUpperCase() + q.slice(1);
+      }
+      if (Array.isArray(candidateMCQ.options)) {
+        candidateMCQ.options = candidateMCQ.options.map(opt => {
+          let o = cleanPrefix(opt).trim();
+          return o.charAt(0).toUpperCase() + o.slice(1);
+        });
+      }
+      if (candidateMCQ.correctAnswer) {
+        let a = cleanPrefix(candidateMCQ.correctAnswer).trim();
+        candidateMCQ.correctAnswer = a.charAt(0).toUpperCase() + a.slice(1);
+      }
+    }
+
     // 1. Fast-Path: Candidate is Null or Non-Object
     if (!candidateMCQ || typeof candidateMCQ !== 'object') {
       return {
@@ -706,7 +737,7 @@ ${evidenceContext}
       const optLower = (opt || '').toLowerCase();
 
       // Check foreign domain contamination using word boundaries
-      const hasForeign = FOREIGN_DOMAIN_PATTERNS.some(pattern => pattern.test(optLower) && !pattern.test(cleanEvidence));
+      const hasForeign = !isTopicMode && FOREIGN_DOMAIN_PATTERNS.some(pattern => pattern.test(optLower) && !pattern.test(cleanEvidence));
       if (hasForeign) {
         const failureCode = isKey ? EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM : EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION;
         if (!failureReasons.includes(failureCode)) {
@@ -730,11 +761,11 @@ ${evidenceContext}
           .split(/\s+/)
           .filter(w => w.length > 3 && !GENERIC_CS_TERMS.has(w));
         const matched = keySubstantive.filter(w => cleanEvidence.includes(w));
-        const keyGrounded = cleanEvidence.length > 20 && (
+        const keyGrounded = isTopicMode || (cleanEvidence.length > 20 && (
           keySubstantive.length === 0 || 
           matched.length > 0 || 
           cleanEvidence.includes(optLower.substring(0, 30))
-        );
+        ));
 
         if (!keyGrounded && cleanEvidence.length > 20) {
           if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM)) {

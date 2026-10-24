@@ -393,6 +393,12 @@ class GroundingGate {
   }
 
   _checkJustification(qText, ansText, rawContent, q = null, evidencePackage = {}) {
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+    if (isTopicMode) {
+      return { isJustified: true, reason: 'Topic curriculum mode: canonical subject verification' };
+    }
+
     if (!rawContent || rawContent.length < 50) {
       return { isJustified: false, reason: 'INSUFFICIENT_READABLE_EVIDENCE: Session content too sparse to verify grounding' };
     }

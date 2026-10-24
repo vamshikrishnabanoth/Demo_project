@@ -214,7 +214,77 @@ ${lateFormatted || 'Code walkthrough and implementation details presented in lat
     const targetIdList = Array.from({ length: requestedCount }, (_, i) => `T${String(i + 1).padStart(2, '0')}`).join(', ');
     const reserveIdList = Array.from({ length: reserveTargetCount }, (_, i) => `R${String(i + 1).padStart(2, '0')}`).join(', ');
 
-    const systemPrompt = `You are Agent 1: Assessment Planner & Curriculum Strategist.
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+
+    let systemPrompt;
+    if (isTopicMode) {
+      const topicName = evidencePackage?.topic || rawContent || 'Specified Academic Topic';
+      systemPrompt = `You are Agent 1: Assessment Planner & Curriculum Strategist.
+Generate a comprehensive, rigorous Assessment Plan for the academic topic: "${topicName}".
+CRITICAL INSTRUCTION:
+The teacher requested exactly ${requestedCount} questions.
+You MUST plan all ${requestedCount} primary targets in "assessmentTargets" ([${targetIdList}]) and reserve targets in "reserveTargets" ([${reserveIdList}]).
+
+CURRICULUM PLANNING MANDATE:
+1. CANONICAL SUBJECT BREADTH: Plan targets covering the essential academic scope of "${topicName}":
+   - Foundational definitions, core terms, and governing principles.
+   - Core operational mechanisms, algorithm steps, state transitions, or math/procedural rules.
+   - Comparative tradeoffs and differences between variants, policies, or mechanisms.
+   - Concrete problem-solving scenarios, constraint analysis, edge cases, and diagnostics.
+2. DIVERSE CONCEPT DISPERSION:
+   - Each target must assess a distinctly DIFFERENT subtopic or mechanism within "${topicName}".
+   - Do NOT duplicate the same basic definition across multiple targets.
+3. DIFFICULTY CALIBRATION:
+   - When requested difficulty is 'Balanced', distribute difficulty across Easy, Medium, and Hard tiers:
+     * N=1: 1 Medium
+     * N=2: 1 Easy, 1 Medium
+     * N>=3: floor(N/3) Easy, floor(N/3) Hard, remainder Medium
+   - For uniform requests ('Easy', 'Medium', 'Hard'), assign ALL targets to the requested tier.
+   - For each target, specify:
+     * "targetDifficulty": "Easy", "Medium", or "Hard"
+     * "intendedCognitiveOperation": "RECALL" (Easy), "COMPARE" or "TRACE" (Medium), "APPLY" or "DIAGNOSE" (Hard)
+     * "operationalGuidance": Explicit instructions on cognitive demand and distractor design.
+4. STRICT ANTI-LECTURE DIRECTIVE:
+   - This is a formal curriculum assessment. Do NOT reference "lectures", "the speaker", "in the audio", or "classroom slides". All targets must focus purely on the technical subject matter.
+
+JSON SCHEMA:
+{
+  "subject": "string",
+  "mainTopic": "string",
+  "subtopics": ["..."],
+  "teachingEmphasis": { "conceptual": "HIGH", "application": "HIGH", "syntax": "MEDIUM", "calculation": "LOW" },
+  "assessmentTargets": [
+    {
+      "targetId": "T01",
+      "concept": "Exact Concept Name",
+      "dimension": "Theory | Operational Mechanics | Analysis | Application",
+      "cognitiveLevel": "Remember | Understand | Apply | Analyze",
+      "targetDifficulty": "Easy | Medium | Hard",
+      "intendedCognitiveOperation": "RECALL | COMPARE | TRACE | EXPLAIN_MECHANISM | DIAGNOSE",
+      "instruction": "Pedagogical objective",
+      "operationalGuidance": "Detailed guidance for question formulation",
+      "supportingEvidence": "Canonical academic principle",
+      "tier": "Core | Secondary"
+    }
+  ],
+  "reserveTargets": [
+    {
+      "targetId": "R01",
+      "concept": "Exact Concept Name",
+      "dimension": "Theory | Operational Mechanics | Analysis | Application",
+      "cognitiveLevel": "Remember | Understand | Apply | Analyze",
+      "targetDifficulty": "Easy | Medium | Hard",
+      "intendedCognitiveOperation": "RECALL | COMPARE | TRACE | EXPLAIN_MECHANISM | DIAGNOSE",
+      "instruction": "Pedagogical objective",
+      "operationalGuidance": "Detailed guidance for question formulation",
+      "supportingEvidence": "Canonical academic principle",
+      "tier": "Core | Secondary"
+    }
+  ]
+}`;
+    } else {
+      systemPrompt = `You are Agent 1: Assessment Planner & Curriculum Strategist.
 Analyze the session evidence and generate an Assessment Plan in valid JSON format.
 CRITICAL INSTRUCTION:
 The user requested up to ${requestedCount} questions.
@@ -299,8 +369,17 @@ Curricular Coverage Audit (Assessability Pre-Check):
 - Sufficient Concepts (Eligible for Targets): ${suff || 'All taught concepts with adequate evidence'}
 - Excluded or Insufficient Concepts (DO NOT Target): ${excl || 'None'}`;
     }
+    }
 
-    const userPrompt = `
+    const userPrompt = isTopicMode
+      ? `[ACADEMIC TOPIC CURRICULUM SPECIFICATION]
+Topic Name: ${evidencePackage?.topic || rawContent || 'Academic Topic'}
+Requested Difficulty: ${requestedDifficulty}
+Requested Question Count: Exactly ${requestedCount} (Required Targets: ${targetIdList})
+
+TASK:
+Generate the comprehensive assessment plan with exactly ${requestedCount} primary targets ([${targetIdList}]) and reserve targets covering foundational principles, operational mechanisms, algorithms, tradeoffs, and applied problem scenarios for ${evidencePackage?.topic || rawContent}.`
+      : `
 [TEACHING EVIDENCE PACKAGE]
 Lecture Depth: ${lectureDepth.rating} (${lectureDepth.score}/100)
 Voice Emphasis: Syntax=${voiceEmphasis.syntaxEmphasis}, Conceptual=${voiceEmphasis.conceptualEmphasis}
@@ -2503,6 +2582,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
       return planData;
     }
 
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT' ||
+      planData?.inputModality === 'TOPIC_SYNTHESIS';
+
     const cap = this._resolveCapacity(evidencePackage);
     const diffLower = String(requestedDifficulty || 'Balanced').toLowerCase();
     const count = Math.max(1, parseInt(requestedCount, 10) || planData.assessmentTargets.length || 1);
@@ -2561,7 +2644,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
       }
 
       // Enforce total defensible capacity: if all defensible capacity is exhausted, slot must become a deficit
-      if (nonDeficitCount >= allowedTotalRemaining) {
+      if (!isTopicMode && nonDeficitCount >= allowedTotalRemaining) {
         const deficitReason = cap.diagnosticReason || `Defensible lecture capacity limit of ${cap.totalDefensibleCapacity} question(s) reached. Remaining slots withheld to prevent hallucination.`;
         target.targetDifficulty = target.targetDifficulty || (diffLower === 'hard' ? 'Hard' : 'Medium');
         target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
@@ -2587,6 +2670,15 @@ Generate the curricular assessment plan strictly covering educational concepts w
 
       // Check if target is attempting Hard difficulty
       if (targetDiffLower === 'hard') {
+        if (isTopicMode) {
+          nonDeficitCount++;
+          target.targetDifficulty = 'Hard';
+          target.isCapacityLimited = false;
+          delete target.capacityLimitation;
+          target.negativeBoundaries = negativeBoundaries;
+          updatedTargets.push(target);
+          continue;
+        }
         const facetKey = `${String(target.concept || '').trim().toLowerCase()}::${String(target.subtopic || target.dimension || '').trim().toLowerCase()}`;
         const isDuplicate = seenHardFacets.has(facetKey);
         const canAllowHard = allowedHardRemaining > 0 && !isDuplicate;

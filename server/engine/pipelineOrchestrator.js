@@ -92,7 +92,21 @@ class PipelineOrchestrator {
       const hasCode = Boolean(sessionInputs.codeSnippets && sessionInputs.codeSnippets.trim().length > 0);
 
       // Connect Lecture Intelligence for consistent preview vs production capacity alignment
-      if (!evidencePackage.lectureIntelligence) {
+      if (evidencePackage.inputModality === 'TOPIC_SYNTHESIS') {
+        evidencePackage.lectureIntelligence = {
+          evidenceCapacity: {
+            distinctConceptCount: Math.max(requestedCount, 10),
+            recommendedQuestionCount: Math.max(requestedCount, 10),
+            capacityByDifficulty: {
+              easy: Math.ceil(requestedCount * 0.4),
+              medium: Math.ceil(requestedCount * 0.4),
+              hard: Math.ceil(requestedCount * 0.4)
+            },
+            totalDefensibleCapacity: Math.max(requestedCount + 10, 25),
+            advisoryRationale: 'Topic curriculum coverage capacity'
+          }
+        };
+      } else if (!evidencePackage.lectureIntelligence) {
         try {
           const rawVoice = sessionInputs.voiceTranscript || '';
           const rawDocs = (sessionInputs.documentTexts || []).join('\n');
@@ -118,7 +132,10 @@ class PipelineOrchestrator {
       let representationMode = 'UNIFIED';
       let routerReason = '';
 
-      if (evidencePackage.hasExcludedMaterials && !hasAlignedDocs && !hasCode) {
+      if (evidencePackage.inputModality === 'TOPIC_SYNTHESIS' || sessionInputs.inputModality === 'TOPIC_SYNTHESIS') {
+        representationMode = 'TOPIC_BLUEPRINT';
+        routerReason = 'Topic synthesis modality: Standard academic curriculum coverage for specified topic.';
+      } else if (evidencePackage.hasExcludedMaterials && !hasAlignedDocs && !hasCode) {
         // Policy C + B: Voice primary authority - all unaligned materials excluded
         representationMode = 'SUMMARY';
         routerReason = `Voice Primary Authority (Policy C+B): Unaligned material (${(evidencePackage.unalignedDocuments || []).join(', ')}) was excluded. Routed to pure transcript narrative representation path.`;

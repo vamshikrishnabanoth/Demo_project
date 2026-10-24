@@ -958,6 +958,27 @@ class DepthAnalyzer {
   analyzeLecture(text = '', options = {}) {
     const raw = (text || '').trim();
     const sourceModality = options.sourceModality || options.modality || 'UNIFIED';
+    if (sourceModality === 'TOPIC' && raw.length >= 3) {
+      return {
+        sourceModality,
+        isAcademic: true,
+        isCurricular: true,
+        academicClassification: 'ACADEMIC_TOPIC',
+        teachingValueScore: 90,
+        lectureDepth: {
+          rating: 'Advanced Curriculum',
+          score: 90,
+          characteristics: { conceptExplanation: 'Strong', reasoning: 'Strong', examples: 'Present', procedures: 'Strong' },
+          breakdown: { recommendedQuestionCount: 10, recommendedQuestionsRationale: 'Standard academic curriculum scope' }
+        },
+        detectedFocus: [raw],
+        retainedSegments: [{ text: raw }],
+        curricularSegments: [{ text: raw, classification: { type: 'CORE_EXPLANATION', concept_links: [raw] } }],
+        pedagogicalSegments: [],
+        adminSegments: [],
+        discardedSegments: []
+      };
+    }
     if (raw.length < 10) {
       return {
         sourceModality,

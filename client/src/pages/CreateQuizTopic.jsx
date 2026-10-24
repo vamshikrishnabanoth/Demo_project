@@ -714,11 +714,14 @@ export default function CreateQuizTopic() {
             }
         } catch (_) {}
 
+        const cleanName = textModalType === 'description'
+            ? (text.length > 40 ? (text.slice(0, 40) + '...') : text)
+            : ('Context Prompt (' + text.slice(0, 20) + '...)');
         const newInput = {
             id: Math.random().toString(),
             type: 'text',
             content: text,
-            source_name: textModalType === 'description' ? 'Topic Description' : `Context Prompt (${text.slice(0, 20)}...)`
+            source_name: cleanName
         };
         setInputs(prev => [...prev, newInput]);
         setTextInputContent('');
@@ -1161,7 +1164,22 @@ export default function CreateQuizTopic() {
         }));
         formData.append('file_configs', JSON.stringify(fileConfigs));
 
-        formData.append('topic', inputs.map(i => i.source_name).join(', '));
+        const textOnlyInputs = inputs.filter(i => i.type === 'text' && i.content);
+        const hasAudio = inputs.some(i => i.type === 'voice' || i.type === 'audio');
+        const hasDocFiles = liveFileInputs.length > 0 || docInputs.length > 0;
+        
+        let resolvedTopic = '';
+        if (textOnlyInputs.length > 0) {
+            resolvedTopic = textOnlyInputs.map(i => i.content.trim().slice(0, 100)).join(', ');
+        } else {
+            resolvedTopic = inputs.map(i => i.source_name).join(', ');
+        }
+        formData.append('topic', resolvedTopic || 'Academic Topic Assessment');
+
+        if (!hasAudio && !hasDocFiles && textOnlyInputs.length > 0) {
+            formData.append('input_modality', 'TOPIC_SYNTHESIS');
+        }
+
         formData.append('questionCount', questionCount);
         formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);

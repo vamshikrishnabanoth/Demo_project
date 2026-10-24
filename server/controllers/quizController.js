@@ -816,7 +816,7 @@ const checkAiServiceOnline = async (url) => {
 // LOCAL/CLOUD AI Generation - Architecture Baseline v1.0 (Three-Agent Assessment Pipeline)
 const pipelineOrchestrator = require('../engine/pipelineOrchestrator');
 
-const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null) => {
+const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null, inputModality = null) => {
     try {
         console.log(`🚀 [Baseline v1.0] Executing 3-Agent Pipeline: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
 
@@ -912,6 +912,10 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             }
         }
 
+        const isTopicMode = inputModality === 'TOPIC_SYNTHESIS' ||
+            type === 'topic' ||
+            (voiceText.trim().length === 0 && (!codeSnippets || codeSnippets.trim().length === 0) && docTexts.length <= 1 && (docTexts[0] || '').trim().length < 500);
+
         const sessionInputs = {
             sessionId: taskId || undefined,
             taskId: taskId || null,
@@ -923,7 +927,9 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             commonDocumentModel: commonDocModel,
             difficulty: difficulty,
             count: parseInt(count),
-            deficitPolicy: deficitPolicy || 'FILL_WITH_MEDIUM'
+            deficitPolicy: deficitPolicy || 'FILL_WITH_MEDIUM',
+            inputModality: isTopicMode ? 'TOPIC_SYNTHESIS' : (inputModality || 'UNIFIED'),
+            topic: (inputs && inputs[0] && inputs[0].content && inputs[0].type === 'text') ? inputs[0].content.trim() : (content || '')
         };
 
         const stageLabelMap = {
@@ -3513,9 +3519,13 @@ exports.generateQuizQuestions = async (req, res) => {
 
             const callbackUrl = `${req.protocol}://${req.get('host')}/api/quiz/generate/callback/${taskId}`;
 
+            const isTopicModeRequest = req.body.input_modality === 'TOPIC_SYNTHESIS' ||
+                ((!allUploadedFiles || allUploadedFiles.length === 0) && (!fileConfigs || fileConfigs.length === 0) && parsedInputs && parsedInputs.every(inp => inp.type === 'text') && (topic || parsedInputs[0]?.content));
+            const explicitModality = isTopicModeRequest ? 'TOPIC_SYNTHESIS' : (req.body.input_modality || null);
+
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality);
             } else if (req.file) {
                 if (isVoiceSource && extractedText) {
                     const voiceInput = [{
@@ -3525,16 +3535,16 @@ exports.generateQuizQuestions = async (req, res) => {
                         transcriptSegments: extractedSegments,
                         source_name: req.file.originalname
                     }];
-                    finalQuestions = await generateQuestions('voice', extractedText, questionCount, difficulty, source_material_id, blendedRatios, voiceInput, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
+                    finalQuestions = await generateQuestions('voice', extractedText, questionCount, difficulty, source_material_id, blendedRatios, voiceInput, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality);
                 } else if (extractedText) {
-                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
+                    finalQuestions = await generateQuestions('text', extractedText, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality);
                 } else {
-                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
+                    finalQuestions = await generateQuestions(sourceType, absolutePath, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality);
                 }
                 extractedTitle = req.file.originalname.replace(/\.[^/.]+$/, '');
                 try { fs.unlinkSync(absolutePath); } catch (_) {}
             } else if (topic) {
-                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy);
+                finalQuestions = await generateQuestions('topic', topic, questionCount, difficulty, source_material_id, blendedRatios, null, null, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, 'TOPIC_SYNTHESIS');
             }
 
             if (finalQuestions === 'ACCEPTED') {
@@ -4744,8 +4754,12 @@ exports.analyzeDepth = async (req, res) => {
             const procedureDesc = characteristics.procedures === 'Strong' ? 'step-by-step procedures' : 'conceptual foundations';
             const exampleDesc = characteristics.examples === 'Present' ? 'practical examples' : 'operational mechanisms';
 
+            const isTopicPrompt = !hasTimingData && wordCount < 300;
             if (lectureIntel?.summary) {
                 whatWasTaught = lectureIntel.summary;
+            } else if (isTopicPrompt) {
+                const topicSummary = meaningfulFocus.slice(0, 3).join(', ') || cleanTitle || 'the specified curriculum';
+                whatWasTaught = `A comprehensive assessment on ${cleanTitle} covering ${topicSummary} and ${exampleDesc}.`;
             } else if (meaningfulFocus.length > 0) {
                 const topicSummary = meaningfulFocus.slice(0, 3).join(', ');
                 whatWasTaught = `A structured lecture exploring ${topicSummary} with ${procedureDesc} and ${exampleDesc}.`;
@@ -4817,6 +4831,22 @@ exports.analyzeDepth = async (req, res) => {
             totalDefensibleCapacity = fallbackRecCount;
             advisoryRationale = recBreakdown?.recommendedQuestionsRationale || 'Estimated from curricular scope and pedagogical depth';
             recommendedQuestionCount = fallbackRecCount;
+        }
+        if (!hasTimingData && wordCount < 300 && analysis.isAcademic) {
+            recommendedQuestionCount = Math.max(10, recommendedQuestionCount || fallbackRecCount);
+            totalDefensibleCapacity = Math.max(15, totalDefensibleCapacity || fallbackRecCount);
+            if (recommendedByDifficulty) {
+                recommendedByDifficulty.easy = Math.max(5, recommendedByDifficulty.easy || 5);
+                recommendedByDifficulty.medium = Math.max(5, recommendedByDifficulty.medium || 5);
+                recommendedByDifficulty.hard = Math.max(3, recommendedByDifficulty.hard || 3);
+                recommendedByDifficulty.balanced = Math.max(10, recommendedByDifficulty.balanced || 10);
+            }
+            if (capacityByDifficulty) {
+                capacityByDifficulty.easy = Math.max(10, capacityByDifficulty.easy || 10);
+                capacityByDifficulty.medium = Math.max(10, capacityByDifficulty.medium || 10);
+                capacityByDifficulty.hard = Math.max(10, capacityByDifficulty.hard || 10);
+                capacityByDifficulty.balanced = Math.max(15, capacityByDifficulty.balanced || 15);
+            }
         }
 
         return res.json({
