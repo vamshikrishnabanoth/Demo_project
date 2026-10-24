@@ -56,6 +56,27 @@ export default function CreateQuizTopic() {
         setDepthLoading(false);
     }, []);
 
+    const clearAnalysisData = useCallback(() => {
+        currentAnalysisRef.current = null;
+        lastAnalyzedSignatureRef.current = null;
+        setLectureDepth(null);
+        setDetectedFocus([]);
+        setWhatWasTaught('');
+        setKeyTopics([]);
+        setLectureWordCount(0);
+        setRecommendedQuestions('');
+        setRecommendedQuestionCount(null);
+        setRecommendedByDifficulty(null);
+        setCapacityByDifficulty(null);
+        setTotalDefensibleCapacity(null);
+        setLectureIntel(null);
+        setDepthError(false);
+        setDepthLoading(false);
+        try {
+            localStorage.removeItem(analysisStorageKey);
+        } catch (_) {}
+    }, [analysisStorageKey]);
+
     // Account-Backed Docket Persistence (Synced across devices, stays until teacher deletes)
     useEffect(() => {
         let isCancelled = false;
@@ -125,13 +146,22 @@ export default function CreateQuizTopic() {
     useEffect(() => {
         if (!isHydrated) return;
         try {
-            localStorage.setItem(storageKey, JSON.stringify(inputs));
-            if (currentAnalysisRef.current) {
-                localStorage.setItem(analysisStorageKey, JSON.stringify(currentAnalysisRef.current));
+            if (inputs.length > 0) {
+                localStorage.setItem(storageKey, JSON.stringify(inputs));
+                if (currentAnalysisRef.current) {
+                    localStorage.setItem(analysisStorageKey, JSON.stringify(currentAnalysisRef.current));
+                }
+            } else {
+                localStorage.removeItem(storageKey);
+                localStorage.removeItem(analysisStorageKey);
             }
         } catch (_) {}
         if (user?.id) {
-            api.post('/quiz/docket', { inputs, analysis: currentAnalysisRef.current }).catch(err => {
+            const payload = {
+                inputs,
+                analysis: inputs.length === 0 ? null : currentAnalysisRef.current
+            };
+            api.post('/quiz/docket', payload).catch(err => {
                 console.warn('Silent docket sync notice:', err.message);
             });
         }
@@ -309,15 +339,7 @@ export default function CreateQuizTopic() {
         
         const hasInputs = voiceInputs.length > 0 || docAndTextInputs.length > 0;
         if (!hasInputs) {
-            setLectureDepth(null);
-            setDetectedFocus([]);
-            setWhatWasTaught('');
-            setKeyTopics([]);
-            setLectureWordCount(0);
-            setRecommendedQuestions('');
-            setRecommendedQuestionCount(null);
-            setDepthLoading(false);
-            setDepthError(false);
+            clearAnalysisData();
             return;
         }
 
@@ -416,19 +438,7 @@ export default function CreateQuizTopic() {
             }, 600);
             return () => clearTimeout(timer);
         } else {
-            setLectureDepth(null);
-            setLectureIntel(null);
-            setDetectedFocus([]);
-            setWhatWasTaught('');
-            setKeyTopics([]);
-            setLectureWordCount(0);
-            setRecommendedQuestions('');
-            setRecommendedQuestionCount(null);
-            setRecommendedByDifficulty(null);
-            setCapacityByDifficulty(null);
-            setTotalDefensibleCapacity(null);
-            setDepthLoading(false);
-            setDepthError(false);
+            clearAnalysisData();
         }
     }, [inputs, depthRetryCount]);
 
@@ -788,7 +798,13 @@ export default function CreateQuizTopic() {
         if (recordedBlobsRef.current.has(id)) {
             recordedBlobsRef.current.delete(id);
         }
-        setInputs(prev => prev.filter(item => item.id !== id));
+        setInputs(prev => {
+            const next = prev.filter(item => item.id !== id);
+            if (next.length === 0) {
+                clearAnalysisData();
+            }
+            return next;
+        });
         if (user?.id) {
             try {
                 await api.delete(`/quiz/docket/${encodeURIComponent(id)}`);
@@ -801,11 +817,10 @@ export default function CreateQuizTopic() {
         if (!window.confirm('Are you sure you want to remove all items from your docket?')) return;
         recordedBlobsRef.current.clear();
         setInputs([]);
+        clearAnalysisData();
         try {
             localStorage.removeItem(storageKey);
             localStorage.removeItem(analysisStorageKey);
-            lastAnalyzedSignatureRef.current = null;
-            currentAnalysisRef.current = null;
             if (user?.id) {
                 await api.delete('/quiz/docket');
             }
@@ -2003,7 +2018,15 @@ export default function CreateQuizTopic() {
                                                     key={level}
                                                     type="button"
                                                     disabled={isGenerating}
-                                                    onClick={() => setDifficulty(level)}
+                                                    onClick={() => {
+                                                        setDifficulty(level);
+                                                        const targetRec = (recVal !== null && recVal !== undefined && Number(recVal) > 0)
+                                                            ? Number(recVal)
+                                                            : (level === 'Balanced' && recommendedQuestionCount ? Number(recommendedQuestionCount) : null);
+                                                        if (targetRec && Number.isFinite(targetRec) && targetRec > 0) {
+                                                            setQuestionCount(Math.min(30, Math.max(1, targetRec)));
+                                                        }
+                                                    }}
                                                     className={`py-3 px-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-200 border-2 cursor-pointer active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-between ${
                                                         difficulty === level
                                                             ? 'bg-[var(--bg-accent)] text-white border-[var(--bg-accent)] shadow-md shadow-[var(--bg-accent)]/20'

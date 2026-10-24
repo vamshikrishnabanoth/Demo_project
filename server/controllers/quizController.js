@@ -4583,10 +4583,11 @@ exports.getUserDocket = async (req, res) => {
                 if (Array.isArray(parsed)) {
                     return res.json({ success: true, inputs: parsed, analysis: null });
                 }
+                const inputsList = Array.isArray(parsed.inputs) ? parsed.inputs : [];
                 return res.json({
                     success: true,
-                    inputs: Array.isArray(parsed.inputs) ? parsed.inputs : [],
-                    analysis: parsed.analysis || null
+                    inputs: inputsList,
+                    analysis: inputsList.length === 0 ? null : (parsed.analysis || null)
                 });
             } catch (pErr) {
                 console.warn('Failed to parse docket file, returning empty:', pErr.message);
@@ -4617,7 +4618,7 @@ exports.saveUserDocket = async (req, res) => {
         const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
         const payload = {
             inputs: sanitized,
-            analysis: (analysis && typeof analysis === 'object') ? analysis : null,
+            analysis: (sanitized.length > 0 && analysis && typeof analysis === 'object') ? analysis : null,
             updatedAt: Date.now()
         };
         fs.writeFileSync(docketFile, JSON.stringify(payload), 'utf8');
