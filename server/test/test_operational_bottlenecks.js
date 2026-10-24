@@ -69,13 +69,14 @@ async function testAsync(name, fn) {
   // PART 1: PROVIDER CONFIGURATION & GEMINI FAILOVER
   // ───────────────────────────────────────────────────────────────────────────
 
-  test('T1: Provider config specifies official supported Gemini fallback model (gemini-1.5-flash)', () => {
+  test('T1: Provider config specifies official active Gemini fallback model (gemini-flash-latest)', () => {
     assert.ok(providerConfig.text, 'providerConfig.text must exist');
     assert.strictEqual(
       providerConfig.text.fallbackModel,
-      process.env.TEXT_FALLBACK_MODEL || process.env.GEMINI_MODEL || 'gemini-1.5-flash',
-      'LLM fallback model must be gemini-1.5-flash or env override'
+      process.env.TEXT_FALLBACK_MODEL || process.env.GEMINI_MODEL || 'gemini-flash-latest',
+      'LLM fallback model must be gemini-flash-latest or env override'
     );
+    assert.notStrictEqual(providerConfig.text.fallbackModel, 'gemini-1.5-flash', 'Must not reference shut down gemini-1.5-flash');
     assert.notStrictEqual(providerConfig.text.fallbackModel, 'gemini-2.5-flash', 'Must not reference non-existent gemini-2.5-flash');
     assert.notStrictEqual(providerConfig.text.fastModel, 'gemini-2.5-flash', 'Fast model must not reference gemini-2.5-flash');
     assert.notStrictEqual(providerConfig.stt.fallbackModel, 'gemini-2.5-flash', 'STT fallback model must not reference gemini-2.5-flash');

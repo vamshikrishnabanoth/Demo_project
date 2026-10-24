@@ -398,12 +398,12 @@ class LLMRouter {
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    // Configurable model cascade: allows env override, defaults to official models gemini-1.5-flash, gemini-1.5-pro
+    // Configurable model cascade: allows env override, defaults to official active models gemini-flash-latest, gemini-pro-latest
     const candidateModels = Array.from(new Set([
       process.env.GEMINI_MODEL,
       model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
-      'gemini-1.5-flash',
-      'gemini-1.5-pro'
+      'gemini-flash-latest',
+      'gemini-pro-latest'
     ].filter(Boolean)));
 
     let lastErr = null;

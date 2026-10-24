@@ -16,9 +16,9 @@ const providerConfig = {
     primaryProvider: process.env.TEXT_PROVIDER || 'groq',
     primaryModel: process.env.TEXT_MODEL || 'openai/gpt-oss-120b',
     fallbackProvider: process.env.TEXT_FALLBACK_PROVIDER || 'gemini',
-    fallbackModel: process.env.TEXT_FALLBACK_MODEL || process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    fallbackModel: process.env.TEXT_FALLBACK_MODEL || process.env.GEMINI_MODEL || 'gemini-flash-latest',
     plannerModel: process.env.PLANNER_MODEL || 'openai/gpt-oss-120b',
-    fastModel: process.env.FAST_MODEL || process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    fastModel: process.env.FAST_MODEL || process.env.GEMINI_MODEL || 'gemini-flash-latest',
     timeoutMs: parseInt(process.env.LLM_TIMEOUT_MS, 10) || 60000,
     maxRetries: parseInt(process.env.LLM_MAX_RETRIES, 10) || 3
   },
@@ -28,7 +28,7 @@ const providerConfig = {
     primaryProvider: process.env.STT_PROVIDER || 'groq',
     primaryModel: process.env.STT_MODEL || 'whisper-large-v3-turbo',
     fallbackProvider: process.env.STT_FALLBACK_PROVIDER || 'gemini',
-    fallbackModel: process.env.STT_FALLBACK_MODEL || process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    fallbackModel: process.env.STT_FALLBACK_MODEL || process.env.GEMINI_MODEL || 'gemini-flash-latest',
     enableLocal: process.env.ENABLE_LOCAL_STT === 'true'
   },
 
