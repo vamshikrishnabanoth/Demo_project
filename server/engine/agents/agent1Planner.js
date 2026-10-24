@@ -356,6 +356,8 @@ JSON SCHEMA:
     { "targetId": "R01", "subtopic": "...", "concept": "Distinct fallback concept", "trajectoryPhase": "EARLY|MID|LATE", "timestamp": "00:00 - 15:00", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual", "cognitiveLevel": "Understand", "targetDifficulty": "Medium", "intendedCognitiveOperation": "COMPARE", "operationalGuidance": "Guidance", "evidenceType": "VOICE", "supportingEvidence": "Verbatim quote", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_02"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ]
 }`;
+    }
+
     const trajectoryPackage = this._buildChronologicalTrajectoryPackage(evidencePackage, rawContent);
     const assessableContent = trajectoryPackage.assessableContent;
 
@@ -368,7 +370,6 @@ JSON SCHEMA:
 Curricular Coverage Audit (Assessability Pre-Check):
 - Sufficient Concepts (Eligible for Targets): ${suff || 'All taught concepts with adequate evidence'}
 - Excluded or Insufficient Concepts (DO NOT Target): ${excl || 'None'}`;
-    }
     }
 
     const userPrompt = isTopicMode
