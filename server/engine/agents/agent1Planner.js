@@ -16,7 +16,416 @@ const { safeParseJson } = require('../utils/jsonParser');
 const crypto = require('crypto');
 const cacheManager = require('../../utils/cacheManager');
 
+const QUESTION_ARCHETYPES = Object.freeze({
+  CONCEPTUAL_CONTRAST: 'CONCEPTUAL_CONTRAST',
+  WHAT_IF_MUTATION: 'WHAT_IF_MUTATION',
+  QUICK_CALCULATION: 'QUICK_CALCULATION',
+  CLI_TERMINAL_IMPACT: 'CLI_TERMINAL_IMPACT',
+  MICRO_TRACE: 'MICRO_TRACE',
+  DIAGNOSTIC_BUG_HUNT: 'DIAGNOSTIC_BUG_HUNT'
+});
+
 class Agent1Planner {
+  /**
+   * Determine if an archetype is permitted by negative boundaries.
+   * Prevents NO_CODE, NO_MATH, NO_CLI, NO_CONCEPTUAL, NO_MUTATION bypasses under all conditions.
+   *
+   * @param {String} archetype
+   * @param {Array<String>} negativeBoundaries
+   * @returns {Boolean}
+   */
+  _isArchetypeAllowedByBoundaries(archetype, negativeBoundaries = []) {
+    const boundaries = Array.isArray(negativeBoundaries) ? negativeBoundaries : [];
+    const isCodeExcluded = boundaries.includes('NO_CODE') || boundaries.includes('NO_CODE_IMPLEMENTATION');
+    const isMathExcluded = boundaries.includes('NO_MATH') || boundaries.includes('NO_CALCULATION');
+    const isCliExcluded = boundaries.includes('NO_CLI') || boundaries.includes('NO_COMMAND_LINE');
+    const isConceptualExcluded = boundaries.includes('NO_CONCEPTUAL') || boundaries.includes('NO_THEORY');
+    const isMutationExcluded = boundaries.includes('NO_MUTATION') || boundaries.includes('NO_WHAT_IF');
+
+    if (isCodeExcluded && (archetype === QUESTION_ARCHETYPES.MICRO_TRACE || archetype === QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT)) {
+      return false;
+    }
+    if (isMathExcluded && archetype === QUESTION_ARCHETYPES.QUICK_CALCULATION) {
+      return false;
+    }
+    if (isCliExcluded && archetype === QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT) {
+      return false;
+    }
+    if (isConceptualExcluded && archetype === QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST) {
+      return false;
+    }
+    if (isMutationExcluded && archetype === QUESTION_ARCHETYPES.WHAT_IF_MUTATION) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Validates whether a candidate string represents a genuine mathematical or quantitative expression.
+   * Adversarially hardened against natural language assignments, string constants, dates, version numbers,
+   * price ranges, phone numbers, item numbers, dangling operators, and malformed equations.
+   *
+   * @param {String} str
+   * @returns {Boolean}
+   */
+  _isGenuineMathExpression(str) {
+    if (!str || typeof str !== 'string') return false;
+    const trimmed = str.trim();
+    if (trimmed.length < 3 || trimmed.length > 300) return false;
+
+    // 1. Reject language keywords and import/function declarations
+    if (/\b(?:const|let|var|def|function|class|import|require|package|return|interface|type)\b/.test(trimmed)) return false;
+
+    // 2. Reject natural language assignments of literals (strings, booleans, empty objects, aliases)
+    if (/^\s*[A-Za-z0-9_]+\s*=\s*(?:["'][^"']*["']|true|false|null|undefined|\{\}|\[\])\s*;?\s*$/.test(trimmed)) return false;
+    if (/^\s*[A-Za-z0-9_]+\s*=\s*[A-Za-z0-9_]+\s*;?\s*$/.test(trimmed)) return false; // variable alias: x = y
+
+    // 3. Reject non-mathematical prose with arithmetic punctuation:
+    if (/\+\d{1,3}[\s\-]\d{3}/.test(trimmed)) return false; // Phone numbers: +1-555-0199
+    if (/\$\s*\d+[\s\w]*[\-–]\s*\$?\s*\d+/.test(trimmed)) return false; // Price ranges: $10 - $20
+    if (/\b(?:items?|pages?|lines?|sections?|steps?|chapter|slides?)\s+\d+\s*[\-–]\s*\d+\b/i.test(trimmed)) return false; // Page/item ranges
+    if (/(?:={2,}|\s*=\s*=\s*|\s*=\s*[\+\*\/%^])/.test(trimmed)) return false; // Malformed equals: ==, ===, = =
+    if (/[+\-*/^%]\s*$/.test(trimmed)) return false; // Dangling operator at end of string
+    if (/[+\-*/%]\s*[+\-*/%](?!\*)/.test(trimmed)) return false; // Malformed consecutive operators: + +, * +
+
+    // 4. Balanced parentheses check
+    let parenCount = 0;
+    for (const char of trimmed) {
+      if (char === '(') parenCount++;
+      if (char === ')') parenCount--;
+      if (parenCount < 0) return false;
+    }
+    if (parenCount !== 0) return false;
+
+    // 5. Sanitize dates, versions, ports, and metadata counts
+    const sanitized = trimmed
+      .replace(/\b(19\d\d|20\d\d)\b/g, '')
+      .replace(/\bv\d+\.\d+(\.\d+)?\b/gi, '')
+      .replace(/\bversion\s+\d+(\.\d+)*\b/gi, '')
+      .replace(/\b\d+\.\d+\.\d+\b/g, '')
+      .replace(/\b\d+\s*(?:questions?|targets?|slides?|students?|minutes?|hours?|seconds?|percent|%)\b/gi, '')
+      .replace(/\b(?:port\s*)?(?:8080|5000|3000|80|443|22|5432|3306)\b/g, '')
+      .trim();
+
+    if (!sanitized || sanitized.length < 3) return false;
+
+    // 6. Valid equations: must have binary arithmetic operation with valid operands on BOTH sides
+    const hasArithmeticEquation = /[A-Za-z0-9_]+\s*=\s*[^=]*[a-zA-Z0-9_\)]+\s*(?:[\+\-\*/\^]|mod|div)\s*[a-zA-Z0-9_\(]+/i.test(sanitized);
+    const hasModuloOrDiv = /\b(?:mod|div)\b/i.test(sanitized) && /\d+/.test(sanitized) && /[a-zA-Z0-9_]+\s*=\s*/.test(sanitized);
+    const hasExponent = /\b(?:2\^\d+|\d+\^\d+)\b/.test(sanitized);
+    const hasMemoryUnitMath = /\b\d+\s*(?:KB|MB|GB|TB|bits?|bytes?)\b/i.test(sanitized) && /(?:page\s*size|frame\s*size|address|offset|total|\*|\+|\/)/i.test(sanitized);
+    const hasComplexity = /\b(?:O|Theta|Omega)\([nNkKvVeE0-9\+\s\^\*log\.]+\)/.test(sanitized);
+    const hasDomainMath = /\b(?:Km|Vmax|kcat|EAT|hit\s*ratio|miss\s*penalty|turnaround\s*time|waiting\s*time|burst\s*time|arrival\s*time)\s*=\s*[\d\.]+/i.test(sanitized);
+    const hasMathFunctions = /\b(?:sqrt|log2?|ln|exp|sin|cos|tan)\s*\([a-zA-Z0-9_\s\+\-\*/]+\)/i.test(sanitized);
+
+    return Boolean(hasArithmeticEquation || hasModuloOrDiv || hasExponent || hasMemoryUnitMath || hasComplexity || hasDomainMath || hasMathFunctions);
+  }
+
+  /**
+   * Detects shell history, command invocations, flags, pipes, or terminal sessions.
+   *
+   * @param {String} text
+   * @returns {Boolean}
+   */
+  _detectCliEvidence(text) {
+    if (!text || typeof text !== 'string') return false;
+
+    // 1. Shell prompt prefixes followed by command: $ cmd, # cmd, > cmd, % cmd
+    const hasPromptCommand = /^\s*[$#%>]\s+[a-z0-9_\-\.\/]+/m.test(text);
+
+    // 2. Representative CLI commands with flags or arguments
+    const hasCliCommands = /\b(?:docker\s+(?:run|build|ps|stop|rm|exec|logs|images|pull|push|compose)|podman\s+[a-z]+|kubectl\s+(?:get|apply|describe|delete|logs|exec)|git\s+(?:commit|checkout|push|pull|rebase|merge|status|branch|stash|diff|log|init|clone|add)|systemctl\s+(?:start|stop|restart|status|enable)|journalctl|kill\s+-\d+|ps\s+(?:aux|-ef)|top|htop|netstat|ss\s+-[a-z]+|ip\s+(?:addr|link|route)|iptables|ufw\s+[a-z]+|curl\s+(?:-[a-zA-Z]+|\S+)|wget\s+\S+|ssh\s+[\w@\.]+|chmod\s+[0-7]{3,4}|chown\s+[\w:]+|tar\s+-[a-z]+|grep\s+(?:-[a-z]+|\S+)|awk\s+['"]|sed\s+['"]|find\s+\S+\s+-name|cat\s+\S+\s*\||psql\s+-[a-zA-Z]+|mysql\s+-[a-zA-Z]+|mongosh|redis-cli|npm\s+(?:install|run|test|build)|pip\s+install|cargo\s+(?:run|build|test)|make\s+[a-z]*)\b/i.test(text);
+
+    // 3. Shell pipes or output redirection between commands
+    const hasShellPipes = /\b(?:cat|grep|sort|uniq|head|tail|wc|awk|sed|xargs)\s*\|\s*(?:grep|sort|uniq|head|tail|wc|awk|sed|xargs)\b/i.test(text);
+
+    // 4. Interactive SQL terminal commands
+    const hasSqlTerminal = /\b(?:BEGIN\s+TRANSACTION|COMMIT;|ROLLBACK;|SELECT\s+.+\s+FOR\s+UPDATE|SHOW\s+TABLES;|EXPLAIN\s+ANALYZE)\b/i.test(text);
+
+    return Boolean(hasPromptCommand || hasCliCommands || hasShellPipes || hasSqlTerminal);
+  }
+
+  /**
+   * Detects spoken state transitions, mutations, or algorithm traces in lecture transcripts.
+   *
+   * @param {String} text
+   * @returns {Boolean}
+   */
+  _detectSpokenTraceEvidence(text) {
+    if (!text || typeof text !== 'string') return false;
+
+    // 1. Concrete operations on data structures with action and target
+    const hasDsOperations = /\b(?:push(?:es|ed)?|pop(?:s|ped)?|enqueue(?:s|d)?|dequeue(?:s|d)?|insert(?:s|ed)?|delet(?:es|ed)?|append(?:s|ed)?)\s+(?:into|from|to|at)?\s*(?:the\s+)?(?:stack|queue|array|list|heap|tree|node|bucket|table|head|tail|top)?\b/i.test(text);
+
+    // 2. Explicit variable or pointer transitions
+    const hasStateMutations = /\b(?:increment(?:s|ed)?\s+by|decrement(?:s|ed)?\s+by|resets?\s+to|reset\s+to|swapp(?:ed|ing)\s+with|becomes?\s+[\w\d]+|changes?\s+from\s+\S+\s+to\s+\S+|pointer\s+\w*\s*(?:moves|advances|points|now\s+points))\b/i.test(text);
+
+    // 3. Algorithmic iteration or pass step
+    const hasStepIteration = /\b(?:after\s+(?:the\s+)?(?:first|second|third|i-th|k-th|\d+(?:st|nd|rd|th)?)\s+(?:iteration|pass|step|cycle)|in\s+the\s+(?:next|current)\s+iteration)\b/i.test(text);
+
+    // 4. Concrete structure contents
+    const hasStructureState = /\b(?:the\s+stack\s+(?:contains|becomes|holds)|the\s+queue\s+(?:contains|becomes|holds)|the\s+array\s+(?:becomes|is\s+sorted|elements?\s+are))\b/i.test(text);
+
+    return Boolean(hasDsOperations || hasStateMutations || hasStepIteration || hasStructureState);
+  }
+
+  /**
+   * Determine evidence-aware eligible question archetypes.
+   * Enforces strict evidence grounding rather than keyword matching.
+   *
+   * @param {Object} evidencePackage
+   * @param {String|Object} rawContent
+   * @returns {Array<String>} List of eligible archetype keys
+   */
+  _determineEligibleArchetypes(evidencePackage = {}, rawContent = '') {
+    const eligible = new Set();
+
+    const textToScan = [
+      typeof rawContent === 'string' ? rawContent : '',
+      evidencePackage.unifiedRawContent,
+      evidencePackage.curricularContent,
+      evidencePackage.voiceTranscript,
+      evidencePackage.topic
+    ].filter(Boolean).join('\n');
+    const docTexts = Array.isArray(evidencePackage.documentTexts) ? evidencePackage.documentTexts.join('\n') : '';
+    const artifacts = evidencePackage.artifacts || {};
+    const codeSnippets = Array.isArray(artifacts.codeSnippets)
+      ? artifacts.codeSnippets.join('\n')
+      : (Array.isArray(evidencePackage.codeSnippets)
+          ? evidencePackage.codeSnippets.join('\n')
+          : (typeof evidencePackage.codeSnippets === 'string' ? evidencePackage.codeSnippets : ''));
+    const combinedEvidence = `${textToScan}\n${docTexts}\n${codeSnippets}`;
+
+    const negBoundaries = Array.isArray(evidencePackage.negativeBoundaries)
+      ? evidencePackage.negativeBoundaries
+      : (Array.isArray(evidencePackage.instructionalProfile?.negativeBoundaries) ? evidencePackage.instructionalProfile.negativeBoundaries : []);
+    const isCodeExcluded = negBoundaries.includes('NO_CODE') || negBoundaries.includes('NO_CODE_IMPLEMENTATION');
+    const isMathExcluded = negBoundaries.includes('NO_MATH') || negBoundaries.includes('NO_CALCULATION');
+    const isCliExcluded = negBoundaries.includes('NO_CLI') || negBoundaries.includes('NO_COMMAND_LINE');
+    const isConceptualExcluded = negBoundaries.includes('NO_CONCEPTUAL') || negBoundaries.includes('NO_THEORY');
+    const isMutationExcluded = negBoundaries.includes('NO_MUTATION') || negBoundaries.includes('NO_WHAT_IF');
+
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+
+    // Baseline: CONCEPTUAL_CONTRAST is eligible for academic materials when not excluded
+    if (!isConceptualExcluded) {
+      const subtopicCount = Array.isArray(evidencePackage.subtopics) ? evidencePackage.subtopics.length : 0;
+      const hasContrastMarkers = /\b(versus|vs\.?|difference|tradeoff|compare|distinguish|alternative|advantage|disadvantage|unlike|on the other hand|in contrast|pros and cons)\b/i.test(combinedEvidence);
+      if (hasContrastMarkers || subtopicCount >= 2 || isTopicMode || combinedEvidence.length > 50) {
+        eligible.add(QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST);
+      }
+    }
+
+    // 1. WHAT_IF_MUTATION Eligibility
+    // Requires a defensible mechanism to mutate: conditional rules, invariants, prerequisites, or policies
+    if (!isMutationExcluded) {
+      const hasMutatableRules = /\b(if\s+[\w\s]{2,40}(?:then|causes|leads|results|fails|succeeds)|condition|constraint|invariant|prerequisite|unless|provided that|safe state|unsafe state|preemption|threshold|timeout|isolation level)\b/i.test(combinedEvidence);
+      const hasAlgoTransitions = codeSnippets.length > 0 || /\b(loop|iteration|queue|stack|pointer|array|recursion|branch|statement|algorithm)\b/i.test(combinedEvidence);
+      if (hasMutatableRules || hasAlgoTransitions || isTopicMode) {
+        eligible.add(QUESTION_ARCHETYPES.WHAT_IF_MUTATION);
+      }
+    }
+
+    // 2. QUICK_CALCULATION Eligibility
+    if (!isMathExcluded) {
+      const rawFormulas = Array.isArray(artifacts.formulasDetected)
+        ? artifacts.formulasDetected
+        : (Array.isArray(evidencePackage.formulasDetected) ? evidencePackage.formulasDetected : []);
+      const verifiedFormulas = rawFormulas.filter(f => this._isGenuineMathExpression(f));
+      const hasMathInText = this._isGenuineMathExpression(combinedEvidence);
+
+      if (verifiedFormulas.length > 0 || hasMathInText) {
+        eligible.add(QUESTION_ARCHETYPES.QUICK_CALCULATION);
+      }
+    }
+
+    // 3. CLI_TERMINAL_IMPACT Eligibility
+    if (!isCliExcluded) {
+      if (this._detectCliEvidence(combinedEvidence)) {
+        eligible.add(QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT);
+      }
+    }
+
+    // 4. MICRO_TRACE Eligibility
+    if (!isCodeExcluded) {
+      const hasCodeStateStructure = codeSnippets.length > 0 && /(?:vector|queue|stack|int\s+|float\s+|char\s+|class\s+|def\s+|function|public:|return\s+|->|\[\w+\]|\.push|\.pop|\.enqueue|\.dequeue|\.append|\*p|\+\+|--)/.test(codeSnippets);
+      const hasSpokenTrace = this._detectSpokenTraceEvidence(combinedEvidence);
+
+      if (hasCodeStateStructure || hasSpokenTrace) {
+        eligible.add(QUESTION_ARCHETYPES.MICRO_TRACE);
+      }
+    }
+
+    // 5. DIAGNOSTIC_BUG_HUNT Eligibility
+    // Clean, correct reference code does NOT enable bug hunting!
+    if (!isCodeExcluded) {
+      const hasBuggyCodeComment = codeSnippets.length > 0 && /(?:\/\/\s*(?:bug|fixme|broken|defect|flaw|error|issue|leak)|buggy_|broken_|flawed_)/i.test(codeSnippets);
+      const hasTerminalErrors = /\b(?:segmentation fault|panic:|nullpointerexception|core dumped|deadlock detected|address already in use|syntax error|out of memory|fatal error|unhandled exception)\b/i.test(combinedEvidence);
+      const hasExplicitFaultModel = /\b(?:bug|flaw|vulnerability|defect|off-by-one|null pointer dereference|memory leak|buffer overflow|infinite loop|starvation|data race|deadlock condition|pitfall|anti-pattern|common mistake|undefined behavior)\b/i.test(combinedEvidence);
+
+      if (hasBuggyCodeComment || hasTerminalErrors || hasExplicitFaultModel) {
+        eligible.add(QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT);
+      }
+    }
+
+    return Array.from(eligible);
+  }
+
+  /**
+   * Deterministically resolve a fallback archetype from the safe eligible set.
+   * Guarantees negative boundaries are NEVER bypassed under any condition.
+   *
+   * @param {String} dimension
+   * @param {String} operation
+   * @param {Array<String>} eligibleArchetypes
+   * @param {Array<String>} negativeBoundaries
+   * @returns {String|null} Resolved archetype key, or null if none allowed
+   */
+  _resolveDefaultArchetype(dimension = '', operation = '', eligibleArchetypes = [], negativeBoundaries = []) {
+    const safeEligible = (Array.isArray(eligibleArchetypes) ? eligibleArchetypes : [])
+      .filter(a => this._isArchetypeAllowedByBoundaries(a, negativeBoundaries));
+
+    if (safeEligible.length === 0) {
+      for (const candidate of Object.values(QUESTION_ARCHETYPES)) {
+        if (this._isArchetypeAllowedByBoundaries(candidate, negativeBoundaries)) {
+          return candidate;
+        }
+      }
+      return null;
+    }
+
+    const dim = String(dimension || '').toLowerCase();
+    const op = String(operation || '').toLowerCase();
+
+    if ((dim.includes('trace') || op.includes('trace')) && safeEligible.includes(QUESTION_ARCHETYPES.MICRO_TRACE)) {
+      return QUESTION_ARCHETYPES.MICRO_TRACE;
+    }
+    if ((dim.includes('calculation') || op.includes('calc') || dim.includes('math')) && safeEligible.includes(QUESTION_ARCHETYPES.QUICK_CALCULATION)) {
+      return QUESTION_ARCHETYPES.QUICK_CALCULATION;
+    }
+    if ((dim.includes('cli') || dim.includes('terminal') || op.includes('command')) && safeEligible.includes(QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT)) {
+      return QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT;
+    }
+    if ((dim.includes('bug') || op.includes('diagnose') || dim.includes('fault')) && safeEligible.includes(QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT)) {
+      return QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT;
+    }
+    if ((dim.includes('scenario') || op.includes('mutate') || dim.includes('cause')) && safeEligible.includes(QUESTION_ARCHETYPES.WHAT_IF_MUTATION)) {
+      return QUESTION_ARCHETYPES.WHAT_IF_MUTATION;
+    }
+    if (safeEligible.includes(QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST)) {
+      return QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST;
+    }
+    return safeEligible[0] || null;
+  }
+
+  /**
+   * Grounded Target Archetype Resolver.
+   * Ensures that a target's archetype is strictly compatible with:
+   * 1. Session-level eligibleArchetypes
+   * 2. All negative boundaries (NO_CODE, NO_MATH, NO_CLI, NO_CONCEPTUAL, NO_MUTATION)
+   * 3. Target's own specific evidence and learning objective (generic nouns alone are rejected)
+   * 4. Capacity deficit protection: capacity deficits are NEVER given a question archetype
+   *
+   * @param {Object} target
+   * @param {Array<String>} eligibleArchetypes
+   * @param {Array<String>} negativeBoundaries
+   * @param {Object} sessionEvidence
+   * @returns {String} Grounded archetype
+   */
+  _resolveTargetArchetype(target = {}, eligibleArchetypes = [], negativeBoundaries = [], sessionEvidence = {}) {
+    const isDeficit = target.isCapacityLimited === true ||
+      target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      target.targetArchetype === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      (target.capacityLimitation && ['INSUFFICIENT_EVIDENCE_FOR_HARD', 'INSUFFICIENT_CURRICULAR_EVIDENCE', 'CAPACITY_DEFICIT'].includes(target.capacityLimitation.status));
+
+    if (isDeficit) {
+      target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+      target.isCapacityLimited = true;
+      return 'UNFULFILLED_CAPACITY_DEFICIT';
+    }
+
+    const safeEligible = (Array.isArray(eligibleArchetypes) ? eligibleArchetypes : [])
+      .filter(a => this._isArchetypeAllowedByBoundaries(a, negativeBoundaries));
+
+    if (safeEligible.length === 0) {
+      target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+      target.isCapacityLimited = true;
+      target.capacityLimitation = {
+        status: 'NEGATIVE_BOUNDARY_EXCLUSION',
+        reason: 'All available archetypes excluded by session negative boundaries'
+      };
+      return 'UNFULFILLED_CAPACITY_DEFICIT';
+    }
+
+    let candidate = target.targetArchetype;
+    if (!candidate || !safeEligible.includes(candidate)) {
+      candidate = this._resolveDefaultArchetype(target.dimension, target.intendedCognitiveOperation, safeEligible, negativeBoundaries);
+    }
+
+    // Target evidence text to evaluate grounding
+    const targetText = `${target.concept || ''} ${target.subtopic || ''} ${target.supportingEvidence || ''} ${target.instruction || ''}`;
+
+    // 1. Target-level grounding for DIAGNOSTIC_BUG_HUNT:
+    // Requires demonstrable defects or failure modes in target context.
+    if (candidate === QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT) {
+      const hasTargetDefect = /\b(?:bug|flaw|defect|error|vulnerability|off-by-one|leak|failure|panic|fault|pitfall|anti-pattern|deadlock|race condition)\b/i.test(targetText);
+      if (!hasTargetDefect) {
+        candidate = this._resolveDefaultArchetype(target.dimension, 'TRACE', safeEligible.filter(a => a !== QUESTION_ARCHETYPES.DIAGNOSTIC_BUG_HUNT), negativeBoundaries);
+      }
+    }
+
+    // 2. Target-level grounding for MICRO_TRACE:
+    // Requires concrete code state transitions or spoken state mutations.
+    // Isolated nouns like "array" or "function" WITHOUT a state transition MUST NOT qualify!
+    if (candidate === QUESTION_ARCHETYPES.MICRO_TRACE) {
+      const hasCodeSnippetMutation = /(?:\b(?:int|float|char|void|def|class)\b.*\{|\w+\[\w+\]\s*=|\w+\.(?:push|pop|enqueue|dequeue|append)\(|\*p\b|\+\+|--)/.test(targetText);
+      const hasSpokenTrace = this._detectSpokenTraceEvidence(targetText);
+      if (!hasCodeSnippetMutation && !hasSpokenTrace) {
+        candidate = this._resolveDefaultArchetype(target.dimension, 'APPLY', safeEligible.filter(a => a !== QUESTION_ARCHETYPES.MICRO_TRACE), negativeBoundaries);
+      }
+    }
+
+    // 3. Target-level grounding for QUICK_CALCULATION:
+    // Requires an actual formula or quantitative formulation.
+    // Generic words like "calculate", "latency", or "overhead" WITHOUT a calculation MUST NOT qualify!
+    if (candidate === QUESTION_ARCHETYPES.QUICK_CALCULATION) {
+      const hasConcreteMath = this._isGenuineMathExpression(targetText);
+      const hasQuantitativeValues = /\b(?:burst time|arrival time|turnaround time|hit ratio|miss penalty|page size|frame size|offset|EAT)\s*=\s*\d+/i.test(targetText) || /\b\d+\s*mod\s*\d+\b/i.test(targetText) || /\b2\^\d+\b/.test(targetText);
+      if (!hasConcreteMath && !hasQuantitativeValues) {
+        candidate = this._resolveDefaultArchetype(target.dimension, 'COMPARE', safeEligible.filter(a => a !== QUESTION_ARCHETYPES.QUICK_CALCULATION), negativeBoundaries);
+      }
+    }
+
+    // 4. Target-level grounding for CLI_TERMINAL_IMPACT:
+    // Requires shell prompt, CLI command with flags, pipes, or SQL transaction syntax.
+    // Isolated words like "command" or "terminal" WITHOUT CLI syntax MUST NOT qualify!
+    if (candidate === QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT) {
+      const hasConcreteCli = this._detectCliEvidence(targetText);
+      if (!hasConcreteCli) {
+        candidate = this._resolveDefaultArchetype(target.dimension, 'APPLY', safeEligible.filter(a => a !== QUESTION_ARCHETYPES.CLI_TERMINAL_IMPACT), negativeBoundaries);
+      }
+    }
+
+    // 5. Target-level grounding for WHAT_IF_MUTATION:
+    // In topic mode or evidence mode, requires conditional rules, invariants, or policy tradeoffs.
+    // Pure definitions without mutation mechanisms MUST NOT receive WHAT_IF_MUTATION!
+    if (candidate === QUESTION_ARCHETYPES.WHAT_IF_MUTATION) {
+      const hasMutatableRules = /\b(if\s+[\w\s]{2,40}(?:then|causes|leads|results|fails|succeeds)|condition|constraint|invariant|prerequisite|unless|provided that|safe state|unsafe state|preemption|threshold|timeout|isolation level|tradeoff|what\s+if|when\s+[\w\s]{2,30}(?:fails|exceeds|occurs))\b/i.test(targetText);
+      const isScenarioDimension = ['Scenario Analysis', 'Cause / Effect', 'Prediction'].includes(target.dimension);
+      if (!hasMutatableRules && !isScenarioDimension) {
+        candidate = safeEligible.includes(QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST) ? QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST : safeEligible[0];
+      }
+    }
+
+    // Final safety check against negative boundaries
+    if (!this._isArchetypeAllowedByBoundaries(candidate, negativeBoundaries)) {
+      candidate = this._resolveDefaultArchetype('Conceptual', 'RECALL', safeEligible, negativeBoundaries);
+    }
+
+    return candidate || 'UNFULFILLED_CAPACITY_DEFICIT';
+  }
+
   /**
    * Constructs a 3-Phase Chronological Trajectory Package from the full session evidence.
    * Eliminates destructive 16k truncation while guaranteeing complete chronological coverage:
@@ -359,7 +768,7 @@ JSON SCHEMA:
   "teachingEmphasis": { "conceptual": "HIGH", "application": "HIGH", "syntax": "MEDIUM", "calculation": "LOW" },
   "targetCount": ${requestedCount},
   "assessmentTargets": [
-    { "targetId": "T01", "subtopic": "...", "concept": "Specific unique learning objective", "trajectoryPhase": "EARLY|MID|LATE", "timestamp": "00:00 - 15:00", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual|Cause / Effect|Comparison / Tradeoff|Scenario Analysis|Application|Prediction|Flow / Trace|Foundational Prerequisite|Evidence-Derived Inference", "cognitiveLevel": "Remember|Understand|Apply|Analyze|Evaluate", "targetDifficulty": "Easy|Medium|Hard", "intendedCognitiveOperation": "RECALL|COMPARE|TRACE|APPLY|DIAGNOSE", "operationalGuidance": "Guidance on cognitive demand", "evidenceType": "VOICE|CODE|DOCUMENT|VOICE + DOCUMENT", "supportingEvidence": "Verbatim quote or factual sentence from session content", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_01"], "requiresExactArtifact": false, "instruction": "Guidance" }
+    { "targetId": "T01", "subtopic": "...", "concept": "Specific unique learning objective", "trajectoryPhase": "EARLY|MID|LATE", "timestamp": "00:00 - 15:00", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual|Cause / Effect|Comparison / Tradeoff|Scenario Analysis|Application|Prediction|Flow / Trace|Foundational Prerequisite|Evidence-Derived Inference", "cognitiveLevel": "Remember|Understand|Apply|Analyze|Evaluate", "targetDifficulty": "Easy|Medium|Hard", "targetArchetype": "CONCEPTUAL_CONTRAST|WHAT_IF_MUTATION|QUICK_CALCULATION|CLI_TERMINAL_IMPACT|MICRO_TRACE|DIAGNOSTIC_BUG_HUNT", "intendedCognitiveOperation": "RECALL|COMPARE|TRACE|APPLY|DIAGNOSE", "operationalGuidance": "Guidance on cognitive demand", "evidenceType": "VOICE|CODE|DOCUMENT|VOICE + DOCUMENT", "supportingEvidence": "Verbatim quote or factual sentence from session content", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_01"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ],
   "reserveTargets": [
     { "targetId": "R01", "subtopic": "...", "concept": "Distinct fallback concept", "trajectoryPhase": "EARLY|MID|LATE", "timestamp": "00:00 - 15:00", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual", "cognitiveLevel": "Understand", "targetDifficulty": "Medium", "intendedCognitiveOperation": "COMPARE", "operationalGuidance": "Guidance", "evidenceType": "VOICE", "supportingEvidence": "Verbatim quote", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_02"], "requiresExactArtifact": false, "instruction": "Guidance" }
@@ -479,6 +888,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
               dimension: t.dimension || 'Conceptual',
               cognitiveLevel: t.cognitiveLevel || 'Understand',
               targetDifficulty: t.targetDifficulty || requestedDifficulty,
+              targetArchetype: t.targetArchetype || undefined,
               evidenceType: prov.evidenceType,
               supportingEvidence: t.supportingEvidence || t.evidenceSpan || '',
               confidence: t.confidence || 'HIGH',
@@ -2320,7 +2730,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     }
 
     if (process.env.DIFFICULTY_CALIBRATION_MODE === 'v1_bloom_quota') {
-      return planData;
+      return this._enforceFinalCapacitySafetyGate(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
     }
     return this._enforceFinalCapacitySafetyGate(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
   }
@@ -3068,6 +3478,13 @@ Generate the curricular assessment plan strictly covering educational concepts w
       updatedTargets.push(deficitTarget);
     }
 
+    const eligibleArchetypes = this._determineEligibleArchetypes(evidencePackage, planData.mainTopic || '');
+
+    // Ensure all assessment targets have a valid eligible and grounded targetArchetype
+    updatedTargets.forEach((t) => {
+      t.targetArchetype = this._resolveTargetArchetype(t, eligibleArchetypes, negativeBoundaries, evidencePackage);
+    });
+
     // Sequential ID re-indexing: T01, T02, ...
     updatedTargets.forEach((t, idx) => {
       t.targetId = `T${String(idx + 1).padStart(2, '0')}`;
@@ -3130,6 +3547,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
         r.negativeBoundaries = negativeBoundaries;
         r.intendedCognitiveOperation = resTier === 'Hard' ? 'SCENARIO_TRADEOFF' : (resTier === 'Medium' ? 'COMPARE' : 'RECALL');
         r.operationalGuidance = 'Assess grounded curricular concepts without introducing un-taught trivia.';
+        r.targetArchetype = this._resolveTargetArchetype(r, eligibleArchetypes, negativeBoundaries, evidencePackage);
       });
     }
 
@@ -3137,4 +3555,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
   }
 }
 
-module.exports = new Agent1Planner();
+const plannerInstance = new Agent1Planner();
+plannerInstance.QUESTION_ARCHETYPES = QUESTION_ARCHETYPES;
+module.exports = plannerInstance;
+module.exports.Agent1Planner = Agent1Planner;
+module.exports.QUESTION_ARCHETYPES = QUESTION_ARCHETYPES;
