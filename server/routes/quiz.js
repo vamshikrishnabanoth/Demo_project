@@ -552,6 +552,11 @@ router.put('/:id/end', auth, teacherOrAdmin, quizController.endQuiz);
 // @desc    Update a quiz
 router.put('/:id', auth, teacherOrAdmin, quizController.updateQuiz);
 
+// @route   POST api/quiz/assign/:id
+// @desc    Assign quiz to specific students or groups
+router.post('/assign/:id', auth, teacherOrAdmin, quizController.assignQuiz);
+router.post('/:id/assign', auth, teacherOrAdmin, quizController.assignQuiz);
+
 module.exports = router;
 
 
