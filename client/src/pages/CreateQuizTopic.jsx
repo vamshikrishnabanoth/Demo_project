@@ -122,6 +122,7 @@ export default function CreateQuizTopic() {
     const [depthRetryCount, setDepthRetryCount] = useState(0);
     const [lectureIntel, setLectureIntel] = useState(null);
 
+    const isTopicOnly = inputs.length > 0 && inputs.every(inp => inp.type === 'text');
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
@@ -298,7 +299,8 @@ export default function CreateQuizTopic() {
         } else {
             textToAnalyze = docAndTextInputs.map(d => (d.content || '').trim()).join('\n\n');
             primaryName = docAndTextInputs[0].source_name || '';
-            modality = 'DOCUMENT_ONLY';
+            const isAllText = docAndTextInputs.every(i => i.type === 'text');
+            modality = isAllText ? 'TOPIC' : 'DOCUMENT_ONLY';
         }
         
         if (textToAnalyze.length > 25) {
@@ -1309,7 +1311,7 @@ export default function CreateQuizTopic() {
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">Lecture Quality Score</p>
+                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">{isTopicOnly ? 'Curriculum Scope' : 'Lecture Quality Score'}</p>
                                         <span className="text-[9px] font-bold text-[#c2410c] bg-orange-100 px-1.5 py-0.2 rounded-full group-hover:bg-[#ea580c] group-hover:text-white transition-colors flex items-center gap-1">
                                             <span>Instructional Digest</span>
                                             <Info size={10} className="shrink-0" />
@@ -1853,7 +1855,7 @@ export default function CreateQuizTopic() {
                                             <div className="flex items-center gap-2">
                                                 <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
                                                 <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider">
-                                                    Teaching Depth: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
+                                                    {isTopicOnly ? 'Topic Scope: ' : 'Teaching Depth: '}<span className="font-bold text-[#ea580c]">{isTopicOnly ? 'ENGINEERING CURRICULUM' : (lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
                                                 </span>
                                             </div>
                                             <button

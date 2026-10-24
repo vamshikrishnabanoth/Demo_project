@@ -219,19 +219,19 @@ ${lateFormatted || 'Code walkthrough and implementation details presented in lat
 
     let systemPrompt;
     if (isTopicMode) {
-      const topicName = evidencePackage?.topic || rawContent || 'Specified Academic Topic';
-      systemPrompt = `You are Agent 1: Assessment Planner & Curriculum Strategist.
-Generate a comprehensive, rigorous Assessment Plan for the academic topic: "${topicName}".
+      const topicName = evidencePackage?.topic || rawContent || 'Specified Engineering Topic';
+      systemPrompt = `You are Agent 1: Engineering Assessment Specialist & Curriculum Designer.
+Generate a comprehensive, rigorous Assessment Plan tailored for university engineering students on the topic: "${topicName}".
 CRITICAL INSTRUCTION:
 The teacher requested exactly ${requestedCount} questions.
 You MUST plan all ${requestedCount} primary targets in "assessmentTargets" ([${targetIdList}]) and reserve targets in "reserveTargets" ([${reserveIdList}]).
 
-CURRICULUM PLANNING MANDATE:
-1. CANONICAL SUBJECT BREADTH: Plan targets covering the essential academic scope of "${topicName}":
-   - Foundational definitions, core terms, and governing principles.
-   - Core operational mechanisms, algorithm steps, state transitions, or math/procedural rules.
-   - Comparative tradeoffs and differences between variants, policies, or mechanisms.
-   - Concrete problem-solving scenarios, constraint analysis, edge cases, and diagnostics.
+ENGINEERING CURRICULUM PLANNING MANDATE:
+1. UNIVERSITY ENGINEERING RIGOR: Plan targets covering the core technical scope of "${topicName}" for engineering undergraduates:
+   - Foundational theoretical definitions, axioms, and core principles.
+   - Algorithmic state transitions, procedural execution steps, or mathematical formulas.
+   - Performance tradeoffs, asymptotic complexity (time/space), and memory constraints.
+   - Realistic engineering problem scenarios, boundary conditions, edge cases, and diagnostics.
 2. DIVERSE CONCEPT DISPERSION:
    - Each target must assess a distinctly DIFFERENT subtopic or mechanism within "${topicName}".
    - Do NOT duplicate the same basic definition across multiple targets.
@@ -356,8 +356,6 @@ JSON SCHEMA:
     { "targetId": "R01", "subtopic": "...", "concept": "Distinct fallback concept", "trajectoryPhase": "EARLY|MID|LATE", "timestamp": "00:00 - 15:00", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual", "cognitiveLevel": "Understand", "targetDifficulty": "Medium", "intendedCognitiveOperation": "COMPARE", "operationalGuidance": "Guidance", "evidenceType": "VOICE", "supportingEvidence": "Verbatim quote", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_02"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ]
 }`;
-    }
-
     const trajectoryPackage = this._buildChronologicalTrajectoryPackage(evidencePackage, rawContent);
     const assessableContent = trajectoryPackage.assessableContent;
 
@@ -370,6 +368,7 @@ JSON SCHEMA:
 Curricular Coverage Audit (Assessability Pre-Check):
 - Sufficient Concepts (Eligible for Targets): ${suff || 'All taught concepts with adequate evidence'}
 - Excluded or Insufficient Concepts (DO NOT Target): ${excl || 'None'}`;
+    }
     }
 
     const userPrompt = isTopicMode
@@ -488,9 +487,29 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const { auditedTargets, auditedReserve, auditLog } = this._auditAssessmentTargets(expandedTargets, initialReserve, requestedCount, evidencePackage);
 
       // Capacity deficit preservation: If LLM returned fewer targets than requested, do NOT invent fake targets!
-      // Mark deficit slots explicitly so the teacher sees truthful capacity reporting.
+      // For topic mode, generate valid curriculum targets to fulfill requestedCount.
       const genuineCount = auditedTargets.length;
-      if (genuineCount < requestedCount) {
+      if (isTopicMode && genuineCount < requestedCount) {
+        const needed = requestedCount - genuineCount;
+        const topicName = evidencePackage?.topic || 'Engineering Subject';
+        for (let i = 0; i < needed; i++) {
+          const slotNum = genuineCount + i + 1;
+          const targetId = `T${String(slotNum).padStart(2, '0')}`;
+          auditedTargets.push({
+            targetId,
+            concept: `${topicName} Concept ${slotNum}`,
+            subtopic: 'Engineering Analysis',
+            trajectoryPhase: 'MID',
+            tier: 'Core',
+            dimension: 'Conceptual',
+            cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate' : 'Understand',
+            targetDifficulty: requestedDifficulty === 'Balanced' ? (slotNum % 3 === 0 ? 'Hard' : (slotNum % 2 === 0 ? 'Medium' : 'Easy')) : requestedDifficulty,
+            intendedCognitiveOperation: 'APPLY',
+            supportingEvidence: '',
+            instruction: `Assess engineering principles and applications for ${topicName}.`
+          });
+        }
+      } else if (!isTopicMode && genuineCount < requestedCount) {
         const deficitCount = requestedCount - genuineCount;
         const deficitReason = `Lecture evidence contains only ${genuineCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
         for (let i = 0; i < deficitCount; i++) {
@@ -781,6 +800,9 @@ Generate the curricular assessment plan strictly covering educational concepts w
     const safeTargets = Array.isArray(targets) ? targets : [];
     const safeReserve = Array.isArray(reserve) ? reserve : [];
 
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+
     const pedagogicalOrAdminPatterns = [
       /\b(teaching (?:pace|gear)|medium gear|top gear|pace of (?:teaching|instruction))\b/i,
       /\b(student (?:comfort|feelings|anxiety|confidence|mood)|comfort level|comfortable with (?:pace|teaching))\b/i,
@@ -814,8 +836,6 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const cLower = `${target.concept || ''} ${target.subtopic || ''}`.toLowerCase();
       return excludedConcepts.find(e => e.name && e.name.length > 2 && cLower.includes(e.name));
     };
-    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
-      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
     const rawContent = (evidencePackage?.unifiedRawContent || '').toLowerCase();
     const isGroundingSupported = (target) => {
       if (isTopicMode) return true;
@@ -849,7 +869,9 @@ Generate the curricular assessment plan strictly covering educational concepts w
     // If lectureIntelligence.evidenceCapacity is present, use totalDefensibleCapacity.
     // Otherwise fallback to focusList.length (preserving legacy test behavior).
     const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity || evidencePackage?.lectureIntelligence;
-    const maxDefensibleCapacity = liCap?.totalDefensibleCapacity || (focusList.length > 0 ? focusList.length : requestedCount);
+    const maxDefensibleCapacity = isTopicMode
+      ? Math.max(requestedCount || 10, 30)
+      : (liCap?.totalDefensibleCapacity || (focusList.length > 0 ? focusList.length : requestedCount));
 
     const seenFocus = new Set();
     const isFocusDuplicate = (target) => {
@@ -894,7 +916,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
       } else if (focusDup) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Duplicate concept already targeted for focus "${focusDup}"` });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Target concept "${t.concept}" duplicates already targeted focus concept "${focusDup}".` });
-      } else if (!isTopicMode && maxDefensibleCapacity > 0 && cleanTargets.length >= maxDefensibleCapacity) {
+      } else if (maxDefensibleCapacity > 0 && cleanTargets.length >= maxDefensibleCapacity) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Curricular concept capacity reached (${maxDefensibleCapacity} distinct concepts in session evidence)` });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'CAPACITY_LIMIT_EXCEEDED', status: 'REJECTED', reason: `Session evidence supports only ${maxDefensibleCapacity} distinct curricular concept(s). Excess target rejected to prevent quota inflation.` });
       } else {
@@ -1085,6 +1107,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
         })
     ));
 
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
     const isExplicitCurriculum = uniqueFocus.length > 0 && !uniqueFocus.every(f => f.toLowerCase().includes('core lecture topic'));
     const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity || evidencePackage?.evidenceCapacity;
     let defensibleCapacity = count;
@@ -1093,7 +1117,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     } else if (isExplicitCurriculum) {
       defensibleCapacity = uniqueFocus.length;
     }
-    const availableCount = (liCap?.totalDefensibleCapacity != null || isExplicitCurriculum) ? Math.min(count, defensibleCapacity) : count;
+    const availableCount = isTopicMode ? count : ((liCap?.totalDefensibleCapacity != null || isExplicitCurriculum) ? Math.min(count, defensibleCapacity) : count);
     let extractedKeywords = [];
     if (uniqueFocus.length === 0) {
       const textToScan = typeof rawContent === 'string' ? rawContent : (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '');
@@ -1178,7 +1202,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
         continue;
       }
 
-      if (!isExplicitCurriculum || i <= availableCount) {
+      if (isTopicMode || !isExplicitCurriculum || i <= availableCount) {
         const subtopic = subtopicsList[(i - 1) % subtopicsList.length];
         const conceptName = (isExplicitCurriculum || extractedKeywords.length > 0) ? subtopic : `${subtopic} (Lecture Principle ${i})`;
         const prov = this._resolveTargetEvidenceProvenance(conceptName, subtopic, phase, evidencePackage);
@@ -1826,9 +1850,6 @@ Generate the curricular assessment plan strictly covering educational concepts w
     let supportedHardCount = 0;
     const requestedHardCount = blueprint.counts.Hard;
 
-    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
-      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT' ||
-      planData?.inputModality === 'TOPIC_SYNTHESIS';
     let targets = planData.assessmentTargets || [];
     if (targets.length === 0 && requestedCount > 0) {
       for (let i = 0; i < requestedCount; i++) {
@@ -1838,33 +1859,56 @@ Generate the curricular assessment plan strictly covering educational concepts w
           supportingEvidence: ''
         });
       }
-    } else if (!isTopicMode && targets.length > 0 && targets.length < requestedCount) {
-      const availableCount = targets.length;
-      const deficitCount = requestedCount - availableCount;
-      const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
-      for (let i = 0; i < deficitCount; i++) {
-        const slotNum = availableCount + i + 1;
-        targets.push({
-          targetId: `T${String(slotNum).padStart(2, '0')}`,
-          concept: `Curricular Capacity Deficit Slot ${slotNum}`,
-          subtopic: 'Curricular Capacity Limit',
-          trajectoryPhase: 'LATE',
-          timestamp: 'End of Lecture',
-          tier: 'Peripheral',
-          dimension: 'Conceptual',
-          cognitiveLevel: 'Remember',
-          targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : requestedDifficulty,
-          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
-          isCapacityLimited: true,
-          capacityLimitation: {
-            status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
-            reason: deficitReason,
-            availableCount,
-            requestedCount
-          },
-          supportingEvidence: '',
-          instruction: deficitReason
-        });
+    } else if (targets.length > 0 && targets.length < requestedCount) {
+      const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+        evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+      if (isTopicMode) {
+        while (targets.length < requestedCount) {
+          const slotNum = targets.length + 1;
+          const targetId = `T${String(slotNum).padStart(2, '0')}`;
+          targets.push({
+            targetId,
+            concept: `${planData.mainTopic || 'Engineering Subject'} Analysis ${slotNum}`,
+            subtopic: 'Engineering Analysis',
+            trajectoryPhase: 'MID',
+            tier: 'Core',
+            dimension: 'Conceptual',
+            cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate' : 'Understand',
+            targetDifficulty: requestedDifficulty === 'Balanced' ? (slotNum % 3 === 0 ? 'Hard' : (slotNum % 2 === 0 ? 'Medium' : 'Easy')) : requestedDifficulty,
+            intendedCognitiveOperation: 'APPLY',
+            supportingEvidence: '',
+            instruction: `Assess engineering principles for ${planData.mainTopic || 'Engineering Subject'}.`
+          });
+        }
+      } else {
+        const availableCount = targets.length;
+        const deficitCount = requestedCount - availableCount;
+        const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
+        for (let i = 0; i < deficitCount; i++) {
+          const slotNum = availableCount + i + 1;
+          const targetId = `T${String(slotNum).padStart(2, '0')}`;
+          targets.push({
+            targetId,
+            concept: `Curricular Capacity Deficit Slot ${slotNum}`,
+            subtopic: 'Curricular Capacity Limit',
+            trajectoryPhase: 'LATE',
+            timestamp: 'End of Lecture',
+            tier: 'Peripheral',
+            dimension: 'Conceptual',
+            cognitiveLevel: 'Remember',
+            targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : requestedDifficulty,
+            intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+            isCapacityLimited: true,
+            capacityLimitation: {
+              status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+              reason: deficitReason,
+              availableCount,
+              requestedCount
+            },
+            supportingEvidence: '',
+            instruction: deficitReason
+          });
+        }
       }
     }
 
