@@ -36,6 +36,7 @@ function toUserFriendlyError(rawError, context = {}) {
   // 2. Rate Limiting / Provider Congestion
   if (
     code === 'RATE_LIMIT_EXCEEDED' ||
+    code === 'PROVIDER_RATE_LIMITED' ||
     code === '429' ||
     lowerMsg.includes('rate limit') ||
     lowerMsg.includes('too many requests') ||
@@ -49,8 +50,10 @@ function toUserFriendlyError(rawError, context = {}) {
   if (
     code === 'INSUFFICIENT_CURRICULAR_TARGETS' ||
     code === 'INSUFFICIENT_READABLE_EVIDENCE' ||
+    code === 'INSUFFICIENT_EVIDENCE' ||
     lowerMsg.includes('insufficient_curricular_targets') ||
     lowerMsg.includes('insufficient_readable_evidence') ||
+    lowerMsg.includes('insufficient evidence') ||
     lowerMsg.includes('no instructional content') ||
     lowerMsg.includes('contains no assessable instructional content')
   ) {
@@ -74,6 +77,13 @@ function toUserFriendlyError(rawError, context = {}) {
     lowerMsg.includes('grounding gate')
   ) {
     return 'Our curriculum grounding engine filtered out unverified assertions to ensure 100% factual accuracy against your teaching notes. Please retry generation to draw from verified lecture sections.';
+  }
+
+  // 5b. Quality Audit & Validation Gates
+  if (
+    code === 'FAILED_VALIDATION'
+  ) {
+    return 'Generated candidate questions did not meet academic quality or verification gates. Your docket materials are preserved—please click Retry to generate a new candidate set.';
   }
 
   // 6. Inaudible or Empty Speech

@@ -215,6 +215,7 @@ export default function CreateQuizText() {
         if (typeof incoming === 'string') {
             try { incoming = JSON.parse(incoming); } catch { incoming = null; }
         }
+        const isFromGen = location.state?.source === 'generated' || location.state?.source === 'voice' || location.state?.isGeneratedSource;
         if (incoming && Array.isArray(incoming) && incoming.length > 0) {
             const normalized = incoming.map((q, qIndex) => {
                 let opts = q.options;
@@ -324,6 +325,33 @@ export default function CreateQuizText() {
             }
             if (location.state?.assignedStudents && Array.isArray(location.state.assignedStudents)) {
                 setAssignedStudents(location.state.assignedStudents);
+            }
+        } else if (isFromGen && (!incoming || !Array.isArray(incoming) || incoming.length === 0)) {
+            setQuestions([]);
+            setIsGeneratedSource(true);
+            if (location.state?.title)            setTitle(location.state.title);
+            if (location.state?.duration)         setDuration(location.state.duration);
+            if (location.state?.timerPerQuestion) setTimerPerQuestion(location.state.timerPerQuestion);
+            if (location.state?.isAssessment !== undefined) setIsAssessment(location.state.isAssessment);
+            if (location.state?.gameType)          setGameType(location.state.gameType);
+            if (location.state?.isVoice || location.state?.isAudio || location.state?.source === 'voice') {
+                setIsVoice(true);
+            }
+            if (location.state?.lectureDepth) {
+                setLectureDepth(location.state.lectureDepth);
+            } else if (location.state?.pipelineResult?.lectureDepth) {
+                setLectureDepth(location.state.pipelineResult.lectureDepth);
+            }
+            if (location.state?.capacityDeficitReport) {
+                setCapacityDeficitReport(location.state.capacityDeficitReport);
+            } else if (location.state?.pipelineResult?.capacityDeficitReport) {
+                setCapacityDeficitReport(location.state.pipelineResult.capacityDeficitReport);
+            }
+            if (location.state?.notice) {
+                setPipelineNotice(location.state.notice);
+            }
+            if (location.state?.requestedCount) {
+                setRequestedCount(location.state.requestedCount);
             }
         }
     }, [location.state]);
@@ -1370,39 +1398,75 @@ export default function CreateQuizText() {
                                 )}
 
                                 {/* Questions Matrix */}
-                                <div className="space-y-10">
-                                    {questions.map((q, idx) => (
-                                        <div key={q.tempId || q._id || q.id || idx} className="relative">
-                                            {/* Regenerating overlay */}
-                                            {regeneratingIdx === idx && (
-                                                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[2.5rem] bg-[var(--bg-primary)]/80 backdrop-blur-sm border border-[var(--bg-accent)]/30">
-                                                    <div className="flex items-center gap-3 text-[var(--bg-accent)]">
-                                                        <Loader2 size={20} className="animate-spin" />
-                                                        <span className="font-black text-sm uppercase tracking-widest">Regenerating Q{idx + 1}…</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            <QuizQuestionEditor
-                                                index={idx}
-                                                question={q}
-                                                onUpdate={updateQuestion}
-                                                onDelete={deleteQuestion}
-                                                onAddOption={addOption}
-                                                onDeleteOption={deleteOption}
-                                                onUpdateOption={updateOption}
-                                            />
+                                {isGeneratedSource && questions.length === 0 ? (
+                                    <div className="p-8 sm:p-10 rounded-[2.5rem] border-2 border-dashed border-amber-500/40 bg-amber-50/50 text-center flex flex-col items-center justify-center space-y-5 shadow-sm">
+                                        <div className="w-16 h-16 rounded-3xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                                            <AlertTriangle size={32} />
                                         </div>
-                                    ))}
+                                        <div className="max-w-md space-y-2">
+                                            <h3 className="text-xl font-black text-[var(--text-primary)] uppercase tracking-tight">
+                                                No Valid Questions Generated
+                                            </h3>
+                                            <p className="text-xs text-[var(--text-secondary)] font-medium leading-relaxed">
+                                                {pipelineNotice || capacityDeficitReport?.deficitReason || 'The uploaded learning materials could not yield questions that passed strict grounding and quality verification gates.'}
+                                            </p>
+                                            <p className="text-[11px] text-amber-700 font-semibold pt-1">
+                                                Your docket materials and settings remain saved. You can return to adjust difficulty or add more lecture text.
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => navigate('/create-quiz/topic')}
+                                                className="px-6 py-3 rounded-2xl bg-[var(--bg-accent)] hover:opacity-90 active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-2.5 transition-all cursor-pointer"
+                                            >
+                                                <ArrowLeft size={16} />
+                                                <span>Return to Docket & Adjust Material</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setQuestions([{ questionText: '', options: ['', ''], correctAnswer: '', points: 10 }])}
+                                                className="px-5 py-3 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] hover:bg-slate-50 text-[var(--text-primary)] font-black text-xs uppercase tracking-wider transition-all cursor-pointer"
+                                            >
+                                                <span>Write Questions Manually</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-10">
+                                        {questions.map((q, idx) => (
+                                            <div key={q.tempId || q._id || q.id || idx} className="relative">
+                                                {/* Regenerating overlay */}
+                                                {regeneratingIdx === idx && (
+                                                    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[2.5rem] bg-[var(--bg-primary)]/80 backdrop-blur-sm border border-[var(--bg-accent)]/30">
+                                                        <div className="flex items-center gap-3 text-[var(--bg-accent)]">
+                                                            <Loader2 size={20} className="animate-spin" />
+                                                            <span className="font-black text-sm uppercase tracking-widest">Regenerating Q{idx + 1}…</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <QuizQuestionEditor
+                                                    index={idx}
+                                                    question={q}
+                                                    onUpdate={updateQuestion}
+                                                    onDelete={deleteQuestion}
+                                                    onAddOption={addOption}
+                                                    onDeleteOption={deleteOption}
+                                                    onUpdateOption={updateOption}
+                                                />
+                                            </div>
+                                        ))}
 
-                                    <button
-                                        type="button"
-                                        onClick={addQuestion}
-                                        className="w-full flex items-center justify-center gap-4 p-6 rounded-[2rem] border-2 border-dashed border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] hover:bg-slate-50 transition-all group shadow-sm"
-                                    >
-                                        <Plus size={24} className="text-[var(--text-accent)] group-hover:scale-125 transition-transform" />
-                                        <span className="font-black text-lg uppercase tracking-widest italic">Add New Data Point</span>
-                                    </button>
-                                </div>
+                                        <button
+                                            type="button"
+                                            onClick={addQuestion}
+                                            className="w-full flex items-center justify-center gap-4 p-6 rounded-[2rem] border-2 border-dashed border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:border-[var(--bg-accent)] hover:bg-slate-50 transition-all group shadow-sm"
+                                        >
+                                            <Plus size={24} className="text-[var(--text-accent)] group-hover:scale-125 transition-transform" />
+                                            <span className="font-black text-lg uppercase tracking-widest italic">Add New Data Point</span>
+                                        </button>
+                                    </div>
+                                )}
 
                                 {/* Final Execution */}
                                 <div className="flex justify-center pt-8 border-t border-slate-200">
@@ -1424,7 +1488,7 @@ export default function CreateQuizText() {
                                         <button
                                             type="button"
                                             onClick={handleFinalizeClick}
-                                            disabled={loading}
+                                            disabled={loading || questions.length === 0}
                                             className={`button-fly button-fly-reversed ${loading ? 'is-loading' : ''} disabled:opacity-80 disabled:cursor-not-allowed`}
                                         >
                                             {loading ? (

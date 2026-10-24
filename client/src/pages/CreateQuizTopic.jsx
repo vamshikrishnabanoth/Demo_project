@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import AuthContext from '../context/AuthContext';
-import { 
-    Hash, Sparkles, Loader2, Database, 
+import {
+    Hash, Sparkles, Loader2, Database,
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
     AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale, Activity,
@@ -13,13 +13,13 @@ import {
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
 import toast from 'react-hot-toast';
-import { 
-    createSessionRecord, 
-    saveAudioChunk, 
-    reconstructSessionBlob, 
-    getPendingSessions, 
-    markSessionCompleted, 
-    deleteSessionRecord 
+import {
+    createSessionRecord,
+    saveAudioChunk,
+    reconstructSessionBlob,
+    getPendingSessions,
+    markSessionCompleted,
+    deleteSessionRecord
 } from '../utils/audioDB';
 import { createTimerWorker } from '../utils/timerWorker';
 import { preflightAudioFile } from '../utils/audioPreflight';
@@ -285,6 +285,7 @@ export default function CreateQuizTopic() {
     const [elapsed, setElapsed] = useState(0);
     const [currentTaskId, setCurrentTaskId] = useState(null);
     const [pollError, setPollError] = useState(null);
+    const [generationError, setGenerationError] = useState(null);
     const pollIntervalRef = useRef(null);
     const startTimeRef = useRef(null);
     const elapsedRef = useRef(null);
@@ -336,7 +337,7 @@ export default function CreateQuizTopic() {
     useEffect(() => {
         const voiceInputs = inputs.filter(inp => (inp.type === 'voice' || inp.type === 'audio') && inp.status !== 'transcribing');
         const docAndTextInputs = inputs.filter(inp => inp.type !== 'voice' && inp.type !== 'audio' && Boolean(inp.content));
-        
+
         const hasInputs = voiceInputs.length > 0 || docAndTextInputs.length > 0;
         if (!hasInputs) {
             clearAnalysisData();
@@ -362,7 +363,7 @@ export default function CreateQuizTopic() {
             const isAllText = docAndTextInputs.every(i => i.type === 'text');
             modality = isAllText ? 'TOPIC' : 'DOCUMENT_ONLY';
         }
-        
+
         if (textToAnalyze.length > 25) {
             const currentSignature = `${primaryName}::${textToAnalyze.length}::${textToAnalyze.slice(0, 100)}::${textToAnalyze.slice(-100)}`;
             if (lastAnalyzedSignatureRef.current === currentSignature && lectureDepth && depthRetryCount === 0) {
@@ -464,7 +465,7 @@ export default function CreateQuizTopic() {
         const doPoll = async () => {
             try {
                 const res = await api.get(`/quiz/generate/status/${taskId}`);
-                const { status, stage: s, stageLabel: sl, representation_mode: rm, result, error: e } = res.data;
+                const { status, stage: s, stageLabel: sl, representation_mode: rm, result, error: e, errorCode: ec } = res.data;
                 if (s !== undefined) setStage(s);
                 if (sl) setStageLabel(sl);
                 if (rm) setRepresentationMode(rm);
@@ -475,8 +476,10 @@ export default function CreateQuizTopic() {
                 } else if (status === 'FAILED' || status === 'EXPIRED') {
                     stopPolling();
                     const errMsg = e || 'Generation failed.';
+                    const errCode = ec || (status === 'EXPIRED' ? 'EXPIRED' : null);
                     setPollError(errMsg);
-                    if (onError) onError(errMsg);
+                    setGenerationError({ message: errMsg, code: errCode });
+                    if (onError) onError(errMsg, errCode);
                 }
             } catch (err) {
                 console.warn('Polling error:', err);
@@ -851,11 +854,11 @@ export default function CreateQuizTopic() {
         const d = entry.createdAt ? new Date(entry.createdAt) : new Date();
         const pad = (n) => String(n).padStart(2, '0');
         const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}-${pad(d.getMinutes())}-${pad(d.getSeconds())}`;
-        
+
         const safePrefix = (sourceName || 'Lecture_Recording')
             .replace(/[^a-zA-Z0-9_\-]/g, '_')
             .replace(/_+/g, '_');
-        
+
         const fileName = `${safePrefix}_${dateStr}.${ext}`;
 
         const url = URL.createObjectURL(blob);
@@ -885,12 +888,12 @@ export default function CreateQuizTopic() {
         await createSessionRecord(newSessionId, { title: 'Lecture Recording' });
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ 
+            const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
                     echoCancellation: true,
                     noiseSuppression: true,
                     autoGainControl: true
-                } 
+                }
             });
 
             let mimeType = 'audio/webm;codecs=opus';
@@ -1198,6 +1201,13 @@ export default function CreateQuizTopic() {
         }
     };
 
+    const handleRetry = () => {
+        if (isGenerating || submitting) return;
+        setGenerationError(null);
+        setPollError(null);
+        handleGenerateQuiz();
+    };
+
     // Direct Generation Submission
     const hasTranscribingAudio = inputs.some(inp => (inp.type === 'voice' || inp.type === 'audio') && inp.status === 'transcribing');
 
@@ -1213,9 +1223,11 @@ export default function CreateQuizTopic() {
         }
 
         setSubmitting(true);
+        setPollError(null);
+        setGenerationError(null);
 
         const formData = new FormData();
-        
+
         // 1. Live physical files currently in memory
         const liveFileInputs = inputs.filter(inp => inp.file && inp.type !== 'voice' && inp.type !== 'audio');
         liveFileInputs.forEach(inp => {
@@ -1223,10 +1235,10 @@ export default function CreateQuizTopic() {
         });
 
         // 2. All document configurations (only actual document files or restored docket items, not pure text prompts)
-        const docInputs = inputs.filter(inp => 
-            inp.type !== 'voice' && 
-            inp.type !== 'audio' && 
-            inp.type !== 'text' && 
+        const docInputs = inputs.filter(inp =>
+            inp.type !== 'voice' &&
+            inp.type !== 'audio' &&
+            inp.type !== 'text' &&
             (inp.file || inp.documentId)
         );
         const fileConfigs = docInputs.map(inp => ({
@@ -1240,7 +1252,7 @@ export default function CreateQuizTopic() {
         const textOnlyInputs = inputs.filter(i => i.type === 'text' && i.content);
         const hasAudio = inputs.some(i => i.type === 'voice' || i.type === 'audio');
         const hasDocFiles = liveFileInputs.length > 0 || docInputs.length > 0;
-        
+
         let resolvedTopic = '';
         if (textOnlyInputs.length > 0) {
             resolvedTopic = textOnlyInputs.map(i => i.content.trim().slice(0, 100)).join(', ');
@@ -1292,7 +1304,7 @@ export default function CreateQuizTopic() {
         try {
             const res = await api.post('/quiz/generate', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 600000 
+                timeout: 600000
             });
 
             const { taskId } = res.data;
@@ -1325,8 +1337,9 @@ export default function CreateQuizTopic() {
                         }
                     });
                 },
-                onError: (msg) => {
+                onError: (msg, code) => {
                     toast.error(msg || 'Generation failed. Please try again.');
+                    setGenerationError({ message: msg || 'Generation failed. Please try again.', code: code || null });
                     setSubmitting(false);
                 }
             });
@@ -1334,7 +1347,10 @@ export default function CreateQuizTopic() {
         } catch (err) {
             console.error(err);
             const serverMsg = err.response?.data?.msg || err.response?.data?.error || (err.response?.data?.errors && err.response.data.errors.map(e => e.msg).join(', ')) || err.message;
-            toast.error(serverMsg || 'Failed to start generation. Please try again.');
+            const errCode = err.response?.data?.errorCode || err.response?.data?.code || null;
+            const fullMsg = serverMsg || 'Failed to start generation. Please try again.';
+            toast.error(fullMsg);
+            setGenerationError({ message: fullMsg, code: errCode });
             setSubmitting(false);
         }
     };
@@ -1355,7 +1371,7 @@ export default function CreateQuizTopic() {
                 </div>
             ) : (
                 <div className="flex flex-col min-h-[calc(100vh-6.5rem)] w-full">
-                
+
                 {/* Header branding & Lecture Depth Badge */}
                 <div className="p-6 pb-4 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
@@ -1393,9 +1409,9 @@ export default function CreateQuizTopic() {
                                     </p>
                                 </div>
                                 <div className="w-16 bg-orange-200 h-2 rounded-full overflow-hidden shrink-0 hidden sm:block">
-                                    <div 
-                                        className="bg-[#ea580c] h-full rounded-full transition-all duration-500" 
-                                        style={{ width: `${lectureDepth.score}%` }} 
+                                    <div
+                                        className="bg-[#ea580c] h-full rounded-full transition-all duration-500"
+                                        style={{ width: `${lectureDepth.score}%` }}
                                     />
                                 </div>
                             </button>
@@ -1403,14 +1419,80 @@ export default function CreateQuizTopic() {
                     </div>
                 </div>
 
-                {pollError && (
-                    <div className="mx-6 mt-4 px-5 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 font-bold text-xs uppercase tracking-wider">
-                        <AlertCircle size={14} className="inline mr-1" aria-hidden="true" /> {pollError}
+                {/* Persistent, Dismissible Error Banner with Safe Retry Action */}
+                {generationError && (
+                    <div
+                        role="alert"
+                        aria-live="polite"
+                        className="mx-6 mt-4 p-4 sm:p-5 rounded-2xl border-2 border-red-500/30 bg-red-50/90 backdrop-blur-md shadow-sm transition-all animate-in fade-in slide-in-from-top-2 duration-300"
+                    >
+                        <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start gap-3 flex-1 min-w-0">
+                                <div className="p-2 rounded-xl bg-red-100 text-red-600 shrink-0 mt-0.5">
+                                    <AlertCircle size={20} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-black text-red-900 uppercase tracking-wide">
+                                        Assessment Generation Halted
+                                    </h4>
+                                    <p className="text-xs text-red-700 mt-1 font-medium leading-relaxed break-words">
+                                        {generationError.message}
+                                    </p>
+
+                                    {/* Contextual guidance based on error code */}
+                                    <p className="text-[11px] text-red-800/80 mt-2 font-semibold bg-red-100/60 p-2.5 rounded-lg border border-red-200/50">
+                                        {generationError.code === 'PROVIDER_RATE_LIMITED' || generationError.code === 'RATE_LIMIT_EXCEEDED' || generationError.code === '429' ? (
+                                            <><strong>Recommendation:</strong> AI reasoning providers are experiencing peak traffic or rate limits. All your uploaded materials and configurations are preserved. Please click <strong>Retry Generation</strong> in a few moments.</>
+                                        ) : generationError.code === 'INSUFFICIENT_EVIDENCE' || generationError.code === 'INSUFFICIENT_READABLE_EVIDENCE' || generationError.code === 'INSUFFICIENT_CURRICULAR_TARGETS' ? (
+                                            <><strong>Recommendation:</strong> The supplied material does not have sufficient content to ground the requested question count. Try reducing question count or adding additional lecture notes to your docket.</>
+                                        ) : generationError.code === 'FAILED_VALIDATION' ? (
+                                            <><strong>Recommendation:</strong> Generated candidate questions did not pass factual grounding or format gates. Click <strong>Retry Generation</strong> to sample a fresh candidate set.</>
+                                        ) : (
+                                            <><strong>Recommendation:</strong> Your docket items and settings have been safely preserved. Click <strong>Retry Generation</strong> to attempt generation again.</>
+                                        )}
+                                    </p>
+
+                                    {/* Action buttons: Safe Retry & Dismiss */}
+                                    <div className="mt-3 flex items-center gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={handleRetry}
+                                            disabled={isGenerating || submitting}
+                                            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {isGenerating || submitting ? (
+                                                <Loader2 size={14} className="animate-spin" />
+                                            ) : (
+                                                <RefreshCw size={14} />
+                                            )}
+                                            <span>Retry Generation</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setGenerationError(null)}
+                                            className="px-3 py-2 rounded-xl text-red-700 hover:bg-red-100/80 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                                        >
+                                            Dismiss
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Dismiss button */}
+                            <button
+                                type="button"
+                                onClick={() => setGenerationError(null)}
+                                aria-label="Dismiss alert"
+                                className="p-1 rounded-lg text-red-500 hover:bg-red-100 hover:text-red-700 transition-colors cursor-pointer shrink-0"
+                            >
+                                <XIcon size={18} />
+                            </button>
+                        </div>
                     </div>
                 )}
 
                 {/* CRASH RECOVERY BANNER WITH DETAILED TIMESTAMPS & DISCARD */}
-                
+
                 {/* Cross-Device In-Progress Active Tasks Banner */}
                 {activeAccountTasks.length > 0 && (
                     <div className="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 border border-orange-300 rounded-2xl p-4 shadow-sm mb-4 space-y-2">
@@ -1484,8 +1566,8 @@ export default function CreateQuizTopic() {
                                 const dateStr = dateObj.toLocaleDateString([], { month: 'short', day: 'numeric' });
 
                                 return (
-                                    <div 
-                                        key={sess.sessionId} 
+                                    <div
+                                        key={sess.sessionId}
                                         className="flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs shadow-sm"
                                     >
                                         <div className="flex flex-col">
@@ -1526,7 +1608,7 @@ export default function CreateQuizTopic() {
 
                 {/* 2-COLUMN ASYMMETRIC GRID WORKSPACE (60% / 40%) */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 lg:p-6 w-full">
-                    
+
                     {/* LEFT COLUMN: Input 1 - Source Content (60% Desktop Width -> lg:col-span-7) */}
                     <div className="lg:col-span-7 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col space-y-5 shadow-lg">
                         <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
@@ -1566,7 +1648,7 @@ export default function CreateQuizTopic() {
                                         <span className="font-mono text-purple-700 font-extrabold">{transcribeProgress}%</span>
                                     </div>
                                     <div className="w-full h-2 bg-purple-200/70 rounded-full overflow-hidden">
-                                        <div 
+                                        <div
                                             className="h-full bg-gradient-to-r from-purple-600 via-indigo-600 to-amber-500 rounded-full transition-all duration-300"
                                             style={{ width: `${transcribeProgress}%` }}
                                         />
@@ -1611,7 +1693,7 @@ export default function CreateQuizTopic() {
                                                 <span>Pause</span>
                                             </button>
                                         )}
-                                        
+
                                         <button
                                             type="button"
                                             onClick={stopRecording}
@@ -1656,7 +1738,7 @@ export default function CreateQuizTopic() {
 
                         {/* 2. ADD SOURCE MATERIAL BUTTON */}
                         <div className={`relative ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
-                            <button 
+                            <button
                                 type="button"
                                 disabled={isGenerating}
                                 onClick={() => setShowDropdown(prev => !prev)}
@@ -1664,7 +1746,7 @@ export default function CreateQuizTopic() {
                             >
                                 <Plus size={18} className="text-[var(--text-accent)]" /> + Add Source Material
                             </button>
-                            
+
                             {showDropdown && !isGenerating && (
                                 <div className="absolute left-0 right-0 mt-2 bg-[var(--bg-secondary)] border-2 border-[var(--border-color)] rounded-2xl overflow-hidden shadow-2xl z-20">
                                     <button
@@ -1705,20 +1787,20 @@ export default function CreateQuizTopic() {
                             )}
                         </div>
 
-                        <input 
-                            type="file" 
+                        <input
+                            type="file"
                             ref={fileInputRef}
-                            multiple 
-                            onChange={handleFileUpload} 
+                            multiple
+                            onChange={handleFileUpload}
                             className="hidden"
                             accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png"
                         />
 
-                        <input 
-                            type="file" 
+                        <input
+                            type="file"
                             ref={lectureFileInputRef}
                             multiple
-                            onChange={handleLectureFileUpload} 
+                            onChange={handleLectureFileUpload}
                             className="hidden"
                             accept=".mp3,.wav,.m4a,.webm,.ogg,.aac,.flac,.opus,.txt"
                         />
@@ -1774,8 +1856,8 @@ export default function CreateQuizTopic() {
                                                             <Download size={16} />
                                                         </button>
                                                     )}
-                                                    <button 
-                                                        type="button" 
+                                                    <button
+                                                        type="button"
                                                         disabled={isGenerating}
                                                         onClick={() => handleRemoveInput(inp.id)}
                                                         className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1805,7 +1887,7 @@ export default function CreateQuizTopic() {
                                                                 <span className="font-mono text-amber-700 font-extrabold">{inp.progress || 20}%</span>
                                                             </div>
                                                             <div className="w-full h-1.5 bg-amber-200/60 rounded-full overflow-hidden">
-                                                                <div 
+                                                                <div
                                                                     className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600 transition-all duration-300 rounded-full"
                                                                     style={{ width: `${inp.progress || 20}%` }}
                                                                 />
@@ -1852,37 +1934,37 @@ export default function CreateQuizTopic() {
                                                 <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-[var(--border-color)]/60 bg-slate-50 p-2.5 rounded-xl">
                                                      <div className="flex items-center gap-2">
                                                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">Start Page:</span>
-                                                         <input 
-                                                             type="number" 
-                                                             min="1" 
+                                                         <input
+                                                             type="number"
+                                                             min="1"
                                                              disabled={isGenerating}
                                                              max={inp.maxPages || undefined}
-                                                             value={inp.startPage || 1} 
+                                                             value={inp.startPage || 1}
                                                              onChange={(e) => {
                                                                  const rawVal = e.target.value;
                                                                  let val = Math.max(1, parseInt(rawVal) || 1);
                                                                  if (inp.maxPages && val > inp.maxPages) val = inp.maxPages;
                                                                  setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, startPage: val } : item));
                                                              }}
-                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center disabled:opacity-50" 
+                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center disabled:opacity-50"
                                                          />
                                                      </div>
                                                      <div className="flex items-center gap-2">
                                                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">End Page:</span>
-                                                         <input 
-                                                             type="number" 
+                                                         <input
+                                                             type="number"
                                                              min="1"
                                                              disabled={isGenerating}
                                                              max={inp.maxPages || undefined}
                                                              placeholder="All"
-                                                             value={inp.endPage || ''} 
+                                                             value={inp.endPage || ''}
                                                              onChange={(e) => {
                                                                  const rawVal = e.target.value;
                                                                  let val = rawVal === '' ? undefined : parseInt(rawVal);
                                                                  if (val !== undefined && inp.maxPages && val > inp.maxPages) val = inp.maxPages;
                                                                  setInputs(prev => prev.map(item => item.id === inp.id ? { ...item, endPage: val } : item));
                                                              }}
-                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center disabled:opacity-50" 
+                                                             className="w-16 px-2 py-1 bg-white border-2 border-slate-300 rounded-lg text-xs font-black text-slate-800 text-center disabled:opacity-50"
                                                          />
                                                      </div>
                                                 </div>
@@ -1952,7 +2034,7 @@ export default function CreateQuizTopic() {
                                             </div>
                                         )}
 
-                                        
+
 
                                         {/* Covered Subtopics / Chapters */}
                                         {lectureIntel?.chapters && lectureIntel.chapters.length > 0 ? (
@@ -2000,7 +2082,7 @@ export default function CreateQuizTopic() {
                     {/* RIGHT COLUMN: Difficulty Focus & Question Count Configuration (40% Desktop Width -> lg:col-span-5) */}
                     <div className={`lg:col-span-5 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col justify-between space-y-6 shadow-lg ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
                         <div className="space-y-6">
-                            
+
                             {/* 1. DIFFICULTY FOCUS SELECTOR */}
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between pb-2 border-b border-[var(--border-color)]">
@@ -2136,8 +2218,8 @@ export default function CreateQuizTopic() {
                             <h3 className="text-base sm:text-lg font-black text-[#0f172a] uppercase italic">
                                 Add Topic Description / Text
                             </h3>
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 onClick={() => setShowTextModal(false)}
                                 className="modal-close-btn"
                                 aria-label="Close dialog"

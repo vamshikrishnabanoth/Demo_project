@@ -19,6 +19,7 @@ export default function useGenerationPoller() {
     const [stageLabel, setStageLabel] = useState('Generating Questions');
     const [elapsed,    setElapsed]    = useState(0);
     const [error,      setError]      = useState(null);
+    const [errorCode,  setErrorCode]  = useState(null);
     const [result,     setResult]     = useState(null);
 
     const intervalRef  = useRef(null);
@@ -41,6 +42,7 @@ export default function useGenerationPoller() {
         setStageLabel('Generating Questions');
         setElapsed(0);
         setError(null);
+        setErrorCode(null);
         setResult(null);
         startTimeRef.current = Date.now();
         onCompleteRef.current = onComplete;
@@ -63,7 +65,7 @@ export default function useGenerationPoller() {
         const doPoll = async () => {
             try {
                 const res = await api.get(`/quiz/generate/status/${taskId}`);
-                const { status, stage: s, stageLabel: sl, result: r, error: e } = res.data;
+                const { status, stage: s, stageLabel: sl, result: r, error: e, errorCode: ec } = res.data;
 
                 if (s !== undefined) setStage(s);
                 if (sl)              setStageLabel(sl);
@@ -76,12 +78,14 @@ export default function useGenerationPoller() {
                     stopPolling();
                     const msg = e || 'Generation failed. Please try again.';
                     setError(msg);
-                    if (onErrorRef.current) onErrorRef.current(msg);
+                    setErrorCode(ec || null);
+                    if (onErrorRef.current) onErrorRef.current(msg, ec || null);
                 } else if (status === 'EXPIRED' || status === 'NOT_FOUND') {
                     stopPolling();
                     const msg = 'Task expired. Please regenerate.';
                     setError(msg);
-                    if (onErrorRef.current) onErrorRef.current(msg);
+                    setErrorCode('EXPIRED');
+                    if (onErrorRef.current) onErrorRef.current(msg, 'EXPIRED');
                 }
                 // RUNNING: continue polling
             } catch (err) {
@@ -96,5 +100,5 @@ export default function useGenerationPoller() {
         return () => clearInterval(intervalRef.current);
     }, [polling, taskId, stopPolling]);
 
-    return { polling, stage, stageLabel, elapsed, error, result, startPolling, stopPolling };
+    return { polling, stage, stageLabel, elapsed, error, errorCode, result, startPolling, stopPolling };
 }

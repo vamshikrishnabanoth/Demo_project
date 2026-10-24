@@ -142,7 +142,7 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
     try {
         const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
         const isNgrokOrRemote = AI_SERVICE_URL.includes('ngrok') || AI_SERVICE_URL.includes('.dev') || AI_SERVICE_URL.includes('.app');
-        
+
         // Fast skip remote dead tunnels if not explicitly online
         if (!isNgrokOrRemote || (await checkAiServiceOnline(AI_SERVICE_URL))) {
             console.log(`🎙️ Transcribing audio with timestamps via Python Whisper: ${AI_SERVICE_URL}/transcribe`);
@@ -577,9 +577,9 @@ const generateFallbackMockQuestions = (count = 5) => {
 
 const generateFallbackQuestions = async (type, content, count = 5, difficulty = 'Medium', targetRatios = null, inputs = null) => {
     console.log(`🔄 Initiating MCQ Engine Generation (8-Stage Pipeline)...`);
-    
+
     const safeContent = (content && typeof content === 'string') ? content : '';
-    
+
     try {
         const { generateMCQPipeline } = require('../engine/mcqEngine');
         const pipelineRes = await generateMCQPipeline({
@@ -606,8 +606,8 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
         }
     } catch (engineErr) {
         console.error(`⚠️ MCQ Engine Pipeline error:`, engineErr.message);
-        const isUserOrConfigError = engineErr.statusCode === 400 || 
-            engineErr.code === 'NON_ACADEMIC_CONTENT' || 
+        const isUserOrConfigError = engineErr.statusCode === 400 ||
+            engineErr.code === 'NON_ACADEMIC_CONTENT' ||
             engineErr.code === 'LIVE_GENERATOR_UNAVAILABLE' ||
             (engineErr.message && (
                 engineErr.message.includes('400') ||
@@ -615,13 +615,13 @@ const generateFallbackQuestions = async (type, content, count = 5, difficulty = 
                 engineErr.message.includes('No educational') ||
                 engineErr.message.includes('LIVE_GENERATOR_UNAVAILABLE')
             ));
-        
+
         const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
         if (isUserOrConfigError || !isMockAllowed) {
             throw engineErr;
         }
     }
-    
+
     console.log(`⚠️ Returning pre-formatted editable fallback questions.`);
     return generateFallbackMockQuestions(count);
 };
@@ -766,12 +766,12 @@ const checkAiServiceOnline = async (url) => {
     const startProbe = Date.now();
     try {
         console.log(`🔍 Probing local AI Service at ${url}...`);
-        const res = await axios.get(url, { 
-            headers: { 
+        const res = await axios.get(url, {
+            headers: {
                 'Bypass-Tunnel-Reminder': 'true',
                 'ngrok-skip-browser-warning': 'true'
-            }, 
-            timeout: 3000 
+            },
+            timeout: 3000
         });
         const latency = Date.now() - startProbe;
         const isOnline = res.status === 200;
@@ -790,7 +790,7 @@ const checkAiServiceOnline = async (url) => {
             console.log(`ℹ️ AI Service replied with HTTP status ${err.response.status}`);
             if (err.response.status === 404) {
                 const isFastApiJson = err.response.headers['content-type']?.includes('application/json') &&
-                                     err.response.data && 
+                                     err.response.data &&
                                      (err.response.data.detail === 'Not Found' || err.response.data.detail === 'Method Not Allowed');
                 if (isFastApiJson) {
                     AI_SERVICE_HEALTH_CACHE = { online: true, lastChecked: now, latency, reason: 'FASTAPI_404_VALID' };
@@ -801,7 +801,7 @@ const checkAiServiceOnline = async (url) => {
                 reason = `HTTP_${err.response.status}_GATEWAY_DOWN`;
             }
         }
-        
+
         AI_SERVICE_HEALTH_CACHE = {
             online: false,
             lastChecked: now,
@@ -815,6 +815,84 @@ const checkAiServiceOnline = async (url) => {
 
 // LOCAL/CLOUD AI Generation - Architecture Baseline v1.0 (Three-Agent Assessment Pipeline)
 const pipelineOrchestrator = require('../engine/pipelineOrchestrator');
+
+/**
+ * Resolves controlled terminal error code and message from pipeline execution diagnostics.
+ * Preserves the actual failure cause rather than blanket-classifying all zero-yields as rate limits.
+ *
+ * @param {Error|null} err - Caught error object, if any
+ * @param {Object|null} pipelineResult - Pipeline result or task pipelineResult object
+ * @returns {string} Error code ('PROVIDER_RATE_LIMITED' | 'INSUFFICIENT_EVIDENCE' | 'FAILED_VALIDATION' | 'FAILED_GENERATION')
+ */
+function resolveGenerationErrorCode(err, pipelineResult) {
+    const rawMsg = (err?.message || (typeof err === 'string' ? err : '')).toLowerCase();
+    const targets = pipelineResult?.targetResults || err?.pipelineResult?.targetResults || [];
+
+    // 1. Provider rate limiting / congestion / upstream failures
+    const hasProviderFailure = targets.some(t =>
+        t?.fulfillmentStatus === 'UNFULFILLED_PROVIDER_FAILURE' ||
+        t?.unfulfilledReason === 'PROVIDER_ERROR' ||
+        t?.status === 'UNFULFILLED_PROVIDER_FAILURE'
+    );
+    if (
+        hasProviderFailure ||
+        rawMsg.includes('rate limit') ||
+        rawMsg.includes('429') ||
+        rawMsg.includes('too many requests') ||
+        rawMsg.includes('quota exceeded') ||
+        rawMsg.includes('all llm endpoints rate limited') ||
+        rawMsg.includes('provider unavailable') ||
+        err?.code === 'RATE_LIMIT_EXCEEDED' ||
+        err?.errorCode === 'RATE_LIMIT_EXCEEDED' ||
+        err?.errorCode === 'PROVIDER_RATE_LIMITED'
+    ) {
+        return 'PROVIDER_RATE_LIMITED';
+    }
+
+    // 2. Insufficient curricular evidence / capacity deficit
+    const hasCapacityDeficit = targets.some(t =>
+        t?.fulfillmentStatus === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+        t?.fulfillmentStatus === 'UNFULFILLED_INSUFFICIENT_EVIDENCE' ||
+        t?.unfulfilledReason === 'DEFICIT_INSUFFICIENT_EVIDENCE' ||
+        t?.status === 'UNFULFILLED_CAPACITY_DEFICIT'
+    );
+    if (
+        hasCapacityDeficit ||
+        rawMsg.includes('insufficient') ||
+        rawMsg.includes('capacity limit') ||
+        rawMsg.includes('capacity deficit') ||
+        rawMsg.includes('no assessable instructional content') ||
+        rawMsg.includes('no instructional content') ||
+        rawMsg.includes('exhausted') ||
+        err?.code === 'INSUFFICIENT_READABLE_EVIDENCE' ||
+        err?.errorCode === 'INSUFFICIENT_READABLE_EVIDENCE' ||
+        err?.errorCode === 'INSUFFICIENT_EVIDENCE'
+    ) {
+        return 'INSUFFICIENT_EVIDENCE';
+    }
+
+    // 3. Format / Validation gate / quality audit rejections
+    const hasValidationFailure = targets.some(t =>
+        t?.fulfillmentStatus === 'UNFULFILLED_MALFORMED_OUTPUT' ||
+        t?.fulfillmentStatus === 'REJECTED_AUDIT' ||
+        t?.status === 'REJECTED'
+    );
+    if (
+        hasValidationFailure ||
+        rawMsg.includes('validation') ||
+        rawMsg.includes('quality audit') ||
+        rawMsg.includes('brevity') ||
+        rawMsg.includes('all candidate questions were rejected') ||
+        rawMsg.includes('grounding gate') ||
+        err?.code === 'FAILED_VALIDATION' ||
+        err?.errorCode === 'FAILED_VALIDATION'
+    ) {
+        return 'FAILED_VALIDATION';
+    }
+
+    // 4. Fallback to existing or generic generation failure
+    return err?.errorCode || 'FAILED_GENERATION';
+}
 
 const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null, inputModality = null) => {
     try {
@@ -1003,8 +1081,18 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             return result.questions;
         }
         if (result && (result.pipelineStatus === 'FAILED' || !result.questions || result.questions.length === 0)) {
+            if (taskId) {
+                const tObj = getTask(taskId);
+                if (tObj) {
+                    tObj.pipelineResult = result;
+                    tObj.pipelineNotice = result.notice || null;
+                    tObj.capacityDeficitReport = result.capacityDeficitReport || null;
+                }
+            }
             const failureMsg = result.error || result.notice || 'Pipeline generation failed: No grounded questions could be generated.';
-            throw new Error(failureMsg);
+            const err = new Error(failureMsg);
+            err.pipelineResult = result;
+            throw err;
         }
     } catch (err) {
         console.warn(`⚠️ [Baseline v1.0] Pipeline notice: ${err.message}`);
@@ -1144,7 +1232,7 @@ const autoBroadcastLiveQuiz = async (quiz, req) => {
             });
 
             const isStudentTargeted = (student, assignedGroups, assignedStudents) => {
-                if ((!assignedGroups || assignedGroups.length === 0) && 
+                if ((!assignedGroups || assignedGroups.length === 0) &&
                     (!assignedStudents || assignedStudents.length === 0)) {
                     return true;
                 }
@@ -1393,7 +1481,7 @@ exports.createQuiz = async (req, res) => {
 
         const isLiveFinal = isLive === 'true' || isLive === true;
         const isActiveFinal = isActive === undefined ? true : (isActive === 'true' || isActive === true);
-        
+
         // --- IMMUTABILITY HASHING ---
         let finalIsLocked = false;
         let finalQuizHash = null;
@@ -1488,14 +1576,14 @@ exports.createQuiz = async (req, res) => {
     } catch (err) {
         console.error('❌ Final CreateQuiz Error:', err.message);
         if (err.code === 'INSUFFICIENT_READABLE_EVIDENCE' || (err.message && err.message.includes('INSUFFICIENT_READABLE_EVIDENCE'))) {
-            return res.status(400).json({ 
-                message: 'No valid grounded questions could be generated from the provided document material.', 
+            return res.status(400).json({
+                message: 'No valid grounded questions could be generated from the provided document material.',
                 code: 'INSUFFICIENT_READABLE_EVIDENCE',
                 error: err.message
             });
         }
-        res.status(500).json({ 
-            message: 'Failed to create quiz', 
+        res.status(500).json({
+            message: 'Failed to create quiz',
             error: process.env.NODE_ENV === 'development' ? err.message : 'Internal error'
         });
     }
@@ -3066,7 +3154,7 @@ exports.generateQuizQuestions = async (req, res) => {
                         }
                     });
                 }
-                
+
                 if (parsedInputs.length === 0 && topic && topic.trim() !== '' && !videoUrls) {
                     parsedInputs.push({
                         type: 'text',
@@ -3151,7 +3239,7 @@ exports.generateQuizQuestions = async (req, res) => {
                     blendedRatios = blendRes.ratios;
                     executionMessages = blendRes.executionMessages;
                     console.log('📊 Factual Text Density:', textDensity);
-                    
+
                     const keywords = ['mechanical', 'civil', 'chemical', 'structural', 'fluid', 'thermodynamic', 'material', 'drawing', 'concrete', 'machine', 'lab tracing', 'cad', 'optimiz', 'piping', 'construction', 'concrete', 'soil', 'geology', 'geotechnical', 'surveying'];
                     const isNonComp = keywords.some(kw => extractedTitle.toLowerCase().includes(kw));
                     const formalNames = {
@@ -3191,12 +3279,12 @@ exports.generateQuizQuestions = async (req, res) => {
                     } else if (Array.isArray(videoUrls)) {
                         urlsArray = videoUrls;
                     }
-                    
+
                     if (urlsArray.length > 2) {
                         failTask(taskId, 'Maximum 2 YouTube links allowed.');
                         return;
                     }
-                    
+
                     const seenUrls = new Set();
                     const ytRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
                     for (const url of urlsArray) {
@@ -3244,7 +3332,7 @@ exports.generateQuizQuestions = async (req, res) => {
                          } catch (_) {
                              transcriptData = await YoutubeTranscript.fetchTranscript(url);
                          }
-                         
+
                          if (transcriptData && transcriptData.length > 0) {
                              text = transcriptData.map(item => item.text).join(' ').trim();
                              extractionMethod = 'transcript';
@@ -3259,10 +3347,10 @@ exports.generateQuizQuestions = async (req, res) => {
                          try {
                              console.log(`[YouTube] Fetching video metadata...`);
                              const ytdl = require('@distube/ytdl-core');
-                             
+
                              const info = await ytdl.getInfo(url);
                              const videoDetails = info.videoDetails;
-                             
+
                              // Combine title and description
                              let metadataText = '';
                              if (videoDetails.title) {
@@ -3271,7 +3359,7 @@ exports.generateQuizQuestions = async (req, res) => {
                              if (videoDetails.description) {
                                  metadataText += `Description: ${videoDetails.description}\n\n`;
                              }
-                             
+
                              if (metadataText.length > 200) {
                                  text = metadataText;
                                  extractionMethod = 'metadata';
@@ -3381,7 +3469,7 @@ exports.generateQuizQuestions = async (req, res) => {
                      if (text.length > MAX_TRANSCRIPT_SIZE_PER_VIDEO) {
                          text = text.substring(0, MAX_TRANSCRIPT_SIZE_PER_VIDEO);
                      }
-                     
+
                      combinedTranscript += text + ' ';
                      console.log(`[YouTube] ✅ Content ready: ${text.length} chars`);
                  }
@@ -3399,7 +3487,7 @@ exports.generateQuizQuestions = async (req, res) => {
             let extractedSegments = [];
             let absolutePath = null;
             let isVoiceSource = false;
-            
+
             if (req.file && (!parsedInputs || parsedInputs.length === 0)) {
                 absolutePath = path.resolve(req.file.path);
                 const ext = path.extname(req.file.originalname).toLowerCase();
@@ -3464,7 +3552,7 @@ exports.generateQuizQuestions = async (req, res) => {
 
             console.log(`\n[Generator Started] type=${sourceType} topic="${topic ? topic.substring(0, 30) : ''}..." count=${questionCount}`);
             updateTaskStage(taskId, 0, 'Ingesting & Analyzing Material');
-            
+
             const { getTask: getTaskFromMgr } = require('../services/taskManager');
             const taskObj = getTaskFromMgr(taskId);
             if (taskObj) {
@@ -3510,10 +3598,25 @@ exports.generateQuizQuestions = async (req, res) => {
                 return;
             }
 
-            console.log(`[Questions Generated] count=${finalQuestions.length}`);
+            console.log(`[Questions Generated] count=${finalQuestions ? finalQuestions.length : 0}`);
 
             const finalTaskObj = getTaskFromMgr(taskId);
             const pResult = finalTaskObj?.pipelineResult;
+
+            if (!finalQuestions || !Array.isArray(finalQuestions) || finalQuestions.length === 0) {
+                const resolvedCode = resolveGenerationErrorCode(null, pResult);
+                const rawMsg = finalTaskObj?.pipelineNotice || finalTaskObj?.error || (
+                    resolvedCode === 'PROVIDER_RATE_LIMITED'
+                        ? 'AI reasoning service is currently experiencing high demand or rate limits. Please retry in a few moments.'
+                        : resolvedCode === 'INSUFFICIENT_EVIDENCE'
+                            ? 'Could not generate questions grounded in the provided materials. The available instructional evidence was exhausted. Please add more lecture text or reduce the question count.'
+                            : resolvedCode === 'FAILED_VALIDATION'
+                                ? 'Generated candidate questions did not meet academic quality or verification gates. Please retry or adjust prompt styles.'
+                                : 'No grounded questions could be generated from the provided material.'
+                );
+                failTask(taskId, rawMsg, resolvedCode);
+                return;
+            }
             const qEval = pResult?.quizEvaluation;
 
             const isEvaluated = Boolean(qEval && typeof qEval.coverageScore === 'number');
@@ -3582,7 +3685,9 @@ exports.generateQuizQuestions = async (req, res) => {
 
         } catch (err) {
             console.error('❌ [GenerateQuizQuestions Background Error]:', err.message);
-            failTask(taskId, err.message);
+            const taskObj = getTaskFromMgr(taskId);
+            const resolvedCode = resolveGenerationErrorCode(err, taskObj?.pipelineResult || err.pipelineResult);
+            failTask(taskId, err.message, resolvedCode);
         }
     });
     } catch (entryErr) {
@@ -3741,10 +3846,10 @@ exports.getLiveQuizzes = async (req, res) => {
             studentFilteredQuizzes = quizzes.filter(quiz => {
                 // 1. Quizzes created by the student themselves (practice tests) are always visible
                 if (quiz.createdById === user.id) return true;
-                
+
                 // 2. Public quizzes are always visible
                 if (quiz.accessType === 'public') return true;
-                
+
                 // 3. Check audience targeting (Assigned Students or Assigned Groups: Year, Branch, Section)
                 return isStudentTargeted(user, quiz.assignedGroups, quiz.assignedStudents);
             });
@@ -4075,7 +4180,7 @@ exports.generateQuizFromVoice = async (req, res) => {
                 cleanupFiles();
                 const origName = req.file.originalname || '';
                 const isRec = origName.includes('recording') || origName.includes('blob') || origName.endsWith('.webm');
-                const errMsg = isRec 
+                const errMsg = isRec
                     ? 'Could not capture clear speech. Please try speaking closer to the mic.'
                     : `Could not transcribe audio from "${origName}". Please ensure the audio contains clear speech.`;
                 failTask(taskId, errMsg);
@@ -4201,7 +4306,7 @@ exports.getScheduleStatus = async (req, res) => {
         const { id } = req.params;
         const quiz = await prisma.quiz.findUnique({ where: { id } });
         if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
-        
+
         // Ensure only creator or admin can view status
         if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({ msg: 'Unauthorized' });
@@ -4243,10 +4348,10 @@ exports.updateSchedule = async (req, res) => {
     try {
         const { id } = req.params;
         const { startTime, endTime } = req.body;
-        
+
         const quiz = await prisma.quiz.findUnique({ where: { id } });
         if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
-        
+
         if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({ msg: 'Unauthorized' });
         }
@@ -4261,8 +4366,8 @@ exports.updateSchedule = async (req, res) => {
         const isLocked = broadcastsCount > 0 || attemptsCount > 0 || quiz.isLive;
 
         if (isLocked) {
-            // Optional: allow end-time extension ONLY if it's strictly > current endTime? 
-            // The prompt says "OR optionally: allow only: end-time extension but NOT: start-time modification". 
+            // Optional: allow end-time extension ONLY if it's strictly > current endTime?
+            // The prompt says "OR optionally: allow only: end-time extension but NOT: start-time modification".
             // Let's implement full lock for safety to strictly follow "If ANY student interaction exists: Disable schedule editing"
             return res.status(403).json({ msg: 'Schedule can no longer be edited because students have already joined or interacted with this quiz.' });
         }
@@ -4324,11 +4429,11 @@ exports.analyzeSources = async (req, res) => {
                 const filePath = path.resolve(file.path);
                 const ext = path.extname(file.originalname).toLowerCase();
                 const config = fileConfigs.find(c => c.name === file.originalname) || { startPage: 1, endPage: 999 };
-                
+
                 let textContent = "";
                 const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
                 let isHandwrittenScan = isImage;
-                
+
                 if (isImage) {
                     const buffer = fs.readFileSync(filePath);
                     textContent = "base64:" + buffer.toString('base64');
@@ -4343,7 +4448,7 @@ exports.analyzeSources = async (req, res) => {
                         }
                     }
                 }
-                
+
                 inputs.push({
                     type: isHandwrittenScan ? 'handwritten_scan' : ext.replace('.', ''),
                     content: textContent || filePath,
@@ -4351,7 +4456,7 @@ exports.analyzeSources = async (req, res) => {
                     startPage: config.startPage || 1,
                     endPage: config.endPage || 999
                 });
-                
+
                 try { fs.unlinkSync(filePath); } catch (_) {}
             }
         }
@@ -4360,8 +4465,8 @@ exports.analyzeSources = async (req, res) => {
         if (req.body.text_prompts) {
             let prompts = [];
             try {
-                prompts = typeof req.body.text_prompts === 'string' 
-                    ? JSON.parse(req.body.text_prompts) 
+                prompts = typeof req.body.text_prompts === 'string'
+                    ? JSON.parse(req.body.text_prompts)
                     : req.body.text_prompts;
             } catch (e) {
                 prompts = [req.body.text_prompts];
@@ -4758,7 +4863,7 @@ exports.analyzeDepth = async (req, res) => {
         }
 
         const analysis = depthAnalyzer.analyzeLecture(text || '');
-        
+
         let whatWasTaught = '';
         let keyTopics = [];
         let recommendedQuestions = wordCount > 3000 ? '5 to 25 Questions' : (wordCount > 1000 ? '5 to 15 Questions' : '3 to 10 Questions');
@@ -5110,14 +5215,14 @@ exports.taskCompleteCallback = async (req, res) => {
     const { taskId } = req.params;
     const { status, result, error } = req.body;
     console.log(`📡 [CALLBACK] Received callback for task ${taskId}: status=${status}`);
-    
+
     const { getTask, completeTask, failTask } = require('../services/taskManager');
     const task = getTask(taskId);
     if (!task) {
         console.log(`📡 [CALLBACK] Task ${taskId} not found or expired.`);
         return res.status(404).json({ msg: 'Task not found or expired' });
     }
-    
+
     if (status === 'success') {
         let finalQuestions = normalizeQuestions(result.questions);
         let agentReport = null;
@@ -5148,6 +5253,11 @@ exports.taskCompleteCallback = async (req, res) => {
         updateTaskStage(taskId, 3, 'Preparing Final Quiz');
         const validation = finalQuizValidator(finalQuestions, task.difficulty || 'Medium');
 
+        if (!finalQuestions || !Array.isArray(finalQuestions) || finalQuestions.length === 0) {
+            failTask(taskId, 'No grounded questions could be generated.', 'FAILED_GENERATION');
+            return;
+        }
+
         let mergedMessages = task.executionMessages || [];
         if (result && result.quiz_metadata && result.quiz_metadata.execution_messages) {
             mergedMessages = [...new Set([...mergedMessages, ...result.quiz_metadata.execution_messages])];
@@ -5169,7 +5279,7 @@ exports.taskCompleteCallback = async (req, res) => {
         failTask(taskId, error || 'Generation failed');
         console.log(`📡 [CALLBACK] Task ${taskId} marked as FAILED. Error: ${error}`);
     }
-    
+
     res.json({ msg: 'Callback processed successfully' });
 };
 
@@ -5456,6 +5566,11 @@ exports.generateQuizFromCleanedLecture = async (req, res) => {
 
                 updateTaskStage(taskId, 3, 'Finalizing Assessment');
                 const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
+
+                if (!finalQuestions || !Array.isArray(finalQuestions) || finalQuestions.length === 0) {
+                    failTask(taskId, 'No grounded questions could be generated from the cleaned lecture.', 'FAILED_GENERATION');
+                    return;
+                }
 
                 completeTask(taskId, {
                     questions: finalQuestions,
