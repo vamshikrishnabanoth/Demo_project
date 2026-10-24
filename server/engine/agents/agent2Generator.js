@@ -38,9 +38,19 @@ const DISTRACTOR_ARCHETYPES = {
   }
 };
 
+const QUESTION_ARCHETYPES = {
+  CONCEPTUAL_CONTRAST: 'CONCEPTUAL_CONTRAST',
+  WHAT_IF_MUTATION: 'WHAT_IF_MUTATION',
+  QUICK_CALCULATION: 'QUICK_CALCULATION',
+  CLI_TERMINAL_IMPACT: 'CLI_TERMINAL_IMPACT',
+  MICRO_TRACE: 'MICRO_TRACE',
+  DIAGNOSTIC_BUG_HUNT: 'DIAGNOSTIC_BUG_HUNT'
+};
+
 class Agent2Generator {
   constructor() {
     this.DISTRACTOR_ARCHETYPES = DISTRACTOR_ARCHETYPES;
+    this.QUESTION_ARCHETYPES = QUESTION_ARCHETYPES;
   }
 
   /**
@@ -82,6 +92,26 @@ class Agent2Generator {
       mcq.correctAnswerKey = KEYS[newIdx];
       mcq.correct_answer = KEYS[newIdx];
       mcq.correct_answer_text = correctText;
+    }
+
+    // Synchronize presentation byLetter rationales without mutating authoritative text dictionary
+    const rationalesSource = mcq.verificationRecord?.distractorRationales || mcq.distractorRationales;
+    if (rationalesSource && typeof rationalesSource === 'object') {
+      const byLetter = {};
+      for (let i = 0; i < 4; i++) {
+        const letter = KEYS[i];
+        const opt = mcq.options[i];
+        if (opt !== correctText) {
+          const matchedRationale = rationalesSource[opt] ||
+            Object.entries(rationalesSource).find(([k]) => k.trim().toLowerCase() === opt.trim().toLowerCase())?.[1] ||
+            'Plausible alternative or conceptual misconception';
+          byLetter[letter] = matchedRationale;
+        }
+      }
+      if (mcq.verificationRecord) {
+        mcq.verificationRecord.byLetter = byLetter;
+      }
+      mcq.distractorRationalesByLetter = byLetter;
     }
 
     return mcq;
@@ -226,6 +256,7 @@ class Agent2Generator {
     const subtopic = target.subtopic || 'General Topic';
     const tier = target.targetDifficulty || target.difficulty || target.tier || 'Medium';
     const op = target.intendedCognitiveOperation || target.cognitiveOperation || target.operation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
+    const targetArchetype = target.targetArchetype || target.archetype || null;
     const evidence = target.supportingEvidence || evidencePackage?.curricularContent || '';
     const isTopicMode = Boolean(target.isTopicMode || evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' || evidencePackage?.topic);
 
@@ -238,6 +269,8 @@ class Agent2Generator {
         (typeof evidence === 'string' && evidence.length < 60 && !/\b(computes?|calculat|translat|allocat|schedules?|executes?|algorithm|travers|hazard|stage)\b/i.test(evidence))
       )) ||
       target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      target.targetArchetype === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      targetArchetype === 'UNFULFILLED_CAPACITY_DEFICIT' ||
       target.isCapacityLimited === true ||
       (target.capacityLimitation && ['INSUFFICIENT_EVIDENCE_FOR_HARD', 'INSUFFICIENT_CURRICULAR_EVIDENCE', 'CAPACITY_DEFICIT'].includes(target.capacityLimitation.status))
     );
@@ -257,6 +290,7 @@ class Agent2Generator {
           intendedCognitiveOperation: op,
           achievedCognitiveOperation: null,
           concept: target.concept,
+          questionArchetype: targetArchetype || 'UNFULFILLED_CAPACITY_DEFICIT',
           capacityLimitation: target.capacityLimitation || {
             status: reasonCode,
             reason: reasonMsg
@@ -309,35 +343,35 @@ class Agent2Generator {
     const conceptLower = concept.toLowerCase();
     const evidenceLower = (typeof evidence === 'string' ? evidence : '').toLowerCase();
 
-    const isOsPaging = conceptLower.includes('pag') || conceptLower.includes('mmu') || 
-      conceptLower.includes('tlb') || conceptLower.includes('virtual memory') || 
+    const isOsPaging = conceptLower.includes('pag') || conceptLower.includes('mmu') ||
+      conceptLower.includes('tlb') || conceptLower.includes('virtual memory') ||
       conceptLower.includes('page fault') || evidenceLower.includes('virtual address');
 
-    const isGit = conceptLower.includes('git') || conceptLower.includes('commit') || 
+    const isGit = conceptLower.includes('git') || conceptLower.includes('commit') ||
       conceptLower.includes('branch') || evidenceLower.includes('working tree');
 
-    const isPipelining = conceptLower.includes('pipelin') || conceptLower.includes('hazard') || 
+    const isPipelining = conceptLower.includes('pipelin') || conceptLower.includes('hazard') ||
       conceptLower.includes('stage') || evidenceLower.includes('pipeline stage');
 
     const subtopicLower = (target.subtopic || '').toLowerCase();
-    const isTree = conceptLower.includes('tree') || conceptLower.includes('bst') || 
+    const isTree = conceptLower.includes('tree') || conceptLower.includes('bst') ||
       conceptLower.includes('traversal') || subtopicLower.includes('tree') || subtopicLower.includes('bst') ||
       evidenceLower.includes('binary tree') || evidenceLower.includes('binary search tree') || evidenceLower.includes('bst');
 
     const isBacktracking = conceptLower.includes('backtrack') || subtopicLower.includes('backtrack');
-    const isDynamicProgramming = conceptLower.includes('dynamic') || conceptLower.includes('dynammic') || conceptLower.includes('dp') || 
+    const isDynamicProgramming = conceptLower.includes('dynamic') || conceptLower.includes('dynammic') || conceptLower.includes('dp') ||
       conceptLower.includes('memoiz') || conceptLower.includes('tabulat') || conceptLower.includes('knapsack') ||
       subtopicLower.includes('dynamic') || subtopicLower.includes('dynammic') || subtopicLower.includes('dp');
     const isRecursion = conceptLower.includes('recurs') || subtopicLower.includes('recurs') ||
       conceptLower.includes('call stack') || conceptLower.includes('base case');
 
-    const isAlgorithm = conceptLower.includes('array') || conceptLower.includes('loop') || 
-      conceptLower.includes('frequency') || conceptLower.includes('count') || 
-      conceptLower.includes('nested') || conceptLower.includes('sort') || 
-      conceptLower.includes('search') || conceptLower.includes('pointer') || 
+    const isAlgorithm = conceptLower.includes('array') || conceptLower.includes('loop') ||
+      conceptLower.includes('frequency') || conceptLower.includes('count') ||
+      conceptLower.includes('nested') || conceptLower.includes('sort') ||
+      conceptLower.includes('search') || conceptLower.includes('pointer') ||
       conceptLower.includes('index') || conceptLower.includes('element') ||
-      evidenceLower.includes('nested loop') || evidenceLower.includes('frequency') || 
-      evidenceLower.includes('outer loop') || evidenceLower.includes('inner loop') || 
+      evidenceLower.includes('nested loop') || evidenceLower.includes('frequency') ||
+      evidenceLower.includes('outer loop') || evidenceLower.includes('inner loop') ||
       evidenceLower.includes('array') || op === 'CODE_OR_TRACE' || op === 'STEP_TRACE';
 
     let questionText = '';
@@ -693,12 +727,43 @@ class Agent2Generator {
 
     const initialOptions = [correctAnswer, ...distractors];
 
+    // Determine accurate archetype for fallback question without fabricating traces
+    let fallbackArchetype = targetArchetype;
+    if (!fallbackArchetype || fallbackArchetype === 'UNFULFILLED_CAPACITY_DEFICIT') {
+      if (isAlgorithm && tier === 'Hard') fallbackArchetype = 'DIAGNOSTIC_BUG_HUNT';
+      else if (isAlgorithm && tier === 'Medium') fallbackArchetype = 'MICRO_TRACE';
+      else if (isRecursion && tier === 'Hard') fallbackArchetype = 'QUICK_CALCULATION';
+      else if (isGit && tier === 'Medium') fallbackArchetype = 'CLI_TERMINAL_IMPACT';
+      else fallbackArchetype = 'CONCEPTUAL_CONTRAST';
+    }
+
+    const normalizedRationales = {};
+    for (const d of distractors) {
+      const arch = (usedArchetypes && usedArchetypes[0]) || 'NEAR_MISS_MECHANISM';
+      normalizedRationales[d] = `Plausible student misconception based on ${arch.toLowerCase().replace(/_/g, ' ')}.`;
+    }
+
+    const verificationRecord = {
+      verificationStatus: 'DETERMINISTIC_REFERENCE',
+      verifiedProgrammatically: false,
+      factualBasis: `Deterministic curricular reference template for ${concept}: ${correctAnswer}`,
+      computedOrTracedKey: (fallbackArchetype === 'MICRO_TRACE' || fallbackArchetype === 'QUICK_CALCULATION')
+        ? `Deterministic reference trace template for ${concept}.`
+        : `Canonical reference specification template for ${concept}.`,
+      distractorRationales: normalizedRationales
+    };
+
     const mcq = {
       targetId: target.targetId,
       questionText,
+      question: questionText,
       options: initialOptions,
       correctAnswer,
       explanation: `Derived directly from session evidence for ${concept}. Correct option reflects taught behavior; distractors embody plausible misconceptions.`,
+      questionArchetype: fallbackArchetype,
+      pedagogicalIntent: `Assess ${concept} via ${fallbackArchetype}`,
+      verificationRecord,
+      distractorRationales: normalizedRationales,
       usedArchetypes,
       metadata: {
         dimension: target.dimension || 'Conceptual',
@@ -706,7 +771,9 @@ class Agent2Generator {
         targetDifficulty: tier,
         intendedCognitiveOperation: op,
         concept: target.concept,
+        questionArchetype: fallbackArchetype,
         usedArchetypes,
+        distractorRationales: normalizedRationales,
         capacityLimitation: null,
         isCapacityLimited: false
       }
@@ -719,29 +786,256 @@ class Agent2Generator {
    * Build modular, domain-adaptive operational scaffolding for cognitive operations.
    * Forces concrete operational mechanisms, shared initial states, and execution sequences.
    */
-  _buildOperationalScaffolding(tier, op, concept = '', evidenceContext = '', repairInstruction = null) {
+  /**
+   * Programmatically enforce stem (<= 35 words excl. code) and option (<= 10 words) brevity.
+   * Preserves code blocks and meaning. Marks _cannotSafelyTrimBrevity if safe trimming is impossible.
+   */
+  _enforceBrevity(parsedMCQ) {
+    if (!parsedMCQ || typeof parsedMCQ !== 'object') return parsedMCQ;
+
+    // 1. Stem brevity check: strictly <= 35 words (excluding code blocks)
+    let stem = parsedMCQ.questionText || parsedMCQ.question || '';
+    if (typeof stem === 'string' && stem.length > 0) {
+      const codeBlocks = [];
+      let textWithoutCode = stem.replace(/```[\s\S]*?```/g, (match) => {
+        codeBlocks.push(match);
+        return '';
+      }).trim();
+
+      const countWords = (txt) => txt.split(/\s+/).filter(Boolean);
+      let words = countWords(textWithoutCode);
+
+      if (words.length > 35) {
+        let trimmed = textWithoutCode;
+        // Step A: Strip introductory meta/discipline context phrases if present
+        trimmed = trimmed.replace(/^(?:(?:In|Under|Within|When considering)\s+[^,]{3,60},[ ]*)/i, '');
+
+        let wordsAfterPrefix = countWords(trimmed);
+        if (wordsAfterPrefix.length <= 35 && /[?.!]$/.test(trimmed.trim())) {
+          textWithoutCode = trimmed.trim();
+        } else {
+          // Step B: Sentence boundary trimming
+          const sentences = textWithoutCode.split(/(?<=[.?!])\s+/);
+          let candidate = null;
+          if (sentences.length > 1) {
+            const questionSentence = sentences.find(s => s.includes('?')) || sentences[sentences.length - 1];
+            if (countWords(questionSentence).length >= 5 && countWords(questionSentence).length <= 35) {
+              candidate = questionSentence.trim();
+            }
+          }
+
+          // Step C: Safe clause boundary trimming
+          if (!candidate) {
+            const clauseMatch = trimmed.match(/,\s*(what\b[^?]+\?|which\b[^?]+\?|how\b[^?]+\?|determine\b[^?]+[.?!]|identify\b[^?]+[.?!])/i);
+            if (clauseMatch) {
+              const mainClause = clauseMatch[1].trim();
+              const capitalized = mainClause.charAt(0).toUpperCase() + mainClause.slice(1);
+              if (countWords(capitalized).length >= 5 && countWords(capitalized).length <= 35) {
+                candidate = capitalized;
+              }
+            }
+          }
+
+          // Step D: Grammatically complete phrase snap <= 35 words ending with ?
+          if (!candidate) {
+            const wordsList = trimmed.split(/\s+/).filter(Boolean);
+            if (wordsList.length > 35) {
+              const slice = wordsList.slice(0, 35).join(' ');
+              const lastClauseEnd = Math.max(slice.lastIndexOf(','), slice.lastIndexOf(';'));
+              if (lastClauseEnd > 20) {
+                const subClause = slice.slice(0, lastClauseEnd).trim();
+                if (countWords(subClause).length >= 5 && countWords(subClause).length <= 35) {
+                  candidate = /[?.!]$/.test(subClause) ? subClause : `${subClause}?`;
+                }
+              }
+            }
+          }
+
+          if (candidate) {
+            textWithoutCode = candidate;
+          } else {
+            parsedMCQ._cannotSafelyTrimBrevity = true;
+          }
+        }
+
+        if (!parsedMCQ._cannotSafelyTrimBrevity) {
+          const restored = codeBlocks.length > 0 ? `${textWithoutCode}\n${codeBlocks.join('\n')}` : textWithoutCode;
+          parsedMCQ.questionText = restored;
+          parsedMCQ.question = restored;
+        }
+      }
+    }
+
+    // 2. Option brevity check: max 10 words per option
+    if (Array.isArray(parsedMCQ.options)) {
+      parsedMCQ.options = parsedMCQ.options.map(opt => {
+        if (typeof opt !== 'string') return opt;
+        let cleanOpt = opt.trim();
+        const optWords = cleanOpt.split(/\s+/).filter(Boolean);
+        if (optWords.length > 10) {
+          // Try safe clause boundaries: semicolon, parenthetical, or non-restrictive relative clause
+          const clauseMatch = cleanOpt.match(/^([^;(]+)[;(]/) ||
+                              cleanOpt.match(/^([^,]+),\s*(?:which|transferring|where|meaning|resulting|allowing|causing)\b/i);
+          if (clauseMatch) {
+            const candidate = clauseMatch[1].trim();
+            const candWords = candidate.split(/\s+/).filter(Boolean);
+            if (candWords.length >= 2 && candWords.length <= 10) {
+              return candidate;
+            }
+          }
+          // Unsafe to trim without risking changing meaning or invalidating answer
+          parsedMCQ._cannotSafelyTrimBrevity = true;
+          return cleanOpt;
+        }
+        return cleanOpt;
+      });
+      if (parsedMCQ.correctAnswer) {
+        this.normalizeCorrectAnswer(parsedMCQ);
+      }
+    }
+
+    return parsedMCQ;
+  }
+
+  /**
+   * Build specialized scaffolding for the 6 Question Archetypes.
+   */
+  _buildArchetypeScaffolding(targetArchetype, concept = '', evidenceContext = '') {
+    const arch = (targetArchetype || 'CONCEPTUAL_CONTRAST').toUpperCase();
+    let systemScaffold = '';
+    let userScaffold = '';
+
+    switch (arch) {
+      case 'MICRO_TRACE':
+        systemScaffold = `
+   * QUESTION ARCHETYPE: MICRO_TRACE
+     - Goal: Trace a small, grounded code snippet or sequence of discrete state transitions step-by-step.
+     - Stem: 1 short sentence setting the scenario (<= 25 words) plus a clean 2–5 line code block or discrete state sequence.
+     - Task: Ask for the exact variable value, register state, or output at an explicit iteration or at termination.
+     - Verification Record Requirement:
+       * factualBasis: State initial conditions and transition rules from lecture evidence.
+       * computedOrTracedKey: Step-by-step trace showing intermediate values to prove the correct answer.
+       * distractorRationales: Cover off-by-one iteration slip, omitted intermediate update, and inverted execution sequence.`;
+        userScaffold = `
+[ARCHETYPE INSTRUCTION: MICRO_TRACE]:
+- Provide a concise 2–5 line code snippet or discrete state sequence.
+- Ask for the specific variable value or state at an explicit iteration or termination.
+- Verification record must provide the step-by-step trace showing intermediate values.`;
+        break;
+
+      case 'QUICK_CALCULATION':
+        systemScaffold = `
+   * QUESTION ARCHETYPE: QUICK_CALCULATION
+     - Goal: Apply a grounded formula or concrete numerical inputs to compute an exact result.
+     - Stem: Crisp scenario (<= 35 words) providing concrete numerical parameters and asking for the calculated outcome.
+     - Task: Require mental or short scratchpad arithmetic applying a taught formula or relationship.
+     - Verification Record Requirement:
+       * factualBasis: State the specific formula and input parameters supported by the evidence.
+       * computedOrTracedKey: Show the explicit arithmetic substitution and calculation that proves the keyed value.
+       * distractorRationales: Embody arithmetic traps (e.g. sign error, missed overhead factor, unit mismatch like 10^3 vs 2^10).`;
+        userScaffold = `
+[ARCHETYPE INSTRUCTION: QUICK_CALCULATION]:
+- Provide concrete numerical inputs and test a taught formula or quantitative relationship.
+- Keep the stem under 35 words.
+- Verification record must show the arithmetic substitution and calculation step.`;
+        break;
+
+      case 'WHAT_IF_MUTATION':
+        systemScaffold = `
+   * QUESTION ARCHETYPE: WHAT_IF_MUTATION
+     - Goal: Change one condition, parameter, or statement and reason about the consequential ripple effect.
+     - Stem: Present a baseline system rule, policy, or snippet, then state the single mutation: "If condition X is changed to Y...".
+     - Task: Ask what precise change occurs in system behavior, correctness, or resource utilization.
+     - Verification Record Requirement:
+       * factualBasis: State the baseline rule and the specific mutation.
+       * computedOrTracedKey: Explain the causal ripple mechanism leading to the new outcome.
+       * distractorRationales: Cover assuming no effect, predicting an inverted failure, or confusing baseline with mutated behavior.`;
+        userScaffold = `
+[ARCHETYPE INSTRUCTION: WHAT_IF_MUTATION]:
+- Modify one condition, parameter, or statement from the taught material.
+- Ask for the resulting operational consequence or failure mode.
+- Verification record must trace the cause-and-effect chain triggered by the mutation.`;
+        break;
+
+      case 'DIAGNOSTIC_BUG_HUNT':
+        systemScaffold = `
+   * QUESTION ARCHETYPE: DIAGNOSTIC_BUG_HUNT
+     - Goal: Identify a specific, demonstrable defect, race condition, boundary error, or flaw.
+     - Stem: Include a concise 2–5 line code snippet or configuration exhibiting an authentic flaw.
+     - Task: Ask which line/mechanism causes the failure, or what incorrect behavior occurs under an edge case.
+     - Verification Record Requirement:
+       * factualBasis: Cite the defective construct and the correct requirement.
+       * computedOrTracedKey: Explain why the defect manifests and how the failure occurs.
+       * distractorRationales: Cover misdiagnosing a benign line, confusing symptom with root cause, or proposing superficial syntax fixes.`;
+        userScaffold = `
+[ARCHETYPE INSTRUCTION: DIAGNOSTIC_BUG_HUNT]:
+- Present a concrete code snippet or configuration with an authentic flaw.
+- Ask for the bug root cause or resulting defect behavior.
+- Verification record must explain why this specific flaw triggers the failure.`;
+        break;
+
+      case 'CLI_TERMINAL_IMPACT':
+        systemScaffold = `
+   * QUESTION ARCHETYPE: CLI_TERMINAL_IMPACT
+     - Goal: Predict the concrete state change or output of a grounded terminal command.
+     - Stem: Present an explicit CLI command with flags/arguments (<= 35 words).
+     - Task: Ask what state transition occurs in the working tree, repository, process table, or filesystem.
+     - Verification Record Requirement:
+       * factualBasis: Reference the documented command syntax and environment state from evidence.
+       * computedOrTracedKey: Specify the exact state changes (e.g. HEAD movement, staged index vs working tree).
+       * distractorRationales: Address flag confusion (e.g. --soft vs --hard), wrong target scope, or destructive misconceptions.`;
+        userScaffold = `
+[ARCHETYPE INSTRUCTION: CLI_TERMINAL_IMPACT]:
+- Present an explicit CLI command with flags/arguments.
+- Ask for the exact state change or environmental impact.
+- Verification record must specify the before/after state transition.`;
+        break;
+
+      case 'CONCEPTUAL_CONTRAST':
+      default:
+        systemScaffold = `
+   * QUESTION ARCHETYPE: CONCEPTUAL_CONTRAST
+     - Goal: Distinguish two concepts, mechanisms, or policies using a meaningful scenario or defining tradeoff.
+     - Stem: Crisp scenario (<= 35 words) contrasting two mechanisms under a shared operational condition.
+     - Task: Ask how they diverge in behavior, guarantees, or performance tradeoffs.
+     - Verification Record Requirement:
+       * factualBasis: Quote the defining operational differences from the evidence.
+       * computedOrTracedKey: Synthesize the contrast proving why the correct answer uniquely holds.
+       * distractorRationales: Cover inverted roles, confusing adjacent mechanisms, or applying properties outside valid scope.`;
+        userScaffold = `
+[ARCHETYPE INSTRUCTION: CONCEPTUAL_CONTRAST]:
+- Contrast two concepts or mechanisms under a shared operational scenario.
+- Test the fundamental operational difference or tradeoff.
+- Verification record must cite the defining distinction from the evidence.`;
+        break;
+    }
+
+    return { systemScaffold, userScaffold };
+  }
+
+  _buildOperationalScaffolding(tier, op, concept = '', evidenceContext = '', repairInstruction = null, targetArchetype = null) {
     const opUpper = (op || '').toUpperCase();
     const tierUpper = (tier || '').toUpperCase();
     const conceptLower = (concept || '').toLowerCase();
     const evidenceLower = (evidenceContext || '').toLowerCase();
 
     // Domain detection for context-adaptive examples
-    const isTree = conceptLower.includes('tree') || conceptLower.includes('bst') || 
-      conceptLower.includes('in-order') || conceptLower.includes('inorder') || 
+    const isTree = conceptLower.includes('tree') || conceptLower.includes('bst') ||
+      conceptLower.includes('in-order') || conceptLower.includes('inorder') ||
       conceptLower.includes('traversal') || evidenceLower.includes('binary search tree');
-    const isNetwork = conceptLower.includes('tcp') || conceptLower.includes('congestion') || 
+    const isNetwork = conceptLower.includes('tcp') || conceptLower.includes('congestion') ||
       conceptLower.includes('cwnd') || conceptLower.includes('rtt') || conceptLower.includes('packet') ||
       conceptLower.includes('routing') || conceptLower.includes('lsa');
-    const isDatabase = conceptLower.includes('lock') || conceptLower.includes('2pl') || 
-      conceptLower.includes('transaction') || conceptLower.includes('schedule') || 
+    const isDatabase = conceptLower.includes('lock') || conceptLower.includes('2pl') ||
+      conceptLower.includes('transaction') || conceptLower.includes('schedule') ||
       conceptLower.includes('serializ') || conceptLower.includes('abort');
-    const isDistributed = conceptLower.includes('raft') || conceptLower.includes('consensus') || 
-      conceptLower.includes('quorum') || conceptLower.includes('partition') || 
+    const isDistributed = conceptLower.includes('raft') || conceptLower.includes('consensus') ||
+      conceptLower.includes('quorum') || conceptLower.includes('partition') ||
       conceptLower.includes('timeout') || conceptLower.includes('election');
-    const isAlgorithm = conceptLower.includes('array') || conceptLower.includes('loop') || 
-      conceptLower.includes('frequency') || conceptLower.includes('count') || 
-      conceptLower.includes('nested') || conceptLower.includes('sort') || 
-      conceptLower.includes('search') || conceptLower.includes('traverse') || 
+    const isAlgorithm = conceptLower.includes('array') || conceptLower.includes('loop') ||
+      conceptLower.includes('frequency') || conceptLower.includes('count') ||
+      conceptLower.includes('nested') || conceptLower.includes('sort') ||
+      conceptLower.includes('search') || conceptLower.includes('traverse') ||
       conceptLower.includes('pointer') || conceptLower.includes('index') ||
       conceptLower.includes('algorithm') || conceptLower.includes('matrix') ||
       evidenceLower.includes('nested loop') || evidenceLower.includes('frequency') ||
@@ -876,7 +1170,8 @@ class Agent2Generator {
 - If repairing a mechanism, comparison, or trace question, keep it operational using a concrete scenario or execution sequence grounded in the evidence.`;
     }
 
-    return { systemScaffold, userScaffold, repairGuardrail };
+    const archetypeScaffold = this._buildArchetypeScaffolding(targetArchetype, concept, evidenceContext);
+    return { systemScaffold, userScaffold, repairGuardrail, archetypeScaffold };
   }
 
   /**
@@ -887,8 +1182,8 @@ class Agent2Generator {
    * @returns {Object} Candidate MCQ object or explicit unfulfilled status payload
    */
   async generateQuestion(target, evidencePackage, repairInstruction = null) {
-    const isTopicMode = target.isTopicMode || 
-      evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' || 
+    const isTopicMode = target.isTopicMode ||
+      evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
       evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
     const isCalculation = target.dimension === 'Calculation' || (target.concept || '').toLowerCase().includes('banker');
 
@@ -899,6 +1194,7 @@ class Agent2Generator {
 
     const tier = target.targetDifficulty || target.difficulty || target.tier || 'Medium';
     const op = target.intendedCognitiveOperation || target.cognitiveOperation || target.operation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
+    const targetArchetype = target.targetArchetype || target.archetype || 'CONCEPTUAL_CONTRAST';
 
     // 1. Explicit Capacity Deficit Handling:
     // If target has insufficient curricular evidence, insufficient evidence for hard,
@@ -907,6 +1203,8 @@ class Agent2Generator {
     const isExplicitDeficit = (
       target.fulfillmentStatus === 'UNFULFILLED_CAPACITY_DEFICIT' ||
       target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      target.targetArchetype === 'UNFULFILLED_CAPACITY_DEFICIT' ||
+      targetArchetype === 'UNFULFILLED_CAPACITY_DEFICIT' ||
       target.isCapacityLimited === true ||
       (target.capacityLimitation && ['INSUFFICIENT_EVIDENCE_FOR_HARD', 'INSUFFICIENT_CURRICULAR_EVIDENCE', 'CAPACITY_DEFICIT'].includes(target.capacityLimitation.status))
     );
@@ -926,6 +1224,7 @@ class Agent2Generator {
           intendedCognitiveOperation: op,
           achievedCognitiveOperation: null,
           concept: target.concept,
+          questionArchetype: targetArchetype,
           capacityLimitation: target.capacityLimitation || {
             status: reasonCode,
             reason: reasonMsg
@@ -936,7 +1235,7 @@ class Agent2Generator {
     }
 
     let evidenceContext = getTargetEvidenceContext(target, evidencePackage, 2000);
-    const directEvidence = target.supportingEvidence || 
+    const directEvidence = target.supportingEvidence ||
       (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || ''));
 
     if (directEvidence && (!evidenceContext || evidenceContext.trim().length < 20 || evidenceContext.includes('No content provided') || evidenceContext === target.concept)) {
@@ -956,18 +1255,20 @@ class Agent2Generator {
           intendedCognitiveOperation: op,
           achievedCognitiveOperation: null,
           concept: target.concept,
+          questionArchetype: targetArchetype,
           isCapacityLimited: true
         }
       };
     }
 
     // Build modular, domain-adaptive operational scaffolding
-    const { systemScaffold, userScaffold, repairGuardrail } = this._buildOperationalScaffolding(
+    const { systemScaffold, userScaffold, repairGuardrail, archetypeScaffold } = this._buildOperationalScaffolding(
       tier,
       op,
       target.concept,
       evidenceContext,
-      repairInstruction
+      repairInstruction,
+      targetArchetype
     );
 
     let systemPrompt;
@@ -980,7 +1281,8 @@ Generate exactly ONE rigorous multiple-choice question in valid JSON format for 
 JSON SCHEMA:
 {
   "targetId": "${target.targetId}",
-  "questionText": "...",
+  "questionText": "Crisp 1-2 sentence question (<= 35 words), followed by optional 2-5 line code or scenario block",
+  "question": "Identical to questionText",
   "options": [
     "Plausible engineering alternative / misconception",
     "Contrasting algorithmic approach or property",
@@ -990,17 +1292,24 @@ JSON SCHEMA:
   "correctAnswerIndex": 2,
   "correctAnswer": "Technically precise, correct formulation",
   "explanation": "...",
-  "distractorRationales": {
-    "Plausible engineering alternative / misconception": "Specific misconception or cognitive trap: Why an incompletely prepared student would pick this option",
-    "Contrasting algorithmic approach or property": "Specific boundary, operational, or execution error",
-    "Boundary-condition or complexity trap": "Plausible near-miss alternative or false assumption"
+  "questionArchetype": "${targetArchetype}",
+  "pedagogicalIntent": "Concise statement of what cognitive mechanism this question tests",
+  "verificationRecord": {
+    "factualBasis": "Specific factual premise or rule from engineering curriculum",
+    "computedOrTracedKey": "Concrete execution trace, arithmetic substitution, or causal mechanism that proves the correct answer",
+    "distractorRationales": {
+      "Plausible engineering alternative / misconception": "Specific misconception or cognitive trap: Why an incompletely prepared student would pick this option",
+      "Contrasting algorithmic approach or property": "Specific boundary, operational, or execution error",
+      "Boundary-condition or complexity trap": "Plausible near-miss alternative or false assumption"
+    }
   },
   "usedArchetypes": ["MISCONCEPTION_INVERSION", "NEAR_MISS_MECHANISM"],
   "metadata": {
     "dimension": "${target.dimension || 'Conceptual'}",
     "cognitiveLevel": "${target.cognitiveLevel || 'Understand'}",
     "targetDifficulty": "${tier}",
-    "intendedCognitiveOperation": "${op}"
+    "intendedCognitiveOperation": "${op}",
+    "questionArchetype": "${targetArchetype}"
   }
 }
 
@@ -1034,9 +1343,11 @@ Subtopic: ${target.subtopic || topicScope}
 Concept to Assess: ${target.concept}
 Difficulty: ${tier}
 Intended Operation: ${op}
+Target Archetype: ${targetArchetype}
 Pedagogical Objective: ${target.instruction || 'Assess deep conceptual and applied understanding of ' + target.concept}
 Operational Guidance: ${target.operationalGuidance || ''}
 ${repairInstruction ? '[CRITICAL REPAIR INSTRUCTION]: ' + repairInstruction : ''}
+${archetypeScaffold?.userScaffold || ''}
 
 TASK:
 Generate a single rigorous university-level multiple-choice question for engineering students testing "${target.concept}".
@@ -1048,7 +1359,8 @@ Generate exactly ONE multiple-choice question in valid JSON format.
 JSON SCHEMA:
 {
   "targetId": "${target.targetId}",
-  "questionText": "...",
+  "questionText": "Crisp 1-2 sentence question (<= 35 words), followed by optional 2-5 line code or scenario block",
+  "question": "Identical to questionText",
   "options": [
     "Plausible alternative concept",
     "Distinct contrasting mechanism",
@@ -1058,17 +1370,24 @@ JSON SCHEMA:
   "correctAnswerIndex": 2,
   "correctAnswer": "Valid factual formulation",
   "explanation": "...",
-  "distractorRationales": {
-    "Plausible alternative concept": "Specific misconception or cognitive trap: Why an incompletely prepared student would pick this option",
-    "Distinct contrasting mechanism": "Specific boundary, operational, or execution error",
-    "Common conceptual misconception": "Plausible near-miss alternative or false assumption"
+  "questionArchetype": "${targetArchetype}",
+  "pedagogicalIntent": "Concise statement of what cognitive mechanism this question tests",
+  "verificationRecord": {
+    "factualBasis": "Specific factual premise or rule from lecture evidence",
+    "computedOrTracedKey": "Concrete execution trace, arithmetic substitution, or causal mechanism that proves the correct answer",
+    "distractorRationales": {
+      "Plausible alternative concept": "Specific misconception or cognitive trap: Why an incompletely prepared student would pick this option",
+      "Distinct contrasting mechanism": "Specific boundary, operational, or execution error",
+      "Common conceptual misconception": "Plausible near-miss alternative or false assumption"
+    }
   },
   "usedArchetypes": ["MISCONCEPTION_INVERSION", "NEAR_MISS_MECHANISM"],
   "metadata": {
     "dimension": "${target.dimension || 'Conceptual'}",
     "cognitiveLevel": "${target.cognitiveLevel || 'Understand'}",
     "targetDifficulty": "${tier}",
-    "intendedCognitiveOperation": "${op}"
+    "intendedCognitiveOperation": "${op}",
+    "questionArchetype": "${targetArchetype}"
   }
 }
 
@@ -1143,11 +1462,13 @@ Dimension: ${target.dimension}
 Cognitive Level: ${target.cognitiveLevel}
 Difficulty: ${tier}
 Intended Cognitive Operation: ${op}
+Target Archetype: ${targetArchetype}
 Operational Guidance: ${target.operationalGuidance || target.instruction}
 ${calculatedData ? '[COMPUTED ARITHMETIC ANSWER]: ' + calculatedData.expectedAnswer : ''}
 ${repairInstruction ? '[CRITICAL REPAIR INSTRUCTION]: ' + repairInstruction : ''}
 ${repairGuardrail}
 ${userScaffold}
+${archetypeScaffold?.userScaffold || ''}
 
 [UNTRUSTED DOCUMENT EVIDENCE]
 <untrusted_document_evidence>
@@ -1291,7 +1612,35 @@ Generate a single grounded multiple-choice question testing the assessment targe
 
     // 2. Strict Schema Validation before proceeding to calculation and shuffle
     const rawQuestionText = parsedMCQ.questionText || parsedMCQ.question || parsedMCQ.stem || '';
-    parsedMCQ.questionText = typeof rawQuestionText === 'string' ? rawQuestionText.trim() : '';
+    const cleanedRaw = typeof rawQuestionText === 'string' ? rawQuestionText.trim() : '';
+    parsedMCQ.questionText = cleanedRaw;
+    parsedMCQ.question = cleanedRaw;
+
+    // Programmatically enforce brevity (<= 35 words non-code stem, <= 10 words options)
+    this._enforceBrevity(parsedMCQ);
+
+    if (parsedMCQ._cannotSafelyTrimBrevity) {
+      console.warn(`⚠️ [Agent 2] Output for target ${target.targetId} exceeded brevity limits and could not be safely trimmed without altering semantics. Rejecting.`);
+      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
+      if (isMockAllowed) {
+        return this.generateQuestionFallback(target, evidencePackage, 'Brevity constraint violation: Output exceeded word limits and could not be safely shortened.');
+      }
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
+        isUnfulfilled: true,
+        unfulfilledReason: 'BREVITY_CONSTRAINT_VIOLATION_UNSAFE_TO_TRIM',
+        message: `Model output for target "${target.concept}" exceeded word limits (stem <= 35 words, options <= 10 words) and could not be safely trimmed without altering semantics.`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          isCapacityLimited: false
+        }
+      };
+    }
 
     if (isTopicMode && parsedMCQ.questionText) {
       const isMetaQuestion = /\b(?:lists?\s+the\s+(?:three|four|\d+)?\s*(?:algorithmic|engineering|course|topic)|identified\s+in\s+the\s+course\s+material|mentioned\s+in\s+the\s+(?:course\s+material|technical\s+reference))\b/i.test(parsedMCQ.questionText);
@@ -1384,8 +1733,15 @@ Generate a single grounded multiple-choice question testing the assessment targe
 
     parsedMCQ.targetId = target.targetId;
 
-    // Cryptographically shuffle presentation options to eliminate positional bias
-    this.shuffleOptions(parsedMCQ);
+    // Resolve verified questionArchetype: planner assigned targetArchetype is authoritative
+    const recognizedArchetypes = Object.keys(QUESTION_ARCHETYPES);
+    let resolvedArchetype = (targetArchetype && recognizedArchetypes.includes(targetArchetype))
+      ? targetArchetype
+      : (recognizedArchetypes.includes(parsedMCQ.questionArchetype) ? parsedMCQ.questionArchetype : 'CONCEPTUAL_CONTRAST');
+    parsedMCQ.questionArchetype = resolvedArchetype;
+    parsedMCQ.pedagogicalIntent = typeof parsedMCQ.pedagogicalIntent === 'string' && parsedMCQ.pedagogicalIntent.trim().length > 0
+      ? parsedMCQ.pedagogicalIntent.trim()
+      : (target.instruction || target.operationalGuidance || `Assess ${target.concept} using ${resolvedArchetype}`);
 
     // Filter usedArchetypes to only recognized exported archetypes genuinely applied
     const validArchetypeCodes = Object.keys(this.DISTRACTOR_ARCHETYPES);
@@ -1396,20 +1752,31 @@ Generate a single grounded multiple-choice question testing the assessment targe
       usedArchetypes = ['NEAR_MISS_MECHANISM', 'MISCONCEPTION_INVERSION'];
     }
 
-    // Normalize and attach distractorRationales
+    // Normalize and attach distractorRationales BEFORE shuffle so authoritative text mapping is locked
     const normalizedRationales = {};
     const distractors = (parsedMCQ.options || []).filter(o => o !== parsedMCQ.correctAnswer);
+    const rawRationalesSource = (parsedMCQ.verificationRecord && typeof parsedMCQ.verificationRecord.distractorRationales === 'object')
+      ? parsedMCQ.verificationRecord.distractorRationales
+      : ((parsedMCQ.distractorRationales && typeof parsedMCQ.distractorRationales === 'object') ? parsedMCQ.distractorRationales : {});
+    const LETTER_MAP = { A: 0, B: 1, C: 2, D: 3 };
 
-    if (parsedMCQ.distractorRationales && typeof parsedMCQ.distractorRationales === 'object') {
-      for (const [key, rationale] of Object.entries(parsedMCQ.distractorRationales)) {
-        if (typeof rationale === 'string' && rationale.trim().length > 0) {
-          const matchingOpt = distractors.find(d => 
-            d.toLowerCase() === key.toLowerCase() || 
-            d.toLowerCase().includes(key.toLowerCase()) || 
+    for (const [key, rationale] of Object.entries(rawRationalesSource)) {
+      if (typeof rationale === 'string' && rationale.trim().length > 0) {
+        const cleanRat = rationale.trim();
+        const upperKey = key.trim().toUpperCase();
+        if (LETTER_MAP[upperKey] !== undefined) {
+          const optAtIdx = parsedMCQ.options[LETTER_MAP[upperKey]];
+          if (optAtIdx && optAtIdx !== parsedMCQ.correctAnswer) {
+            normalizedRationales[optAtIdx] = cleanRat;
+          }
+        } else {
+          const matchingOpt = distractors.find(d =>
+            d.toLowerCase() === key.toLowerCase() ||
+            d.toLowerCase().includes(key.toLowerCase()) ||
             key.toLowerCase().includes(d.toLowerCase())
           );
           if (matchingOpt) {
-            normalizedRationales[matchingOpt] = rationale.trim();
+            normalizedRationales[matchingOpt] = cleanRat;
           }
         }
       }
@@ -1423,8 +1790,32 @@ Generate a single grounded multiple-choice question testing the assessment targe
       }
     }
 
+    // Normalize verificationRecord contract
+    const rawVRecord = parsedMCQ.verificationRecord || {};
+    const factualBasis = typeof rawVRecord.factualBasis === 'string' && rawVRecord.factualBasis.trim().length > 0
+      ? rawVRecord.factualBasis.trim()
+      : (typeof parsedMCQ.explanation === 'string' && parsedMCQ.explanation.trim().length > 0
+        ? parsedMCQ.explanation.trim()
+        : `Model-asserted factual basis for ${target.concept}`);
+    const computedOrTracedKey = typeof rawVRecord.computedOrTracedKey === 'string' && rawVRecord.computedOrTracedKey.trim().length > 0
+      ? rawVRecord.computedOrTracedKey.trim()
+      : (typeof parsedMCQ.explanation === 'string' && parsedMCQ.explanation.trim().length > 0
+        ? parsedMCQ.explanation.trim()
+        : `Model-asserted key logic for "${parsedMCQ.correctAnswer}" (${target.concept})`);
+
+    parsedMCQ.verificationRecord = {
+      verificationStatus: 'MODEL_ASSERTED',
+      verifiedProgrammatically: false,
+      factualBasis,
+      computedOrTracedKey,
+      distractorRationales: normalizedRationales
+    };
     parsedMCQ.distractorRationales = normalizedRationales;
     parsedMCQ.usedArchetypes = usedArchetypes;
+
+    // Cryptographically shuffle presentation options and synchronize byLetter rationales
+    this.shuffleOptions(parsedMCQ);
+
     parsedMCQ.metadata = {
       ...(parsedMCQ.metadata || {}),
       dimension: target.dimension || 'Conceptual',
@@ -1432,6 +1823,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
       targetDifficulty: tier,
       intendedCognitiveOperation: op,
       concept: target.concept,
+      questionArchetype: resolvedArchetype,
       usedArchetypes: usedArchetypes,
       distractorRationales: normalizedRationales,
       capacityLimitation: target.capacityLimitation || null,
