@@ -404,6 +404,8 @@ const handleUserSuspendToggle = async (req, res) => {
 
 router.put('/users/suspend/:id', auth, adminOnly, handleUserSuspendToggle);
 router.put('/users/:id/suspend', auth, adminOnly, handleUserSuspendToggle);
+router.patch('/users/suspend/:id', auth, adminOnly, handleUserSuspendToggle);
+router.patch('/users/:id/suspend', auth, adminOnly, handleUserSuspendToggle);
 
 // POST bulk suspend users
 router.post('/users/bulk-suspend', auth, adminOnly, async (req, res) => {
