@@ -2186,6 +2186,8 @@ export default function CreateQuizTopic() {
                 lectureDepth={lectureDepth}
                 detectedFocus={detectedFocus}
                 whatWasTaught={whatWasTaught}
+                keyTopics={keyTopics}
+                lectureWordCount={lectureWordCount}
                 recommendedQuestions={recommendedQuestions}
                 recommendedQuestionCount={recommendedQuestionCount}
                 recommendedByDifficulty={recommendedByDifficulty}
