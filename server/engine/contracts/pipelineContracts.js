@@ -87,6 +87,7 @@ const OPTION_SET_CONTRACT = {
   name: 'MCQ Option Set Contract',
   requiredCount: 4,
   minOptionLength: 2,
+  allowedSingleCharPattern: /^[0-9a-zA-Z+\-*/%^=<>&|!~]$/,
   lengthDisparityRatioThreshold: 2.5,
   lengthDisparityAbsoluteCharMin: 20,
   similarityWarningThreshold: 0.80,

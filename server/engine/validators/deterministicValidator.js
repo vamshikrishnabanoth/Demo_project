@@ -126,8 +126,13 @@ class DeterministicValidator {
     }
 
     // 2. Empty / Short options check
+    const allowedPattern = this.OPTION_SET_CONTRACT.allowedSingleCharPattern || /^[0-9a-zA-Z+\-*\/%^=<>&|!~]$/;
     options.forEach((opt, idx) => {
-      if (typeof opt !== 'string' || opt.trim().length < this.OPTION_SET_CONTRACT.minOptionLength) {
+      const isString = typeof opt === 'string';
+      const trimmed = isString ? opt.trim() : '';
+      const isAllowedSingle = isString && trimmed.length === 1 && allowedPattern.test(trimmed);
+
+      if (!isString || (trimmed.length < this.OPTION_SET_CONTRACT.minOptionLength && !isAllowedSingle)) {
         errors.push({
           code: this.OPTION_SET_CONTRACT.hardRejectionCodes.EMPTY_OR_SHORT_OPTION,
           message: `Option at index ${idx} is empty or shorter than ${this.OPTION_SET_CONTRACT.minOptionLength} characters: "${opt}"`,

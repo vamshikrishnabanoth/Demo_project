@@ -138,7 +138,9 @@ const MUTUALLY_EXCLUSIVE_PAIRS = [
   ['deterministic', 'non-deterministic'],
   ['static', 'dynamic'],
   ['linear', 'non-linear'],
-  ['mutable', 'immutable']
+  ['mutable', 'immutable'],
+  ['0-indexed', '1-indexed'],
+  ['zero-indexed', 'one-indexed']
 ];
 
 function matchPredicateStem(word) {

@@ -20,6 +20,7 @@ const { safeParseJson } = require('../utils/jsonParser');
 const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelector');
 const { validateQuestionCodeArtifacts } = require('../validators/astParser');
 const groundingGate = require('../validators/groundingGate');
+const verificationRecordGate = require('../validators/verificationRecordGate');
 
 const EVALUATOR_FAILURE_CODES = {
   OPTION_VALIDATION_ERROR: 'OPTION_VALIDATION_ERROR',
@@ -35,7 +36,8 @@ const EVALUATOR_FAILURE_CODES = {
   EMPTY_SESSION_EVIDENCE: 'EMPTY_SESSION_EVIDENCE',
   CODE_SYNTAX_ERROR: 'CODE_SYNTAX_ERROR',
   TEACHER_BOUNDARY_VIOLATION: 'TEACHER_BOUNDARY_VIOLATION',
-  PEDAGOGICAL_DEFECT: 'PEDAGOGICAL_DEFECT'
+  PEDAGOGICAL_DEFECT: 'PEDAGOGICAL_DEFECT',
+  VERIFICATION_FAILED: 'VERIFICATION_FAILED'
 };
 
 const OPTION_VERDICTS = {
@@ -191,6 +193,8 @@ class Agent3Evaluator {
       preAudit.verificationMethod = 'DETERMINISTIC_FAST_PATH';
       preAudit.isFallback = false;
       preAudit.isLLMVerified = false;
+      preAudit.verifiedProgrammatically = Boolean(candidateMCQ.verificationRecord?.verifiedProgrammatically);
+      preAudit.verificationStatus = candidateMCQ.verificationRecord?.verificationStatus || 'MODEL_ASSERTED';
       return preAudit;
     }
 
@@ -306,6 +310,21 @@ ${evidenceContext}
         parsed.verdict = 'FAIL';
         if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
           parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION);
+        }
+      }
+
+      // Hard enforcement: Deterministic VERIFICATION_FAILED must never be overwritten by LLM evaluation
+      if (candidateMCQ.verificationRecord?.verificationStatus === 'VERIFICATION_FAILED' || preAudit.failureReasons?.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
+        parsed.status = 'FAIL';
+        parsed.passed = false;
+        parsed.verdict = 'FAIL';
+        if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
+          parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED);
+        }
+        parsed.failureReason = preAudit.failureReason || EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED;
+        if (candidateMCQ.verificationRecord) {
+          candidateMCQ.verificationRecord.verificationStatus = 'VERIFICATION_FAILED';
+          candidateMCQ.verificationRecord.verifiedProgrammatically = false;
         }
       }
 
@@ -691,6 +710,32 @@ ${evidenceContext}
       }
     }
 
+    // 3f. Verification Record & Deterministic Sandbox Verification (Phase 3)
+    let verificationAudit = { status: 'MODEL_ASSERTED', verifiedProgrammatically: false };
+    if (candidateMCQ.verificationRecord) {
+      verificationAudit = verificationRecordGate.verify(candidateMCQ, target, evidencePackage);
+      if (verificationAudit.status === 'VERIFICATION_FAILED') {
+        if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED);
+        }
+      } else if (verificationAudit.status === 'VERIFICATION_MALFORMED') {
+        if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR);
+        }
+      }
+
+      if (verificationAudit.status === 'DETERMINISTIC_VERIFIED') {
+        candidateMCQ.verificationRecord.verificationStatus = 'DETERMINISTIC_VERIFIED';
+        candidateMCQ.verificationRecord.verifiedProgrammatically = true;
+      } else if (verificationAudit.status === 'VERIFICATION_FAILED') {
+        candidateMCQ.verificationRecord.verificationStatus = 'VERIFICATION_FAILED';
+        candidateMCQ.verificationRecord.verifiedProgrammatically = false;
+      } else {
+        candidateMCQ.verificationRecord.verificationStatus = 'VERIFICATION_UNSUPPORTED';
+        candidateMCQ.verificationRecord.verifiedProgrammatically = false;
+      }
+    }
+
     // 4. Cognitive Demand Calibration Heuristic (Multi-Feature Analysis)
     const qLower = (candidateMCQ.questionText || '').toLowerCase();
     const cognitiveEvaluation = this._evaluateCognitiveDemand(candidateMCQ, target);
@@ -882,6 +927,9 @@ ${evidenceContext}
       failureReason: preCheckFailureReason || (failureReasons.length > 0 ? failureReasons.join('; ') : null),
       repairInstruction,
       optionAnalysis,
+      verificationStatus: candidateMCQ.verificationRecord?.verificationStatus || 'MODEL_ASSERTED',
+      verifiedProgrammatically: Boolean(candidateMCQ.verificationRecord?.verifiedProgrammatically),
+      verificationAudit,
       cognitiveAudit: {
         requestedDifficulty: requestedTier,
         intendedCognitiveOperation: intendedOp,
@@ -1181,6 +1229,9 @@ ${evidenceContext}
    */
   _synthesizeRepairInstruction(failureReasons = [], candidateMCQ = {}, target = {}) {
     const instructions = [];
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
+      instructions.push('Recompute and resolve the correct answer: independent deterministic calculation/trace contradicted the claimed key.');
+    }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.PEDAGOGICAL_DEFECT)) {
       instructions.push('REGENERATE AS TECHNICAL QUESTION: Question must test actual engineering mechanisms, algorithms, state transitions, or complexity without referencing "course material" or "technical reference".');
     }
