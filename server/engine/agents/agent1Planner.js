@@ -232,9 +232,18 @@ ENGINEERING CURRICULUM PLANNING MANDATE:
    - Algorithmic state transitions, procedural execution steps, or mathematical formulas.
    - Performance tradeoffs, asymptotic complexity (time/space), and memory constraints.
    - Realistic engineering problem scenarios, boundary conditions, edge cases, and diagnostics.
-2. DIVERSE CONCEPT DISPERSION:
-   - Each target must assess a distinctly DIFFERENT subtopic or mechanism within "${topicName}".
-   - Do NOT duplicate the same basic definition across multiple targets.
+2. TOPIC DECOMPOSITION & DIVERSE CONCEPT DISPERSION:
+   - If "${topicName}" contains multiple topics or subtopics (separated by commas, 'and', semicolons, colons, or slashes, e.g. "backtracking, dynamic programming, recursion"):
+     You MUST decompose them and assign each target to ONE individual subtopic and technical facet!
+     For example, if the topic is "backtracking, dynamic programming, recursion":
+       * T01: concept = "Backtracking (State-Space Tree and Pruning Conditions)"
+       * T02: concept = "Dynamic Programming (Optimal Substructure and Memoization)"
+       * T03: concept = "Recursion (Base Cases and Call Stack Frames)"
+       * T04: concept = "Backtracking (N-Queens and Constraint Satisfaction)"
+       * T05: concept = "Dynamic Programming (Tabulation vs Memoization Tradeoffs)"
+       * T06: concept = "Recursion (Tail Recursion and Stack Safety)"
+   - NEVER set the "concept" field to the full input string (e.g. NEVER "backtracking, dynamic programming, recursion")!
+   - Every single target MUST have a unique, distinct, focused technical concept name!
 3. DIFFICULTY CALIBRATION:
    - When requested difficulty is 'Balanced', distribute difficulty across Easy, Medium, and Hard tiers:
      * N=1: 1 Medium
@@ -379,7 +388,8 @@ Requested Difficulty: ${requestedDifficulty}
 Requested Question Count: Exactly ${requestedCount} (Required Targets: ${targetIdList})
 
 TASK:
-Generate the comprehensive assessment plan with exactly ${requestedCount} primary targets ([${targetIdList}]) and reserve targets covering foundational principles, operational mechanisms, algorithms, tradeoffs, and applied problem scenarios for ${evidencePackage?.topic || rawContent}.`
+Generate the comprehensive assessment plan with exactly ${requestedCount} primary targets ([${targetIdList}]) and reserve targets covering foundational principles, operational mechanisms, algorithms, tradeoffs, and applied problem scenarios for ${evidencePackage?.topic || rawContent}.
+DECOMPOSITION MANDATE: If the topic string lists multiple areas (e.g. separated by commas or 'and'), decompose them across targets so each target tests ONE specific subtopic and facet. NEVER repeat the full topic string as the concept name.`
       : `
 [TEACHING EVIDENCE PACKAGE]
 Lecture Depth: ${lectureDepth.rating} (${lectureDepth.score}/100)
@@ -482,6 +492,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const initialTargets = filterGrounded(rawTargets, 'T');
       const initialReserve = filterGrounded(rawReserve, 'R');
 
+      if (isTopicMode) {
+        this._ensureDistinctTopicTargets(initialTargets, evidencePackage?.topic || rawContent, requestedCount, requestedDifficulty);
+        this._ensureDistinctTopicTargets(initialReserve, evidencePackage?.topic || rawContent, reserveTargetCount, requestedDifficulty);
+      }
+
       // Phase 5: Expand deep concepts into distinct assessment facets if targets are fewer than requestedCount
       const expandedTargets = this._expandTargetsWithConceptFacets(initialTargets, requestedCount, evidencePackage, requestedDifficulty);
 
@@ -493,22 +508,44 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const genuineCount = auditedTargets.length;
       if (isTopicMode && genuineCount < requestedCount) {
         const needed = requestedCount - genuineCount;
-        const topicName = evidencePackage?.topic || 'Engineering Subject';
+        const topicStr = evidencePackage?.topic || (typeof rawContent === 'string' ? rawContent : '') || 'Engineering Subject';
+        let rawParts = topicStr
+          .split(/[:;,]|and|&/i)
+          .map(p => p.trim())
+          .filter(p => p.length > 2 && !/^(algorithmic|techniques|concepts|principles|introduction|overview|advanced|basics|fundamentals)$/i.test(p));
+        if (rawParts.length === 0) rawParts = [topicStr.trim() || 'Core Engineering Subject'];
+
+        const engineeringFacets = [
+          'Core Foundations and Governing Principles',
+          'Operational Mechanics and Execution Steps',
+          'State Transitions and Formulations',
+          'Time Complexity and Asymptotic Bounds',
+          'Space Complexity and Memory Bounds',
+          'Design Tradeoffs and Comparative Analysis',
+          'Boundary Conditions and Edge Cases',
+          'Applied Problem-Solving Scenarios',
+          'Constraint Optimization and Pruning Logic',
+          'System Invariants and Bug Diagnostics'
+        ];
+
         for (let i = 0; i < needed; i++) {
           const slotNum = genuineCount + i + 1;
+          const sub = rawParts[(slotNum - 1) % rawParts.length];
+          const facet = engineeringFacets[(slotNum - 1) % engineeringFacets.length];
           const targetId = `T${String(slotNum).padStart(2, '0')}`;
           auditedTargets.push({
             targetId,
-            concept: `${topicName} Concept ${slotNum}`,
-            subtopic: 'Engineering Analysis',
+            concept: `${sub} (${facet})`,
+            subtopic: sub,
             trajectoryPhase: 'MID',
             tier: 'Core',
             dimension: 'Conceptual',
             cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate' : 'Understand',
             targetDifficulty: requestedDifficulty === 'Balanced' ? (slotNum % 3 === 0 ? 'Hard' : (slotNum % 2 === 0 ? 'Medium' : 'Easy')) : requestedDifficulty,
             intendedCognitiveOperation: 'APPLY',
-            supportingEvidence: '',
-            instruction: `Assess engineering principles and applications for ${topicName}.`
+            supportingEvidence: topicStr,
+            isCapacityLimited: false,
+            instruction: `Assess engineering principles and applications for ${sub}: ${facet}.`
           });
         }
       } else if (!isTopicMode && genuineCount < requestedCount) {
@@ -612,6 +649,62 @@ Generate the curricular assessment plan strictly covering educational concepts w
    * (e.g. Easy: ordering rule, Medium: insertion trace, Hard: shape/performance under sorted insertion)
    * without assuming 1 concept = 1 question or generating duplicates.
    */
+  /**
+   * Decompose composite topics (e.g. 'backtracking, dynamic programming, recursion')
+   * into distinct subtopic targets so each question assesses a focused engineering mechanism.
+   */
+  _ensureDistinctTopicTargets(targets = [], topicInput = '', count = 5, difficulty = 'Balanced') {
+    if (!Array.isArray(targets) || targets.length === 0) return targets;
+
+    const topicStr = (typeof topicInput === 'string' ? topicInput : (topicInput?.topic || '')) || 'Engineering Subject';
+    let rawParts = topicStr
+      .split(/[:;,]|and|&/i)
+      .map(p => p.trim())
+      .filter(p => p.length > 2 && !/^(algorithmic|techniques|concepts|principles|introduction|overview|advanced|basics|fundamentals)$/i.test(p));
+
+    if (rawParts.length === 0) {
+      rawParts = [topicStr.trim() || 'Core Engineering Subject'];
+    }
+
+    const engineeringFacets = [
+      { name: 'Core Foundations and Governing Principles', dim: 'Conceptual', op: 'RECALL' },
+      { name: 'Operational Mechanics and Execution Steps', dim: 'Flow / Trace', op: 'TRACE' },
+      { name: 'State Transitions and Formulations', dim: 'Flow / Trace', op: 'TRACE' },
+      { name: 'Time Complexity and Asymptotic Bounds', dim: 'Scenario Analysis', op: 'COMPARE' },
+      { name: 'Space Complexity and Memory Bounds', dim: 'Scenario Analysis', op: 'COMPARE' },
+      { name: 'Design Tradeoffs and Comparative Analysis', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
+      { name: 'Boundary Conditions and Edge Cases', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
+      { name: 'Applied Problem-Solving Scenarios', dim: 'Application', op: 'APPLY' },
+      { name: 'Constraint Optimization and Pruning Logic', dim: 'Cause / Effect', op: 'APPLY' },
+      { name: 'System Invariants and Bug Diagnostics', dim: 'Evidence-Derived Inference', op: 'DIAGNOSE' },
+      { name: 'Base Cases and Termination Proofs', dim: 'Flow / Trace', op: 'TRACE' },
+      { name: 'Algorithmic Efficiency and Benchmarks', dim: 'Application', op: 'APPLY' }
+    ];
+
+    const allConcepts = targets.map(t => (t.concept || '').toLowerCase().trim());
+    const hasDuplicates = new Set(allConcepts).size < allConcepts.length;
+    const hasComposite = targets.some(t => {
+      const c = (t.concept || '').toLowerCase();
+      return c.includes(',') || c.includes(';') || c === topicStr.toLowerCase() || (rawParts.length > 1 && c.includes(rawParts[0].toLowerCase()) && c.includes(rawParts[1].toLowerCase()));
+    });
+
+    if (hasDuplicates || hasComposite || (rawParts.length > 1 && targets.length > 1)) {
+      targets.forEach((t, i) => {
+        const sub = rawParts[i % rawParts.length];
+        const facet = engineeringFacets[Math.floor(i / rawParts.length) % engineeringFacets.length];
+        t.subtopic = sub;
+        t.concept = `${sub} (${facet.name})`;
+        t.dimension = facet.dim;
+        t.intendedCognitiveOperation = facet.op;
+        t.instruction = `Assess engineering principles, operational mechanisms, and tradeoffs of ${sub}: ${facet.name}.`;
+        t.isCapacityLimited = false;
+        delete t.capacityLimitation;
+      });
+    }
+
+    return targets;
+  }
+
   _expandTargetsWithConceptFacets(initialTargets = [], requestedCount = 5, evidencePackage = {}, requestedDifficulty = 'Balanced') {
     if (!Array.isArray(initialTargets) || initialTargets.length === 0) {
       return initialTargets || [];
@@ -1549,6 +1642,24 @@ Generate the curricular assessment plan strictly covering educational concepts w
    * invariants, or comparative tradeoffs capable of supporting Hard-tier cognitive demands.
    */
   _detectConceptDepth(concept = '', supportingEvidence = '', evidencePackage = {}) {
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+    if (isTopicMode) {
+      return {
+        level: 'COMPLEX_MECHANISM',
+        supportsHard: true,
+        supportsMedium: true,
+        supportsEasy: true,
+        characteristics: {
+          hasMechanism: true,
+          hasProcedure: true,
+          hasInvariant: true,
+          hasTradeoff: true,
+          hasViolation: true
+        },
+        diagnosticReasons: ['Topic curriculum synthesis: full academic engineering depth supported']
+      };
+    }
     const conceptLower = String(concept || '').toLowerCase();
     let evidenceLower = String(supportingEvidence || '').toLowerCase();
     if ((!evidenceLower || evidenceLower.length < 20) && evidencePackage) {

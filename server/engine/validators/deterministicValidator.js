@@ -529,16 +529,26 @@ class DeterministicValidator {
       const sameAnswer = candidateAns.length > 0 && candidateAns === existingAns;
 
       // 1. Extreme verbatim duplicate
-      if (sim >= 0.80) {
+      if (sim >= 0.70) {
         return {
           isDuplicate: true,
           similarity: sim,
-          reason: 'VERBATIM_DUPLICATE: Text similarity exceeds 0.80',
+          reason: 'VERBATIM_DUPLICATE: Text similarity exceeds 0.70',
           duplicateWith: existing.questionText
         };
       }
 
-      // 2. Pedagogical duplicate: same concept + same cognitive operation + same answer
+      // 2. Direct answer collision with significant stem overlap
+      if (sameAnswer && sim >= 0.25) {
+        return {
+          isDuplicate: true,
+          similarity: sim,
+          reason: 'ANSWER_COLLISION_DUPLICATE: Identical correct answer with high stem similarity',
+          duplicateWith: existing.questionText
+        };
+      }
+
+      // 3. Pedagogical duplicate: same concept + same cognitive operation
       if (sameDimension && (sameConcept || sameAnswer) && sim >= 0.30) {
         return {
           isDuplicate: true,

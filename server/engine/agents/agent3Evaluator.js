@@ -34,7 +34,8 @@ const EVALUATOR_FAILURE_CODES = {
   INSUFFICIENT_EVIDENCE_FOR_HARD: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
   EMPTY_SESSION_EVIDENCE: 'EMPTY_SESSION_EVIDENCE',
   CODE_SYNTAX_ERROR: 'CODE_SYNTAX_ERROR',
-  TEACHER_BOUNDARY_VIOLATION: 'TEACHER_BOUNDARY_VIOLATION'
+  TEACHER_BOUNDARY_VIOLATION: 'TEACHER_BOUNDARY_VIOLATION',
+  PEDAGOGICAL_DEFECT: 'PEDAGOGICAL_DEFECT'
 };
 
 const OPTION_VERDICTS = {
@@ -682,6 +683,14 @@ ${evidenceContext}
       }
     }
 
+    // 3e. Anti-Meta-Question Defect Check (Topic Mode)
+    const metaCheckRegex = /\b(course material|technical reference|provided technical reference|identified in the course|mentioned in the course|listed in the course|covered in the syllabus|three algorithmic paradigms)\b/i;
+    if (isTopicMode && (metaCheckRegex.test(candidateMCQ.questionText || '') || metaCheckRegex.test(candidateMCQ.correctAnswer || ''))) {
+      if (!failureReasons.includes(EVALUATOR_FAILURE_CODES.PEDAGOGICAL_DEFECT)) {
+        failureReasons.push(EVALUATOR_FAILURE_CODES.PEDAGOGICAL_DEFECT);
+      }
+    }
+
     // 4. Cognitive Demand Calibration Heuristic (Multi-Feature Analysis)
     const qLower = (candidateMCQ.questionText || '').toLowerCase();
     const cognitiveEvaluation = this._evaluateCognitiveDemand(candidateMCQ, target);
@@ -1172,6 +1181,9 @@ ${evidenceContext}
    */
   _synthesizeRepairInstruction(failureReasons = [], candidateMCQ = {}, target = {}) {
     const instructions = [];
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.PEDAGOGICAL_DEFECT)) {
+      instructions.push('REGENERATE AS TECHNICAL QUESTION: Question must test actual engineering mechanisms, algorithms, state transitions, or complexity without referencing "course material" or "technical reference".');
+    }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR)) {
       instructions.push('Format with exactly 4 distinct, balanced options without superficial formatting variants.');
     }
