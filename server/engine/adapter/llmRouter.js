@@ -350,6 +350,9 @@ class LLMRouter {
 
       // If pass completed without returning, sleep until earliest cooldown expires and retry
       if (poolAttempt < 2 && this.keyCooldowns.size > 0) {
+        if (process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production') {
+          break;
+        }
         const earliestCooldown = Math.min(...Array.from(this.keyCooldowns.values()));
         const remaining = earliestCooldown - Date.now();
         if (remaining > 0) {
