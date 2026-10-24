@@ -356,6 +356,8 @@ JSON SCHEMA:
     { "targetId": "R01", "subtopic": "...", "concept": "Distinct fallback concept", "trajectoryPhase": "EARLY|MID|LATE", "timestamp": "00:00 - 15:00", "tier": "Core|Secondary|Peripheral", "dimension": "Conceptual", "cognitiveLevel": "Understand", "targetDifficulty": "Medium", "intendedCognitiveOperation": "COMPARE", "operationalGuidance": "Guidance", "evidenceType": "VOICE", "supportingEvidence": "Verbatim quote", "evidenceSpan": "Context sentence", "confidence": "HIGH", "sourceChunks": ["chunk_02"], "requiresExactArtifact": false, "instruction": "Guidance" }
   ]
 }`;
+    }
+
     const trajectoryPackage = this._buildChronologicalTrajectoryPackage(evidencePackage, rawContent);
     const assessableContent = trajectoryPackage.assessableContent;
 
@@ -368,7 +370,6 @@ JSON SCHEMA:
 Curricular Coverage Audit (Assessability Pre-Check):
 - Sufficient Concepts (Eligible for Targets): ${suff || 'All taught concepts with adequate evidence'}
 - Excluded or Insufficient Concepts (DO NOT Target): ${excl || 'None'}`;
-    }
     }
 
     const userPrompt = isTopicMode
@@ -813,8 +814,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const cLower = `${target.concept || ''} ${target.subtopic || ''}`.toLowerCase();
       return excludedConcepts.find(e => e.name && e.name.length > 2 && cLower.includes(e.name));
     };
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
     const rawContent = (evidencePackage?.unifiedRawContent || '').toLowerCase();
     const isGroundingSupported = (target) => {
+      if (isTopicMode) return true;
       if (target.isCapacityLimited || target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT') return true;
       if (!rawContent || rawContent.length < 50) return true;
 
@@ -890,7 +894,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
       } else if (focusDup) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Duplicate concept already targeted for focus "${focusDup}"` });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Target concept "${t.concept}" duplicates already targeted focus concept "${focusDup}".` });
-      } else if (maxDefensibleCapacity > 0 && cleanTargets.length >= maxDefensibleCapacity) {
+      } else if (!isTopicMode && maxDefensibleCapacity > 0 && cleanTargets.length >= maxDefensibleCapacity) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Curricular concept capacity reached (${maxDefensibleCapacity} distinct concepts in session evidence)` });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'CAPACITY_LIMIT_EXCEEDED', status: 'REJECTED', reason: `Session evidence supports only ${maxDefensibleCapacity} distinct curricular concept(s). Excess target rejected to prevent quota inflation.` });
       } else {
@@ -1822,6 +1826,9 @@ Generate the curricular assessment plan strictly covering educational concepts w
     let supportedHardCount = 0;
     const requestedHardCount = blueprint.counts.Hard;
 
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT' ||
+      planData?.inputModality === 'TOPIC_SYNTHESIS';
     let targets = planData.assessmentTargets || [];
     if (targets.length === 0 && requestedCount > 0) {
       for (let i = 0; i < requestedCount; i++) {
@@ -1831,7 +1838,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
           supportingEvidence: ''
         });
       }
-    } else if (targets.length > 0 && targets.length < requestedCount) {
+    } else if (!isTopicMode && targets.length > 0 && targets.length < requestedCount) {
       const availableCount = targets.length;
       const deficitCount = requestedCount - availableCount;
       const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;

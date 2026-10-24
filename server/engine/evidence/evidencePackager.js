@@ -229,6 +229,7 @@ class EvidencePackager {
         characteristics: { reasoning: 'Strong', procedures: 'Strong', examples: 'Present' }
       };
       packageData.curricularContent = cleanDocsText || sessionInputs.topic || 'Academic Topic Curriculum';
+      packageData.unifiedRawContent = packageData.topic || packageData.curricularContent;
 
       const reqCount = sessionInputs.count || sessionInputs.requestedCount || 10;
       packageData.evidenceCapacity = {
