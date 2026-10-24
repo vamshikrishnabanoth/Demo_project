@@ -547,10 +547,11 @@ class PipelineOrchestrator {
 
         // 5. Evaluation Verdict Branching
         if (evalResult.status === 'PASS') {
-          // Check deterministic duplicate question against passing pool
+          // Check deterministic duplicate question and distractor collisions against passing pool
           const dupCheck = deterministicValidator.checkDuplicateQuestion(evalResult.mcq, passingQuestions, currentTarget);
+          const distractorCollision = deterministicValidator.checkDistractorCollision(evalResult.mcq, passingQuestions);
 
-          if (!dupCheck.isDuplicate) {
+          if (!dupCheck.isDuplicate && !distractorCollision.hasCollision) {
             if (passingQuestions.length < requestedCount) {
               const qNum = passingQuestions.length + 1;
               const provenance = evidenceContextSelector.resolveTargetProvenance(currentTarget, evidencePackage, evalResult);
@@ -692,10 +693,12 @@ class PipelineOrchestrator {
               });
             }
           } else {
-            // Duplicate rejected
-            const reason = `DUPLICATE_QUESTION: ${dupCheck.reason}`;
+            // Duplicate or distractor collision rejected
+            const isDup = dupCheck.isDuplicate;
+            const failCode = isDup ? 'DUPLICATE_QUESTION' : 'DISTRACTOR_COLLISION';
+            const reason = isDup ? `DUPLICATE_QUESTION: ${dupCheck.reason}` : `DISTRACTOR_COLLISION: ${distractorCollision.reason}`;
             if (byTier[tier]) byTier[tier].rejected++;
-            rejectionReasonsCount['DUPLICATE_QUESTION'] = (rejectionReasonsCount['DUPLICATE_QUESTION'] || 0) + 1;
+            rejectionReasonsCount[failCode] = (rejectionReasonsCount[failCode] || 0) + 1;
 
             const rejectedRecord = {
               targetId: currentTarget.targetId,
@@ -705,7 +708,7 @@ class PipelineOrchestrator {
               intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
               status: 'REJECTED',
               reason,
-              failureReasons: ['DUPLICATE_QUESTION'],
+              failureReasons: [failCode],
               attempts: 1 + (repairAttempted ? 1 : 0),
               repairAttempted,
               repairSuccessful: false

@@ -16,7 +16,7 @@
 const { DenseEmbeddingBridge } = require('./denseEmbeddingBridge');
 
 // Feature Flag: 'v1_lexical' (default baseline) | 'v2_hybrid' (Phase 3 Semantic Reasoner)
-const LINKER_MODE = process.env.CROSS_SOURCE_LINKER || 'v1_lexical';
+const LINKER_MODE = process.env.CROSS_SOURCE_LINKER || 'v2_hybrid';
 
 const RELATIONSHIP_TYPES = {
   // Legacy types

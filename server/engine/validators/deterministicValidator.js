@@ -553,6 +553,78 @@ class DeterministicValidator {
   }
 
   /**
+   * Check for distractor collisions against existing passing questions in the quiz.
+   * Ensures high pedagogical diversity and prevents distractor set exhaustion across the quiz:
+   * 1. Multi-distractor set overlap: Candidate question shares 2 or more identical distractors with any single existing question.
+   * 2. Substantive verbatim collision: A long distractor (>= 4 words or >= 20 chars) is repeated verbatim in an existing question.
+   *
+   * @param {Object} candidateMCQ - Candidate MCQ object
+   * @param {Array<Object>} existingQuestions - Array of already accepted quiz questions
+   * @returns {Object} { hasCollision: boolean, type: string|null, reason: string|null, collidedWith: string|null, sharedDistractors: string[] }
+   */
+  checkDistractorCollision(candidateMCQ, existingQuestions = []) {
+    if (!candidateMCQ || !Array.isArray(candidateMCQ.options) || !Array.isArray(existingQuestions) || existingQuestions.length === 0) {
+      return { hasCollision: false, type: null, reason: null, collidedWith: null, sharedDistractors: [] };
+    }
+
+    const candidateKey = String(candidateMCQ.correctAnswer || '').trim().toLowerCase();
+    const candidateDistractors = candidateMCQ.options
+      .map(o => String(o || '').trim())
+      .filter(o => o.toLowerCase() !== candidateKey && o.length > 0);
+
+    const norm = (str) => this.stripSuperficialFormatting(str).toLowerCase();
+
+    for (let qIdx = 0; qIdx < existingQuestions.length; qIdx++) {
+      const existing = existingQuestions[qIdx];
+      if (!existing || !Array.isArray(existing.options)) continue;
+
+      const existingKey = String(existing.correctAnswer || '').trim().toLowerCase();
+      const existingDistractors = existing.options
+        .map(o => String(o || '').trim())
+        .filter(o => o.toLowerCase() !== existingKey && o.length > 0);
+
+      const shared = [];
+      for (const cd of candidateDistractors) {
+        const normCd = norm(cd);
+        for (const ed of existingDistractors) {
+          const normEd = norm(ed);
+          if (normCd === normEd && normCd.length > 0) {
+            shared.push(cd);
+            break;
+          }
+        }
+      }
+
+      // Case 1: Multiple shared distractors (2 or more)
+      if (shared.length >= 2) {
+        return {
+          hasCollision: true,
+          type: 'DISTRACTOR_SET_COLLISION',
+          reason: `Candidate question shares ${shared.length} identical distractors (${shared.map(s => `"${s}"`).join(', ')}) with Question ${qIdx + 1}`,
+          collidedWith: existing.questionText || `Question ${qIdx + 1}`,
+          sharedDistractors: shared
+        };
+      }
+
+      // Case 2: Substantive verbatim distractor collision (length >= 20 chars or >= 4 words)
+      for (const s of shared) {
+        const wordCount = s.split(/\s+/).filter(Boolean).length;
+        if (s.length >= 20 || wordCount >= 4) {
+          return {
+            hasCollision: true,
+            type: 'VERBATIM_DISTRACTOR_COLLISION',
+            reason: `Substantive distractor "${s}" is identical to a distractor in Question ${qIdx + 1}`,
+            collidedWith: existing.questionText || `Question ${qIdx + 1}`,
+            sharedDistractors: [s]
+          };
+        }
+      }
+    }
+
+    return { hasCollision: false, type: null, reason: null, collidedWith: null, sharedDistractors: [] };
+  }
+
+  /**
    * Compute whole-quiz pairwise redundancy matrix.
    */
   computeRedundancyMatrix(quizQuestions = []) {
