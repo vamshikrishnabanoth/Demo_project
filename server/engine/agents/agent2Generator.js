@@ -254,7 +254,8 @@ class Agent2Generator {
   generateQuestionFallback(target, evidencePackage, repairInstruction = null) {
     const concept = target.concept || 'Operating System Concept';
     const subtopic = target.subtopic || 'General Topic';
-    const tier = target.targetDifficulty || target.difficulty || target.tier || 'Medium';
+    const rawTier = target.targetDifficulty || target.difficulty || target.tier || 'Medium';
+    const tier = (rawTier === 1 || rawTier === '1' || String(rawTier).toLowerCase() === 'easy') ? 'Easy' : ((rawTier === 3 || rawTier === '3' || String(rawTier).toLowerCase() === 'hard') ? 'Hard' : 'Medium');
     const op = target.intendedCognitiveOperation || target.cognitiveOperation || target.operation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
     const targetArchetype = target.targetArchetype || target.archetype || null;
     const evidence = target.supportingEvidence || evidencePackage?.curricularContent || '';
@@ -761,6 +762,7 @@ class Agent2Generator {
       correctAnswer,
       explanation: `Derived directly from session evidence for ${concept}. Correct option reflects taught behavior; distractors embody plausible misconceptions.`,
       questionArchetype: fallbackArchetype,
+      targetArchetype: fallbackArchetype,
       pedagogicalIntent: `Assess ${concept} via ${fallbackArchetype}`,
       verificationRecord,
       distractorRationales: normalizedRationales,
@@ -1015,7 +1017,8 @@ class Agent2Generator {
 
   _buildOperationalScaffolding(tier, op, concept = '', evidenceContext = '', repairInstruction = null, targetArchetype = null) {
     const opUpper = (op || '').toUpperCase();
-    const tierUpper = (tier || '').toUpperCase();
+    const normTier = (tier === 1 || tier === '1') ? 'Easy' : (tier === 2 || tier === '2') ? 'Medium' : (tier === 3 || tier === '3') ? 'Hard' : tier;
+    const tierUpper = String(normTier || '').toUpperCase();
     const conceptLower = (concept || '').toLowerCase();
     const evidenceLower = (evidenceContext || '').toLowerCase();
 
@@ -1192,7 +1195,8 @@ class Agent2Generator {
       calculatedData = calculationEngine.evaluateCalculation(target, { max: [7, 5, 3], allocation: [3, 2, 2] });
     }
 
-    const tier = target.targetDifficulty || target.difficulty || target.tier || 'Medium';
+    const rawTier = target.targetDifficulty || target.difficulty || target.tier || 'Medium';
+    const tier = (rawTier === 1 || rawTier === '1' || String(rawTier).toLowerCase() === 'easy') ? 'Easy' : ((rawTier === 3 || rawTier === '3' || String(rawTier).toLowerCase() === 'hard') ? 'Hard' : 'Medium');
     const op = target.intendedCognitiveOperation || target.cognitiveOperation || target.operation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
     const targetArchetype = target.targetArchetype || target.archetype || 'CONCEPTUAL_CONTRAST';
 
@@ -1620,10 +1624,17 @@ Generate a single grounded multiple-choice question testing the assessment targe
     this._enforceBrevity(parsedMCQ);
 
     if (parsedMCQ._cannotSafelyTrimBrevity) {
-      console.warn(`⚠️ [Agent 2] Output for target ${target.targetId} exceeded brevity limits and could not be safely trimmed without altering semantics. Rejecting.`);
-      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
-      if (isMockAllowed) {
-        return this.generateQuestionFallback(target, evidencePackage, 'Brevity constraint violation: Output exceeded word limits and could not be safely shortened.');
+      console.warn(`⚠️ [Agent 2] Output for target ${target.targetId} exceeded brevity limits and could not be safely trimmed without altering semantics. Engaging fallback question generator.`);
+      const fallbackResult = this.generateQuestionFallback(
+        target,
+        evidencePackage,
+        'Brevity constraint violation: Model output exceeded word limits and could not be safely shortened.'
+      );
+      if (fallbackResult && !fallbackResult.isUnfulfilled) {
+        return fallbackResult;
+      }
+      if (fallbackResult && fallbackResult.fulfillmentStatus === 'UNFULFILLED_CAPACITY_DEFICIT') {
+        return fallbackResult;
       }
       return {
         targetId: target.targetId,
@@ -1637,7 +1648,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
           intendedCognitiveOperation: op,
           achievedCognitiveOperation: null,
           concept: target.concept,
-          isCapacityLimited: false
+          isCapacityLimited: Boolean(fallbackResult?.metadata?.isCapacityLimited)
         }
       };
     }

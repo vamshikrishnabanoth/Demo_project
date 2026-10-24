@@ -11,6 +11,8 @@
 
 'use strict';
 
+const PLANNER_SCHEMA_VERSION = 'v2_archetype_aware';
+
 const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const crypto = require('crypto');
@@ -604,16 +606,21 @@ ${lateFormatted || 'Code walkthrough and implementation details presented in lat
     const detectedFocus = evidencePackage.detectedFocus || [];
     // Step 3: Make conceptEvidenceGraph available alongside existing curricularContent
     const conceptEvidenceGraph = evidencePackage.conceptEvidenceGraph || null;
-    // Cache Read Check (Key: content + difficulty + count + deficitPolicy)
+    // Cache Read Check (Key: schemaVersion + content + difficulty + count + deficitPolicy)
     const contentKey = (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || rawContent || '').slice(0, 10000);
     const planHash = crypto.createHash('sha256')
-      .update(`${contentKey}|${requestedDifficulty}|${requestedCount}|${deficitPolicy || ''}`)
+      .update(`${PLANNER_SCHEMA_VERSION}|${contentKey}|${requestedDifficulty}|${requestedCount}|${deficitPolicy || ''}`)
       .digest('hex');
-    const cacheKey = `plan:${planHash}`;
+    const cacheKey = `plan:${PLANNER_SCHEMA_VERSION}:${planHash}`;
     const cachedPlan = cacheManager.get(cacheKey);
     if (cachedPlan && Array.isArray(cachedPlan.assessmentTargets) && cachedPlan.assessmentTargets.length > 0) {
-      console.log(`⚡ [PLANNER CACHE HIT] Reusing cached assessment plan (${cachedPlan.assessmentTargets.length} targets)`);
-      return JSON.parse(JSON.stringify(cachedPlan));
+      const hasValidArchetypes = cachedPlan.assessmentTargets.every(t => typeof t.targetArchetype === 'string');
+      if (hasValidArchetypes) {
+        console.log(`⚡ [PLANNER CACHE HIT] Reusing cached assessment plan (${cachedPlan.assessmentTargets.length} targets)`);
+        return JSON.parse(JSON.stringify(cachedPlan));
+      } else {
+        console.warn(`⚠️ [Agent 1 Planner] Stale legacy plan detected in cache without archetype metadata. Invalidating.`);
+      }
     }
 
     // 1. Calculate TC (Teaching Coverage) Score
@@ -1041,6 +1048,9 @@ Generate the curricular assessment plan strictly covering educational concepts w
     planData.conceptEvidenceGraph = conceptEvidenceGraph;
     planData.curricularCoverage = evidencePackage?.curricularCoverage || null;
     const finalPlan = this._enforceFinalCapacitySafetyGate(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+    if (finalPlan) {
+      finalPlan.schemaVersion = PLANNER_SCHEMA_VERSION;
+    }
     if (finalPlan && !finalPlan.isFallbackPlan && Array.isArray(finalPlan.assessmentTargets) && finalPlan.assessmentTargets.length > 0) {
       try {
         cacheManager.set(cacheKey, finalPlan, {

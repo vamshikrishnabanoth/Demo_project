@@ -58,7 +58,7 @@ class CacheManager {
   }
 
   getL2Path(key) {
-    const safeKey = String(key).replace(/[^a-zA-Z0-9_\-:]/g, '_');
+    const safeKey = String(key).replace(/[^a-zA-Z0-9_.-]/g, '_');
     return path.join(L2_CACHE_DIR, `${safeKey}.json`);
   }
 

@@ -398,14 +398,12 @@ class LLMRouter {
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    // Configurable model cascade: allows env override, defaults to gemini-2.5-flash, gemini-1.5-flash then alternatives
+    // Configurable model cascade: allows env override, defaults to official models gemini-1.5-flash, gemini-1.5-pro
     const candidateModels = Array.from(new Set([
       process.env.GEMINI_MODEL,
       model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
-      'gemini-2.5-flash',
       'gemini-1.5-flash',
-      'gemini-1.5-pro',
-      'gemini-2.0-flash'
+      'gemini-1.5-pro'
     ].filter(Boolean)));
 
     let lastErr = null;
@@ -462,7 +460,7 @@ class LLMRouter {
           this.geminiCooldownUntil = Date.now() + 60000;
           console.warn(`⚠️ [LLMRouter] Gemini hit rate limit (429). Setting 60s cooldown.`);
           break; // Don't burn requests across models if key is throttled
-        } else if (status === 403 || msg.includes('PERMISSION_DENIED') || msg.includes('leaked')) {
+        } else if (status === 403 || msg.includes('PERMISSION_DENIED') || msg.includes('leaked') || msg.includes('API key')) {
           this.geminiCooldownUntil = Date.now() + 3600000; // 1-hour cooldown for invalid/leaked key
           console.warn(`🚨 [LLMRouter] Gemini authentication error (${msg}). Marking key unavailable.`);
           break;
