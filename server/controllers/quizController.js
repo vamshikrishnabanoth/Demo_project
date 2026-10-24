@@ -4686,11 +4686,45 @@ function sanitizeLectureTitle(rawTitle) {
 exports.analyzeDepth = async (req, res) => {
     try {
         const { text, title, segments, modality, hasTimingData } = req.body;
+        const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
+        const isTopicInput = modality === 'TOPIC' || modality === 'TOPIC_SYNTHESIS' ||
+            (!hasTimingData && (!segments || segments.length === 0) && wordCount < 300);
+
+        if (isTopicInput && (text || '').trim().length >= 3) {
+            const cleanTopic = sanitizeLectureTitle(title || text.trim());
+            return res.json({
+                isAcademic: true,
+                isTopicMode: true,
+                topic: cleanTopic,
+                lectureDepth: {
+                    rating: 'Engineering Curriculum',
+                    score: 100,
+                    characteristics: {
+                        conceptExplanation: 'Strong',
+                        reasoning: 'Strong',
+                        examples: 'Present',
+                        procedures: 'Strong'
+                    },
+                    breakdown: {
+                        recommendedQuestionCount: 15,
+                        recommendedQuestionsRationale: 'Standard university-level engineering curriculum assessment scope'
+                    }
+                },
+                keyTopics: [cleanTopic, 'Algorithmic Mechanics', 'State Transitions & Complexity', 'Engineering Scenarios'],
+                whatWasTaught: `Comprehensive university engineering assessment covering ${cleanTopic}.`,
+                recommendedQuestions: '10 to 30 Questions',
+                recommendedQuestionCount: 10,
+                recommendedByDifficulty: { easy: 10, medium: 15, hard: 10, balanced: 15 },
+                capacityByDifficulty: { easy: 10, medium: 15, hard: 10, balanced: 15 },
+                totalDefensibleCapacity: 30,
+                wordCount: wordCount
+            });
+        }
+
         const analysis = depthAnalyzer.analyzeLecture(text || '');
         
         let whatWasTaught = '';
         let keyTopics = [];
-        const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
         let recommendedQuestions = wordCount > 3000 ? '5 to 25 Questions' : (wordCount > 1000 ? '5 to 15 Questions' : '3 to 10 Questions');
 
         let lectureIntel = null;
