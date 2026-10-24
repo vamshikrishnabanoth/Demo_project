@@ -44,7 +44,7 @@ class LLMRouter {
    * Route completion request to active LLM provider with intelligent failover.
    * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model, sessionId }
    */
-  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null }) {
+  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null }) {
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
     }
@@ -56,7 +56,7 @@ class LLMRouter {
 
     // Resolve model cleanly: use active models on user key
     let primaryModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
-    let fallbackModel = process.env.GROQ_FALLBACK_MODEL || 'llama-3.3-70b-versatile';
+    let fallbackModel = process.env.GROQ_FALLBACK_MODEL || (primaryModel === 'openai/gpt-oss-120b' ? 'openai/gpt-oss-20b' : 'openai/gpt-oss-120b');
     if (model) {
       primaryModel = model;
     }
@@ -70,7 +70,8 @@ class LLMRouter {
           temperature,
           primaryModel,
           fallbackModel,
-          sessionId
+          sessionId,
+          maxTokens
         });
       } catch (err) {
         errors.push(`Groq (${err.message})`);
@@ -87,7 +88,8 @@ class LLMRouter {
           temperature,
           responseFormat,
           model,
-          sessionId
+          sessionId,
+          maxTokens
         });
       } catch (err) {
         errors.push(`Gemini (${err.message})`);
@@ -151,7 +153,17 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null }) {
+  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null }) {
+    let resolvedMaxTokens = parseInt(maxTokens, 10);
+    if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
+      if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
+        resolvedMaxTokens = 1800;
+      } else if (prompt.includes('Assessment Planner') || prompt.includes('[ACADEMIC TOPIC CURRICULUM SPECIFICATION]') || prompt.includes('[TEACHING EVIDENCE PACKAGE]')) {
+        resolvedMaxTokens = 3000;
+      } else {
+        resolvedMaxTokens = 4096;
+      }
+    }
     const keys = this._getGroqKeys();
     if (keys.length === 0) throw new Error('GROQ_API_KEY is missing');
 
@@ -160,10 +172,13 @@ class LLMRouter {
     const totalKeys = keys.length;
     let lastErr = null;
 
+    // Distribute concurrent calls evenly across available keys by advancing starting key index per invocation
+    const startKeyOffset = (this.currentKeyIndex++) % totalKeys;
+
     // Up to 3 passes across the pool with bounded cooldown sleep if keys are temporarily throttled
     for (let poolAttempt = 0; poolAttempt < 3; poolAttempt++) {
       for (let offset = 0; offset < totalKeys; offset++) {
-        const keyIdx = (this.currentKeyIndex + offset) % totalKeys;
+        const keyIdx = (startKeyOffset + offset) % totalKeys;
         const key = keys[keyIdx];
         // Check if key was permanently invalidated (e.g. 401/403)
         if (this.invalidKeys.has(keyIdx)) {
@@ -210,7 +225,7 @@ class LLMRouter {
                   ],
                   temperature: temperature,
                   response_format: { type: 'json_object' },
-                  max_tokens: 4096
+                  max_tokens: resolvedMaxTokens
                 },
                 {
                   headers: {
@@ -351,7 +366,17 @@ class LLMRouter {
   /**
    * Call Google Gemini API as cloud fallback when Groq hits 429/failures.
    */
-  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null }) {
+  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null }) {
+    let resolvedMaxTokens = parseInt(maxTokens, 10);
+    if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
+      if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
+        resolvedMaxTokens = 1800;
+      } else if (prompt.includes('Assessment Planner') || prompt.includes('[ACADEMIC TOPIC CURRICULUM SPECIFICATION]') || prompt.includes('[TEACHING EVIDENCE PACKAGE]')) {
+        resolvedMaxTokens = 3000;
+      } else {
+        resolvedMaxTokens = 4096;
+      }
+    }
     const apiKey = (this.geminiApiKey || process.env.GEMINI_API_KEY || '').trim();
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY is missing or empty');
@@ -387,7 +412,8 @@ class LLMRouter {
         const modelConfig = {
           model: geminiModelName,
           generationConfig: {
-            temperature: typeof temperature === 'number' ? temperature : 0.3
+            temperature: typeof temperature === 'number' ? temperature : 0.3,
+            maxOutputTokens: resolvedMaxTokens
           }
         };
 

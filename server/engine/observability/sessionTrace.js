@@ -81,7 +81,11 @@ class SessionTrace {
 
     // 2. Level 2: Persistent Stage JSON Snapshot
     const filename = `${stageOrder}_${stageName.toLowerCase()}.json`;
-    await debugRecorder.recordStage(this.sessionId, filename, stageRecord);
+    if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_STAGE_DEBUG_FILES === 'true') {
+      debugRecorder.recordStage(this.sessionId, filename, stageRecord).catch(err => {
+        console.warn(`[DebugRecorder] Stage record async notice: ${err.message}`);
+      });
+    }
 
     if (output && output.representationMode) {
       this.representationMode = output.representationMode;

@@ -404,7 +404,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
         systemPrompt: systemPrompt,
         temperature: 0.2,
         model: process.env.AGENT1_MODEL || 'openai/gpt-oss-120b',
-        sessionId: evidencePackage?.sessionId
+        sessionId: evidencePackage?.sessionId,
+        maxTokens: 3000
       });
 
       let parsed = safeParseJson(responseText);

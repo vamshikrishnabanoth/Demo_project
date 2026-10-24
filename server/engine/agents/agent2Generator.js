@@ -227,6 +227,7 @@ class Agent2Generator {
     const tier = target.targetDifficulty || target.difficulty || target.tier || 'Medium';
     const op = target.intendedCognitiveOperation || target.cognitiveOperation || target.operation || (tier === 'Easy' ? 'RECALL' : (tier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
     const evidence = target.supportingEvidence || evidencePackage?.curricularContent || '';
+    const isTopicMode = Boolean(target.isTopicMode || evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' || evidencePackage?.topic);
 
     // 1. Explicit Capacity Deficit Check:
     // If target has pre-identified capacity deficit (either difficulty-based or concept-count-based),
@@ -984,7 +985,7 @@ TASK:
 ${isTopicMode ? `Generate a single multiple-choice question testing the assessment target concept ("${target.concept}") according to canonical academic principles, adhering to the requested difficulty (${tier}) and cognitive operation (${op}). Do NOT use phrases like "according to the lecture", "in the lecture", or "the lecturer".` : `Generate a single grounded multiple-choice question testing the assessment target strictly using facts within the evidence above, adhering to the requested difficulty (${tier}) and cognitive operation (${op}).`}
 `;
 
-    const fastModel = process.env.AGENT2_MODEL || 'openai/gpt-oss-20b';
+    const fastModel = process.env.AGENT2_MODEL || process.env.GENERATOR_MODEL || process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 
     let responseText;
     try {
@@ -993,7 +994,8 @@ ${isTopicMode ? `Generate a single multiple-choice question testing the assessme
         systemPrompt: systemPrompt,
         temperature: 0.2,
         model: fastModel,
-        sessionId: evidencePackage?.sessionId
+        sessionId: evidencePackage?.sessionId,
+        maxTokens: 1800
       });
     } catch (llmErr) {
       console.warn(`⚠️ [Agent 2] LLM generation error on target ${target.targetId}: ${llmErr.message}`);
@@ -1029,7 +1031,8 @@ ${isTopicMode ? `Generate a single multiple-choice question testing the assessme
           systemPrompt: 'You are a JSON repair specialist. Output ONLY the raw JSON object matching the required schema starting with { and ending with }. No commentary or markdown formatting.',
           temperature: 0.1,
           model: fastModel,
-          sessionId: evidencePackage?.sessionId
+          sessionId: evidencePackage?.sessionId,
+          maxTokens: 1800
         });
         parsedMCQ = safeParseJson(repairResponse);
       } catch (repairErr) {

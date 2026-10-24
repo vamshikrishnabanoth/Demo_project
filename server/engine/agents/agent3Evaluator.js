@@ -171,15 +171,28 @@ class Agent3Evaluator {
       evidenceContext = directEvidence;
     }
 
-    // 4. Check if deterministic-only mode requested
+    // 4. Check if deterministic-only mode or fast-path bypass applies
     const isDeterministicOnly = options.skipLLM || process.env.AGENT3_MODE === 'deterministic_only';
+    const preAudit = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
+
     if (isDeterministicOnly) {
-      const deterministicResult = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
-      deterministicResult.verificationMethod = 'DETERMINISTIC_AUDIT';
-      deterministicResult.isFallback = false;
-      deterministicResult.isLLMVerified = false;
-      return deterministicResult;
+      preAudit.verificationMethod = 'DETERMINISTIC_AUDIT';
+      preAudit.isFallback = false;
+      preAudit.isLLMVerified = false;
+      return preAudit;
     }
+
+    // Fast-Path Tier 1: If candidate question cleanly passes all local deterministic checks
+    // (AST syntax, 4 options, key integrity, length symmetry, absence of foreign contamination, and cognitive calibration)
+    // with high score and zero failure reasons, bypass the heavy LLM call entirely.
+    const enableFastPath = process.env.AGENT3_FAST_PATH !== 'false' && process.env.AGENT3_ALWAYS_CALL_LLM !== 'true';
+    if (enableFastPath && preAudit.passed && preAudit.failureReasons.length === 0 && preAudit.score >= 0.90) {
+      preAudit.verificationMethod = 'DETERMINISTIC_FAST_PATH';
+      preAudit.isFallback = false;
+      preAudit.isLLMVerified = false;
+      return preAudit;
+    }
+
     const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
     const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
@@ -263,7 +276,8 @@ ${evidenceContext}
         systemPrompt: systemPrompt,
         temperature: 0.1,
         model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
-        sessionId: evidencePackage?.sessionId
+        sessionId: evidencePackage?.sessionId,
+        maxTokens: 1200
       });
 
       const parsed = safeParseJson(responseText);
@@ -543,6 +557,7 @@ ${evidenceContext}
     const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
     const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || 
       (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
+    const isTopicMode = Boolean(target.isTopicMode || evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' || evidencePackage?.topic);
 
     // 0. Teacher Negative Boundary Enforcement Gate (Evaluated FIRST as highest-precedence constraint)
     const activeBoundaries = target.negativeBoundaries || evidencePackage?.negativeBoundaries || evidencePackage?.instructionalProfile?.negativeBoundaries || [];
