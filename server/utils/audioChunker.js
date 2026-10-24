@@ -531,7 +531,7 @@ async function transcribeChunkWithGemini(filePath) {
     try {
         const { GoogleGenerativeAI } = require('@google/generative-ai');
         const genAI = new GoogleGenerativeAI(geminiKey.trim());
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
         const buffer = fs.readFileSync(filePath);
         const base64Audio = buffer.toString('base64');

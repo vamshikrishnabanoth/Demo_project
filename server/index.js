@@ -35,10 +35,11 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('🌊 UNHANDLED REJECTION at:', promise, 'reason:', reason);
 });
 
+const { exec } = require('child_process');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
@@ -173,13 +174,15 @@ const getClientIdentifier = (req) => {
         // Scope limit to unique authenticated user token
         return `user_${token.slice(-16)}`;
     }
-    return req.ip || req.connection?.remoteAddress || 'unknown';
+    const rawIp = req.ip || req.connection?.remoteAddress || '127.0.0.1';
+    return ipKeyGenerator(rawIp);
 };
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: isDevRateLimitDisabled ? 100000000 : 3000, // accommodate multi-student lab WiFi
     keyGenerator: getClientIdentifier,
+    validate: { ip: false },
     message: 'Too many requests, please try again after a few minutes',
     standardHeaders: true,  // Return rate limit info in `RateLimit-*` headers
     legacyHeaders: false,   // Disable `X-RateLimit-*` headers
@@ -192,6 +195,7 @@ const speedLimiter = slowDown({
     delayAfter: isDevRateLimitDisabled ? 100000000 : 1500, // allow 1500 requests per window before applying micro-delays
     delayMs: (hits) => (hits - 1500) * 50, // subtle 50ms delay per request above 1500
     maxDelayMs: 2000, // max 2 second delay
+    validate: { ip: false },
     keyGenerator: getClientIdentifier,
 });
 app.use('/api/', speedLimiter);

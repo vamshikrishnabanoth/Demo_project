@@ -57,7 +57,7 @@ CONTENT: ${contentSample}`;
             // 2. Secondary: If Groq failed, try Gemini if configured
             if (!result && genAI && process.env.ENABLE_GEMINI_MODERATION === 'true') {
                 try {
-                    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
+                    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
                     const prompt = `Educational moderation: return SAFE if educational/neutral, or VIOLATION: [Reason] if hate/explicit/spam.\nContent: ${contentSample}`;
                     const res = await model.generateContent(prompt);
                     result = res?.response?.text()?.trim();
@@ -79,7 +79,7 @@ CONTENT: ${contentSample}`;
             // For images, if Gemini is enabled try vision, otherwise verify image file is readable
             if (genAI && process.env.ENABLE_GEMINI_MODERATION === 'true') {
                 try {
-                    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
+                    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
                     const imageData = fs.readFileSync(filePath);
                     const imagePart = {
                         inlineData: {

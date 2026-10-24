@@ -275,7 +275,7 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                     console.warn(`⚠️ Groq direct transcription failed: ${groqErr.message}. Checking Gemini fallback...`);
                     if (geminiKey) {
                         data = await transcribeChunkWithGemini(filePath);
-                        actualModel = 'gemini-1.5-flash';
+                        actualModel = 'gemini-flash-latest';
                         actualProvider = 'gemini';
                     } else {
                         throw groqErr;
@@ -416,7 +416,7 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                             chunkText = sanitizeTranscriptEchoes(geminiRes.text.trim());
                             chunkSegs = [];
                             transcribed = true;
-                            chunkModel = 'gemini-1.5-flash';
+                            chunkModel = 'gemini-flash-latest';
                             chunkProvider = 'gemini';
                             console.log(`✅ [Gemini STT][Worker ${workerId + 1}] Chunk ${chunkNum}/${chunks.length} transcribed (${chunkText.length} chars)`);
                         }
@@ -3392,7 +3392,7 @@ exports.generateQuizQuestions = async (req, res) => {
                               console.log(`[YouTube] 🤖 Using Gemini AI to generate educational content...`);
                               updateTaskStage(taskId, 0, 'Generating Content with AI');
                               const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                              const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+                              const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
                               const videoHint = getVideoHint(url);
                               const contextHint = extractionMethod === 'oembed' ? `Video Details from YouTube: ${text}` : '';
                               const geminiPrompt = [
@@ -5061,6 +5061,7 @@ function formatDurationLabel(seconds) {
     return remMins > 0 ? `${hrs}h ${remMins}m` : `${hrs} hr${hrs === 1 ? '' : 's'}`;
 }
 exports.formatDurationLabel = formatDurationLabel;
+exports.resolveGenerationErrorCode = resolveGenerationErrorCode;
 
 /**
  * Generate a smart concise academic topic title (3-6 words) like ChatGPT
