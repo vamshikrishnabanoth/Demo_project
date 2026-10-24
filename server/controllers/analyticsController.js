@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const { getCache, setCache } = require('../lib/cache');
 
 // Helper: Safe answers parsing
 const getAnswersArray = (answers) => {
@@ -70,8 +71,13 @@ exports.getQuizAnalytics = async (req, res) => {
             }
         }
 
-        // Query with 15-second timeout and graceful degradation to quiz.finalLeaderboard
-        const fetchAnalyticsData = async () => {
+        // ── CACHE CHECK: Check if shared aggregation is already cached ─────────────
+        const cacheKey = `quiz_analytics_base:${quizId}`;
+        let sharedAnalytics = await getCache(cacheKey);
+
+        if (!sharedAnalytics) {
+            // Query with 15-second timeout and graceful degradation to quiz.finalLeaderboard
+            const fetchAnalyticsData = async () => {
             const normalizedQuestions = normalizeQuestions(quiz.questions);
             const results = await prisma.result.findMany({
                 where: { quizId: quizId },
@@ -427,10 +433,31 @@ exports.getQuizAnalytics = async (req, res) => {
             console.error('Error fetching cheating logs, falling back to empty list:', cheatingErr);
         }
 
+            sharedAnalytics = {
+                quizTitle: quiz.title,
+                topic: quiz.topic,
+                totalQuestions: normalizedQuestions.length,
+                totalParticipants,
+                averageScore: totalParticipants > 0 ? Math.round(totalScore / totalParticipants) : 0,
+                highestScore,
+                scoreDistribution: Object.entries(scoreDistribution).map(([range, count]) => ({ range, count })),
+                questionPerformance,
+                sectionPerformance,
+                participationRate: { attempted: totalParticipants, totalEligible: allStudentsInDb },
+                topStudents,
+                leaderboard,
+                cheatingLogs: formattedCheatingLogs
+            };
+            await setCache(cacheKey, sharedAnalytics, quiz.status === 'finished' ? 60000 : 30000);
+        }
+
         let studentAttempt = null;
         const targetStudentId = (req.user?.role !== 'student' && req.query.studentId) ? req.query.studentId : req.user?.id;
         if (targetStudentId) {
-            const studentResult = results.find(r => r.studentId === targetStudentId);
+            const studentResult = await prisma.result.findFirst({
+                where: { quizId: quizId, studentId: targetStudentId },
+                include: { student: { select: { username: true, name: true } } }
+            });
             if (studentResult) {
                 studentAttempt = {
                     id: studentResult.id,
@@ -443,20 +470,12 @@ exports.getQuizAnalytics = async (req, res) => {
             }
         }
 
+        const studentRank = req.user?.role === 'student'
+            ? (sharedAnalytics.leaderboard?.find(student => student.id === req.user.id)?.rank || null)
+            : null;
+
         res.json({
-            quizTitle: quiz.title,
-            topic: quiz.topic,
-            totalQuestions: normalizedQuestions.length,
-            totalParticipants,
-            averageScore: Math.round(totalScore / totalParticipants),
-            highestScore,
-            scoreDistribution: Object.entries(scoreDistribution).map(([range, count]) => ({ range, count })),
-            questionPerformance,
-            sectionPerformance,
-            participationRate: { attempted: totalParticipants, totalEligible: allStudentsInDb },
-            topStudents,
-            leaderboard,
-            cheatingLogs: formattedCheatingLogs,
+            ...sharedAnalytics,
             studentAttempt,
             studentRank
         });

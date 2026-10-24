@@ -9,6 +9,7 @@ import confetti from 'canvas-confetti';
 import api from '../utils/api';
 import DashboardLayout from '../components/DashboardLayout';
 import FormattedQuestionText, { FormattedOptionText } from '../components/quiz/FormattedQuestionText';
+import { playSoundEffect } from '../utils/soundEffects';
 
 // Dynamically generate the ladder based on total levels (question count)
 function buildLadder(totalLevels) {
@@ -186,67 +187,9 @@ export default function CyberQuest() {
         }
     }, [gameStatus, currentLevel, sessionId, quizId, questions, userAnswers]);
 
-    // ── Synthesized Sound Effects ──────────────────────────────────────────
+    // ── Synthesized Sound Effects (Memory-safe singleton) ─────────────────
     const playSound = useCallback((type) => {
-        if (muted) return;
-        try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
-            
-            if (type === 'correct') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.3);
-            } else if (type === 'wrong') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(130, ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(90, ctx.currentTime + 0.4);
-                gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.4);
-            } else if (type === 'shield') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(550, ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(250, ctx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.5);
-            } else if (type === 'levelUp') {
-                const now = ctx.currentTime;
-                [330, 440, 554, 660, 880].forEach((f, i) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.frequency.setValueAtTime(f, now + i * 0.07);
-                    gain.gain.setValueAtTime(0.08, now + i * 0.07);
-                    gain.gain.exponentialRampToValueAtTime(0.005, now + i * 0.07 + 0.2);
-                    osc.start(now + i * 0.07);
-                    osc.stop(now + i * 0.07 + 0.2);
-                });
-            }
-        } catch (e) {
-            console.warn('Synth error:', e);
-        }
+        playSoundEffect(type, muted);
     }, [muted]);
 
     // ── Celebration Confetti Loops ──────────────────────────────────────────

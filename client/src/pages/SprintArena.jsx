@@ -8,6 +8,7 @@ import {
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
 import FormattedQuestionText, { FormattedOptionText } from '../components/quiz/FormattedQuestionText';
+import { playSoundEffect } from '../utils/soundEffects';
 
 const FALLBACK_QUESTIONS = [
     {
@@ -172,65 +173,9 @@ export default function SprintArena() {
         }
     }, [gameStatus, correctAnswers, wrongAnswers, timer, sessionId, quizId, questions, userAnswers]);
 
-    // ── Synthesized Audio Synthesis ──────────────────────────────────────────
+    // ── Synthesized Audio Synthesis (Memory-safe singleton) ─────────────────
     const playSound = useCallback((type) => {
-        if (muted) return;
-        try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
-            
-            if (type === 'correct') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(520, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1040, ctx.currentTime + 0.25);
-                gain.gain.setValueAtTime(0.08, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.25);
-            } else if (type === 'wrong') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(110, ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(70, ctx.currentTime + 0.35);
-                gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.35);
-            } else if (type === 'tick') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, ctx.currentTime);
-                gain.gain.setValueAtTime(0.05, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.05);
-            } else if (type === 'gameover') {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(55, ctx.currentTime + 0.6);
-                gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.6);
-            }
-        } catch (e) {
-            console.warn('Synth failed:', e);
-        }
+        playSoundEffect(type, muted);
     }, [muted]);
 
     // ── Gameplay Clock Interval Loop ──────────────────────────────────────────

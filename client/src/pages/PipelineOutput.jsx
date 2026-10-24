@@ -481,17 +481,6 @@ export default function PipelineOutput() {
 
           {/* ACTIONS */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto shrink-0">
-            {/* Back to Generation */}
-            <button
-              type="button"
-              onClick={() => navigate(originPath && originPath !== -1 ? originPath : '/create-quiz/text')}
-              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-black text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer transition-all"
-              title="Return to generation screen"
-            >
-              <ArrowLeft size={15} />
-              <span>Back to Generation</span>
-            </button>
-
             {/* Quick Actions */}
             <div className="flex items-center gap-2">
               {status === 'COMPLETED' && (

@@ -442,6 +442,12 @@ if (socket.connected) {
     };
 
     const handleEndQuiz = async () => {
+        const targetQuizId = quiz?.id || quizRef.current?.id;
+        if (!targetQuizId) {
+            toast.error('Session ID not found.');
+            return;
+        }
+
         const result = await showConfirm(
             'Terminate Session?',
             'All live progress will be finalized. This action cannot be undone.',
@@ -455,20 +461,33 @@ if (socket.connected) {
                 if (!hasNavigated) {
                     hasNavigated = true;
                     toast.dismiss(toastId);
-                    navigate(`/analytics/quiz/${quiz.id}`);
+                    navigate(`/analytics/quiz/${targetQuizId}`);
                 }
             };
 
-            socket.once('quiz_ended_success', () => {
-                goToAnalytics();
-            });
+            if (socket && socket.connected) {
+                socket.once('quiz_ended_success', () => {
+                    goToAnalytics();
+                });
+                socket.emit('end_quiz', targetQuizId);
+            }
 
-            socket.emit('end_quiz', quiz.id);
+            // Concurrently invoke HTTP end endpoint to guarantee database finalization
+            api.post(`/quiz/${targetQuizId}/end`)
+                .then(() => {
+                    goToAnalytics();
+                })
+                .catch((httpErr) => {
+                    console.warn('[EndQuiz] HTTP end fallback call error:', httpErr.message);
+                    api.put(`/quiz/${targetQuizId}`, { isActive: false, isLive: false, status: 'finished' })
+                        .then(() => goToAnalytics())
+                        .catch((putErr) => console.warn('[EndQuiz] PUT fallback error:', putErr.message));
+                });
 
-            // Safety fallback: Navigate after 20 seconds max if socket event delayed
+            // Safety fallback: Navigate after 3 seconds max if socket or HTTP event delayed
             setTimeout(() => {
                 goToAnalytics();
-            }, 20000);
+            }, 3000);
         }
     };
 
@@ -817,6 +836,18 @@ if (socket.connected) {
                                             <Pencil size={20} />
                                             <span>EDIT LIVE QUIZ</span>
                                         </Link>
+                                    )}
+
+                                    {quiz && (
+                                        <button
+                                            type="button"
+                                            onClick={handleEndQuiz}
+                                            className="px-7 py-4 rounded-[1.5rem] bg-rose-50 hover:bg-rose-100 text-rose-700 border-2 border-rose-200 font-black text-base italic uppercase tracking-[0.12em] flex items-center gap-2.5 cursor-pointer transition-all active:scale-95 shadow-sm"
+                                            title="Cancel and conclude this live session"
+                                        >
+                                            <MinusCircle size={20} />
+                                            <span>END SESSION</span>
+                                        </button>
                                     )}
                                 </div>
                                 <p className="text-[var(--text-secondary)] font-black uppercase tracking-[0.18em] text-[10px]">{participants.length} {participants.length === 1 ? 'Student' : 'Students'} Joined</p>

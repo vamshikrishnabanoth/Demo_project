@@ -2,11 +2,16 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const prisma = require('../lib/prisma');
+const { getCache, setCache } = require('../lib/cache');
 
 // @route   GET api/students/branches
-// @desc    Fetch unique branches directly from database student records
+// @desc    Fetch unique branches directly from database student records (Cached for 5 minutes)
 router.get('/branches', auth, async (req, res) => {
     try {
+        const cacheKey = 'metadata:branches';
+        const cached = await getCache(cacheKey);
+        if (cached) return res.json(cached);
+
         const branches = await prisma.user.groupBy({
             by: ['studentBranch'],
             where: {
@@ -15,6 +20,7 @@ router.get('/branches', auth, async (req, res) => {
             }
         });
         const branchList = branches.map(b => b.studentBranch).filter(Boolean);
+        await setCache(cacheKey, branchList, 300000); // 5 min cache
         res.json(branchList);
     } catch (err) {
         console.error('Error fetching branches:', err);
@@ -23,10 +29,15 @@ router.get('/branches', auth, async (req, res) => {
 });
 
 // @route   GET api/students/sections
-// @desc    Fetch unique sections dynamically based on selected branch
+// @desc    Fetch unique sections dynamically based on selected branch (Cached for 5 minutes)
 router.get('/sections', auth, async (req, res) => {
     try {
         const branchParam = req.query.branch || req.query['branch[]'];
+        const branchKey = Array.isArray(branchParam) ? branchParam.slice().sort().join(',') : (branchParam || 'all');
+        const cacheKey = `metadata:sections:${branchKey}`;
+        const cached = await getCache(cacheKey);
+        if (cached) return res.json(cached);
+
         const whereClause = {
             role: 'student',
             section: { not: null }
@@ -50,6 +61,7 @@ router.get('/sections', auth, async (req, res) => {
             where: whereClause
         });
         const sectionList = sections.map(s => s.section).filter(Boolean).sort();
+        await setCache(cacheKey, sectionList, 300000); // 5 min cache
         res.json(sectionList);
     } catch (err) {
         console.error('Error fetching sections:', err);
@@ -58,9 +70,13 @@ router.get('/sections', auth, async (req, res) => {
 });
 
 // @route   GET api/students/years
-// @desc    Fetch unique academic years directly from DB records
+// @desc    Fetch unique academic years directly from DB records (Cached for 5 minutes)
 router.get('/years', auth, async (req, res) => {
     try {
+        const cacheKey = 'metadata:years';
+        const cached = await getCache(cacheKey);
+        if (cached) return res.json(cached);
+
         const years = await prisma.user.groupBy({
             by: ['year'],
             where: {
@@ -72,6 +88,7 @@ router.get('/years', auth, async (req, res) => {
         // Fallback to ["1st Year", "2nd Year", "3rd Year", "4th Year"] if database years aren't fully populated yet
         const defaultYears = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
         const combined = Array.from(new Set([...yearList, ...defaultYears]));
+        await setCache(cacheKey, combined, 300000); // 5 min cache
         res.json(combined);
     } catch (err) {
         console.error('Error fetching years:', err);
@@ -80,9 +97,13 @@ router.get('/years', auth, async (req, res) => {
 });
 
 // @route   GET api/students/semesters
-// @desc    Fetch unique semesters directly from DB records
+// @desc    Fetch unique semesters directly from DB records (Cached for 5 minutes)
 router.get('/semesters', auth, async (req, res) => {
     try {
+        const cacheKey = 'metadata:semesters';
+        const cached = await getCache(cacheKey);
+        if (cached) return res.json(cached);
+
         const semesters = await prisma.user.groupBy({
             by: ['semester'],
             where: {
@@ -94,6 +115,7 @@ router.get('/semesters', auth, async (req, res) => {
         // Fallback to default semesters if database semesters aren't populated yet
         const defaultSems = ['Semester 1', 'Semester 2'];
         const combined = Array.from(new Set([...semesterList, ...defaultSems]));
+        await setCache(cacheKey, combined, 300000); // 5 min cache
         res.json(combined);
     } catch (err) {
         console.error('Error fetching semesters:', err);

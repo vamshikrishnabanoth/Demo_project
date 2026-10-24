@@ -1464,19 +1464,23 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                         eligibleUpdates.push({ studentId: r.studentId, correctCount });
                     }
                 }
-                const BATCH_SIZE = 15;
-                for (let i = 0; i < eligibleUpdates.length; i += BATCH_SIZE) {
-                    const batch = eligibleUpdates.slice(i, i + BATCH_SIZE);
-                    await Promise.allSettled(batch.map(({ studentId, correctCount }) =>
-                        prisma.user.update({
-                            where: { id: studentId },
-                            data: {
-                                points: { increment: correctCount },
-                                xp: { increment: correctCount * 10 }
-                            }
-                        }).catch(() => {})
-                    ));
+                // Group students by correctCount to execute fast set-based updateMany queries instead of N individual queries
+                const countGroups = new Map();
+                for (const { studentId, correctCount } of eligibleUpdates) {
+                    if (!countGroups.has(correctCount)) countGroups.set(correctCount, []);
+                    countGroups.get(correctCount).push(studentId);
                 }
+                await Promise.all(
+                    Array.from(countGroups.entries()).map(([count, ids]) =>
+                        prisma.user.updateMany({
+                            where: { id: { in: ids } },
+                            data: {
+                                points: { increment: count },
+                                xp: { increment: count * 10 }
+                            }
+                        })
+                    )
+                );
             } catch (ptsErr) {
                 console.error('[QuizEnd] Error awarding gamification points:', ptsErr.message);
             }
@@ -1566,11 +1570,11 @@ function isStudentTargetedSocket(student, assignedGroups, assignedStudents) {
                 return socket.emit('error_alert', { msg: 'Unauthorized live room action.' });
             }
 
-            // IMMUTABILITY GUARD: Cannot add questions to a locked quiz unless it is an active/waiting live quiz
-            if (quiz.isLocked && (!quiz.isLive || quiz.status === 'finished')) {
-                console.warn(`[ImmutabilityBlock] add_question blocked for locked quiz ${quizId} by ${socket.user.id}`);
+            // IMMUTABILITY GUARD: Cannot add questions once quiz has concluded ('finished')
+            if (quiz.isLocked && quiz.status === 'finished') {
+                console.warn(`[ImmutabilityBlock] add_question blocked for concluded quiz ${quizId} by ${socket.user.id}`);
                 return socket.emit('error_alert', {
-                    msg: 'Quiz is locked after publishing. Questions cannot be added or modified.',
+                    msg: 'Quiz has concluded and is locked. Questions cannot be modified.',
                     code: 'QUIZ_LOCKED'
                 });
             }

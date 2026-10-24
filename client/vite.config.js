@@ -26,6 +26,10 @@ export default defineConfig({
           'vendor-icons': ['lucide-react'],
           // Socket.io client
           'vendor-socket': ['socket.io-client'],
+          // Recharts — large charting library cached separately
+          'vendor-charts': ['recharts'],
+          // KaTeX math rendering
+          'vendor-katex': ['katex'],
         },
       },
     },
@@ -40,6 +44,8 @@ export default defineConfig({
       'framer-motion',
       'lucide-react',
       'socket.io-client',
+      'recharts',
+      'katex',
     ],
   },
 

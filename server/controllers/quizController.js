@@ -1848,63 +1848,6 @@ exports.deleteQuiz = async (req, res) => {
     }
 };
 
-exports.getLiveQuizzes = async (req, res) => {
-    try {
-        const quizzes = await prisma.quiz.findMany({
-            where: { isActive: true },
-            orderBy: { createdAt: 'desc' }
-        });
-
-        const now = new Date();
-
-        const quizzesWithAttempts = await Promise.all(quizzes.map(async (quiz) => {
-            const result = await prisma.result.findFirst({
-                where: { quizId: quiz.id, studentId: req.user.id }
-            });
-
-            // Determine timing status for assessments
-            let isLocked = false;
-            let isExpired = false;
-
-            if (quiz.isAssessment) {
-                if (quiz.startTime && new Date(quiz.startTime) > now) {
-                    isLocked = true;
-                }
-                if (quiz.endTime && new Date(quiz.endTime) < now) {
-                    isExpired = true;
-                }
-            }
-
-            // Cleanly calculate total questions
-            let totalQ = 0;
-            if (Array.isArray(quiz.questions)) {
-                totalQ = quiz.questions.length;
-            } else if (quiz.questions && typeof quiz.questions === 'object') {
-                try {
-                    const parsed = typeof quiz.questions === 'string' ? JSON.parse(quiz.questions) : quiz.questions;
-                    totalQ = Array.isArray(parsed) ? parsed.length : (parsed.questions ? parsed.questions.length : 0);
-                } catch (_) {}
-            }
-
-            // Strip raw questions column for security against sniffing
-            const { questions, ...quizData } = quiz;
-
-            return {
-                ...quizData,
-                isAttempted: !!result,
-                score: result ? result.score : 0,
-                totalQuestions: totalQ,
-                isLocked,
-                isExpired
-            };
-        }));
-
-        res.json(quizzesWithAttempts);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ msg: 'Server Error' });
-    }
-};
 
 // Helper: Normalize a questions array from PostgreSQL JSON field.
 // Prisma returns Json columns as plain JS values, but edge cases (double-
@@ -2627,6 +2570,13 @@ exports.getTeacherStats = async (req, res) => {
     try {
         const quizzes = await prisma.quiz.findMany({
             where: { createdById: req.user.id },
+            select: {
+                id: true,
+                title: true,
+                topic: true,
+                createdAt: true
+            },
+            take: 60,
             orderBy: { createdAt: 'desc' }
         });
 
@@ -2691,46 +2641,32 @@ exports.updateQuiz = async (req, res) => {
     try {
         const { title, description, questions, difficulty, timerPerQuestion, duration, isLive, isActive, isAssessment, startTime, endTime, timerType, accessType } = req.body;
 
-        let quiz = await prisma.quiz.findUnique({
-            where: { id: req.params.id }
-        });
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(req.params.id);
+        let quiz = isUuid
+            ? await prisma.quiz.findUnique({ where: { id: req.params.id } })
+            : await prisma.quiz.findFirst({ where: { joinCode: req.params.id.toString().trim() } });
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
-        if (quiz.createdById !== req.user.id) {
+        const isOwner = quiz.createdById === req.user.id;
+        const isAdmin = req.user.role === 'admin';
+        if (!isOwner && !isAdmin) {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
-        // ── IMMUTABILITY GUARD: Locked (published) quizzes cannot be edited ──────
-        // EXCEPTION: Teachers can edit live quizzes before they conclude ('finished')
-        // to fix duplicate questions, typos, or add students/groups who forgot to be assigned.
-        const isLiveEditable = quiz.isLive && quiz.status !== 'finished';
+        // ── IMMUTABILITY GUARD: Concluded quizzes ('finished') cannot have questions modified ──────
+        // Teachers / admins can edit live, active, draft, or waiting quizzes before they conclude ('finished')
+        // to add/delete questions, fix typos, adjust options, or update assigned students/groups.
+        const isFinished = quiz.status === 'finished';
 
-        if (quiz.isLocked && !isLiveEditable) {
-            // Admin override allowed only for metadata — never for questions
-            const isAdmin = req.user.role === 'admin';
-            if (questions !== undefined) {
-                return res.status(403).json({
-                    msg: 'Quiz is locked after publishing. Questions cannot be modified. Duplicate this quiz to make changes.',
-                    locked: true,
-                    code: 'QUIZ_LOCKED'
-                });
-            }
-            if (!isAdmin) {
-                // Non-admin teachers can only update non-content fields on locked quizzes
-                const allowedFields = ['title', 'description', 'startTime', 'endTime', 'timerPerQuestion', 'duration', 'timerType', 'accessType', 'gameType', 'assignedGroups', 'assignedStudents', 'status'];
-                const requestedFields = Object.keys(req.body);
-                const forbidden = requestedFields.filter(f => !allowedFields.includes(f) && !['isActive', 'isAssessment', 'isLive', 'gameType'].includes(f));
-                if (forbidden.length > 0) {
-                    return res.status(403).json({
-                        msg: `Quiz is locked. Cannot modify: ${forbidden.join(', ')}. Duplicate this quiz to make structural changes.`,
-                        locked: true,
-                        code: 'QUIZ_LOCKED'
-                    });
-                }
-            }
+        if (quiz.isLocked && isFinished) {
+            return res.status(403).json({
+                msg: 'Quiz has concluded and is permanently locked. Questions cannot be modified. Duplicate this quiz to make changes.',
+                locked: true,
+                code: 'QUIZ_LOCKED'
+            });
         }
 
         const updateData = {};
@@ -2804,21 +2740,43 @@ exports.updateQuiz = async (req, res) => {
         }
 
         const updated = await prisma.quiz.update({
-            where: { id: req.params.id },
+            where: { id: quiz.id },
             data: updateData
         });
 
-        // If status became finished, notify connected sockets
-        if (updateData.status === 'finished') {
-            try {
-                const io = req.app.get('io');
-                if (io) {
-                    io.to(req.params.id).emit('quiz_ended', { quizId: req.params.id, status: 'finished' });
-                    io.to(req.params.id).emit('quiz_ended_success', { quizId: req.params.id });
-                }
-            } catch (err) {
-                console.warn('[QuizEnd] Socket notification warning:', err.message);
+        // Synchronize in-memory quiz state and notify live room if active
+        try {
+            const quizState = require('../lib/quizState');
+            if (quizState) {
+                const stateUpdates = {};
+                if (updateData.questions) stateUpdates.questions = updateData.questions;
+                if (updateData.title) stateUpdates.title = updateData.title;
+                if (updateData.status) stateUpdates.status = updateData.status;
+                quizState.updateQuizState(quiz.id, stateUpdates);
             }
+        } catch (memErr) {
+            console.warn('[QuizUpdate] quizState update warning:', memErr.message);
+        }
+
+        try {
+            const io = req.app.get('io');
+            if (io) {
+                if (updateData.questions) {
+                    io.to(quiz.id).emit('quiz_updated', {
+                        quizId: quiz.id,
+                        title: updated.title,
+                        questions: updated.questions,
+                        questionsCount: Array.isArray(updated.questions) ? updated.questions.length : 0
+                    });
+                }
+                // If status became finished, notify connected sockets
+                if (updateData.status === 'finished') {
+                    io.to(quiz.id).emit('quiz_ended', { quizId: quiz.id, status: 'finished' });
+                    io.to(quiz.id).emit('quiz_ended_success', { quizId: quiz.id });
+                }
+            }
+        } catch (err) {
+            console.warn('[QuizUpdate] Socket notification warning:', err.message);
         }
 
         res.json(updated);
@@ -3638,38 +3596,62 @@ exports.getStudentHistory = async (req, res) => {
         const studentId = req.user.id;
         const now = new Date();
 
-        // 1. Fetch all completed attempts for this student
+        // 1. Fetch all completed attempts for this student with pre-joined quiz and teacher in 1 single query
         const studentResults = await prisma.result.findMany({
             where: { studentId: studentId, status: 'completed' },
-            include: { quiz: true },
+            include: {
+                quiz: {
+                    include: {
+                        createdBy: { select: { username: true } }
+                    }
+                }
+            },
             orderBy: { completedAt: 'desc' }
         });
 
         const attemptedQuizIds = new Set(studentResults.map(r => r.quizId));
 
+        // 2. Fetch missed/expired assessments with pre-joined teacher in 1 single query
+        const missedQuizzes = await prisma.quiz.findMany({
+            where: {
+                isAssessment: true,
+                endTime: { lt: now },
+                id: { notIn: Array.from(attemptedQuizIds) }
+            },
+            include: {
+                createdBy: { select: { username: true } }
+            },
+            orderBy: { endTime: 'desc' }
+        });
+
+        // 3. Concurrently calculate student rank using index-backed count queries (O(1) memory, fast index scan)
+        const rankPromises = studentResults.map(resItem => {
+            if (!resItem.quiz) return Promise.resolve(null);
+            return prisma.result.count({
+                where: {
+                    quizId: resItem.quiz.id,
+                    status: 'completed',
+                    score: { gt: resItem.score }
+                }
+            }).then(higherCount => higherCount + 1).catch(() => null);
+        });
+
+        const ranks = await Promise.all(rankPromises);
+
         const historyItems = [];
 
-        // Build attempted items
-        for (const resItem of studentResults) {
+        // Build attempted items with O(1) lookups
+        for (let i = 0; i < studentResults.length; i++) {
+            const resItem = studentResults[i];
             const quiz = resItem.quiz;
             if (!quiz) continue;
 
-            const teacher = await prisma.user.findUnique({
-                where: { id: quiz.createdById },
-                select: { username: true }
-            });
-
-            // Calculate Rank
-            const allResults = await prisma.result.findMany({
-                where: { quizId: quiz.id, status: 'completed' },
-                orderBy: [{ score: 'desc' }, { completedAt: 'asc' }]
-            });
-            const studentIndex = allResults.findIndex(r => r.studentId === studentId);
-            const rank = studentIndex !== -1 ? studentIndex + 1 : null;
+            const teacherName = quiz.createdBy?.username || 'Teacher';
+            const rank = ranks[i];
 
             const questionsArr = Array.isArray(quiz.questions) ? quiz.questions : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions) : []);
             const totalQ = questionsArr.length;
-            const maxPossibleScore = questionsArr.reduce((acc, q) => acc + (q.points || 10), 0) || totalQ * 10;
+            const maxPossibleScore = questionsArr.reduce((acc, q) => acc + (q.points || 10), 0) || (totalQ * 10);
             const scorePercent = maxPossibleScore > 0 ? Math.round((resItem.score / maxPossibleScore) * 100) : 0;
 
             historyItems.push({
@@ -3678,7 +3660,7 @@ exports.getStudentHistory = async (req, res) => {
                 title: quiz.title,
                 topic: quiz.topic || quiz.title,
                 subject: quiz.topic || 'General',
-                conductedBy: teacher ? teacher.username : 'Teacher',
+                conductedBy: teacherName,
                 description: quiz.description,
                 date: resItem.completedAt || resItem.startedAt || quiz.createdAt,
                 startedAt: resItem.startedAt,
@@ -3693,21 +3675,9 @@ exports.getStudentHistory = async (req, res) => {
             });
         }
 
-        // 2. Fetch missed/expired assessments targeted to student that were NEVER attempted
-        const missedQuizzes = await prisma.quiz.findMany({
-            where: {
-                isAssessment: true,
-                endTime: { lt: now },
-                id: { notIn: Array.from(attemptedQuizIds) }
-            },
-            orderBy: { endTime: 'desc' }
-        });
-
+        // Build missed items with pre-joined teacher (zero additional DB queries)
         for (const quiz of missedQuizzes) {
-            const teacher = await prisma.user.findUnique({
-                where: { id: quiz.createdById },
-                select: { username: true }
-            });
+            const teacherName = quiz.createdBy?.username || 'Teacher';
             const totalQ = Array.isArray(quiz.questions) ? quiz.questions.length : (typeof quiz.questions === 'string' ? JSON.parse(quiz.questions).length : 0);
 
             historyItems.push({
@@ -3716,7 +3686,7 @@ exports.getStudentHistory = async (req, res) => {
                 title: quiz.title,
                 topic: quiz.topic || quiz.title,
                 subject: quiz.topic || 'General',
-                conductedBy: teacher ? teacher.username : 'Teacher',
+                conductedBy: teacherName,
                 description: quiz.description,
                 date: quiz.endTime || quiz.createdAt,
                 startedAt: null,
@@ -3745,19 +3715,26 @@ exports.getLiveQuizzes = async (req, res) => {
             where: { id: req.user.id }
         });
 
-        // Fetch currently active quizzes, finished live quizzes (for async practice), and active assessments
-        const quizzes = await prisma.quiz.findMany({
-            where: {
-                OR: [
-                    { isActive: true },
-                    // Finished live quizzes are surfaced in the Assessments tab for async practice
-                    { isLive: true, status: 'finished' },
-                    // Assessment quizzes published by teachers
-                    { isAssessment: true, status: 'active' }
-                ]
-            },
-            orderBy: { createdAt: 'desc' }
-        });
+        // 1. Fetch active quizzes from multi-tier cache (15s TTL) to prevent 500 simultaneous DB queries during classroom starts
+        const cacheKey = 'live_quizzes_pool';
+        let quizzes = await getCache(cacheKey);
+
+        if (!quizzes) {
+            quizzes = await prisma.quiz.findMany({
+                where: {
+                    OR: [
+                        { isActive: true },
+                        // Finished live quizzes are surfaced in the Assessments tab for async practice
+                        { isLive: true, status: 'finished' },
+                        // Assessment quizzes published by teachers
+                        { isAssessment: true, status: 'active' }
+                    ]
+                },
+                take: 150,
+                orderBy: { createdAt: 'desc' }
+            });
+            await setCache(cacheKey, quizzes, 15000); // 15 seconds cache
+        }
 
         let studentFilteredQuizzes = quizzes;
         if (user && user.role === 'student') {
@@ -5442,37 +5419,85 @@ exports.generateQuizFromCleanedLecture = async (req, res) => {
 
 exports.endQuiz = async (req, res) => {
     try {
-        const quizId = req.params.id;
-        const quiz = await prisma.quiz.findUnique({
-            where: { id: quizId }
-        });
+        const quizIdParam = req.params.id;
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(quizIdParam);
+        let quiz = isUuid
+            ? await prisma.quiz.findUnique({ where: { id: quizIdParam } })
+            : await prisma.quiz.findFirst({ where: { joinCode: quizIdParam.toString().trim() } });
 
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
+        const quizId = quiz.id;
+
         if (quiz.createdById !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({ msg: 'Not authorized to end this quiz room' });
         }
 
-        // Close in-memory quiz state if active
+        // Close in-memory quiz state and drain write buffer
         try {
             const quizState = require('../lib/quizState');
-            if (quizState && typeof quizState.closeQuiz === 'function') {
-                quizState.closeQuiz(quizId);
+            if (quizState) {
+                if (typeof quizState.closeQuiz === 'function') quizState.closeQuiz(quizId);
+                if (typeof quizState.drainWrites === 'function') await quizState.drainWrites(quizId, 10000);
             }
         } catch (e) {
             console.warn('[QuizEnd] quizState close warning:', e.message);
         }
 
+        // Mark all in-progress results as completed
+        try {
+            await prisma.result.updateMany({
+                where: { quizId, status: 'in-progress' },
+                data: { status: 'completed', completedAt: new Date() }
+            });
+        } catch (resErr) {
+            console.warn('[QuizEnd] Result status update warning:', resErr.message);
+        }
+
+        // Build leaderboard from results
+        let finalLeaderboard = [];
+        try {
+            const allResults = await prisma.result.findMany({
+                where: { quizId },
+                include: { student: { select: { username: true } } }
+            });
+            finalLeaderboard = allResults
+                .map(r => ({
+                    studentId: r.studentId,
+                    username: r.student?.username || 'Student',
+                    currentScore: r.score || 0,
+                    totalTimeTaken: r.totalTimeTaken || 0,
+                    answeredQuestions: Array.isArray(r.answers) ? r.answers.length : 0
+                }))
+                .sort((a, b) => {
+                    if (b.currentScore !== a.currentScore) return b.currentScore - a.currentScore;
+                    return a.totalTimeTaken - b.totalTimeTaken;
+                })
+                .map((item, index) => ({ ...item, rank: index + 1 }));
+        } catch (lbErr) {
+            console.warn('[QuizEnd] Leaderboard compilation warning:', lbErr.message);
+        }
+
         // Update database to finished & inactive
+        const updatePayload = {
+            status: 'finished',
+            isActive: false,
+            isLive: false
+        };
+        if (finalLeaderboard.length > 0) {
+            updatePayload.finalLeaderboard = finalLeaderboard;
+            updatePayload.finalInsights = {
+                topStudent: finalLeaderboard[0]?.username || null,
+                hardestQuestion: null,
+                easiestQuestion: null
+            };
+        }
+
         const updated = await prisma.quiz.update({
             where: { id: quizId },
-            data: {
-                status: 'finished',
-                isActive: false,
-                isLive: false
-            }
+            data: updatePayload
         });
 
         // Notify all sockets in this quiz room
@@ -5485,6 +5510,14 @@ exports.endQuiz = async (req, res) => {
         } catch (socketErr) {
             console.warn('[QuizEnd] Socket notify error:', socketErr.message);
         }
+
+        // Clean up in-memory quiz state
+        try {
+            const quizState = require('../lib/quizState');
+            if (quizState && typeof quizState.cleanupQuiz === 'function') {
+                quizState.cleanupQuiz(quizId);
+            }
+        } catch (_) {}
 
         return res.json({ msg: 'Live room ended successfully', quiz: updated });
     } catch (err) {

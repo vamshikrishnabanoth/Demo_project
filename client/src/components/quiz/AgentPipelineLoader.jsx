@@ -558,8 +558,8 @@ export default function AgentPipelineLoader({
                             </div>
                         </div>
 
-                        {/* Bottom Informational Bar & Outside Inspection Action */}
-                        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-bold text-slate-400">
+                        {/* Bottom Informational Bar */}
+                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3 text-[11px] font-bold text-slate-400">
                             <div className="flex items-center gap-3">
                                 <span className="flex items-center gap-1.5 text-slate-600">
                                     <Shield size={13} className="text-emerald-500" />
@@ -568,16 +568,6 @@ export default function AgentPipelineLoader({
                                 <span className="hidden sm:inline text-slate-300">•</span>
                                 <span>Do not refresh or close</span>
                             </div>
-
-                            <button
-                                type="button"
-                                onClick={() => navigate(`/pipeline-output?taskId=${sessionId || 'live-session'}`)}
-                                className="px-5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] active:scale-95 text-white font-black text-xs uppercase tracking-wider shadow-[0_4px_14px_rgba(234,88,12,0.28)] flex items-center gap-2 cursor-pointer transition-all border-none outline-none shrink-0"
-                                title="Open live pipeline output and telemetry"
-                            >
-                                <Activity size={15} className="animate-pulse text-white" />
-                                <span>Live Pipeline Output &amp; Telemetry</span>
-                            </button>
                         </div>
                     </div>
                 </div>

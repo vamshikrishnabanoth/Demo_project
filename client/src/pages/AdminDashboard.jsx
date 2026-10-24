@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useContext, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import { useAdmin } from '../context/AdminContext';
@@ -344,6 +344,84 @@ function AdminOverviewTab({ stats, loadingStats, refreshStats, setActiveTab }) {
     );
 }
 
+// ─── OPTIMIZED MEMOIZED STUDENT TABLE ROW (60 FPS Table Scrolling & Selection) ──
+const StudentTableRow = React.memo(function StudentTableRow({
+    student,
+    isSelected,
+    onToggle,
+    onViewProfile,
+    onEdit,
+    onSuspend,
+    onDelete
+}) {
+    return (
+        <tr className="hover:bg-slate-50 transition-colors">
+            <td className="p-4 text-center">
+                <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => onToggle(student.id)}
+                    className="rounded text-sky-600 w-4 h-4"
+                />
+            </td>
+            <td className="p-4 whitespace-nowrap">
+                <span className="font-mono font-black text-[#0f172a] text-xs px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-300">
+                    {student.username || student.rollNumber || '—'}
+                </span>
+            </td>
+            <td className="p-4 whitespace-nowrap">
+                <div>
+                    <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{student.name || student.username}</p>
+                    {student.email && student.email.includes('@') && !student.email.toLowerCase().startsWith(student.username?.toLowerCase()) && (
+                        <p className="text-xs text-slate-500 font-bold">{student.email}</p>
+                    )}
+                </div>
+            </td>
+            <td className="p-4 whitespace-nowrap"><span className="px-3 py-1 rounded-full bg-slate-100 border-2 border-slate-300 text-xs font-black uppercase text-[#0f172a]">{student.studentBranch || 'CSE'}</span></td>
+            <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Yr {student.year || 1}</td>
+            <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Sem {student.semester || 1}</td>
+            <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Sec {student.section || 'A'}</td>
+            <td className="p-4 whitespace-nowrap"><StatusBadge suspended={student.isSuspended} online={student.isOnline} /></td>
+            <td className="p-4 text-center whitespace-nowrap">
+                <div className="flex items-center justify-center gap-2 min-w-[140px] shrink-0">
+                    <button 
+                        onClick={() => onViewProfile(student)} 
+                        className="p-2.5 rounded-xl border-2 border-[#7dd3fc] bg-[#eff6ff] text-[#0284c7] hover:bg-[#e0f2fe] hover:border-[#38bdf8] transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                        title="View Student Analytics"
+                        aria-label="View Student Analytics"
+                    >
+                        <Eye size={18} className="text-[#0284c7]" />
+                    </button>
+                    <button 
+                        onClick={() => onEdit(student)} 
+                        className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                        title="Edit Student Details"
+                        aria-label="Edit Student Details"
+                    >
+                        <Edit3 size={18} className="text-indigo-700" />
+                    </button>
+                    <button 
+                        onClick={() => onSuspend(student)} 
+                        className="p-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                        title={student.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
+                        aria-label={student.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
+                    >
+                        <Ban size={18} />
+                    </button>
+                    <button 
+                        onClick={() => onDelete(student)} 
+                        className="p-2.5 rounded-xl border-2 border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
+                        title="Delete Student Record"
+                        aria-label="Delete Student Record"
+                    >
+                        <Trash2 size={18} />
+                    </button>
+                </div>
+            </td>
+        </tr>
+    );
+});
+
 // ─── TAB 2: STUDENTS DIRECTORY ─────────────────────────────────────────────
 function AdminStudentsTab() {
     const navigate = useNavigate();
@@ -410,7 +488,7 @@ function AdminStudentsTab() {
         return () => clearTimeout(timer);
     }, [search, yearF, semF, sectionF, branchF, statusF, page, fetchStudents]);
 
-    const handleDelete = async (s) => {
+    const handleDelete = useCallback(async (s) => {
         if (s.id === currentUser?.id) return;
         const res = await showConfirm('Delete Student Account?', `Permanently delete student ${s.name || s.username}?`, 'Delete Account');
         if (!res || !res.isConfirmed) return;
@@ -421,9 +499,9 @@ function AdminStudentsTab() {
             invalidate();
             toast.success('Student deleted');
         } catch { toast.error('Delete failed'); }
-    };
+    }, [currentUser?.id, invalidate]);
 
-    const handleSuspend = async (s) => {
+    const handleSuspend = useCallback(async (s) => {
         if (s.id === currentUser?.id) return;
         try {
             const res = await api.put(`/admin/users/suspend/${s.id}`);
@@ -431,16 +509,20 @@ function AdminStudentsTab() {
             invalidate();
             toast.success(`Student ${s.isSuspended ? 'reinstated' : 'suspended'}`);
         } catch { toast.error('Action failed'); }
-    };
+    }, [currentUser?.id, invalidate]);
 
-    const toggleSelectAll = () => {
+    const toggleSelectAll = useCallback(() => {
         if (selectedIds.length === students.length) setSelectedIds([]);
         else setSelectedIds(students.map(s => s.id));
-    };
+    }, [selectedIds.length, students]);
 
-    const toggleSelectOne = (id) => {
+    const toggleSelectOne = useCallback((id) => {
         setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
-    };
+    }, []);
+
+    const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+    const handleViewProfile = useCallback((s) => navigate(`/admin/students/${s.id}/profile`, { state: { student: s } }), [navigate]);
+    const handleEdit = useCallback((s) => navigate(`/admin/users/${s.id}/edit`, { state: { user: s, defaultRole: 'student' } }), [navigate]);
 
     const handleBulkDelete = async () => {
         if (!selectedIds.length) return;
@@ -617,65 +699,16 @@ function AdminStudentsTab() {
                                 ))
                             ) : students.length > 0 ? (
                                 students.map((s) => (
-                                    <tr key={s.id} className="hover:bg-slate-50 transition-colors">
-                                        <td className="p-4 text-center">
-                                            <input type="checkbox" checked={selectedIds.includes(s.id)} onChange={() => toggleSelectOne(s.id)} className="rounded text-sky-600 w-4 h-4" />
-                                        </td>
-                                        <td className="p-4 whitespace-nowrap">
-                                            <span className="font-mono font-black text-[#0f172a] text-xs px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-300">
-                                                {s.username || s.rollNumber || '—'}
-                                            </span>
-                                        </td>
-                                        <td className="p-4 whitespace-nowrap">
-                                            <div>
-                                                <p className="font-black text-[#0f172a] text-sm uppercase italic tracking-tight">{s.name || s.username}</p>
-                                                {s.email && s.email.includes('@') && !s.email.toLowerCase().startsWith(s.username?.toLowerCase()) && (
-                                                    <p className="text-xs text-slate-500 font-bold">{s.email}</p>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="p-4 whitespace-nowrap"><span className="px-3 py-1 rounded-full bg-slate-100 border-2 border-slate-300 text-xs font-black uppercase text-[#0f172a]">{s.studentBranch || 'CSE'}</span></td>
-                                        <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Yr {s.year || 1}</td>
-                                        <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Sem {s.semester || 1}</td>
-                                        <td className="p-4 text-xs font-bold text-slate-700 whitespace-nowrap">Sec {s.section || 'A'}</td>
-                                        <td className="p-4 whitespace-nowrap"><StatusBadge suspended={s.isSuspended} online={s.isOnline} /></td>
-                                        <td className="p-4 text-center whitespace-nowrap">
-                                            <div className="flex items-center justify-center gap-2 min-w-[140px] shrink-0">
-                                                <button 
-                                                    onClick={() => navigate(`/admin/students/${s.id}/profile`, { state: { student: s } })} 
-                                                    className="p-2.5 rounded-xl border-2 border-[#7dd3fc] bg-[#eff6ff] text-[#0284c7] hover:bg-[#e0f2fe] hover:border-[#38bdf8] transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
-                                                    title="View Student Analytics"
-                                                    aria-label="View Student Analytics"
-                                                >
-                                                    <Eye size={18} className="text-[#0284c7]" />
-                                                </button>
-                                                <button 
-                                                    onClick={() => navigate(`/admin/users/${s.id}/edit`, { state: { user: s, defaultRole: 'student' } })} 
-                                                    className="p-2.5 rounded-xl border-2 border-indigo-300 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:border-indigo-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
-                                                    title="Edit Student Details"
-                                                    aria-label="Edit Student Details"
-                                                >
-                                                    <Edit3 size={18} className="text-indigo-700" />
-                                                </button>
-                                                <button 
-                                                    onClick={() => handleSuspend(s)} 
-                                                    className="p-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
-                                                    title={s.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
-                                                    aria-label={s.isSuspended ? 'Reinstate Student' : 'Suspend Student'}
-                                                >
-                                                    <Ban size={18} />
-                                                </button>
-                                                <button 
-                                                    onClick={() => handleDelete(s)} 
-                                                    className="p-2.5 rounded-xl border-2 border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-400 transition-all duration-150 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0" 
-                                                    title="Delete Student Record"
-                                                    aria-label="Delete Student Record"
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <StudentTableRow
+                                        key={s.id}
+                                        student={s}
+                                        isSelected={selectedIdSet.has(s.id)}
+                                        onToggle={toggleSelectOne}
+                                        onViewProfile={handleViewProfile}
+                                        onEdit={handleEdit}
+                                        onSuspend={handleSuspend}
+                                        onDelete={handleDelete}
+                                    />
                                 ))
                             ) : (
                                 <tr><td colSpan="9" className="py-16 text-center text-xs font-black text-slate-500 uppercase tracking-widest">No student records match your filter criteria</td></tr>

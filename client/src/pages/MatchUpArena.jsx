@@ -9,6 +9,7 @@ import confetti from 'canvas-confetti';
 import DashboardLayout from '../components/DashboardLayout';
 import FormattedQuestionText from '../components/quiz/FormattedQuestionText';
 import api from '../utils/api';
+import { playSoundEffect } from '../utils/soundEffects';
 
 const FALLBACK_QUESTIONS = [
     { questionText: "Which TCP/IP protocol is used to securely transfer files over a network tunnel?", correctAnswer: "SFTP" },
@@ -112,71 +113,9 @@ export default function MatchUpArena() {
         }
     }, [gameStatus, correctMatches, totalPairs, timer, moves, sessionId, quizId, normalizedQuestions]);
 
-    // ── Synthesized Sound Oscillators ─────────────────────────────────────────
+    // ── Synthesized Sound Oscillators (Memory-safe singleton) ───────────────
     const playSound = useCallback((type) => {
-        if (muted) return;
-        try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            const ctx = new AudioContext();
-            
-            if (type === 'select') {
-                // Short organic click
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, ctx.currentTime);
-                gain.gain.setValueAtTime(0.06, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.15);
-            } else if (type === 'match') {
-                // Happy double chime
-                const now = ctx.currentTime;
-                [523.25, 659.25].forEach((f, i) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.frequency.setValueAtTime(f, now + i * 0.08);
-                    gain.gain.setValueAtTime(0.07, now + i * 0.08);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.2);
-                    osc.start(now + i * 0.08);
-                    osc.stop(now + i * 0.08 + 0.2);
-                });
-            } else if (type === 'mismatch') {
-                // Double low buzz
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(120, ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(80, ctx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.3);
-            } else if (type === 'victory') {
-                // Glorious major chord melody
-                const now = ctx.currentTime;
-                [261.63, 329.63, 392.00, 523.25].forEach((f, i) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.frequency.setValueAtTime(f, now + i * 0.12);
-                    gain.gain.setValueAtTime(0.08, now + i * 0.12);
-                    gain.gain.exponentialRampToValueAtTime(0.002, now + i * 0.12 + 0.45);
-                    osc.start(now + i * 0.12);
-                    osc.stop(now + i * 0.12 + 0.45);
-                });
-            }
-        } catch (e) {
-            console.warn('Synth error:', e);
-        }
+        playSoundEffect(type, muted);
     }, [muted]);
 
     // ── Timer clock ──────────────────────────────────────────────────────────

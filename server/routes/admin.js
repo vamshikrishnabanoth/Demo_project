@@ -188,7 +188,7 @@ router.get('/users', auth, adminOnly, async (req, res) => {
         }
 
         if (isUnpaginated) {
-            const users = await prisma.user.findMany({ where, select: USER_SELECT, orderBy });
+            const users = await prisma.user.findMany({ where, select: USER_SELECT, take: 2000, orderBy });
             return res.json(users);
         }
 
