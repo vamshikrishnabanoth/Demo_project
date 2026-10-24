@@ -28,11 +28,33 @@ export default function CreateQuizTopic() {
     const { user, loading: authLoading } = useContext(AuthContext);
     const userId = user?.id || 'guest';
     const storageKey = `quiz_docket_inputs_${userId}`;
+    const analysisStorageKey = `quiz_docket_analysis_${userId}`;
+    const lastAnalyzedSignatureRef = useRef(null);
+    const currentAnalysisRef = useRef(null);
 
     // ── 3 Inputs Only ──────────────────────────────────────────────────────────
     // 1. Source Content (Ingested files, recordings, or text prompts)
     const [inputs, setInputs] = useState([]);
     const [isHydrated, setIsHydrated] = useState(false);
+
+    const applyAnalysisData = useCallback((analysis) => {
+        if (!analysis || typeof analysis !== 'object') return;
+        currentAnalysisRef.current = analysis;
+        if (analysis.signature) lastAnalyzedSignatureRef.current = analysis.signature;
+        if (analysis.lectureDepth) setLectureDepth(analysis.lectureDepth);
+        if (analysis.detectedFocus) setDetectedFocus(analysis.detectedFocus);
+        if (analysis.whatWasTaught) setWhatWasTaught(analysis.whatWasTaught);
+        if (analysis.keyTopics) setKeyTopics(analysis.keyTopics);
+        if (analysis.lectureWordCount !== undefined) setLectureWordCount(analysis.lectureWordCount);
+        if (analysis.recommendedQuestions) setRecommendedQuestions(analysis.recommendedQuestions);
+        if (analysis.recommendedQuestionCount !== undefined) setRecommendedQuestionCount(analysis.recommendedQuestionCount);
+        if (analysis.recommendedByDifficulty) setRecommendedByDifficulty(analysis.recommendedByDifficulty);
+        if (analysis.capacityByDifficulty) setCapacityByDifficulty(analysis.capacityByDifficulty);
+        if (analysis.totalDefensibleCapacity !== undefined) setTotalDefensibleCapacity(analysis.totalDefensibleCapacity);
+        if (analysis.lecture_intelligence) setLectureIntel(analysis.lecture_intelligence);
+        setDepthError(false);
+        setDepthLoading(false);
+    }, []);
 
     // Account-Backed Docket Persistence (Synced across devices, stays until teacher deletes)
     useEffect(() => {
@@ -47,10 +69,23 @@ export default function CreateQuizTopic() {
                             try {
                                 localStorage.setItem(storageKey, JSON.stringify(res.data.inputs));
                             } catch (_) {}
+                            if (res.data.analysis) {
+                                applyAnalysisData(res.data.analysis);
+                                try {
+                                    localStorage.setItem(analysisStorageKey, JSON.stringify(res.data.analysis));
+                                } catch (_) {}
+                            }
                             setIsHydrated(true);
                             return;
                         }
                     }
+                }
+                const localAnalysis = localStorage.getItem(analysisStorageKey);
+                if (!isCancelled && localAnalysis) {
+                    try {
+                        const parsedA = JSON.parse(localAnalysis);
+                        applyAnalysisData(parsedA);
+                    } catch (_) {}
                 }
                 const local = localStorage.getItem(storageKey);
                 if (!isCancelled && local) {
@@ -86,18 +121,21 @@ export default function CreateQuizTopic() {
         };
     }, [user?.id, storageKey]);
 
-    // Continuous account synchronization: syncs inputs to localStorage & server docket
+    // Continuous account synchronization: syncs inputs & analysis to localStorage & server docket
     useEffect(() => {
         if (!isHydrated) return;
         try {
             localStorage.setItem(storageKey, JSON.stringify(inputs));
+            if (currentAnalysisRef.current) {
+                localStorage.setItem(analysisStorageKey, JSON.stringify(currentAnalysisRef.current));
+            }
         } catch (_) {}
         if (user?.id) {
-            api.post('/quiz/docket', { inputs }).catch(err => {
+            api.post('/quiz/docket', { inputs, analysis: currentAnalysisRef.current }).catch(err => {
                 console.warn('Silent docket sync notice:', err.message);
             });
         }
-    }, [inputs, isHydrated, user?.id, storageKey]);
+    }, [inputs, isHydrated, user?.id, storageKey, analysisStorageKey]);
 
     // 2. Difficulty Focus ("Balanced", "Easy", "Medium", "Hard")
     const [difficulty, setDifficulty] = useState('Balanced');
@@ -304,6 +342,11 @@ export default function CreateQuizTopic() {
         }
         
         if (textToAnalyze.length > 25) {
+            const currentSignature = `${primaryName}::${textToAnalyze.length}::${textToAnalyze.slice(0, 100)}::${textToAnalyze.slice(-100)}`;
+            if (lastAnalyzedSignatureRef.current === currentSignature && lectureDepth && depthRetryCount === 0) {
+                return;
+            }
+
             setDepthLoading(true);
             setDepthError(false);
             const timer = setTimeout(async () => {
@@ -313,21 +356,31 @@ export default function CreateQuizTopic() {
                         title: primaryName,
                         modality,
                         segments: voiceSegs,
-                        hasTimingData: voiceSegs.length > 0 && voiceSegs.some(s => s.start !== null && s.start !== undefined)
+                        hasTimingData: voiceSegs.length > 0 && voiceSegs.some(s => s.start !== null && s.start !== undefined),
+                        forceRefresh: depthRetryCount > 0
                     });
                     if (res.data && res.data.isAcademic) {
-                        setLectureDepth(res.data.lectureDepth);
-                        setDetectedFocus(res.data.detectedFocus || []);
-                        setWhatWasTaught(res.data.whatWasTaught || '');
-                        setKeyTopics(res.data.keyTopics || []);
-                        setLectureWordCount(res.data.wordCount || textToAnalyze.trim().split(/\s+/).length);
-                        setRecommendedQuestions(res.data.recommendedQuestions || '');
-                        setRecommendedQuestionCount(res.data.recommendedQuestionCount || res.data.lectureDepth?.breakdown?.recommendedQuestionCount || 5);
-                        setRecommendedByDifficulty(res.data.recommendedByDifficulty || res.data.lecture_intelligence?.evidenceCapacity?.recommendedByDifficulty || null);
-                        setCapacityByDifficulty(res.data.capacityByDifficulty || res.data.lecture_intelligence?.evidenceCapacity?.capacityByDifficulty || null);
-                        setTotalDefensibleCapacity(res.data.totalDefensibleCapacity || res.data.lecture_intelligence?.evidenceCapacity?.totalDefensibleCapacity || null);
-                        setLectureIntel(res.data.lecture_intelligence || null);
-                        setDepthError(false);
+                        const analysisPayload = {
+                            signature: currentSignature,
+                            lectureDepth: res.data.lectureDepth,
+                            detectedFocus: res.data.detectedFocus || [],
+                            whatWasTaught: res.data.whatWasTaught || '',
+                            keyTopics: res.data.keyTopics || [],
+                            lectureWordCount: res.data.wordCount || textToAnalyze.trim().split(/\s+/).length,
+                            recommendedQuestions: res.data.recommendedQuestions || '',
+                            recommendedQuestionCount: res.data.recommendedQuestionCount || res.data.lectureDepth?.breakdown?.recommendedQuestionCount || 5,
+                            recommendedByDifficulty: res.data.recommendedByDifficulty || res.data.lecture_intelligence?.evidenceCapacity?.recommendedByDifficulty || null,
+                            capacityByDifficulty: res.data.capacityByDifficulty || res.data.lecture_intelligence?.evidenceCapacity?.capacityByDifficulty || null,
+                            totalDefensibleCapacity: res.data.totalDefensibleCapacity || res.data.lecture_intelligence?.evidenceCapacity?.totalDefensibleCapacity || null,
+                            lecture_intelligence: res.data.lecture_intelligence || null
+                        };
+                        applyAnalysisData(analysisPayload);
+                        try {
+                            localStorage.setItem(analysisStorageKey, JSON.stringify(analysisPayload));
+                        } catch (_) {}
+                        if (user?.id) {
+                            api.post('/quiz/docket', { inputs, analysis: analysisPayload }).catch(() => {});
+                        }
                     } else if (res.data && !res.data.isAcademic) {
                         setLectureDepth({ rating: 'Non-Academic', score: 10, characteristics: {} });
                         setDetectedFocus([]);
@@ -750,6 +803,9 @@ export default function CreateQuizTopic() {
         setInputs([]);
         try {
             localStorage.removeItem(storageKey);
+            localStorage.removeItem(analysisStorageKey);
+            lastAnalyzedSignatureRef.current = null;
+            currentAnalysisRef.current = null;
             if (user?.id) {
                 await api.delete('/quiz/docket');
             }

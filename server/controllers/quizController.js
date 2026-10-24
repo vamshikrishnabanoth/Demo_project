@@ -4558,12 +4558,16 @@ exports.getFileMetadata = async (req, res) => {
 
 // ── Server-Side User Docket Persistence ──────────────────────────────────────
 const DOCKETS_DIR = path.resolve(__dirname, '../data/cache/dockets');
+const DEPTH_CACHE_DIR = path.resolve(__dirname, '../data/cache/depth_analysis');
 try {
     if (!fs.existsSync(DOCKETS_DIR)) {
         fs.mkdirSync(DOCKETS_DIR, { recursive: true });
     }
+    if (!fs.existsSync(DEPTH_CACHE_DIR)) {
+        fs.mkdirSync(DEPTH_CACHE_DIR, { recursive: true });
+    }
 } catch (e) {
-    console.warn('Failed to ensure DOCKETS_DIR:', e.message);
+    console.warn('Failed to ensure DOCKETS_DIR or DEPTH_CACHE_DIR:', e.message);
 }
 
 exports.getUserDocket = async (req, res) => {
@@ -4574,9 +4578,22 @@ exports.getUserDocket = async (req, res) => {
         const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
         if (fs.existsSync(docketFile)) {
             const data = fs.readFileSync(docketFile, 'utf8');
-            return res.json({ success: true, inputs: JSON.parse(data) });
+            try {
+                const parsed = JSON.parse(data);
+                if (Array.isArray(parsed)) {
+                    return res.json({ success: true, inputs: parsed, analysis: null });
+                }
+                return res.json({
+                    success: true,
+                    inputs: Array.isArray(parsed.inputs) ? parsed.inputs : [],
+                    analysis: parsed.analysis || null
+                });
+            } catch (pErr) {
+                console.warn('Failed to parse docket file, returning empty:', pErr.message);
+                return res.json({ success: true, inputs: [], analysis: null });
+            }
         }
-        return res.json({ success: true, inputs: [] });
+        return res.json({ success: true, inputs: [], analysis: null });
     } catch (err) {
         console.error('Error in getUserDocket:', err.message);
         return res.status(500).json({ msg: 'Failed to retrieve docket' });
@@ -4587,7 +4604,7 @@ exports.saveUserDocket = async (req, res) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ msg: 'Unauthorized' });
-        const { inputs } = req.body;
+        const { inputs, analysis } = req.body;
         if (!Array.isArray(inputs)) {
             return res.status(400).json({ msg: 'inputs must be an array' });
         }
@@ -4598,7 +4615,12 @@ exports.saveUserDocket = async (req, res) => {
         });
         const safeUserId = String(userId).replace(/[^a-zA-Z0-9_-]/g, '_');
         const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
-        fs.writeFileSync(docketFile, JSON.stringify(sanitized), 'utf8');
+        const payload = {
+            inputs: sanitized,
+            analysis: (analysis && typeof analysis === 'object') ? analysis : null,
+            updatedAt: Date.now()
+        };
+        fs.writeFileSync(docketFile, JSON.stringify(payload), 'utf8');
         return res.json({ success: true, count: sanitized.length });
     } catch (err) {
         console.error('Error in saveUserDocket:', err.message);
@@ -4631,9 +4653,24 @@ exports.deleteDocketItem = async (req, res) => {
         const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
         if (fs.existsSync(docketFile)) {
             const data = fs.readFileSync(docketFile, 'utf8');
-            const items = JSON.parse(data);
+            let items = [];
+            let currentAnalysis = null;
+            try {
+                const parsed = JSON.parse(data);
+                if (Array.isArray(parsed)) {
+                    items = parsed;
+                } else {
+                    items = Array.isArray(parsed.inputs) ? parsed.inputs : [];
+                    currentAnalysis = parsed.analysis || null;
+                }
+            } catch (_) {}
             const remaining = items.filter(item => String(item.id) !== String(itemId));
-            fs.writeFileSync(docketFile, JSON.stringify(remaining), 'utf8');
+            const payload = {
+                inputs: remaining,
+                analysis: remaining.length === 0 ? null : currentAnalysis,
+                updatedAt: Date.now()
+            };
+            fs.writeFileSync(docketFile, JSON.stringify(payload), 'utf8');
             return res.json({ success: true, count: remaining.length });
         }
         return res.json({ success: true, count: 0 });
@@ -4662,14 +4699,35 @@ function sanitizeLectureTitle(rawTitle) {
 
 exports.analyzeDepth = async (req, res) => {
     try {
-        const { text, title, segments, modality, hasTimingData } = req.body;
+        const { text, title, segments, modality, hasTimingData, forceRefresh } = req.body;
+        const normalizedText = (text || '').trim();
+        const contentSignature = crypto.createHash('sha256')
+            .update(normalizedText)
+            .update(String(title || '').trim())
+            .update(String(modality || '').trim())
+            .digest('hex');
+        const cachePath = path.join(DEPTH_CACHE_DIR, `${contentSignature}.json`);
+
+        if (!forceRefresh && fs.existsSync(cachePath)) {
+            try {
+                const cachedData = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+                return res.json(cachedData);
+            } catch (_) {}
+        }
+
+        const sendAndCache = (payload) => {
+            try {
+                fs.writeFileSync(cachePath, JSON.stringify(payload), 'utf8');
+            } catch (_) {}
+            return res.json(payload);
+        };
         const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
         const isTopicInput = modality === 'TOPIC' || modality === 'TOPIC_SYNTHESIS' ||
             (!hasTimingData && (!segments || segments.length === 0) && wordCount < 300);
 
         if (isTopicInput && (text || '').trim().length >= 3) {
             const cleanTopic = sanitizeLectureTitle(title || text.trim());
-            return res.json({
+            return sendAndCache({
                 isAcademic: true,
                 isTopicMode: true,
                 topic: cleanTopic,
@@ -4860,7 +4918,7 @@ exports.analyzeDepth = async (req, res) => {
             }
         }
 
-        return res.json({
+        return sendAndCache({
             success: true,
             isAcademic: analysis.isAcademic,
             reason: analysis.reason,
