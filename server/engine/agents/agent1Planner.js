@@ -1081,6 +1081,82 @@ Generate the curricular assessment plan strictly covering educational concepts w
       if (!detectedFocus || detectedFocus.length === 0) detectedFocus = rawContent.detectedFocus || [];
     }
 
+    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+
+    if (isTopicMode) {
+      const topicStr = evidencePackage?.topic || (typeof rawContent === 'string' ? rawContent : '') || 'Engineering Subject';
+      let rawParts = topicStr
+        .split(/[:;,]|\band\b|&/i)
+        .map(p => p.trim())
+        .filter(p => p.length > 2 && !/^(algorithmic|techniques|concepts|principles|introduction|overview|advanced|basics|fundamentals)$/i.test(p));
+
+      if (rawParts.length === 0) {
+        rawParts = [topicStr.trim() || 'Core Engineering Subject'];
+      }
+
+      const engineeringFacets = [
+        { name: 'Core Foundations & Governing Principles', dim: 'Conceptual', op: 'RECALL' },
+        { name: 'Operational Mechanics & Execution Steps', dim: 'Flow / Trace', op: 'TRACE' },
+        { name: 'State Transitions & Formulations', dim: 'Flow / Trace', op: 'TRACE' },
+        { name: 'Time Complexity & Asymptotic Bounds', dim: 'Scenario Analysis', op: 'COMPARE' },
+        { name: 'Space Complexity & Memory Bounds', dim: 'Scenario Analysis', op: 'COMPARE' },
+        { name: 'Design Tradeoffs & Comparative Analysis', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
+        { name: 'Boundary Conditions & Edge Cases', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
+        { name: 'Applied Problem-Solving Scenarios', dim: 'Application', op: 'APPLY' },
+        { name: 'Constraint Optimization & Pruning Logic', dim: 'Cause / Effect', op: 'APPLY' },
+        { name: 'System Invariants & Bug Diagnostics', dim: 'Evidence-Derived Inference', op: 'DIAGNOSE' },
+        { name: 'Data Structure Organization & Layout', dim: 'Conceptual', op: 'EXPLAIN_MECHANISM' },
+        { name: 'Base Cases & Termination Proofs', dim: 'Flow / Trace', op: 'TRACE' },
+        { name: 'Iterative vs Recursive Tradeoffs', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
+        { name: 'Memory Overhead & Stack Safety', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
+        { name: 'Algorithmic Efficiency & Benchmarks', dim: 'Application', op: 'APPLY' }
+      ];
+
+      const targets = [];
+      const diffLower = String(difficulty || 'Balanced').toLowerCase();
+
+      for (let i = 1; i <= count; i++) {
+        const subtopic = rawParts[(i - 1) % rawParts.length];
+        const facet = engineeringFacets[(i - 1) % engineeringFacets.length];
+        let tier = difficulty;
+        if (diffLower === 'balanced') {
+          tier = (i % 3 === 0) ? 'Hard' : ((i % 2 === 0) ? 'Medium' : 'Easy');
+        }
+
+        targets.push({
+          targetId: `T${String(i).padStart(2, '0')}`,
+          subtopic: subtopic,
+          concept: `${subtopic} (${facet.name})`,
+          trajectoryPhase: i <= Math.ceil(count / 3) ? 'EARLY' : (i > Math.ceil((2 * count) / 3) ? 'LATE' : 'MID'),
+          timestamp: null,
+          tier: 'Core',
+          dimension: facet.dim,
+          cognitiveLevel: tier === 'Hard' ? 'Evaluate' : (tier === 'Medium' ? 'Apply' : 'Understand'),
+          targetDifficulty: tier,
+          intendedCognitiveOperation: facet.op,
+          evidenceType: 'DOCUMENT',
+          supportingEvidence: topicStr,
+          sourceChunks: [],
+          requiresExactArtifact: false,
+          isCapacityLimited: false,
+          instruction: `Assess understanding and application of ${subtopic}: ${facet.name} for engineering students.`
+        });
+      }
+
+      const planData = {
+        subject: 'Engineering & Computer Science',
+        mainTopic: topicStr,
+        subtopics: rawParts,
+        targetCount: targets.length,
+        categoryWeights,
+        lectureDepth: { score: 100, rating: 'Advanced Curriculum' },
+        assessmentTargets: targets,
+        reserveTargets: []
+      };
+      return this._enforceFinalCapacitySafetyGate(planData, difficulty, count, evidencePackage, null);
+    }
+
     const targets = [];
     const dimensions = [
       'Conceptual',
@@ -1109,8 +1185,6 @@ Generate the curricular assessment plan strictly covering educational concepts w
         })
     ));
 
-    const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
-      evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
     const isExplicitCurriculum = uniqueFocus.length > 0 && !uniqueFocus.every(f => f.toLowerCase().includes('core lecture topic'));
     const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity || evidencePackage?.evidenceCapacity;
     let defensibleCapacity = count;
@@ -2045,7 +2119,9 @@ Generate the curricular assessment plan strictly covering educational concepts w
 
         // Audit Hard target capability
         if (assignedTier === 'Hard') {
-          if (depth.supportsHard) {
+          const isTopicMode = evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
+            evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
+          if (isTopicMode || depth.supportsHard) {
             supportedHardCount++;
           } else {
             target.isCapacityLimited = true;
