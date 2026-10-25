@@ -497,6 +497,7 @@ async function compressForWhisper(inputPath, options = {}) {
     const { execFile } = require("child_process");
     const outputDir = options.outputDir || path.dirname(inputPath);
     const targetPath = path.join(outputDir, `whisper_opt_${Date.now()}_${Math.random().toString(36).substr(2, 5)}.m4a`);
+    const bitrate = options.bitrate || "36k";
 
     try {
         const startTime = Date.now();
@@ -504,7 +505,8 @@ async function compressForWhisper(inputPath, options = {}) {
             execFile(ffmpeg.path, [
                 "-y", "-i", inputPath,
                 "-vn", "-ar", "16000", "-ac", "1",
-                "-c:a", "aac", "-b:a", "48k",
+                "-c:a", "aac", "-b:a", bitrate,
+                "-threads", "2",
                 targetPath
             ], { timeout: 180000, windowsHide: true }, (err, stdout, stderr) => {
                 if (err) return reject(err);
