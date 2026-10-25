@@ -191,6 +191,9 @@ export default function CreateQuizTopic() {
     const [lectureIntel, setLectureIntel] = useState(null);
 
     const isTopicOnly = inputs.length > 0 && inputs.every(inp => inp.type === 'text');
+    const hasAudio = inputs.some(inp => inp.type === 'voice' || inp.type === 'audio');
+    const hasDocFiles = inputs.some(inp => inp.type === 'document' || inp.type === 'file' || inp.type === 'pdf' || inp.file || inp.documentId);
+    const isHybrid = hasAudio && hasDocFiles;
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
@@ -1250,8 +1253,6 @@ export default function CreateQuizTopic() {
         formData.append('file_configs', JSON.stringify(fileConfigs));
 
         const textOnlyInputs = inputs.filter(i => i.type === 'text' && i.content);
-        const hasAudio = inputs.some(i => i.type === 'voice' || i.type === 'audio');
-        const hasDocFiles = liveFileInputs.length > 0 || docInputs.length > 0;
 
         let resolvedTopic = '';
         if (textOnlyInputs.length > 0) {
