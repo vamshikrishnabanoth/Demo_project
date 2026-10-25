@@ -816,27 +816,6 @@ if (socket.connected) {
                                         <span>START GAME</span>
                                     </button>
 
-                                    {quiz && (
-                                        <Link
-                                            to="/create-quiz/text"
-                                            state={{
-                                                editMode: true,
-                                                editQuizId: quiz.id,
-                                                editJoinCode: quiz.joinCode || joinCode,
-                                                questions: Array.isArray(quiz.questions) ? quiz.questions : [],
-                                                title: quiz.title || '',
-                                                timerPerQuestion: quiz.timerPerQuestion || 30,
-                                                accessType: quiz.accessType || 'private',
-                                                assignedGroups: quiz.assignedGroups || [],
-                                                assignedStudents: quiz.assignedStudents || [],
-                                            }}
-                                            className="px-7 py-4 rounded-[1.5rem] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-2 border-indigo-200 font-black text-base italic uppercase tracking-[0.12em] flex items-center gap-2.5 cursor-pointer transition-all active:scale-95 shadow-sm"
-                                            title="Edit questions, delete duplicates, or manage assigned students"
-                                        >
-                                            <Pencil size={20} />
-                                            <span>EDIT LIVE QUIZ</span>
-                                        </Link>
-                                    )}
 
                                     {quiz && (
                                         <button
@@ -988,29 +967,6 @@ if (socket.connected) {
                                 <Clock size={14} />
                                 +30s
                             </button>
-
-                            {/* Edit Live Quiz */}
-                            {quiz && (
-                                <Link
-                                    to="/create-quiz/text"
-                                    state={{
-                                        editMode: true,
-                                        editQuizId: quiz.id,
-                                        editJoinCode: quiz.joinCode || joinCode,
-                                        questions: Array.isArray(quiz.questions) ? quiz.questions : [],
-                                        title: quiz.title || '',
-                                        timerPerQuestion: quiz.timerPerQuestion || 30,
-                                        accessType: quiz.accessType || 'private',
-                                        assignedGroups: quiz.assignedGroups || [],
-                                        assignedStudents: quiz.assignedStudents || [],
-                                    }}
-                                    className="h-9 px-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 font-black uppercase text-[10px] tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-xs"
-                                    title="Edit questions, duplicates, or allowed students"
-                                >
-                                    <Pencil size={13} />
-                                    <span>Edit Quiz</span>
-                                </Link>
-                            )}
 
                             {/* End Session — separated visually to reduce mis-clicks */}
                             <button

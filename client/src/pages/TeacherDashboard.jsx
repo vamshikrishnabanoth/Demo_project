@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import { 
     FileText, Type, Book, Cpu, Sparkles, Mic, ArrowRight,
-    Activity, Radio, Play, Pencil, MinusCircle
+    Activity, Radio, Play
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import { showConfirm } from '../utils/alerts';
 
 export default function TeacherDashboard() {
     const [activeLiveQuiz, setActiveLiveQuiz] = useState(null);
@@ -29,28 +28,6 @@ export default function TeacherDashboard() {
         fetchActive();
     }, []);
 
-    const handleEndRoom = async () => {
-        if (!activeLiveQuiz) return;
-        const result = await showConfirm(
-            'End Live Classroom?',
-            `Conclude the active live room for "${activeLiveQuiz.title}"? Students will no longer be able to answer questions and the room will be closed.`,
-            'Yes, End Room'
-        );
-        if (!result.isConfirmed) return;
-        try {
-            await api.post(`/quiz/${activeLiveQuiz.id || activeLiveQuiz._id}/end`);
-            setActiveLiveQuiz(null);
-            toast.success('Live room ended successfully.');
-        } catch (err) {
-            try {
-                await api.put(`/quiz/${activeLiveQuiz.id || activeLiveQuiz._id}`, { isActive: false, isLive: false, status: 'finished' });
-                setActiveLiveQuiz(null);
-                toast.success('Live room ended successfully.');
-            } catch (err2) {
-                toast.error(err.response?.data?.msg || err2.response?.data?.msg || 'Failed to end live room.');
-            }
-        }
-    };
 
     return (
         <DashboardLayout role="teacher">
@@ -85,41 +62,13 @@ export default function TeacherDashboard() {
                                 </p>
                             </div>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto shrink-0 z-10">
+                        <div className="flex items-center w-full md:w-auto shrink-0 z-10">
                             <button
                                 onClick={() => navigate(`/live-room-teacher/${activeLiveQuiz.joinCode}`)}
                                 className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white font-black text-xs uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer border-none"
                             >
                                 <Play size={16} className="fill-white text-white" />
                                 <span>Revisit Live Room</span>
-                            </button>
-                            <button
-                                onClick={() => navigate('/create-quiz/text', {
-                                    state: {
-                                        editMode: true,
-                                        editQuizId: activeLiveQuiz.id || activeLiveQuiz._id,
-                                        editJoinCode: activeLiveQuiz.joinCode,
-                                        questions: Array.isArray(activeLiveQuiz.questions) ? activeLiveQuiz.questions : [],
-                                        title: activeLiveQuiz.title || '',
-                                        timerPerQuestion: activeLiveQuiz.timerPerQuestion || 30,
-                                        accessType: activeLiveQuiz.accessType || 'private',
-                                        assignedGroups: activeLiveQuiz.assignedGroups || [],
-                                        assignedStudents: activeLiveQuiz.assignedStudents || [],
-                                    }
-                                })}
-                                className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-black text-xs uppercase tracking-wider shadow-sm hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                                title="Edit questions, delete duplicates, or manage assigned students"
-                            >
-                                <Pencil size={15} />
-                                <span>Edit Live Quiz</span>
-                            </button>
-                            <button
-                                onClick={handleEndRoom}
-                                className="w-full sm:w-auto px-4 py-3.5 rounded-2xl bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 border border-slate-300 hover:border-rose-300 font-black text-xs uppercase tracking-wider shadow-xs hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                                title="End this live classroom"
-                            >
-                                <MinusCircle size={15} className="text-rose-600" />
-                                <span>End Room</span>
                             </button>
                         </div>
                     </motion.div>
