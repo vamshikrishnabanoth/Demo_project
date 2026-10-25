@@ -817,8 +817,9 @@ class PipelineOrchestrator {
           );
           for (const ft of fallback.assessmentTargets) {
             const cLower = (ft.concept || '').toLowerCase().trim();
-            if (!seenConcepts.has(cLower)) {
-              seenConcepts.add(cLower);
+            const facetSig = `${cLower}::${ft.dimension || ''}`;
+            if (!seenConcepts.has(facetSig)) {
+              seenConcepts.add(facetSig);
               ft.targetId = `T_REP_0${candidateQueue.length + 1}`;
               candidateQueue.push(ft);
               if (candidateQueue.length >= neededMore) break;

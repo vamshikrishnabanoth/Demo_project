@@ -1061,35 +1061,57 @@ Generate the curricular assessment plan strictly covering educational concepts w
 
         const remainingDeficit = requestedCount - auditedTargets.length;
         if (remainingDeficit > 0) {
-          const deficitReason = `Lecture evidence contains only ${auditedTargets.length} distinct assessable concept(s); requested ${requestedCount}. Remaining ${remainingDeficit} slot(s) withheld as capacity deficits to prevent hallucination.`;
+          // Decompose available lecture concepts across cognitive dimensions so all requested questions are fulfilled
+          const availableConcepts = Array.from(new Set([
+            ...auditedTargets.map(t => t.subtopic || t.concept).filter(Boolean),
+            ...(Array.isArray(parsed?.subtopics) ? parsed.subtopics : []),
+            ...(Array.isArray(detectedFocus) ? detectedFocus : []),
+            parsed?.mainTopic || 'Core Subject Matter'
+          ])).filter(c => c && c.length > 2 && !c.toLowerCase().includes('deficit'));
+
+          if (availableConcepts.length === 0) {
+            availableConcepts.push(parsed?.mainTopic || 'Core Lecture Topic');
+          }
+
+          const pedagogicalFacets = [
+            { name: 'Core Foundations and Governing Principles', dim: 'Conceptual', op: 'RECALL' },
+            { name: 'Operational Mechanics and Execution Steps', dim: 'Flow / Trace', op: 'TRACE' },
+            { name: 'State Transitions and Formulations', dim: 'Flow / Trace', op: 'TRACE' },
+            { name: 'Boundary Conditions and Edge Cases', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
+            { name: 'Applied Problem-Solving Scenarios', dim: 'Application', op: 'APPLY' },
+            { name: 'Design Tradeoffs and Comparative Analysis', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
+            { name: 'System Invariants and Bug Diagnostics', dim: 'Cause / Effect', op: 'EXPLAIN' }
+          ];
+
           for (let i = 0; i < remainingDeficit; i++) {
             const slotNum = auditedTargets.length + 1;
+            const sub = availableConcepts[(slotNum - 1) % availableConcepts.length];
+            const facet = pedagogicalFacets[(slotNum - 1) % pedagogicalFacets.length];
             const targetId = `T${String(slotNum).padStart(2, '0')}`;
+            let targetDiff = requestedDifficulty;
+            if (String(requestedDifficulty || '').toLowerCase() === 'balanced') {
+              targetDiff = (slotNum % 3 === 0) ? 'Hard' : ((slotNum % 2 === 0) ? 'Medium' : 'Easy');
+            }
+
             auditedTargets.push({
               targetId,
-              macroTopic: 'Curricular Capacity Limit',
-              assessmentAngle: 'CONCEPTUAL',
-              learningObjective: deficitReason,
-              specificReasoningTask: deficitReason,
+              macroTopic: sub,
+              assessmentAngle: facet.dim === 'Flow / Trace' ? 'CODE_TRACE' : (facet.dim === 'Scenario Analysis' ? 'EDGE_CASE' : 'CONCEPTUAL'),
+              learningObjective: `Assess ${sub} with focus on ${facet.name}.`,
+              specificReasoningTask: `Assess operational understanding of ${sub} under ${facet.name}.`,
               formatRecommendation: 'PROSE_MULTIPLE_CHOICE',
-              concept: `Curricular Capacity Deficit Slot ${slotNum}`,
-              subtopic: 'Curricular Capacity Limit',
-              trajectoryPhase: 'LATE',
-              timestamp: 'End of Lecture',
-              tier: 'Peripheral',
-              dimension: 'Conceptual',
-              cognitiveLevel: 'Remember',
-              targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : requestedDifficulty,
-              intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
-              isCapacityLimited: true,
-              capacityLimitation: {
-                status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
-                reason: deficitReason,
-                availableCount: auditedTargets.length,
-                requestedCount
-              },
-              supportingEvidence: '',
-              instruction: deficitReason
+              concept: `${sub} (${facet.name})`,
+              subtopic: sub,
+              trajectoryPhase: slotNum <= Math.ceil(requestedCount / 3) ? 'EARLY' : (slotNum > Math.ceil((2 * requestedCount) / 3) ? 'LATE' : 'MID'),
+              timestamp: null,
+              tier: 'Core',
+              dimension: facet.dim,
+              cognitiveLevel: targetDiff === 'Hard' ? 'Evaluate' : (targetDiff === 'Medium' ? 'Apply' : 'Understand'),
+              targetDifficulty: targetDiff,
+              intendedCognitiveOperation: facet.op,
+              isCapacityLimited: false,
+              supportingEvidence: rawContent || evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '',
+              instruction: `Assess engineering principles and applications for ${sub}: ${facet.name}.`
             });
           }
         }
@@ -1850,115 +1872,36 @@ Generate the curricular assessment plan strictly covering educational concepts w
       if (i <= Math.ceil(count / 3)) phase = 'EARLY';
       else if (i > Math.ceil((2 * count) / 3)) phase = 'LATE';
 
-      // Hard requested with 0 Hard capacity: every slot must be an unfulfilled capacity deficit
-      if (diffLower === 'hard' && hardCap === 0) {
-        const deficitReason = cap.diagnosticReason || `Lecture evidence contains zero verified Hard-level operations; requested ${count} Hard questions.`;
-        targets.push({
-          targetId: `T${String(i).padStart(2, '0')}`,
-          subtopic: 'Curricular Capacity Limit',
-          concept: `Curricular Capacity Deficit Slot ${i}`,
-          trajectoryPhase: phase,
-          timestamp: 'End of Lecture',
-          tier: 'Peripheral',
-          dimension: 'Conceptual',
-          cognitiveLevel: 'Remember',
-          targetDifficulty: 'Hard',
-          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
-          isCapacityLimited: true,
-          capacityLimitation: {
-            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            reason: deficitReason,
-            availableCount: 0,
-            requestedCount: count
-          },
-          supportingEvidence: '',
-          instruction: deficitReason
-        });
-        continue;
+      const subtopic = subtopicsList[(i - 1) % subtopicsList.length];
+      const dimension = dimensions[(i - 1) % dimensions.length];
+      const conceptName = (isExplicitCurriculum || extractedKeywords.length > 0)
+        ? (count > subtopicsList.length ? `${subtopic} (${dimension})` : subtopic)
+        : `${subtopic} (Lecture Principle ${i})`;
+      const prov = this._resolveTargetEvidenceProvenance(conceptName, subtopic, phase, evidencePackage);
+
+      let targetDiff = difficulty;
+      if (diffLower === 'balanced') {
+        targetDiff = (i % 3 === 0) ? 'Hard' : ((i % 2 === 0) ? 'Medium' : 'Easy');
       }
 
-      // Hard requested with positive capacity: clamp to hardCap
-      if (diffLower === 'hard' && hardCap > 0 && hardAssignedCount >= hardCap) {
-        const deficitReason = cap.diagnosticReason || `Lecture evidence supports at most ${hardCap} distinct Hard questions; requested ${count}.`;
-        targets.push({
-          targetId: `T${String(i).padStart(2, '0')}`,
-          subtopic: 'Curricular Capacity Limit',
-          concept: `Curricular Capacity Deficit Slot ${i}`,
-          trajectoryPhase: phase,
-          timestamp: 'End of Lecture',
-          tier: 'Peripheral',
-          dimension: 'Conceptual',
-          cognitiveLevel: 'Remember',
-          targetDifficulty: 'Hard',
-          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
-          isCapacityLimited: true,
-          capacityLimitation: {
-            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            reason: deficitReason,
-            availableCount: hardCap,
-            requestedCount: count
-          },
-          supportingEvidence: '',
-          instruction: deficitReason
-        });
-        continue;
-      }
-
-      if (isTopicMode || !isExplicitCurriculum || i <= availableCount) {
-        const subtopic = subtopicsList[(i - 1) % subtopicsList.length];
-        const conceptName = (isExplicitCurriculum || extractedKeywords.length > 0) ? subtopic : `${subtopic} (Lecture Principle ${i})`;
-        const prov = this._resolveTargetEvidenceProvenance(conceptName, subtopic, phase, evidencePackage);
-        const dimension = dimensions[(i - 1) % dimensions.length];
-
-        let targetDiff = difficulty;
-        if (diffLower === 'balanced' && hardCap === 0) {
-          targetDiff = (i % 2 === 0) ? 'Medium' : 'Easy';
-        } else if (diffLower === 'hard') {
-          hardAssignedCount++;
-        }
-
-        targets.push({
-          targetId: `T${String(i).padStart(2, '0')}`,
-          subtopic: subtopic,
-          concept: conceptName,
-          trajectoryPhase: phase,
-          timestamp: prov.timestamp,
-          tier: 'Core',
-          dimension: dimension,
-          cognitiveLevel: i % 2 === 0 ? 'Apply' : 'Understand',
-          targetDifficulty: targetDiff,
-          intendedCognitiveOperation: dimension.toUpperCase().replace(/[^A-Z]/g, '_'),
-          evidenceType: prov.evidenceType,
-          supportingEvidence: prov.supportingEvidence || evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '',
-          sourceChunks: prov.sourceChunks,
-          requiresExactArtifact: false,
-          instruction: `Assess understanding and application of ${conceptName}`
-        });
-      } else {
-        // True capacity deficit
-        const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${count}. Remaining slot withheld to prevent hallucination.`;
-        targets.push({
-          targetId: `T${String(i).padStart(2, '0')}`,
-          subtopic: 'Curricular Capacity Limit',
-          concept: `Curricular Capacity Deficit Slot ${i}`,
-          trajectoryPhase: phase,
-          timestamp: 'End of Lecture',
-          tier: 'Peripheral',
-          dimension: 'Conceptual',
-          cognitiveLevel: 'Remember',
-          targetDifficulty: difficulty === 'Balanced' ? 'Medium' : difficulty,
-          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
-          isCapacityLimited: true,
-          capacityLimitation: {
-            status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
-            reason: deficitReason,
-            availableCount,
-            requestedCount: count
-          },
-          supportingEvidence: '',
-          instruction: deficitReason
-        });
-      }
+      targets.push({
+        targetId: `T${String(i).padStart(2, '0')}`,
+        subtopic: subtopic,
+        concept: conceptName,
+        trajectoryPhase: phase,
+        timestamp: prov.timestamp,
+        tier: 'Core',
+        dimension: dimension,
+        cognitiveLevel: targetDiff === 'Hard' ? 'Evaluate' : (targetDiff === 'Medium' ? 'Apply' : 'Understand'),
+        targetDifficulty: targetDiff,
+        intendedCognitiveOperation: dimension.toUpperCase().replace(/[^A-Z]/g, '_'),
+        evidenceType: prov.evidenceType,
+        supportingEvidence: prov.supportingEvidence || evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '',
+        sourceChunks: prov.sourceChunks,
+        requiresExactArtifact: false,
+        isCapacityLimited: false,
+        instruction: `Assess understanding and application of ${conceptName}`
+      });
     }
 
     const fallbackReserve = Array.from({ length: Math.max(3, Math.ceil(count * 0.4)) }, (_, idx) => {
@@ -3416,27 +3359,14 @@ Generate the curricular assessment plan strictly covering educational concepts w
         continue;
       }
 
-      // Enforce total defensible capacity: if all defensible capacity is exhausted, slot must become a deficit
+      // Allow full question fulfillment across cognitive dimensions without artificial truncation
       if (!isTopicMode && nonDeficitCount >= allowedTotalRemaining) {
-        const deficitReason = cap.diagnosticReason || `Defensible lecture capacity limit of ${cap.totalDefensibleCapacity} question(s) reached. Remaining slots withheld to prevent hallucination.`;
+        nonDeficitCount++;
         target.targetDifficulty = target.targetDifficulty || (diffLower === 'hard' ? 'Hard' : 'Medium');
-        target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
-        target.isCapacityLimited = true;
-        target.bloomLevel = targetDiffLower === 'hard' ? 'Evaluate / Synthesize' : 'Understand';
-        target.operationalGuidance = 'Capacity deficit: total defensible lecture capacity reached across all eligible tiers.';
-        target.instruction = deficitReason;
-        target.capacityLimitation = {
-          status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
-          reason: deficitReason
-        };
+        target.intendedCognitiveOperation = target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ? 'APPLY' : (target.intendedCognitiveOperation || 'APPLY');
+        target.isCapacityLimited = false;
+        delete target.capacityLimitation;
         target.negativeBoundaries = negativeBoundaries;
-        capacityLimitations.push({
-          targetId: target.targetId,
-          concept: target.concept,
-          requestedDifficulty: target.targetDifficulty,
-          limitationType: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
-          message: deficitReason
-        });
         updatedTargets.push(target);
         continue;
       }
@@ -3572,33 +3502,53 @@ Generate the curricular assessment plan strictly covering educational concepts w
       }
     }
 
-    // Pad to requested count if targets are short
+    // Pad to requested count if targets are short by decomposing curriculum concepts across pedagogical facets
+    const baseConcepts = Array.from(new Set([
+      ...updatedTargets.map(t => t.subtopic || t.concept).filter(Boolean),
+      ...(Array.isArray(planData.subtopics) ? planData.subtopics : []),
+      planData.mainTopic || 'Core Subject Matter'
+    ])).filter(c => c && c.length > 2 && !c.toLowerCase().includes('deficit'));
+
+    if (baseConcepts.length === 0) {
+      baseConcepts.push(planData.mainTopic || 'Core Subject Matter');
+    }
+
+    const engineeringFacets = [
+      { name: 'Core Foundations & Governing Principles', dim: 'Conceptual', op: 'RECALL' },
+      { name: 'Operational Mechanics & Execution Steps', dim: 'Flow / Trace', op: 'TRACE' },
+      { name: 'State Transitions & Formulations', dim: 'Flow / Trace', op: 'TRACE' },
+      { name: 'Boundary Conditions & Edge Cases', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
+      { name: 'Applied Problem-Solving Scenarios', dim: 'Application', op: 'APPLY' },
+      { name: 'Design Tradeoffs & Comparative Analysis', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
+      { name: 'System Invariants & Bug Diagnostics', dim: 'Cause / Effect', op: 'EXPLAIN' }
+    ];
+
     while (updatedTargets.length < count) {
       const slotNum = updatedTargets.length + 1;
-      const deficitReason = cap.diagnosticReason || `Lecture evidence insufficient for slot ${slotNum}; withheld as capacity deficit.`;
-      const deficitTarget = {
+      const sub = baseConcepts[(slotNum - 1) % baseConcepts.length];
+      const facet = engineeringFacets[(slotNum - 1) % engineeringFacets.length];
+      let targetDiff = diffLower === 'hard' ? 'Hard' : (diffLower === 'easy' ? 'Easy' : 'Medium');
+      if (diffLower === 'balanced') {
+        targetDiff = (slotNum % 3 === 0) ? 'Hard' : ((slotNum % 2 === 0) ? 'Medium' : 'Easy');
+      }
+
+      const activeTarget = {
         targetId: `T${String(slotNum).padStart(2, '0')}`,
-        concept: `Curricular Capacity Deficit Slot ${slotNum}`,
-        subtopic: 'Curricular Capacity Limit',
-        trajectoryPhase: 'LATE',
-        timestamp: 'End of Lecture',
-        tier: 'Peripheral',
-        dimension: 'Conceptual',
-        cognitiveLevel: 'Remember',
-        targetDifficulty: diffLower === 'hard' ? 'Hard' : 'Medium',
-        intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
-        isCapacityLimited: true,
-        capacityLimitation: {
-          status: diffLower === 'hard' ? 'INSUFFICIENT_EVIDENCE_FOR_HARD' : 'INSUFFICIENT_CURRICULAR_EVIDENCE',
-          reason: deficitReason,
-          availableCount: updatedTargets.length,
-          requestedCount: count
-        },
-        supportingEvidence: '',
-        instruction: deficitReason,
+        concept: `${sub} (${facet.name})`,
+        subtopic: sub,
+        trajectoryPhase: slotNum <= Math.ceil(count / 3) ? 'EARLY' : (slotNum > Math.ceil((2 * count) / 3) ? 'LATE' : 'MID'),
+        timestamp: null,
+        tier: 'Core',
+        dimension: facet.dim,
+        cognitiveLevel: targetDiff === 'Hard' ? 'Evaluate' : (targetDiff === 'Medium' ? 'Apply' : 'Understand'),
+        targetDifficulty: targetDiff,
+        intendedCognitiveOperation: facet.op,
+        isCapacityLimited: false,
+        supportingEvidence: evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '',
+        instruction: `Assess engineering principles and applications for ${sub}: ${facet.name}.`,
         negativeBoundaries
       };
-      updatedTargets.push(deficitTarget);
+      updatedTargets.push(activeTarget);
     }
 
     const eligibleArchetypes = this._determineEligibleArchetypes(evidencePackage, planData.mainTopic || '');
