@@ -167,8 +167,16 @@ class LLMRouter {
     const keys = this._getGroqKeys();
     if (keys.length === 0) throw new Error('GROQ_API_KEY is missing');
 
-    // 1-Primary + 1-Fallback Standard: Exclude degraded 20B (50% hallucination) & Qwen (147s latency)
-    const modelsToTry = Array.from(new Set([primaryModel, fallbackModel].filter(Boolean)));
+    // High-performance model cascade across available Groq keys:
+    // 1. Primary (e.g. openai/gpt-oss-120b)
+    // 2. High-speed reasoning model (qwen/qwen3.8-27b - ~1.0s latency, distinct daily quota)
+    // 3. Fallback (openai/gpt-oss-20b)
+    const modelsToTry = Array.from(new Set([
+      primaryModel,
+      'qwen/qwen3.8-27b',
+      fallbackModel,
+      'openai/gpt-oss-20b'
+    ].filter(Boolean)));
     const totalKeys = keys.length;
     let lastErr = null;
 
@@ -212,7 +220,10 @@ class LLMRouter {
             const hasJsonWord = combinedPromptText.includes('json');
             const sanitizedSystemPrompt = systemPrompt
               ? (hasJsonWord ? systemPrompt : `${systemPrompt}\nOutput valid JSON format.`)
-              : (hasJsonWord ? '' : 'Output valid JSON format.');
+              : 'Output valid JSON format.';
+            const finalUserPrompt = prompt.toLowerCase().includes('json')
+              ? prompt
+              : `${prompt}\n\nReturn strictly valid JSON format.`;
 
             try {
               const response = await axios.post(
@@ -221,7 +232,7 @@ class LLMRouter {
                   model: currentModel,
                   messages: [
                     ...(sanitizedSystemPrompt ? [{ role: 'system', content: sanitizedSystemPrompt }] : []),
-                    { role: 'user', content: prompt }
+                    { role: 'user', content: finalUserPrompt }
                   ],
                   temperature: temperature,
                   response_format: { type: 'json_object' },
@@ -317,15 +328,15 @@ class LLMRouter {
                 const parsedWaitMs = extractedWaitSec ? Math.ceil(extractedWaitSec * 1000) + 400 : null;
 
                 if (isTPD) {
-                  // Confirmed daily quota exhaustion: do NOT sleep 120s! Mark key in cooldown and fail over immediately
-                  this.keyCooldowns.set(keyIdx, Date.now() + 3600000);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} daily quota exhausted (TPD). Failing over immediately without delay.`);
-                  // Check if any other key is active
-                  const activeRemaining = keys.filter((_, idx) => (this.keyCooldowns.get(idx) || 0) < Date.now() && !this.invalidKeys.has(idx));
-                  if (activeRemaining.length === 0) {
-                    throw new Error('Groq daily quota exhausted across available keys');
+                  // Confirmed daily token limit on this specific model:
+                  // Mark THIS MODEL in cooldown on this key for 1 hour. Do NOT invalidate other models or the whole key!
+                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 3600000);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Failing over to next model immediately.`);
+                  if (isLastModel) {
+                    this.keyCooldowns.set(keyIdx, Date.now() + 3600000);
+                    console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} all models exhausted daily quota. Moving to next key.`);
                   }
-                  break;
+                  break; // Break inner loop to try next model or next key
                 } else if (isLastModel) {
                   const cooldownMs = parsedWaitMs ? Math.min(parsedWaitMs, 8000) : 3000;
                   this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
@@ -418,7 +429,8 @@ class LLMRouter {
       process.env.GEMINI_MODEL,
       model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
       'gemini-2.5-flash',
-      'gemini-flash-latest'
+      'gemini-flash-latest',
+      'gemini-2.0-flash'
     ].filter(Boolean)));
 
     let lastErr = null;

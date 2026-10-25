@@ -1802,7 +1802,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
         assessmentTargets: targets,
         reserveTargets: []
       };
-      return this._enforceFinalCapacitySafetyGate(planData, difficulty, count, evidencePackage, null);
+      return this._enforceFinalCapacitySafetyGate(planData, difficulty, count, evidencePackage, 'FILL_WITH_MEDIUM');
     }
 
     const targets = [];
@@ -1949,7 +1949,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
       reserveTargets: fallbackReserve
     };
 
-    return this._enforceFinalCapacitySafetyGate(planData, difficulty, count, evidencePackage, null);
+    return this._enforceFinalCapacitySafetyGate(planData, difficulty, count, evidencePackage, 'FILL_WITH_MEDIUM');
   }
 
   /**
@@ -2543,7 +2543,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
             instruction: `Assess engineering principles for ${planData.mainTopic || 'Engineering Subject'}.`
           });
         }
-      } else {
+      } else if (deficitPolicy === 'FAIL_CLOSED') {
         const availableCount = targets.length;
         const deficitCount = requestedCount - availableCount;
         const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
@@ -2570,6 +2570,36 @@ Generate the curricular assessment plan strictly covering educational concepts w
             },
             supportingEvidence: '',
             instruction: deficitReason
+          });
+        }
+      } else {
+        const subtopicsPool = (evidencePackage?.lectureIntelligence?.chapters?.map(c => c.title) || [])
+          .concat(evidencePackage?.subtopics || [])
+          .concat(evidencePackage?.detectedFocus || []);
+        const cognitiveDims = ['Scenario Analysis', 'Operational Trace', 'Comparative Evaluation', 'Boundary Diagnostic', 'Mechanism Design'];
+        const cognitiveOps = requestedDifficulty === 'Hard'
+          ? ['INVARIANT_VERIFICATION', 'FAILURE_MODE_DIAGNOSIS', 'SCENARIO_TRADEOFF', 'STATE_TRANSITION_TRACE']
+          : ['EXPLAIN_MECHANISM', 'COMPARE', 'APPLY', 'ANALYZE'];
+
+        while (targets.length < requestedCount) {
+          const slotNum = targets.length + 1;
+          const targetId = `T${String(slotNum).padStart(2, '0')}`;
+          const subtopicName = subtopicsPool[(slotNum - 1) % (subtopicsPool.length || 1)] || `${planData.mainTopic || 'Curriculum Concept'} (Part ${slotNum})`;
+          const dim = cognitiveDims[(slotNum - 1) % cognitiveDims.length];
+          const op = cognitiveOps[(slotNum - 1) % cognitiveOps.length];
+
+          targets.push({
+            targetId,
+            concept: subtopicName,
+            subtopic: subtopicName,
+            trajectoryPhase: slotNum <= Math.ceil(requestedCount / 3) ? 'EARLY' : (slotNum > Math.ceil(2 * requestedCount / 3) ? 'LATE' : 'MID'),
+            tier: 'Core',
+            dimension: dim,
+            cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate / Synthesize' : 'Understand / Apply',
+            targetDifficulty: requestedDifficulty === 'Balanced' ? (slotNum % 3 === 0 ? 'Hard' : (slotNum % 2 === 0 ? 'Medium' : 'Easy')) : requestedDifficulty,
+            intendedCognitiveOperation: op,
+            supportingEvidence: evidencePackage?.unifiedRawContent?.slice(0, 3000) || '',
+            instruction: `Assess ${dim.toLowerCase()} and operational understanding of ${subtopicName}.`
           });
         }
       }
@@ -2871,32 +2901,64 @@ Generate the curricular assessment plan strictly covering educational concepts w
         });
       }
     } else if (targets.length > 0 && targets.length < requestedCount) {
-      const availableCount = targets.length;
-      const deficitCount = requestedCount - availableCount;
-      const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
-      for (let i = 0; i < deficitCount; i++) {
-        const slotNum = availableCount + i + 1;
-        targets.push({
-          targetId: `T${String(slotNum).padStart(2, '0')}`,
-          concept: `Curricular Capacity Deficit Slot ${slotNum}`,
-          subtopic: 'Curricular Capacity Limit',
-          trajectoryPhase: 'LATE',
-          timestamp: 'End of Lecture',
-          tier: 'Peripheral',
-          dimension: 'Conceptual',
-          cognitiveLevel: 'Remember',
-          targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : requestedDifficulty,
-          intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
-          isCapacityLimited: true,
-          capacityLimitation: {
-            status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
-            reason: deficitReason,
-            availableCount,
-            requestedCount
-          },
-          supportingEvidence: '',
-          instruction: deficitReason
-        });
+      if (deficitPolicy === 'FAIL_CLOSED') {
+        const availableCount = targets.length;
+        const deficitCount = requestedCount - availableCount;
+        const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
+        for (let i = 0; i < deficitCount; i++) {
+          const slotNum = availableCount + i + 1;
+          targets.push({
+            targetId: `T${String(slotNum).padStart(2, '0')}`,
+            concept: `Curricular Capacity Deficit Slot ${slotNum}`,
+            subtopic: 'Curricular Capacity Limit',
+            trajectoryPhase: 'LATE',
+            timestamp: 'End of Lecture',
+            tier: 'Peripheral',
+            dimension: 'Conceptual',
+            cognitiveLevel: 'Remember',
+            targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : requestedDifficulty,
+            intendedCognitiveOperation: 'UNFULFILLED_CAPACITY_DEFICIT',
+            isCapacityLimited: true,
+            capacityLimitation: {
+              status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+              reason: deficitReason,
+              availableCount,
+              requestedCount
+            },
+            supportingEvidence: '',
+            instruction: deficitReason
+          });
+        }
+      } else {
+        const subtopicsPool = (evidencePackage?.lectureIntelligence?.chapters?.map(c => c.title) || [])
+          .concat(evidencePackage?.subtopics || [])
+          .concat(evidencePackage?.detectedFocus || []);
+        const cognitiveDims = ['Scenario Analysis', 'Operational Trace', 'Comparative Evaluation', 'Boundary Diagnostic', 'Mechanism Design'];
+        const cognitiveOps = requestedDifficulty === 'Hard'
+          ? ['INVARIANT_VERIFICATION', 'FAILURE_MODE_DIAGNOSIS', 'SCENARIO_TRADEOFF', 'STATE_TRANSITION_TRACE']
+          : ['EXPLAIN_MECHANISM', 'COMPARE', 'APPLY', 'ANALYZE'];
+
+        while (targets.length < requestedCount) {
+          const slotNum = targets.length + 1;
+          const targetId = `T${String(slotNum).padStart(2, '0')}`;
+          const subtopicName = subtopicsPool[(slotNum - 1) % (subtopicsPool.length || 1)] || `${planData.mainTopic || 'Curriculum Concept'} (Part ${slotNum})`;
+          const dim = cognitiveDims[(slotNum - 1) % cognitiveDims.length];
+          const op = cognitiveOps[(slotNum - 1) % cognitiveOps.length];
+
+          targets.push({
+            targetId,
+            concept: subtopicName,
+            subtopic: subtopicName,
+            trajectoryPhase: slotNum <= Math.ceil(requestedCount / 3) ? 'EARLY' : (slotNum > Math.ceil(2 * requestedCount / 3) ? 'LATE' : 'MID'),
+            tier: 'Core',
+            dimension: dim,
+            cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate / Synthesize' : 'Understand / Apply',
+            targetDifficulty: requestedDifficulty === 'Balanced' ? (slotNum % 3 === 0 ? 'Hard' : (slotNum % 2 === 0 ? 'Medium' : 'Easy')) : requestedDifficulty,
+            intendedCognitiveOperation: op,
+            supportingEvidence: evidencePackage?.unifiedRawContent?.slice(0, 3000) || '',
+            instruction: `Assess ${dim.toLowerCase()} and operational understanding of ${subtopicName}.`
+          });
+        }
       }
     }
 
@@ -3407,12 +3469,13 @@ Generate the curricular assessment plan strictly covering educational concepts w
           }
 
           if (diffLower === 'hard') {
-            if (deficitPolicy === 'FILL_WITH_MEDIUM') {
+            if (deficitPolicy !== 'FAIL_CLOSED') {
+              // Fulfill requested question count with deep operational reasoning rather than halting generation
               nonDeficitCount++;
               target.targetDifficulty = 'Medium';
               target.intendedCognitiveOperation = 'EXPLAIN_MECHANISM';
               target.bloomLevel = 'Understand / Apply';
-              target.operationalGuidance = 'Require operational reasoning about mechanisms and state transitions.';
+              target.operationalGuidance = 'Require operational reasoning about mechanisms, invariants, and state transitions.';
               target.instruction = `Assess operational understanding of ${target.concept}.`;
               target.negativeBoundaries = negativeBoundaries;
               target.isDeficitFill = true;

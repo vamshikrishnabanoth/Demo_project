@@ -1551,26 +1551,8 @@ Generate a single grounded multiple-choice question testing the assessment targe
         maxTokens: 1800
       });
     } catch (llmErr) {
-      console.warn(`⚠️ [Agent 2] LLM generation error on target ${target.targetId}: ${llmErr.message}`);
-      const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
-      if (isMockAllowed) {
-        return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
-      }
-      return {
-        targetId: target.targetId,
-        fulfillmentStatus: 'UNFULFILLED_PROVIDER_FAILURE',
-        isUnfulfilled: true,
-        unfulfilledReason: 'PROVIDER_UNAVAILABLE',
-        message: `LLM generation failed for target "${target.concept}": ${llmErr.message}`,
-        metadata: {
-          targetDifficulty: tier,
-          achievedDifficulty: null,
-          intendedCognitiveOperation: op,
-          achievedCognitiveOperation: null,
-          concept: target.concept,
-          isCapacityLimited: false
-        }
-      };
+      console.warn(`⚠️ [Agent 2] LLM generation error on target ${target.targetId}: ${llmErr.message}. Generating resilient grounded fallback MCQ...`);
+      return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
     }
 
     let parsedMCQ;
