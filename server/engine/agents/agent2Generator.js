@@ -813,7 +813,7 @@ class Agent2Generator {
         trimmed = trimmed.replace(/^(?:(?:In|Under|Within|When considering)\s+[^,]{3,60},[ ]*)/i, '');
 
         let wordsAfterPrefix = countWords(trimmed);
-        if (wordsAfterPrefix.length <= 35 && /[?.!]$/.test(trimmed.trim())) {
+        if (wordsAfterPrefix.length <= 45 && /[?.!]$/.test(trimmed.trim())) {
           textWithoutCode = trimmed.trim();
         } else {
           // Step B: Sentence boundary trimming
@@ -821,7 +821,7 @@ class Agent2Generator {
           let candidate = null;
           if (sentences.length > 1) {
             const questionSentence = sentences.find(s => s.includes('?')) || sentences[sentences.length - 1];
-            if (countWords(questionSentence).length >= 5 && countWords(questionSentence).length <= 35) {
+            if (countWords(questionSentence).length >= 5 && countWords(questionSentence).length <= 45) {
               candidate = questionSentence.trim();
             }
           }
@@ -832,7 +832,7 @@ class Agent2Generator {
             if (clauseMatch) {
               const mainClause = clauseMatch[1].trim();
               const capitalized = mainClause.charAt(0).toUpperCase() + mainClause.slice(1);
-              if (countWords(capitalized).length >= 5 && countWords(capitalized).length <= 35) {
+              if (countWords(capitalized).length >= 5 && countWords(capitalized).length <= 45) {
                 candidate = capitalized;
               }
             }
@@ -841,12 +841,12 @@ class Agent2Generator {
           // Step D: Grammatically complete phrase snap <= 35 words ending with ?
           if (!candidate) {
             const wordsList = trimmed.split(/\s+/).filter(Boolean);
-            if (wordsList.length > 35) {
-              const slice = wordsList.slice(0, 35).join(' ');
+            if (wordsList.length > 45) {
+              const slice = wordsList.slice(0, 45).join(' ');
               const lastClauseEnd = Math.max(slice.lastIndexOf(','), slice.lastIndexOf(';'));
               if (lastClauseEnd > 20) {
                 const subClause = slice.slice(0, lastClauseEnd).trim();
-                if (countWords(subClause).length >= 5 && countWords(subClause).length <= 35) {
+                if (countWords(subClause).length >= 5 && countWords(subClause).length <= 45) {
                   candidate = /[?.!]$/.test(subClause) ? subClause : `${subClause}?`;
                 }
               }
@@ -868,20 +868,20 @@ class Agent2Generator {
       }
     }
 
-    // 2. Option brevity check: max 10 words per option
+    // 2. Option brevity check: max 15 words per option (aligned with prompt 3-15 words)
     if (Array.isArray(parsedMCQ.options)) {
       parsedMCQ.options = parsedMCQ.options.map(opt => {
         if (typeof opt !== 'string') return opt;
         let cleanOpt = opt.trim();
         const optWords = cleanOpt.split(/\s+/).filter(Boolean);
-        if (optWords.length > 10) {
+        if (optWords.length > 15) {
           // Try safe clause boundaries: semicolon, parenthetical, or non-restrictive relative clause
           const clauseMatch = cleanOpt.match(/^([^;(]+)[;(]/) ||
                               cleanOpt.match(/^([^,]+),\s*(?:which|transferring|where|meaning|resulting|allowing|causing)\b/i);
           if (clauseMatch) {
             const candidate = clauseMatch[1].trim();
             const candWords = candidate.split(/\s+/).filter(Boolean);
-            if (candWords.length >= 2 && candWords.length <= 10) {
+            if (candWords.length >= 2 && candWords.length <= 15) {
               return candidate;
             }
           }
@@ -1015,7 +1015,7 @@ class Agent2Generator {
     return { systemScaffold, userScaffold };
   }
 
-  _buildOperationalScaffolding(tier, op, concept = '', evidenceContext = '', repairInstruction = null, targetArchetype = null) {
+  _buildOperationalScaffolding(tier, op, concept = '', evidenceContext = '', repairInstruction = null, targetArchetype = null, target = null) {
     const opUpper = (op || '').toUpperCase();
     const normTier = (tier === 1 || tier === '1') ? 'Easy' : (tier === 2 || tier === '2') ? 'Medium' : (tier === 3 || tier === '3') ? 'Hard' : tier;
     const tierUpper = String(normTier || '').toUpperCase();
@@ -1143,24 +1143,75 @@ class Agent2Generator {
 - Ground all causal details strictly in the provided lecture evidence.`;
     }
 
-    if (isAlgorithm || opUpper === 'CODE_OR_TRACE') {
+    const formatRec = String(target?.formatRecommendation || '').toUpperCase();
+    const angleUpper = String(target?.assessmentAngle || '').toUpperCase();
+
+    const wantsCode = formatRec === 'CODE_ANALYSIS' ||
+      angleUpper === 'CODE_TRACE' ||
+      opUpper === 'CODE_OR_TRACE' ||
+      targetArchetype === 'MICRO_TRACE' ||
+      targetArchetype === 'DIAGNOSTIC_BUG_HUNT';
+
+    const wantsProse = formatRec === 'PROSE_MULTIPLE_CHOICE' || angleUpper === 'CONCEPTUAL';
+    const wantsCalculation = formatRec === 'NUMERICAL_TRACE' || angleUpper === 'CALCULATION';
+    const wantsReasoning = formatRec === 'REASONING_CONTRAST' || angleUpper === 'REASONING';
+    const wantsScenario = formatRec === 'SCENARIO_APPLICATION' || angleUpper === 'APPLICATION';
+
+    if (wantsCode) {
       systemScaffold += `
-   * ALGORITHMIC & CODE QUESTION SPECIFICATION:
+   * CODE ANALYSIS & TRACE QUESTION SPECIFICATION:
      - Include a clean, concise 3–7 line code snippet (Python, Java, C, or standard pseudocode).
      - Employ varied questioning strategies:
-       (1) Output Prediction: Given an input array, predict what the snippet outputs.
-       (2) Code Completion: Ask which condition or statement should replace "/* MISSING */" to avoid duplicate recounting or handle boundary conditions.
-       (3) State Tracing: Ask for the exact variable value (e.g. count, visited[j]) after a specific loop pass.
-       (4) Bug Diagnosis: What defect occurs if a specific line (e.g. visited[j] = true) is omitted?
-       (5) Edge Case Analysis: How does the algorithm behave on an array with all identical elements or an empty array?
-       (6) Complexity Tradeoff: Compare the time/space complexity of this nested-loop solution against an auxiliary hash map.
-     - Keep stems crisp and concise (strictly under 35 words plus code snippet).`;
+       (1) Output Prediction: Given an input, predict what the snippet outputs.
+       (2) Code Completion: Ask which condition or statement should replace "/* MISSING */" to handle boundary conditions or state transitions.
+       (3) State Tracing: Ask for the exact variable value or call frame state after a specific line or recursive step.
+       (4) Bug Diagnosis: What defect occurs if a specific base case or index increment is omitted?
+     - Keep stems crisp and concise (strictly under 45 words plus code snippet).`;
 
       userScaffold += `
-[ALGORITHMIC & CODE STRUCTURAL GUIDANCE]:
-- Include a concise 3–7 line code snippet testing the taught algorithmic logic.
+[CODE ANALYSIS STRUCTURAL GUIDANCE]:
+- Include a concise 3–7 line code snippet testing the algorithmic execution logic.
 - Test concrete execution behavior (output prediction, state tracing, missing condition, or bug diagnosis).
-- Stems must be crisp and under 35 words followed by the code snippet.`;
+- Stems must be crisp and under 45 words followed by the code snippet.`;
+    } else if (wantsCalculation) {
+      systemScaffold += `
+   * CALCULATION & NUMERICAL TRACE SPECIFICATION:
+     - Formulate a concrete manual calculation or parameter trace based on the taught algorithm/formulas (e.g. Euclidean remainder steps, modulo reductions, or recurrence substitutions).
+     - STRICT PROHIBITION: Do NOT wrap this in a programming language code block. Pose the calculation directly in words and mathematical expressions.
+     - Distractors must represent plausible computational errors (e.g. off-by-one, inverted remainder, missing final reduction).`;
+
+      userScaffold += `
+[CALCULATION / NUMERICAL TRACE STRUCTURAL GUIDANCE]:
+- Present a concrete numerical calculation problem based on the taught rule.
+- Do NOT provide a programming code snippet. Test manual calculation of the taught rule.`;
+    } else if (wantsReasoning) {
+      systemScaffold += `
+   * REASONING & INVARIANT CONTRAST SPECIFICATION:
+     - Formulate a reasoning question explaining WHY a mathematical rule or invariant holds (e.g. why the GCD is preserved when replacing (a, b) with (b, a mod b)), or comparing algorithmic tradeoffs.
+     - STRICT PROHIBITION: Do NOT include a code block. Focus entirely on logical reasoning and conceptual cause-and-effect.`;
+
+      userScaffold += `
+[REASONING / INVARIANT STRUCTURAL GUIDANCE]:
+- Focus on the mathematical or conceptual invariant/reasoning behind the algorithm.
+- Do NOT provide a programming code snippet.`;
+    } else if (wantsScenario) {
+      systemScaffold += `
+   * SCENARIO APPLICATION SPECIFICATION:
+     - Present a realistic engineering scenario or practical application of the taught concept.
+     - Keep the scenario concise (1 short sentence setting the real-world context).`;
+
+      userScaffold += `
+[SCENARIO APPLICATION GUIDANCE]:
+- Frame as a concise real-world applied scenario without code snippets unless specifically necessary.`;
+    } else if (wantsProse) {
+      systemScaffold += `
+   * CONCEPTUAL PROSE SPECIFICATION:
+     - Present the question entirely in academic English prose.
+     - STRICT PROHIBITION: Do NOT include any code blocks, programming scripts, or syntax-tracing snippets. Focus on foundational understanding and terminology.`;
+
+      userScaffold += `
+[CONCEPTUAL PROSE GUIDANCE]:
+- Frame as conceptual prose. Do NOT include any code snippets.`;
     }
 
     let repairGuardrail = '';
@@ -1243,7 +1294,7 @@ class Agent2Generator {
       (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || ''));
 
     if (directEvidence && (!evidenceContext || evidenceContext.trim().length < 20 || evidenceContext.includes('No content provided') || evidenceContext === target.concept)) {
-      evidenceContext = directEvidence;
+      evidenceContext = directEvidence.length > 2500 ? directEvidence.slice(0, 2500) : directEvidence;
     }
 
     if (!isTopicMode && (!evidenceContext || evidenceContext.trim().length < 20)) {
@@ -1272,7 +1323,8 @@ class Agent2Generator {
       target.concept,
       evidenceContext,
       repairInstruction,
-      targetArchetype
+      targetArchetype,
+      target
     );
 
     let systemPrompt;
@@ -1313,7 +1365,9 @@ JSON SCHEMA:
     "cognitiveLevel": "${target.cognitiveLevel || 'Understand'}",
     "targetDifficulty": "${tier}",
     "intendedCognitiveOperation": "${op}",
-    "questionArchetype": "${targetArchetype}"
+    "questionArchetype": "${targetArchetype}",
+    "assessmentAngle": "${target.assessmentAngle || 'CONCEPTUAL'}",
+    "formatRecommendation": "${target.formatRecommendation || 'PROSE_MULTIPLE_CHOICE'}"
   }
 }
 
@@ -1641,7 +1695,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
         fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
         isUnfulfilled: true,
         unfulfilledReason: 'BREVITY_CONSTRAINT_VIOLATION_UNSAFE_TO_TRIM',
-        message: `Model output for target "${target.concept}" exceeded word limits (stem <= 35 words, options <= 10 words) and could not be safely trimmed without altering semantics.`,
+        message: `Model output for target "${target.concept}" exceeded word limits (stem <= 45 words, options <= 15 words) and could not be safely trimmed without altering semantics.`,
         metadata: {
           targetDifficulty: tier,
           achievedDifficulty: null,

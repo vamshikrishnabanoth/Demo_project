@@ -329,7 +329,7 @@ class PipelineOrchestrator {
 
       // Bounded Concurrency Worker Pool:
       // Controlled concurrency (default 2, bounded [1, 3]) balances throughput and Groq rate-limits
-      const defaultConcurrency = process.env.NODE_ENV === 'test' ? 2 : 4;
+      const defaultConcurrency = 2;
       const concurrencyLimit = Math.max(1, Math.min(5, parseInt(process.env.GENERATION_CONCURRENCY, 10) || defaultConcurrency));
       let activeWorkers = 0;
 
@@ -570,9 +570,12 @@ class PipelineOrchestrator {
                 },
                 concept: currentTarget.concept,
                 subtopic: currentTarget.subtopic || 'Core Mechanism',
+                macroTopic: currentTarget.macroTopic || currentTarget.subtopic || 'Core Mechanism',
                 cognitiveDimension: currentTarget.dimension,
                 difficulty: currentTarget.targetDifficulty,
                 intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
+                assessmentAngle: currentTarget.assessmentAngle || 'CONCEPTUAL',
+                formatRecommendation: currentTarget.formatRecommendation || 'PROSE_MULTIPLE_CHOICE',
                 studentAnswerability: evalResult.studentAnswerability || 'HIGH',
                 redundancy: {
                   similarQuestion: null,
@@ -664,6 +667,14 @@ class PipelineOrchestrator {
                 traceabilityAudit
               };
 
+              if (evalResult.mcq) {
+                evalResult.mcq.metadata = {
+                  ...(evalResult.mcq.metadata || {}),
+                  assessmentAngle: currentTarget.assessmentAngle || 'CONCEPTUAL',
+                  formatRecommendation: currentTarget.formatRecommendation || 'PROSE_MULTIPLE_CHOICE',
+                  macroTopic: currentTarget.macroTopic || currentTarget.subtopic || 'Core Mechanism'
+                };
+              }
               passingQuestions.push(evalResult.mcq);
               if (byTier[tier]) byTier[tier].accepted++;
 
@@ -671,6 +682,9 @@ class PipelineOrchestrator {
                 targetId: currentTarget.targetId,
                 concept: currentTarget.concept,
                 subtopic: currentTarget.subtopic || 'Core Mechanism',
+                macroTopic: currentTarget.macroTopic || currentTarget.subtopic || 'Core Mechanism',
+                assessmentAngle: currentTarget.assessmentAngle || 'CONCEPTUAL',
+                formatRecommendation: currentTarget.formatRecommendation || 'PROSE_MULTIPLE_CHOICE',
                 targetDifficulty: currentTarget.targetDifficulty,
                 intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
                 status: 'ACCEPTED',
@@ -855,6 +869,21 @@ class PipelineOrchestrator {
         decisions: [`Audited pedagogical derivability and student answerability for ${passingQuestions.length} questions`],
         validation: { status: 'PASS', checks: ['Audit complete'] }
       });
+
+      // ──────────────────────────────────────────────────────────────────────────
+      // Stage 04b: FINAL SET DEDUPLICATION AUDIT
+      // ──────────────────────────────────────────────────────────────────────────
+      const deduplicatedPassing = [];
+      for (const q of passingQuestions) {
+        const isDup = deterministicValidator.checkDuplicateQuestion(q, deduplicatedPassing, q.metadata);
+        if (!isDup.isDuplicate) {
+          deduplicatedPassing.push(q);
+        } else {
+          console.warn(`⚠️ [Orchestrator] Post-pass duplicate removed: "${(q.questionText || q.stem || '').slice(0, 50)}..." (${isDup.reason})`);
+        }
+      }
+      passingQuestions.length = 0;
+      passingQuestions.push(...deduplicatedPassing);
 
       // ──────────────────────────────────────────────────────────────────────────
       // Stage 05: AGENT 3 — QUIZ-LEVEL EVALUATION

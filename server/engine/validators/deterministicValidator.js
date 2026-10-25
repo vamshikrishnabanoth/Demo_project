@@ -518,22 +518,35 @@ class DeterministicValidator {
       return { isDuplicate: false, similarity: 0 };
     }
 
+    const normAnswer = (ans) => {
+      if (!ans || typeof ans !== 'string') return '';
+      return ans.toLowerCase().trim()
+        .replace(/^(?:it|the|a|an)\s+/i, '')
+        .replace(/[.,;!?]+$/, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
+    const candidateNormAns = normAnswer(candidateMCQ.correctAnswer);
+    const candText = (candidateMCQ.questionText || '').toLowerCase();
+
     for (const existing of existingQuestions) {
+      const existingText = (existing.questionText || '').toLowerCase();
       const sim = this.calculateSimilarity(candidateMCQ.questionText, existing.questionText || '');
+      const existingNormAns = normAnswer(existing.correctAnswer);
 
-      const candidateDim = candidateMCQ.metadata?.dimension || currentTarget.dimension || 'Conceptual';
-      const existingDim = existing.metadata?.dimension || 'Conceptual';
-      const sameDimension = candidateDim === existingDim;
+      const exactAnswerMatch = candidateNormAns.length > 0 && candidateNormAns === existingNormAns;
+      const ansSim = (candidateNormAns && existingNormAns) ? this.calculateSimilarity(candidateNormAns, existingNormAns) : 0;
+      const semanticAnswerMatch = exactAnswerMatch || (ansSim >= 0.75 && candidateNormAns.length > 10);
 
-      const candidateConcept = candidateMCQ.metadata?.concept || currentTarget.concept || '';
-      const existingConcept = existing.metadata?.concept || '';
-      const sameConcept = candidateConcept.toLowerCase() === existingConcept.toLowerCase();
+      const candidateConcept = (candidateMCQ.metadata?.concept || currentTarget.concept || '').toLowerCase().trim();
+      const existingConcept = (existing.metadata?.concept || '').toLowerCase().trim();
+      const sameConcept = candidateConcept.length > 3 && (
+        candidateConcept === existingConcept ||
+        this.calculateSimilarity(candidateConcept, existingConcept) >= 0.70
+      );
 
-      const candidateAns = (candidateMCQ.correctAnswer || '').trim().toLowerCase();
-      const existingAns = (existing.correctAnswer || '').trim().toLowerCase();
-      const sameAnswer = candidateAns.length > 0 && candidateAns === existingAns;
-
-      // 1. Extreme verbatim duplicate
+      // 1. Extreme verbatim duplicate stem
       if (sim >= 0.70) {
         return {
           isDuplicate: true,
@@ -543,31 +556,55 @@ class DeterministicValidator {
         };
       }
 
-      // 2. Direct answer collision with significant stem overlap
-      if (sameAnswer && sim >= 0.25) {
+      // 2. Direct/semantic answer collision with significant stem overlap (DIMENSION-INDEPENDENT)
+      if (semanticAnswerMatch && sim >= 0.25) {
         return {
           isDuplicate: true,
           similarity: sim,
-          reason: 'ANSWER_COLLISION_DUPLICATE: Identical correct answer with high stem similarity',
+          reason: 'ANSWER_COLLISION_DUPLICATE: Equivalent correct answer with significant stem similarity',
           duplicateWith: existing.questionText
         };
       }
 
-      // 3. Pedagogical duplicate: same concept + same cognitive operation
-      if (sameDimension && (sameConcept || sameAnswer) && sim >= 0.30) {
+      // 3. Core definition duplication (e.g. repeated GCD definitions across different dimensions)
+      const isGcdDefCand = (candText.includes('gcd') || candText.includes('greatest common divisor') || candText.includes('greatest common factor')) &&
+        (candText.includes('define') || candText.includes('definition') || candText.includes('what is the gcd') || candText.includes('what is the greatest') || candText.includes('stands for') || candText.includes('meaning of'));
+      const isGcdDefExist = (existingText.includes('gcd') || existingText.includes('greatest common divisor') || existingText.includes('greatest common factor')) &&
+        (existingText.includes('define') || existingText.includes('definition') || existingText.includes('what is the gcd') || existingText.includes('what is the greatest') || existingText.includes('stands for') || existingText.includes('meaning of'));
+      if (isGcdDefCand && isGcdDefExist && (semanticAnswerMatch || (candidateNormAns.includes('divid') && existingNormAns.includes('divid')))) {
         return {
           isDuplicate: true,
           similarity: sim,
-          reason: 'PEDAGOGICAL_REDUNDANCY: High similarity testing identical cognitive operation and answer',
+          reason: 'CORE_DEFINITION_DUPLICATE: Multiple questions testing identical GCD definition',
+          duplicateWith: existing.questionText
+        };
+      }
+
+      // 4. Repeated equality operator (==) questions
+      const hasDoubleEqualCand = candText.includes('==') || candText.includes('double-equal') || candText.includes('double equal') || candText.includes('equality operator');
+      const hasDoubleEqualExist = existingText.includes('==') || existingText.includes('double-equal') || existingText.includes('double equal') || existingText.includes('equality operator');
+      if (hasDoubleEqualCand && hasDoubleEqualExist && (semanticAnswerMatch || (candidateNormAns.includes('equal') && existingNormAns.includes('equal')) || (candidateNormAns.includes('compar') && existingNormAns.includes('compar')))) {
+        return {
+          isDuplicate: true,
+          similarity: sim,
+          reason: 'OPERATOR_REPETITION_DUPLICATE: Multiple questions testing identical equality operator (==)',
+          duplicateWith: existing.questionText
+        };
+      }
+
+      // 5. Pedagogical duplicate: same concept + substantial stem overlap (DIMENSION-INDEPENDENT)
+      if (sameConcept && (sim >= 0.35 || (semanticAnswerMatch && sim >= 0.20))) {
+        return {
+          isDuplicate: true,
+          similarity: sim,
+          reason: 'PEDAGOGICAL_REDUNDANCY: High similarity testing identical concept and reasoning task',
           duplicateWith: existing.questionText
         };
       }
     }
 
     return { isDuplicate: false, similarity: 0 };
-  }
-
-  /**
+  }/**
    * Check for distractor collisions against existing passing questions in the quiz.
    * Ensures high pedagogical diversity and prevents distractor set exhaustion across the quiz:
    * 1. Multi-distractor set overlap: Candidate question shares 2 or more identical distractors with any single existing question.

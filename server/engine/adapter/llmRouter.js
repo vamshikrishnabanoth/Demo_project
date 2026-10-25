@@ -155,13 +155,13 @@ class LLMRouter {
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
   async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null }) {
     let resolvedMaxTokens = parseInt(maxTokens, 10);
-    if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
+    if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0 || resolvedMaxTokens > 1100) {
       if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
-        resolvedMaxTokens = 1800;
+        resolvedMaxTokens = 1100; // Calibrated for single MCQ to reduce Groq TPM reservation
       } else if (prompt.includes('Assessment Planner') || prompt.includes('[ACADEMIC TOPIC CURRICULUM SPECIFICATION]') || prompt.includes('[TEACHING EVIDENCE PACKAGE]')) {
-        resolvedMaxTokens = 3000;
+        resolvedMaxTokens = 2500;
       } else {
-        resolvedMaxTokens = 4096;
+        resolvedMaxTokens = 2048;
       }
     }
     const keys = this._getGroqKeys();
@@ -314,19 +314,31 @@ class LLMRouter {
                   : null;
                 const retryMatch = errorMsg.match(/try again in ([\d\.]+)s/i);
                 const extractedWaitSec = retryAfterSec || (retryMatch ? parseFloat(retryMatch[1]) : null);
-                const parsedWaitMs = extractedWaitSec ? Math.ceil(extractedWaitSec * 1000) + 600 : null;
+                const parsedWaitMs = extractedWaitSec ? Math.ceil(extractedWaitSec * 1000) + 400 : null;
 
-                if (isTPD || isLastModel) {
-                  const cooldownMs = isTPD ? 120000 : (parsedWaitMs || 5000);
+                if (isTPD) {
+                  // Confirmed daily quota exhaustion: do NOT sleep 120s! Mark key in cooldown and fail over immediately
+                  this.keyCooldowns.set(keyIdx, Date.now() + 3600000);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} daily quota exhausted (TPD). Failing over immediately without delay.`);
+                  // Check if any other key is active
+                  const activeRemaining = keys.filter((_, idx) => (this.keyCooldowns.get(idx) || 0) < Date.now() && !this.invalidKeys.has(idx));
+                  if (activeRemaining.length === 0) {
+                    throw new Error('Groq daily quota exhausted across available keys');
+                  }
+                  break;
+                } else if (isLastModel) {
+                  const cooldownMs = parsedWaitMs ? Math.min(parsedWaitMs, 8000) : 3000;
                   this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' throttled (${isTPD ? 'daily TPD' : 'rate limit'}). Backing off ${cooldownMs}ms...`);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' rate-limited. Backing off ${cooldownMs}ms...`);
                 } else {
-                  // Mark this specific model as temporarily throttled on this key so next requests skip immediately to fallback
-                  const modelCooldownMs = parsedWaitMs || 5000;
+                  const modelCooldownMs = parsedWaitMs ? Math.min(parsedWaitMs, 6000) : 2500;
                   this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + modelCooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Failing over to next key or fallback '${modelsToTry[mIdx + 1]}'...`);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Failing over to next model or key...`);
                 }
                 break; // Break inner loop to try fallback model or next key
+              } else if (status === 413) {
+                console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} request payload exceeded limits (413). Failing over to cloud fallback provider immediately.`);
+                throw new Error('Groq request payload too large (413)');
               } else if (status === 401 || status === 403) {
                 console.warn(`🚨 [LLMRouter] Groq Key-${keyIdx + 1} authentication/permission failed (${status}). Marking key invalid.`);
                 this.invalidKeys.add(keyIdx);
@@ -348,18 +360,21 @@ class LLMRouter {
         }
       }
 
-      // If pass completed without returning, sleep until earliest cooldown expires and retry
+      // If pass completed without returning, check if transient cooldowns can expire
       if (poolAttempt < 2 && this.keyCooldowns.size > 0) {
         if (process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production') {
           break;
         }
-        const earliestCooldown = Math.min(...Array.from(this.keyCooldowns.values()));
-        const remaining = earliestCooldown - Date.now();
-        if (remaining > 0) {
-          const waitMs = Math.min(remaining + 400, 15000);
-          console.warn(`⏳ [LLMRouter] All available keys throttled. Bounded wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
-          await this._sleep(waitMs);
+        const now = Date.now();
+        const shortCooldowns = Array.from(this.keyCooldowns.values()).filter(t => t - now <= 8000 && t - now > 0);
+        if (shortCooldowns.length === 0) {
+          // No transient cooldowns expiring soon; fail over to next provider immediately!
+          break;
         }
+        const earliestCooldown = Math.min(...shortCooldowns);
+        const waitMs = Math.min(earliestCooldown - now + 200, 4000);
+        console.warn(`⏳ [LLMRouter] Transient rate limit. Bounded wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
+        await this._sleep(waitMs);
       }
     }
 
@@ -373,9 +388,9 @@ class LLMRouter {
     let resolvedMaxTokens = parseInt(maxTokens, 10);
     if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
       if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
-        resolvedMaxTokens = 1800;
+        resolvedMaxTokens = 2048; // Gemini has generous token windows; allow full MCQ without truncation
       } else if (prompt.includes('Assessment Planner') || prompt.includes('[ACADEMIC TOPIC CURRICULUM SPECIFICATION]') || prompt.includes('[TEACHING EVIDENCE PACKAGE]')) {
-        resolvedMaxTokens = 3000;
+        resolvedMaxTokens = 3500;
       } else {
         resolvedMaxTokens = 4096;
       }
@@ -398,12 +413,12 @@ class LLMRouter {
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    // Configurable model cascade: allows env override, defaults to official active models gemini-flash-latest, gemini-pro-latest
+    // Configurable model cascade: allows env override, defaults to verified active models gemini-2.5-flash, gemini-flash-latest
     const candidateModels = Array.from(new Set([
       process.env.GEMINI_MODEL,
       model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
-      'gemini-flash-latest',
-      'gemini-pro-latest'
+      'gemini-2.5-flash',
+      'gemini-flash-latest'
     ].filter(Boolean)));
 
     let lastErr = null;
@@ -414,12 +429,17 @@ class LLMRouter {
           model: geminiModelName,
           generationConfig: {
             temperature: typeof temperature === 'number' ? temperature : 0.3,
-            maxOutputTokens: resolvedMaxTokens
+            maxOutputTokens: 8192
           }
         };
 
         if (responseFormat === 'json') {
           modelConfig.generationConfig.responseMimeType = 'application/json';
+        }
+
+        // For Gemini 2.5 thinking models, disable hidden thinking tokens so full output budget is preserved for structured JSON
+        if (geminiModelName.includes('2.5') || geminiModelName.includes('thinking')) {
+          modelConfig.generationConfig.thinkingConfig = { thinkingBudget: 0 };
         }
 
         if (systemPrompt && typeof systemPrompt === 'string' && systemPrompt.trim()) {
@@ -457,9 +477,11 @@ class LLMRouter {
         const status = err.status || (msg.includes('429') ? 429 : (msg.includes('403') ? 403 : (msg.includes('404') ? 404 : 500)));
 
         if (status === 429 || msg.includes('RESOURCE_EXHAUSTED')) {
-          this.geminiCooldownUntil = Date.now() + 60000;
-          console.warn(`⚠️ [LLMRouter] Gemini hit rate limit (429). Setting 60s cooldown.`);
-          break; // Don't burn requests across models if key is throttled
+          const cooldownMs = 3000;
+          this.geminiCooldownUntil = Date.now() + cooldownMs;
+          console.warn(`⚠️ [LLMRouter] Gemini hit transient rate limit (429). Bounded cooldown ${cooldownMs}ms...`);
+          await this._sleep(cooldownMs);
+          continue; // Try next candidate model in cascade
         } else if (status === 403 || msg.includes('PERMISSION_DENIED') || msg.includes('leaked') || msg.includes('API key')) {
           this.geminiCooldownUntil = Date.now() + 3600000; // 1-hour cooldown for invalid/leaked key
           console.warn(`🚨 [LLMRouter] Gemini authentication error (${msg}). Marking key unavailable.`);

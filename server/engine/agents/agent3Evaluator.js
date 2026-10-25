@@ -171,7 +171,7 @@ class Agent3Evaluator {
       (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || ''));
 
     if (directEvidence && (!evidenceContext || evidenceContext.trim().length < 20 || evidenceContext.includes('No content provided') || evidenceContext === target.concept)) {
-      evidenceContext = directEvidence;
+      evidenceContext = directEvidence.length > 2500 ? directEvidence.slice(0, 2500) : directEvidence;
     }
 
     // 4. Check if deterministic-only mode or fast-path bypass applies
@@ -710,6 +710,22 @@ ${evidenceContext}
       }
     }
 
+    // 3f. Format Alignment Gate (Phase D)
+    const formatRec = String(target.formatRecommendation || '').toUpperCase();
+    const qText = String(candidateMCQ.questionText || candidateMCQ.question || '');
+    const hasCodeSnippet = qText.includes('```') ||
+      (Array.isArray(candidateMCQ.options) && candidateMCQ.options.some(o => typeof o === 'string' && o.includes('```')));
+
+    if (formatRec === 'PROSE_MULTIPLE_CHOICE' && hasCodeSnippet) {
+      if (!failureReasons.includes('FORMAT_MISMATCH_UNWANTED_CODE')) {
+        failureReasons.push('FORMAT_MISMATCH_UNWANTED_CODE');
+      }
+    } else if (formatRec === 'CODE_ANALYSIS' && !hasCodeSnippet && !qText.includes('def ') && !qText.includes('function ') && !qText.includes('class ') && !qText.includes('int ')) {
+      if (!failureReasons.includes('FORMAT_MISMATCH_MISSING_CODE')) {
+        failureReasons.push('FORMAT_MISMATCH_MISSING_CODE');
+      }
+    }
+
     // 3f. Verification Record & Deterministic Sandbox Verification (Phase 3)
     let verificationAudit = { status: 'MODEL_ASSERTED', verifiedProgrammatically: false };
     if (candidateMCQ.verificationRecord) {
@@ -1229,6 +1245,12 @@ ${evidenceContext}
    */
   _synthesizeRepairInstruction(failureReasons = [], candidateMCQ = {}, target = {}) {
     const instructions = [];
+    if (failureReasons.includes('FORMAT_MISMATCH_UNWANTED_CODE')) {
+      instructions.push('Format alignment: Remove code block/snippet. Present as conceptual multiple-choice prose without programming code.');
+    }
+    if (failureReasons.includes('FORMAT_MISMATCH_MISSING_CODE')) {
+      instructions.push('Format alignment: Include a clean 3-7 line code snippet for algorithmic analysis or state tracing.');
+    }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
       instructions.push('Recompute and resolve the correct answer: independent deterministic calculation/trace contradicted the claimed key.');
     }
