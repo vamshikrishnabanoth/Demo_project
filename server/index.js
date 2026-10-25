@@ -35,7 +35,6 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('🌊 UNHANDLED REJECTION at:', promise, 'reason:', reason);
 });
 
-const { exec } = require('child_process');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
@@ -2168,25 +2167,6 @@ if (process.env.NODE_ENV !== 'test') {
         console.log(`[Router Configuration] ROUTER_MODE="${routerMode}" | PDI_ROUTER_ENABLED=${routerMode === 'pdi'}`);
         console.log(`[DB Keep-Alive] Pinging every 9 minutes to prevent cold starts`);
 
-        // Automatic Prisma Database Schema Synchronization
-        setImmediate(() => {
-            try {
-                const prismaSyncCommand = process.platform === 'win32'
-                    ? `cd /d "${__dirname}" && npx prisma db push --skip-generate`
-                    : `cd "${__dirname}" && npx prisma db push --skip-generate`;
-
-                console.log('🔄 Syncing database schema via prisma db push...');
-                exec(prismaSyncCommand, (error, stdout, stderr) => {
-                    if (error) {
-                        console.warn('⚠️ [Prisma Sync Note]:', error.message);
-                        return;
-                    }
-                    console.log('✅ [Prisma DB]: Database schema is in sync with schema.prisma.');
-                });
-            } catch (err) {
-                console.warn('⚠️ Failed to initiate database sync:', err.message);
-            }
-        });
     });
 }
 
