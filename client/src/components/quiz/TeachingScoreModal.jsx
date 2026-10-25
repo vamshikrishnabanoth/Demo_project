@@ -79,7 +79,32 @@ export default function TeachingScoreModal({
         scoreRingColor = '#f97316';
     }
 
-    // 2. Compute 4 Pillar Scores (out of 25 each = 100 max)
+    // 2. Extract Clean Concepts for dynamic citations & "What Was Taught"
+    const concepts = useMemo(() => {
+        const pool = [
+            ...(Array.isArray(keyTopics) ? keyTopics : []),
+            ...(Array.isArray(detectedFocus) ? detectedFocus : []),
+            ...(lectureIntel?.conceptMap?.map(c => c.name || c.concept_name) || [])
+        ].filter(Boolean);
+
+        const seen = new Set();
+        const unique = [];
+        for (const item of pool) {
+            const clean = String(item).trim();
+            const lower = clean.toLowerCase();
+            if (clean.length >= 3 && clean.length <= 40 && !seen.has(lower) && !lower.includes('instructional content')) {
+                seen.add(lower);
+                unique.push(clean);
+            }
+        }
+        return unique.slice(0, 6);
+    }, [keyTopics, detectedFocus, lectureIntel]);
+
+    const primaryConcept = concepts[0] || '';
+    const secondaryConcept = concepts[1] || '';
+    const tertiaryConcept = concepts[2] || '';
+
+    // 3. Compute 4 Pillar Scores (out of 25 each = 100 max)
     let clarityScore = 18;
     if (chars.conceptExplanation === 'Strong') clarityScore = 25;
     else if (chars.conceptExplanation === 'Moderate') clarityScore = 19;
@@ -103,65 +128,96 @@ export default function TeachingScoreModal({
     else if (chars.procedures === 'Light') structureScore = 13;
     if (isNonAcademic) structureScore = 3;
 
-    const pillars = [
-        {
-            title: 'Concept Clarity',
-            subtitle: 'Definitions & core terminology',
-            score: clarityScore,
-            max: 25,
-            color: 'bg-emerald-500',
-            trackColor: 'bg-emerald-100',
-            textColor: 'text-emerald-700'
-        },
-        {
-            title: 'Depth of Explanation',
-            subtitle: 'Causal reasoning & underlying mechanisms',
-            score: depthScore,
-            max: 25,
-            color: 'bg-indigo-500',
-            trackColor: 'bg-indigo-100',
-            textColor: 'text-indigo-700'
-        },
-        {
-            title: 'Examples & Practice',
-            subtitle: 'Practical commands, traces & demonstrations',
-            score: examplesScore,
-            max: 25,
-            color: 'bg-blue-500',
-            trackColor: 'bg-blue-100',
-            textColor: 'text-blue-700'
-        },
-        {
-            title: 'Lecture Structure',
-            subtitle: 'Procedural flow & step-by-step pacing',
-            score: structureScore,
-            max: 25,
-            color: 'bg-amber-500',
-            trackColor: 'bg-amber-100',
-            textColor: 'text-amber-700'
+    const pillars = useMemo(() => {
+        const c1 = primaryConcept;
+        const c2 = secondaryConcept;
+        const c3 = tertiaryConcept;
+
+        let clarityReason = c1
+            ? `Standardized definitions & core nomenclature established for ${c1}${c2 ? ` and ${c2}` : ''}.`
+            : 'Clear foundational definitions and domain-specific terminology established.';
+        if (clarityScore < 20) {
+            clarityReason = c1
+                ? `Introduces ${c1}; providing explicit contrasting definitions with adjacent concepts will push clarity to 25.`
+                : 'Covers introductory terms; defining all prerequisite terminology explicitly will maximize clarity.';
         }
-    ];
+        if (isNonAcademic) {
+            clarityReason = 'No assessable academic definitions or curriculum terminology detected.';
+        }
 
-    // 3. Extract Clean Concepts for "What Was Taught"
-    const concepts = useMemo(() => {
-        const pool = [
-            ...(Array.isArray(keyTopics) ? keyTopics : []),
-            ...(Array.isArray(detectedFocus) ? detectedFocus : []),
-            ...(lectureIntel?.conceptMap?.map(c => c.name || c.concept_name) || [])
-        ].filter(Boolean);
+        let depthReason = c2 || c1
+            ? `Detailed causal reasoning explaining operational mechanisms & invariants behind ${c2 || c1}.`
+            : 'Detailed causal explanations answering why underlying mechanisms operate as they do.';
+        if (depthScore < 20) {
+            depthReason = c2 || c1
+                ? `Explains operational behavior for ${c2 || c1}; analyzing edge cases & failure modes will reach 25.`
+                : 'Explains standard behavior; exploring failure boundaries and trade-offs will reach full depth.';
+        }
+        if (isNonAcademic) {
+            depthReason = 'No theoretical or analytical explanations found in the material.';
+        }
 
-        const seen = new Set();
-        const unique = [];
-        for (const item of pool) {
-            const clean = String(item).trim();
-            const lower = clean.toLowerCase();
-            if (clean.length >= 3 && clean.length <= 40 && !seen.has(lower) && !lower.includes('instructional content')) {
-                seen.add(lower);
-                unique.push(clean);
+        let examplesReason = c2 || c1
+            ? `Concrete walkthroughs, sample traces & practical demonstrations applied to ${c2 || c1}.`
+            : 'Concrete technical demonstrations, sample code, and worked walkthroughs provided.';
+        if (examplesScore < 20) {
+            examplesReason = c2 || c1
+                ? `Conceptual illustrations present; adding a step-by-step trace or CLI demonstration for ${c2 || c1} will maximize score.`
+                : 'High-level examples present; adding worked step-by-step traces will maximize score.';
+        }
+        if (isNonAcademic) {
+            examplesReason = 'No practical engineering demonstrations or sample problem traces provided.';
+        }
+
+        let structureReason = c3 || c1
+            ? `Methodical procedural sequencing progressing logically from ${c3 || 'fundamentals'} to ${c1}.`
+            : 'Structured procedural sequence with clear chronological progression.';
+        if (structureScore < 20) {
+            structureReason = 'Sequential delivery detected; adding brief recap checkpoints between sections will enhance pacing.';
+        }
+        if (isNonAcademic) {
+            structureReason = 'Disjointed dialogue lacking structured instructional sequencing.';
+        }
+
+        return [
+            {
+                title: 'Concept Clarity',
+                score: clarityScore,
+                max: 25,
+                color: 'bg-emerald-500',
+                trackColor: 'bg-emerald-100',
+                textColor: 'text-emerald-700',
+                reason: clarityReason
+            },
+            {
+                title: 'Depth of Explanation',
+                score: depthScore,
+                max: 25,
+                color: 'bg-indigo-500',
+                trackColor: 'bg-indigo-100',
+                textColor: 'text-indigo-700',
+                reason: depthReason
+            },
+            {
+                title: 'Examples & Practice',
+                score: examplesScore,
+                max: 25,
+                color: 'bg-blue-500',
+                trackColor: 'bg-blue-100',
+                textColor: 'text-blue-700',
+                reason: examplesReason
+            },
+            {
+                title: 'Lecture Structure',
+                score: structureScore,
+                max: 25,
+                color: 'bg-amber-500',
+                trackColor: 'bg-amber-100',
+                textColor: 'text-amber-700',
+                reason: structureReason
             }
-        }
-        return unique.slice(0, 6);
-    }, [keyTopics, detectedFocus, lectureIntel]);
+        ];
+    }, [clarityScore, depthScore, examplesScore, structureScore, isNonAcademic, primaryConcept, secondaryConcept, tertiaryConcept]);
 
     // 4. Strengths Observed
     const strengths = useMemo(() => {
@@ -169,34 +225,51 @@ export default function TeachingScoreModal({
         if (breakdown.coveredAspects && breakdown.coveredAspects.length > 0) {
             list.push(...breakdown.coveredAspects.slice(0, 2));
         } else {
-            if (clarityScore >= 20) list.push('Clear foundational definitions and consistent domain terminology.');
+            if (clarityScore >= 20) list.push(primaryConcept ? `Clear foundational definitions and domain terminology for ${primaryConcept}.` : 'Clear foundational definitions and consistent domain terminology.');
             if (structureScore >= 20) list.push('Structured procedural sequence and step-by-step algorithmic pacing.');
-            if (examplesScore >= 20) list.push('Practical technical demonstrations and concrete worked examples.');
+            if (examplesScore >= 20) list.push(secondaryConcept ? `Practical technical demonstrations and concrete worked examples on ${secondaryConcept}.` : 'Practical technical demonstrations and concrete worked examples.');
             if (depthScore >= 20) list.push('Causal reasoning explaining why core mechanisms behave as they do.');
         }
         if (list.length === 0) {
             list.push('Identified assessable subject matter curriculum.');
         }
         return list.slice(0, 2);
-    }, [breakdown.coveredAspects, clarityScore, structureScore, examplesScore, depthScore]);
+    }, [breakdown.coveredAspects, clarityScore, structureScore, examplesScore, depthScore, primaryConcept, secondaryConcept]);
 
-    // 5. Actionable Tip to reach 100
+    // 5. Mastery Distinction vs Actionable Tip
+    const isMastery = score >= 95;
+
+    const masteryVerdict = useMemo(() => {
+        const topics = [primaryConcept, secondaryConcept].filter(Boolean).join(' and ');
+        if (topics) {
+            return `Exemplary pedagogical delivery! Definitions, causal reasoning, practical traces, and logical progression are all thoroughly demonstrated with zero curricular deficits across ${topics}.`;
+        }
+        return 'Exemplary pedagogical delivery! All core rubric dimensions (concept clarity, depth of explanation, practical demonstrations, and procedural structure) are thoroughly demonstrated with zero curricular deficits.';
+    }, [primaryConcept, secondaryConcept]);
+
     const actionableTip = useMemo(() => {
         if (breakdown.actionableTips && breakdown.actionableTips.length > 0) {
-            return breakdown.actionableTips[0];
+            const first = breakdown.actionableTips[0];
+            if (!first.toLowerCase().includes('outstanding pedagogical delivery')) {
+                return first;
+            }
         }
         // Fallback to lowest pillar
         const sorted = [...pillars].sort((a, b) => a.score - b.score);
         const lowest = sorted[0];
         if (lowest.title === 'Depth of Explanation') {
-            return 'Explain why edge cases occur and contrast standard execution with a boundary failure to reinforce invariants.';
+            return primaryConcept
+                ? `Explain why edge cases occur in ${primaryConcept} and contrast standard execution with a boundary failure to reinforce invariants.`
+                : 'Explain why edge cases occur and contrast standard execution with a boundary failure to reinforce invariants.';
         } else if (lowest.title === 'Examples & Practice') {
-            return 'Include a concrete worked example or CLI command output showing variable state transitions.';
+            return primaryConcept
+                ? `Include a concrete worked example or CLI command output showing variable state transitions for ${primaryConcept}.`
+                : 'Include a concrete worked example or CLI command output showing variable state transitions.';
         } else if (lowest.title === 'Lecture Structure') {
             return 'Add a brief 30-second summary recap between foundational rules and complex procedures.';
         }
-        return 'Ensure explicit definitions are provided for all prerequisite terms before introducing syntax.';
-    }, [breakdown.actionableTips, pillars]);
+        return 'Ensure explicit definitions are provided for all prerequisite terms before introducing syntax or operations.';
+    }, [breakdown.actionableTips, pillars, primaryConcept]);
 
     // 6. Recommended Question Count
     const recCount = recommendedQuestionCount || breakdown.recommendedQuestionCount || recommendedByDifficulty?.balanced || 5;
@@ -273,21 +346,30 @@ export default function TeachingScoreModal({
                             {pillars.map((pillar) => {
                                 const pct = Math.round((pillar.score / pillar.max) * 100);
                                 return (
-                                    <div key={pillar.title} className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 shadow-xs">
-                                        <div className="flex items-center justify-between text-xs">
-                                            <span className="font-bold text-slate-800">{pillar.title}</span>
-                                            <span className={`font-black ${pillar.textColor}`}>{pillar.score}/{pillar.max}</span>
+                                    <div key={pillar.title} className="bg-white border border-slate-200/90 rounded-2xl p-4 flex flex-col justify-between space-y-2.5 shadow-xs hover:border-slate-300 transition-colors">
+                                        <div>
+                                            <div className="flex items-center justify-between text-xs mb-1.5">
+                                                <span className="font-bold text-slate-800">{pillar.title}</span>
+                                                <span className={`text-[11px] font-black px-2 py-0.5 rounded-md ${pillar.score >= 20 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : 'bg-slate-100 text-slate-700'}`}>
+                                                    {pillar.score}/{pillar.max}
+                                                </span>
+                                            </div>
+                                            {/* Progress Bar */}
+                                            <div className={`w-full h-1.5 rounded-full overflow-hidden ${pillar.trackColor}`}>
+                                                <div
+                                                    className={`h-full rounded-full transition-all duration-500 ${pillar.color}`}
+                                                    style={{ width: `${pct}%` }}
+                                                />
+                                            </div>
                                         </div>
-                                        {/* Progress Bar */}
-                                        <div className={`w-full h-2 rounded-full overflow-hidden ${pillar.trackColor}`}>
-                                            <div
-                                                className={`h-full rounded-full transition-all duration-500 ${pillar.color}`}
-                                                style={{ width: `${pct}%` }}
-                                            />
+
+                                        {/* Dynamic Evidence Reason */}
+                                        <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-2.5">
+                                            <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
+                                                <span className="font-bold mr-1 text-[10px] uppercase tracking-wider text-slate-400">Why:</span>
+                                                {pillar.reason}
+                                            </p>
                                         </div>
-                                        <p className="text-[10px] text-slate-500 font-medium leading-tight truncate">
-                                            {pillar.subtitle}
-                                        </p>
                                     </div>
                                 );
                             })}
@@ -314,7 +396,7 @@ export default function TeachingScoreModal({
                         </div>
                     )}
 
-                    {/* KEY STRENGTHS & ACTIONABLE TIP */}
+                    {/* KEY STRENGTHS & ACTIONABLE TIP / MASTERY DISTINCTION */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {/* Strengths */}
                         <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-4 space-y-2">
@@ -332,16 +414,33 @@ export default function TeachingScoreModal({
                             </ul>
                         </div>
 
-                        {/* Actionable Tip */}
-                        <div className="bg-amber-50/50 border border-amber-100 rounded-2xl p-4 space-y-2">
-                            <div className="flex items-center gap-1.5 text-amber-800 text-xs font-black uppercase tracking-wider">
-                                <Lightbulb size={15} className="text-amber-600" />
-                                Tip to Reach 100
+                        {/* Right Card: Mastery Distinction vs Tip to Reach 100 */}
+                        {isMastery ? (
+                            <div className="bg-gradient-to-br from-emerald-50/80 via-teal-50/40 to-slate-50 border border-emerald-200/80 rounded-2xl p-4 space-y-2 shadow-xs">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-1.5 text-emerald-900 text-xs font-black uppercase tracking-wider">
+                                        <Award size={15} className="text-emerald-600" />
+                                        Pedagogical Distinction
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-xs">
+                                        Mastery Achieved
+                                    </span>
+                                </div>
+                                <p className="text-xs text-slate-700 font-medium leading-relaxed">
+                                    {masteryVerdict}
+                                </p>
                             </div>
-                            <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                                {actionableTip}
-                            </p>
-                        </div>
+                        ) : (
+                            <div className="bg-amber-50/50 border border-amber-100 rounded-2xl p-4 space-y-2">
+                                <div className="flex items-center gap-1.5 text-amber-800 text-xs font-black uppercase tracking-wider">
+                                    <Lightbulb size={15} className="text-amber-600" />
+                                    Recommendation to Reach 100
+                                </div>
+                                <p className="text-xs text-slate-700 font-medium leading-relaxed">
+                                    {actionableTip}
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                 </div>
