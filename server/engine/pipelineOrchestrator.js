@@ -111,7 +111,7 @@ class PipelineOrchestrator {
           const rawVoice = sessionInputs.voiceTranscript || '';
           const rawDocs = (sessionInputs.documentTexts || []).join('\n');
           const combinedEvidence = evidencePackage.unifiedRawContent || `${rawVoice}\n${rawDocs}`;
-          const timingSegments = sessionInputs.voiceSegments || sessionInputs.segments || null;
+          const timingSegments = sessionInputs.transcriptSegments || sessionInputs.voiceSegments || sessionInputs.segments || null;
           const hasTiming = Array.isArray(timingSegments) && timingSegments.length > 0;
           const negBoundaries = evidencePackage.negativeBoundaries || evidencePackage.instructionalProfile?.negativeBoundaries || [];
 
@@ -119,6 +119,8 @@ class PipelineOrchestrator {
             evidenceText: combinedEvidence,
             modality: sessionInputs.modality || (hasVoice && hasAlignedDocs ? 'UNIFIED' : (hasVoice ? 'VOICE_ONLY' : 'DOCUMENT_ONLY')),
             hasTimingData: hasTiming,
+            fileName: sessionInputs.title || sessionInputs.topic || sessionInputs.fileName || null,
+            segments: timingSegments || [],
             errorReason: 'Deterministic lecture intelligence attached at Stage 02',
             negativeBoundaries: negBoundaries
           });

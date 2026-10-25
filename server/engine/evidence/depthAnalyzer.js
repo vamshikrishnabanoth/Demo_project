@@ -65,6 +65,11 @@ const ACADEMIC_DOMAIN_TERMS = new Set([
   'sstf', 'scan algorithm', 'c-scan', 'look algorithm', 'c-look', 'raid', 'raid 0', 'raid 1', 'raid 5',
   'virtualization', 'hypervisor', 'type 1 hypervisor', 'type 2 hypervisor', 'container', 'containers', 'docker',
   'posix', 'unix', 'linux', 'shell', 'bash', 'command line', 'cli',
+  'git', 'version control', 'vcs', 'dvcs', 'repository', 'repositories', 'repo', 'repos', 'commit', 'commits', 'branch', 'branches',
+  'git config', 'git init', 'git clone', 'git status', 'git add', 'git commit', 'git push', 'git pull',
+  'git branch', 'git checkout', 'git switch', 'git merge', 'git rebase', 'git log', 'git diff', 'git reset', 'git stash', 'git fetch', 'git remote',
+  'staging area', 'working tree', 'working directory', 'remote repository', 'merge conflict', 'head pointer',
+  'pull request', 'pull requests', 'fast-forward', 'rebase', 'cherry-pick', 'github', 'gitlab',
   'cache', 'latency', 'bandwidth', 'protocol', 'tcp', 'udp', 'ip', 'http', 'https', 'dns',
   'syn', 'ack', 'syn-ack', 'handshake', 'packet', 'packets', 'frame', 'frames', 'datagram', 'payload', 'syn cookies',
   'syn flood', 'flow control', 'congestion control', 'sliding window', 'mtu', 'rtt', 'checksum', 'header', 'headers',
@@ -248,6 +253,8 @@ class DepthAnalyzer {
     }
     const codePatterns = [
       /\b(?:#include\s*<|#define\s+|import\s+[\w.]+|from\s+[\w.]+\s+import|def\s+\w+\s*\(|public\s+class\s+|class\s+\w+|function\s+\w+\s*\(|void\s+\w+\s*\(|int\s+main\s*\(|pid_t\s+|fork\s*\(\)|pthread_|malloc\s*\(|free\s*\(|printf\s*\(|cout\s*<<|cin\s*>>|System\.out\.println|console\.log|SELECT\s+.*\s+FROM|CREATE\s+TABLE|INSERT\s+INTO|ALTER\s+TABLE|UPDATE\s+.*\s+SET|DELETE\s+FROM)\b/i,
+      /\b(?:git\s+(?:config|init|clone|status|add|commit|push|pull|branch|checkout|switch|merge|rebase|log|diff|remote|reset|stash|fetch|tag|show)|npm\s+(?:install|run|test|build|init|start|ci)|docker\s+(?:run|build|ps|compose|exec|stop|images)|kubectl\s+[a-z]+|pip\s+install|cargo\s+[a-z]+)\b/i,
+      /\b(?:--global|--save-dev|-m\s+"[^"]*"|--hard|--soft)\b/i,
       /[{}][\s\S]*[;{}]|=>|\b(?:return|sizeof|typedef|struct|enum)\b\s*[\w*&]+|\b(?:const|var)\b\s*[\w*&]+|\blet\b\s*[\w*&]+\s*(?:=|[;:,])/i,
       /\b(?:[A-Za-z0-9_]+\s*=\s*[A-Za-z0-9_+\-*/()]+;|\b(?:if|while|for)\s*\([^)]+\)\s*\{?)/i
     ];
@@ -934,12 +941,24 @@ class DepthAnalyzer {
       return { classification: 'UNCERTAIN', reason: 'INSUFFICIENT_CONTENT: Material is too short to evaluate curriculum.' };
     }
 
+    const hasAcademic = this._hasAcademicDomainWord((raw || '').toLowerCase());
+    const hasCode = this._isCodeOrTechnicalSnippet(raw);
+    const hasCurricularSegments = Array.isArray(classifiedSegments) && classifiedSegments.some(s =>
+      ['CORE_EXPLANATION', 'EXAMPLE', 'ANALOGY', 'REAL_WORLD_APPLICATION', 'TEACHER_EXPERIENCE', 'DEMONSTRATION', 'PEDAGOGICAL_GUIDANCE'].includes(s?.classification?.type)
+    );
+
+    // If verified academic curriculum, code/technical commands, or instructional segments are present,
+    // conversational address (e.g. "we run git config", "you type git status") is natural spoken pedagogy.
+    if (hasAcademic || hasCode || hasCurricularSegments) {
+      return { classification: 'ACADEMIC', reason: null };
+    }
+
     // 1. Personal Pronoun Ratio (1st/2nd person address indicates conversational narrative or administrative directive)
     const personalPronouns = words.filter(w => /^(i|me|my|mine|you|your|yours|we|our|ours|us)$/i.test(w)).length;
     const pronounRatio = personalPronouns / totalWordCount;
 
-    // High ratio of personal pronouns indicates personal conversation or administrative address
-    if (pronounRatio > 0.06 && !this._isCodeOrTechnicalSnippet(raw)) {
+    // High ratio of personal pronouns without academic terms indicates personal conversation or administrative address
+    if (pronounRatio > 0.10) {
       return {
         classification: 'UNCERTAIN',
         reason: 'UNCERTAIN_CURRICULAR_CONTENT: High ratio of first/second-person personal pronouns indicates conversational narrative rather than objective curriculum.'

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const quizController = require('../controllers/quizController');
-const { getTask, onTaskEvent, removeTaskListener } = require('../services/taskManager');
+const { getTask, onTaskEvent, removeTaskListener, cancelTask } = require('../services/taskManager');
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
@@ -360,6 +360,33 @@ router.get('/generate/active-tasks', auth, (req, res) => {
         res.json(userTasks);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch active tasks: ' + err.message });
+    }
+});
+
+
+// @route   POST api/quiz/generate/cancel/:taskId
+// @desc    Cancel an in-flight generation task
+router.post('/generate/cancel/:taskId', auth, (req, res) => {
+    try {
+        const cancelled = cancelTask(req.params.taskId, req.user?.id);
+        if (cancelled) {
+            return res.json({ success: true, message: 'Generation cancelled successfully.' });
+        }
+        return res.status(400).json({ success: false, message: 'Task cannot be cancelled or is not in progress.' });
+    } catch (err) {
+        return res.status(err.statusCode || 500).json({ success: false, message: err.message });
+    }
+});
+
+router.post('/cancel-task/:taskId', auth, (req, res) => {
+    try {
+        const cancelled = cancelTask(req.params.taskId, req.user?.id);
+        if (cancelled) {
+            return res.json({ success: true, message: 'Generation cancelled successfully.' });
+        }
+        return res.status(400).json({ success: false, message: 'Task cannot be cancelled or is not in progress.' });
+    } catch (err) {
+        return res.status(err.statusCode || 500).json({ success: false, message: err.message });
     }
 });
 

@@ -8,7 +8,7 @@ import {
     FileText, FileCode, Plus, Trash2, Mic, X as XIcon, Award,
     PlayCircle, PauseCircle, StopCircle, WifiOff, RefreshCw,
     AlertCircle, CheckCircle, Download, Lightbulb, Shield, Zap, Scale, Activity,
-    Wifi, Info, Tag, ListOrdered, Target
+    Wifi, Info, Tag, ListOrdered, Target, Link2
 } from 'lucide-react';
 import AgentPipelineLoader from '../components/loaders/AgentPipelineLoader';
 import TeachingScoreModal from '../components/quiz/TeachingScoreModal';
@@ -1355,6 +1355,21 @@ export default function CreateQuizTopic() {
         }
     };
 
+    const handleCancelGeneration = async () => {
+        stopPolling();
+        if (currentTaskId) {
+            try {
+                await api.post(`/quiz/generate/cancel/${encodeURIComponent(currentTaskId)}`);
+            } catch (_) {}
+        }
+        setIsGenerating(false);
+        setSubmitting(false);
+        setStage(0);
+        setStageLabel('');
+        setCurrentTaskId(null);
+        toast.info('Generation cancelled.');
+    };
+
     return (
         <DashboardLayout role="teacher">
             {isGenerating ? (
@@ -1367,6 +1382,7 @@ export default function CreateQuizTopic() {
                         representationMode={representationMode}
                         sessionId={currentTaskId}
                         standalone={true}
+                        onCancel={handleCancelGeneration}
                     />
                 </div>
             ) : (
@@ -1385,8 +1401,8 @@ export default function CreateQuizTopic() {
 
                     <div className="flex items-center gap-3 flex-wrap">
 
-                        {/* Interactive Teaching Depth Score Badge */}
-                        {lectureDepth && (
+                        {/* Interactive Teaching Depth Score Badge (ONLY when lecture audio is present) */}
+                        {hasAudio && lectureDepth && (
                             <button
                                 type="button"
                                 onClick={() => setShowTeachingScoreModal(true)}
@@ -2008,39 +2024,58 @@ export default function CreateQuizTopic() {
                                             <div className="flex items-center gap-2">
                                                 <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
                                                 <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider">
-                                                    {isTopicOnly ? 'Topic Scope: ' : 'Teaching Depth: '}<span className="font-bold text-[#ea580c]">{isTopicOnly ? 'ENGINEERING CURRICULUM' : (lectureDepth.rating || 'Comprehensive').toUpperCase()}</span>
+                                                    {hasAudio ? (
+                                                        <>Teaching Depth: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span></>
+                                                    ) : hasDocFiles ? (
+                                                        <>Document Scope: <span className="font-bold text-[#ea580c]">CURRICULUM EXTRACTED</span></>
+                                                    ) : (
+                                                        <>Topic Blueprint: <span className="font-bold text-[#ea580c]">ACADEMIC SYLLABUS</span></>
+                                                    )}
                                                 </span>
                                             </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowTeachingScoreModal(true)}
-                                                className="self-start sm:self-auto text-xs font-mono font-black text-[#9a3412] bg-white hover:bg-orange-100/80 px-3 py-1 rounded-full border border-[#f5d0b5] flex items-center gap-2 shadow-2xs transition-all cursor-pointer hover:scale-105 active:scale-95"
-                                                title="Click to view exact rubric explanation & point deductions breakdown"
-                                            >
-                                                <span>Instructional Digest</span>
-                                                <Info size={11} className="text-[#ea580c] shrink-0" />
-                                            </button>
+                                            {/* Show Instructional Digest / Teaching Score button ONLY when audio lecture is present */}
+                                            {hasAudio && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowTeachingScoreModal(true)}
+                                                    className="self-start sm:self-auto text-xs font-mono font-black text-[#9a3412] bg-white hover:bg-orange-100/80 px-3 py-1 rounded-full border border-[#f5d0b5] flex items-center gap-2 shadow-2xs transition-all cursor-pointer hover:scale-105 active:scale-95"
+                                                    title="Click to view exact rubric explanation & point deductions breakdown"
+                                                >
+                                                    <span>Instructional Digest</span>
+                                                    <Info size={11} className="text-[#ea580c] shrink-0" />
+                                                </button>
+                                            )}
                                         </div>
 
-                                        {/* 0. Intelligent Evidence-Grounded Lecture Title */}
-                                        {lectureIntel?.title && (
+                                        {/* Main Topic / Subject */}
+                                        {(lectureIntel?.title || whatWasTaught || inputs[0]?.source_name) && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Tag size={13} className="text-[#c2410c] shrink-0" /> Main Topic
+                                                    <Tag size={13} className="text-[#c2410c] shrink-0" /> {hasAudio ? 'Main Lecture Topic' : hasDocFiles ? 'Document Subject' : 'Topic Subject'}
                                                 </p>
                                                 <p className="text-xs font-bold text-slate-900 leading-snug">
-                                                    {lectureIntel.title}
+                                                    {lectureIntel?.title || inputs[0]?.source_name || 'Academic Subject'}
                                                 </p>
                                             </div>
                                         )}
 
+                                        {/* Goal of Lecture (when audio is present) */}
+                                        {hasAudio && (lectureIntel?.summary || whatWasTaught) && (
+                                            <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Goal of Lecture
+                                                </p>
+                                                <p className="text-xs font-medium text-slate-700 leading-relaxed">
+                                                    {lectureIntel?.summary || whatWasTaught}
+                                                </p>
+                                            </div>
+                                        )}
 
-
-                                        {/* Covered Subtopics / Chapters */}
-                                        {lectureIntel?.chapters && lectureIntel.chapters.length > 0 ? (
+                                        {/* Audio Lecture Chapters (when audio is present) */}
+                                        {hasAudio && lectureIntel?.chapters && lectureIntel.chapters.length > 0 && (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Covered Subtopics
+                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Covered in Lecture
                                                 </p>
                                                 <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                                                     {lectureIntel.chapters.map((ch, idx) => (
@@ -2055,10 +2090,25 @@ export default function CreateQuizTopic() {
                                                     ))}
                                                 </div>
                                             </div>
-                                        ) : ((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) ? (
+                                        )}
+
+                                        {/* Hybrid Cross-Material Link (when BOTH audio and documents are present) */}
+                                        {isHybrid && (
+                                            <div className="bg-orange-50/90 p-3 rounded-2xl border border-orange-200/90 space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                    <Link2 size={13} className="text-[#ea580c] shrink-0" /> Linked Source Materials
+                                                </p>
+                                                <p className="text-xs text-slate-700 font-medium leading-snug">
+                                                    Supporting materials <span className="font-bold text-slate-900">({inputs.filter(i => i.type !== 'voice' && i.type !== 'audio' && (i.file || i.documentId)).map(d => d.source_name || d.file?.name || 'Document').join(', ')})</span> are cross-aligned with the spoken lecture. Code, definitions, and formulas are linked to lecture timeline chapters.
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Document-Only Topics (when ONLY documents/PDFs are present) */}
+                                        {!hasAudio && hasDocFiles && ((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Covered Subtopics
+                                                    <FileText size={13} className="text-[#c2410c] shrink-0" /> Topics Extracted from Document
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
@@ -2072,7 +2122,27 @@ export default function CreateQuizTopic() {
                                                     ))}
                                                 </div>
                                             </div>
-                                        ) : null}
+                                        )}
+
+                                        {/* Topic-Only Syllabus (when ONLY topic is present) */}
+                                        {isPureTopic && ((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
+                                            <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Academic Curriculum Scope
+                                                </p>
+                                                <div className="flex flex-wrap gap-2 pt-0.5">
+                                                    {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
+                                                        .filter(t => t && t.length >= 3 && !/\b\d+\b/.test(t) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
+                                                        .slice(0, 8)
+                                                        .map((topic, i) => (
+                                                        <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
+                                                            <span>{topic}</span>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </>
@@ -2102,9 +2172,15 @@ export default function CreateQuizTopic() {
                                                     disabled={isGenerating}
                                                     onClick={() => {
                                                         setDifficulty(level);
-                                                        const targetRec = (recVal !== null && recVal !== undefined && Number(recVal) > 0)
+                                                        let targetRec = (recVal !== null && recVal !== undefined && Number(recVal) > 0)
                                                             ? Number(recVal)
-                                                            : (level === 'Balanced' && recommendedQuestionCount ? Number(recommendedQuestionCount) : null);
+                                                            : null;
+                                                        if (!targetRec && recommendedQuestionCount && Number(recommendedQuestionCount) > 0) {
+                                                            const baseRec = Number(recommendedQuestionCount);
+                                                            if (level === 'Balanced') targetRec = baseRec;
+                                                            else if (level === 'Easy' || level === 'Medium') targetRec = Math.max(1, Math.round(baseRec * 0.85));
+                                                            else if (level === 'Hard') targetRec = Math.max(1, Math.round(baseRec * 0.5));
+                                                        }
                                                         if (targetRec && Number.isFinite(targetRec) && targetRec > 0) {
                                                             setQuestionCount(Math.min(30, Math.max(1, targetRec)));
                                                         }

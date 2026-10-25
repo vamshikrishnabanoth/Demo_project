@@ -690,7 +690,9 @@ exports.getQuestionAIReview = async (req, res) => {
         const totalAttempts = correctCount + wrongCount + skippedCount;
         const correctPercentage = totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0;
 
-        fallbackReview = `The correct answer is "${question.correctAnswer}". It is correct because it directly matches the relationship or definition described in the question.`;
+        fallbackReview = question.explanation
+            ? `The correct answer is "${question.correctAnswer}". ${question.explanation}`
+            : `The correct answer is "${question.correctAnswer}". It is correct because it directly matches the relationship or definition described in the question.`;
 
         // Do not send requests with a placeholder key. Return a useful grounded answer immediately.
         if (!process.env.GEMINI_API_KEY?.trim()) {

@@ -284,11 +284,7 @@ class Agent1Planner {
 
     // Baseline: CONCEPTUAL_CONTRAST is eligible for academic materials when not excluded
     if (!isConceptualExcluded) {
-      const subtopicCount = Array.isArray(evidencePackage.subtopics) ? evidencePackage.subtopics.length : 0;
-      const hasContrastMarkers = /\b(versus|vs\.?|difference|tradeoff|compare|distinguish|alternative|advantage|disadvantage|unlike|on the other hand|in contrast|pros and cons)\b/i.test(combinedEvidence);
-      if (hasContrastMarkers || subtopicCount >= 2 || isTopicMode || combinedEvidence.length > 50) {
-        eligible.add(QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST);
-      }
+      eligible.add(QUESTION_ARCHETYPES.CONCEPTUAL_CONTRAST);
     }
 
     // 1. WHAT_IF_MUTATION Eligibility

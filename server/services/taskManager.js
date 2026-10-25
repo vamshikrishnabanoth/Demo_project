@@ -55,7 +55,8 @@ const TaskStates = {
   INSUFFICIENT_READABLE_EVIDENCE: 'INSUFFICIENT_READABLE_EVIDENCE',
   TIMEOUT_EXCEEDED: 'TIMEOUT_EXCEEDED',
   FAILED_INTERNAL: 'FAILED_INTERNAL',
-  EXPIRED: 'EXPIRED'
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED'
 };
 
 // Explicit Terminal Failure Codes (Diagnostic / Failure Reasons)
@@ -435,6 +436,47 @@ function getTask(taskId, requestingUserId = null) {
 }
 
 // ─── Cleanup: expire & remove old completed/failed tasks ─────────────────────
+
+/**
+ * Cancel an in-flight generation task.
+ *
+ * @param {string} taskId
+ * @param {string} [requestingUserId]
+ * @returns {boolean} whether task was cancelled
+ */
+function cancelTask(taskId, requestingUserId = null) {
+  const task = tasks.get(taskId);
+  if (!task) return false;
+
+  // Multi-tenant authorization guard
+  if (requestingUserId && task.userId && task.userId !== requestingUserId) {
+    const authErr = new Error('UNAUTHORIZED_TASK_ACCESS: You do not have permission to cancel this task.');
+    authErr.code = 'FORBIDDEN';
+    authErr.statusCode = 403;
+    throw authErr;
+  }
+
+  if (task.status !== 'RUNNING') return false;
+
+  if (task.timeoutTimer) {
+    clearTimeout(task.timeoutTimer);
+    task.timeoutTimer = null;
+  }
+
+  task.status = 'CANCELLED';
+  task.state = TaskStates.CANCELLED || 'CANCELLED';
+  task.completedAt = Date.now();
+  task.error = 'Generation was cancelled by the user.';
+  task.errorCode = 'USER_CANCELLED';
+
+  try {
+    productionMetrics.inc('documents_cancelled_total');
+  } catch (_) {}
+
+  taskEmitter.emit(`task:${taskId}`, { type: 'cancelled', taskId });
+  return true;
+}
+
 function runCleanup() {
   const now = Date.now();
   for (const [id, task] of tasks.entries()) {
@@ -472,5 +514,6 @@ module.exports = {
   getTask,
   getUserActiveTasks,
   getActiveRunningJobCount,
-  calculateAdaptiveTimeoutMs
+  calculateAdaptiveTimeoutMs,
+  cancelTask
 };

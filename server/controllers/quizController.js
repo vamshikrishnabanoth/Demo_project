@@ -4828,12 +4828,35 @@ exports.analyzeDepth = async (req, res) => {
             return res.json(payload);
         };
         const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
+        const analysis = depthAnalyzer.analyzeLecture(text || '');
+
+        if (!analysis.isAcademic) {
+            return sendAndCache({
+                success: true,
+                isAcademic: false,
+                reason: analysis.reason,
+                lectureDepth: analysis.lectureDepth,
+                detectedFocus: [],
+                whatWasTaught: 'Non-academic content: No assessable curriculum detected.',
+                keyTopics: [],
+                wordCount,
+                recommendedQuestions: '0 Questions',
+                recommendedQuestionCount: 0,
+                recommendedByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+                capacityByDifficulty: { easy: 0, medium: 0, hard: 0, balanced: 0 },
+                totalDefensibleCapacity: 0,
+                advisoryRationale: analysis.reason || 'Cannot recommend questions: Non-academic content.',
+                lecture_intelligence: null
+            });
+        }
+
         const isTopicInput = modality === 'TOPIC' || modality === 'TOPIC_SYNTHESIS' ||
-            (!hasTimingData && (!segments || segments.length === 0) && wordCount < 300);
+            (!modality && !hasTimingData && (!segments || segments.length === 0) && wordCount < 15 && !text.includes('\n'));
 
         if (isTopicInput && (text || '').trim().length >= 3) {
             const cleanTopic = sanitizeLectureTitle(title || text.trim());
             return sendAndCache({
+                success: true,
                 isAcademic: true,
                 isTopicMode: true,
                 topic: cleanTopic,
@@ -4858,11 +4881,10 @@ exports.analyzeDepth = async (req, res) => {
                 recommendedByDifficulty: { easy: 10, medium: 15, hard: 10, balanced: 15 },
                 capacityByDifficulty: { easy: 10, medium: 15, hard: 10, balanced: 15 },
                 totalDefensibleCapacity: 30,
+                advisoryRationale: 'Standard university-level engineering curriculum assessment scope',
                 wordCount: wordCount
             });
         }
-
-        const analysis = depthAnalyzer.analyzeLecture(text || '');
 
         let whatWasTaught = '';
         let keyTopics = [];
@@ -4882,6 +4904,17 @@ exports.analyzeDepth = async (req, res) => {
                 });
             } catch (intelErr) {
                 console.warn('[analyzeDepth] lectureIntelligence error, falling back:', intelErr.message);
+                try {
+                    const lectureIntelligence = require('../engine/intelligence/lectureIntelligence');
+                    lectureIntel = lectureIntelligence.buildPartialFallback({
+                        evidenceText: text,
+                        segments: segments || [],
+                        modality: modality || (hasTiming ? 'VOICE_ONLY' : 'DOCUMENT_ONLY'),
+                        hasTimingData: hasTiming,
+                        fileName: title || null,
+                        errorReason: `Analysis error: ${intelErr.message}`
+                    });
+                } catch (_) {}
             }
         }
 
@@ -4956,7 +4989,7 @@ exports.analyzeDepth = async (req, res) => {
         const recBreakdown = analysis.lectureDepth?.breakdown;
         const fallbackRecCount = recBreakdown?.recommendedQuestionCount || 5;
         const chars = analysis.lectureDepth?.characteristics || {};
-        const supportsHard = chars.reasoning === 'Strong' || chars.procedures === 'Strong' || chars.examples === 'Present' || (analysis.curricularSegments && analysis.curricularSegments.length > 0);
+        const supportsHard = (chars.reasoning === 'Strong' || chars.procedures === 'Strong') || (chars.reasoning !== 'Light' && (chars.examples === 'Present' || (analysis.curricularSegments && analysis.curricularSegments.length > 0)));
 
         let recommendedByDifficulty;
         let capacityByDifficulty;
@@ -5007,7 +5040,7 @@ exports.analyzeDepth = async (req, res) => {
             advisoryRationale = recBreakdown?.recommendedQuestionsRationale || 'Estimated from curricular scope and pedagogical depth';
             recommendedQuestionCount = fallbackRecCount;
         }
-        if (!hasTimingData && wordCount < 300 && analysis.isAcademic) {
+        if (isTopicInput && analysis.isAcademic) {
             recommendedQuestionCount = Math.max(10, recommendedQuestionCount || fallbackRecCount);
             totalDefensibleCapacity = Math.max(15, totalDefensibleCapacity || fallbackRecCount);
             if (recommendedByDifficulty) {
@@ -5067,9 +5100,21 @@ exports.resolveGenerationErrorCode = resolveGenerationErrorCode;
  * Generate a smart concise academic topic title (3-6 words) like ChatGPT
  */
 async function generateSmartAudioTitle(transcriptText, fallbackConcepts = [], groqClient = null) {
-    const defaultFallback = (fallbackConcepts && fallbackConcepts.length > 0)
+    let defaultFallback = (fallbackConcepts && fallbackConcepts.length > 0)
         ? fallbackConcepts.slice(0, 3).join(' & ')
         : 'Lecture Presentation';
+
+    if (!transcriptText || transcriptText.trim().length < 15) {
+        return defaultFallback;
+    }
+
+    try {
+        const lectureIntelligence = require('../engine/intelligence/lectureIntelligence');
+        const resolvedFallback = lectureIntelligence._resolveAuthoritativeTitle(null, transcriptText, fallbackConcepts);
+        if (resolvedFallback && resolvedFallback !== 'Academic Lecture Curriculum') {
+            defaultFallback = resolvedFallback;
+        }
+    } catch (_) {}
 
     if (!transcriptText || transcriptText.trim().length < 15) {
         return defaultFallback;

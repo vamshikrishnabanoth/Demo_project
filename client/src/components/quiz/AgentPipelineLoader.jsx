@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
     Clock, Inbox, Network, Ruler, Scale, Search, ShieldCheck, Zap, Rocket,
-    CheckCircle2, Loader2, Sparkles, Activity, Cpu, Shield, ArrowRight, Terminal
+    CheckCircle2, Loader2, Sparkles, X, Activity, Cpu, Shield, ArrowRight, Terminal
 } from "lucide-react";
 
 const PIPELINE_STAGES = [
@@ -349,6 +349,7 @@ export default function AgentPipelineLoader({
     representationMode = null,
     sessionId = null,
     standalone = true,
+    onCancel = null,
 }) {
     const stageList = PIPELINE_STAGES;
     const navigate = useNavigate();
@@ -568,6 +569,16 @@ export default function AgentPipelineLoader({
                                 <span className="hidden sm:inline text-slate-300">•</span>
                                 <span>Do not refresh or close</span>
                             </div>
+                            {onCancel && (
+                                <button
+                                    type="button"
+                                    onClick={onCancel}
+                                    className="px-3 py-1 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs active:scale-95"
+                                >
+                                    <X size={13} />
+                                    Cancel Generation
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
