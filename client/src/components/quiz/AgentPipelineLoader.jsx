@@ -371,7 +371,9 @@ export default function AgentPipelineLoader({
         }
     }, [stage, stageLabel, stageList.length]);
 
-    const pct = Math.round(((activeStage + 1) / stageList.length) * 100);
+    // Scale active pipeline stages (0..7) from 12% to 94%.
+    // 100% is strictly reserved for when final validation completes and questions are delivered.
+    const pct = Math.min(94, Math.max(12, Math.round(((activeStage + 1) / stageList.length) * 94)));
     const currentStage = stageList[activeStage];
     const CurrentIcon = currentStage.icon;
 

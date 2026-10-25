@@ -3710,7 +3710,7 @@ exports.generateQuizQuestions = async (req, res) => {
 
         } catch (err) {
             console.error('❌ [GenerateQuizQuestions Background Error]:', err.message);
-            const taskObj = getTaskFromMgr(taskId);
+            const taskObj = getTask(taskId);
             const resolvedCode = resolveGenerationErrorCode(err, taskObj?.pipelineResult || err.pipelineResult);
             failTask(taskId, err.message, resolvedCode);
         }

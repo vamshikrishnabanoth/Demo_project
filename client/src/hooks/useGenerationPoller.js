@@ -89,8 +89,14 @@ export default function useGenerationPoller() {
                 }
                 // RUNNING: continue polling
             } catch (err) {
-                // Network error: don't stop — keep retrying
                 console.warn('[Poller] Poll error:', err.message);
+                if (err.response?.status === 404 || err.response?.status === 410) {
+                    stopPolling();
+                    const msg = 'Task session expired. Please click generate again.';
+                    setError(msg);
+                    setErrorCode('EXPIRED');
+                    if (onErrorRef.current) onErrorRef.current(msg, 'EXPIRED');
+                }
             }
         };
 

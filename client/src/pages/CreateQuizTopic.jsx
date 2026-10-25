@@ -466,9 +466,11 @@ export default function CreateQuizTopic() {
             setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000));
         }, 1000);
 
+        let consecutive404s = 0;
         const doPoll = async () => {
             try {
                 const res = await api.get(`/quiz/generate/status/${taskId}`);
+                consecutive404s = 0;
                 const { status, stage: s, stageLabel: sl, representation_mode: rm, result, error: e, errorCode: ec } = res.data;
                 if (s !== undefined) setStage(s);
                 if (sl) setStageLabel(sl);
@@ -487,6 +489,17 @@ export default function CreateQuizTopic() {
                 }
             } catch (err) {
                 console.warn('Polling error:', err);
+                const httpStatus = err.response?.status;
+                if (httpStatus === 404 || httpStatus === 410) {
+                    consecutive404s++;
+                    if (consecutive404s >= 3) {
+                        stopPolling();
+                        const errMsg = 'Task session expired. Please click "Generate Assessment" to generate your quiz.';
+                        setPollError(errMsg);
+                        setGenerationError({ message: errMsg, code: 'EXPIRED' });
+                        if (onError) onError(errMsg, 'EXPIRED');
+                    }
+                }
             }
         };
 
