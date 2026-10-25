@@ -309,7 +309,7 @@ class LectureIntelligence {
         }
 
         // Worked code trace / multi-step diagnostic scenario (discounted if code excluded)
-        const isCodeTrace = !isCodeExcluded && (hasPracticalTraces && hasConceptMechanism && def.length >= 80);
+        const isCodeTrace = !isCodeExcluded && (hasPracticalTraces && hasConceptMechanism && (def.length >= 40 || (def.length + mech.length >= 60)));
         if (isCodeTrace) {
           codeTraceCount += 1;
           operationEvidenceTrail.push({
@@ -342,11 +342,11 @@ class LectureIntelligence {
       totalHard = Math.min(2, causalHard + critiqueHard + proofHard + invariantHard + codeHard);
     } else {
       // Standard / full lecture: concepts contribute their validated reasoning operations
-      const causalHard = Math.min(Math.ceil(op5Count / 2), 4);
-      const critiqueHard = Math.min(Math.ceil(op6Count / 2), 4);
-      const proofHard = Math.min(op4Count, 5);
-      const invariantHard = Math.min(op1Count, 5);
-      const codeHard = Math.min(codeTraceCount, 3);
+      const causalHard = Math.min(Math.ceil(op5Count / 2), 6);
+      const critiqueHard = Math.min(Math.ceil(op6Count / 2), 6);
+      const proofHard = Math.min(op4Count, 8);
+      const invariantHard = Math.min(op1Count, 8);
+      const codeHard = Math.min(codeTraceCount, 8);
 
       totalHard = causalHard + critiqueHard + proofHard + invariantHard + codeHard;
     }
@@ -687,7 +687,7 @@ class LectureIntelligence {
     const totalSec = totalDurationSec || (hasTimingData ? Math.max(60, Math.round((wordCount / 135) * 60)) : null);
     const chapters = [];
     const focusPills = Array.isArray(detectedFocus) && detectedFocus.length > 0
-      ? detectedFocus.filter(t => t && t.length >= 3 && !/^(item|topic|concept)/i.test(t))
+      ? detectedFocus.filter(t => t && t.length >= 3 && !/^(item|topic|concept|core curriculum|academic curriculum|mean|class|any kind|particular node|delete this node|at every node|root equal equal|saving the|doing any|previous commit|all the)/i.test(t))
       : ['Core Principles', 'Operational Mechanics', 'State Tracing', 'Edge Cases'];
 
     const chapterArchetypes = [
@@ -1176,6 +1176,26 @@ ${promptEvidence}`;
           inputModality: modality,
           sourceText: rawText
         });
+
+        // Calibrate chapter timestamps across full lecture duration if timing data is available
+        if (hasTimingData && Array.isArray(parsed.chapters) && parsed.chapters.length > 0) {
+          const totalDurationSec = this._resolveTotalDurationSeconds(segments, fileName, wordCount, hasTimingData, duration);
+          if (totalDurationSec && totalDurationSec > 60) {
+            const count = parsed.chapters.length;
+            const lastCh = parsed.chapters[count - 1];
+            const lastEnd = Number(lastCh.end_seconds || 0);
+            if (lastEnd < totalDurationSec * 0.75 || !lastCh.end_seconds) {
+              parsed.chapters.forEach((ch, idx) => {
+                const sSec = Math.round((idx * totalDurationSec) / count);
+                const eSec = Math.round(((idx + 1) * totalDurationSec) / count);
+                ch.start_seconds = sSec;
+                ch.end_seconds = eSec;
+                ch.timestamp_start = this.formatTimestamp(sSec);
+                ch.timestamp_end = this.formatTimestamp(eSec);
+              });
+            }
+          }
+        }
 
         if (val.valid) {
           this.saveToCache(cacheKey, parsed);

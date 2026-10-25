@@ -958,10 +958,13 @@ class DepthAnalyzer {
     const pronounRatio = personalPronouns / totalWordCount;
 
     // High ratio of personal pronouns without academic terms indicates personal conversation or administrative address
-    if (pronounRatio > 0.10) {
+        // High ratio of personal pronouns without academic terms indicates personal conversation or administrative address.
+    // In spoken classroom lectures, teachers naturally use 15-25% personal pronouns ("we", "you", "I").
+    // Only classify as uncertain if pronoun ratio exceeds 30% AND there are 0 technical/curricular indicators.
+    if (pronounRatio > 0.30 && !hasAcademic && !hasCode && !hasCurricularSegments) {
       return {
         classification: 'UNCERTAIN',
-        reason: 'UNCERTAIN_CURRICULAR_CONTENT: High ratio of first/second-person personal pronouns indicates conversational narrative rather than objective curriculum.'
+        reason: 'UNCERTAIN_CURRICULAR_CONTENT: High ratio of conversational dialogue without objective educational curriculum.'
       };
     }
 

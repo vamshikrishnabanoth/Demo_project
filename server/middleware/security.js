@@ -59,7 +59,7 @@ function requestIdMiddleware(req, res, next) {
  * - Truncates excessively long strings (>10KB) to prevent payload bombs
  * - Does NOT modify non-string values (numbers, booleans, etc.)
  */
-function sanitizeValue(value, maxLength = 10000) {
+function sanitizeValue(value, maxLength = 5000000) {
     if (typeof value === 'string') {
         return value
             // Remove null bytes
@@ -89,7 +89,7 @@ function sanitizeValue(value, maxLength = 10000) {
 
 function sanitizeInput(req, res, next) {
     if (req.body && typeof req.body === 'object') {
-        req.body = sanitizeValue(req.body);
+        req.body = sanitizeValue(req.body, 5000000);
     }
     if (req.query && typeof req.query === 'object') {
         req.query = sanitizeValue(req.query, 2000);
@@ -203,6 +203,7 @@ function securityEventLogger(req, res, next) {
 module.exports = {
     requestIdMiddleware,
     sanitizeInput,
+    sanitizeValue,
     sqlInjectionDetector,
     securityEventLogger,
     logSecurityEvent,

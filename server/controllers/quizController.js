@@ -270,7 +270,15 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
     if (fileSizeBytes > 24.5 * 1024 * 1024) {
         console.log(`🎙️ Oversized audio (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Running fast mono voice compression pass for single-pass Whisper...`);
         try {
-            const comp = await compressForWhisper(filePath, { bitrate: '36k' });
+            let targetVoiceBitrate = '32k';
+            if (probedDuration && probedDuration > 5400) {
+                targetVoiceBitrate = '20k'; // 1.5h+ lecture: 20kbps fits in ~15MB (< 24.5MB)
+            } else if (probedDuration && probedDuration > 2700) {
+                targetVoiceBitrate = '24k'; // 45m+ lecture: 24kbps fits in ~18MB (< 24.5MB)
+            } else if (fileSizeBytes > 100 * 1024 * 1024) {
+                targetVoiceBitrate = '22k';
+            }
+            const comp = await compressForWhisper(filePath, { bitrate: targetVoiceBitrate });
             if (comp && comp.sizeBytes <= 24.5 * 1024 * 1024) {
                 effectiveFilePath = comp.compressedPath;
                 effectiveFileSize = comp.sizeBytes;
