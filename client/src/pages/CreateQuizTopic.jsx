@@ -191,6 +191,7 @@ export default function CreateQuizTopic() {
     const [lectureIntel, setLectureIntel] = useState(null);
 
     const isTopicOnly = inputs.length > 0 && inputs.every(inp => inp.type === 'text');
+    const isPureTopic = isTopicOnly;
     const hasAudio = inputs.some(inp => inp.type === 'voice' || inp.type === 'audio');
     const hasDocFiles = inputs.some(inp => inp.type === 'document' || inp.type === 'file' || inp.type === 'pdf' || inp.file || inp.documentId);
     const isHybrid = hasAudio && hasDocFiles;
