@@ -337,13 +337,36 @@ ${evidenceContext}
         });
       }
 
-      // Validate cognitive calibration
-      if (parsed.cognitiveAudit && parsed.cognitiveAudit.isCalibrated === false) {
+      // Hard enforcement: Deterministic TIER_COGNITIVE_MISMATCH must never be overwritten by LLM Critic
+      const hasDeterministicMismatch = Array.isArray(preAudit.failureReasons) &&
+        preAudit.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      const hasCriticMismatch = parsed.cognitiveAudit && parsed.cognitiveAudit.isCalibrated === false;
+
+      if (hasDeterministicMismatch || hasCriticMismatch) {
+        if (!Array.isArray(parsed.failureReasons)) {
+          parsed.failureReasons = parsed.failureReason ? [parsed.failureReason] : [];
+        }
         parsed.status = 'FAIL';
         parsed.passed = false;
         parsed.verdict = 'FAIL';
         if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH)) {
           parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+        }
+        parsed.failureReason = preAudit.failureReason || parsed.failureReason || EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH;
+        if (!parsed.cognitiveAudit || typeof parsed.cognitiveAudit !== 'object') {
+          parsed.cognitiveAudit = {
+            requestedDifficulty: requestedTier,
+            intendedCognitiveOperation: intendedOp,
+            evaluatedCognitiveDemand: preAudit.cognitiveAudit?.evaluatedCognitiveDemand || 'RECALL',
+            isCalibrated: false,
+            mismatchDetails: preAudit.cognitiveAudit?.mismatchDetails || 'Question cognitive calibration failed target difficulty tier'
+          };
+        } else {
+          parsed.cognitiveAudit.isCalibrated = false;
+          if (hasDeterministicMismatch && preAudit.cognitiveAudit?.evaluatedCognitiveDemand) {
+            parsed.cognitiveAudit.evaluatedCognitiveDemand = preAudit.cognitiveAudit.evaluatedCognitiveDemand;
+            parsed.cognitiveAudit.mismatchDetails = preAudit.cognitiveAudit.mismatchDetails || parsed.cognitiveAudit.mismatchDetails;
+          }
         }
       }
 
@@ -1101,8 +1124,16 @@ ${evidenceContext}
       /\b(?:which (?:[a-z0-9_-]+\s+)*(?:format|instruction format|frame format|packet format)\s+(?:encodes|represents|contains|specifies))\b/i.test(qLower)
     );
 
+    // Taxonomic / Definitional Justification Ask (stem or options justifying category labels by textbook definitions)
+    const hasTaxonomicClassificationAsk = (
+      /\b(?:why (?:is|are|does|do)\b[^\n\r?]*?\b(?:classif(?:ied|ication)|categoriz(?:ed|ation)|designat(?:ed|ion)|considered|termed|labeled|defined as)\b)/i.test(qLower) ||
+      /\b(?:why does this classification hold|which metric definition must be adopted|what type of (?:[a-z0-9_-]+\s+)*(?:tree|structure|algorithm|grammar|graph|node|network|protocol) is being described)\b/i.test(qLower) ||
+      options.some(o => /\b(?:satisfying|fulfills?|meets?)\s+(?:the\s+)?(?:[a-z0-9_-]+\s+)*(?:definition|criteria|criterion|rule)|by (?:the\s+)?definition\b/i.test(o || ''))
+    );
+
     const hasDefinitionalAsk = (
       hasPropertyOrFormatRecallAsk ||
+      hasTaxonomicClassificationAsk ||
       /\b(?:what is the (?:definition|term|name|meaning)|define\b|is defined as|what is meant by|which term refers to)\b/i.test(qLower) ||
       /\b(?:what is (?:an?|the) [a-z0-9_-]+(?:\?|$))/i.test(qLower) ||
       /\b(?:the (?:primary )?(?:role|purpose|function) of [a-z0-9_-]+ is\b)/i.test(qLower) ||
