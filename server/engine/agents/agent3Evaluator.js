@@ -1152,7 +1152,7 @@ ${evidenceContext}
     // ──────────────────────────────────────────────────────────────────────────
 
     // Guardrail 1: Pseudo-scenarios asking for pure definition or naming
-    if (hasDefinitionalAsk && (!hasAnomalyOrConflict || optionsAreSingleTerms) && !hasConcreteTransactionSchedule && !hasConcreteInstructionSequence && !hasReferenceOrTraversalSequence && !hasScheduleFailureAsk) {
+    if (hasDefinitionalAsk && (!hasAnomalyOrConflict || hasTaxonomicClassificationAsk || optionsAreSingleTerms) && !hasConcreteTransactionSchedule && !hasConcreteInstructionSequence && !hasReferenceOrTraversalSequence && !hasScheduleFailureAsk) {
       return {
         demand: 'RECALL',
         reasoning: 'Interrogative ask targets factual definition, naming, or property/format specification, without operational execution state.'
@@ -1174,10 +1174,10 @@ ${evidenceContext}
     // Requires concrete operational premises/states + anomaly/diagnostic ask + non-trivial reasoning.
     // For schedules, strictly requires an explicit failure/diagnostic ask to prevent misclassifying traces as diagnosis.
     // Sequences asking for order of operations are classified as TRACE, not DIAGNOSE.
-    const isGenuineDiagnosticScenario = !hasExecutionSequenceAsk && (
+    const isGenuineDiagnosticScenario = !hasExecutionSequenceAsk && !hasDefinitionalAsk && (
       (hasScheduleFailureAsk && !optionsAreSingleTerms) ||
       (hasConcreteStateValues && !hasConcreteTransactionSchedule && (hasAnomalyOrConflict || hasDiagnosticAsk) && !optionsAreSingleTerms) ||
-      (hasDiagnosticAsk && (hasAnomalyOrConflict || optionsContainCausalReasoning) && !hasDefinitionalAsk)
+      (hasDiagnosticAsk && (hasAnomalyOrConflict || optionsContainCausalReasoning))
     );
 
     if (isGenuineDiagnosticScenario) {
