@@ -861,6 +861,23 @@ function resolveGenerationErrorCode(err, pipelineResult) {
     const rawMsg = (err?.message || (typeof err === 'string' ? err : '')).toLowerCase();
     const targets = pipelineResult?.targetResults || err?.pipelineResult?.targetResults || [];
 
+    // 0. Non-academic content detection
+    if (
+        err?.code === 'NON_ACADEMIC_CONTENT' ||
+        err?.errorCode === 'NON_ACADEMIC_CONTENT' ||
+        pipelineResult?.errorCode === 'NON_ACADEMIC_CONTENT' ||
+        rawMsg.includes('non_academic_content') ||
+        rawMsg.includes('non-academic content') ||
+        rawMsg.includes('non academic content') ||
+        rawMsg.includes('fictional') ||
+        rawMsg.includes('cartoon') ||
+        rawMsg.includes('pop song') ||
+        rawMsg.includes('song lyrics') ||
+        rawMsg.includes('casual conversational dialogue')
+    ) {
+        return 'NON_ACADEMIC_CONTENT';
+    }
+
     // 1. Provider rate limiting / congestion / upstream failures
     const hasProviderFailure = targets.some(t =>
         t?.fulfillmentStatus === 'UNFULFILLED_PROVIDER_FAILURE' ||
@@ -1045,6 +1062,36 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             inputModality: isTopicMode ? 'TOPIC_SYNTHESIS' : (inputModality || 'UNIFIED'),
             topic: (inputs && inputs[0] && inputs[0].content && inputs[0].type === 'text') ? inputs[0].content.trim() : (content || '')
         };
+
+        // Guard against non-academic audio or topics before launching heavy pipeline
+        if (voiceText && voiceText.trim().length > 10) {
+            const vAnalysis = depthAnalyzer.analyzeLecture(voiceText, { sourceModality: 'VOICE' });
+            if (vAnalysis.isAcademic === false) {
+                const failMsg = vAnalysis.reason || 'Question generation : Non-academic content detected. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.';
+                const err = new Error(failMsg);
+                err.code = 'NON_ACADEMIC_CONTENT';
+                err.errorCode = 'NON_ACADEMIC_CONTENT';
+                if (taskId) {
+                    failTask(taskId, failMsg, 'NON_ACADEMIC_CONTENT');
+                }
+                throw err;
+            }
+        }
+
+        const candidateTopic = sessionInputs.topic || (docTexts[0] || '');
+        if (isTopicMode && candidateTopic && candidateTopic.trim().length > 2) {
+            const tAnalysis = depthAnalyzer.analyzeLecture(candidateTopic, { sourceModality: 'TOPIC' });
+            if (tAnalysis.isAcademic === false) {
+                const failMsg = tAnalysis.reason || 'Question generation : Non-academic content detected. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.';
+                const err = new Error(failMsg);
+                err.code = 'NON_ACADEMIC_CONTENT';
+                err.errorCode = 'NON_ACADEMIC_CONTENT';
+                if (taskId) {
+                    failTask(taskId, failMsg, 'NON_ACADEMIC_CONTENT');
+                }
+                throw err;
+            }
+        }
 
         const stageLabelMap = {
             'INGESTION': { stage: 0, label: 'Ingesting & Analyzing Material' },
@@ -2986,6 +3033,7 @@ exports.generateQuizQuestions = async (req, res) => {
             console.log('========================================================\n');
 
             let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts, startPage, endPage, isolated_narratives, questionStyle, deficitPolicy } = req.body;
+            deficitPolicy = deficitPolicy || 'FILL_WITH_MEDIUM';
             let start = startPage ? parseInt(startPage) : 1;
             let end = endPage ? parseInt(endPage) : 999;
             let parsedIsolatedNarratives = null;
@@ -3645,13 +3693,15 @@ exports.generateQuizQuestions = async (req, res) => {
             if (!finalQuestions || !Array.isArray(finalQuestions) || finalQuestions.length === 0) {
                 const resolvedCode = resolveGenerationErrorCode(null, pResult);
                 const rawMsg = finalTaskObj?.pipelineNotice || finalTaskObj?.error || (
-                    resolvedCode === 'PROVIDER_RATE_LIMITED'
-                        ? 'AI reasoning service is currently experiencing high demand or rate limits. Please retry in a few moments.'
-                        : resolvedCode === 'INSUFFICIENT_EVIDENCE'
-                            ? 'Could not generate questions grounded in the provided materials. The available instructional evidence was exhausted. Please add more lecture text or reduce the question count.'
-                            : resolvedCode === 'FAILED_VALIDATION'
-                                ? 'Generated candidate questions did not meet academic quality or verification gates. Please retry or adjust prompt styles.'
-                                : 'No grounded questions could be generated from the provided material.'
+                    resolvedCode === 'NON_ACADEMIC_CONTENT'
+                        ? 'Question generation : Non-academic content detected. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.'
+                        : resolvedCode === 'PROVIDER_RATE_LIMITED'
+                            ? 'AI reasoning service is currently experiencing high demand or rate limits. Please retry in a few moments.'
+                            : resolvedCode === 'INSUFFICIENT_EVIDENCE'
+                                ? 'Could not generate questions grounded in the provided materials. The available instructional evidence was exhausted. Please add more lecture text or reduce the question count.'
+                                : resolvedCode === 'FAILED_VALIDATION'
+                                    ? 'Generated candidate questions did not meet academic quality or verification gates. Please retry or adjust prompt styles.'
+                                    : 'No grounded questions could be generated from the provided material.'
                 );
                 failTask(taskId, rawMsg, resolvedCode);
                 return;
@@ -5058,6 +5108,7 @@ exports.analyzeDepth = async (req, res) => {
             advisoryRationale = analysis.reason || 'Cannot recommend questions: Non-academic content.';
             recommendedQuestionCount = 0;
             recommendedQuestions = '0 Questions';
+
         } else {
             // Step 1: Check if primary analysis yielded verified capacity
             let validCap = (evCap && evCap.distinctConceptCount > 0 && evCap.totalDefensibleCapacity > 0) ? evCap : null;
@@ -5299,6 +5350,17 @@ exports.transcribe = async (req, res) => {
         }
 
         const depthAnalysis = depthAnalyzer.analyzeLecture(transcript);
+
+        if (depthAnalysis.isAcademic === false) {
+            const failMsg = depthAnalysis.reason || 'Question generation : Non-academic content detected. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.';
+            return res.status(422).json({
+                isAcademic: false,
+                isCurricular: false,
+                msg: failMsg,
+                reason: failMsg,
+                error: failMsg
+            });
+        }
 
         // Compute smart concise title (3-6 words, like ChatGPT) + human duration
         const audioDuration = result ? (result.duration || 0) : 0;

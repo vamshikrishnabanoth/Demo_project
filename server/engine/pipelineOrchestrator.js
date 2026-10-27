@@ -85,6 +85,32 @@ class PipelineOrchestrator {
       const t1 = Date.now();
       evidencePackage = evidencePackager.packageSessionEvidence(sessionInputs);
       evidencePackage.sessionId = sessionId;
+
+      if (evidencePackage.isAcademic === false) {
+        const failureReason = evidencePackage.academicFailureReason || 'Question generation : Non-academic content detected. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.';
+        await trace.recordStage({
+          stageOrder: '02',
+          stageName: 'EVIDENCE_PACKAGE',
+          input: { sessionId },
+          processing: { operations: ['Academic content gate check'] },
+          decisions: [failureReason],
+          validation: { status: 'FAIL', checks: ['Academic content verification failed'] },
+          output: { status: 'REJECTED_NON_ACADEMIC', reason: failureReason },
+          durationMs: Date.now() - t1
+        });
+        const failErr = new Error(failureReason);
+        failErr.code = 'NON_ACADEMIC_CONTENT';
+        failErr.errorCode = 'NON_ACADEMIC_CONTENT';
+        failErr.pipelineResult = {
+          pipelineStatus: 'FAILED',
+          questions: [],
+          notice: failureReason,
+          error: failureReason,
+          errorCode: 'NON_ACADEMIC_CONTENT'
+        };
+        throw failErr;
+      }
+
       const voiceEmphasis = evidencePackage.voiceEmphasis || {};
 
       const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
@@ -335,12 +361,12 @@ class PipelineOrchestrator {
 
       // Bounded Concurrency Worker Pool:
       // Controlled concurrency (default 2, bounded [1, 3]) balances throughput and Groq rate-limits
-      const defaultConcurrency = 2;
+      const defaultConcurrency = 3;
       const concurrencyLimit = Math.max(1, Math.min(5, parseInt(process.env.GENERATION_CONCURRENCY, 10) || defaultConcurrency));
       let activeWorkers = 0;
 
       async function processSingleTarget(currentTarget, workerId) {
-        const tier = currentTarget.targetDifficulty || 'Medium';
+        let tier = currentTarget.targetDifficulty || 'Medium';
         const targetStartTime = Date.now();
         const currentQNum = passingQuestions.length + 1;
 
@@ -353,40 +379,53 @@ class PipelineOrchestrator {
         );
 
         if (isPreIdentifiedDeficit) {
-          totalGenerationAttempts++;
-          if (byTier[tier]) byTier[tier].generated++;
-          if (byTier[tier]) byTier[tier].unfulfilled++;
+          if (sessionInputs.deficitPolicy === 'FILL_WITH_MEDIUM' && passingQuestions.length < requestedCount) {
+            currentTarget.targetDifficulty = 'Medium';
+            currentTarget.isCapacityLimited = false;
+            currentTarget.isDeficitFill = true;
+            delete currentTarget.capacityLimitation;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint('Medium', currentTarget.dimension || 'Conceptual');
+            currentTarget.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation || 'EXPLAIN_MECHANISM';
+            currentTarget.bloomLevel = cognitiveBp.bloomLevel || 'Understand / Apply';
+            currentTarget.operationalGuidance = cognitiveBp.operationalGuidance || 'Require operational reasoning about mechanisms and state transitions.';
+            currentTarget.instruction = `${currentTarget.operationalGuidance} Test concept: ${currentTarget.concept}.`;
+            tier = 'Medium';
+          } else {
+            totalGenerationAttempts++;
+            if (byTier[tier]) byTier[tier].generated++;
+            if (byTier[tier]) byTier[tier].unfulfilled++;
 
-          const deficitMCQ = agent2Generator.generateQuestionFallback(currentTarget, evidencePackage);
-          const evalDecision = await agent3Evaluator.evaluateQuestion(deficitMCQ, currentTarget, evidencePackage);
+            const deficitMCQ = agent2Generator.generateQuestionFallback(currentTarget, evidencePackage);
+            const evalDecision = await agent3Evaluator.evaluateQuestion(deficitMCQ, currentTarget, evidencePackage);
 
-          const deficitRecord = {
-            targetId: currentTarget.targetId,
-            concept: currentTarget.concept,
-            subtopic: currentTarget.subtopic || 'General Topic',
-            targetDifficulty: currentTarget.targetDifficulty,
-            intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
-            status: 'UNFULFILLED_CAPACITY_DEFICIT',
-            reason: currentTarget.capacityLimitation?.reason || deficitMCQ.message || 'Capacity deficit: lecture evidence exhausted without hallucinating un-taught concepts',
-            attempts: 1,
-            repairAttempted: false,
-            repairSuccessful: false,
-            mcq: deficitMCQ,
-            evalDecision
-          };
+            const deficitRecord = {
+              targetId: currentTarget.targetId,
+              concept: currentTarget.concept,
+              subtopic: currentTarget.subtopic || 'General Topic',
+              targetDifficulty: currentTarget.targetDifficulty,
+              intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
+              status: 'UNFULFILLED_CAPACITY_DEFICIT',
+              reason: currentTarget.capacityLimitation?.reason || deficitMCQ.message || 'Capacity deficit: lecture evidence exhausted without hallucinating un-taught concepts',
+              attempts: 1,
+              repairAttempted: false,
+              repairSuccessful: false,
+              mcq: deficitMCQ,
+              evalDecision
+            };
 
-          await trace.recordStage({
-            stageOrder: `04_T${currentTarget.targetId}`,
-            stageName: 'CAPACITY_DEFICIT_RECORDED',
-            input: { targetId: currentTarget.targetId, concept: currentTarget.concept, difficulty: tier },
-            decisions: [`Target ${currentTarget.targetId} ("${currentTarget.concept}") recorded as explicit capacity deficit: ${deficitRecord.reason}`],
-            rulesApplied: ['Honest Capacity Limitation Rule: Never fabricate complexity or downgrade difficulty silently'],
-            output: { status: 'UNFULFILLED_CAPACITY_DEFICIT', reason: deficitRecord.reason },
-            validation: { status: 'PASS', checks: ['Capacity deficit preserved honestly'] },
-            durationMs: Date.now() - targetStartTime
-          });
+            await trace.recordStage({
+              stageOrder: `04_T${currentTarget.targetId}`,
+              stageName: 'CAPACITY_DEFICIT_RECORDED',
+              input: { targetId: currentTarget.targetId, concept: currentTarget.concept, difficulty: tier },
+              decisions: [`Target ${currentTarget.targetId} ("${currentTarget.concept}") recorded as explicit capacity deficit: ${deficitRecord.reason}`],
+              rulesApplied: ['Honest Capacity Limitation Rule: Never fabricate complexity or downgrade difficulty silently'],
+              output: { status: 'UNFULFILLED_CAPACITY_DEFICIT', reason: deficitRecord.reason },
+              validation: { status: 'PASS', checks: ['Capacity deficit preserved honestly'] },
+              durationMs: Date.now() - targetStartTime
+            });
 
-          return { status: 'DEFICIT', deficitRecord, currentTarget, tier, targetStartTime };
+            return { status: 'DEFICIT', deficitRecord, currentTarget, tier, targetStartTime };
+          }
         }
 
         // 2. Generation Step (Agent 2)
@@ -512,6 +551,7 @@ class PipelineOrchestrator {
               ...currentTarget,
               targetId: `${currentTarget.targetId}_cal`,
               targetDifficulty: 'Medium',
+              isCapacityLimited: false,
               isDeficitFill: true,
               originalRequestedDifficulty: tier
             };
@@ -813,13 +853,13 @@ class PipelineOrchestrator {
           const fallback = agent1Planner._buildFallbackPlan(
             sessionInputs.voiceTranscript || evidencePackage.unifiedRawContent || '',
             requestedDifficulty,
-            neededMore + 3,
+            neededMore + 5,
             evidencePackage.categoryWeights || {},
             evidencePackage.lectureDepth || {},
             evidencePackage.detectedFocus || [],
             evidencePackage
           );
-          for (const ft of fallback.assessmentTargets) {
+          for (const ft of (fallback.assessmentTargets || [])) {
             const cLower = (ft.concept || '').toLowerCase().trim();
             const facetSig = `${cLower}::${ft.dimension || ''}`;
             if (!seenConcepts.has(facetSig)) {
@@ -827,6 +867,48 @@ class PipelineOrchestrator {
               ft.targetId = `T_REP_0${candidateQueue.length + 1}`;
               candidateQueue.push(ft);
               if (candidateQueue.length >= neededMore) break;
+            }
+          }
+
+          // Guaranteed Queue Padding: Decompose curriculum concepts across distinct engineering facets
+          if (candidateQueue.length < neededMore) {
+            const baseConcepts = Array.from(new Set([
+              ...(evidencePackage.detectedFocus || []),
+              ...(Array.isArray(plan?.subtopics) ? plan.subtopics : []),
+              plan?.mainTopic || 'Core Subject Matter'
+            ])).filter(c => c && c.length > 2);
+
+            const replenishmentFacets = [
+              { name: 'Core Foundations & Governing Principles', dim: 'Conceptual', op: 'RECALL' },
+              { name: 'Operational Mechanics & Execution Steps', dim: 'Flow / Trace', op: 'TRACE' },
+              { name: 'State Transitions & Formulations', dim: 'Flow / Trace', op: 'TRACE' },
+              { name: 'Boundary Conditions & Edge Cases', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
+              { name: 'Applied Problem-Solving Scenarios', dim: 'Application', op: 'APPLY' },
+              { name: 'Design Tradeoffs & Comparative Analysis', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
+              { name: 'System Invariants & Bug Diagnostics', dim: 'Cause / Effect', op: 'EXPLAIN' },
+              { name: 'Practical System Behavior', dim: 'Conceptual', op: 'EXPLAIN' }
+            ];
+
+            let facetIndex = iterationCount;
+            while (candidateQueue.length < neededMore) {
+              const sub = baseConcepts[facetIndex % baseConcepts.length] || 'Core Subject Matter';
+              const facet = replenishmentFacets[facetIndex % replenishmentFacets.length];
+              facetIndex++;
+              const repTarget = {
+                targetId: `T_REP_0${candidateQueue.length + 1}`,
+                concept: `${sub} (${facet.name})`,
+                subtopic: sub,
+                trajectoryPhase: 'MID',
+                dimension: facet.dim,
+                cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate' : (requestedDifficulty === 'Medium' ? 'Apply' : 'Understand'),
+                targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : (requestedDifficulty || 'Medium'),
+                intendedCognitiveOperation: facet.op,
+                isCapacityLimited: false,
+                supportingEvidence: evidencePackage.unifiedRawContent || evidencePackage.curricularContent || '',
+                instruction: `Assess engineering principles and applications for ${sub}: ${facet.name}.`,
+                negativeBoundaries: evidencePackage.negativeBoundaries || []
+              };
+              candidateQueue.push(repTarget);
             }
           }
         }

@@ -160,7 +160,7 @@ const FICTIONAL_CARTOON_PATTERNS = [
   /\b(defeat\s+the\s+monster|save\s+the\s+village|save\s+the\s+kingdom|destroy\s+the\s+evil|king\s+indraverma)\b/i
 ];
 
-// Entertainment Drama / Soap Script / Casual Non-Educational Dialogue Patterns
+// Entertainment Drama / Soap Script / Casual Non-Educational Dialogue Patterns & Pop Music
 const ENTERTAINMENT_DRAMA_PATTERNS = [
   /\b(vlog|vlogger|vlogging|unboxing|merchandise|merch\b|weekend trip|vacation trip|subscribe to the channel|bell notification|hit that bell|welcome back to (?:the|my) (?:vlog|channel))\b/i,
   /\b(accidentally (?:sewed|ripped|dropped|cut|broke)|sewed the (?:sleeve|hem|dress|shirt)|ripped it out)\b/i,
@@ -172,7 +172,14 @@ const ENTERTAINMENT_DRAMA_PATTERNS = [
   /\b(went to the party|drinking beer|at the club|hangover|getting drunk|shots of tequila)\b/i,
   /\b(shopping at the mall|bought a dress|delicious dinner|cooked dinner|washed the dishes|laundry)\b/i,
   /\b(movie was (?:awesome|terrible)|favorite actor|hollywood|pop star|celebrity gossip)\b/i,
-  /\b(screamed loudly|started crying|tears in (?:his|her) eyes|whispered softly)\b/i
+  /\b(screamed loudly|started crying|tears in (?:his|her) eyes|whispered softly)\b/i,
+  // Pop music, song lyrics, artists & music video patterns
+  /\b(justin\s+bieber|taylor\s+swift|selena\s+gomez|ariana\s+grande|katy\s+perry|ed\s+sheeran|billie\s+eilish|bruno\s+mars|dua\s+lipa|kanye\s+west|miley\s+cyrus|harry\s+styles|shawn\s+mendes|post\s+malone|cardi\s+b|nicki\s+minaj|olivia\s+rodrigo|imagine\s+dragons|blackpink|bts\s+army|maroon\s+5|backstreet\s+boys|one\s+direction)\b/i,
+  /\b(official\s+(?:music\s+)?video|lyric\s+video|official\s+audio|album\s+track|song\s+lyrics|pop\s+song|acoustic\s+version|single\s+track|remix\s+feat|soundtrack\s+version)\b/i,
+  /\b(?:\[(?:verse\s*\d*|chorus|bridge|pre-chorus|hook|outro|intro)\]|\((?:verse|chorus|bridge|hook)\))\b/i,
+  /\b(is\s+it\s+too\s+late(?:\s+now)?\s+to\s+say\s+sorry|missing(?:\s+more\s+than)?\s+just\s+your\s+body|let\s+you\s+down|one\s+more\s+shot\s+at\s+second\s+chances|call\s+a\s+referee|take\s+the\s+blame|sorry\s+now|say\s+that\s+i'?m\s+sorry)\b/i,
+  /\b(baby\s+baby|oh-oh-oh+|ooh\s+yeah+|la-la-la+|na-na-na+|woah-oh+|singing\s+along|dance\s+with\s+me|kiss\s+me\s+baby|love\s+me\s+like\s+you\s+do|hit\s+me\s+baby\s+one\s+more\s+time)\b/i,
+  /\b(love\s+song|heartbreak\s+song|romantic\s+track|karaoke\s+version|song\s+by\s+[a-z]+)\b/i
 ];
 
 class DepthAnalyzer {
@@ -981,6 +988,44 @@ class DepthAnalyzer {
     const raw = (text || '').trim();
     const sourceModality = options.sourceModality || options.modality || 'UNIFIED';
     if (sourceModality === 'TOPIC' && raw.length >= 3) {
+      const topicLower = raw.toLowerCase();
+      const isFictionalOrEntertainment = this._isFictionalOrCartoonNarrative(topicLower, raw) ||
+        ENTERTAINMENT_DRAMA_PATTERNS.some(p => p.test(topicLower)) ||
+        FICTIONAL_CARTOON_PATTERNS.some(p => p.test(topicLower));
+
+      if (isFictionalOrEntertainment && !this._hasAcademicDomainWord(topicLower) && !this._isCodeOrTechnicalSnippet(raw)) {
+        const friendlyReason = 'Question generation : Non-academic content detected. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.';
+        return {
+          sourceModality,
+          isAcademic: false,
+          isCurricular: false,
+          academicClassification: 'NON_ACADEMIC',
+          reason: friendlyReason,
+          teachingValueScore: 0,
+          lectureDepth: {
+            rating: 'Non-Academic',
+            score: 0,
+            characteristics: { conceptExplanation: 'None', reasoning: 'None', examples: 'None', procedures: 'None' },
+            breakdown: {
+              earnedRubric: [],
+              deductions: [],
+              totalLostPoints: 100,
+              coveredAspects: [],
+              missingAspects: ['Assessable subject matter curriculum'],
+              actionableTips: ['Please enter an academic subject, topic, or course curriculum.'],
+              recommendedQuestionCount: 0,
+              recommendedQuestionsRationale: 'Cannot generate questions on non-academic entertainment or music.'
+            }
+          },
+          detectedFocus: [],
+          retainedSegments: [],
+          curricularSegments: [],
+          pedagogicalSegments: [],
+          adminSegments: [],
+          discardedSegments: []
+        };
+      }
+
       return {
         sourceModality,
         isAcademic: true,
@@ -1007,7 +1052,7 @@ class DepthAnalyzer {
         isAcademic: false,
         isCurricular: false,
         academicClassification: 'UNCERTAIN',
-        reason: 'INSUFFICIENT_CONTENT: The provided material is too short to evaluate.',
+        reason: 'Question generation : Non-academic content detected. The provided material is too short to evaluate.',
         teachingValueScore: 0,
         lectureDepth: {
           rating: 'Non-Academic',
@@ -1114,13 +1159,13 @@ class DepthAnalyzer {
     const hasAcademicSubstance = (curricularSegments.length >= 1 || detectedFocus.length >= 1 || hasAcademicLexicon || hasCodeOrTechnical || hasSyllabusHeader) && !isExplicitlyFictional && !isPredominantlyFictional && !isPredominantlyUnrelated;
 
     if (!hasAcademicSubstance) {
-      let reason = 'NON_ACADEMIC_CONTENT: The provided material does not contain assessable educational subject matter or curriculum concepts.';
+      let reason = 'Question generation : Non-academic content detected. (NON_ACADEMIC_CONTENT: The provided material does not contain assessable educational subject matter or curriculum concepts.)';
       if (isExplicitlyFictional || isPredominantlyFictional) {
-        reason = 'NON_ACADEMIC_CONTENT: The uploaded audio/video appears to be an animated cartoon, fictional entertainment narrative, or personal conversation. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.';
+        reason = 'Question generation : Non-academic content detected. (NON_ACADEMIC_CONTENT: The uploaded material appears to be an animated cartoon, fictional entertainment narrative, music lyrics, or personal conversation. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.)';
       } else if (isPurelyAdmin) {
-        reason = 'INSUFFICIENT_CURRICULAR_CONTENT: Material contains administrative logistics or casual chatter without assessable teaching concepts.';
+        reason = 'Question generation : Non-academic content detected. (INSUFFICIENT_CURRICULAR_CONTENT: Material contains administrative logistics or casual chatter without assessable teaching concepts.)';
       } else if (unrelatedSegments.length > 0 && curricularSegments.length === 0) {
-        reason = 'NON_ACADEMIC_CONTENT: Casual conversational dialogue without educational curriculum concepts.';
+        reason = 'Question generation : Non-academic content detected. (NON_ACADEMIC_CONTENT: Casual conversational dialogue or music lyrics without educational curriculum concepts.)';
       }
 
       return {

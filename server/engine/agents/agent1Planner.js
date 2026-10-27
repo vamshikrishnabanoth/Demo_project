@@ -2649,7 +2649,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
       const deficitCount = requestedHardCount - feasibleHardCount;
       if (deficitCount > 0) {
         if (deficitPolicy === 'FILL_WITH_MEDIUM') {
-          // Explicit teacher policy: fill remaining deficit with Medium questions
+          // Fill remaining deficit with deep Medium operational questions to fulfill 100% of requested count
           const remainingTargets = targets.filter(t => !finalTargets.some(f => f.concept === t.concept));
           for (let i = 0; i < deficitCount; i++) {
             const fallbackTarget = remainingTargets[i % (remainingTargets.length || 1)] || targets[i % targets.length];
@@ -2663,11 +2663,12 @@ Generate the curricular assessment plan strictly covering educational concepts w
               operationalGuidance: cognitiveBp.operationalGuidance,
               instruction: `${cognitiveBp.operationalGuidance} Test concept: ${fallbackTarget.concept}.`,
               isDeficitFill: true,
+              isCapacityLimited: false,
               originalRequestedDifficulty: 'Hard'
             });
           }
         } else {
-          // TEACHER IS KING: NO silent downgrade to Medium!
+          // TEACHER IS KING: Explicit FAIL_CLOSED mode
           // Mark deficit slots transparently
           const remainingTargets = targets.filter(t => !finalTargets.some(f => f.concept === t.concept));
           for (let i = 0; i < deficitCount; i++) {
@@ -3003,11 +3004,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
           allocatedHardCount: feasibleHardCount,
           reallocatedCount: deficitCount,
           reallocatedTo: 'Medium',
-          reason: `Filled ${deficitCount} deficit slots with Medium questions per teacher instruction due to evidence limits`,
+          reason: `Filled ${deficitCount} deficit slots with deep Medium operational questions to fulfill 100% of requested question count (${requestedCount})`,
           deficitStatus: null
         };
       } else {
-        // TEACHER IS KING: NO silent difficulty downgrade!
+        // Explicit FAIL_CLOSED mode
         allocatedMedium = 0;
         allocatedEasy = 0;
         capacityAudit = {
@@ -3071,11 +3072,12 @@ Generate the curricular assessment plan strictly covering educational concepts w
               instruction: `Assess operational understanding of ${fallbackTarget.concept}.${negConstraint}`,
               negativeBoundaries,
               isDeficitFill: true,
+              isCapacityLimited: false,
               originalRequestedDifficulty: 'Hard'
             });
           }
         } else {
-          // TEACHER IS KING: NO silent difficulty downgrade!
+          // Explicit FAIL_CLOSED mode
           const remainingTargets = targets.filter(t => !finalTargets.some(f => f.concept === t.concept));
           for (let i = 0; i < deficitCount; i++) {
             const conceptObj = remainingTargets[i] || targets[i % targets.length];
@@ -3409,6 +3411,20 @@ Generate the curricular assessment plan strictly covering educational concepts w
         target.capacityLimitation != null;
 
       if (isAlreadyDeficit) {
+        if (deficitPolicy === 'FILL_WITH_MEDIUM') {
+          nonDeficitCount++;
+          target.targetDifficulty = targetDiffLower === 'easy' ? 'Easy' : 'Medium';
+          target.intendedCognitiveOperation = 'EXPLAIN_MECHANISM';
+          target.bloomLevel = 'Understand / Apply';
+          target.operationalGuidance = 'Require operational reasoning about mechanisms, invariants, and state transitions.';
+          target.instruction = `Assess operational understanding of ${target.concept || 'core subject matter'}.`;
+          target.negativeBoundaries = negativeBoundaries;
+          target.isDeficitFill = true;
+          target.isCapacityLimited = false;
+          delete target.capacityLimitation;
+          updatedTargets.push(target);
+          continue;
+        }
         target.isCapacityLimited = true;
         target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
         if (!target.capacityLimitation) {
@@ -3424,6 +3440,29 @@ Generate the curricular assessment plan strictly covering educational concepts w
 
       // Allow full question fulfillment across cognitive dimensions without artificial truncation
       if (!isTopicMode && nonDeficitCount >= allowedTotalRemaining) {
+        if (deficitPolicy !== 'FILL_WITH_MEDIUM') {
+          const deficitReason = cap.diagnosticReason || `Defensible lecture capacity limit of ${cap.totalDefensibleCapacity} question(s) reached. Remaining slots withheld to prevent hallucination.`;
+          target.targetDifficulty = target.targetDifficulty || (diffLower === 'hard' ? 'Hard' : 'Medium');
+          target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+          target.isCapacityLimited = true;
+          target.bloomLevel = targetDiffLower === 'hard' ? 'Evaluate / Synthesize' : 'Understand';
+          target.operationalGuidance = 'Capacity deficit: total defensible lecture capacity reached across all eligible tiers.';
+          target.instruction = deficitReason;
+          target.capacityLimitation = {
+            status: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+            reason: deficitReason
+          };
+          target.negativeBoundaries = negativeBoundaries;
+          capacityLimitations.push({
+            targetId: target.targetId,
+            concept: target.concept,
+            requestedDifficulty: target.targetDifficulty,
+            limitationType: 'INSUFFICIENT_CURRICULAR_EVIDENCE',
+            message: deficitReason
+          });
+          updatedTargets.push(target);
+          continue;
+        }
         nonDeficitCount++;
         target.targetDifficulty = target.targetDifficulty || (diffLower === 'hard' ? 'Hard' : 'Medium');
         target.intendedCognitiveOperation = target.intendedCognitiveOperation === 'UNFULFILLED_CAPACITY_DEFICIT' ? 'APPLY' : (target.intendedCognitiveOperation || 'APPLY');
@@ -3470,7 +3509,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
           }
 
           if (diffLower === 'hard') {
-            if (deficitPolicy !== 'FAIL_CLOSED') {
+            if (deficitPolicy === 'FILL_WITH_MEDIUM') {
               // Fulfill requested question count with deep operational reasoning rather than halting generation
               nonDeficitCount++;
               target.targetDifficulty = 'Medium';

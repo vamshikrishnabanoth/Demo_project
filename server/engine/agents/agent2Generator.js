@@ -1554,7 +1554,11 @@ Generate a single grounded multiple-choice question testing the assessment targe
       });
     } catch (llmErr) {
       console.warn(`⚠️ [Agent 2] LLM generation error on target ${target.targetId}: ${llmErr.message}. Generating resilient grounded fallback MCQ...`);
-      return this.generateQuestionFallback(target, { ...evidencePackage, error: llmErr.message }, repairInstruction || llmErr.message);
+      const fallbackResult = this.generateQuestionFallback(target, { ...evidencePackage, error: llmErr.message }, repairInstruction || llmErr.message);
+      if (fallbackResult && fallbackResult.isUnfulfilled) {
+        fallbackResult.message = `LLM generation error on target "${target.concept}": ${llmErr.message}`;
+      }
+      return fallbackResult;
     }
 
     let parsedMCQ;

@@ -216,37 +216,52 @@ class EvidencePackager {
     const isTopicSynthesis = sessionInputs.inputModality === 'TOPIC_SYNTHESIS' ||
       (!hasVoice && (!codeText || codeText.trim().length === 0) && docTexts.length <= 1 && (cleanDocsText.trim().length < 500));
 
-    if (isTopicSynthesis) {
-      packageData.inputModality = 'TOPIC_SYNTHESIS';
-      packageData.representationMode = 'TOPIC_BLUEPRINT';
-      packageData.topic = sessionInputs.topic || cleanDocsText.trim() || 'Academic Topic';
-      packageData.isAcademic = true;
-      packageData.isCurricular = true;
-      packageData.academicFailureReason = null;
-      packageData.lectureDepth = {
-        score: 90,
-        rating: 'Advanced Curriculum',
-        characteristics: { reasoning: 'Strong', procedures: 'Strong', examples: 'Present' }
-      };
-      packageData.curricularContent = cleanDocsText || sessionInputs.topic || 'Academic Topic Curriculum';
-      packageData.unifiedRawContent = packageData.topic || packageData.curricularContent;
+    if (hasVoice && voiceAnalysis && !voiceAnalysis.isAcademic) {
+      packageData.isAcademic = false;
+      packageData.isCurricular = false;
+      packageData.academicFailureReason = voiceAnalysis.reason || 'Question generation : Non-academic content detected.';
+    } else if (isTopicSynthesis) {
+      const topicCandidate = sessionInputs.topic || cleanDocsText.trim() || 'Academic Topic';
+      const topicCheck = depthAnalyzer.analyzeLecture(topicCandidate, { sourceModality: 'TOPIC' });
+      if (!topicCheck.isAcademic) {
+        packageData.inputModality = 'TOPIC_SYNTHESIS';
+        packageData.representationMode = 'TOPIC_BLUEPRINT';
+        packageData.topic = topicCandidate;
+        packageData.isAcademic = false;
+        packageData.isCurricular = false;
+        packageData.academicFailureReason = topicCheck.reason || 'Question generation : Non-academic content detected.';
+      } else {
+        packageData.inputModality = 'TOPIC_SYNTHESIS';
+        packageData.representationMode = 'TOPIC_BLUEPRINT';
+        packageData.topic = topicCandidate;
+        packageData.isAcademic = true;
+        packageData.isCurricular = true;
+        packageData.academicFailureReason = null;
+        packageData.lectureDepth = {
+          score: 90,
+          rating: 'Advanced Curriculum',
+          characteristics: { reasoning: 'Strong', procedures: 'Strong', examples: 'Present' }
+        };
+        packageData.curricularContent = cleanDocsText || sessionInputs.topic || 'Academic Topic Curriculum';
+        packageData.unifiedRawContent = packageData.topic || packageData.curricularContent;
 
-      const reqCount = sessionInputs.count || sessionInputs.requestedCount || 10;
-      packageData.evidenceCapacity = {
-        distinctConceptCount: Math.max(reqCount, 10),
-        recommendedQuestionCount: Math.max(reqCount, 10),
-        capacityByDifficulty: {
-          easy: Math.ceil(reqCount * 0.4),
-          medium: Math.ceil(reqCount * 0.4),
-          hard: Math.ceil(reqCount * 0.4)
-        },
-        totalDefensibleCapacity: Math.max(reqCount + 10, 25),
-        advisoryRationale: 'Broad academic curriculum scope for specified topic'
-      };
-      packageData.lectureIntelligence = {
-        evidenceCapacity: packageData.evidenceCapacity,
-        summary: `Comprehensive assessment covering ${packageData.topic} across foundational principles, algorithms, and practical applications.`
-      };
+        const reqCount = sessionInputs.count || sessionInputs.requestedCount || 10;
+        packageData.evidenceCapacity = {
+          distinctConceptCount: Math.max(reqCount, 10),
+          recommendedQuestionCount: Math.max(reqCount, 10),
+          capacityByDifficulty: {
+            easy: Math.ceil(reqCount * 0.4),
+            medium: Math.ceil(reqCount * 0.4),
+            hard: Math.ceil(reqCount * 0.4)
+          },
+          totalDefensibleCapacity: Math.max(reqCount + 10, 25),
+          advisoryRationale: 'Broad academic curriculum scope for specified topic'
+        };
+        packageData.lectureIntelligence = {
+          evidenceCapacity: packageData.evidenceCapacity,
+          summary: `Comprehensive assessment covering ${packageData.topic} across foundational principles, algorithms, and practical applications.`
+        };
+      }
     }
 
     // 3. Construct Dual-Level Hierarchical Evidence Store & Cross-Material Alignment Graph

@@ -614,6 +614,18 @@ export default function CreateQuizTopic() {
             });
 
             if (transcribeRes.data && transcribeRes.data.text && transcribeRes.data.text.trim().length >= 5) {
+                if (transcribeRes.data.isAcademic === false) {
+                    const failReason = transcribeRes.data.reason || transcribeRes.data.msg || 'Question generation : Non-academic content detected. Please upload an educational lecture or course recording.';
+                    setInputs(prev => prev.map(item => item.id === id ? {
+                        ...item,
+                        status: 'error',
+                        fetchingMetadata: false,
+                        progress: 0,
+                        errorMsg: failReason
+                    } : item));
+                    toast.error(failReason, { duration: 6000 });
+                    return;
+                }
                 const smartName = transcribeRes.data.sourceName || transcribeRes.data.smartTitle || file.name;
                 setInputs(prev => prev.map(item => item.id === id ? {
                     ...item,
@@ -1283,6 +1295,7 @@ export default function CreateQuizTopic() {
         formData.append('questionCount', questionCount);
         formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);
+        formData.append('deficitPolicy', 'FILL_WITH_MEDIUM');
 
         // 3. Text prompts: voice transcripts, text inputs, and fallback text for restored documents without live File
         const textInputs = inputs.filter(inp => {
@@ -1467,8 +1480,13 @@ export default function CreateQuizTopic() {
                                     <AlertCircle size={20} />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h4 className="text-sm font-black text-red-900 uppercase tracking-wide">
-                                        Assessment Generation Halted
+                                    <h4 className="text-sm font-black text-red-900 uppercase tracking-wide flex items-center gap-2">
+                                        <span>⚠️</span>
+                                        <span>
+                                            {generationError.code === 'NON_ACADEMIC_CONTENT' || (generationError.message && generationError.message.toLowerCase().includes('non-academic'))
+                                                ? 'Question Generation : Non-Academic Content Detected'
+                                                : 'Assessment Generation Halted'}
+                                        </span>
                                     </h4>
                                     <p className="text-xs text-red-700 mt-1 font-medium leading-relaxed break-words">
                                         {generationError.message}
@@ -1476,7 +1494,9 @@ export default function CreateQuizTopic() {
 
                                     {/* Contextual guidance based on error code */}
                                     <p className="text-[11px] text-red-800/80 mt-2 font-semibold bg-red-100/60 p-2.5 rounded-lg border border-red-200/50">
-                                        {generationError.code === 'PROVIDER_RATE_LIMITED' || generationError.code === 'RATE_LIMIT_EXCEEDED' || generationError.code === '429' ? (
+                                        {generationError.code === 'NON_ACADEMIC_CONTENT' || (generationError.message && generationError.message.toLowerCase().includes('non-academic')) ? (
+                                            <><strong>Recommendation:</strong> As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum. Please upload lecture recordings, syllabus documents, or slides.</>
+                                        ) : generationError.code === 'PROVIDER_RATE_LIMITED' || generationError.code === 'RATE_LIMIT_EXCEEDED' || generationError.code === '429' ? (
                                             <><strong>Recommendation:</strong> AI reasoning providers are experiencing peak traffic or rate limits. All your uploaded materials and configurations are preserved. Please click <strong>Retry Generation</strong> in a few moments.</>
                                         ) : generationError.code === 'INSUFFICIENT_EVIDENCE' || generationError.code === 'INSUFFICIENT_READABLE_EVIDENCE' || generationError.code === 'INSUFFICIENT_CURRICULAR_TARGETS' ? (
                                             <><strong>Recommendation:</strong> The supplied material does not have sufficient content to ground the requested question count. Try reducing question count or adding additional lecture notes to your docket.</>
@@ -2183,7 +2203,13 @@ export default function CreateQuizTopic() {
                                     <div className="grid grid-cols-2 gap-2.5">
                                         {['Balanced', 'Easy', 'Medium', 'Hard'].map((level) => {
                                             const lvlKey = level.toLowerCase();
-                                            const recVal = recommendedByDifficulty ? recommendedByDifficulty[lvlKey] : null;
+                                            const rawRec = recommendedByDifficulty ? recommendedByDifficulty[lvlKey] : null;
+                                            const baseRec = (recommendedQuestionCount && Number(recommendedQuestionCount) > 0) ? Number(recommendedQuestionCount) : null;
+                                            const recVal = (rawRec !== null && rawRec !== undefined && Number(rawRec) > 0)
+                                                ? Number(rawRec)
+                                                : (baseRec
+                                                    ? (level === 'Balanced' ? baseRec : (level === 'Hard' ? Math.max(1, Math.round(baseRec * 0.5)) : Math.max(1, Math.round(baseRec * 0.85))))
+                                                    : (rawRec !== null && rawRec !== undefined ? rawRec : null));
                                             return (
                                                 <button
                                                     key={level}
@@ -2194,12 +2220,6 @@ export default function CreateQuizTopic() {
                                                         let targetRec = (recVal !== null && recVal !== undefined && Number(recVal) > 0)
                                                             ? Number(recVal)
                                                             : null;
-                                                        if (!targetRec && recommendedQuestionCount && Number(recommendedQuestionCount) > 0) {
-                                                            const baseRec = Number(recommendedQuestionCount);
-                                                            if (level === 'Balanced') targetRec = baseRec;
-                                                            else if (level === 'Easy' || level === 'Medium') targetRec = Math.max(1, Math.round(baseRec * 0.85));
-                                                            else if (level === 'Hard') targetRec = Math.max(1, Math.round(baseRec * 0.5));
-                                                        }
                                                         if (targetRec && Number.isFinite(targetRec) && targetRec > 0) {
                                                             setQuestionCount(Math.min(30, Math.max(1, targetRec)));
                                                         }
@@ -2217,7 +2237,7 @@ export default function CreateQuizTopic() {
                                                         <span className={`text-[10px] px-2 py-0.5 rounded-lg font-black tracking-normal ${
                                                             difficulty === level
                                                                 ? 'bg-white/25 text-white'
-                                                                : (recVal === 0 ? 'bg-amber-100 text-amber-700' : 'bg-orange-100 text-orange-800')
+                                                                : 'bg-orange-100 text-orange-800'
                                                         }`}>
                                                             {recVal} Qs
                                                         </span>
