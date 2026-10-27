@@ -1,0 +1,336 @@
+{
+  "timestamp": "2026-10-27T19:51:20.317Z",
+  "cases": [
+    {
+      "testId": "ARCH_04",
+      "name": "Process vs Thread Memory Isolation & TLB Dynamics",
+      "subject": "Operating Systems",
+      "before": [
+        {
+          "targetId": "T01",
+          "difficulty": "Easy",
+          "stem": "In virtual memory systems, what is the primary role of Identify the specific resources that constitute a process's isolated execution environment. during instruction execution?",
+          "options": [
+            "Caches recently translated page mappings in hardware registers to avoid main memory lookups",
+            "Translates virtual page numbers into physical memory frames using page table entries",
+            "Allocates contiguous physical memory frames directly to newly spawned user processes",
+            "Translates physical frame numbers back into virtual addresses to verify CPU register state"
+          ],
+          "correctAnswer": "Translates virtual page numbers into physical memory frames using page table entries",
+          "correctKey": "B",
+          "audit": {
+            "stemWords": 24,
+            "maxOptWords": 13,
+            "lengthRatio": 1.18,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T02",
+          "difficulty": "Medium",
+          "stem": "When analyzing Distinguish between resources shared among sibling threads and resources maintained privately by each thread. in Thread Sharing, how does the mechanism execute its operational sequence?",
+          "options": [
+            "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+            "Executes postconditions prior to checking input boundary parameters",
+            "Skips prerequisite state verification and writes intermediate results directly without validation",
+            "Delegates state resolution to an unmonitored external subsystem without consistency checks"
+          ],
+          "correctAnswer": "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+          "correctKey": "A",
+          "audit": {
+            "stemWords": 27,
+            "maxOptWords": 13,
+            "lengthRatio": 1.63,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T03",
+          "difficulty": "Hard",
+          "stem": "When the operating system performs a context switch between two threads within the same process, the transition is significantly faster than a switch between two distinct processes. Which causal mechanism best explains why the shared memory architecture of threads eliminates the specific performance penalty associated with process switches?",
+          "options": [
+            "The shared virtual address space ensures that existing TLB entries remain valid, eliminating the need for a costly TLB flush during the switch.",
+            "Threads share the same physical memory pages, which allows the hardware to skip the page table walk entirely during the context transition.",
+            "Threads utilize a private register file that bypasses the kernel scheduler, preventing the overhead of saving and restoring the full process state.",
+            "The kernel maintains a unified file descriptor table for all threads, reducing the I/O synchronization overhead that typically slows down process isolation."
+          ],
+          "correctAnswer": "Threads share the same physical memory pages, which allows the hardware to skip the page table walk entirely during the context transition.",
+          "correctKey": "B",
+          "audit": {
+            "stemWords": 48,
+            "maxOptWords": 23,
+            "lengthRatio": 1.05,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "FAILED",
+            "groundingReason": null
+          }
+        }
+      ],
+      "after": [
+        {
+          "targetId": "T02",
+          "stem": "Which resource is maintained privately by each thread rather than shared among sibling threads within the same process?",
+          "options": [
+            "The open file descriptor table",
+            "The process heap memory",
+            "The thread stack and registers",
+            "The global variable table"
+          ],
+          "correctAnswer": "The thread stack and registers",
+          "correctKey": "C",
+          "audit": {
+            "stemWords": 18,
+            "maxOptWords": 5,
+            "lengthRatio": 1.25,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "agent3Score": 0.95,
+          "agent3Verdict": "PASS"
+        },
+        {
+          "targetId": "T03",
+          "stem": "Why are thread context switches significantly faster than process context switches in modern operating systems?",
+          "options": [
+            "Shared address spaces avoid expensive translation lookaside buffer flushes.",
+            "Threads eliminate the need to save general-purpose registers.",
+            "Shared page tables remove register reloading requirements entirely.",
+            "Threads completely bypass kernel-mode transition overheads."
+          ],
+          "correctAnswer": "Shared address spaces avoid expensive translation lookaside buffer flushes.",
+          "correctKey": "A",
+          "audit": {
+            "stemWords": 15,
+            "maxOptWords": 9,
+            "lengthRatio": 1.5,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "agent3Score": 0.95,
+          "agent3Verdict": "PASS"
+        },
+        {
+          "targetId": "R01",
+          "stem": "What fundamental definition best describes a thread within an operating system process?",
+          "options": [
+            "An isolated kernel execution space with private virtual memory",
+            "A heavy container managing separate address spaces and file tables",
+            "A dedicated processor core allocated exclusively to handle system interrupts",
+            "A lightweight execution stream that shares the heap within a process"
+          ],
+          "correctAnswer": "A lightweight execution stream that shares the heap within a process",
+          "correctKey": "D",
+          "audit": {
+            "stemWords": 12,
+            "maxOptWords": 11,
+            "lengthRatio": 1.22,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "agent3Score": 0.95,
+          "agent3Verdict": "PASS"
+        }
+      ],
+      "fulfilledCount": 3,
+      "requestedCount": 3
+    },
+    {
+      "testId": "ARCH_05",
+      "name": "KMIT Recursion, GCD/LCM & Euclidean Algorithm (Deepa Madam)",
+      "subject": "Computer Science Programming",
+      "before": [
+        {
+          "targetId": "T01",
+          "difficulty": "Easy",
+          "stem": "In the study of GCD (Greatest Common Divisor) Algorithms, what is the fundamental role or definition of Identify the base case and return value for a recursive GCD implementation based on the modulo operation.?",
+          "options": [
+            "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+            "Applies global locking constraints across unrelated external system services",
+            "Acts as an auxiliary background queue that bypasses primary domain state verification",
+            "Represents the core domain structure and operational rules for Identify the base case and return value for a recursive GCD implementation based on the modulo operation. established in the lecture"
+          ],
+          "correctAnswer": "Represents the core domain structure and operational rules for Identify the base case and return value for a recursive GCD implementation based on the modulo operation. established in the lecture",
+          "correctKey": "D",
+          "audit": {
+            "stemWords": 34,
+            "maxOptWords": 30,
+            "lengthRatio": 3.33,
+            "passesStyle": false,
+            "styleIssues": [
+              "OPTION_EXCESSIVE_LENGTH"
+            ],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T02",
+          "difficulty": "Medium",
+          "stem": "In a recursive string reversal function where the base case returns the single character when length is 1, how does the operational mechanism of constructing the final string differ between the recursive call phase (going down) and the return phase (coming back)?",
+          "options": [
+            "The concatenation of the return value and the first character occurs during the return phase, combining the result from the deeper call with the current character.",
+            "The string is fully constructed during the recursive call phase by appending the first character to the result before the base case is reached.",
+            "The base case returns the entire reversed string directly, eliminating the need for any concatenation operations in the recursive steps.",
+            "The first character is prepended to the input string during the recursive call phase, modifying the parameter before the next recursive invocation."
+          ],
+          "correctAnswer": "The string is fully constructed during the recursive call phase by appending the first character to the result before the base case is reached.",
+          "correctKey": "B",
+          "audit": {
+            "stemWords": 42,
+            "maxOptWords": 26,
+            "lengthRatio": 1.3,
+            "passesStyle": false,
+            "styleIssues": [
+              "OPTION_EXCESSIVE_LENGTH"
+            ],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T03",
+          "difficulty": "Medium",
+          "stem": "In the recursive palindrome checker described, given an initial string of length 1, how does the operational execution path and return value differ between the base case condition and the recursive comparison condition?",
+          "options": [
+            "The base case triggers immediately, returning True without performing any character index access or comparison operations.",
+            "The recursive case triggers first, comparing index 0 with index -1, which results in a false return value due to out-of-bounds access.",
+            "Both conditions evaluate simultaneously, with the base case overriding the comparison result to ensure a consistent boolean output.",
+            "The base case returns the string length as an integer, while the recursive case returns a boolean indicating character equality."
+          ],
+          "correctAnswer": "The base case returns the string length as an integer, while the recursive case returns a boolean indicating character equality.",
+          "correctKey": "D",
+          "audit": {
+            "stemWords": 33,
+            "maxOptWords": 22,
+            "lengthRatio": 1.38,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        }
+      ],
+      "after": [
+        {
+          "targetId": "T03",
+          "stem": "When adapting the recursive length calculation of a string to exclude spaces, why does adding a conditional check on the current character require adjusting the return state accumulation?",
+          "options": [
+            "Omitting the space check forces recursive calls to process multiple characters simultaneously.",
+            "Unconditional addition of one overcounts whitespace by incrementing the accumulator for space characters.",
+            "Skipping whitespace prevents base condition evaluation from ever reaching the end of the string.",
+            "Conditional incrementing skips recursive unwinding entirely when encountering terminal null characters."
+          ],
+          "correctAnswer": "Unconditional addition of one overcounts whitespace by incrementing the accumulator for space characters.",
+          "correctKey": "B",
+          "audit": {
+            "stemWords": 28,
+            "maxOptWords": 14,
+            "lengthRatio": 1.27,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "agent3Score": 0.95,
+          "agent3Verdict": "PASS"
+        },
+        {
+          "targetId": "R02",
+          "stem": "When implementing a downward search loop to compute the greatest common divisor of two positive integers, why is checking candidate divisors down to one guaranteed to find a solution?",
+          "options": [
+            "Common factors cannot exist below the square root of the smaller integer.",
+            "Checking down to zero is required because zero divides all integers evenly.",
+            "Negative integer bounds are required to resolve symmetrical factor pairs.",
+            "One is a universal common divisor of all positive integers, guaranteeing loop termination."
+          ],
+          "correctAnswer": "One is a universal common divisor of all positive integers, guaranteeing loop termination.",
+          "correctKey": "D",
+          "audit": {
+            "stemWords": 31,
+            "maxOptWords": 12,
+            "lengthRatio": 1.2,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "agent3Score": 0.95,
+          "agent3Verdict": "PASS"
+        },
+        {
+          "targetId": "T_REP_01",
+          "stem": "What is the core conceptual principle when designing a recursive solution?",
+          "options": [
+            "Precompute all arithmetic modulo values prior to recursive depth entry.",
+            "Always convert iterative loops into tail-recursive tail calls.",
+            "Execute operations from maximum bounds down to negative zero.",
+            "Make the problem extremely small, solve that, and repeat for the next."
+          ],
+          "correctAnswer": "Make the problem extremely small, solve that, and repeat for the next.",
+          "correctKey": "D",
+          "audit": {
+            "stemWords": 11,
+            "maxOptWords": 12,
+            "lengthRatio": 1.5,
+            "passesStyle": true,
+            "styleIssues": [],
+            "styleWarnings": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "agent3Score": 0.95,
+          "agent3Verdict": "PASS"
+        }
+      ],
+      "fulfilledCount": 3,
+      "requestedCount": 3
+    }
+  ],
+  "repairExperiment": {
+    "experimentA_StyleRepair": {
+      "initialDefect": [
+        "UNNECESSARY_META_LANGUAGE"
+      ],
+      "repaired": true,
+      "finalStatus": "PASS",
+      "repairedStem": "What core component is maintained privately by an individual thread rather than being shared with sibling threads within the same process?",
+      "postRepairStylePasses": true
+    },
+    "experimentB_BrokenKey": {
+      "stylePasses": true,
+      "evalStatus": "FAIL",
+      "evalFailureReasons": [
+        "ACCIDENTAL_CORRECT_DISTRACTOR",
+        "CANONICAL_DOMAIN_TRUTH_VIOLATION",
+        "FOREIGN_DOMAIN_CONTAMINATION",
+        "TIER_COGNITIVE_MISMATCH",
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "evalVerdict": "FAIL"
+    }
+  }
+}

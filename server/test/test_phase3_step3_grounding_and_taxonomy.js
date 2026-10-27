@@ -219,7 +219,7 @@ async function runSuite() {
     const target = {
       concept: 'Process Scheduling',
       targetDifficulty: 'Medium',
-      intendedCognitiveOperation: 'COMPARE',
+      intendedCognitiveOperation: 'EXPLAIN_MECHANISM',
       negativeBoundaries: ['NO_CODE']
     };
 
@@ -239,6 +239,49 @@ async function runSuite() {
   });
 
   // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // Test 5b: Genuine Comparative Question (COMPARE) under NO_CODE Passes Both
+  // -------------------------------------------------------------------------
+  await test('Genuine Comparative Question (COMPARE) under NO_CODE passes Gate and Agent 3', async () => {
+    const fixtureCompare = [
+      'Today we are discussing Process Scheduling algorithms in operating systems.',
+      'Do not worry about coding, implementation syntax is strictly outside our syllabus, and there will be zero coding questions on the exam.',
+      'A preemptive scheduler pauses the running process when a higher-priority process arrives to guarantee responsiveness, whereas a non-preemptive scheduler allows the current process to run until it voluntary yields or terminates.'
+    ].join('\n');
+
+    const compareMCQ = {
+      questionText: 'How does preemptive scheduling differ from non-preemptive scheduling when a higher-priority process arrives?',
+      options: [
+        'A preemptive scheduler interrupts the current process, while non-preemptive lets it run until voluntary release',
+        'A preemptive scheduler terminates the current process, while non-preemptive increases its priority level',
+        'A non-preemptive scheduler pauses all background threads, while preemptive ignores process priorities',
+        'Both schedulers allocate additional CPU cores to execute the new process concurrently'
+      ],
+      correctAnswer: 'A preemptive scheduler interrupts the current process, while non-preemptive lets it run until voluntary release'
+    };
+
+    const compareTarget = {
+      concept: 'Preemptive vs Non-Preemptive Scheduling',
+      targetDifficulty: 'Medium',
+      intendedCognitiveOperation: 'COMPARE',
+      negativeBoundaries: ['NO_CODE']
+    };
+
+    const gateRes = groundingGate.verifyQuizGrounding([compareMCQ], {
+      unifiedRawContent: fixtureCompare,
+      negativeBoundaries: ['NO_CODE']
+    });
+
+    assert.strictEqual(gateRes.status, 'PASSED', 'Comparative question must pass grounding gate under NO_CODE');
+
+    const agent3Res = await agent3Evaluator.evaluateQuestion(compareMCQ, compareTarget, {
+      unifiedRawContent: fixtureCompare,
+      negativeBoundaries: ['NO_CODE']
+    });
+
+    assert.strictEqual(agent3Res.status, 'PASS', 'Comparative question must pass Agent 3 under NO_CODE');
+  });
+
   // Test 6: Factual Contradiction Detection
   // -------------------------------------------------------------------------
   await test('Factual Contradiction on mutually exclusive properties detected with FACTUAL_CONTRADICTION', () => {

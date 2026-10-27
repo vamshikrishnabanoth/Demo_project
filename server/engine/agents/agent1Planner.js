@@ -34,6 +34,7 @@ const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const crypto = require('crypto');
 const cacheManager = require('../../utils/cacheManager');
+const kmitStyleContract = require('../../config/kmitStyleContract');
 
 const QUESTION_ARCHETYPES = Object.freeze({
   CONCEPTUAL_CONTRAST: 'CONCEPTUAL_CONTRAST',
@@ -741,6 +742,8 @@ ENGINEERING CURRICULUM PLANNING MANDATE:
 4. STRICT ANTI-LECTURE DIRECTIVE:
    - This is a formal curriculum assessment. Do NOT reference "lectures", "the speaker", "in the audio", or "classroom slides". All targets must focus purely on the technical subject matter.
 
+${kmitStyleContract.getPlannerGuidance({ requestedDifficulty })}
+
 JSON SCHEMA:
 {
   "subject": "string",
@@ -838,6 +841,8 @@ CORE PRINCIPLES:
    - Decompose rich topics into distinct assessment angles: Conceptual understanding, Numerical calculation, Invariant reasoning, Edge cases, and Code tracing.
    - Every planned target MUST test a distinctly DIFFERENT learning objective and reasoning task.
    - Distinct assessment angles on the same core topic are strongly encouraged when supported by the evidence!
+
+${kmitStyleContract.getPlannerGuidance({ requestedDifficulty })}
 
 JSON SCHEMA:
 {
@@ -1094,6 +1099,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
               targetDiff = (slotNum % 3 === 0) ? 'Hard' : ((slotNum % 2 === 0) ? 'Medium' : 'Easy');
             }
 
+            const phase = slotNum <= Math.ceil(requestedCount / 3) ? 'EARLY' : (slotNum > Math.ceil((2 * requestedCount) / 3) ? 'LATE' : 'MID');
+            const prov = this._resolveTargetEvidenceProvenance(sub, sub, phase, evidencePackage);
             auditedTargets.push({
               targetId,
               macroTopic: sub,
@@ -1103,15 +1110,17 @@ Generate the curricular assessment plan strictly covering educational concepts w
               formatRecommendation: 'PROSE_MULTIPLE_CHOICE',
               concept: `${sub} (${facet.name})`,
               subtopic: sub,
-              trajectoryPhase: slotNum <= Math.ceil(requestedCount / 3) ? 'EARLY' : (slotNum > Math.ceil((2 * requestedCount) / 3) ? 'LATE' : 'MID'),
-              timestamp: null,
+              trajectoryPhase: phase,
+              timestamp: prov.timestamp,
               tier: 'Core',
               dimension: facet.dim,
               cognitiveLevel: targetDiff === 'Hard' ? 'Evaluate' : (targetDiff === 'Medium' ? 'Apply' : 'Understand'),
               targetDifficulty: targetDiff,
               intendedCognitiveOperation: facet.op,
+              evidenceType: prov.evidenceType,
               isCapacityLimited: false,
-              supportingEvidence: rawContent || evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '',
+              supportingEvidence: prov.supportingEvidence || (typeof rawContent === 'string' ? rawContent.slice(0, 1500) : '') || evidencePackage?.unifiedRawContent?.slice(0, 1500) || evidencePackage?.curricularContent?.slice(0, 1500) || '',
+              sourceChunks: prov.sourceChunks,
               instruction: `Assess engineering principles and applications for ${sub}: ${facet.name}.`
             });
           }
@@ -1667,19 +1676,55 @@ Generate the curricular assessment plan strictly covering educational concepts w
       (activeStore?.children || []).some(c => c.sourceType === 'TRANSCRIPT')
     );
 
+    const cLower = String(conceptName || '').toLowerCase();
+    const sLower = String(subtopic || '').toLowerCase();
+    const stopWords = new Set(['under', 'with', 'across', 'from', 'that', 'this', 'have', 'does', 'when', 'what', 'where', 'about', 'into', 'than', 'over', 'between', 'their', 'which', 'some', 'more', 'also', 'such', 'using', 'based', 'concept', 'topic']);
+    const contentKeywords = `${cLower} ${sLower}`
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 3 && !stopWords.has(w));
+
     let sourceChunks = [];
     let timestamp = null;
     let hasRealTimestamps = false;
     let matchedChild = null;
 
     if (activeStore && Array.isArray(activeStore.children) && activeStore.children.length > 0) {
-      const cLower = String(conceptName || '').toLowerCase();
-      const sLower = String(subtopic || '').toLowerCase();
 
       matchedChild = activeStore.children.find(c => {
         const tLower = (c.text || '').toLowerCase();
         return (cLower.length > 3 && tLower.includes(cLower)) || (sLower.length > 3 && tLower.includes(sLower));
       });
+
+      // If exact phrase is not in any child, rank children by content keyword match density and phase alignment
+      if (!matchedChild && contentKeywords.length > 0) {
+        let bestChild = null;
+        let maxScore = 0;
+        const total = activeStore.children.length;
+
+        activeStore.children.forEach((c, idx) => {
+          const tLower = (c.text || '').toLowerCase();
+          let count = 0;
+          for (const kw of contentKeywords) {
+            if (tLower.includes(kw)) count++;
+          }
+          if (count > 0) {
+            let phaseBonus = 0;
+            if (phase === 'EARLY' && idx <= Math.floor(total / 3)) phaseBonus = 0.5;
+            else if (phase === 'LATE' && idx >= Math.max(0, total - Math.ceil(total / 3))) phaseBonus = 0.5;
+            else if (phase === 'MID' && idx > 0 && idx < total - 1) phaseBonus = 0.5;
+            const score = count + phaseBonus;
+            if (score > maxScore) {
+              maxScore = score;
+              bestChild = c;
+            }
+          }
+        });
+
+        if (bestChild) {
+          matchedChild = bestChild;
+        }
+      }
 
       if (!matchedChild) {
         const total = activeStore.children.length;
@@ -1716,11 +1761,49 @@ Generate the curricular assessment plan strictly covering educational concepts w
       }
     }
 
+    let supportingEvidence = '';
+    if (matchedChild && typeof matchedChild.text === 'string') {
+      const fullText = matchedChild.text;
+      if (fullText.length <= 1500) {
+        supportingEvidence = fullText;
+      } else {
+        const tLower = fullText.toLowerCase();
+        const cLower = String(conceptName || '').toLowerCase();
+        const sLower = String(subtopic || '').toLowerCase();
+        let matchIdx = -1;
+        if (cLower.length > 3) matchIdx = tLower.indexOf(cLower);
+        if (matchIdx === -1 && sLower.length > 3) matchIdx = tLower.indexOf(sLower);
+        // If exact phrase not found, center window on first significant content keyword match
+        if (matchIdx === -1 && contentKeywords && contentKeywords.length > 0) {
+          for (const kw of contentKeywords) {
+            const kIdx = tLower.indexOf(kw);
+            if (kIdx !== -1) {
+              matchIdx = kIdx;
+              break;
+            }
+          }
+        }
+
+        if (matchIdx !== -1) {
+          const half = 750;
+          let start = Math.max(0, matchIdx - half);
+          let end = Math.min(fullText.length, start + 1500);
+          if (end - start < 1500) {
+            start = Math.max(0, end - 1500);
+          }
+          supportingEvidence = fullText.slice(start, end);
+        } else {
+          supportingEvidence = fullText.slice(0, 1500);
+        }
+      }
+    }
+
     return {
       sourceChunks,
       timestamp,
       hasRealTimestamps,
-      evidenceType
+      evidenceType,
+      supportingEvidence
     };
   }
 
@@ -1897,7 +1980,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
         targetDifficulty: targetDiff,
         intendedCognitiveOperation: dimension.toUpperCase().replace(/[^A-Z]/g, '_'),
         evidenceType: prov.evidenceType,
-        supportingEvidence: prov.supportingEvidence || evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '',
+        supportingEvidence: prov.supportingEvidence || evidencePackage?.unifiedRawContent?.slice(0, 1500) || evidencePackage?.curricularContent?.slice(0, 1500) || '',
         sourceChunks: prov.sourceChunks,
         requiresExactArtifact: false,
         isCapacityLimited: false,
@@ -3647,7 +3730,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
         targetDifficulty: targetDiff,
         intendedCognitiveOperation: facet.op,
         isCapacityLimited: false,
-        supportingEvidence: evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '',
+        supportingEvidence: evidencePackage?.unifiedRawContent?.slice(0, 1500) || evidencePackage?.curricularContent?.slice(0, 1500) || '',
         instruction: `Assess engineering principles and applications for ${sub}: ${facet.name}.`,
         negativeBoundaries
       };

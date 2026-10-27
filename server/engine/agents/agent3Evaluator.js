@@ -21,6 +21,7 @@ const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelecto
 const { validateQuestionCodeArtifacts } = require('../validators/astParser');
 const groundingGate = require('../validators/groundingGate');
 const verificationRecordGate = require('../validators/verificationRecordGate');
+const kmitStyleContract = require('../../config/kmitStyleContract');
 
 const EVALUATOR_FAILURE_CODES = {
   OPTION_VALIDATION_ERROR: 'OPTION_VALIDATION_ERROR',
@@ -67,33 +68,6 @@ class Agent3Evaluator {
     const isTopicMode = target.isTopicMode || 
       evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' || 
       evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
-
-    const cleanPrefix = (str) => {
-      if (typeof str !== 'string') return str;
-      return str
-        .replace(/^(?:according\s+to\s+the\s+lecture|as\s+discussed\s+in\s+the\s+lecture|in\s+the\s+lecture|based\s+on\s+the\s+lecture|as\s+taught\s+in\s+the\s+lecture|according\s+to\s+the\s+transcript)[,\s:]*/i, '')
-        .replace(/^(?:according\s+to\s+the\s+notes|as\s+explained\s+in\s+the\s+lecture)[,\s:]*/i, '');
-    };
-    if (candidateMCQ && typeof candidateMCQ === 'object') {
-      if (candidateMCQ.questionText) {
-        let q = cleanPrefix(candidateMCQ.questionText).trim();
-        candidateMCQ.questionText = q.charAt(0).toUpperCase() + q.slice(1);
-      }
-      if (candidateMCQ.question) {
-        let q = cleanPrefix(candidateMCQ.question).trim();
-        candidateMCQ.question = q.charAt(0).toUpperCase() + q.slice(1);
-      }
-      if (Array.isArray(candidateMCQ.options)) {
-        candidateMCQ.options = candidateMCQ.options.map(opt => {
-          let o = cleanPrefix(opt).trim();
-          return o.charAt(0).toUpperCase() + o.slice(1);
-        });
-      }
-      if (candidateMCQ.correctAnswer) {
-        let a = cleanPrefix(candidateMCQ.correctAnswer).trim();
-        candidateMCQ.correctAnswer = a.charAt(0).toUpperCase() + a.slice(1);
-      }
-    }
 
     // 1. Fast-Path: Candidate is Null or Non-Object
     if (!candidateMCQ || typeof candidateMCQ !== 'object') {
@@ -177,6 +151,7 @@ class Agent3Evaluator {
     // 4. Check if deterministic-only mode or fast-path bypass applies
     const isDeterministicOnly = options.skipLLM || process.env.AGENT3_MODE === 'deterministic_only';
     const preAudit = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
+
 
     if (isDeterministicOnly) {
       preAudit.verificationMethod = 'DETERMINISTIC_AUDIT';
@@ -303,6 +278,23 @@ ${evidenceContext}
       parsed.tier = parsed.tier || parsed.evidenceGrounding?.tier || 'DIRECT_EVIDENCE';
       parsed.groundingScore = typeof parsed.groundingScore === 'number' ? parsed.groundingScore : (parsed.evidenceGrounding?.groundingScore || 0.95);
       parsed.repair = { attempted: false, successful: false, repairAttempts: 0, instruction: null };
+
+      // Hard enforcement: Deterministic pre-audit failures (style, boundaries, schema, ambiguity) must be preserved
+      if (Array.isArray(preAudit.failureReasons) && preAudit.failureReasons.length > 0) {
+        for (const reason of preAudit.failureReasons) {
+          if (!parsed.failureReasons.includes(reason)) {
+            parsed.failureReasons.push(reason);
+          }
+        }
+        if (!preAudit.passed) {
+          parsed.status = 'FAIL';
+          parsed.passed = false;
+          parsed.verdict = 'FAIL';
+          if (!parsed.failureReason) {
+            parsed.failureReason = preAudit.failureReason || preAudit.failureReasons.join('; ');
+          }
+        }
+      }
 
       // Hard enforcement: If tier is UNSUPPORTED_FOREIGN, override status to FAIL
       if (parsed.tier === 'UNSUPPORTED_FOREIGN') {
@@ -491,11 +483,48 @@ ${evidenceContext}
       };
     }
 
-    // 4. Construct precise repair instruction from failure reasons
-    const repairInstruction = initialEval.repairInstruction || 
-      (initialEval.failureReasons && initialEval.failureReasons.length > 0 
+    // 4. Construct precise repair instruction preserving BOTH style and semantic failure reasons
+    const repairDirectives = [];
+
+    // A. Collect style instructions if style defects exist
+    const styleIssues = (initialEval.failureReasons || []).filter(r => typeof r === 'string' && r.startsWith('STYLE_'));
+    if (styleIssues.length > 0) {
+      const styleInst = this._synthesizeRepairInstruction(styleIssues, candidateMCQ, target);
+      if (styleInst && styleInst !== 'Ensure question is unambiguous, grounded, and matches requested difficulty.') {
+        repairDirectives.push(styleInst);
+      }
+    }
+
+    // B. Collect semantic/pedagogical instructions
+    if (initialEval.repairInstruction) {
+      repairDirectives.push(initialEval.repairInstruction);
+    } else {
+      const nonStyleIssues = (initialEval.failureReasons || []).filter(r => typeof r === 'string' && !r.startsWith('STYLE_'));
+      if (nonStyleIssues.length > 0) {
+        const semanticInst = this._synthesizeRepairInstruction(nonStyleIssues, candidateMCQ, target);
+        if (semanticInst && semanticInst !== 'Ensure question is unambiguous, grounded, and matches requested difficulty.') {
+          repairDirectives.push(semanticInst);
+        }
+      }
+    }
+
+    // C. Deduplicate and merge instructions cleanly
+    let repairInstruction;
+    if (repairDirectives.length > 0) {
+      const uniqueDirectives = [];
+      for (const directive of repairDirectives) {
+        if (!uniqueDirectives.some(u => u.includes(directive) || directive.includes(u))) {
+          uniqueDirectives.push(directive);
+        }
+      }
+      repairInstruction = uniqueDirectives.join(' ');
+    } else {
+      repairInstruction = (initialEval.failureReasons && initialEval.failureReasons.length > 0)
         ? this._synthesizeRepairInstruction(initialEval.failureReasons, candidateMCQ, target)
-        : 'Repair identified pedagogical and option flaws');
+        : 'Repair identified pedagogical and option flaws';
+    }
+
+
 
     let repairedMCQ;
     try {
@@ -603,7 +632,7 @@ ${evidenceContext}
    */
   _runDeterministicAudit(candidateMCQ, target = {}, evidenceText = '', errorReason = '', evidencePackage = null) {
     const failureReasons = [];
-    const cleanEvidence = (evidenceText || '').toLowerCase();
+    const cleanEvidence = (evidenceText || '').replace(/\[[A-Z_\s]{3,}\]/g, ' ').toLowerCase();
     const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
     const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || 
       (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
@@ -667,6 +696,19 @@ ${evidenceContext}
     // 2. Correct Answer Inclusion Check
     if (!Array.isArray(candidateMCQ.options) || !candidateMCQ.options.includes(candidateMCQ.correctAnswer)) {
       failureReasons.push(EVALUATOR_FAILURE_CODES.CORRECT_ANSWER_NOT_IN_OPTIONS);
+    }
+
+    // 2b. Mechanical Style Contract Heuristics Gate
+    const styleAudit = candidateMCQ.styleAudit || kmitStyleContract.checkStyleHeuristics(candidateMCQ);
+    if (!styleAudit.passesStyle) {
+      for (const issue of styleAudit.issues) {
+        if (!failureReasons.includes(`STYLE_${issue}`)) {
+          failureReasons.push(`STYLE_${issue}`);
+        }
+      }
+    }
+    if (styleAudit.warnings && styleAudit.warnings.length > 0) {
+      candidateMCQ.styleWarnings = styleAudit.warnings;
     }
 
     // 3. Option Ambiguity & Subset Command Chain Check
@@ -1283,6 +1325,17 @@ ${evidenceContext}
    */
   _synthesizeRepairInstruction(failureReasons = [], candidateMCQ = {}, target = {}) {
     const instructions = [];
+    if (failureReasons.some(r => typeof r === 'string' && r.startsWith('STYLE_'))) {
+      if (failureReasons.includes('STYLE_UNNECESSARY_META_LANGUAGE')) {
+        instructions.push('Style compliance: Eliminate empty meta-discourse phrases ("According to the lecture", "Which was discussed") and pose the problem directly.');
+      }
+      if (failureReasons.includes('STYLE_STEM_LENGTH_EXCEEDED')) {
+        instructions.push('Style compliance: Shorten question stem to under 45 words (excluding code snippets) while keeping the technical premise crisp.');
+      }
+      if (failureReasons.includes('STYLE_OPTION_LENGTH_ASYMMETRY') || failureReasons.includes('STYLE_DUPLICATE_OPTIONS')) {
+        instructions.push('Style compliance: Ensure all 4 options are distinct, mutually exclusive concepts balanced in length (within 2.0x ratio).');
+      }
+    }
     if (failureReasons.includes('FORMAT_MISMATCH_UNWANTED_CODE')) {
       instructions.push('Format alignment: Remove code block/snippet. Present as conceptual multiple-choice prose without programming code.');
     }

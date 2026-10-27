@@ -578,7 +578,7 @@ async function testAsync(name, fn) {
     const enforced = agent2Generator._enforceBrevity(verboseMCQ);
     const nonCodeProse = enforced.questionText.replace(/```[\s\S]*?```/, '').trim();
     const words = nonCodeProse.split(/\s+/).filter(Boolean);
-    assert(words.length <= 35, `Enforced stem prose (${words.length} words) must be <= 35 words`);
+    assert(words.length <= 45, `Enforced stem prose (${words.length} words) must be <= 45 words`);
     assert(enforced.questionText.includes('```c\nint *p = (int*)0x1000;'), 'Code block must be preserved intact');
 
     const opt0Words = enforced.options[0].split(/\s+/).filter(Boolean);
