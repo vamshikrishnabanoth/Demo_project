@@ -44,7 +44,7 @@ class LLMRouter {
    * Route completion request to active LLM provider with intelligent failover.
    * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model, sessionId }
    */
-  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null }) {
+  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null }) {
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
     }
@@ -71,7 +71,8 @@ class LLMRouter {
           primaryModel,
           fallbackModel,
           sessionId,
-          maxTokens
+          maxTokens,
+          operation
         });
       } catch (err) {
         errors.push(`Groq (${err.message})`);
@@ -89,7 +90,8 @@ class LLMRouter {
           responseFormat,
           model,
           sessionId,
-          maxTokens
+          maxTokens,
+          operation
         });
       } catch (err) {
         errors.push(`Gemini (${err.message})`);
@@ -153,9 +155,16 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null }) {
+  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null }) {
     let resolvedMaxTokens = parseInt(maxTokens, 10);
-    if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0 || resolvedMaxTokens > 1100) {
+    if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
+      if (operation === 'LECTURE_INTELLIGENCE') {
+        resolvedMaxTokens = 4096;
+      } else if (operation === 'ASSESSMENT_PLANNING') {
+        resolvedMaxTokens = 2500;
+      } else if (operation === 'QUESTION_GENERATION') {
+        resolvedMaxTokens = 1600;
+      } else
       if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
         resolvedMaxTokens = 1100; // Calibrated for single MCQ to reduce Groq TPM reservation
       } else if (prompt.includes('Assessment Planner') || prompt.includes('[ACADEMIC TOPIC CURRICULUM SPECIFICATION]') || prompt.includes('[TEACHING EVIDENCE PACKAGE]')) {
@@ -247,7 +256,11 @@ class LLMRouter {
                 }
               );
 
-              const content = response.data.choices[0].message.content;
+              const choice = response.data.choices[0];
+              const content = choice.message.content;
+              if (choice.finish_reason === 'length') {
+                console.warn(`⚠️ [LLMRouter] Completion truncated by max_tokens limit (${resolvedMaxTokens})`);
+              }
 
               // Record production metrics
               productionMetrics.inc('llm_requests_total');

@@ -704,12 +704,12 @@ export default function CreateQuizTopic() {
                 startPage: 1,
                 endPage: undefined,
                 maxPages: undefined,
-                fetchingMetadata: !isImage
+                fetchingMetadata: true
             };
 
             setInputs(prev => [...prev, newInput]);
 
-            if (!isImage) {
+
                 try {
                     const formData = new FormData();
                     formData.append('file', file);
@@ -740,7 +740,7 @@ export default function CreateQuizTopic() {
                     console.error('Metadata fetch error:', err);
                     setInputs(prev => prev.map(item => item.id === id ? { ...item, fetchingMetadata: false } : item));
                 }
-            }
+            
         }
         e.target.value = '';
     };
@@ -1345,6 +1345,10 @@ export default function CreateQuizTopic() {
                             pipelineResult:     result,
                             lectureDepth:       result.lectureDepth || lectureDepth || null,
                             capacityDeficitReport: result.capacityDeficitReport || result.difficultyReport?.capacityDeficitReport || null,
+                            isPartial:          result.isPartial || (result.questions?.length < (questionCount || 10)),
+                            shortfallCategory:  result.shortfallCategory || null,
+                            deliveredCount:     result.questions?.length || 0,
+                            notice:             result.notice || null,
                             whatWasTaught:      result.whatWasTaught || whatWasTaught || '',
                             keyTopics:          result.keyTopics || keyTopics || [],
                             requestedCount:     questionCount || 10,

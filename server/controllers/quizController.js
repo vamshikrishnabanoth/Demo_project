@@ -899,7 +899,10 @@ function resolveGenerationErrorCode(err, pipelineResult) {
         rawMsg.includes('exhausted') ||
         err?.code === 'INSUFFICIENT_READABLE_EVIDENCE' ||
         err?.errorCode === 'INSUFFICIENT_READABLE_EVIDENCE' ||
-        err?.errorCode === 'INSUFFICIENT_EVIDENCE'
+        err?.errorCode === 'INSUFFICIENT_EVIDENCE' ||
+        err?.code === 'INSUFFICIENT_CURRICULAR_TARGETS' ||
+        err?.errorCode === 'INSUFFICIENT_CURRICULAR_TARGETS' ||
+        rawMsg.includes('no assessment targets')
     ) {
         return 'INSUFFICIENT_EVIDENCE';
     }
@@ -1102,7 +1105,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     tObj.pipelineNotice = result.notice || null;
                     tObj.alignmentWarning = result.alignmentWarning || null;
                     tObj.unalignedDocuments = result.unalignedDocuments || [];
-                    tObj.isPartial = Boolean(result.pipelineStatus === 'COMPLETED_WITH_PARTIAL_FULFILLMENT' || (result.questions.length < sessionInputs.count));
+                    tObj.isPartial = Boolean(result.isPartial !== undefined ? result.isPartial : (result.pipelineStatus === 'COMPLETED_WITH_PARTIAL_FULFILLMENT' || (result.questions.length < sessionInputs.count)));
+                    tObj.shortfallCategory = result.shortfallCategory || null;
                     tObj.requestedCount = sessionInputs.count;
                     tObj.deliveredCount = result.questions.length;
                     tObj.representation_mode = tObj.representation_mode || result.representationMode || null;
@@ -1120,6 +1124,8 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     tObj.pipelineResult = result;
                     tObj.pipelineNotice = result.notice || null;
                     tObj.capacityDeficitReport = result.capacityDeficitReport || null;
+                    tObj.shortfallCategory = result?.shortfallCategory || null;
+                    tObj.isPartial = Boolean(result?.isPartial);
                 }
             }
             const failureMsg = result.error || result.notice || 'Pipeline generation failed: No grounded questions could be generated.';
@@ -3693,6 +3699,7 @@ exports.generateQuizQuestions = async (req, res) => {
                 lobbySummary:    lobby_summary || null,
                 aiFlashcards:    ai_flashcards ? (typeof ai_flashcards === 'string' ? JSON.parse(ai_flashcards) : ai_flashcards) : null,
                 isPartial:       (finalTaskObj && finalTaskObj.isPartial) !== undefined ? finalTaskObj.isPartial : (finalQuestions.length < questionCount),
+                shortfallCategory: (finalTaskObj && finalTaskObj.shortfallCategory) || pResult?.shortfallCategory || null,
                 requestedCount:  (finalTaskObj && finalTaskObj.requestedCount) || questionCount,
                 deliveredCount:  finalQuestions.length,
                 notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `${finalQuestions.length} evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.` : null),
@@ -4660,6 +4667,18 @@ exports.getFileMetadata = async (req, res) => {
                 extractedText = '';
                 totalCount = 1;
             }
+        } else if (['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) {
+            try {
+                const commonDoc = await DocumentRouter.ingestDocument(absolutePath, {
+                    filename: req.file.originalname
+                });
+                extractedText = commonDoc ? commonDoc.toUnifiedText() : '';
+                totalCount = 1;
+            } catch (imgErr) {
+                console.warn('Image metadata OCR error:', imgErr.message);
+                extractedText = '';
+                totalCount = 1;
+            }
         }
 
         // Store in documentStore for page-scoped retrieval
@@ -4682,7 +4701,9 @@ exports.getFileMetadata = async (req, res) => {
             documentId: docEntry ? docEntry.documentId : null,
             filename: req.file.originalname,
             totalCount,
-            extractedText: extractedText.substring(0, 5000),
+            extractedText: extractedText && extractedText.length > 120000
+                ? (extractedText.slice(0, 60000) + '\n\n[...Curriculum sampled for overview...]\n\n' + extractedText.slice(-60000))
+                : extractedText,
             isAcademic: depthAnalysis.isAcademic,
             reason: depthAnalysis.reason,
             lectureDepth: depthAnalysis.lectureDepth
@@ -5037,41 +5058,57 @@ exports.analyzeDepth = async (req, res) => {
             advisoryRationale = analysis.reason || 'Cannot recommend questions: Non-academic content.';
             recommendedQuestionCount = 0;
             recommendedQuestions = '0 Questions';
-        } else if (evCap && evCap.recommendedByDifficulty) {
-            recommendedByDifficulty = { ...evCap.recommendedByDifficulty };
-            capacityByDifficulty = evCap.capacityByDifficulty ? { ...evCap.capacityByDifficulty } : {
-                easy: evCap.recommendedByDifficulty.easy,
-                medium: evCap.recommendedByDifficulty.medium,
-                hard: evCap.recommendedByDifficulty.hard,
-                balanced: evCap.totalDefensibleCapacity || evCap.recommendedQuestionCount
-            };
-            if (recommendedByDifficulty.hard === 0 && supportsHard && fallbackRecCount >= 3) {
-                const derivedHard = Math.max(1, Math.round(fallbackRecCount * 0.35));
-                recommendedByDifficulty.hard = derivedHard;
-                capacityByDifficulty.hard = Math.max(capacityByDifficulty.hard || 0, derivedHard);
-            }
-            totalDefensibleCapacity = evCap.totalDefensibleCapacity || (recommendedByDifficulty.easy + recommendedByDifficulty.medium + recommendedByDifficulty.hard);
-            advisoryRationale = evCap.advisoryRationale || '';
-            recommendedQuestionCount = evCap.recommendedQuestionCount || fallbackRecCount;
         } else {
-            const easyCount = Math.max(1, Math.round(fallbackRecCount * 0.85));
-            const medCount = Math.max(1, Math.round(fallbackRecCount * 0.85));
-            const hardCount = supportsHard ? Math.max(1, Math.round(fallbackRecCount * 0.4)) : 0;
-            recommendedByDifficulty = {
-                easy: easyCount,
-                medium: medCount,
-                hard: hardCount,
-                balanced: fallbackRecCount
-            };
-            capacityByDifficulty = {
-                easy: Math.max(fallbackRecCount, easyCount),
-                medium: Math.max(fallbackRecCount, medCount),
-                hard: hardCount,
-                balanced: fallbackRecCount
-            };
-            totalDefensibleCapacity = fallbackRecCount;
-            advisoryRationale = recBreakdown?.recommendedQuestionsRationale || 'Estimated from curricular scope and pedagogical depth';
-            recommendedQuestionCount = fallbackRecCount;
+            // Step 1: Check if primary analysis yielded verified capacity
+            let validCap = (evCap && evCap.distinctConceptCount > 0 && evCap.totalDefensibleCapacity > 0) ? evCap : null;
+
+            // Step 2: If primary analysis was unavailable, truncated, or produced 0 concepts, recover curriculum analysis
+            if (!validCap && analysis.isAcademic && (text || '').trim().length >= 15) {
+                try {
+                    const lectureIntelligence = require('../engine/intelligence/lectureIntelligence');
+                    const hasTiming = hasTimingData !== undefined ? !!hasTimingData : (Array.isArray(segments) && segments.some(s => s.start !== null && s.start !== undefined));
+                    const recovered = lectureIntelligence.buildPartialFallback({
+                        evidenceText: text,
+                        segments: segments || [],
+                        modality: modality || (hasTiming ? 'VOICE_ONLY' : 'DOCUMENT_ONLY'),
+                        hasTimingData: hasTiming,
+                        fileName: title || null,
+                        errorReason: 'Recovered curriculum capacity from verified segments'
+                    });
+                    if (recovered?.evidenceCapacity?.distinctConceptCount > 0) {
+                        validCap = recovered.evidenceCapacity;
+                        lectureIntel = recovered;
+                        if (recovered.conceptMap?.length > 0) {
+                            keyTopics = recovered.conceptMap.map(c => c.name);
+                        }
+                    }
+                } catch (recErr) {
+                    console.warn('[analyzeDepth] Failed to recover curriculum capacity:', recErr.message);
+                }
+            }
+
+            // Step 3: Apply verified evidence-backed capacity, or report genuinely insufficient analysis
+            if (validCap && validCap.recommendedByDifficulty) {
+                recommendedByDifficulty = { ...validCap.recommendedByDifficulty };
+                capacityByDifficulty = validCap.capacityByDifficulty ? { ...validCap.capacityByDifficulty } : {
+                    easy: validCap.recommendedByDifficulty.easy,
+                    medium: validCap.recommendedByDifficulty.medium,
+                    hard: validCap.recommendedByDifficulty.hard,
+                    balanced: validCap.totalDefensibleCapacity || validCap.recommendedQuestionCount
+                };
+                totalDefensibleCapacity = validCap.totalDefensibleCapacity || (recommendedByDifficulty.easy + recommendedByDifficulty.medium + recommendedByDifficulty.hard);
+                advisoryRationale = validCap.advisoryRationale || '';
+                recommendedQuestionCount = validCap.recommendedQuestionCount || Math.max(1, recommendedByDifficulty.balanced);
+                recommendedQuestions = `${recommendedQuestionCount} Questions (Evidence-Backed Capacity)`;
+            } else {
+                // Genuinely insufficient curricular evidence detected
+                recommendedByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
+                capacityByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
+                totalDefensibleCapacity = 0;
+                advisoryRationale = 'Insufficient curricular substance to ground defensible assessment recommendations.';
+                recommendedQuestionCount = 0;
+                recommendedQuestions = '0 Questions';
+            }
         }
         if (isTopicInput && analysis.isAcademic) {
             recommendedQuestionCount = Math.max(10, recommendedQuestionCount || fallbackRecCount);
@@ -5663,7 +5700,9 @@ exports.generateQuizFromCleanedLecture = async (req, res) => {
                 });
             } catch (err) {
                 console.error('❌ Lecture Quiz Gen Error:', err.message);
-                failTask(taskId, err.message);
+                const taskObj = getTaskFromMgr ? getTaskFromMgr(taskId) : null;
+                const resolvedCode = resolveGenerationErrorCode(err, taskObj?.pipelineResult || err.pipelineResult);
+                failTask(taskId, err.message, resolvedCode);
             }
         });
     } catch (err) {

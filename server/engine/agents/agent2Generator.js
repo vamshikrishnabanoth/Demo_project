@@ -329,7 +329,7 @@ class Agent2Generator {
         fulfillmentStatus: 'UNFULFILLED_PROVIDER_FAILURE',
         isUnfulfilled: true,
         unfulfilledReason: 'PROVIDER_UNAVAILABLE',
-        message: `Cannot generate grounded question for "${concept}". Model generation failed and canned fallbacks are disabled.`,
+        message: `Cannot generate grounded question for "${concept}". Model generation failed (${repairInstruction || evidencePackage?.error || 'Provider error'}) and canned fallbacks are disabled.`,
         metadata: {
           targetDifficulty: tier,
           achievedDifficulty: null,
@@ -873,15 +873,17 @@ class Agent2Generator {
       parsedMCQ.options = parsedMCQ.options.map(opt => {
         if (typeof opt !== 'string') return opt;
         let cleanOpt = opt.trim();
+        const isCodeOrSyntax = /->|::|\b(?:free|malloc|nullptr|NULL|cout|cin|return|sizeof|struct|class|head|tail|prev|next|curr|node)\b|[{}\[\];=><]/.test(cleanOpt);
         const optWords = cleanOpt.split(/\s+/).filter(Boolean);
-        if (optWords.length > 15) {
+        const wordCeiling = isCodeOrSyntax ? 30 : 15;
+        if (optWords.length > wordCeiling) {
           // Try safe clause boundaries: semicolon, parenthetical, or non-restrictive relative clause
           const clauseMatch = cleanOpt.match(/^([^;(]+)[;(]/) ||
                               cleanOpt.match(/^([^,]+),\s*(?:which|transferring|where|meaning|resulting|allowing|causing)\b/i);
           if (clauseMatch) {
             const candidate = clauseMatch[1].trim();
             const candWords = candidate.split(/\s+/).filter(Boolean);
-            if (candWords.length >= 2 && candWords.length <= 15) {
+            if (candWords.length >= 2 && candWords.length <= wordCeiling) {
               return candidate;
             }
           }
@@ -1552,7 +1554,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
       });
     } catch (llmErr) {
       console.warn(`⚠️ [Agent 2] LLM generation error on target ${target.targetId}: ${llmErr.message}. Generating resilient grounded fallback MCQ...`);
-      return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+      return this.generateQuestionFallback(target, { ...evidencePackage, error: llmErr.message }, repairInstruction || llmErr.message);
     }
 
     let parsedMCQ;
@@ -1574,7 +1576,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
         console.warn(`⚠️ [Agent 2] JSON repair notice for target ${target.targetId}: ${repairErr.message}.`);
         const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
         if (isMockAllowed) {
-          return this.generateQuestionFallback(target, evidencePackage, repairInstruction);
+          return this.generateQuestionFallback(target, evidencePackage, repairInstruction || repairErr?.message);
         }
         return {
           targetId: target.targetId,

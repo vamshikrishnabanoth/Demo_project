@@ -247,6 +247,10 @@ class PipelineOrchestrator {
         throw new Error('INSUFFICIENT_CURRICULAR_TARGETS: No assessment targets could be planned from the session evidence.');
       }
 
+      if (primaryTargets.length < requestedCount) {
+        console.log(`ℹ️ [Orchestrator] Available evidence yields ${primaryTargets.length} target(s) for requested ${requestedCount} questions. Processing available targets without hallucinating extra content.`);
+      }
+
       const hasTcScore = typeof plan.tcScore?.overallScore === 'number';
       const tcCalculations = plan.tcScore?.breakdown || {
         status: hasTcScore ? 'EVALUATED' : 'NOT_EVALUATED',
@@ -1094,6 +1098,27 @@ class PipelineOrchestrator {
         notice = noticeParts.join(' ');
       }
 
+      // Truthful shortfall categorization
+      const isPartial = deliveredCount > 0 && deliveredCount < requestedCount;
+      let shortfallCategory = null;
+      if (isPartial || deliveredCount < requestedCount) {
+        const hasProviderFailures = unfulfilledTargets.some(u => 
+          u?.status === 'UNFULFILLED_PROVIDER_FAILURE' || 
+          u?.unfulfilledReason === 'PROVIDER_UNAVAILABLE' || 
+          u?.unfulfilledReason === 'PROVIDER_ERROR'
+        ) || (totalGenerationAttempts > 0 && deliveredCount === 0 && Boolean(notice && /rate limit|quota|provider/i.test(notice)));
+
+        const hasValidationRejections = rejectedTargets.length > 0 && !hasProviderFailures;
+
+        if (hasProviderFailures) {
+          shortfallCategory = 'PROVIDER_ERROR';
+        } else if (hasValidationRejections && unfulfilledTargets.length === 0) {
+          shortfallCategory = 'VALIDATION_REJECTION';
+        } else {
+          shortfallCategory = 'MATERIAL_EXHAUSTED';
+        }
+      }
+
       // Merge Cross-Material Alignment exclusion warning if present
       if (evidencePackage.alignmentWarning) {
         notice = notice ? `${evidencePackage.alignmentWarning} (${notice})` : evidencePackage.alignmentWarning;
@@ -1116,7 +1141,9 @@ class PipelineOrchestrator {
           concept: u?.concept || 'Target',
           targetDifficulty: u?.targetDifficulty || 'Medium',
           reason: u?.reason || 'Capacity deficit'
-        }))
+        })),
+        isPartial,
+        shortfallCategory
       };
 
       // Finalize Session Trace & Persist final_session_trace.json
@@ -1131,6 +1158,8 @@ class PipelineOrchestrator {
         ...plan.capacityDeficitReport,
         generatedCount: deliveredCount,
         capacityDeficit: totalDeficit,
+        isPartial,
+        shortfallCategory,
         teacherActionRequired: hasDeficit && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM',
         options: (hasDeficit && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
           { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${deliveredCount} ${requestedDifficulty} Question${deliveredCount === 1 ? '' : 's'}` },
@@ -1164,6 +1193,8 @@ class PipelineOrchestrator {
       return {
         sessionId: sessionId,
         pipelineStatus: pipelineStatus,
+        isPartial,
+        shortfallCategory,
         evidenceSafety: evidenceSafety,
         quizQualityStatus: quizEval?.quizQualityStatus || (deliveredCount > 0 ? 'QUALITY_PASSED' : 'NOT_EVALUATED'),
         quizTitle: plan?.mainTopic || 'AI Generated Quiz',
@@ -1222,17 +1253,30 @@ class PipelineOrchestrator {
       };
     } catch (err) {
       console.error('💥 [PipelineOrchestrator Error Stack]:', err.stack || err);
-      const isInsufficient = err.code === 'INSUFFICIENT_READABLE_EVIDENCE' || (err.message && err.message.includes('INSUFFICIENT_READABLE_EVIDENCE'));
-      const isFatal = err.code === 'NO_LLM_PROVIDER_AVAILABLE' || (err.message && err.message.includes('NO_LLM_PROVIDER_AVAILABLE'));
+      const isInsufficient = err.code === 'INSUFFICIENT_READABLE_EVIDENCE' || 
+        (err.message && (
+          err.message.includes('INSUFFICIENT_READABLE_EVIDENCE') ||
+          err.message.includes('INSUFFICIENT_CURRICULAR_TARGETS') ||
+          err.message.includes('INSUFFICIENT_CURRICULAR_CONTENT') ||
+          err.message.includes('No assessment targets could be planned')
+        ));
+      const isFatal = err.code === 'NO_LLM_PROVIDER_AVAILABLE' || 
+        (err.message && (
+          err.message.includes('NO_LLM_PROVIDER_AVAILABLE') ||
+          err.message.includes('rate limit') ||
+          err.message.includes('429') ||
+          err.message.includes('quota') ||
+          err.message.includes('too many requests')
+        ));
       let failureReason;
       let failureCode = 'PIPELINE_ERROR';
 
       if (isInsufficient) {
-        failureCode = 'INSUFFICIENT_READABLE_EVIDENCE';
-        failureReason = 'INSUFFICIENT_READABLE_EVIDENCE: The uploaded document did not contain sufficient readable instructional text, tables, or visual data to formulate grounded assessment questions.';
+        failureCode = 'INSUFFICIENT_EVIDENCE';
+        failureReason = 'INSUFFICIENT_EVIDENCE: The uploaded material does not contain sufficient instructional evidence to formulate grounded assessment questions.';
       } else if (isFatal) {
-        failureCode = 'NO_LLM_PROVIDER_AVAILABLE';
-        failureReason = 'NO_LLM_PROVIDER_AVAILABLE: All AI providers are rate-limited or offline. Please retry in a few moments.';
+        failureCode = 'PROVIDER_RATE_LIMITED';
+        failureReason = 'PROVIDER_RATE_LIMITED: AI reasoning service is currently experiencing high demand or rate limits. Please retry in a few moments.';
       } else {
         failureReason = `PIPELINE_ERROR: ${err.message}`;
       }
@@ -1252,6 +1296,8 @@ class PipelineOrchestrator {
         sessionId: sessionId,
         pipelineStatus: 'FAILED',
         failureCode,
+        isPartial: false,
+        shortfallCategory: failureCode === 'PROVIDER_RATE_LIMITED' ? 'PROVIDER_ERROR' : 'MATERIAL_EXHAUSTED',
         evidenceSafety: 'UNKNOWN',
         quizQualityStatus: 'FAILED',
         error: failureReason,

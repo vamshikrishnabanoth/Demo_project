@@ -1132,7 +1132,9 @@ ${promptEvidence}`;
         prompt: userPrompt,
         systemPrompt,
         temperature: 0.1, // low temperature for maximum evidence fidelity
-        responseFormat: 'json'
+        responseFormat: 'json',
+        maxTokens: 4096,
+        operation: 'LECTURE_INTELLIGENCE'
       });
 
       const parsed = safeParseJson(responseStr);
@@ -1193,26 +1195,40 @@ ${promptEvidence}`;
                 ch.timestamp_start = this.formatTimestamp(sSec);
                 ch.timestamp_end = this.formatTimestamp(eSec);
               });
+  
             }
           }
         }
 
-        if (val.valid) {
+        if (!hasTimingData && Array.isArray(parsed.chapters)) {
+          parsed.chapters.forEach(c => {
+            c.timestamp_start = null;
+            c.timestamp_end = null;
+            c.start_seconds = null;
+            c.end_seconds = null;
+          });
+        }
+        const hasValidConcepts = Array.isArray(parsed.conceptMap) && parsed.conceptMap.length > 0;
+        const timingOnlyError = !val.valid && Array.isArray(val.errors) && val.errors.every(e => e.includes('timestamp') || e.includes('start_seconds') || e.includes('end_seconds'));
+        if ((val.valid || timingOnlyError) && hasValidConcepts) {
           this.saveToCache(cacheKey, parsed);
           return parsed;
         } else {
-          console.warn('[LectureIntelligence] Validation warnings:', val.errors);
-          // If timing invariant was violated, fix it deterministically
-          if (!hasTimingData) {
-            parsed.chapters.forEach(c => {
-              c.timestamp_start = null;
-              c.timestamp_end = null;
-              c.start_seconds = null;
-              c.end_seconds = null;
-            });
-          }
-          this.saveToCache(cacheKey, parsed);
-          return parsed;
+          console.warn('[LectureIntelligence] Response invalid or conceptMap missing. Executing deterministic fallback. Errors:', val.errors);
+          const fallback = this.buildPartialFallback({
+            evidenceText: rawText,
+            modality,
+            hasTimingData,
+            decoyFilename: fileName,
+            fileName,
+            duration,
+            segments,
+            slides,
+            errorReason: `LLM validation failed: ${val.errors?.join('; ') || 'missing concepts'}`
+          });
+          if (requestedCount !== null) fallback.userRequestedCount = Number(requestedCount);
+          if (requestedDifficulty) fallback.userRequestedDifficulty = requestedDifficulty;
+          return fallback;
         }
       }
     } catch (llmErr) {

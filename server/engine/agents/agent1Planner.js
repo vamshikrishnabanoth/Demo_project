@@ -877,7 +877,8 @@ Requested Question Count: Exactly ${requestedCount} (Required Targets: ${targetI
 
 TASK:
 Generate the comprehensive assessment plan with exactly ${requestedCount} primary targets ([${targetIdList}]) and reserve targets covering foundational principles, operational mechanisms, algorithms, tradeoffs, and applied problem scenarios for ${evidencePackage?.topic || rawContent}.
-DECOMPOSITION MANDATE: If the topic string lists multiple areas (e.g. separated by commas or 'and'), decompose them across targets so each target tests ONE specific subtopic and facet. NEVER repeat the full topic string as the concept name.`
+DECOMPOSITION MANDATE: If the topic string lists multiple areas (e.g. separated by commas or 'and'), decompose them across targets so each target tests ONE specific subtopic and facet. NEVER repeat the full topic string as the concept name.
+PROGRAMMING & ALGORITHM DIRECTIVE: If the topic involves a programming language, data structure, or algorithm (e.g. C++, Java, Python, Linked List, Pointers, Trees, Memory Management): Formulate targets around concrete operational mechanisms (pointer mutation sequences, edge case node deletion, memory leaks/free ordering, execution traces, and Big-O complexity). For Hard difficulty, require code tracing, pointer manipulation analysis, or state bug diagnosis.`
       : `
 [TEACHING EVIDENCE PACKAGE]
 Lecture Depth: ${lectureDepth.rating} (${lectureDepth.score}/100)
