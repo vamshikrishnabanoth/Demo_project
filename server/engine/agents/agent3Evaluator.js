@@ -185,21 +185,21 @@ class Agent3Evaluator {
       return preAudit;
     }
 
-    // Fast-Path Tier 1: If candidate question cleanly passes all local deterministic checks
-    // (AST syntax, 4 options, key integrity, length symmetry, absence of foreign contamination, and cognitive calibration)
-    // with high score and zero failure reasons, bypass the heavy LLM call entirely.
+    const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
+    const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
+
+    // Fast-Path Tier 1: Deterministic verification bypass ONLY for Easy (factual recall) questions.
+    // Medium and Hard questions require semantic quality evaluation (cannot be certified by lexical match alone).
+    const isEasyTier = requestedTier === 'Easy';
     const enableFastPath = process.env.AGENT3_FAST_PATH !== 'false' && process.env.AGENT3_ALWAYS_CALL_LLM !== 'true';
-    if (enableFastPath && preAudit.passed && preAudit.failureReasons.length === 0 && preAudit.score >= 0.90) {
-      preAudit.verificationMethod = 'DETERMINISTIC_FAST_PATH';
+    if (enableFastPath && isEasyTier && preAudit.passed && preAudit.failureReasons.length === 0 && preAudit.score >= 0.90) {
+      preAudit.verificationMethod = 'DETERMINISTIC_RECALL_FAST_PATH';
       preAudit.isFallback = false;
       preAudit.isLLMVerified = false;
       preAudit.verifiedProgrammatically = Boolean(candidateMCQ.verificationRecord?.verifiedProgrammatically);
       preAudit.verificationStatus = candidateMCQ.verificationRecord?.verificationStatus || 'MODEL_ASSERTED';
       return preAudit;
     }
-
-    const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
-    const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
     const systemPrompt = `You are Agent 3: Academic Question Evaluator & Curriculum Auditor.
 Perform a rigorous option-by-option audit and cognitive calibration evaluation on the candidate MCQ.
@@ -389,19 +389,25 @@ ${evidenceContext}
         fallbackResult.failureReasons?.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) ||
         (typeof gScore === 'number' && gScore < 0.20);
 
-      if (fallbackResult.status === 'FAIL' || isForeign) {
+      // Rule: An unverified Medium or Hard question must NOT silently pass merely because its words match the lecture
+      const isUnverifiedCognitiveTier = requestedTier === 'Medium' || requestedTier === 'Hard';
+
+      if (fallbackResult.status === 'FAIL' || isForeign || isUnverifiedCognitiveTier) {
         fallbackResult.status = 'FAIL';
         fallbackResult.passed = false;
         fallbackResult.verdict = 'FAIL';
-        fallbackResult.tier = 'UNSUPPORTED_FOREIGN';
+        fallbackResult.tier = isForeign ? 'UNSUPPORTED_FOREIGN' : 'UNVERIFIED_EVALUATION_FAILURE';
         fallbackResult.groundingScore = typeof gScore === 'number' ? gScore : 0.0;
+        const failReason = isUnverifiedCognitiveTier
+          ? `Semantic evaluation unavailable: ${requestedTier} difficulty question cannot be certified without semantic quality evaluation (${err.message})`
+          : 'Question rejected due to insufficient evidence overlap (LLM unavailable fallback)';
         if (!fallbackResult.failureReason) {
-          fallbackResult.failureReason = 'Question rejected due to insufficient evidence overlap (LLM unavailable fallback)';
-        } else if (isForeign && !fallbackResult.failureReason.includes('insufficient evidence overlap')) {
-          fallbackResult.failureReason += '; insufficient evidence overlap';
+          fallbackResult.failureReason = failReason;
+        } else if (!fallbackResult.failureReason.includes('Semantic evaluation unavailable')) {
+          fallbackResult.failureReason += `; ${failReason}`;
         }
-        if (!fallbackResult.failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM)) {
-          fallbackResult.failureReasons.push(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM);
+        if (!fallbackResult.failureReasons.includes('SEMANTIC_EVALUATION_UNAVAILABLE')) {
+          fallbackResult.failureReasons.push('SEMANTIC_EVALUATION_UNAVAILABLE');
         }
       } else {
         fallbackResult.status = 'PASS';
@@ -409,7 +415,7 @@ ${evidenceContext}
         fallbackResult.verdict = 'PASS';
         fallbackResult.tier = 'VERIFICATION_FALLBACK';
         fallbackResult.groundingScore = (typeof gScore === 'number' && gScore > 0) ? gScore : 0.85;
-        fallbackResult.auditNotice = `Audited via deterministic lexical evidence match fallback (${err.message}).`;
+        fallbackResult.auditNotice = `Audited via deterministic lexical evidence match fallback for Easy recall (${err.message}).`;
       }
 
       return fallbackResult;

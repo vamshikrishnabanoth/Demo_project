@@ -437,13 +437,14 @@ class LLMRouter {
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    // Configurable model cascade: allows env override, defaults to verified active models gemini-2.5-flash, gemini-flash-latest
+    // Configurable model cascade: verified supported models from Google ModelService API
     const candidateModels = Array.from(new Set([
       process.env.GEMINI_MODEL,
       model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
-      'gemini-2.5-flash',
       'gemini-flash-latest',
-      'gemini-2.0-flash'
+      'gemini-2.5-flash',
+      'gemini-3.8-flash',
+      'gemini-3.1-flash-lite'
     ].filter(Boolean)));
 
     let lastErr = null;
@@ -454,7 +455,7 @@ class LLMRouter {
           model: geminiModelName,
           generationConfig: {
             temperature: typeof temperature === 'number' ? temperature : 0.3,
-            maxOutputTokens: 8192
+            maxOutputTokens: resolvedMaxTokens || 2048
           }
         };
 
