@@ -331,12 +331,12 @@ class PipelineOrchestrator {
 
       // Bounded Concurrency Worker Pool:
       // Controlled concurrency (default 2, bounded [1, 3]) balances throughput and Groq rate-limits
-      const defaultConcurrency = 2;
+      const defaultConcurrency = 3;
       const concurrencyLimit = Math.max(1, Math.min(5, parseInt(process.env.GENERATION_CONCURRENCY, 10) || defaultConcurrency));
       let activeWorkers = 0;
 
       async function processSingleTarget(currentTarget, workerId) {
-        const tier = currentTarget.targetDifficulty || 'Medium';
+        let tier = currentTarget.targetDifficulty || 'Medium';
         const targetStartTime = Date.now();
         const currentQNum = passingQuestions.length + 1;
 
@@ -349,40 +349,53 @@ class PipelineOrchestrator {
         );
 
         if (isPreIdentifiedDeficit) {
-          totalGenerationAttempts++;
-          if (byTier[tier]) byTier[tier].generated++;
-          if (byTier[tier]) byTier[tier].unfulfilled++;
+          if (sessionInputs.deficitPolicy === 'FILL_WITH_MEDIUM' && passingQuestions.length < requestedCount) {
+            currentTarget.targetDifficulty = 'Medium';
+            currentTarget.isCapacityLimited = false;
+            currentTarget.isDeficitFill = true;
+            delete currentTarget.capacityLimitation;
+            const cognitiveBp = agent1Planner.getCognitiveBlueprint('Medium', currentTarget.dimension || 'Conceptual');
+            currentTarget.intendedCognitiveOperation = cognitiveBp.intendedCognitiveOperation || 'EXPLAIN_MECHANISM';
+            currentTarget.bloomLevel = cognitiveBp.bloomLevel || 'Understand / Apply';
+            currentTarget.operationalGuidance = cognitiveBp.operationalGuidance || 'Require operational reasoning about mechanisms and state transitions.';
+            currentTarget.instruction = `${currentTarget.operationalGuidance} Test concept: ${currentTarget.concept}.`;
+            tier = 'Medium';
+          } else {
+            totalGenerationAttempts++;
+            if (byTier[tier]) byTier[tier].generated++;
+            if (byTier[tier]) byTier[tier].unfulfilled++;
 
-          const deficitMCQ = agent2Generator.generateQuestionFallback(currentTarget, evidencePackage);
-          const evalDecision = await agent3Evaluator.evaluateQuestion(deficitMCQ, currentTarget, evidencePackage);
+            const deficitMCQ = agent2Generator.generateQuestionFallback(currentTarget, evidencePackage);
+            const evalDecision = await agent3Evaluator.evaluateQuestion(deficitMCQ, currentTarget, evidencePackage);
 
-          const deficitRecord = {
-            targetId: currentTarget.targetId,
-            concept: currentTarget.concept,
-            subtopic: currentTarget.subtopic || 'General Topic',
-            targetDifficulty: currentTarget.targetDifficulty,
-            intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
-            status: 'UNFULFILLED_CAPACITY_DEFICIT',
-            reason: currentTarget.capacityLimitation?.reason || deficitMCQ.message || 'Capacity deficit: lecture evidence exhausted without hallucinating un-taught concepts',
-            attempts: 1,
-            repairAttempted: false,
-            repairSuccessful: false,
-            mcq: deficitMCQ,
-            evalDecision
-          };
+            const deficitRecord = {
+              targetId: currentTarget.targetId,
+              concept: currentTarget.concept,
+              subtopic: currentTarget.subtopic || 'General Topic',
+              targetDifficulty: currentTarget.targetDifficulty,
+              intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
+              status: 'UNFULFILLED_CAPACITY_DEFICIT',
+              reason: currentTarget.capacityLimitation?.reason || deficitMCQ.message || 'Capacity deficit: lecture evidence exhausted without hallucinating un-taught concepts',
+              attempts: 1,
+              repairAttempted: false,
+              repairSuccessful: false,
+              mcq: deficitMCQ,
+              evalDecision
+            };
 
-          await trace.recordStage({
-            stageOrder: `04_T${currentTarget.targetId}`,
-            stageName: 'CAPACITY_DEFICIT_RECORDED',
-            input: { targetId: currentTarget.targetId, concept: currentTarget.concept, difficulty: tier },
-            decisions: [`Target ${currentTarget.targetId} ("${currentTarget.concept}") recorded as explicit capacity deficit: ${deficitRecord.reason}`],
-            rulesApplied: ['Honest Capacity Limitation Rule: Never fabricate complexity or downgrade difficulty silently'],
-            output: { status: 'UNFULFILLED_CAPACITY_DEFICIT', reason: deficitRecord.reason },
-            validation: { status: 'PASS', checks: ['Capacity deficit preserved honestly'] },
-            durationMs: Date.now() - targetStartTime
-          });
+            await trace.recordStage({
+              stageOrder: `04_T${currentTarget.targetId}`,
+              stageName: 'CAPACITY_DEFICIT_RECORDED',
+              input: { targetId: currentTarget.targetId, concept: currentTarget.concept, difficulty: tier },
+              decisions: [`Target ${currentTarget.targetId} ("${currentTarget.concept}") recorded as explicit capacity deficit: ${deficitRecord.reason}`],
+              rulesApplied: ['Honest Capacity Limitation Rule: Never fabricate complexity or downgrade difficulty silently'],
+              output: { status: 'UNFULFILLED_CAPACITY_DEFICIT', reason: deficitRecord.reason },
+              validation: { status: 'PASS', checks: ['Capacity deficit preserved honestly'] },
+              durationMs: Date.now() - targetStartTime
+            });
 
-          return { status: 'DEFICIT', deficitRecord, currentTarget, tier, targetStartTime };
+            return { status: 'DEFICIT', deficitRecord, currentTarget, tier, targetStartTime };
+          }
         }
 
         // 2. Generation Step (Agent 2)
@@ -508,6 +521,7 @@ class PipelineOrchestrator {
               ...currentTarget,
               targetId: `${currentTarget.targetId}_cal`,
               targetDifficulty: 'Medium',
+              isCapacityLimited: false,
               isDeficitFill: true,
               originalRequestedDifficulty: tier
             };

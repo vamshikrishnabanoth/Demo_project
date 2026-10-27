@@ -430,6 +430,7 @@ export default function CreateQuizText() {
                 type:          'topic',
                 questionCount: 1,
                 difficulty:    'Medium',
+                deficitPolicy: 'FILL_WITH_MEDIUM'
             };
             const res = await api.post('/quiz/generate', payload, { timeout: 300000 });
             const [newQ] = res.data.questions || [];

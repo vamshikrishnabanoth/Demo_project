@@ -2980,6 +2980,7 @@ exports.generateQuizQuestions = async (req, res) => {
             console.log('========================================================\n');
 
             let { type, questionCount, difficulty, topic, videoUrls, source_material_id, target_ratios, inputs, topic_weights, lobby_summary, ai_flashcards, text_prompts, startPage, endPage, isolated_narratives, questionStyle, deficitPolicy } = req.body;
+            deficitPolicy = deficitPolicy || 'FILL_WITH_MEDIUM';
             let start = startPage ? parseInt(startPage) : 1;
             let end = endPage ? parseInt(endPage) : 999;
             let parsedIsolatedNarratives = null;
@@ -5045,14 +5046,27 @@ exports.analyzeDepth = async (req, res) => {
                 hard: evCap.recommendedByDifficulty.hard,
                 balanced: evCap.totalDefensibleCapacity || evCap.recommendedQuestionCount
             };
-            if (recommendedByDifficulty.hard === 0 && supportsHard && fallbackRecCount >= 3) {
-                const derivedHard = Math.max(1, Math.round(fallbackRecCount * 0.35));
+            const safeRec = Math.max(fallbackRecCount || 5, 5);
+            if (!recommendedByDifficulty.balanced || recommendedByDifficulty.balanced === 0) {
+                recommendedByDifficulty.balanced = safeRec;
+            }
+            if (!recommendedByDifficulty.easy || recommendedByDifficulty.easy === 0) {
+                recommendedByDifficulty.easy = Math.max(1, Math.round(safeRec * 0.85));
+            }
+            if (!recommendedByDifficulty.medium || recommendedByDifficulty.medium === 0) {
+                recommendedByDifficulty.medium = Math.max(1, Math.round(safeRec * 0.85));
+            }
+            if ((!recommendedByDifficulty.hard || recommendedByDifficulty.hard === 0) && supportsHard) {
+                const derivedHard = Math.max(1, Math.round(safeRec * 0.4));
                 recommendedByDifficulty.hard = derivedHard;
                 capacityByDifficulty.hard = Math.max(capacityByDifficulty.hard || 0, derivedHard);
             }
-            totalDefensibleCapacity = evCap.totalDefensibleCapacity || (recommendedByDifficulty.easy + recommendedByDifficulty.medium + recommendedByDifficulty.hard);
+            if (!capacityByDifficulty.easy || capacityByDifficulty.easy === 0) capacityByDifficulty.easy = safeRec;
+            if (!capacityByDifficulty.medium || capacityByDifficulty.medium === 0) capacityByDifficulty.medium = safeRec;
+            if (!capacityByDifficulty.balanced || capacityByDifficulty.balanced === 0) capacityByDifficulty.balanced = safeRec;
+            totalDefensibleCapacity = Math.max(evCap.totalDefensibleCapacity || 0, safeRec, (recommendedByDifficulty.easy + recommendedByDifficulty.medium + (recommendedByDifficulty.hard || 0)));
             advisoryRationale = evCap.advisoryRationale || '';
-            recommendedQuestionCount = evCap.recommendedQuestionCount || fallbackRecCount;
+            recommendedQuestionCount = Math.max(evCap.recommendedQuestionCount || safeRec, safeRec);
         } else {
             const easyCount = Math.max(1, Math.round(fallbackRecCount * 0.85));
             const medCount = Math.max(1, Math.round(fallbackRecCount * 0.85));

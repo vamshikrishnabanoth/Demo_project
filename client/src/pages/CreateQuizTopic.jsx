@@ -1283,6 +1283,7 @@ export default function CreateQuizTopic() {
         formData.append('questionCount', questionCount);
         formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);
+        formData.append('deficitPolicy', 'FILL_WITH_MEDIUM');
 
         // 3. Text prompts: voice transcripts, text inputs, and fallback text for restored documents without live File
         const textInputs = inputs.filter(inp => {
@@ -2179,7 +2180,13 @@ export default function CreateQuizTopic() {
                                     <div className="grid grid-cols-2 gap-2.5">
                                         {['Balanced', 'Easy', 'Medium', 'Hard'].map((level) => {
                                             const lvlKey = level.toLowerCase();
-                                            const recVal = recommendedByDifficulty ? recommendedByDifficulty[lvlKey] : null;
+                                            const rawRec = recommendedByDifficulty ? recommendedByDifficulty[lvlKey] : null;
+                                            const baseRec = (recommendedQuestionCount && Number(recommendedQuestionCount) > 0) ? Number(recommendedQuestionCount) : null;
+                                            const recVal = (rawRec !== null && rawRec !== undefined && Number(rawRec) > 0)
+                                                ? Number(rawRec)
+                                                : (baseRec
+                                                    ? (level === 'Balanced' ? baseRec : (level === 'Hard' ? Math.max(1, Math.round(baseRec * 0.5)) : Math.max(1, Math.round(baseRec * 0.85))))
+                                                    : (rawRec !== null && rawRec !== undefined ? rawRec : null));
                                             return (
                                                 <button
                                                     key={level}
@@ -2190,12 +2197,6 @@ export default function CreateQuizTopic() {
                                                         let targetRec = (recVal !== null && recVal !== undefined && Number(recVal) > 0)
                                                             ? Number(recVal)
                                                             : null;
-                                                        if (!targetRec && recommendedQuestionCount && Number(recommendedQuestionCount) > 0) {
-                                                            const baseRec = Number(recommendedQuestionCount);
-                                                            if (level === 'Balanced') targetRec = baseRec;
-                                                            else if (level === 'Easy' || level === 'Medium') targetRec = Math.max(1, Math.round(baseRec * 0.85));
-                                                            else if (level === 'Hard') targetRec = Math.max(1, Math.round(baseRec * 0.5));
-                                                        }
                                                         if (targetRec && Number.isFinite(targetRec) && targetRec > 0) {
                                                             setQuestionCount(Math.min(30, Math.max(1, targetRec)));
                                                         }
@@ -2213,7 +2214,7 @@ export default function CreateQuizTopic() {
                                                         <span className={`text-[10px] px-2 py-0.5 rounded-lg font-black tracking-normal ${
                                                             difficulty === level
                                                                 ? 'bg-white/25 text-white'
-                                                                : (recVal === 0 ? 'bg-amber-100 text-amber-700' : 'bg-orange-100 text-orange-800')
+                                                                : 'bg-orange-100 text-orange-800'
                                                         }`}>
                                                             {recVal} Qs
                                                         </span>
