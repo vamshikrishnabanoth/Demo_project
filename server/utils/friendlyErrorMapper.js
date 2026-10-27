@@ -102,9 +102,13 @@ function toUserFriendlyError(rawError, context = {}) {
     lowerMsg.includes('conversational chatter') ||
     lowerMsg.includes('non-academic') ||
     lowerMsg.includes('youtube banter') ||
-    lowerMsg.includes('unboxing')
+    lowerMsg.includes('unboxing') ||
+    lowerMsg.includes('pop song') ||
+    lowerMsg.includes('song lyrics') ||
+    lowerMsg.includes('cartoon') ||
+    lowerMsg.includes('fictional')
   ) {
-    return 'The uploaded recording appears to be informal conversation or general media rather than an academic lecture. Please upload course materials, classroom recordings, or textbook excerpts.';
+    return 'Question generation : Non-academic content detected. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum. Please upload lecture recordings, notes, or textbook excerpts.';
   }
 
   // 8. Raw Javascript Runtime Crashes (e.g. "Cannot read properties of undefined")

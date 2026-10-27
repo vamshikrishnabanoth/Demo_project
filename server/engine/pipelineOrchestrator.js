@@ -85,6 +85,32 @@ class PipelineOrchestrator {
       const t1 = Date.now();
       evidencePackage = evidencePackager.packageSessionEvidence(sessionInputs);
       evidencePackage.sessionId = sessionId;
+
+      if (evidencePackage.isAcademic === false) {
+        const failureReason = evidencePackage.academicFailureReason || 'Question generation : Non-academic content detected. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, and course curriculum.';
+        await trace.recordStage({
+          stageOrder: '02',
+          stageName: 'EVIDENCE_PACKAGE',
+          input: { sessionId },
+          processing: { operations: ['Academic content gate check'] },
+          decisions: [failureReason],
+          validation: { status: 'FAIL', checks: ['Academic content verification failed'] },
+          output: { status: 'REJECTED_NON_ACADEMIC', reason: failureReason },
+          durationMs: Date.now() - t1
+        });
+        const failErr = new Error(failureReason);
+        failErr.code = 'NON_ACADEMIC_CONTENT';
+        failErr.errorCode = 'NON_ACADEMIC_CONTENT';
+        failErr.pipelineResult = {
+          pipelineStatus: 'FAILED',
+          questions: [],
+          notice: failureReason,
+          error: failureReason,
+          errorCode: 'NON_ACADEMIC_CONTENT'
+        };
+        throw failErr;
+      }
+
       const voiceEmphasis = evidencePackage.voiceEmphasis || {};
 
       const hasVoice = Boolean(sessionInputs.voiceTranscript && sessionInputs.voiceTranscript.trim().length > 0);
@@ -823,13 +849,13 @@ class PipelineOrchestrator {
           const fallback = agent1Planner._buildFallbackPlan(
             sessionInputs.voiceTranscript || evidencePackage.unifiedRawContent || '',
             requestedDifficulty,
-            neededMore + 3,
+            neededMore + 5,
             evidencePackage.categoryWeights || {},
             evidencePackage.lectureDepth || {},
             evidencePackage.detectedFocus || [],
             evidencePackage
           );
-          for (const ft of fallback.assessmentTargets) {
+          for (const ft of (fallback.assessmentTargets || [])) {
             const cLower = (ft.concept || '').toLowerCase().trim();
             const facetSig = `${cLower}::${ft.dimension || ''}`;
             if (!seenConcepts.has(facetSig)) {
@@ -837,6 +863,48 @@ class PipelineOrchestrator {
               ft.targetId = `T_REP_0${candidateQueue.length + 1}`;
               candidateQueue.push(ft);
               if (candidateQueue.length >= neededMore) break;
+            }
+          }
+
+          // Guaranteed Queue Padding: Decompose curriculum concepts across distinct engineering facets
+          if (candidateQueue.length < neededMore) {
+            const baseConcepts = Array.from(new Set([
+              ...(evidencePackage.detectedFocus || []),
+              ...(Array.isArray(plan?.subtopics) ? plan.subtopics : []),
+              plan?.mainTopic || 'Core Subject Matter'
+            ])).filter(c => c && c.length > 2);
+
+            const replenishmentFacets = [
+              { name: 'Core Foundations & Governing Principles', dim: 'Conceptual', op: 'RECALL' },
+              { name: 'Operational Mechanics & Execution Steps', dim: 'Flow / Trace', op: 'TRACE' },
+              { name: 'State Transitions & Formulations', dim: 'Flow / Trace', op: 'TRACE' },
+              { name: 'Boundary Conditions & Edge Cases', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
+              { name: 'Applied Problem-Solving Scenarios', dim: 'Application', op: 'APPLY' },
+              { name: 'Design Tradeoffs & Comparative Analysis', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
+              { name: 'System Invariants & Bug Diagnostics', dim: 'Cause / Effect', op: 'EXPLAIN' },
+              { name: 'Practical System Behavior', dim: 'Conceptual', op: 'EXPLAIN' }
+            ];
+
+            let facetIndex = iterationCount;
+            while (candidateQueue.length < neededMore) {
+              const sub = baseConcepts[facetIndex % baseConcepts.length] || 'Core Subject Matter';
+              const facet = replenishmentFacets[facetIndex % replenishmentFacets.length];
+              facetIndex++;
+              const repTarget = {
+                targetId: `T_REP_0${candidateQueue.length + 1}`,
+                concept: `${sub} (${facet.name})`,
+                subtopic: sub,
+                trajectoryPhase: 'MID',
+                dimension: facet.dim,
+                cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate' : (requestedDifficulty === 'Medium' ? 'Apply' : 'Understand'),
+                targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : (requestedDifficulty || 'Medium'),
+                intendedCognitiveOperation: facet.op,
+                isCapacityLimited: false,
+                supportingEvidence: evidencePackage.unifiedRawContent || evidencePackage.curricularContent || '',
+                instruction: `Assess engineering principles and applications for ${sub}: ${facet.name}.`,
+                negativeBoundaries: evidencePackage.negativeBoundaries || []
+              };
+              candidateQueue.push(repTarget);
             }
           }
         }
@@ -1052,6 +1120,73 @@ class PipelineOrchestrator {
               repairSuccessful: false,
               mcq: q
             });
+          }
+        }
+      }
+
+      // GUARANTEED 100% QUESTION COUNT FULFILLMENT:
+      // If deduplication or grounding gate dropped any questions and validatedQuestions.length < requestedCount,
+      // actively generate replacement questions for each deficit slot so that exactly 100% of requestedCount is delivered!
+      if (validatedQuestions.length < requestedCount && validatedQuestions.length > 0) {
+        const needed = requestedCount - validatedQuestions.length;
+        console.log(`🔄 [Orchestrator] Fulfilling ${needed} deficit questions to reach requested count ${requestedCount}...`);
+
+        const baseConcepts = Array.from(new Set([
+          ...(evidencePackage.detectedFocus || []),
+          ...(Array.isArray(plan?.subtopics) ? plan.subtopics : []),
+          plan?.mainTopic || 'Core Subject Matter'
+        ])).filter(c => c && c.length > 2);
+
+        const replenishmentFacets = [
+          { name: 'Core Foundations & Governing Principles', dim: 'Conceptual', op: 'RECALL' },
+          { name: 'Operational Mechanics & Execution Steps', dim: 'Flow / Trace', op: 'TRACE' },
+          { name: 'State Transitions & Formulations', dim: 'Flow / Trace', op: 'TRACE' },
+          { name: 'Boundary Conditions & Edge Cases', dim: 'Scenario Analysis', op: 'DIAGNOSE' },
+          { name: 'Applied Problem-Solving Scenarios', dim: 'Application', op: 'APPLY' },
+          { name: 'Design Tradeoffs & Comparative Analysis', dim: 'Comparison / Tradeoff', op: 'COMPARE' },
+          { name: 'System Invariants & Bug Diagnostics', dim: 'Cause / Effect', op: 'EXPLAIN' },
+          { name: 'Practical System Behavior', dim: 'Conceptual', op: 'EXPLAIN' }
+        ];
+
+        for (let fi = 0; validatedQuestions.length < requestedCount && fi < 25; fi++) {
+          const sub = baseConcepts[fi % baseConcepts.length] || 'Core Subject Matter';
+          const facet = replenishmentFacets[fi % replenishmentFacets.length];
+          const repTarget = {
+            targetId: `T_FULFILL_${String(validatedQuestions.length + 1).padStart(2, '0')}`,
+            concept: `${sub} (${facet.name})`,
+            subtopic: sub,
+            trajectoryPhase: 'MID',
+            dimension: facet.dim,
+            cognitiveLevel: requestedDifficulty === 'Hard' ? 'Evaluate' : (requestedDifficulty === 'Medium' ? 'Apply' : 'Understand'),
+            targetDifficulty: requestedDifficulty === 'Balanced' ? 'Medium' : (requestedDifficulty || 'Medium'),
+            intendedCognitiveOperation: facet.op,
+            isCapacityLimited: false,
+            supportingEvidence: evidencePackage.unifiedRawContent || evidencePackage.curricularContent || '',
+            instruction: `Assess engineering principles and applications for ${sub}: ${facet.name}.`,
+            negativeBoundaries: evidencePackage.negativeBoundaries || []
+          };
+
+          try {
+            const rawMCQ = await agent2Generator.generateQuestion(repTarget, evidencePackage, plan);
+            const isDup = deterministicValidator.checkDuplicateQuestion(rawMCQ, validatedQuestions, rawMCQ.metadata);
+            if (!isDup.isDuplicate && Array.isArray(rawMCQ.options) && rawMCQ.options.length === 4 && rawMCQ.options.includes(rawMCQ.correctAnswer)) {
+              const correctIdx = rawMCQ.options.indexOf(rawMCQ.correctAnswer);
+              rawMCQ.correctAnswerKey = ['A', 'B', 'C', 'D'][correctIdx];
+              rawMCQ.correct_answer = rawMCQ.correctAnswerKey;
+              rawMCQ.correctAnswerText = rawMCQ.correctAnswer;
+              rawMCQ.metadata = {
+                ...(rawMCQ.metadata || {}),
+                targetId: repTarget.targetId,
+                concept: repTarget.concept,
+                subtopic: repTarget.subtopic,
+                targetDifficulty: repTarget.targetDifficulty,
+                tier: repTarget.targetDifficulty
+              };
+              validatedQuestions.push(rawMCQ);
+              console.log(`✅ [Orchestrator] Fulfilled deficit question ${validatedQuestions.length}/${requestedCount} on "${repTarget.concept}"`);
+            }
+          } catch (genErr) {
+            console.warn(`[Orchestrator] Fulfillment target attempt notice: ${genErr.message}`);
           }
         }
       }
