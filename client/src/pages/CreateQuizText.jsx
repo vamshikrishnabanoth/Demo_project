@@ -706,7 +706,7 @@ export default function CreateQuizText() {
                 )}
 
                 {/* Evidence Grounding & Partial Yield Notice Banner */}
-                {pipelineNotice && !alignmentWarning && (
+                {pipelineNotice && !alignmentWarning && requestedCount && questions.length < requestedCount && (
                     <div className="mb-6 bg-gradient-to-r from-blue-950/80 via-slate-900/90 to-indigo-950/80 border border-blue-500/30 rounded-2xl p-4 shadow-lg flex items-start justify-between gap-4 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-300">
                         <div className="flex items-start gap-3.5">
                             <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-400/30 shrink-0 mt-0.5">
@@ -724,9 +724,7 @@ export default function CreateQuizText() {
                                     )}
                                 </div>
                                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                                    {requestedCount && questions.length < requestedCount
-                                        ? `${questions.length} of ${requestedCount} requested questions were generated. The remaining ${requestedCount - questions.length === 1 ? 'question' : 'questions'} could not be validated against the available instructional evidence. Add more lecture content or supporting material to enable additional questions.`
-                                        : pipelineNotice}
+                                    {`${questions.length} of ${requestedCount} requested questions were generated. The remaining ${requestedCount - questions.length === 1 ? 'question' : 'questions'} could not be validated against the available instructional evidence. Add more lecture content or supporting material to enable additional questions.`}
                                 </p>
                             </div>
                         </div>

@@ -284,8 +284,12 @@ async function runSuite() {
         const result = await pipelineOrchestrator.runPipeline(sessionInputs);
 
         if (result.questions.length > 0) {
-          assert.strictEqual(result.pipelineStatus, 'COMPLETED_WITH_PARTIAL_FULFILLMENT');
-          assert.strictEqual(result.deliveredCount < sessionInputs.count, true, 'Delivered count is less than requested');
+          if (result.deliveredCount === sessionInputs.count) {
+            assert.strictEqual(result.pipelineStatus, 'COMPLETED');
+          } else {
+            assert.strictEqual(result.pipelineStatus, 'COMPLETED_WITH_PARTIAL_FULFILLMENT');
+            assert.strictEqual(result.deliveredCount < sessionInputs.count, true, 'Delivered count is less than requested');
+          }
           // Verify none of the questions contain canned templates
           result.questions.forEach(q => {
             assert.ok(!q.questionText.includes('AI quiz generation is temporarily offline'), 'Must not contain mock templates');

@@ -1511,15 +1511,16 @@ Generate the curricular assessment plan strictly covering educational concepts w
       .filter(f => f.length > 2 && !f.includes('core lecture topic'));
 
     // Semantic defensible capacity bounds:
-    // If lectureIntelligence.evidenceCapacity is present, use totalDefensibleCapacity.
-    // Otherwise fallback to focusList.length (preserving legacy test behavior).
+    // When a teacher requests a specific question count (e.g. 7, 5, 10), each topic/concept
+    // contributes multiple distinct pedagogical facets (Foundations, State Transitions,
+    // Boundary Cases, Diagnostic Analysis, Comparative Tradeoffs).
     const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity || evidencePackage?.lectureIntelligence;
     const rawLen = (evidencePackage?.unifiedRawContent || '').length;
-    // Substantive lectures (> 10k chars) naturally support 15-25 distinct targets; brief snippets (< 1500 chars) clamp to 3-4 targets
-    const lengthBasedCapacity = rawLen > 15000 ? 25 : (rawLen > 5000 ? 15 : (rawLen > 1500 ? 8 : Math.max(focusList.length * 2, 3)));
+    const lengthBasedCapacity = rawLen > 15000 ? 30 : (rawLen > 5000 ? 20 : (rawLen > 1500 ? 12 : Math.max(focusList.length * 3, 6)));
+    const targetQuota = requestedCount ? Math.max(requestedCount, 10) : 10;
     const maxDefensibleCapacity = isTopicMode
-      ? Math.max(requestedCount || 10, 30)
-      : (liCap?.totalDefensibleCapacity || lengthBasedCapacity);
+      ? Math.max(targetQuota, 30)
+      : Math.max(liCap?.totalDefensibleCapacity || 0, lengthBasedCapacity, targetQuota);
 
     const seenFocus = new Set();
     const isFocusDuplicate = (target) => {
@@ -1564,10 +1565,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
       } else if (normConcept && seenConceptFacets.has(conceptFingerprint)) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: 'Duplicate concept already targeted' });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Target concept "${t.concept}" duplicates an already planned target concept.` });
-      } else if (focusDup) {
+      } else if (focusDup && requestedCount && cleanTargets.length >= requestedCount) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Duplicate concept already targeted for focus "${focusDup}"` });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Target concept "${t.concept}" duplicates already targeted focus concept "${focusDup}".` });
-      } else if (maxDefensibleCapacity > 0 && cleanTargets.length >= maxDefensibleCapacity) {
+      } else if (maxDefensibleCapacity > 0 && cleanTargets.length >= maxDefensibleCapacity && (requestedCount == null || cleanTargets.length >= requestedCount)) {
         auditLog.rejected.push({ targetId: t.targetId, concept: t.concept, reason: `Curricular concept capacity reached (${maxDefensibleCapacity} distinct concepts in session evidence)` });
         auditLog.diagnosticEntries.push({ targetId: t.targetId, concept: t.concept, classification: 'CAPACITY_LIMIT_EXCEEDED', status: 'REJECTED', reason: `Session evidence supports only ${maxDefensibleCapacity} distinct curricular concept(s). Excess target rejected to prevent quota inflation.` });
       } else {
@@ -1596,10 +1597,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
       } else if (normConcept && seenConceptFacets.has(conceptFingerprint)) {
         auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: 'Duplicate concept already targeted' });
         auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Reserve target concept "${r.concept}" duplicates an existing concept.` });
-      } else if (focusDup) {
+      } else if (focusDup && requestedCount && (cleanTargets.length + cleanReserve.length) >= requestedCount) {
         auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: `Duplicate concept already targeted for focus "${focusDup}"` });
         auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'PEDAGOGICAL_DUPLICATE', status: 'REJECTED', reason: `Reserve target concept "${r.concept}" duplicates already targeted focus concept "${focusDup}".` });
-      } else if (maxDefensibleCapacity > 0 && (cleanTargets.length + cleanReserve.length) >= maxDefensibleCapacity) {
+      } else if (maxDefensibleCapacity > 0 && (cleanTargets.length + cleanReserve.length) >= maxDefensibleCapacity && (requestedCount == null || (cleanTargets.length + cleanReserve.length) >= requestedCount)) {
         auditLog.rejected.push({ targetId: r.targetId, concept: r.concept, reason: `Curricular concept capacity reached (${maxDefensibleCapacity} distinct concepts in session evidence)` });
         auditLog.diagnosticEntries.push({ targetId: r.targetId, concept: r.concept, classification: 'CAPACITY_LIMIT_EXCEEDED', status: 'REJECTED', reason: `Reserve concept exceeds session concept capacity (${maxDefensibleCapacity}).` });
       } else {
@@ -1610,7 +1611,7 @@ Generate the curricular assessment plan strictly covering educational concepts w
     }
 
     // Promote clean reserve targets if needed to fulfill requestedCount within genuine capacity bounds
-    const maxCapacity = maxDefensibleCapacity || requestedCount;
+    const maxCapacity = Math.max(requestedCount || 10, maxDefensibleCapacity || 10);
     while (cleanTargets.length < requestedCount && cleanTargets.length < maxCapacity && cleanReserve.length > 0) {
       const promoted = cleanReserve.shift();
       promoted.targetId = `T0${cleanTargets.length + 1}`;
@@ -1838,11 +1839,11 @@ Generate the curricular assessment plan strictly covering educational concepts w
     const liCap = evidencePackage?.lectureIntelligence?.evidenceCapacity || evidencePackage?.evidenceCapacity;
     let defensibleCapacity = count;
     if (liCap && typeof liCap.totalDefensibleCapacity === 'number') {
-      defensibleCapacity = liCap.totalDefensibleCapacity;
+      defensibleCapacity = Math.max(liCap.totalDefensibleCapacity, count);
     } else if (isExplicitCurriculum) {
-      defensibleCapacity = uniqueFocus.length;
+      defensibleCapacity = Math.max(uniqueFocus.length * 4, count);
     }
-    const availableCount = isTopicMode ? count : ((liCap?.totalDefensibleCapacity != null || isExplicitCurriculum) ? Math.min(count, defensibleCapacity) : count);
+    const availableCount = count;
     let extractedKeywords = [];
     if (uniqueFocus.length === 0) {
       const textToScan = typeof rawContent === 'string' ? rawContent : (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || '');
