@@ -354,6 +354,130 @@ test('23. Algorithmic problem domain context (e.g. lecture-hall interval schedul
   assert.strictEqual(res.issues.length, 0);
 });
 
+// ──────────────────────────────────────────────────────────────────────────
+// TARGETED REGRESSION SUITE: EXPANDED META-DISCOURSE & NEGATIVE CONTROLS
+// ──────────────────────────────────────────────────────────────────────────
+
+test('24. Leading meta-phrase "In the context of the lecture" triggers UNNECESSARY_META_LANGUAGE', () => {
+  const q = {
+    questionText: 'In the context of the lecture, which term is identified as being the same as the Greatest Common Divisor (GCD)?',
+    options: [
+      'Highest Common Factor',
+      'Least Common Multiple',
+      'Euclidean Algorithm',
+      'Prime Factorization'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(q);
+  assert.strictEqual(res.passesStyle, false, 'Must flag "In the context of the lecture"');
+  assert.ok(res.issues.includes('UNNECESSARY_META_LANGUAGE'), 'Issue code must be UNNECESSARY_META_LANGUAGE');
+});
+
+test('25. Leading meta-phrase "Based on the transcript" triggers UNNECESSARY_META_LANGUAGE', () => {
+  const q = {
+    questionText: 'Based on the transcript, which concurrency control protocol prevents dirty reads under Read Committed?',
+    options: [
+      'Immediate shared lock release',
+      'Strict two-phase locking',
+      'Exclusive write locks only',
+      'Predicate lock acquisition'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(q);
+  assert.strictEqual(res.passesStyle, false, 'Must flag "Based on the transcript"');
+  assert.ok(res.issues.includes('UNNECESSARY_META_LANGUAGE'), 'Issue code must be UNNECESSARY_META_LANGUAGE');
+});
+
+test('26. Embedded middle meta-phrase "in the context of the lecture" triggers UNNECESSARY_META_LANGUAGE', () => {
+  const q = {
+    questionText: 'When executing recursive modulo calls, in the context of the lecture, what base condition stops execution?',
+    options: [
+      'Maximum modulo minimum equals zero',
+      'Divisor increments above hundred',
+      'Remainder equals negative one',
+      'Call stack exceeds recursion limit'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(q);
+  assert.strictEqual(res.passesStyle, false, 'Must flag embedded "in the context of the lecture"');
+  assert.ok(res.issues.includes('UNNECESSARY_META_LANGUAGE'), 'Issue code must be UNNECESSARY_META_LANGUAGE');
+});
+
+test('27. Trailing meta-phrase "based on the transcript" triggers UNNECESSARY_META_LANGUAGE', () => {
+  const q = {
+    questionText: 'A process maintains an isolated virtual address space from sibling threads, based on the transcript.',
+    options: [
+      'Private virtual memory address space',
+      'Shared heap memory allocation',
+      'Global variable declaration table',
+      'Open file descriptor table'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(q);
+  assert.strictEqual(res.passesStyle, false, 'Must flag trailing "based on the transcript"');
+  assert.ok(res.issues.includes('UNNECESSARY_META_LANGUAGE'), 'Issue code must be UNNECESSARY_META_LANGUAGE');
+});
+
+test('28. Leading meta-phrase "From the lecture" triggers UNNECESSARY_META_LANGUAGE', () => {
+  const q = {
+    questionText: 'From the lecture, how does a thread context switch avoid a TLB flush?',
+    options: [
+      'By sharing the virtual address space',
+      'By reloading kernel page directories',
+      'By saving private register files',
+      'By duplicating memory management units'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(q);
+  assert.strictEqual(res.passesStyle, false, 'Must flag "From the lecture"');
+  assert.ok(res.issues.includes('UNNECESSARY_META_LANGUAGE'), 'Issue code must be UNNECESSARY_META_LANGUAGE');
+});
+
+test('29. Negative Control: Algorithmic domain "lecture-hall scheduling" passes cleanly', () => {
+  const q = {
+    questionText: 'In the lecture-hall interval scheduling problem, how does the greedy algorithm order requests?',
+    options: [
+      'Earliest request finish time',
+      'Shortest total interval duration',
+      'Latest feasible start deadline',
+      'Maximum total processor utilization'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(q);
+  assert.strictEqual(res.passesStyle, true, 'Legitimate domain phrasing must pass');
+  assert.strictEqual(res.issues.length, 0);
+});
+
+test('30. Negative Control: Biological domain "primary RNA transcript" passes cleanly', () => {
+  const q = {
+    questionText: 'During eukaryotic gene regulation, how does the primary RNA transcript undergo post-transcriptional splicing?',
+    options: [
+      'Spliceosomes remove non-coding introns',
+      'Ribosomes translate exon boundaries',
+      'Polymerase adds poly-A tail',
+      'Helicase unwinds double stranded DNA'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(q);
+  assert.strictEqual(res.passesStyle, true, 'Biological transcript context must pass');
+  assert.strictEqual(res.issues.length, 0);
+});
+
+test('31. Negative Control: Hardware domain "speaker impedance mismatch" passes cleanly', () => {
+  const q = {
+    questionText: 'In audio amplifier circuit design, what causes speaker impedance mismatch distortion?',
+    options: [
+      'Reflected load power dissipation',
+      'Excessive thermal noise in resistors',
+      'Capacitive coupling phase lag',
+      'Magnetic hysteresis saturation loss'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(q);
+  assert.strictEqual(res.passesStyle, true, 'Audio and speaker hardware context must pass');
+  assert.strictEqual(res.issues.length, 0);
+});
+
 console.log('\n======================================================================');
 console.log(`🏁 ALL ${passCount} STYLE CONTRACT v1.2 VERIFICATION TESTS PASSED CLEANLY!`);
 console.log('======================================================================\n');

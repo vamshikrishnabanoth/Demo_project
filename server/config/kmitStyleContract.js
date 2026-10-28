@@ -65,7 +65,7 @@ const KMIT_STYLE_CONTRACT = {
       /\bas explained by the (?:speaker|instructor|professor|teacher)\b/i,
       /\bwhich of the following was (?:mentioned|discussed|covered)\b/i,
       /\bwhich topic (?:was|is) covered\b/i,
-      /\b(?:in the lecture|based on the lecture)\b(?!\s*[-–—]?\s*(?:hall|room|setting|venue))/i
+      /\b(?:in the context of the|in the|based on the|from the)\s+(?:lecture|transcript)\b(?!\s*[-–—]?\s*(?:hall|room|setting|venue|interval))/i
     ],
     prohibitedMetaPrefixes: [
       /^(?:according to the lecture|as discussed in the lecture|in the lecture|based on the lecture|as taught in the lecture|according to the transcript)[,\s:]*/i,
