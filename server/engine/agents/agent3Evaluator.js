@@ -286,7 +286,8 @@ ${evidenceContext}
 `;
 
     try {
-      const responseText = await llmRouter.complete({
+      const evalTimeoutMs = 15000;
+      const evalPromise = llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.1,
@@ -295,6 +296,10 @@ ${evidenceContext}
         maxTokens: 2048,
         operation: 'EVALUATION'
       });
+      const evalTimeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Agent 3 LLM evaluation timed out after 15s')), evalTimeoutMs)
+      );
+      const responseText = await Promise.race([evalPromise, evalTimeout]);
 
       const parsed = safeParseJson(responseText);
 

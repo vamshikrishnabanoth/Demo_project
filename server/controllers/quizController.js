@@ -3734,7 +3734,7 @@ exports.generateQuizQuestions = async (req, res) => {
             const validation = finalQuizValidator(finalQuestions, difficulty || 'Medium');
             let lectureDepth = null;
             if (isVoiceSource && extractedText) {
-                const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText);
+                const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText, { sourceModality: 'DOCUMENT_ONLY', modality: 'DOCUMENT_ONLY' });
                 lectureDepth = depthAnalysis.lectureDepth;
             }
 
@@ -4743,7 +4743,15 @@ exports.getFileMetadata = async (req, res) => {
         }
 
         // Academic content analysis on document text
-        const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText);
+        const depthAnalysis = depthAnalyzer.analyzeLecture(extractedText, { sourceModality: 'DOCUMENT_ONLY', modality: 'DOCUMENT_ONLY' });
+
+        // Calculate upfront Pedagogical Delivery Index (PDI) for uploaded document
+        const pdiRouter = require('../engine/pdiRouter');
+        const pdiDecision = pdiRouter.route({ documentTexts: [extractedText] });
+        const rawFocus = Array.isArray(depthAnalysis.detectedFocus) ? depthAnalysis.detectedFocus : [];
+        const docTopics = rawFocus
+            .filter(t => t && typeof t === 'string' && t.trim() !== 'Instructional Content' && t.trim().length >= 3)
+            .slice(0, 8);
 
         try { fs.unlinkSync(absolutePath); } catch (_) {}
 
@@ -4756,7 +4764,12 @@ exports.getFileMetadata = async (req, res) => {
                 : extractedText,
             isAcademic: depthAnalysis.isAcademic,
             reason: depthAnalysis.reason,
-            lectureDepth: depthAnalysis.lectureDepth
+            lectureDepth: depthAnalysis.lectureDepth,
+            pdi: pdiDecision.pedagogical_delivery_index,
+            pdiDecision,
+            representationMode: pdiDecision.selected_representation,
+            keyTopics: docTopics,
+            detectedFocus: docTopics
         });
     } catch (err) {
         console.error('Error in getFileMetadata:', err);
@@ -4932,7 +4945,14 @@ exports.analyzeDepth = async (req, res) => {
             return res.json(payload);
         };
         const wordCount = (text || '').trim().split(/\s+/).filter(Boolean).length;
-        const analysis = depthAnalyzer.analyzeLecture(text || '');
+        const analysis = depthAnalyzer.analyzeLecture(text || '', { sourceModality: modality, modality });
+        const pdiRouter = require('../engine/pdiRouter');
+        const isVoiceInput = modality === 'VOICE_ONLY' || modality === 'HYBRID' || (Array.isArray(segments) && segments.length > 0);
+        const pdiDecision = pdiRouter.route({
+            voiceTranscript: isVoiceInput ? text : '',
+            documentTexts: isVoiceInput ? [] : [text],
+            codeSnippets: ''
+        });
 
         if (!analysis.isAcademic) {
             return sendAndCache({
@@ -5187,6 +5207,9 @@ exports.analyzeDepth = async (req, res) => {
             whatWasTaught,
             keyTopics,
             wordCount,
+            pdi: pdiDecision.pedagogical_delivery_index,
+            pdiDecision,
+            representationMode: pdiDecision.selected_representation,
             recommendedQuestions,
             recommendedQuestionCount,
             recommendedByDifficulty,

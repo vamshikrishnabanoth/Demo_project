@@ -1670,7 +1670,8 @@ Generate a single grounded multiple-choice question testing the assessment targe
 
     let responseText;
     try {
-      responseText = await llmRouter.complete({
+      const genTimeoutMs = 15000;
+      const genPromise = llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.2,
@@ -1678,6 +1679,10 @@ Generate a single grounded multiple-choice question testing the assessment targe
         sessionId: evidencePackage?.sessionId,
         maxTokens: 1800
       });
+      const genTimeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Agent 2 LLM generation timed out after 15s')), genTimeoutMs)
+      );
+      responseText = await Promise.race([genPromise, genTimeout]);
     } catch (llmErr) {
       console.warn(`⚠️ [Agent 2] LLM generation error on target ${target.targetId}: ${llmErr.message}. Generating resilient grounded fallback MCQ...`);
       const fallbackResult = this.generateQuestionFallback(target, { ...evidencePackage, error: llmErr.message }, repairInstruction || llmErr.message);

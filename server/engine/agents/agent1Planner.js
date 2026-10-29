@@ -898,7 +898,8 @@ Generate the curricular assessment plan strictly covering educational concepts w
 
     let planData;
     try {
-      const responseText = await llmRouter.complete({
+      const planTimeoutMs = 15000;
+      const llmPromise = llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.2,
@@ -906,6 +907,10 @@ Generate the curricular assessment plan strictly covering educational concepts w
         sessionId: evidencePackage?.sessionId,
         maxTokens: 3000
       });
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Agent 1 LLM planning timed out after 15s')), planTimeoutMs)
+      );
+      const responseText = await Promise.race([llmPromise, timeoutPromise]);
 
       let parsed = safeParseJson(responseText);
       if (parsed.assessmentPlan) parsed = parsed.assessmentPlan;

@@ -261,6 +261,14 @@ class PipelineOrchestrator {
       // Stage 03: AGENT 1 — ASSESSMENT PLANNING & TC ANALYSIS
       // ──────────────────────────────────────────────────────────────────────────
       const t2 = Date.now();
+      if (typeof progressCallback === 'function') {
+        progressCallback({
+          sessionId,
+          stage: 'AGENT_1_PLANNING',
+          stageOrder: '03',
+          decisions: [`Agent 1: Planning Assessment Targets & TC Analysis for ${requestedCount} questions...`]
+        });
+      }
       plan = await agent1Planner.planAssessment(evidencePackage, {
         requestedDifficulty,
         requestedCount,
