@@ -159,12 +159,20 @@ export default function CreateQuizTopic() {
             }
         } catch (_) {}
         if (user?.id) {
+            const sanitizedInputs = (inputs || []).map(inp => {
+                if (!inp || typeof inp !== 'object') return null;
+                const { file, ...rest } = inp;
+                if (rest.content && typeof rest.content === 'string' && rest.content.length > 500000) {
+                    rest.content = rest.content.slice(0, 500000);
+                }
+                return rest;
+            }).filter(Boolean);
             const payload = {
-                inputs,
-                analysis: inputs.length === 0 ? null : currentAnalysisRef.current
+                inputs: sanitizedInputs,
+                analysis: sanitizedInputs.length === 0 ? null : currentAnalysisRef.current
             };
             api.post('/quiz/docket', payload).catch(err => {
-                console.warn('Silent docket sync notice:', err.message);
+                // Silent background docket sync catch
             });
         }
     }, [inputs, isHydrated, user?.id, storageKey, analysisStorageKey]);
@@ -762,6 +770,21 @@ export default function CreateQuizTopic() {
                         }
                         if (res.data.lectureDepth) {
                             setLectureDepth(res.data.lectureDepth);
+                        }
+                        if (res.data.recommendedQuestionCount) {
+                            setRecommendedQuestionCount(res.data.recommendedQuestionCount);
+                        }
+                        if (res.data.recommendedQuestions) {
+                            setRecommendedQuestions(res.data.recommendedQuestions);
+                        }
+                        if (res.data.recommendedByDifficulty) {
+                            setRecommendedByDifficulty(res.data.recommendedByDifficulty);
+                        }
+                        if (res.data.capacityByDifficulty) {
+                            setCapacityByDifficulty(res.data.capacityByDifficulty);
+                        }
+                        if (res.data.totalDefensibleCapacity) {
+                            setTotalDefensibleCapacity(res.data.totalDefensibleCapacity);
                         }
                     }
                 } catch (err) {
@@ -2172,7 +2195,7 @@ export default function CreateQuizTopic() {
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
-                                                        .filter(t => t && t.length >= 3 && !/\b\d+\b/.test(t) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
+                                                        .filter(t => t && t.length >= 3 && !/^\d+$/.test(t.trim()) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
                                                         .slice(0, 8)
                                                         .map((topic, i) => (
                                                         <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
@@ -2192,7 +2215,7 @@ export default function CreateQuizTopic() {
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
-                                                        .filter(t => t && t.length >= 3 && !/\b\d+\b/.test(t) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
+                                                        .filter(t => t && t.length >= 3 && !/^\d+$/.test(t.trim()) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
                                                         .slice(0, 8)
                                                         .map((topic, i) => (
                                                         <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">

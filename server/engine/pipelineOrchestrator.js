@@ -369,7 +369,7 @@ class PipelineOrchestrator {
 
       // Bounded Concurrency Worker Pool:
       // Controlled concurrency (default 2, bounded [1, 3]) balances throughput and Groq rate-limits
-      const defaultConcurrency = 3;
+      const defaultConcurrency = 2;
       const concurrencyLimit = Math.max(1, Math.min(5, parseInt(process.env.GENERATION_CONCURRENCY, 10) || defaultConcurrency));
       let activeWorkers = 0;
 

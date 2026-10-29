@@ -1372,73 +1372,6 @@ const generateJoinCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-exports.getFileMetadata = async (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ msg: 'No file uploaded.' });
-    }
-    const filePath = path.resolve(req.file.path);
-    const ext = path.extname(req.file.originalname).toLowerCase();
-    try {
-        let totalCount = 1;
-        let type = 'pages';
-        let extractedText = '';
-
-        if (ext === '.pdf') {
-            const dataBuffer = fs.readFileSync(filePath);
-            const data = await pdfParse(dataBuffer);
-            totalCount = data.numpages || 1;
-            type = 'pages';
-            extractedText = data.text || '';
-        } else if (ext === '.docx') {
-            const result = await mammoth.extractRawText({ path: filePath });
-            const lines = result.value.split('\n');
-            const linesPerPage = 30;
-            totalCount = Math.max(1, Math.ceil(lines.length / linesPerPage));
-            type = 'pages';
-            extractedText = result.value || '';
-        } else if (['.pptx', '.xlsx', '.ppt'].includes(ext)) {
-            const parsedText = await new Promise((resolve, reject) => {
-                officeParser.parseOffice(filePath, (data, err) => {
-                    if (err) return reject(err);
-                    resolve(typeof data === 'string' ? data : JSON.stringify(data));
-                });
-            });
-            const chunks = parsedText.split('\n');
-            const chunksPerSlide = 15;
-            totalCount = Math.max(1, Math.ceil(chunks.length / chunksPerSlide));
-            type = 'slides';
-            extractedText = parsedText || '';
-        } else {
-            totalCount = 1;
-            type = 'pages';
-            extractedText = fs.readFileSync(filePath, 'utf8');
-        }
-
-        const savedDoc = documentStore.saveDocument({
-            filename: req.file.originalname,
-            ext,
-            totalPages: totalCount,
-            textContent: extractedText
-        });
-
-        // Clean up the file immediately after metadata extraction
-        try { fs.unlinkSync(filePath); } catch (_) {}
-
-        return res.json({
-            success: true,
-            documentId: savedDoc.documentId,
-            totalCount,
-            type,
-            name: req.file.originalname,
-            extractedText
-        });
-    } catch (err) {
-        console.error('Error extracting file metadata:', err);
-        try { fs.unlinkSync(filePath); } catch (_) {}
-        return res.status(500).json({ msg: 'Failed to parse file metadata.' });
-    }
-};
-
 exports.createQuiz = async (req, res) => {
     try {
         let { title, type, content, questions: manualQuestions, questionCount, difficulty, timerPerQuestion, topic, isLive, isAssessment, gameType, isActive, duration, assignedGroups, assignedStudents, startTime, endTime, timerType, accessType, autoBroadcast } = req.body;
@@ -4769,7 +4702,22 @@ exports.getFileMetadata = async (req, res) => {
             pdiDecision,
             representationMode: pdiDecision.selected_representation,
             keyTopics: docTopics,
-            detectedFocus: docTopics
+            detectedFocus: docTopics,
+            recommendedQuestions: `${Math.max(3, depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5)} Questions (Optimal Pedagogical Scope)`,
+            recommendedQuestionCount: Math.max(3, depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5),
+            recommendedByDifficulty: {
+                easy: Math.max(1, Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 0.35)),
+                medium: Math.max(1, Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 0.45)),
+                hard: Math.max(1, (depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) - Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 0.35) - Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 0.45)),
+                balanced: Math.max(3, depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5)
+            },
+            capacityByDifficulty: {
+                easy: Math.max(3, Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 0.5)),
+                medium: Math.max(4, Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 0.7)),
+                hard: Math.max(2, Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 0.4)),
+                balanced: Math.max(5, Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 1.5))
+            },
+            totalDefensibleCapacity: Math.max(5, Math.round((depthAnalysis.lectureDepth?.breakdown?.recommendedQuestionCount || 5) * 1.5))
         });
     } catch (err) {
         console.error('Error in getFileMetadata:', err);
@@ -4827,20 +4775,32 @@ exports.saveUserDocket = async (req, res) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ msg: 'Unauthorized' });
-        const { inputs, analysis } = req.body;
-        if (!Array.isArray(inputs)) {
-            return res.status(400).json({ msg: 'inputs must be an array' });
+        const body = req.body || {};
+        let rawInputs = body.inputs;
+        if (!Array.isArray(rawInputs)) {
+            if (Array.isArray(body)) {
+                rawInputs = body;
+            } else {
+                rawInputs = [];
+            }
         }
-        // Sanitize inputs to ensure no non-serializable properties
-        const sanitized = inputs.map(inp => {
+        // Sanitize inputs to ensure no non-serializable properties or excessive size
+        const sanitized = rawInputs.map(inp => {
+            if (!inp || typeof inp !== 'object') return null;
             const { file, ...rest } = inp;
+            if (rest.content && typeof rest.content === 'string' && rest.content.length > 500000) {
+                rest.content = rest.content.slice(0, 500000);
+            }
             return rest;
-        });
+        }).filter(Boolean);
+        if (!fs.existsSync(DOCKETS_DIR)) {
+            fs.mkdirSync(DOCKETS_DIR, { recursive: true });
+        }
         const safeUserId = String(userId).replace(/[^a-zA-Z0-9_-]/g, '_');
         const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
         const payload = {
             inputs: sanitized,
-            analysis: (sanitized.length > 0 && analysis && typeof analysis === 'object') ? analysis : null,
+            analysis: (sanitized.length > 0 && body.analysis && typeof body.analysis === 'object') ? body.analysis : null,
             updatedAt: Date.now()
         };
         fs.writeFileSync(docketFile, JSON.stringify(payload), 'utf8');
@@ -5159,7 +5119,7 @@ exports.analyzeDepth = async (req, res) => {
             }
 
             // Step 3: Apply verified evidence-backed capacity, or report genuinely insufficient analysis
-            if (validCap && validCap.recommendedByDifficulty) {
+            if (validCap && validCap.recommendedByDifficulty && validCap.recommendedQuestionCount > 0) {
                 recommendedByDifficulty = { ...validCap.recommendedByDifficulty };
                 capacityByDifficulty = validCap.capacityByDifficulty ? { ...validCap.capacityByDifficulty } : {
                     easy: validCap.recommendedByDifficulty.easy,
@@ -5171,12 +5131,36 @@ exports.analyzeDepth = async (req, res) => {
                 advisoryRationale = validCap.advisoryRationale || '';
                 recommendedQuestionCount = validCap.recommendedQuestionCount || Math.max(1, recommendedByDifficulty.balanced);
                 recommendedQuestions = `${recommendedQuestionCount} Questions (Evidence-Backed Capacity)`;
+            } else if (analysis.isAcademic) {
+                // Grounded defensible capacity from curriculum depth and word count when LLM capacity is pending or null
+                const baseCount = Math.max(3, recBreakdown?.recommendedQuestionCount || Math.min(25, Math.max(5, Math.round(wordCount / 120))));
+                const easyPart = Math.max(1, Math.round(baseCount * 0.35));
+                const medPart = Math.max(1, Math.round(baseCount * 0.45));
+                const hardPart = supportsHard ? Math.max(1, baseCount - easyPart - medPart) : 0;
+                const balancedPart = easyPart + medPart + hardPart;
+
+                recommendedByDifficulty = {
+                    easy: easyPart,
+                    medium: medPart,
+                    hard: hardPart,
+                    balanced: balancedPart
+                };
+                capacityByDifficulty = {
+                    easy: Math.max(3, Math.round(easyPart * 1.5)),
+                    medium: Math.max(3, Math.round(medPart * 1.5)),
+                    hard: supportsHard ? Math.max(1, Math.round(hardPart * 1.5)) : 1,
+                    balanced: Math.max(5, Math.round(balancedPart * 1.5))
+                };
+                totalDefensibleCapacity = capacityByDifficulty.balanced;
+                recommendedQuestionCount = balancedPart;
+                recommendedQuestions = `${recommendedQuestionCount} Questions (Optimal Pedagogical Scope)`;
+                advisoryRationale = 'Grounded curricular capacity based on document instructional depth.';
             } else {
-                // Genuinely insufficient curricular evidence detected
+                // Genuinely non-academic content detected
                 recommendedByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
                 capacityByDifficulty = { easy: 0, medium: 0, hard: 0, balanced: 0 };
                 totalDefensibleCapacity = 0;
-                advisoryRationale = 'Insufficient curricular substance to ground defensible assessment recommendations.';
+                advisoryRationale = analysis.reason || 'Insufficient curricular substance to ground defensible assessment recommendations.';
                 recommendedQuestionCount = 0;
                 recommendedQuestions = '0 Questions';
             }

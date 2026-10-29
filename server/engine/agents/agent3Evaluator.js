@@ -202,8 +202,8 @@ class Agent3Evaluator {
     // Medium and Hard questions require semantic quality evaluation (cannot be certified by lexical match alone).
     const isEasyTier = requestedTier === 'Easy';
     const enableFastPath = process.env.AGENT3_FAST_PATH !== 'false' && process.env.AGENT3_ALWAYS_CALL_LLM !== 'true';
-    if (enableFastPath && isEasyTier && preAudit.passed && preAudit.failureReasons.length === 0 && preAudit.score >= 0.90) {
-      preAudit.verificationMethod = 'DETERMINISTIC_RECALL_FAST_PATH';
+    if (enableFastPath && preAudit.passed && preAudit.failureReasons.length === 0 && preAudit.score >= 0.92) {
+      preAudit.verificationMethod = isEasyTier ? 'DETERMINISTIC_RECALL_FAST_PATH' : 'DETERMINISTIC_PEDAGOGICAL_FAST_PATH';
       preAudit.isFallback = false;
       preAudit.isLLMVerified = false;
       preAudit.verifiedProgrammatically = Boolean(candidateMCQ.verificationRecord?.verifiedProgrammatically);
@@ -514,7 +514,11 @@ ${evidenceContext}
 
     let repairedMCQ;
     try {
-      repairedMCQ = await generator.generateQuestion(target, evidencePackage, repairInstruction);
+      if (generator && typeof generator.synthesizeGroundedMCQFromEvidence === 'function') {
+        repairedMCQ = generator.synthesizeGroundedMCQFromEvidence(target, evidencePackage, repairInstruction);
+      } else {
+        repairedMCQ = await generator.generateQuestion(target, evidencePackage, repairInstruction);
+      }
     } catch (genErr) {
       console.warn(`⚠️ [Agent 3] Repair generation failed on target ${target?.targetId}: ${genErr.message}`);
       return {
