@@ -29,6 +29,8 @@ const EVALUATOR_FAILURE_CODES = {
   AMBIGUOUS_DISTRACTOR: 'AMBIGUOUS_DISTRACTOR',
   ACCIDENTAL_CORRECT_DISTRACTOR: 'ACCIDENTAL_CORRECT_DISTRACTOR',
   TIER_COGNITIVE_MISMATCH: 'TIER_COGNITIVE_MISMATCH',
+  STEM_ANSWER_MISALIGNMENT: 'STEM_ANSWER_MISALIGNMENT',
+  EVALUATION_CONTRACT_VIOLATION: 'EVALUATION_CONTRACT_VIOLATION',
   UNGROUNDED_EVIDENCE_CLAIM: 'UNGROUNDED_EVIDENCE_CLAIM',
   UNGROUNDED_RELATIONAL_CLAIM: 'UNGROUNDED_RELATIONAL_CLAIM',
   FACTUAL_CONTRADICTION: 'FACTUAL_CONTRADICTION',
@@ -185,22 +187,29 @@ EVALUATION DIRECTIVES:
    - For each distractor: verify that it is plausible, clearly incorrect, and cannot be defended as true under a reasonable interpretation.
    - Reject any question where a distractor could also be considered correct (AMBIGUOUS_DISTRACTOR / ACCIDENTAL_CORRECT_DISTRACTOR).
    - Reject any question with ungrounded claims going beyond the provided evidence (UNGROUNDED_EVIDENCE_CLAIM).
-2. CANONICAL DOMAIN TRUTH INVARIANT:
+2. STEM–ANSWER RESPONSIVENESS & INTERROGATIVE MOOD:
+   - The keyed answer MUST directly answer the question asked in the stem.
+   - For polar (Yes/No) questions, the keyed answer must provide an affirmative/negative answer or direct resolution, NOT merely state a general conditional prerequisite or unrelated true fact.
+   - For causal/explanatory ("Why...") questions, the keyed answer must provide the explanatory cause or reason, not a symptom or non-causal property.
+   - For specific identification ("Which...") questions, the keyed answer must identify the specific mechanism, entity, or state queried.
+   - If the keyed answer is technically true in the abstract but fails to directly resolve or answer the specific interrogative focus/mood of the stem, set "isDirectlyResponsive": false and "interrogativeMatch": false, provide "mismatchDetails", and reject with STEM_ANSWER_MISALIGNMENT.
+   - Both "isDirectlyResponsive" (boolean) and "interrogativeMatch" (boolean) are mandatory contract fields.
+3. CANONICAL DOMAIN TRUTH INVARIANT:
    - The keyed option (correct answer) MUST be factually and technically true according to canonical Computer Science / academic principles.
    - If a teacher in spoken audio made an inadvertent verbal slip (e.g. calling an array 1-indexed or misstating an asymptotic complexity), the technically sound answer is correct; do NOT fail a question for upholding canonical domain truth over a spoken verbal slip.
-3. ALGORITHMIC & CODE GROUNDING:
+4. ALGORITHMIC & CODE GROUNDING:
    - For algorithmic/programming concepts taught in the lecture (loops, arrays, traversals, frequency counting), concise 3–7 line code snippets illustrating the taught algorithm are validly grounded derived evidence (EVIDENCE_DERIVED or DIRECT_EVIDENCE).
    - Do NOT reject code snippets as UNGROUNDED_EVIDENCE_CLAIM merely because the lecture was delivered via audio transcript rather than written code.
-4. CONCISE & CREATIVE MCQ FORMAT:
+5. CONCISE & CREATIVE MCQ FORMAT:
    - Question stems should be crisp (strictly under 45 words plus code snippet). Realistic applied scenarios (e.g. streaming pipelines, telemetry, cache monitors) are valid and encouraged; options should be punchy (under 15 words).
-5. COGNITIVE CALIBRATION:
+6. COGNITIVE CALIBRATION:
    - Evaluate the actual cognitive operation demanded by the question:
      * Easy (RECALL/RECOGNIZE): Factual recall, definition recognition.
      * Medium (COMPARE/TRACE/EXPLAIN_MECHANISM): Operational mechanism, sequential state transitions, comparative tradeoffs.
      * Hard (APPLY/DIAGNOSE/PREDICT_CONSTRAINT): Concrete scenario diagnosis, constraint resolution, fault prediction.
    - Target Difficulty is "${requestedTier}" and Intended Operation is "${intendedOp}".
    - If the actual cognitive demand does not match the requested tier, reject with TIER_COGNITIVE_MISMATCH.
-3. OUTPUT SCHEMA (Return strictly raw JSON):
+7. OUTPUT SCHEMA (Return strictly raw JSON):
 {
   "status": "PASS" or "FAIL",
   "score": 0.95,
@@ -208,6 +217,13 @@ EVALUATION DIRECTIVES:
   "failureReasons": [],
   "failureReason": null or "...",
   "repairInstruction": null or "...",
+  "stemAnswerAlignment": {
+    "interrogativeMood": "POLAR_YES_NO" or "EXPLANATORY_WHY" or "IDENTIFICATION_WHICH" or "CALCULATION" or "GENERAL",
+    "isDirectlyResponsive": true or false,
+    "interrogativeMatch": true or false,
+    "responsivenessAnalysis": "Detailed reason why the keyed option directly answers (or fails to answer) the question stem",
+    "mismatchDetails": null or "Specific reason if either isDirectlyResponsive or interrogativeMatch is false"
+  },
   "optionAnalysis": [
     {
       "slot": "A",
@@ -261,109 +277,7 @@ ${evidenceContext}
         operation: 'EVALUATION'
       });
 
-      const parsed = safeParseJson(responseText);
-
-      if (!parsed || typeof parsed !== 'object' || !parsed.status) {
-        throw new Error('AGENT3_MALFORMED_RESPONSE: Parsed JSON does not contain valid evaluation status');
-      }
-
-      parsed.passed = parsed.status === 'PASS';
-      parsed.score = typeof parsed.score === 'number' ? parsed.score : (parsed.passed ? 0.95 : 0.2);
-      parsed.verdict = parsed.passed ? 'PASS' : 'FAIL';
-      parsed.failureReasons = Array.isArray(parsed.failureReasons) ? parsed.failureReasons : (parsed.failureReason ? [parsed.failureReason] : []);
-      parsed.optionAnalysis = Array.isArray(parsed.optionAnalysis) ? parsed.optionAnalysis : [];
-      parsed.verificationMethod = 'LLM_EVALUATION';
-      parsed.isFallback = false;
-      parsed.isLLMVerified = true;
-      parsed.tier = parsed.tier || parsed.evidenceGrounding?.tier || 'DIRECT_EVIDENCE';
-      parsed.groundingScore = typeof parsed.groundingScore === 'number' ? parsed.groundingScore : (parsed.evidenceGrounding?.groundingScore || 0.95);
-      parsed.repair = { attempted: false, successful: false, repairAttempts: 0, instruction: null };
-
-      // Hard enforcement: Deterministic pre-audit failures (style, boundaries, schema, ambiguity) must be preserved
-      if (Array.isArray(preAudit.failureReasons) && preAudit.failureReasons.length > 0) {
-        for (const reason of preAudit.failureReasons) {
-          if (!parsed.failureReasons.includes(reason)) {
-            parsed.failureReasons.push(reason);
-          }
-        }
-        if (!preAudit.passed) {
-          parsed.status = 'FAIL';
-          parsed.passed = false;
-          parsed.verdict = 'FAIL';
-          if (!parsed.failureReason) {
-            parsed.failureReason = preAudit.failureReason || preAudit.failureReasons.join('; ');
-          }
-        }
-      }
-
-      // Hard enforcement: If tier is UNSUPPORTED_FOREIGN, override status to FAIL
-      if (parsed.tier === 'UNSUPPORTED_FOREIGN') {
-        parsed.status = 'FAIL';
-        parsed.passed = false;
-        parsed.verdict = 'FAIL';
-        if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
-          parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION);
-        }
-      }
-
-      // Hard enforcement: Deterministic VERIFICATION_FAILED must never be overwritten by LLM evaluation
-      if (candidateMCQ.verificationRecord?.verificationStatus === 'VERIFICATION_FAILED' || preAudit.failureReasons?.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
-        parsed.status = 'FAIL';
-        parsed.passed = false;
-        parsed.verdict = 'FAIL';
-        if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
-          parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED);
-        }
-        parsed.failureReason = preAudit.failureReason || EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED;
-        if (candidateMCQ.verificationRecord) {
-          candidateMCQ.verificationRecord.verificationStatus = 'VERIFICATION_FAILED';
-          candidateMCQ.verificationRecord.verifiedProgrammatically = false;
-        }
-      }
-
-      // Ensure distractor plausibility for valid distractors is normalized to HIGH
-      if (parsed.optionAnalysis.length > 0) {
-        parsed.optionAnalysis.forEach(o => {
-          if (!o.isKey && (o.verdict === 'PLAUSIBLE_DISTRACTOR' || !o.verdict) && (!o.distractorPlausibility || o.distractorPlausibility === 'MEDIUM')) {
-            o.distractorPlausibility = 'HIGH';
-          }
-        });
-      }
-
-      // Hard enforcement: Deterministic TIER_COGNITIVE_MISMATCH must never be overwritten by LLM Critic
-      const hasDeterministicMismatch = Array.isArray(preAudit.failureReasons) &&
-        preAudit.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
-      const hasCriticMismatch = parsed.cognitiveAudit && parsed.cognitiveAudit.isCalibrated === false;
-
-      if (hasDeterministicMismatch || hasCriticMismatch) {
-        if (!Array.isArray(parsed.failureReasons)) {
-          parsed.failureReasons = parsed.failureReason ? [parsed.failureReason] : [];
-        }
-        parsed.status = 'FAIL';
-        parsed.passed = false;
-        parsed.verdict = 'FAIL';
-        if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH)) {
-          parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
-        }
-        parsed.failureReason = preAudit.failureReason || parsed.failureReason || EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH;
-        if (!parsed.cognitiveAudit || typeof parsed.cognitiveAudit !== 'object') {
-          parsed.cognitiveAudit = {
-            requestedDifficulty: requestedTier,
-            intendedCognitiveOperation: intendedOp,
-            evaluatedCognitiveDemand: preAudit.cognitiveAudit?.evaluatedCognitiveDemand || 'RECALL',
-            isCalibrated: false,
-            mismatchDetails: preAudit.cognitiveAudit?.mismatchDetails || 'Question cognitive calibration failed target difficulty tier'
-          };
-        } else {
-          parsed.cognitiveAudit.isCalibrated = false;
-          if (hasDeterministicMismatch && preAudit.cognitiveAudit?.evaluatedCognitiveDemand) {
-            parsed.cognitiveAudit.evaluatedCognitiveDemand = preAudit.cognitiveAudit.evaluatedCognitiveDemand;
-            parsed.cognitiveAudit.mismatchDetails = preAudit.cognitiveAudit.mismatchDetails || parsed.cognitiveAudit.mismatchDetails;
-          }
-        }
-      }
-
-      return parsed;
+      return this._parseAndEnforceEvaluationResponse(responseText, preAudit, candidateMCQ, target);
     } catch (err) {
       console.warn(`⚠️ [Agent 3] LLM evaluation notice (${err.message}). Engaging deterministic fallback.`);
       const deterministicResult = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
@@ -412,6 +326,175 @@ ${evidenceContext}
 
       return fallbackResult;
     }
+  }
+
+  /**
+   * Parse LLM evaluation response and enforce fail-closed quality, contract, and alignment gates.
+   *
+   * @param {string|Object} responseText - Raw LLM response string or parsed JSON object
+   * @param {Object} preAudit - Results from _runDeterministicAudit
+   * @param {Object} candidateMCQ - Candidate MCQ being evaluated
+   * @param {Object} target - AssessmentTarget
+   * @returns {Object} Final evaluated and enforced result
+   */
+  _parseAndEnforceEvaluationResponse(responseText, preAudit = {}, candidateMCQ = {}, target = {}) {
+    let parsed;
+    if (typeof responseText === 'string') {
+      parsed = safeParseJson(responseText);
+    } else if (responseText && typeof responseText === 'object') {
+      parsed = { ...responseText };
+    } else {
+      parsed = null;
+    }
+
+    if (!parsed || typeof parsed !== 'object' || !parsed.status) {
+      throw new Error('AGENT3_MALFORMED_RESPONSE: Parsed JSON does not contain valid evaluation status');
+    }
+
+    parsed.passed = parsed.status === 'PASS';
+    parsed.score = typeof parsed.score === 'number' ? parsed.score : (parsed.passed ? 0.95 : 0.2);
+    parsed.verdict = parsed.passed ? 'PASS' : 'FAIL';
+    parsed.failureReasons = Array.isArray(parsed.failureReasons) ? parsed.failureReasons : (parsed.failureReason ? [parsed.failureReason] : []);
+    parsed.optionAnalysis = Array.isArray(parsed.optionAnalysis) ? parsed.optionAnalysis : [];
+    parsed.verificationMethod = 'LLM_EVALUATION';
+    parsed.isFallback = false;
+    parsed.isLLMVerified = true;
+    parsed.tier = parsed.tier || parsed.evidenceGrounding?.tier || 'DIRECT_EVIDENCE';
+    parsed.groundingScore = typeof parsed.groundingScore === 'number' ? parsed.groundingScore : (parsed.evidenceGrounding?.groundingScore || 0.95);
+    parsed.repair = { attempted: false, successful: false, repairAttempts: 0, instruction: null };
+
+    // 1. Stem–Answer Interrogative Mood & Responsiveness Audit Gate (Workstream 1)
+    const alignment = parsed.stemAnswerAlignment;
+    if (!alignment || typeof alignment !== 'object') {
+      // Contract violation: Evaluator output omitted required stemAnswerAlignment record
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.EVALUATION_CONTRACT_VIOLATION)) {
+        parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.EVALUATION_CONTRACT_VIOLATION);
+      }
+      const contractMsg = 'Missing stemAnswerAlignment evaluation contract record';
+      parsed.failureReason = parsed.failureReason ? `${parsed.failureReason}; ${contractMsg}` : contractMsg;
+    } else if (typeof alignment.isDirectlyResponsive !== 'boolean') {
+      // Contract violation: isDirectlyResponsive is missing or not a boolean
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.EVALUATION_CONTRACT_VIOLATION)) {
+        parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.EVALUATION_CONTRACT_VIOLATION);
+      }
+      const contractMsg = 'Malformed stemAnswerAlignment: isDirectlyResponsive must be boolean';
+      parsed.failureReason = parsed.failureReason ? `${parsed.failureReason}; ${contractMsg}` : contractMsg;
+    } else if (typeof alignment.interrogativeMatch !== 'boolean') {
+      // Contract violation: interrogativeMatch is missing or not a boolean
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.EVALUATION_CONTRACT_VIOLATION)) {
+        parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.EVALUATION_CONTRACT_VIOLATION);
+      }
+      const contractMsg = 'Malformed stemAnswerAlignment: interrogativeMatch must be boolean';
+      parsed.failureReason = parsed.failureReason ? `${parsed.failureReason}; ${contractMsg}` : contractMsg;
+    } else if (alignment.isDirectlyResponsive === false || alignment.interrogativeMatch === false) {
+      // Explicit semantic mismatch diagnosed: Hard veto override
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.STEM_ANSWER_MISALIGNMENT)) {
+        parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.STEM_ANSWER_MISALIGNMENT);
+      }
+      const misalignmentMsg = alignment.mismatchDetails || alignment.responsivenessAnalysis || 'Keyed answer does not directly answer the question stem interrogative mood';
+      parsed.failureReason = parsed.failureReason ? `${parsed.failureReason}; ${misalignmentMsg}` : misalignmentMsg;
+    }
+
+    // 2. Hard enforcement: Deterministic pre-audit failures (style, boundaries, schema, ambiguity) must be preserved
+    if (Array.isArray(preAudit.failureReasons) && preAudit.failureReasons.length > 0) {
+      for (const reason of preAudit.failureReasons) {
+        if (!parsed.failureReasons.includes(reason)) {
+          parsed.failureReasons.push(reason);
+        }
+      }
+      if (!preAudit.passed) {
+        parsed.status = 'FAIL';
+        parsed.passed = false;
+        parsed.verdict = 'FAIL';
+        if (!parsed.failureReason) {
+          parsed.failureReason = preAudit.failureReason || preAudit.failureReasons.join('; ');
+        }
+      }
+    }
+
+    // 3. Hard enforcement: If tier is UNSUPPORTED_FOREIGN, override status to FAIL
+    if (parsed.tier === 'UNSUPPORTED_FOREIGN') {
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
+        parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION);
+      }
+    }
+
+    // 4. Hard enforcement: Deterministic VERIFICATION_FAILED must never be overwritten by LLM evaluation
+    if (candidateMCQ.verificationRecord?.verificationStatus === 'VERIFICATION_FAILED' || preAudit.failureReasons?.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED)) {
+        parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED);
+      }
+      parsed.failureReason = preAudit.failureReason || EVALUATOR_FAILURE_CODES.VERIFICATION_FAILED;
+      if (candidateMCQ.verificationRecord) {
+        candidateMCQ.verificationRecord.verificationStatus = 'VERIFICATION_FAILED';
+        candidateMCQ.verificationRecord.verifiedProgrammatically = false;
+      }
+    }
+
+    // 5. Ensure distractor plausibility for valid distractors is normalized to HIGH
+    if (parsed.optionAnalysis.length > 0) {
+      parsed.optionAnalysis.forEach(o => {
+        if (!o.isKey && (o.verdict === 'PLAUSIBLE_DISTRACTOR' || !o.verdict) && (!o.distractorPlausibility || o.distractorPlausibility === 'MEDIUM')) {
+          o.distractorPlausibility = 'HIGH';
+        }
+      });
+    }
+
+    // 6. Hard enforcement: Deterministic TIER_COGNITIVE_MISMATCH must never be overwritten by LLM Critic
+    const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
+    const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
+
+    const hasDeterministicMismatch = Array.isArray(preAudit.failureReasons) &&
+      preAudit.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+    const hasCriticMismatch = parsed.cognitiveAudit && parsed.cognitiveAudit.isCalibrated === false;
+
+    if (hasDeterministicMismatch || hasCriticMismatch) {
+      if (!Array.isArray(parsed.failureReasons)) {
+        parsed.failureReasons = parsed.failureReason ? [parsed.failureReason] : [];
+      }
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      if (!parsed.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH)) {
+        parsed.failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      }
+      parsed.failureReason = preAudit.failureReason || parsed.failureReason || EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH;
+      if (!parsed.cognitiveAudit || typeof parsed.cognitiveAudit !== 'object') {
+        parsed.cognitiveAudit = {
+          requestedDifficulty: requestedTier,
+          intendedCognitiveOperation: intendedOp,
+          evaluatedCognitiveDemand: preAudit.cognitiveAudit?.evaluatedCognitiveDemand || 'RECALL',
+          isCalibrated: false,
+          mismatchDetails: preAudit.cognitiveAudit?.mismatchDetails || 'Question cognitive calibration failed target difficulty tier'
+        };
+      } else {
+        parsed.cognitiveAudit.isCalibrated = false;
+        if (hasDeterministicMismatch && preAudit.cognitiveAudit?.evaluatedCognitiveDemand) {
+          parsed.cognitiveAudit.evaluatedCognitiveDemand = preAudit.cognitiveAudit.evaluatedCognitiveDemand;
+          parsed.cognitiveAudit.mismatchDetails = preAudit.cognitiveAudit.mismatchDetails || parsed.cognitiveAudit.mismatchDetails;
+        }
+      }
+    }
+
+    return parsed;
   }
 
   /**
@@ -1353,6 +1436,12 @@ ${evidenceContext}
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR) || failureReasons.includes(EVALUATOR_FAILURE_CODES.ACCIDENTAL_CORRECT_DISTRACTOR)) {
       instructions.push('Ensure options are mutually exclusive alternatives; eliminate command subsets or parameter extensions that could also be correct.');
+    }
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.STEM_ANSWER_MISALIGNMENT)) {
+      instructions.push('Ensure the keyed answer directly answers the specific interrogative focus, question mood (e.g. Yes/No, Why, Which, or exact calculation), and conditions posed in the stem.');
+    }
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.EVALUATION_CONTRACT_VIOLATION)) {
+      instructions.push('Evaluation contract violation: Ensure complete schema compliance with stemAnswerAlignment.');
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH)) {
       const tier = target.targetDifficulty || 'Medium';
