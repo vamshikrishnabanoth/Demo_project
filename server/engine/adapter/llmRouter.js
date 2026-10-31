@@ -139,7 +139,7 @@ class LLMRouter {
     const foundKeys = [];
     // Dynamically collect all available keys configured across environments
     for (const [name, val] of Object.entries(process.env)) {
-      if (name.startsWith('GROQ_API_KEY') && typeof val === 'string' && val.trim().length > 10) {
+      if ((name.startsWith('GROQ_API_KEY') || name.startsWith('GROQ_KEY')) && typeof val === 'string' && val.trim().length > 10) {
         if (val.includes(',')) {
           foundKeys.push(...val.split(',').map(k => k.trim()));
         } else {

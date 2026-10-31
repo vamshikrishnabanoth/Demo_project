@@ -1320,7 +1320,7 @@ class PipelineOrchestrator {
         // Gate 3: Provenance-Enforced Faculty Analytics
         // Teaching score and analysis MUST originate from evaluated spoken lecture audio, NEVER from planning ALO coverage
         tcScore: hasVoice
-          ? (evidencePackage?.lectureIntelligence?.tcScore ?? evidencePackage?.voiceAnalysis?.teachingValueScore ?? null)
+          ? (evidencePackage?.voiceAnalysis?.lectureDepth?.score ?? evidencePackage?.lectureIntelligence?.tcScore ?? evidencePackage?.voiceAnalysis?.teachingValueScore ?? null)
           : null,
         pdi: (evidencePackage?.pdi !== undefined && evidencePackage?.pdi !== null) 
           ? evidencePackage.pdi 
@@ -1331,7 +1331,7 @@ class PipelineOrchestrator {
           conceptMap: evidencePackage.lectureIntelligence.conceptMap,
           evidenceCapacity: evidencePackage.lectureIntelligence.evidenceCapacity,
           pdi: evidencePackage.lectureIntelligence.pedagogicalDeficitIndex ?? evidencePackage.pdi ?? null,
-          tcScore: evidencePackage.lectureIntelligence.tcScore ?? evidencePackage.voiceAnalysis?.teachingValueScore ?? null
+          tcScore: evidencePackage?.voiceAnalysis?.lectureDepth?.score ?? evidencePackage.lectureIntelligence.tcScore ?? evidencePackage.voiceAnalysis?.teachingValueScore ?? null
         } : null,
         quizEvaluation: quizEval,
         telemetry: finalTraceData.metrics,

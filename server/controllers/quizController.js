@@ -3696,6 +3696,8 @@ exports.generateQuizQuestions = async (req, res) => {
                 plan:            (finalTaskObj && finalTaskObj.pipelineResult?.plan) || null,
                 evidencePackage: (finalTaskObj && finalTaskObj.pipelineResult?.evidencePackage) || null,
                 tcScore:         (finalTaskObj && finalTaskObj.pipelineResult?.tcScore) || null,
+                teacherAnalysis: (finalTaskObj && finalTaskObj.pipelineResult?.teacherAnalysis) || null,
+                pdi:             (finalTaskObj && finalTaskObj.pipelineResult?.pdi) || null,
                 quizEvaluation:  (finalTaskObj && finalTaskObj.pipelineResult?.quizEvaluation) || null,
                 targetResults:   (finalTaskObj && finalTaskObj.pipelineResult?.targetResults) || [],
                 difficultyReport: (finalTaskObj && finalTaskObj.pipelineResult?.difficultyReport) || null,
