@@ -409,9 +409,9 @@ export default function StageOutputPanel({
           status={status}
           onLaunchClassroom={onLaunchClassroom}
           onPreviewQuiz={onPreviewQuiz}
-          teacherAnalysis={pipelineResult?.teacherAnalysis || pipelineResult?.lectureIntelligence || pipelineResult?.lecture_intelligence}
-          tcScore={pipelineResult?.tcScore || 85}
-          pdi={pipelineResult?.pdi || 0.12}
+          teacherAnalysis={pipelineResult?.teacherAnalysis || pipelineResult?.lectureIntelligence || pipelineResult?.lecture_intelligence || null}
+          tcScore={pipelineResult?.tcScore ?? null}
+          pdi={pipelineResult?.pdi ?? null}
         />
       )}
     </div>

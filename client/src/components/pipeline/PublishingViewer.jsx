@@ -1,5 +1,5 @@
 import React from 'react';
-import { PackageCheck, Hash, Lock, CheckCircle2, Rocket, Play, Share2, Eye, ShieldCheck, Award, Sparkles, BookOpen, Brain, TrendingUp, Check } from 'lucide-react';
+import { PackageCheck, Hash, Lock, CheckCircle2, Rocket, Play, Share2, Eye, ShieldCheck, Award, Sparkles, BookOpen, Brain, TrendingUp, Check, Info } from 'lucide-react';
 
 export default function PublishingViewer({
   taskId = '',
@@ -10,17 +10,27 @@ export default function PublishingViewer({
   onLaunchClassroom = null,
   onPreviewQuiz = null,
   teacherAnalysis = null,
-  tcScore = 85,
-  pdi = 0.12
+  tcScore = null,
+  pdi = null
 }) {
   const isReady = status === 'COMPLETED';
   const displayHash = sha256 || (taskId ? `sha256_${taskId.replace(/-/g, '').substring(0, 32)}...` : 'sha256_e3b0c44298fc1c149afbf4c8996fb924...');
 
-  const effectiveTcScore = Math.round(Number(tcScore || teacherAnalysis?.tcScore || 85));
-  const effectivePdi = Number(pdi ?? teacherAnalysis?.pdi ?? 0.12);
+  const rawScore = (tcScore !== null && tcScore !== undefined) 
+    ? tcScore 
+    : (teacherAnalysis?.tcScore !== null && teacherAnalysis?.tcScore !== undefined ? teacherAnalysis.tcScore : null);
+  const effectiveTcScore = rawScore !== null ? Math.round(Number(rawScore)) : null;
+
+  const rawPdi = (pdi !== null && pdi !== undefined) 
+    ? pdi 
+    : (teacherAnalysis?.pdi !== null && teacherAnalysis?.pdi !== undefined ? teacherAnalysis.pdi : null);
+  const effectivePdi = rawPdi !== null ? Number(rawPdi) : null;
+
   const critique = teacherAnalysis?.pedagogicalCritique || {};
+  const hasAnalysis = effectiveTcScore !== null && teacherAnalysis !== null;
 
   const getScoreBadge = (score) => {
+    if (score === null) return { label: 'Not Evaluated', color: 'text-slate-600 bg-slate-100 border-slate-200' };
     if (score >= 85) return { label: 'Exemplary Instructional Rigor', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' };
     if (score >= 70) return { label: 'Strong Curricular Depth', color: 'text-blue-700 bg-blue-50 border-blue-200' };
     return { label: 'Foundational Overview', color: 'text-amber-700 bg-amber-50 border-amber-200' };
@@ -102,17 +112,23 @@ export default function PublishingViewer({
             </div>
             <h3 className="text-base font-black text-slate-900">Teaching Quality & Explanatory Scorecard</h3>
             <p className="text-xs text-slate-500">
-              Automated cognitive assessment of instructor delivery, causal explanations, and pedagogical completeness.
+              {hasAnalysis
+                ? 'Automated cognitive assessment of instructor delivery, causal explanations, and pedagogical completeness.'
+                : 'Faculty delivery analytics require recorded classroom audio or synchronized instruction. Not evaluated for this session.'}
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="text-right">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Teaching Score</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black text-indigo-600 font-mono">{effectiveTcScore}</span>
-                <span className="text-xs font-bold text-slate-400">/ 100</span>
-              </div>
+              {hasAnalysis ? (
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-black text-indigo-600 font-mono">{effectiveTcScore}</span>
+                  <span className="text-xs font-bold text-slate-400">/ 100</span>
+                </div>
+              ) : (
+                <span className="text-sm font-bold text-slate-500">Not Evaluated</span>
+              )}
             </div>
             <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${scoreBadge.color}`}>
               {scoreBadge.label}
@@ -128,9 +144,9 @@ export default function PublishingViewer({
               <span>Explanatory Depth</span>
             </div>
             <p className="text-[11px] text-slate-600 leading-snug">
-              {Array.isArray(critique.explanatoryDepth) && critique.explanatoryDepth.length > 0
+              {hasAnalysis && Array.isArray(critique.explanatoryDepth) && critique.explanatoryDepth.length > 0
                 ? critique.explanatoryDepth[0]
-                : 'Defines foundational concepts with domain-accurate terminology and mechanics.'}
+                : (hasAnalysis ? 'Defines foundational concepts with domain-accurate terminology.' : 'Requires classroom audio')}
             </p>
           </div>
 
@@ -140,9 +156,9 @@ export default function PublishingViewer({
               <span>Reasoning Depth</span>
             </div>
             <p className="text-[11px] text-slate-600 leading-snug">
-              {Array.isArray(critique.reasoningDepth) && critique.reasoningDepth.length > 0
+              {hasAnalysis && Array.isArray(critique.reasoningDepth) && critique.reasoningDepth.length > 0
                 ? critique.reasoningDepth[0]
-                : 'Explains causal mechanisms, tradeoffs, and state invariants.'}
+                : (hasAnalysis ? 'Explains causal mechanisms and state invariants.' : 'Requires classroom audio')}
             </p>
           </div>
 
@@ -152,9 +168,9 @@ export default function PublishingViewer({
               <span>Demonstrations</span>
             </div>
             <p className="text-[11px] text-slate-600 leading-snug">
-              {Array.isArray(critique.practicalDemonstrations) && critique.practicalDemonstrations.length > 0
+              {hasAnalysis && Array.isArray(critique.practicalDemonstrations) && critique.practicalDemonstrations.length > 0
                 ? critique.practicalDemonstrations[0]
-                : 'Provides concrete examples, code trace snippets, and memory layouts.'}
+                : (hasAnalysis ? 'Provides code trace snippets and memory layouts.' : 'Requires classroom audio')}
             </p>
           </div>
 
@@ -164,15 +180,21 @@ export default function PublishingViewer({
               <span>PDI Delivery Index</span>
             </div>
             <p className="text-[11px] text-slate-600 leading-snug">
-              PDI = <span className="font-mono font-bold text-slate-900">{effectivePdi.toFixed(3)}</span> (
-              {effectivePdi < 0.25 ? 'High Spoken Autonomy' : (effectivePdi < 0.6 ? 'Balanced Multi-Modal' : 'Document-Guided')}
-              ).
+              {effectivePdi !== null ? (
+                <>
+                  PDI = <span className="font-mono font-bold text-slate-900">{effectivePdi.toFixed(3)}</span> (
+                  {effectivePdi < 0.25 ? 'High Spoken Autonomy' : (effectivePdi < 0.6 ? 'Balanced Multi-Modal' : 'Document-Guided')}
+                  )
+                </>
+              ) : (
+                'Not Available'
+              )}
             </p>
           </div>
         </div>
 
         {/* Actionable Feedback for Instructor */}
-        {critique.limitationsOfExcerpt && critique.limitationsOfExcerpt !== 'Non-academic content.' && (
+        {hasAnalysis && critique.limitationsOfExcerpt && critique.limitationsOfExcerpt !== 'Non-academic content.' && (
           <div className="p-3.5 bg-amber-50/60 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-900">
             <span className="p-1 rounded-md bg-amber-100 text-amber-700 shrink-0 mt-0.5">
               <Sparkles size={12} />
