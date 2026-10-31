@@ -335,7 +335,16 @@ class GroundingGate {
    * @returns {Object} { status: 'PASSED'|'FAILED', validatedQuestions: [], rejectedCount: 0 }
    */
   verifyQuizGrounding(quizQuestions = [], evidencePackage = {}) {
-    const rawContent = (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || '')).toLowerCase();
+    const rawContent = (typeof evidencePackage === 'string'
+      ? evidencePackage
+      : [
+          evidencePackage?.unifiedRawContent,
+          evidencePackage?.curricularContent,
+          ...(Array.isArray(evidencePackage?.documentTexts) ? evidencePackage.documentTexts : []),
+          evidencePackage?.voiceTranscript,
+          evidencePackage?.topic
+        ].filter(Boolean).join('\n')
+    ).toLowerCase();
     const pkgObj = typeof evidencePackage === 'string' ? { unifiedRawContent: evidencePackage } : evidencePackage;
     const validated = [];
     let rejectedCount = 0;

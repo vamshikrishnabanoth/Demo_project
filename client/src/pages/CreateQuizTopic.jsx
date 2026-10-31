@@ -42,6 +42,7 @@ export default function CreateQuizTopic() {
         currentAnalysisRef.current = analysis;
         if (analysis.signature) lastAnalyzedSignatureRef.current = analysis.signature;
         if (analysis.lectureDepth) setLectureDepth(analysis.lectureDepth);
+        if (analysis.pdi !== undefined) setPdi(analysis.pdi);
         if (analysis.detectedFocus) setDetectedFocus(analysis.detectedFocus);
         if (analysis.whatWasTaught) setWhatWasTaught(analysis.whatWasTaught);
         if (analysis.keyTopics) setKeyTopics(analysis.keyTopics);
@@ -60,6 +61,7 @@ export default function CreateQuizTopic() {
         currentAnalysisRef.current = null;
         lastAnalyzedSignatureRef.current = null;
         setLectureDepth(null);
+        setPdi(null);
         setDetectedFocus([]);
         setWhatWasTaught('');
         setKeyTopics([]);
@@ -157,12 +159,20 @@ export default function CreateQuizTopic() {
             }
         } catch (_) {}
         if (user?.id) {
+            const sanitizedInputs = (inputs || []).map(inp => {
+                if (!inp || typeof inp !== 'object') return null;
+                const { file, ...rest } = inp;
+                if (rest.content && typeof rest.content === 'string' && rest.content.length > 500000) {
+                    rest.content = rest.content.slice(0, 500000);
+                }
+                return rest;
+            }).filter(Boolean);
             const payload = {
-                inputs,
-                analysis: inputs.length === 0 ? null : currentAnalysisRef.current
+                inputs: sanitizedInputs,
+                analysis: sanitizedInputs.length === 0 ? null : currentAnalysisRef.current
             };
             api.post('/quiz/docket', payload).catch(err => {
-                console.warn('Silent docket sync notice:', err.message);
+                // Silent background docket sync catch
             });
         }
     }, [inputs, isHydrated, user?.id, storageKey, analysisStorageKey]);
@@ -175,6 +185,7 @@ export default function CreateQuizTopic() {
 
     // Dynamic Lecture Depth & Curriculum Overview
     const [lectureDepth, setLectureDepth] = useState(null);
+    const [pdi, setPdi] = useState(null);
     const [detectedFocus, setDetectedFocus] = useState([]);
     const [whatWasTaught, setWhatWasTaught] = useState('');
     const [keyTopics, setKeyTopics] = useState([]);
@@ -390,6 +401,7 @@ export default function CreateQuizTopic() {
                         const analysisPayload = {
                             signature: currentSignature,
                             lectureDepth: res.data.lectureDepth,
+                            pdi: res.data.pdi !== undefined ? res.data.pdi : null,
                             detectedFocus: res.data.detectedFocus || [],
                             whatWasTaught: res.data.whatWasTaught || '',
                             keyTopics: res.data.keyTopics || [],
@@ -746,6 +758,33 @@ export default function CreateQuizTopic() {
                                 schemaVersion: 2,
                                 fetchingMetadata: false
                             } : item));
+                        }
+                        if (res.data.keyTopics && res.data.keyTopics.length > 0) {
+                            setKeyTopics(res.data.keyTopics);
+                        }
+                        if (res.data.detectedFocus && res.data.detectedFocus.length > 0) {
+                            setDetectedFocus(res.data.detectedFocus);
+                        }
+                        if (res.data.pdi !== undefined) {
+                            setPdi(res.data.pdi);
+                        }
+                        if (res.data.lectureDepth) {
+                            setLectureDepth(res.data.lectureDepth);
+                        }
+                        if (res.data.recommendedQuestionCount) {
+                            setRecommendedQuestionCount(res.data.recommendedQuestionCount);
+                        }
+                        if (res.data.recommendedQuestions) {
+                            setRecommendedQuestions(res.data.recommendedQuestions);
+                        }
+                        if (res.data.recommendedByDifficulty) {
+                            setRecommendedByDifficulty(res.data.recommendedByDifficulty);
+                        }
+                        if (res.data.capacityByDifficulty) {
+                            setCapacityByDifficulty(res.data.capacityByDifficulty);
+                        }
+                        if (res.data.totalDefensibleCapacity) {
+                            setTotalDefensibleCapacity(res.data.totalDefensibleCapacity);
                         }
                     }
                 } catch (err) {
@@ -1433,27 +1472,32 @@ export default function CreateQuizTopic() {
 
                     <div className="flex items-center gap-3 flex-wrap">
 
-                        {/* Interactive Teaching Depth Score Badge (ONLY when lecture audio is present) */}
-                        {hasAudio && lectureDepth && (
+                        {/* Interactive Pedagogical & Quality Score Badge */}
+                        {lectureDepth && (
                             <button
                                 type="button"
                                 onClick={() => setShowTeachingScoreModal(true)}
                                 className="bg-[#fff8f3] hover:bg-orange-100/80 border-2 border-[#f5d0b5] hover:border-orange-300 rounded-2xl px-4 py-2.5 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
-                                title="Click to view lecture quality score & recommended questions breakdown"
+                                title="Click to view pedagogical quality score, PDI & recommended questions breakdown"
                             >
                                 <div className="w-9 h-9 rounded-xl bg-orange-500/15 border border-orange-300/60 flex items-center justify-center text-[#ea580c] shrink-0 group-hover:scale-105 transition-transform">
                                     <Award size={20} />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">{isTopicOnly ? 'Curriculum Scope' : 'Lecture Quality Score'}</p>
+                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">{isTopicOnly ? 'Curriculum Scope' : hasAudio ? 'Lecture Quality Score' : 'Pedagogical Quality / PDI'}</p>
                                         <span className="text-[9px] font-bold text-[#c2410c] bg-orange-100 px-1.5 py-0.2 rounded-full group-hover:bg-[#ea580c] group-hover:text-white transition-colors flex items-center gap-1">
                                             <span>Instructional Digest</span>
                                             <Info size={10} className="shrink-0" />
                                         </span>
                                     </div>
-                                    <p className="text-sm font-black text-[#c2410c]">
-                                        {lectureDepth.rating || 'Comprehensive'} ({lectureDepth.score}/100)
+                                    <p className="text-sm font-black text-[#c2410c] flex items-center gap-1.5">
+                                        <span>{lectureDepth.rating || 'Comprehensive'} ({lectureDepth.score}/100)</span>
+                                        {typeof pdi === 'number' && (
+                                            <span className="text-[10px] font-mono font-black text-white bg-[#ea580c] px-1.5 py-0.5 rounded-md shadow-2xs">
+                                                PDI: {pdi.toFixed(2)}
+                                            </span>
+                                        )}
                                     </p>
                                 </div>
                                 <div className="w-16 bg-orange-200 h-2 rounded-full overflow-hidden shrink-0 hidden sm:block">
@@ -2072,8 +2116,8 @@ export default function CreateQuizTopic() {
                                                     )}
                                                 </span>
                                             </div>
-                                            {/* Show Instructional Digest / Teaching Score button ONLY when audio lecture is present */}
-                                            {hasAudio && (
+                                            {/* Show Instructional Digest / Teaching Score button */}
+                                            {lectureDepth && (
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowTeachingScoreModal(true)}
@@ -2098,11 +2142,11 @@ export default function CreateQuizTopic() {
                                             </div>
                                         )}
 
-                                        {/* Goal of Lecture (when audio is present) */}
-                                        {hasAudio && (lectureIntel?.summary || whatWasTaught) && (
+                                        {/* Goal of Lecture / Curriculum Overview */}
+                                        {(lectureIntel?.summary || whatWasTaught) && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> Goal of Lecture
+                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> {hasAudio ? 'Goal of Lecture' : 'Curriculum Overview'}
                                                 </p>
                                                 <p className="text-xs font-medium text-slate-700 leading-relaxed">
                                                     {lectureIntel?.summary || whatWasTaught}
@@ -2144,14 +2188,14 @@ export default function CreateQuizTopic() {
                                         )}
 
                                         {/* Document-Only Topics (when ONLY documents/PDFs are present) */}
-                                        {!hasAudio && hasDocFiles && ((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
+                                        {hasDocFiles && ((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
                                                     <FileText size={13} className="text-[#c2410c] shrink-0" /> Topics Extracted from Document
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
-                                                        .filter(t => t && t.length >= 3 && !/\b\d+\b/.test(t) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
+                                                        .filter(t => t && t.length >= 3 && !/^\d+$/.test(t.trim()) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
                                                         .slice(0, 8)
                                                         .map((topic, i) => (
                                                         <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
@@ -2171,7 +2215,7 @@ export default function CreateQuizTopic() {
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 pt-0.5">
                                                     {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
-                                                        .filter(t => t && t.length >= 3 && !/\b\d+\b/.test(t) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
+                                                        .filter(t => t && t.length >= 3 && !/^\d+$/.test(t.trim()) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
                                                         .slice(0, 8)
                                                         .map((topic, i) => (
                                                         <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">

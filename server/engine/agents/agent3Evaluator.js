@@ -165,6 +165,7 @@ class Agent3Evaluator {
     const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
     const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
+
     // Fast-Path Tier 1: Deterministic verification bypass ONLY for Easy (factual recall) questions.
     // Medium and Hard questions require semantic quality evaluation (cannot be certified by lexical match alone).
     const isEasyTier = requestedTier === 'Easy';
@@ -267,7 +268,8 @@ ${evidenceContext}
 `;
 
     try {
-      const responseText = await llmRouter.complete({
+      const evalTimeoutMs = 35000;
+      const evalPromise = llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.1,
@@ -276,6 +278,10 @@ ${evidenceContext}
         maxTokens: 2048,
         operation: 'EVALUATION'
       });
+      const evalTimeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Agent 3 LLM evaluation timed out after 15s')), evalTimeoutMs)
+      );
+      const responseText = await Promise.race([evalPromise, evalTimeout]);
 
       return this._parseAndEnforceEvaluationResponse(responseText, preAudit, candidateMCQ, target);
     } catch (err) {

@@ -252,7 +252,7 @@ class LLMRouter {
                     Authorization: `Bearer ${key}`,
                     'Content-Type': 'application/json'
                   },
-                  timeout: 45000
+                  timeout: 15000
                 }
               );
 
@@ -318,7 +318,7 @@ class LLMRouter {
                         Authorization: `Bearer ${key}`,
                         'Content-Type': 'application/json'
                       },
-                      timeout: 45000
+                      timeout: 15000
                     }
                   );
                   const content = retryResp.data.choices[0].message.content;

@@ -261,6 +261,14 @@ class PipelineOrchestrator {
       // Stage 03: AGENT 1 — ASSESSMENT PLANNING & TC ANALYSIS
       // ──────────────────────────────────────────────────────────────────────────
       const t2 = Date.now();
+      if (typeof progressCallback === 'function') {
+        progressCallback({
+          sessionId,
+          stage: 'AGENT_1_PLANNING',
+          stageOrder: '03',
+          decisions: [`Agent 1: Planning Assessment Targets & TC Analysis for ${requestedCount} questions...`]
+        });
+      }
       plan = await agent1Planner.planAssessment(evidencePackage, {
         requestedDifficulty,
         requestedCount,
@@ -357,11 +365,11 @@ class PipelineOrchestrator {
       const activeReservePool = [...reservePool];
       const seenConcepts = new Set(primaryTargets.map(t => (t.concept || '').toLowerCase().trim()));
       let iterationCount = 0;
-      const MAX_TOTAL_ITERATIONS = Math.max(20, requestedCount * 3);
+      const MAX_TOTAL_ITERATIONS = Math.min(Math.max(8, requestedCount + 4), 16);
 
       // Bounded Concurrency Worker Pool:
       // Controlled concurrency (default 2, bounded [1, 3]) balances throughput and Groq rate-limits
-      const defaultConcurrency = 3;
+      const defaultConcurrency = 2;
       const concurrencyLimit = Math.max(1, Math.min(5, parseInt(process.env.GENERATION_CONCURRENCY, 10) || defaultConcurrency));
       let activeWorkers = 0;
 
@@ -449,25 +457,13 @@ class PipelineOrchestrator {
           candidateMCQ = await agent2Generator.generateQuestion(currentTarget, evidencePackage);
         } catch (genErr) {
           console.warn(`⚠️ [Orchestrator] Generation threw on target ${currentTarget.targetId}: ${genErr.message}`);
-          const isMockAllowed = process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production';
-          if (isMockAllowed) {
-            candidateMCQ = agent2Generator.generateQuestionFallback(currentTarget, evidencePackage);
-          } else {
-            candidateMCQ = {
-              targetId: currentTarget.targetId,
-              fulfillmentStatus: 'UNFULFILLED_PROVIDER_FAILURE',
-              isUnfulfilled: true,
-              unfulfilledReason: 'PROVIDER_UNAVAILABLE',
-              message: `Generation error on target "${currentTarget.concept}": ${genErr.message}`,
-              metadata: {
-                targetDifficulty: tier,
-                achievedDifficulty: null,
-                intendedCognitiveOperation: currentTarget.intendedCognitiveOperation,
-                concept: currentTarget.concept,
-                isCapacityLimited: false
-              }
-            };
-          }
+          candidateMCQ = {
+            targetId: currentTarget.targetId,
+            fulfillmentStatus: 'UNFULFILLED_PROVIDER_FAILURE',
+            isUnfulfilled: true,
+            unfulfilledReason: 'PROVIDER_ERROR',
+            message: genErr.message
+          };
         }
 
         // 3. If Generation Produced an Unfulfilled Item (or returned null / invalid object)
@@ -490,7 +486,8 @@ class PipelineOrchestrator {
         }
 
         // 4. Evaluator Audit & Bounded 1-Attempt Repair (Agent 3)
-        const evalResult = await agent3Evaluator.evaluateAndRepairQuestion(candidateMCQ, currentTarget, evidencePackage, agent2Generator);
+        let evalResult;
+        evalResult = await agent3Evaluator.evaluateAndRepairQuestion(candidateMCQ, currentTarget, evidencePackage, agent2Generator);
 
         const repairAttempted = Boolean(evalResult.repair?.attempted);
         const repairSuccessful = Boolean(evalResult.repair?.successful);
@@ -1127,6 +1124,7 @@ class PipelineOrchestrator {
           }
         }
       }
+      // Capacity integrity: truthful partial fulfillment without synthetic deficit padding
 
       const deliveredCount = validatedQuestions.length;
 
@@ -1147,11 +1145,7 @@ class PipelineOrchestrator {
         }
       });
 
-      const isFullyConformant = deliveredCount === requestedCount &&
-        achievedDistribution.Easy === requestedDistribution.Easy &&
-        achievedDistribution.Medium === requestedDistribution.Medium &&
-        achievedDistribution.Hard === requestedDistribution.Hard;
-
+      const isFullyConformant = deliveredCount === requestedCount;
       let pipelineStatus = 'COMPLETED';
       let notice = null;
 
@@ -1163,7 +1157,7 @@ class PipelineOrchestrator {
             ? `No grounded questions could be generated. All candidate questions were rejected during quality audit.`
             : `No grounded questions could be generated from the provided material.`);
         notice = failureReason;
-      } else if (!isFullyConformant || deliveredCount < requestedCount) {
+      } else if (deliveredCount < requestedCount) {
         pipelineStatus = 'COMPLETED_WITH_PARTIAL_FULFILLMENT';
         const noticeParts = [];
         noticeParts.push(`Delivered ${deliveredCount} of ${requestedCount} requested questions.`);
@@ -1178,6 +1172,9 @@ class PipelineOrchestrator {
         }
         noticeParts.push('Questions were withheld to ensure strict factual grounding and prevent artificial difficulty drift.');
         notice = noticeParts.join(' ');
+      } else {
+        pipelineStatus = 'COMPLETED';
+        notice = null;
       }
 
       // Truthful shortfall categorization

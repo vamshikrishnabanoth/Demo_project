@@ -515,6 +515,40 @@ export default function PipelineOutput() {
           </div>
         </div>
 
+        {/* ── FRIENDLY ERROR BANNER (FOR NON-ACADEMIC CONTENT & OTHER ISSUES) ── */}
+        {(status === 'FAILED' || error) && (
+          <div className="bg-red-50 border-2 border-red-500/30 rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row items-start gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="p-3 bg-red-500/10 text-red-600 rounded-2xl shrink-0 mt-0.5 border border-red-500/20">
+              <AlertCircle size={28} className="stroke-[2.5]" />
+            </div>
+            <div className="space-y-2 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-black uppercase tracking-wider text-red-700 bg-red-100 px-2.5 py-0.5 rounded-full border border-red-200">
+                  Assessment Guard
+                </span>
+                <h3 className="text-base sm:text-lg font-black text-red-950 tracking-tight">
+                  {(error && (error.toLowerCase().includes('non-academic') || error.toLowerCase().includes('entertainment') || error.toLowerCase().includes('song')))
+                    ? 'Question Generation : Non Academic Content'
+                    : 'Question Generation : Academic Content Required'}
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-red-800 leading-relaxed font-medium">
+                {error || 'Question generation stopped: The uploaded material does not contain academic or educational lecture content. As an educational assessment platform, questions are strictly generated from academic lectures, textbooks, code, and course curricula.'}
+              </p>
+              <div className="pt-2 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate(originPath || '/create-quiz')}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <ArrowLeft size={14} />
+                  <span>Upload Academic Material</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── KEY METRICS STRIP ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
           <div className="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs space-y-1">
