@@ -164,6 +164,8 @@ class LLMRouter {
         resolvedMaxTokens = 2500;
       } else if (operation === 'QUESTION_GENERATION') {
         resolvedMaxTokens = 1600;
+      } else if (operation === 'EVALUATION' || prompt.includes('[PEDAGOGICAL & FACTUAL TRUTHFULNESS EVALUATION]')) {
+        resolvedMaxTokens = 750;
       } else
       if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
         resolvedMaxTokens = 1100; // Calibrated for single MCQ to reduce Groq TPM reservation
@@ -194,7 +196,7 @@ class LLMRouter {
     const startKeyOffset = (this.currentKeyIndex++) % totalKeys;
 
     // Up to 3 passes across the pool with bounded cooldown sleep if keys are temporarily throttled
-    for (let poolAttempt = 0; poolAttempt < 3; poolAttempt++) {
+    for (let poolAttempt = 0; poolAttempt < 5; poolAttempt++) {
       for (let offset = 0; offset < totalKeys; offset++) {
         const keyIdx = (startKeyOffset + offset) % totalKeys;
         const key = keys[keyIdx];
@@ -390,18 +392,18 @@ class LLMRouter {
       }
 
       // If pass completed without returning, check if transient cooldowns can expire
-      if (poolAttempt < 2 && this.keyCooldowns.size > 0) {
+      if (poolAttempt < 4 && this.keyCooldowns.size > 0) {
         if (process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production') {
           break;
         }
         const now = Date.now();
-        const shortCooldowns = Array.from(this.keyCooldowns.values()).filter(t => t - now <= 8000 && t - now > 0);
+        const shortCooldowns = Array.from(this.keyCooldowns.values()).filter(t => t - now <= 15000 && t - now > 0);
         if (shortCooldowns.length === 0) {
           // No transient cooldowns expiring soon; fail over to next provider immediately!
           break;
         }
         const earliestCooldown = Math.min(...shortCooldowns);
-        const waitMs = Math.min(earliestCooldown - now + 200, 4000);
+        const waitMs = Math.min(earliestCooldown - now + 200, 6000);
         console.warn(`⏳ [LLMRouter] Transient rate limit. Bounded wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
         await this._sleep(waitMs);
       }
