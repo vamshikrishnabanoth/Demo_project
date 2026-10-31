@@ -180,7 +180,8 @@ class LLMRouter {
     // 1. Primary (e.g. openai/gpt-oss-120b)
     // 2. High-speed reasoning model (qwen/qwen3.8-27b - ~1.0s latency, distinct daily quota)
     // 3. Fallback (openai/gpt-oss-20b)
-    const modelsToTry = Array.from(new Set([
+    const configuredModels = process.env.GROQ_MODELS ? process.env.GROQ_MODELS.split(',').map(m => m.trim()).filter(Boolean) : null;
+    const modelsToTry = (configuredModels && configuredModels.length > 0) ? configuredModels : Array.from(new Set([
       primaryModel,
       'qwen/qwen3.8-27b',
       fallbackModel,
@@ -345,7 +346,11 @@ class LLMRouter {
                   // Mark THIS MODEL in cooldown on this key for 1 hour. Do NOT invalidate other models or the whole key!
                   this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 3600000);
                   console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Failing over to next model immediately.`);
-                  if (isLastModel) {
+                  const allExhausted = modelsToTry.every(m => {
+                    const cd = this.modelCooldowns.get(`${keyIdx}_${m}`) || 0;
+                    return cd > Date.now() + 60000;
+                  });
+                  if (allExhausted) {
                     this.keyCooldowns.set(keyIdx, Date.now() + 3600000);
                     console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} all models exhausted daily quota. Moving to next key.`);
                   }
