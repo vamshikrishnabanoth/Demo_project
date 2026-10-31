@@ -275,7 +275,7 @@ ${evidenceContext}
         temperature: 0.1,
         model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
         sessionId: evidencePackage?.sessionId,
-        maxTokens: 750,
+        maxTokens: 1400,
         operation: 'EVALUATION'
       });
       const evalTimeout = new Promise((_, reject) =>

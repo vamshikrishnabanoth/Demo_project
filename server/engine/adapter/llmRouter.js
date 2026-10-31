@@ -165,7 +165,7 @@ class LLMRouter {
       } else if (operation === 'QUESTION_GENERATION') {
         resolvedMaxTokens = 1600;
       } else if (operation === 'EVALUATION' || prompt.includes('[PEDAGOGICAL & FACTUAL TRUTHFULNESS EVALUATION]')) {
-        resolvedMaxTokens = 750;
+        resolvedMaxTokens = 1400;
       } else
       if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
         resolvedMaxTokens = 1100; // Calibrated for single MCQ to reduce Groq TPM reservation
