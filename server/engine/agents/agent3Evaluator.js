@@ -877,11 +877,12 @@ ${evidenceContext}
     const hasCodeSnippet = qText.includes('```') ||
       (Array.isArray(candidateMCQ.options) && candidateMCQ.options.some(o => typeof o === 'string' && o.includes('```')));
 
+    const evidenceHasCode = !!(evidencePackage?.codeSnippets || evidencePackage?.hasCode || target?.codeSnippet);
     if (formatRec === 'PROSE_MULTIPLE_CHOICE' && hasCodeSnippet) {
       if (!failureReasons.includes('FORMAT_MISMATCH_UNWANTED_CODE')) {
         failureReasons.push('FORMAT_MISMATCH_UNWANTED_CODE');
       }
-    } else if (formatRec === 'CODE_ANALYSIS' && !hasCodeSnippet && !qText.includes('def ') && !qText.includes('function ') && !qText.includes('class ') && !qText.includes('int ')) {
+    } else if (formatRec === 'CODE_ANALYSIS' && evidenceHasCode && !hasCodeSnippet && !qText.includes('def ') && !qText.includes('function ') && !qText.includes('class ') && !qText.includes('int ')) {
       if (!failureReasons.includes('FORMAT_MISMATCH_MISSING_CODE')) {
         failureReasons.push('FORMAT_MISMATCH_MISSING_CODE');
       }

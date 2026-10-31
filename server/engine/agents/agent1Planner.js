@@ -61,7 +61,7 @@ class Agent1Planner {
     if (dim.includes('CALCULATION') || op.includes('CALCULAT') || op === 'CALCULATION' || concept.includes('calculate') || concept.includes('remainder trace')) {
       return ASSESSMENT_ANGLES.CALCULATION;
     }
-    if (dim.includes('FLOW') || op === 'TRACE' || op === 'CODE_OR_TRACE' || concept.includes('code trace') || concept.includes('execution trace')) {
+    if (dim.includes('FLOW') || op === 'CODE_OR_TRACE' || concept.includes('code trace') || concept.includes('execution trace') || ((op === 'TRACE' || dim.includes('TRACE')) && (t.evidenceType === 'CODE' || concept.includes('code') || t.requiresExactArtifact))) {
       return ASSESSMENT_ANGLES.CODE_TRACE;
     }
     if (dim.includes('TRADEOFF') || dim.includes('COMPARISON') || op === 'COMPARE' || concept.includes('tradeoff') || concept.includes('invariance') || concept.includes('reasoning')) {
