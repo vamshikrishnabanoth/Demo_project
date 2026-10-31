@@ -15,6 +15,7 @@ const calculationEngine = require('../validators/calculationEngine');
 const { safeParseJson } = require('../utils/jsonParser');
 const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelector');
 const kmitStyleContract = require('../../config/kmitStyleContract');
+const deterministicValidator = require('../validators/deterministicValidator');
 
 const DISTRACTOR_ARCHETYPES = {
   MISCONCEPTION_INVERSION: {
@@ -1872,6 +1873,26 @@ Generate a single grounded multiple-choice question testing the assessment targe
         isUnfulfilled: true,
         unfulfilledReason: 'INSUFFICIENT_OPTIONS_COUNT',
         message: `Model output for target "${target.concept}" provided ${Array.isArray(parsedMCQ.options) ? parsedMCQ.options.length : 0} options (exactly 4 required).`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          isCapacityLimited: false
+        }
+      };
+    }
+
+    // Deterministic check for prompt schema archetype placeholder options
+    if (Array.isArray(parsedMCQ.options) && parsedMCQ.options.some(opt => deterministicValidator.isSchemaPlaceholderOption(opt))) {
+      console.warn(`⚠️ [Agent 2] Output for target ${target.targetId} contains prompt schema placeholder options.`);
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_MALFORMED_OUTPUT',
+        isUnfulfilled: true,
+        unfulfilledReason: 'SCHEMA_PLACEHOLDER_OPTIONS',
+        message: `Model output for target "${target.concept}" emitted prompt schema archetype placeholders as answer choices.`,
         metadata: {
           targetDifficulty: tier,
           achievedDifficulty: null,

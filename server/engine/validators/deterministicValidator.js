@@ -13,6 +13,21 @@
 const crypto = require('crypto');
 const { OPTION_SET_CONTRACT } = require('../contracts/pipelineContracts');
 
+const SCHEMA_PLACEHOLDER_OPTIONS = new Set([
+  'contrasting algorithmic approach or property',
+  'technically precise correct formulation',
+  'boundary condition or complexity trap',
+  'plausible engineering alternative misconception',
+  'plausible engineering alternative',
+  'boundary condition trap',
+  'plausible alternative concept',
+  'distinct contrasting mechanism',
+  'valid factual formulation',
+  'common conceptual misconception',
+  'crisp 1 2 sentence question',
+  'identical to questiontext'
+]);
+
 class DeterministicValidator {
   constructor() {
     this.OPTION_SET_CONTRACT = OPTION_SET_CONTRACT;
@@ -21,6 +36,17 @@ class DeterministicValidator {
   /**
    * Exact case and whitespace normalized option string.
    */
+  isSchemaPlaceholderOption(str) {
+    if (typeof str !== 'string') return false;
+    const norm = str
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!norm) return false;
+    return SCHEMA_PLACEHOLDER_OPTIONS.has(norm);
+  }
+
   normalizeExactOption(str) {
     if (typeof str !== 'string') return '';
     return str.trim().toLowerCase().replace(/\s+/g, ' ');
@@ -136,6 +162,17 @@ class DeterministicValidator {
         errors.push({
           code: this.OPTION_SET_CONTRACT.hardRejectionCodes.EMPTY_OR_SHORT_OPTION,
           message: `Option at index ${idx} is empty or shorter than ${this.OPTION_SET_CONTRACT.minOptionLength} characters: "${opt}"`,
+          details: { index: idx, value: opt }
+        });
+      }
+    });
+
+    // 2b. Prohibited prompt schema archetype placeholder options
+    options.forEach((opt, idx) => {
+      if (this.isSchemaPlaceholderOption(opt)) {
+        errors.push({
+          code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SCHEMA_PLACEHOLDER_OPTION || 'SCHEMA_PLACEHOLDER_OPTION',
+          message: `Option at index ${idx} is a prohibited prompt schema archetype placeholder: "${opt}"`,
           details: { index: idx, value: opt }
         });
       }
@@ -539,11 +576,19 @@ class DeterministicValidator {
       const ansSim = (candidateNormAns && existingNormAns) ? this.calculateSimilarity(candidateNormAns, existingNormAns) : 0;
       const semanticAnswerMatch = exactAnswerMatch || (ansSim >= 0.75 && candidateNormAns.length > 10);
 
-      const candidateConcept = (candidateMCQ.metadata?.concept || currentTarget.concept || '').toLowerCase().trim();
-      const existingConcept = (existing.metadata?.concept || '').toLowerCase().trim();
-      const sameConcept = candidateConcept.length > 3 && (
-        candidateConcept === existingConcept ||
-        this.calculateSimilarity(candidateConcept, existingConcept) >= 0.70
+      const normalizeConcept = (c) => {
+        if (!c || typeof c !== 'string') return '';
+        return c.toLowerCase()
+          .replace(/&/g, ' and ')
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      };
+      const normCandConcept = normalizeConcept(candidateMCQ.metadata?.concept || currentTarget.concept || '');
+      const normExistConcept = normalizeConcept(existing.metadata?.concept || '');
+      const sameConcept = normCandConcept.length > 3 && (
+        normCandConcept === normExistConcept ||
+        this.calculateSimilarity(normCandConcept, normExistConcept) >= 0.70
       );
 
       // 1. Extreme verbatim duplicate stem

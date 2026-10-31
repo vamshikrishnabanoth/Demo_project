@@ -410,6 +410,30 @@ const KMIT_STYLE_CONTRACT = {
         issues.push('DUPLICATE_OPTIONS');
       }
 
+      // 4b. Check for prompt schema archetype placeholder strings (Fatal)
+      const SCHEMA_PLACEHOLDER_OPTIONS = new Set([
+        'contrasting algorithmic approach or property',
+        'technically precise correct formulation',
+        'boundary condition or complexity trap',
+        'plausible engineering alternative misconception',
+        'plausible engineering alternative',
+        'boundary condition trap',
+        'plausible alternative concept',
+        'distinct contrasting mechanism',
+        'valid factual formulation',
+        'common conceptual misconception',
+        'crisp 1 2 sentence question',
+        'identical to questiontext'
+      ]);
+      const hasPlaceholderOption = options.some(opt => {
+        if (typeof opt !== 'string') return false;
+        const norm = opt.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        return SCHEMA_PLACEHOLDER_OPTIONS.has(norm);
+      });
+      if (hasPlaceholderOption) {
+        issues.push('SCHEMA_PLACEHOLDER_OPTION');
+      }
+
       // 5. Check option length bounds and outlier asymmetry (Fatal)
       const wordCounts = options.map(o => String(o).trim().split(/\s+/).filter(Boolean).length);
       const minWords = Math.min(...wordCounts);

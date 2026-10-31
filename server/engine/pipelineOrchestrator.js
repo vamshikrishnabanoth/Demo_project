@@ -363,7 +363,11 @@ class PipelineOrchestrator {
 
       const candidateQueue = [...primaryTargets];
       const activeReservePool = [...reservePool];
-      const seenConcepts = new Set(primaryTargets.map(t => (t.concept || '').toLowerCase().trim()));
+      const normConceptSig = (c) => String(c || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+      const seenConcepts = new Set([
+        ...primaryTargets.map(t => normConceptSig(t.concept)),
+        ...activeReservePool.map(r => normConceptSig(r.concept))
+      ].filter(Boolean));
       let iterationCount = 0;
       const MAX_TOTAL_ITERATIONS = Math.min(Math.max(8, requestedCount + 4), 16);
 
@@ -857,10 +861,9 @@ class PipelineOrchestrator {
             evidencePackage
           );
           for (const ft of (fallback.assessmentTargets || [])) {
-            const cLower = (ft.concept || '').toLowerCase().trim();
-            const facetSig = `${cLower}::${ft.dimension || ''}`;
-            if (!seenConcepts.has(facetSig)) {
-              seenConcepts.add(facetSig);
+            const cNorm = normConceptSig(ft.concept);
+            if (cNorm && !seenConcepts.has(cNorm)) {
+              seenConcepts.add(cNorm);
               ft.targetId = `T_REP_0${candidateQueue.length + 1}`;
               candidateQueue.push(ft);
               if (candidateQueue.length >= neededMore) break;
@@ -887,13 +890,21 @@ class PipelineOrchestrator {
             ];
 
             let facetIndex = iterationCount;
-            while (candidateQueue.length < neededMore) {
+            let paddingAttempts = 0;
+            while (candidateQueue.length < neededMore && paddingAttempts < 50) {
+              paddingAttempts++;
               const sub = baseConcepts[facetIndex % baseConcepts.length] || 'Core Subject Matter';
               const facet = replenishmentFacets[facetIndex % replenishmentFacets.length];
               facetIndex++;
+              const conceptName = `${sub} (${facet.name})`;
+              const cNorm = normConceptSig(conceptName);
+              if (seenConcepts.has(cNorm)) {
+                continue; // Skip already planned/evaluated concept facet
+              }
+              seenConcepts.add(cNorm);
               const repTarget = {
                 targetId: `T_REP_0${candidateQueue.length + 1}`,
-                concept: `${sub} (${facet.name})`,
+                concept: conceptName,
                 subtopic: sub,
                 trajectoryPhase: 'MID',
                 dimension: facet.dim,
@@ -1306,19 +1317,21 @@ class PipelineOrchestrator {
         capacityDeficitReport,
         metrics,
         questionDecisionLedger: validatedQuestions.map(q => q.metadata?.decisionLedger).filter(Boolean),
-        tcScore: (plan?.tcScore !== undefined && plan?.tcScore !== null) 
-          ? plan.tcScore 
-          : (evidencePackage?.lectureIntelligence?.tcScore ?? null),
+        // Gate 3: Provenance-Enforced Faculty Analytics
+        // Teaching score and analysis MUST originate from evaluated spoken lecture audio, NEVER from planning ALO coverage
+        tcScore: hasVoice
+          ? (evidencePackage?.lectureIntelligence?.tcScore ?? evidencePackage?.voiceAnalysis?.teachingValueScore ?? null)
+          : null,
         pdi: (evidencePackage?.pdi !== undefined && evidencePackage?.pdi !== null) 
           ? evidencePackage.pdi 
           : (evidencePackage?.lectureIntelligence?.pedagogicalDeficitIndex ?? null),
-        teacherAnalysis: evidencePackage?.lectureIntelligence ? {
+        teacherAnalysis: hasVoice && evidencePackage?.lectureIntelligence ? {
           pedagogicalCritique: evidencePackage.lectureIntelligence.pedagogicalCritique,
           chapters: evidencePackage.lectureIntelligence.chapters,
           conceptMap: evidencePackage.lectureIntelligence.conceptMap,
           evidenceCapacity: evidencePackage.lectureIntelligence.evidenceCapacity,
           pdi: evidencePackage.lectureIntelligence.pedagogicalDeficitIndex ?? evidencePackage.pdi ?? null,
-          tcScore: plan?.tcScore ?? evidencePackage.lectureIntelligence?.tcScore ?? null
+          tcScore: evidencePackage.lectureIntelligence.tcScore ?? evidencePackage.voiceAnalysis?.teachingValueScore ?? null
         } : null,
         quizEvaluation: quizEval,
         telemetry: finalTraceData.metrics,
