@@ -185,9 +185,10 @@ class LLMRouter {
     const configuredModels = process.env.GROQ_MODELS ? process.env.GROQ_MODELS.split(',').map(m => m.trim()).filter(Boolean) : null;
     const modelsToTry = (configuredModels && configuredModels.length > 0) ? configuredModels : Array.from(new Set([
       primaryModel,
+      'openai/gpt-oss-120b',
+      'openai/gpt-oss-20b',
       'qwen/qwen3.8-27b',
-      fallbackModel,
-      'openai/gpt-oss-20b'
+      fallbackModel
     ].filter(Boolean)));
     const totalKeys = keys.length;
     let lastErr = null;
@@ -248,7 +249,7 @@ class LLMRouter {
                   ],
                   temperature: temperature,
                   response_format: { type: 'json_object' },
-                  max_tokens: resolvedMaxTokens
+                  max_tokens: (currentModel.includes('qwen') || currentModel.includes('27b')) ? Math.min(resolvedMaxTokens, 900) : resolvedMaxTokens
                 },
                 {
                   headers: {
