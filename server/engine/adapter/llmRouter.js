@@ -347,14 +347,14 @@ class LLMRouter {
                 if (isTPD) {
                   // Confirmed daily token limit on this specific model:
                   // Mark THIS MODEL in cooldown on this key for 1 hour. Do NOT invalidate other models or the whole key!
-                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 3600000);
+                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 15000);
                   console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Failing over to next model immediately.`);
                   const allExhausted = modelsToTry.every(m => {
                     const cd = this.modelCooldowns.get(`${keyIdx}_${m}`) || 0;
                     return cd > Date.now() + 60000;
                   });
                   if (allExhausted) {
-                    this.keyCooldowns.set(keyIdx, Date.now() + 3600000);
+                    this.keyCooldowns.set(keyIdx, Date.now() + 10000);
                     console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} all models exhausted daily quota. Moving to next key.`);
                   }
                   break; // Break inner loop to try next model or next key
@@ -399,12 +399,7 @@ class LLMRouter {
         }
         const now = Date.now();
         const shortCooldowns = Array.from(this.keyCooldowns.values()).filter(t => t - now <= 15000 && t - now > 0);
-        if (shortCooldowns.length === 0) {
-          // No transient cooldowns expiring soon; fail over to next provider immediately!
-          break;
-        }
-        const earliestCooldown = Math.min(...shortCooldowns);
-        const waitMs = Math.min(earliestCooldown - now + 200, 6000);
+        const waitMs = shortCooldowns.length > 0 ? Math.min(Math.min(...shortCooldowns) - now + 200, 6000) : 3000;
         console.warn(`⏳ [LLMRouter] Transient rate limit. Bounded wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
         await this._sleep(waitMs);
       }
