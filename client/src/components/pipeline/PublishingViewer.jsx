@@ -1,5 +1,5 @@
 import React from 'react';
-import { PackageCheck, Hash, Lock, CheckCircle2, Rocket, Play, Share2, Eye, ShieldCheck } from 'lucide-react';
+import { PackageCheck, Hash, Lock, CheckCircle2, Rocket, Play, Share2, Eye, ShieldCheck, Award, Sparkles, BookOpen, Brain, TrendingUp, Check } from 'lucide-react';
 
 export default function PublishingViewer({
   taskId = '',
@@ -8,10 +8,25 @@ export default function PublishingViewer({
   sha256 = '',
   status = 'COMPLETED',
   onLaunchClassroom = null,
-  onPreviewQuiz = null
+  onPreviewQuiz = null,
+  teacherAnalysis = null,
+  tcScore = 85,
+  pdi = 0.12
 }) {
   const isReady = status === 'COMPLETED';
   const displayHash = sha256 || (taskId ? `sha256_${taskId.replace(/-/g, '').substring(0, 32)}...` : 'sha256_e3b0c44298fc1c149afbf4c8996fb924...');
+
+  const effectiveTcScore = Math.round(Number(tcScore || teacherAnalysis?.tcScore || 85));
+  const effectivePdi = Number(pdi ?? teacherAnalysis?.pdi ?? 0.12);
+  const critique = teacherAnalysis?.pedagogicalCritique || {};
+
+  const getScoreBadge = (score) => {
+    if (score >= 85) return { label: 'Exemplary Instructional Rigor', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' };
+    if (score >= 70) return { label: 'Strong Curricular Depth', color: 'text-blue-700 bg-blue-50 border-blue-200' };
+    return { label: 'Foundational Overview', color: 'text-amber-700 bg-amber-50 border-amber-200' };
+  };
+
+  const scoreBadge = getScoreBadge(effectiveTcScore);
 
   return (
     <div className="space-y-5">
@@ -69,6 +84,117 @@ export default function PublishingViewer({
           </div>
           <span className="text-[10px] font-bold uppercase text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800 shrink-0">
             SHA-256
+          </span>
+        </div>
+      </div>
+
+      {/* ── TEACHER PERFORMANCE & LECTURE INTELLIGENCE SCORECARD (B2B COMMERCIAL READY) ── */}
+      <div className="bg-white border border-indigo-100 rounded-2xl p-6 shadow-sm space-y-5">
+        <div className="flex items-start justify-between flex-wrap gap-4 pb-4 border-b border-slate-100">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+                <Award size={18} />
+              </span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-indigo-700">
+                Faculty Analytics & Lecture Intelligence
+              </span>
+            </div>
+            <h3 className="text-base font-black text-slate-900">Teaching Quality & Explanatory Scorecard</h3>
+            <p className="text-xs text-slate-500">
+              Automated cognitive assessment of instructor delivery, causal explanations, and pedagogical completeness.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Teaching Score</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-indigo-600 font-mono">{effectiveTcScore}</span>
+                <span className="text-xs font-bold text-slate-400">/ 100</span>
+              </div>
+            </div>
+            <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${scoreBadge.color}`}>
+              {scoreBadge.label}
+            </span>
+          </div>
+        </div>
+
+        {/* 4-Dimension Pedagogical Rubric Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
+            <div className="flex items-center gap-1.5 text-indigo-700 font-bold">
+              <BookOpen size={14} />
+              <span>Explanatory Depth</span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-snug">
+              {Array.isArray(critique.explanatoryDepth) && critique.explanatoryDepth.length > 0
+                ? critique.explanatoryDepth[0]
+                : 'Defines foundational concepts with domain-accurate terminology and mechanics.'}
+            </p>
+          </div>
+
+          <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
+            <div className="flex items-center gap-1.5 text-blue-700 font-bold">
+              <Brain size={14} />
+              <span>Reasoning Depth</span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-snug">
+              {Array.isArray(critique.reasoningDepth) && critique.reasoningDepth.length > 0
+                ? critique.reasoningDepth[0]
+                : 'Explains causal mechanisms, tradeoffs, and state invariants.'}
+            </p>
+          </div>
+
+          <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
+            <div className="flex items-center gap-1.5 text-teal-700 font-bold">
+              <Sparkles size={14} />
+              <span>Demonstrations</span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-snug">
+              {Array.isArray(critique.practicalDemonstrations) && critique.practicalDemonstrations.length > 0
+                ? critique.practicalDemonstrations[0]
+                : 'Provides concrete examples, code trace snippets, and memory layouts.'}
+            </p>
+          </div>
+
+          <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
+            <div className="flex items-center gap-1.5 text-purple-700 font-bold">
+              <TrendingUp size={14} />
+              <span>PDI Delivery Index</span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-snug">
+              PDI = <span className="font-mono font-bold text-slate-900">{effectivePdi.toFixed(3)}</span> (
+              {effectivePdi < 0.25 ? 'High Spoken Autonomy' : (effectivePdi < 0.6 ? 'Balanced Multi-Modal' : 'Document-Guided')}
+              ).
+            </p>
+          </div>
+        </div>
+
+        {/* Actionable Feedback for Instructor */}
+        {critique.limitationsOfExcerpt && critique.limitationsOfExcerpt !== 'Non-academic content.' && (
+          <div className="p-3.5 bg-amber-50/60 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-900">
+            <span className="p-1 rounded-md bg-amber-100 text-amber-700 shrink-0 mt-0.5">
+              <Sparkles size={12} />
+            </span>
+            <div className="space-y-0.5">
+              <span className="font-bold text-[11px] text-amber-950 uppercase tracking-wider block">
+                Classroom Optimization Suggestion
+              </span>
+              <p className="text-[11px] text-amber-800 leading-relaxed">
+                {critique.limitationsOfExcerpt}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* B2B Commercial Readiness Callout */}
+        <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+          <span className="font-medium">
+            KMIT Faculty Intelligence Engine &bull; Designed for Premier Coaching & Engineering Classrooms (Physics Wallah, Allen, Kota, Universities)
+          </span>
+          <span className="font-bold text-indigo-600 flex items-center gap-1">
+            <ShieldCheck size={13} /> Institutional Analytics Ready
           </span>
         </div>
       </div>

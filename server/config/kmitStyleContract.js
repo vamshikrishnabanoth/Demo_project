@@ -29,7 +29,7 @@
 'use strict';
 
 const KMIT_STYLE_CONTRACT = {
-  version: '1.2.0',
+  version: '1.3.0',
   name: 'KMIT Kahoot Assessment Signature Style',
   philosophy: "Think, Don't Guess: Problem-first challenge grounded strictly in taught evidence.",
 
@@ -39,16 +39,16 @@ const KMIT_STYLE_CONTRACT = {
   standards: {
     // Advisory targets provided to Planner and Generator prompts
     advisory: {
-      stemTargetWords: 45, // Target max for question stem (excluding code snippets or data tables)
-      optionLengthTarget: '3 to 15 words per option',
+      stemTargetWords: 25, // Target max for question stem (excluding code snippets or data tables)
+      optionLengthTarget: '3 to 12 words per option',
       optionLengthRatioTarget: 2.0, // Longest-to-shortest option length ratio ideally <= 2.0x
-      styleTone: 'Direct, problem-first phrasing. Context is welcomed when technically necessary, but vacuous meta-talk is prohibited.'
+      styleTone: 'Crisp, direct, student-accessible phrasing. Pose the technical question immediately. Eliminate academic boilerplate, verbose throat-clearing, and meta-language.'
     },
     // Mechanically enforceable heuristic thresholds checked by checkStyleHeuristics()
     enforceable: {
-      stemHardWordLimit: 85, // Generous upper bound to catch runaway paragraphs while allowing technical setup
+      stemHardWordLimit: 55, // Generous upper bound to catch runaway paragraphs while allowing technical setup
       optionMinWords: 1,     // Minimum tokens per option
-      optionMaxWords: 25,    // Upper boundary before option is flagged as runaway explanatory text
+      optionMaxWords: 20,    // Upper boundary before option is flagged as runaway explanatory text
       optionLengthRatioCeiling: 3.5, // Flags obvious giveaway outlier options (e.g., 20 words vs 2 words)
       maxWordJaccardSimilarity: 0.85 // Advisory threshold to flag potential near-duplicate or permuted options
     }
@@ -65,7 +65,9 @@ const KMIT_STYLE_CONTRACT = {
       /\bas explained by the (?:speaker|instructor|professor|teacher)\b/i,
       /\bwhich of the following was (?:mentioned|discussed|covered)\b/i,
       /\bwhich topic (?:was|is) covered\b/i,
-      /\b(?:in the context of the|in the|based on the|from the)\s+(?:lecture|transcript)\b(?!\s*[-–—]?\s*(?:hall|room|setting|venue|interval))/i
+      /\b(?:in the context of the|in the|based on the|from the)\s+(?:lecture|transcript)\b(?!\s*[-–—]?\s*(?:hall|room|setting|venue|interval))/i,
+      /\b(?:operational mechanics|foundational premise|substantive paradigm|overarching framework)\b/i,
+      /\b(?:in order to ascertain|it is imperative to determine|with reference to the aforementioned)\b/i
     ],
     prohibitedMetaPrefixes: [
       /^(?:according to the lecture|as discussed in the lecture|in the lecture|based on the lecture|as taught in the lecture|according to the transcript)[,\s:]*/i,
@@ -116,7 +118,7 @@ const KMIT_STYLE_CONTRACT = {
       intendedCognitiveOperation: 'DIAGNOSE',
       strategyTag: 'ASYMPTOTIC_BOUNDARY_TRAP',
       evidenceBasis: 'Standard in-place singly linked list node deletion by copying successor values when head pointer is unavailable.',
-      questionText: 'In a singly linked list, an in-place deletion algorithm removes a node in O(1) time by copying the successor node\'s data into the target node (Node* target) and bypassing the successor. Under which condition does this successor-copying technique fail to preserve list integrity?',
+      questionText: 'In a singly linked list, an in-place deletion algorithm copies the successor node\'s data into the target node and unlinks the successor. Under which condition does this technique fail to preserve list integrity?',
       options: [
         'The target node contains duplicate payload data matching its predecessor.',
         'The target node is the terminal node (tail) of the list.',
@@ -141,7 +143,7 @@ const KMIT_STYLE_CONTRACT = {
       intendedCognitiveOperation: 'TRACE',
       strategyTag: 'MISCONCEPTION_INVERSION',
       evidenceBasis: 'Standard counting semaphore state definition where negative counter values denote the exact count of waiting blocked threads.',
-      questionText: 'In an operating system implementation of counting semaphores where negative counter values represent the count of waiting threads, a semaphore is initialized to value = 2. Five threads sequentially execute wait() (P operation) without any thread executing signal() (V operation). What is the resulting state of the semaphore?',
+      questionText: 'A counting semaphore initialized to 2 has five threads sequentially call wait() with no signal() calls. If negative values count waiting threads, what is the resulting semaphore state?',
       options: [
         'Semaphore value is 0, and all five threads are placed in the blocked waiting queue.',
         'Semaphore value is -3, and three threads are placed in the blocked waiting queue.',
@@ -166,7 +168,7 @@ const KMIT_STYLE_CONTRACT = {
       intendedCognitiveOperation: 'COMPARE',
       strategyTag: 'SCOPE_PRECONDITION_ERROR',
       evidenceBasis: 'Simple money multiplier model (M = 1 / r) with constant base reserves, assuming zero excess reserves and zero public cash drain.',
-      questionText: 'Under the standard fractional-reserve money multiplier model (M = 1 / r) with no currency drain or excess reserves, a central bank raises the statutory reserve requirement ratio from 10% to 20% while total base reserves remain constant. What immediate effect does this regulatory shift have on commercial bank lending capacity and the maximum theoretical money multiplier?',
+      questionText: 'Under fractional-reserve banking (M = 1 / r) with constant base reserves, the statutory reserve ratio is raised from 10% to 20%. What is the effect on lending capacity and the maximum theoretical money multiplier?',
       options: [
         'Lending capacity expands because banks hold greater total reserves, doubling the money multiplier to 20.',
         'Lending capacity contracts because mandatory reserves absorb liquidity, halving the maximum money multiplier from 10 to 5.',
@@ -312,6 +314,7 @@ const KMIT_STYLE_CONTRACT = {
       '   - Easy: Foundational comprehension, essential definitions, and core domain terminology taught in the material. Avoid trivial metadata (dates, slide numbers, logistics).',
       '   - Medium: Causal mechanisms, operational relationships, comparative distinctions, or applied principles supported by the lecture.',
       '   - Hard: Multi-variable interactions, subtle boundary conditions, diagnostic analysis, or tracing execution under specific constraints.',
+      '   - CRITICAL DIFFICULTY PRINCIPLE: An easy question written in a difficult manner is NOT a hard question! Hard questions require genuine multi-step reasoning, trace analysis, or trade-off evaluation. Never disguise an easy recall item with convoluted vocabulary.',
       '3. TARGET INDEPENDENCE: Each target must test a distinct conceptual mechanism. Do not plan redundant targets that merely rephrase the same factual assertion.',
       '4. NON-INTERFERENCE: This guidance governs assessment clarity and rigor only. It does not replace or override existing evidence extraction, Bloom taxonomy mapping, or teacher-relative difficulty allocation.'
     ].join('\n');
@@ -326,10 +329,12 @@ const KMIT_STYLE_CONTRACT = {
     const tier = String(targetDifficulty || 'Medium').trim();
     const lines = [
       '[KMIT KAHOOT QUESTION STYLE CONTRACT: "Think, Don\'t Guess"]',
-      '1. STEM: Direct, problem-first premise (<= 45 words target). Provide technical context or setup when necessary, but eliminate empty meta-phrases ("According to the lecture", "Which was discussed in class").',
-      '2. OPTIONS: Exactly 4 mutually exclusive, grammatically parallel choices (typically 3 to 15 words each). All options must present distinct conceptual alternatives or mechanisms.',
-      '3. DISTRACTORS: Must represent plausible domain misconceptions, scope errors, or alternative outcomes relevant to the concept. Never use near-identical word permutations or obvious giveaway outliers. For boundary or termination conditions, distractors must represent conceptual errors (e.g. invalid factor bounds) rather than runtime crashes (e.g. division by zero) that could inadvertently justify the same stopping bound.',
-      `4. DIFFICULTY & EVIDENCE: Deliver authentic ${tier} challenge reflecting the teacher's pedagogical intent. Every correct answer and distractor must be grounded in or defensible against the provided lecture material.`
+      '1. STEM: Crisp, direct, problem-first premise (target <= 25 words, maximum 55 words). Eliminate academic boilerplate ("operational mechanics", "foundational premise"), verbose throat-clearing, and meta-language ("According to the lecture").',
+      '2. OPTIONS: Exactly 4 mutually exclusive, grammatically parallel choices (typically 3 to 12 words each). All options must present concrete technical alternatives.',
+      '3. DISTRACTORS: Must represent authentic student misconceptions or common technical pitfalls from the lecture topic. NEVER use generic abstract boilerplate ("Inverts the operational priority, allowing unconstrained resource preemption without threshold validation"). Every distractor must assert a plausible but incorrect technical mechanism, value, or state.',
+      '4. COGNITIVE CALIBRATION: An easy question written in difficult words is NOT a hard question. Hard items must require multi-step reasoning, execution tracing, or trade-off evaluation under constraints. Never pad vocabulary to simulate difficulty.',
+      '5. CODE SNIPPETS: If including code, use short, syntactically clean markdown code blocks (<= 6 lines). Test trace output, pointer manipulation, state mutation, or edge-case behavior—never syntax trivia.',
+      `6. DIFFICULTY & EVIDENCE: Deliver authentic ${tier} challenge reflecting the teacher's pedagogical intent. Every correct answer and distractor must be grounded in or defensible against the provided lecture material.`
     ];
 
     if (includeExemplar) {

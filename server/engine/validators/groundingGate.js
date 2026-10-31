@@ -143,9 +143,39 @@ const MUTUALLY_EXCLUSIVE_PAIRS = [
   ['zero-indexed', 'one-indexed']
 ];
 
-function matchPredicateStem(word) {
+function matchPredicateStem(word, prevWord = '', nextWord = '') {
   const w = word.toLowerCase().trim();
   if (w.length < 4) return null;
+
+  // 1. Adjectival or nominal derivations are not active relational verbs
+  // e.g. "generative", "productive", "restrictive", "generator", "generation", "execution"
+  if (w.endsWith('ive') || w.endsWith('ivity') || w.endsWith('tion') || w.endsWith('tions') || w.endsWith('tor') || w.endsWith('tors')) {
+    return null;
+  }
+
+  // 2. Infinitive marker ("to generate", "to execute") does not assert agent causality
+  if (prevWord === 'to') {
+    return null;
+  }
+
+  // 3. Computing domain: "process" / "processes" is overwhelmingly a noun
+  if (w === 'process' || w === 'processes') {
+    // Plural "processes" is a noun unless functioning as a transitive verb
+    if (w === 'processes') {
+      const singularSubjectNoun = prevWord && !['two', 'three', 'multiple', 'all', 'cooperating', 'user', 'the', 'these', 'those'].includes(prevWord);
+      const isTransitiveVerb = singularSubjectNoun && nextWord && !['simultaneously', 'and', 'or', 'in', 'on', 'with', 'from', 'to'].includes(nextWord);
+      if (!isTransitiveVerb) {
+        return null;
+      }
+    } else {
+      // Singular "process" preceded by articles/determiners/adjectives is a noun
+      const nounMarkers = new Set(['a', 'an', 'the', 'each', 'every', 'user', 'sender', 'child', 'parent', 'background', 'this', 'that', 'one']);
+      if (nounMarkers.has(prevWord)) {
+        return null;
+      }
+    }
+  }
+
   for (const [family, def] of Object.entries(PREDICATE_FAMILIES)) {
     for (const stem of def.stems) {
       if (w === stem || w.startsWith(stem)) {
@@ -169,6 +199,19 @@ function cleanTokens(text) {
   return text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
 }
 
+/**
+ * Checks if a token is a substantive entity (not an adverb, stopword, or pure number).
+ */
+function isSubstantiveEntity(word, stopwords) {
+  if (!word || word.length < 3) return false;
+  if (/^\d+$/.test(word)) return false;
+  if (stopwords && stopwords.has(word)) return false;
+  if (DISCOURSE_CONNECTORS.has(word)) return false;
+  // Adverbs (-ly) modify actions and are not agent or target entities
+  if (word.endsWith('ly')) return false;
+  return true;
+}
+
 function buildEvidenceGraph(rawContent, stopwords) {
   const clauses = parseClauses(rawContent);
   const evidenceRecords = [];
@@ -182,7 +225,9 @@ function buildEvidenceGraph(rawContent, stopwords) {
     for (let i = 0; i < words.length; i++) {
       const w = words[i];
       if (DISCOURSE_CONNECTORS.has(w) || (stopwords && stopwords.has(w))) continue;
-      const pred = matchPredicateStem(w);
+      const prevWord = i > 0 ? words[i - 1] : '';
+      const nextWord = i < words.length - 1 ? words[i + 1] : '';
+      const pred = matchPredicateStem(w, prevWord, nextWord);
       tokens.push({
         word: w,
         index: i,
@@ -191,7 +236,7 @@ function buildEvidenceGraph(rawContent, stopwords) {
       });
     }
 
-    const substantiveWords = tokens.filter(t => !t.isPred && t.word.length >= 3);
+    const substantiveWords = tokens.filter(t => !t.isPred && isSubstantiveEntity(t.word, stopwords));
     const predsInClause = tokens.filter(t => t.isPred);
 
     const relations = [];
@@ -255,7 +300,9 @@ function verifyRelationalGrounding(qText, ansText, evidenceRecords, rawEvidence 
     for (let i = 0; i < words.length; i++) {
       const w = words[i];
       if (DISCOURSE_CONNECTORS.has(w) || (stopwords && stopwords.has(w))) continue;
-      const pred = matchPredicateStem(w);
+      const prevWord = i > 0 ? words[i - 1] : '';
+      const nextWord = i < words.length - 1 ? words[i + 1] : '';
+      const pred = matchPredicateStem(w, prevWord, nextWord);
       tokens.push({
         word: w,
         index: i,
@@ -264,7 +311,7 @@ function verifyRelationalGrounding(qText, ansText, evidenceRecords, rawEvidence 
       });
     }
 
-    const candSubstantive = tokens.filter(t => !t.isPred && t.word.length >= 3);
+    const candSubstantive = tokens.filter(t => !t.isPred && isSubstantiveEntity(t.word, stopwords));
     const candPreds = tokens.filter(t => t.isPred);
 
     for (const cp of candPreds) {
@@ -448,6 +495,14 @@ class GroundingGate {
       'this', 'these', 'those', 'have', 'were', 'being', 'other', 'most',
       'both', 'through', 'under', 'over', 'while', 'well', 'here', 'first',
       'affect', 'currently',
+
+      // Numerical & quantifier qualifiers (should not be entity agents or targets)
+      'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+      'multiple', 'many', 'several', 'few', 'single', 'double', 'new', 'old',
+
+      // Meta nouns & capability words
+      'role', 'roles', 'ability', 'abilities', 'capacity', 'way', 'ways', 'means',
+      'order', 'orders', 'kind', 'kinds', 'part', 'parts',
 
       // Question-framing metadata & prompt scaffolding tokens
       'according', 'evidence', 'result', 'expression', 'determine', 'determines',

@@ -898,22 +898,25 @@ ${assessableContent}
 </untrusted_document_evidence>
 
 TASK:
-Generate the curricular assessment plan strictly covering educational concepts within the untrusted evidence above.
+Generate the comprehensive assessment plan covering educational concepts within the untrusted evidence above.
+You MUST plan up to ${requestedCount} primary assessment targets ([${targetIdList}]) and at least 3 to 5 reserve targets whenever the evidence contains sufficient breadth.
+Ensure targets are distributed across Easy, Medium, and Hard according to the requested difficulty.
 `;
 
     let planData;
     try {
-      const planTimeoutMs = 15000;
+      const planTimeoutMs = 45000;
+      const dynamicMaxTokens = Math.min(8000, Math.max(4000, requestedCount * 280));
       const llmPromise = llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.2,
         model: process.env.AGENT1_MODEL || 'openai/gpt-oss-120b',
         sessionId: evidencePackage?.sessionId,
-        maxTokens: 3000
+        maxTokens: dynamicMaxTokens
       });
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Agent 1 LLM planning timed out after 15s')), planTimeoutMs)
+        setTimeout(() => reject(new Error('Agent 1 LLM planning timed out after 45s')), planTimeoutMs)
       );
       const responseText = await Promise.race([llmPromise, timeoutPromise]);
 

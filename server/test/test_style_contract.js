@@ -45,7 +45,7 @@ test('1. Algorithmic Exemplar cleanly passes style heuristics', () => {
   const result = kmitStyleContract.checkStyleHeuristics(ex);
   assert.strictEqual(result.passesStyle, true, 'Algorithmic exemplar must pass style');
   assert.strictEqual(result.issues.length, 0);
-  assert.strictEqual(result.standardsVersion, '1.2.0');
+  assert.strictEqual(result.standardsVersion, '1.3.0');
 });
 
 test('2. Systems Exemplar cleanly passes style heuristics', () => {
@@ -288,7 +288,7 @@ test('19. Style checker certifies form only: trivial Hard question passes style 
   assert.strictEqual(styleResult.passesStyle, true, 'Form is clean so style passes');
   assert.strictEqual(styleResult.issues.length, 0);
   assert.strictEqual(styleResult.warnings.length, 0);
-  assert.strictEqual(styleResult.standardsVersion, '1.2.0');
+  assert.strictEqual(styleResult.standardsVersion, '1.3.0');
 });
 
 // -----------------------------------------------------------------------------
@@ -478,6 +478,57 @@ test('31. Negative Control: Hardware domain "speaker impedance mismatch" passes 
   assert.strictEqual(res.issues.length, 0);
 });
 
+// -----------------------------------------------------------------------------
+// Suite 8: Mentor Feedback Rules (v1.3 Standards)
+// -----------------------------------------------------------------------------
+test('32. Convoluted academic jargon triggers UNNECESSARY_META_LANGUAGE', () => {
+  const badJargonQ = {
+    questionText: 'What is the operational mechanics of the foundational premise of virtual memory paging?',
+    options: [
+      'Translating virtual addresses to physical frame addresses',
+      'Compiling source code into bytecode instructions',
+      'Allocating contiguous heap space dynamically',
+      'Enforcing strict mutual exclusion via spinlocks'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(badJargonQ);
+  assert.strictEqual(res.passesStyle, false);
+  assert.ok(res.issues.includes('UNNECESSARY_META_LANGUAGE'), 'Must reject convoluted academic jargon');
+});
+
+test('33. Question stem exceeding 55 words triggers STEM_LENGTH_EXCEEDED (v1.3 limit)', () => {
+  const wordyStem = 'A '.repeat(58) + '?';
+  const wordyQ = {
+    questionText: wordyStem,
+    options: ['Option A', 'Option B', 'Option C', 'Option D']
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(wordyQ);
+  assert.strictEqual(res.passesStyle, false);
+  assert.ok(res.issues.includes('STEM_LENGTH_EXCEEDED'), 'Must flag stems over 55 words');
+});
+
+test('34. Concise 25-word question stem passes style heuristics cleanly', () => {
+  const crispQ = {
+    questionText: 'When a process executes a system call in user mode, which hardware mechanism transitions CPU execution privilege to kernel mode?',
+    options: [
+      'Software interrupt trap vector',
+      'Direct memory access controller',
+      'Translation lookaside buffer fault',
+      'Instruction cache prefetch flush'
+    ]
+  };
+  const res = kmitStyleContract.checkStyleHeuristics(crispQ);
+  assert.strictEqual(res.passesStyle, true, 'Crisp 20-25 word stem must pass style cleanly');
+  assert.strictEqual(res.issues.length, 0);
+});
+
+test('35. Generator guidance includes explicit bans on fake-hard vocabulary and boilerplate options', () => {
+  const guidance = kmitStyleContract.getGeneratorGuidance({ targetDifficulty: 'Hard', subject: 'Computer Science' });
+  assert.ok(guidance.includes('easy question written in difficult words is NOT a hard question'), 'Must forbid fake hard items');
+  assert.ok(guidance.includes('NEVER use generic abstract boilerplate'), 'Must ban generic distractor templates');
+  assert.ok(guidance.includes('authentic student misconceptions'), 'Must mandate student misconceptions');
+});
+
 console.log('\n======================================================================');
-console.log(`🏁 ALL ${passCount} STYLE CONTRACT v1.2 VERIFICATION TESTS PASSED CLEANLY!`);
+console.log(`🏁 ALL ${passCount} STYLE CONTRACT v1.3 VERIFICATION TESTS PASSED CLEANLY!`);
 console.log('======================================================================\n');

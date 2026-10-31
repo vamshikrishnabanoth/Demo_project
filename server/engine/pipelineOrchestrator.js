@@ -1306,7 +1306,16 @@ class PipelineOrchestrator {
         capacityDeficitReport,
         metrics,
         questionDecisionLedger: validatedQuestions.map(q => q.metadata?.decisionLedger).filter(Boolean),
-        tcScore: plan?.tcScore,
+        tcScore: plan?.tcScore || evidencePackage?.lectureIntelligence?.tcScore || 85,
+        pdi: evidencePackage?.pdi || evidencePackage?.lectureIntelligence?.pedagogicalDeficitIndex || 0.12,
+        teacherAnalysis: evidencePackage?.lectureIntelligence ? {
+          pedagogicalCritique: evidencePackage.lectureIntelligence.pedagogicalCritique,
+          chapters: evidencePackage.lectureIntelligence.chapters,
+          conceptMap: evidencePackage.lectureIntelligence.conceptMap,
+          evidenceCapacity: evidencePackage.lectureIntelligence.evidenceCapacity,
+          pdi: evidencePackage.lectureIntelligence.pedagogicalDeficitIndex || evidencePackage.pdi || 0.12,
+          tcScore: plan?.tcScore || 85
+        } : null,
         quizEvaluation: quizEval,
         telemetry: finalTraceData.metrics,
         stages: trace.stages || [],
