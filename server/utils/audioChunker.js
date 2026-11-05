@@ -398,7 +398,7 @@ async function segmentAudioUniversal(inputPath, options = {}) {
     const ffmpeg = require("@ffmpeg-installer/ffmpeg");
     const { execFile } = require("child_process");
 
-    const segmentSeconds = options.segmentTimeSeconds || 1200; // 20 minutes per chunk (~7.2 MB at 48k mono AAC)
+    const segmentSeconds = options.segmentTimeSeconds || 300; // 5 minutes per chunk (~1.8 MB at 48k mono AAC)
     const outputDir = options.outputDir || path.dirname(inputPath);
     const baseName = `speech_seg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
     const pattern = path.join(outputDir, `${baseName}_%03d.m4a`);

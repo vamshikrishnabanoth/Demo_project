@@ -259,61 +259,27 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
     // Determine actual or probed audio duration
     const probedDuration = getAudioDuration(filePath);
 
-    let effectiveFilePath = filePath;
-    let effectiveFileSize = fileSizeBytes;
-    let tempCompressedPath = null;
-
-    // ── Pre-Compression Pass for Oversized Audio ──
-    // If the original file exceeds 24.5 MB (standard for 30m-90m lectures), run fast mono voice pre-compression (36k 16kHz mono AAC).
-    // In 3-5 seconds, FFmpeg compresses a 60-90 minute lecture down to 16-24 MB (< 24.5 MB), unlocking a direct 1-shot Groq Whisper Turbo pass (< 15 seconds)
-    // instead of 2-4 minutes of chunking and multi-worker stitching.
-    if (fileSizeBytes > 24.5 * 1024 * 1024) {
-        console.log(`🎙️ Oversized audio (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Running fast mono voice compression pass for single-pass Whisper...`);
-        try {
-            let targetVoiceBitrate = '32k';
-            if (probedDuration && probedDuration > 5400) {
-                targetVoiceBitrate = '20k'; // 1.5h+ lecture: 20kbps fits in ~15MB (< 24.5MB)
-            } else if (probedDuration && probedDuration > 2700) {
-                targetVoiceBitrate = '24k'; // 45m+ lecture: 24kbps fits in ~18MB (< 24.5MB)
-            } else if (fileSizeBytes > 100 * 1024 * 1024) {
-                targetVoiceBitrate = '22k';
-            }
-            const comp = await compressForWhisper(filePath, { bitrate: targetVoiceBitrate });
-            if (comp && comp.sizeBytes <= 24.5 * 1024 * 1024) {
-                effectiveFilePath = comp.compressedPath;
-                effectiveFileSize = comp.sizeBytes;
-                tempCompressedPath = comp.compressedPath;
-                console.log(`⚡ [AudioOptimizer] Pre-compression succeeded: ${(effectiveFileSize / (1024 * 1024)).toFixed(2)} MB (< 24.5 MB). Unlocking 1-shot Groq Whisper Turbo!`);
-            } else if (comp) {
-                console.log(`ℹ️ Even after compression, size (${(comp.sizeBytes / (1024 * 1024)).toFixed(2)} MB) exceeds 24.5 MB (multi-hour lecture). Escalating to chunking.`);
-                try { fs.unlinkSync(comp.compressedPath); } catch (_) {}
-            }
-        } catch (compErr) {
-            console.warn('⚠️ [AudioOptimizer] Pre-compression error, proceeding with fallback:', compErr.message);
-        }
-    }
-
-    const canDoSinglePass = effectiveFileSize <= 24.5 * 1024 * 1024;
+    // ── Single-Pass Eligibility Evaluation ──
+    // Single direct pass to Groq Whisper Turbo is optimal ONLY when:
+    // 1. File size is under 24.5 MB (Groq payload limit) AND
+    // 2. Audio duration is <= 15 minutes (900s) to comfortably stay within Groq duration limits.
+    const isDurationEligible = probedDuration !== null ? probedDuration <= 900 : fileSizeBytes <= 20 * 1024 * 1024;
+    const isSizeEligible = fileSizeBytes <= 24.5 * 1024 * 1024;
+    const canDoSinglePass = isSizeEligible && isDurationEligible;
 
     try {
-        // ── Tier A: Single Direct Pass (Files <= 24.5 MB or successfully pre-compressed) ──
+        // ── Tier A: Single Direct Pass (Files <= 15 mins & <= 24.5 MB) ──
         if (canDoSinglePass) {
             try {
-                console.log(`🎙️ Transcribing audio directly via Groq Whisper Turbo (${probedDuration ? probedDuration.toFixed(1) + 's' : (effectiveFileSize / (1024 * 1024)).toFixed(2) + ' MB'})...`);
+                console.log(`🎙️ [STT Tier A] Short audio detected (${probedDuration ? probedDuration.toFixed(1) + 's' : (fileSizeBytes / (1024 * 1024)).toFixed(2) + ' MB'}). Transcribing directly via Groq Whisper Turbo in 1-shot...`);
                 let data = null;
                 let actualModel = 'whisper-large-v3-turbo';
                 let actualProvider = 'groq';
                 try {
-                    data = await callGroqWhisper(effectiveFilePath, 'whisper-large-v3-turbo');
+                    data = await callGroqWhisper(filePath, 'whisper-large-v3-turbo');
                 } catch (groqErr) {
-                    console.warn(`⚠️ Groq direct transcription failed: ${groqErr.message}. Checking Gemini fallback...`);
-                    if (geminiKey) {
-                        data = await transcribeChunkWithGemini(effectiveFilePath);
-                        actualModel = 'gemini-flash-latest';
-                        actualProvider = 'gemini';
-                    } else {
-                        throw groqErr;
-                    }
+                    console.warn(`⚠️ [STT Tier A] Groq direct transcription failed: ${groqErr.message}. Escalating immediately to Tier B parallel chunking...`);
+                    throw groqErr; // Immediately jump to Tier B fast chunking
                 }
 
                 if (data && (data.text || (typeof data === 'string' && data.length > 0))) {
@@ -347,7 +313,7 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                     ];
 
                     if (fullText.length >= 5) {
-                        console.log(`✅ Direct transcription successful (${fullText.length} chars, ${duration.toFixed(1)}s, 1 chunk via ${actualModel})!`);
+                        console.log(`✅ [STT Tier A] Direct single-pass successful (${fullText.length} chars, ${duration.toFixed(1)}s, 1 chunk via ${actualModel})!`);
                         return {
                             text: fullText,
                             rawText: fullText,
@@ -364,17 +330,22 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
                     }
                 }
             } catch (singlePassErr) {
-                console.warn('⚠️ Direct transcription failed, escalating to universal chunking pass:', singlePassErr.message);
+                console.warn(`⚠️ [STT Tier A] Direct pass bypass: ${singlePassErr.message}. Escalating immediately to Tier B fast parallel chunking...`);
             }
+        } else {
+            console.log(`🎙️ [STT] Audio exceeds single-pass threshold (Duration: ${probedDuration ? probedDuration.toFixed(1) + 's' : 'probing...'}, Size: ${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB). Routing directly to Tier B fast parallel chunking...`);
         }
 
-        // ── Tier B: Universal Multi-Hour Chunking Pass (Files > 10 mins or > 18 MB, up to 4 Hours) ──
-        console.log(`🎙️ Multi-Hour / Oversized Audio (${(fileSizeBytes / (1024 * 1024)).toFixed(2)} MB, duration: ${probedDuration ? probedDuration.toFixed(1) + 's' : 'probing...'}). Slicing into clean 20-minute 16kHz mono chunks (Async)...`);
+        // ── Tier B: Fast Parallel Chunking & Chronological Re-Assembly ──
+        // Slices into fast 5-minute (300s) chunks, transcribes concurrently across GROQ_KEY_POOL,
+        // and reassembles all segments in chronological order with monotonic timestamp offsets.
+        const segmentSeconds = 300; // 5 minutes per chunk (~1.8 MB at 48k mono AAC)
+        console.log(`🎙️ [STT Tier B] Slicing into fast ${segmentSeconds}s chunks (Async non-blocking)...`);
 
         let chunks = [];
         try {
             chunks = await segmentAudioUniversal(filePath, {
-                segmentTimeSeconds: 1200, // 20 minutes per chunk (~7.2 MB at 48k mono AAC)
+                segmentTimeSeconds: segmentSeconds,
                 outputDir: path.dirname(filePath)
             });
         } catch (segmentErr) {
@@ -382,8 +353,8 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
             // Fallback for MP3
             if (ext === '.mp3') {
                 chunks = chunkMp3(filePath, {
-                    targetChunkBytes: 10 * 1024 * 1024,
-                    overlapSeconds: 2.0,
+                    targetChunkBytes: 5 * 1024 * 1024,
+                    overlapSeconds: 1.5,
                     outputDir: path.dirname(filePath)
                 });
             } else {
@@ -419,7 +390,7 @@ const _rawTranscribeAudioWithTimestamps = async (filePath) => {
 
                 let chunkText = '';
                 let chunkSegs = [];
-                let chunkDuration = chunk.durationEstimate || 1200;
+                let chunkDuration = chunk.durationEstimate || 300;
                 let transcribed = false;
                 let chunkModel = 'whisper-large-v3-turbo';
                 let chunkProvider = 'groq';
