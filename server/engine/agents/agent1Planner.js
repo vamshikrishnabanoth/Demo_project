@@ -18,6 +18,7 @@ const ASSESSMENT_ANGLES = Object.freeze({
   CALCULATION: 'CALCULATION',
   REASONING: 'REASONING',
   CODE_TRACE: 'CODE_TRACE',
+  CLI_EXECUTION: 'CLI_EXECUTION',
   EDGE_CASE: 'EDGE_CASE',
   APPLICATION: 'APPLICATION'
 });
@@ -27,6 +28,7 @@ const FORMAT_RECOMMENDATIONS = Object.freeze({
   NUMERICAL_TRACE: 'NUMERICAL_TRACE',
   REASONING_CONTRAST: 'REASONING_CONTRAST',
   CODE_ANALYSIS: 'CODE_ANALYSIS',
+  CLI_ANALYSIS: 'CLI_ANALYSIS',
   SCENARIO_APPLICATION: 'SCENARIO_APPLICATION'
 });
 
@@ -57,19 +59,29 @@ class Agent1Planner {
     const dim = String(t.dimension || '').toUpperCase();
     const op = String(t.intendedCognitiveOperation || t.operation || '').toUpperCase();
     const concept = String(t.concept || '').toLowerCase();
+    const arch = String(t.targetArchetype || '').toUpperCase();
 
-    if (dim.includes('CALCULATION') || op.includes('CALCULAT') || op === 'CALCULATION' || concept.includes('calculate') || concept.includes('remainder trace')) {
+    // 1. CLI / Terminal execution commands (Git, Linux shell, Docker, SQL commands)
+    if (arch === 'CLI_TERMINAL_IMPACT' || dim.includes('CLI') || dim.includes('TERMINAL') || op.includes('COMMAND') || concept.includes('command') || concept.includes('terminal') || this._detectCliEvidence(concept) || this._detectCliEvidence(t.supportingEvidence || '')) {
+      return ASSESSMENT_ANGLES.CLI_EXECUTION;
+    }
+    // 2. Numerical / Math calculation
+    if (arch === 'QUICK_CALCULATION' || dim.includes('CALCULATION') || op.includes('CALCULAT') || op === 'CALCULATION' || concept.includes('calculate') || concept.includes('remainder trace')) {
       return ASSESSMENT_ANGLES.CALCULATION;
     }
-    if (dim.includes('FLOW') || op === 'CODE_OR_TRACE' || concept.includes('code trace') || concept.includes('execution trace') || ((op === 'TRACE' || dim.includes('TRACE')) && (t.evidenceType === 'CODE' || concept.includes('code') || t.requiresExactArtifact))) {
+    // 3. Code trace / execution / bug hunt
+    if (arch === 'MICRO_TRACE' || arch === 'DIAGNOSTIC_BUG_HUNT' || dim.includes('FLOW') || op === 'CODE_OR_TRACE' || concept.includes('code trace') || concept.includes('execution trace') || ((op === 'TRACE' || dim.includes('TRACE')) && (t.evidenceType === 'CODE' || concept.includes('code') || t.requiresExactArtifact))) {
       return ASSESSMENT_ANGLES.CODE_TRACE;
     }
-    if (dim.includes('TRADEOFF') || dim.includes('COMPARISON') || op === 'COMPARE' || concept.includes('tradeoff') || concept.includes('invariance') || concept.includes('reasoning')) {
+    // 4. Invariant reasoning / tradeoffs
+    if (arch === 'WHAT_IF_MUTATION' || dim.includes('TRADEOFF') || dim.includes('COMPARISON') || op === 'COMPARE' || concept.includes('tradeoff') || concept.includes('invariance') || concept.includes('reasoning')) {
       return ASSESSMENT_ANGLES.REASONING;
     }
+    // 5. Practical application / scenario
     if (dim.includes('SCENARIO') || dim.includes('APPLICATION') || op === 'APPLY' || concept.includes('application') || concept.includes('practical')) {
       return ASSESSMENT_ANGLES.APPLICATION;
     }
+    // 6. Edge case diagnosis
     if (op === 'DIAGNOSE' || concept.includes('edge case') || concept.includes('boundary') || concept.includes('defect') || concept.includes('violation')) {
       return ASSESSMENT_ANGLES.EDGE_CASE;
     }
@@ -86,6 +98,8 @@ class Agent1Planner {
     }
     const angle = this._deriveAssessmentAngle(t);
     switch (angle) {
+      case ASSESSMENT_ANGLES.CLI_EXECUTION:
+        return FORMAT_RECOMMENDATIONS.CLI_ANALYSIS;
       case ASSESSMENT_ANGLES.CALCULATION:
         return FORMAT_RECOMMENDATIONS.NUMERICAL_TRACE;
       case ASSESSMENT_ANGLES.CODE_TRACE:
@@ -823,15 +837,15 @@ CORE PRINCIPLES:
    - If Phase 2 contains a real-world scenario (e.g. database indexing, IP routing, production systems), plan at least one target testing understanding of that taught scenario.
 
 8. NATURAL FORMAT SELECTION & MULTI-ANGLE VARIETY:
-   - When the lecture covers programming, algorithms, data structures, or code mechanics (e.g., Euclidean algorithm, recursion, arrays, sorting, searching):
-     * Grounding means capturing the teacher's mathematical, conceptual, and algorithmic logic.
-     * Do NOT force all algorithm questions to have code snippets! Code is only one assessment format among many.
-     * Select the appropriate "assessmentAngle" and "formatRecommendation" matching the educational objective:
-       - CONCEPTUAL / PROSE_MULTIPLE_CHOICE: Core definitions, axiomatic properties, and why the algorithm works.
-       - CALCULATION / NUMERICAL_TRACE: Step-by-step remainder reductions, recurrence values, or manual parameter evaluations (e.g. calculating GCD steps).
-       - REASONING / REASONING_CONTRAST: Invariants (e.g. why GCD is preserved under modulo), time/space complexity tradeoffs, or comparative analysis.
+   - When the lecture covers programming, algorithms, CLI terminal commands, or code mechanics:
+     * Grounding means capturing the teacher's concrete instructional focus (execution, commands, syntax, or concepts).
+     * Select the appropriate "assessmentAngle" and "formatRecommendation" matching what the teacher actually taught:
+       - CLI_EXECUTION / CLI_ANALYSIS: When the teacher taught command-line tools, Git (e.g. git add, git commit, git checkout), Linux shells, Docker, or SQL transactions, test concrete terminal commands, flags, outputs, and repository state changes!
        - CODE_TRACE / CODE_ANALYSIS: Use concise 3–7 line code snippets ONLY when specifically evaluating code execution, missing loop logic, return values, or bug diagnosis.
-       - EDGE_CASE / SCENARIO_APPLICATION: Boundary conditions (e.g. zero, negative, empty cases) or realistic engineering applications.
+       - CALCULATION / NUMERICAL_TRACE: Step-by-step remainder reductions, recurrence values, or manual parameter evaluations (e.g. calculating GCD steps).
+       - REASONING / REASONING_CONTRAST: Invariants, time/space complexity tradeoffs, or comparative mechanism analysis.
+       - EDGE_CASE / SCENARIO_APPLICATION: Boundary conditions, fault prediction, or realistic engineering applications under constraint.
+       - CONCEPTUAL / PROSE_MULTIPLE_CHOICE: Core definitions, architectural paradigms, and terminology when no code/CLI was taught.
 
 9. CANONICAL DOMAIN TRUTH INSTRUCTION:
    - Assessment targets must reflect canonical academic truth of the taught subject. If the speaker made an inadvertent verbal slip, plan the target around the true canonical concept, not the misstatement.

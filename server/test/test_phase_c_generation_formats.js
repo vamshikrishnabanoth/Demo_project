@@ -89,6 +89,33 @@ console.log('\n▶ Test 1: Format decoupling prevents unwanted code snippets on 
   assert(codeScaffold.includes('Include a clean, concise 3–7 line code snippet'), 'Expected code snippet instruction for CODE_ANALYSIS');
 
   console.log('✅ PASS: Code analysis target correctly receives code snippet instruction');
+
+  // CLI command target
+  const cliTarget = {
+    targetId: 'T04',
+    concept: 'Git Commit Staged Index Transition',
+    dimension: 'Operational Mechanics',
+    targetDifficulty: 'Medium',
+    intendedCognitiveOperation: 'APPLY',
+    assessmentAngle: 'CLI_EXECUTION',
+    formatRecommendation: 'CLI_ANALYSIS'
+  };
+
+  const { systemScaffold: cliScaffold } = agent2Generator._buildOperationalScaffolding(
+    'Medium',
+    'APPLY',
+    cliTarget.concept,
+    'git commit -m records changes in staging to repository',
+    null,
+    'CLI_TERMINAL_IMPACT',
+    cliTarget
+  );
+
+  assert(cliScaffold.includes('CLI / COMMAND-LINE IMPACT QUESTION SPECIFICATION'), 'Expected CLI / COMMAND-LINE IMPACT QUESTION SPECIFICATION');
+  assert(cliScaffold.includes('Present an explicit CLI command with flags or arguments'), 'Expected explicit CLI instruction');
+  assert(!cliScaffold.includes('CONCEPTUAL PROSE SPECIFICATION'), 'Did not expect conceptual prose specification');
+
+  console.log('✅ PASS: CLI command target correctly receives CLI terminal impact instruction');
 }
 
 // Test 2: Brevity Harmonization (11-15 words per option preserved)

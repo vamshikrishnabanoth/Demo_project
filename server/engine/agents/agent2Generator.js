@@ -1289,18 +1289,35 @@ class Agent2Generator {
     const formatRec = String(target?.formatRecommendation || '').toUpperCase();
     const angleUpper = String(target?.assessmentAngle || '').toUpperCase();
 
-    const wantsCode = formatRec === 'CODE_ANALYSIS' ||
+    const wantsCli = formatRec === 'CLI_ANALYSIS' ||
+      targetArchetype === 'CLI_TERMINAL_IMPACT' ||
+      angleUpper === 'CLI_EXECUTION';
+
+    const wantsCode = !wantsCli && (formatRec === 'CODE_ANALYSIS' ||
       angleUpper === 'CODE_TRACE' ||
       opUpper === 'CODE_OR_TRACE' ||
       targetArchetype === 'MICRO_TRACE' ||
-      targetArchetype === 'DIAGNOSTIC_BUG_HUNT';
+      targetArchetype === 'DIAGNOSTIC_BUG_HUNT');
 
-    const wantsProse = formatRec === 'PROSE_MULTIPLE_CHOICE' || angleUpper === 'CONCEPTUAL';
-    const wantsCalculation = formatRec === 'NUMERICAL_TRACE' || angleUpper === 'CALCULATION';
-    const wantsReasoning = formatRec === 'REASONING_CONTRAST' || angleUpper === 'REASONING';
-    const wantsScenario = formatRec === 'SCENARIO_APPLICATION' || angleUpper === 'APPLICATION';
+    const wantsCalculation = !wantsCli && !wantsCode && (formatRec === 'NUMERICAL_TRACE' || angleUpper === 'CALCULATION' || targetArchetype === 'QUICK_CALCULATION');
+    const wantsReasoning = !wantsCli && !wantsCode && !wantsCalculation && (formatRec === 'REASONING_CONTRAST' || angleUpper === 'REASONING' || targetArchetype === 'WHAT_IF_MUTATION');
+    const wantsScenario = !wantsCli && !wantsCode && !wantsCalculation && !wantsReasoning && (formatRec === 'SCENARIO_APPLICATION' || angleUpper === 'APPLICATION');
+    const wantsProse = !wantsCli && !wantsCode && !wantsCalculation && !wantsReasoning && !wantsScenario;
 
-    if (wantsCode) {
+    if (wantsCli) {
+      systemScaffold += `
+   * CLI / COMMAND-LINE IMPACT QUESTION SPECIFICATION:
+     - Present an explicit CLI command with flags or arguments (e.g. git commit, git add, git checkout, docker run).
+     - Ask directly what state change occurs in the repository, staging area, working tree, or terminal output.
+     - Keep stems crisp and problem-first (target 12 to 20 words).
+     - Test concrete command impact, flag semantics, or execution outcome. Do NOT pose abstract philosophical history questions.`;
+
+      userScaffold += `
+[CLI / COMMAND IMPACT STRUCTURAL GUIDANCE]:
+- Present a concrete terminal command with syntax/flags.
+- Ask for the exact state transition or environmental effect (e.g. staged vs working tree, commit state, branch pointer).
+- Keep the stem crisp, direct, and under 30 words.`;
+    } else if (wantsCode) {
       systemScaffold += `
    * CODE ANALYSIS & TRACE QUESTION SPECIFICATION:
      - Include a clean, concise 3–7 line code snippet (Python, Java, C, or standard pseudocode).

@@ -26,6 +26,10 @@ console.log('\n▶ Test 1: Assessment Angle and Format Recommendation Derivation
   assert.strictEqual(agent1Planner._deriveAssessmentAngle(conceptualTarget), 'CONCEPTUAL');
   assert.strictEqual(agent1Planner._deriveFormatRecommendation(conceptualTarget), 'PROSE_MULTIPLE_CHOICE');
 
+  const cliTarget = { concept: 'git commit command state transition', dimension: 'Operational Mechanics', intendedCognitiveOperation: 'APPLY', targetArchetype: 'CLI_TERMINAL_IMPACT' };
+  assert.strictEqual(agent1Planner._deriveAssessmentAngle(cliTarget), 'CLI_EXECUTION');
+  assert.strictEqual(agent1Planner._deriveFormatRecommendation(cliTarget), 'CLI_ANALYSIS');
+
   console.log('✅ PASS: Angle and format recommendations derived correctly across archetypes');
 }
 
