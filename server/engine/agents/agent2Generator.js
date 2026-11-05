@@ -1630,6 +1630,9 @@ STRICT CONSTRAINTS:
      * Scope / Precondition Error: Applying a rule outside its valid prerequisites (e.g. assuming pass-by-value modifies original, assuming static dispatch, assuming linear scaling).
      * Near-Miss Mechanism: Attributing responsibility to a real, related mechanism from the same lecture (e.g. confusing TLB with page table).
    - In "distractorRationales", explicitly articulate the cognitive mistake behind each of the 3 distractors.
+   - AUTHENTIC DISTRACTOR FORMULATION RULES:
+     * FOR CLI & TERMINAL QUESTIONS: Distractors MUST be authentic, recognized commands or valid flag variants from the taught tool (e.g. 'git branch', 'git checkout', 'git status', 'git reset'). NEVER invent fictional command names (e.g. do NOT invent 'git save' or 'git upload'). Distractors must represent plausible student confusion (e.g. confusing 'git add' with 'git commit', or working tree with staging area).
+     * FOR CODE TRACE & COMPUTATION: Distractors MUST represent exact off-by-one loop counts, un-mutated values, or inverted conditional outcomes—NOT arbitrary random numbers.
    - ABSOLUTE PROHIBITIONS ON DISTRACTORS:
      * NEVER generate superficial opposites by merely flipping a single word (e.g. 'increases' vs 'decreases' or 'true' vs 'false').
      * NEVER generate absurd, comical, or obvious throwaway options.
