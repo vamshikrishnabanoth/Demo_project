@@ -39,14 +39,14 @@ const KMIT_STYLE_CONTRACT = {
   standards: {
     // Advisory targets provided to Planner and Generator prompts
     advisory: {
-      stemTargetWords: 25, // Target max for question stem (excluding code snippets or data tables)
-      optionLengthTarget: '3 to 12 words per option',
+      stemTargetWords: 18, // Target max for question stem for instant Kahoot quiz (target 12 to 20 words)
+      optionLengthTarget: '3 to 10 words per option',
       optionLengthRatioTarget: 2.0, // Longest-to-shortest option length ratio ideally <= 2.0x
-      styleTone: 'Crisp, direct, student-accessible phrasing. Pose the technical question immediately. Eliminate academic boilerplate, verbose throat-clearing, and meta-language.'
+      styleTone: 'Crisp, direct, student-accessible phrasing for instant Kahoot quizzes. Pose the technical question immediately. Eliminate fictional corporate storytelling, narrative throat-clearing, academic boilerplate, and meta-language.'
     },
     // Mechanically enforceable heuristic thresholds checked by checkStyleHeuristics()
     enforceable: {
-      stemHardWordLimit: 55, // Generous upper bound to catch runaway paragraphs while allowing technical setup
+      stemHardWordLimit: 45, // Upper bound before fatal rejection while allowing technical setup
       optionMinWords: 1,     // Minimum tokens per option
       optionMaxWords: 20,    // Upper boundary before option is flagged as runaway explanatory text
       optionLengthRatioCeiling: 3.5, // Flags obvious giveaway outlier options (e.g., 20 words vs 2 words)
@@ -67,7 +67,9 @@ const KMIT_STYLE_CONTRACT = {
       /\bwhich topic (?:was|is) covered\b/i,
       /\b(?:in the context of the|in the|based on the|from the)\s+(?:lecture|transcript)\b(?!\s*[-–—]?\s*(?:hall|room|setting|venue|interval))/i,
       /\b(?:operational mechanics|foundational premise|substantive paradigm|overarching framework)\b/i,
-      /\b(?:in order to ascertain|it is imperative to determine|with reference to the aforementioned)\b/i
+      /\b(?:in order to ascertain|it is imperative to determine|with reference to the aforementioned)\b/i,
+      /\b(?:a software (?:architect|engineer|developer) at a|a system designer at a|at a (?:high-volume|fintech|cloud) (?:startup|company|firm))\b/i,
+      /\bconsider a (?:fictional|hypothetical)?\s*scenario where a (?:company|team|startup|engineer)\b/i
     ],
     prohibitedMetaPrefixes: [
       /^(?:according to the lecture|as discussed in the lecture|in the lecture|based on the lecture|as taught in the lecture|according to the transcript)[,\s:]*/i,
@@ -329,7 +331,7 @@ const KMIT_STYLE_CONTRACT = {
     const tier = String(targetDifficulty || 'Medium').trim();
     const lines = [
       '[KMIT KAHOOT QUESTION STYLE CONTRACT: "Think, Don\'t Guess"]',
-      '1. STEM: Crisp, direct, problem-first premise (target <= 25 words, maximum 55 words). Eliminate academic boilerplate ("operational mechanics", "foundational premise"), verbose throat-clearing, and meta-language ("According to the lecture").',
+      '1. STEM BREVITY (KAHOOT INSTANT-QUIZ): Crisp, direct, problem-first question (target 12 to 20 words, hard max 35 words). Forbid fictional storytelling ("A software engineer at a startup...", "Consider a scenario..."). Pose the core technical problem immediately in the very first sentence so students can read and think within a 20-30 second Kahoot timer.',
       '2. OPTIONS: Exactly 4 mutually exclusive, grammatically parallel choices (typically 3 to 12 words each). All options must present concrete technical alternatives.',
       '3. DISTRACTORS: Must represent authentic student misconceptions or common technical pitfalls from the lecture topic. NEVER use generic abstract boilerplate ("Inverts the operational priority, allowing unconstrained resource preemption without threshold validation"). Every distractor must assert a plausible but incorrect technical mechanism, value, or state.',
       '4. COGNITIVE CALIBRATION: An easy question written in difficult words is NOT a hard question. Hard items must require multi-step reasoning, execution tracing, or trade-off evaluation under constraints. Never pad vocabulary to simulate difficulty.',

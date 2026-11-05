@@ -1417,7 +1417,7 @@ ${evidenceContext}
     const instructions = [];
     if (failureReasons.some(r => typeof r === 'string' && r.startsWith('STYLE_'))) {
       if (failureReasons.includes('STYLE_UNNECESSARY_META_LANGUAGE')) {
-        instructions.push('Style compliance: Eliminate empty meta-discourse phrases ("According to the lecture", "Which was discussed") and pose the problem directly.');
+        instructions.push('Style compliance: Eliminate empty meta-discourse phrases ("According to the lecture", "Which was discussed") and fictional corporate backstories ("A software engineer at a startup..."). Pose the core technical problem directly.');
       }
       if (failureReasons.includes('STYLE_STEM_LENGTH_EXCEEDED')) {
         instructions.push('Style compliance: Shorten question stem to under 45 words (excluding code snippets) while keeping the technical premise crisp.');

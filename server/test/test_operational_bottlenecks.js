@@ -135,10 +135,10 @@ async function testAsync(name, fn) {
   test('T4: _enforceBrevity flags output exceeding limits that cannot be safely shortened', () => {
     // 40-word question stem with crucial conditionals in the tail
     const longQuestion = {
-      questionText: 'Given an undirected weighted connected graph with positive edge weights where Dijkstra algorithm is running from source vertex s to find shortest paths to all reachable destinations in the graph, if edge weights change dynamically during path computation, what invariant is preserved?',
+      questionText: 'Given an undirected weighted connected graph with strictly positive edge weights where the standard Dijkstra algorithm is currently executing from a source vertex s to discover all shortest paths to every reachable destination in the network, if arbitrary edge weights change dynamically and unpredictably during path computation across concurrent execution threads, what invariant is preserved?',
       options: [
         'Shortest path distances monotonically increase and never decrease during graph relaxation steps',
-        'Standard Dijkstra is not guaranteed to compute shortest paths when edge weights mutate during execution',
+        'Standard Dijkstra is not guaranteed to compute shortest paths when edge weights mutate dynamically during execution and relaxation steps',
         'All vertices remain visited in exactly the same order regardless of weight changes occurring midway',
         'Negative edge cycles are immediately detected and isolated by priority queue extraction order'
       ],
