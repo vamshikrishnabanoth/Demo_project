@@ -223,6 +223,12 @@ EVALUATION DIRECTIVES:
    - If the actual cognitive demand does not match the requested tier, reject with TIER_COGNITIVE_MISMATCH.
 6b. TRANSFORMATION OF ANALOGIES INTO TECHNICAL ASSESSMENTS (CRITERION D):
    - Reject any question that tests trivial recall of a conversational metaphor, analogy, or classroom story (e.g., asking why the teacher mentioned plants or what sunlight represented). Such questions test trivial memory of a casual illustration rather than computer science/academic knowledge. Flag with TRIVIAL_ANALOGY_RECALL.
+6c. CORE QUALITY CHECKLIST AUDIT (CRAFTSMANSHIP & FAIRNESS):
+   - "COVER THE OPTIONS" AUDIT: Verify that the stem is self-contained. If a student covers the options with their hand, do they know what is asked? Reject incomplete or lazy stems ("Which of the following is true?", "Regarding [Topic]:") with STEM_AMBIGUOUS_WITHOUT_OPTIONS.
+   - "BROTHERS AND SISTERS" OPTION AUDIT: Verify that all 4 choices look like brothers and sisters: roughly equal length (reject if key is conspicuously longer with LENGTH_GIVEAWAY), parallel grammar, and consistent tone.
+   - NO ACCIDENTAL CLUES AUDIT: Reject if options contain "always", "never", "all of the above", "none of the above", or grammatical giveaways like stem ending with "an" for a vowel option.
+   - FAIRNESS AUDIT: Verify that the question tests the big idea and is 100% honest to the lecture evidence—never footnotes or trivia.
+   - DISTRACTOR QUALITY AUDIT: Verify that distractors look real to someone who guessed and represent authentic student misconceptions. Reject silly, absurd, or throwaway options with SILLY_DISTRACTOR.
 7. OUTPUT SCHEMA (Return strictly raw JSON):
 {
   "status": "PASS" or "FAIL",

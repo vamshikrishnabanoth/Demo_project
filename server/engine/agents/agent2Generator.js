@@ -1744,6 +1744,22 @@ STRICT CONSTRAINTS FOR TOPIC ASSESSMENT:
    - NEVER ask meta-questions like "Which topic is covered?", "Which of the following was mentioned/identified?", or "Which list contains the topics/paradigms?".
    - NEVER use phrases like "course material", "technical reference", "in the lecture", "according to the lecture", "as discussed", "the speaker", "the slides", or "the syllabus".
    - The question stem must present a genuine technical question or problem directly.
+
+4. CORE QUALITY CHECKLIST A (THE STEM & THE ANSWER):
+   - PASSES THE "COVER THE OPTIONS" TEST: If a student covers the options with their hand and reads only the question, do they already know what is being asked? The stem MUST be a standalone problem statement. NEVER write lazy stems like "Which of the following is true?" or sentence fragments that force reading the choices.
+   - 100% HONEST TO THE MATERIAL (THE FAIRNESS CHECK): Tests concepts strictly rooted in the curriculum; no un-taught trivia.
+   - TESTS THE BIG IDEA, NOT FOOTNOTES: Tests core mechanics and architectural tradeoffs, never footnotes or trivia.
+   - CRYSTAL CLEAR (ONLY ONE RIGHT ANSWER): Zero debate among experts. The keyed option is unequivocally correct, and no distractor is partially right.
+   - NO ACCIDENTAL CLUES (CRAFTSMANSHIP):
+     * The correct answer must NOT be substantially longer than distractors.
+     * NEVER use giveaway words like "always", "never", "all of the above", "none of the above".
+     * NEVER provide grammatical giveaways (e.g. ending the stem with "an" when only one option starts with a vowel).
+
+5. CORE QUALITY CHECKLIST B (DISTRACTOR QUALITY - THE 3 WRONG OPTIONS):
+   - LOOKS REAL TO SOMEONE WHO GUESSED: Distractors must be authentic, plausible technical alternatives.
+   - REPRESENTS A COMMON MISTAKE: Models real traps (confusing two similar mechanisms, applying a rule backwards, off-by-one errors).
+   - SAME SIZE AND TONE ("BROTHERS AND SISTERS"): All 4 choices must look like brothers and sisters: roughly the same length, same grammar, same style.
+   - NO SILLY OPTIONS: Zero joke answers, zero impossible numbers, zero throwaways.
 4. COGNITIVE CALIBRATION:
    - Target Difficulty: ${tier} | Intended Operation: ${op}
    * Easy: Assess direct definitions, core properties, or fundamental invariants of ${target.concept}.
@@ -1818,10 +1834,23 @@ JSON SCHEMA:
 STRICT CONSTRAINTS:
 1. Output MUST be strictly raw JSON starting with { and ending with }.
 2. Absolutely NO markdown asterisks, bullet points, definitions, conversational commentary, or headers outside the JSON.
-3. Exactly 4 distinct, plausible options. All options MUST be well-balanced in length (within 2x length ratio between longest and shortest) and grammatical structure. Do NOT make the correct answer substantially longer, more descriptive, or formatted differently than the distractors.
-   - OPTION LENGTH RULE: 3 to 25 words per option (up to 35 words for technical or code expressions). Crisp, punchy, and grammatically parallel.
-   - STEM LENGTH & KAHOOT INSTANT-QUIZ BREVITY: Crisp, direct, problem-first question (target 15 to 35 words, max 45 words), followed by an optional clean 3–6 line code or scenario block, followed by an optional clean 3–6 line code block. Absolutely FORBID fictional corporate backstories (e.g. "A software engineer at a fintech startup...", "Consider a scenario where a company..."). Pose the core technical problem immediately in the very first sentence so students can read and think within a 20-30 second Kahoot countdown. End with a clear question mark (?).
-   - CRITICAL ANTI-PERMUTATION RULE: Absolutely NEVER generate options that are merely permutations, word-reorderings, anagrams, or trivial paraphrases of another option or the correct answer. For example, if one option lists "A, B, C, and D", NO other option may list "D, C, B, and A". All 4 choices must present fundamentally distinct technical ideas or distinct misconceptions.
+3. CORE QUALITY CHECKLIST A (STEM & ANSWER CRAFTSMANSHIP):
+   - PASSES THE "COVER THE OPTIONS" TEST: If a student covers the options with their hand and reads only the question, do they already know what is being asked? The stem MUST be a self-contained, problem-first question. NEVER write lazy, incomplete stems like "Which of the following is true?", "Regarding [Concept]:", or sentence fragments that force the student to inspect the options just to understand the problem.
+   - 100% HONEST TO THE MATERIAL (FAIRNESS): "Did the teacher actually teach this?" Every premise, fact, and rule must come straight from the lecture slides, transcript, or provided notes—zero outside trivia, zero un-taught tools.
+   - TESTS THE BIG IDEA, NOT FOOTNOTES: Focus strictly on core concepts, operational mechanisms, and architectural tradeoffs. Never test obscure dates, off-hand remarks, or casual anecdotes.
+   - CRYSTAL CLEAR (ONLY ONE RIGHT ANSWER): Zero debate among experts. The keyed option is unequivocally correct, and no distractor is partially right.
+   - NO ACCIDENTAL CLUES:
+     * The correct answer must NOT be substantially longer, more descriptive, or formatted differently than the distractors (all 4 options must be roughly equal in length).
+     * NEVER use giveaway words like "always", "never", "all of the above", "none of the above", "both a and b".
+     * NEVER provide grammatical giveaways (e.g. ending the stem with "an" when only one option starts with a vowel).
+   - STEM LENGTH & KAHOOT INSTANT-QUIZ BREVITY: Crisp, direct, problem-first question (target 15 to 35 words, max 45 words), followed by an optional clean 3–6 line code block. Absolutely FORBID fictional corporate backstories. Pose the core problem immediately. End with a clear question mark (?).
+   - CRITICAL ANTI-PERMUTATION RULE: Absolutely NEVER generate options that are merely permutations or trivial paraphrases of another option. All 4 choices must present fundamentally distinct technical ideas or distinct misconceptions.
+
+3b. CORE QUALITY CHECKLIST B (DISTRACTOR QUALITY - THE 3 WRONG OPTIONS):
+   - LOOKS REAL TO SOMEONE WHO GUESSED: Plausible, authentic-sounding alternatives that attract a student who did not study or only skimmed the surface.
+   - REPRESENTS A COMMON MISTAKE: Good wrong options embody real conceptual traps—confusing two similar mechanisms, applying a rule backwards, off-by-one errors, or mistaking a prerequisite for an outcome.
+   - SAME SIZE AND TONE ("BROTHERS AND SISTERS"): All 4 choices must look like brothers and sisters: roughly the same length (within 1.5x length ratio), same grammatical form (all verb phrases, or all noun phrases, or all code expressions), and same professional tone.
+   - NO SILLY OPTIONS: Strictly zero joke answers, zero impossible numbers, and zero options completely unrelated to the subject.
 4. COGNITIVE SCAFFOLDING & DIFFICULTY CALIBRATION:
    - Target Difficulty: ${tier} | Intended Operation: ${op}
    - Operational Guidance: ${target.operationalGuidance || target.instruction}

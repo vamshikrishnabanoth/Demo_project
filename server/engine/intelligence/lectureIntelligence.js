@@ -275,12 +275,26 @@ class LectureIntelligence {
         }
 
         // Op 5: Multi-Concept Causal Chain (e.g. naval blockade -> price surge -> bread riots -> rationing; permitted even under NO_CODE + NO_MATH)
-        const isCausalChain = (substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM') &&
-          /\b(because|leads to|results in|causes|consequently|triggers|forces|forced to|due to|led to|as a result|recursively|returns|updates|overrides|persists)\b/i.test(`${def} ${mech}`);
+        const isCausalChain = (substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM' || def.length >= 25 || mech.length >= 20) &&
+          /\b(because|leads to|results in|causes|consequently|triggers|forces|forced to|due to|led to|as a result|recursively|returns|updates|overrides|persists|overcome|bottleneck|prevents|adversarial|generator|discriminator|attention mechanism)\b/i.test(`${def} ${mech}`);
         if (isCausalChain) {
           op5Count += 1;
           operationEvidenceTrail.push({
             operationId: 'OP_5_CAUSAL_CHAIN',
+            conceptName: name,
+            substanceType,
+            transcriptAnchors: anchors.length > 0 ? anchors : [def.slice(0, 120)],
+            decision: 'CREDITED_HARD_CAPACITY'
+          });
+        }
+
+        // Op 7: Architectural Trade-Off & Comparative Synthesis (e.g. GANs vs RNNs vs Transformers)
+        const isArchitecturalTradeoff = (isComparison || substantiveList.length >= 2) &&
+          /\b(trade-off|tradeoff|advantage|drawback|limitation|versus|vs\.?|contrast|compared to|replaces|improves upon|difference between|bottleneck|alternative|sequential)\b/i.test(`${name} ${def} ${mech}`);
+        if (isArchitecturalTradeoff) {
+          op1Count += 1;
+          operationEvidenceTrail.push({
+            operationId: 'OP_7_ARCHITECTURAL_TRADEOFF',
             conceptName: name,
             substanceType,
             transcriptAnchors: anchors.length > 0 ? anchors : [def.slice(0, 120)],
@@ -358,10 +372,9 @@ class LectureIntelligence {
       const codeHard = Math.min(codeTraceCount, 8);
 
       totalHard = causalHard + critiqueHard + proofHard + invariantHard + codeHard;
-      if (totalHard === 0 && substantiveConceptCount >= 2) {
-        // Any substantive academic lecture supports hard assessment via cross-concept synthesis,
-        // architectural tradeoffs, and constraint/boundary analysis.
-        totalHard = Math.max(1, Math.min(8, Math.round(substantiveConceptCount * 0.4)));
+      if (totalHard === 0 && substantiveConceptCount >= 2 && hasInvariantsInLecture) {
+        // Substantive academic lecture with reasoning or mechanisms supports hard assessment via tradeoffs
+        totalHard = Math.max(1, Math.min(8, Math.round(substantiveConceptCount * 0.35)));
       }
     }
 
@@ -429,9 +442,22 @@ class LectureIntelligence {
     let recHard = 0;
 
     if (totalDefensibleCapacity > 0) {
-      recEasy = Math.min(totalEasy, Math.max(1, Math.min(balancedRec, Math.round(balancedRec * 0.85))));
-      recMedium = Math.min(totalMedium, Math.max(1, Math.min(balancedRec, Math.round(balancedRec * 0.85))));
-      recHard = totalHard > 0 ? Math.min(totalHard, Math.max(1, Math.round(balancedRec * 0.45))) : Math.max(1, Math.round(balancedRec * 0.35));
+      // 1. Easy: Derived from foundational concept definitions and terminology taught
+      recEasy = Math.min(totalEasy, Math.max(1, Math.min(balancedRec, Math.round(totalEasy * (substantiveConceptCount > 10 ? 0.8 : 0.85)))));
+
+      // 2. Medium: Derived from operational mechanisms, procedures, and practical examples demonstrated
+      recMedium = Math.min(totalMedium, Math.max(1, Math.min(balancedRec, Math.round(totalMedium * (totalMedium > 8 ? 0.75 : 0.85)))));
+
+      // 3. Hard: Derived from causal reasoning, architectural tradeoffs, and invariants
+      // High-depth lecture with deep tradeoffs -> strong Hard yield & wide tier variation!
+      // So-so lecture with light reasoning -> low Hard yield & low tier variation!
+      // Pure descriptive taxonomy without reasoning -> strictly 0 Hard!
+      if (totalHard === 0) {
+        recHard = 0;
+      } else {
+        const hardFraction = totalHard >= 5 ? 0.75 : 0.85;
+        recHard = Math.min(totalHard, Math.max(1, Math.min(balancedRec, Math.round(totalHard * hardFraction))));
+      }
 
       // Ensure Balanced is strictly greater than or equal to each single-tier recommendation
       balancedRec = Math.max(balancedRec, recEasy, recMedium, recHard);
@@ -458,6 +484,28 @@ class LectureIntelligence {
 
     const advisoryRationale = `Defensible assessment capacity of ${totalDefensibleCapacity} questions across ${substantiveConceptCount} substantive concepts (Easy: ${totalEasy}, Medium: ${totalMedium}, Hard: ${totalHard}, Balanced: ${balancedRec}). Recommended counts per difficulty: Easy=${recEasy}, Medium=${recMedium}, Hard=${recHard}, Balanced=${balancedRec}.`;
 
+    const isHighDepth = (totalHard >= 5 && substantiveConceptCount >= 8) || (substantiveConceptCount >= 12 && totalHard >= 4);
+    const isModerateDepth = !isHighDepth && totalDefensibleCapacity >= 6;
+
+    let yieldNarrative = '';
+    let variationNote = '';
+    if (isHighDepth) {
+      yieldNarrative = `Your lecture delivered rich explanatory depth across ${substantiveConceptCount} concepts with clear mechanisms and comparative tradeoffs. This supports a wide pedagogical spread: ${recEasy} Easy questions (foundational definitions), ${recMedium} Medium questions (operational mechanics), and ${recHard} Hard questions (architectural tradeoffs & synthesis).`;
+      variationNote = 'High pedagogical variation: Deep causal reasoning in your class supports distinct separation between foundational recall and advanced tradeoffs.';
+    } else if (isModerateDepth) {
+      yieldNarrative = `Your lecture focused on ${substantiveConceptCount} core topics with direct explanations. Because advanced tradeoffs were covered selectively, question counts across Easy, Medium, and Hard (${recEasy} Easy, ${recMedium} Medium, ${recHard} Hard) stay closely calibrated so questions strictly test what was taught without guessing.`;
+      variationNote = 'Calibrated pedagogical variation: Question tiers stay closely aligned to keep all questions 100% faithful to your direct explanations.';
+    } else {
+      yieldNarrative = `Your material introduces foundational definitions and terminology across ${substantiveConceptCount} topics. Questions are centered around foundational mastery (${recEasy} Easy, ${recMedium} Medium) to ensure 100% fidelity to your direct words.`;
+      variationNote = 'Introductory pedagogical scope: Hard questions are evidence-limited to prevent speculating beyond your direct words.';
+    }
+
+    const easyExplanation = `Derived from the ${totalEasy} distinct definitions and foundational terms introduced in your lecture.`;
+    const mediumExplanation = `Derived from the ${totalMedium} operational mechanisms, workflows, and practical examples explained in class.`;
+    const hardExplanation = totalHard > 0
+      ? `Derived from the ${totalHard} comparative tradeoffs, causal dynamics, and architectural synthesis covered in your lecture.`
+      : 'Your lecture focused on core definitions without causal tradeoffs; Hard is evidence-limited to prevent AI guessing.';
+
     return {
       distinctConceptCount: substantiveConceptCount,
       recommendedQuestionCount: recommendedCount,
@@ -465,6 +513,11 @@ class LectureIntelligence {
       capacityByDifficulty,
       totalDefensibleCapacity,
       advisoryRationale,
+      yieldNarrative,
+      variationNote,
+      easyExplanation,
+      mediumExplanation,
+      hardExplanation,
       operationEvidenceTrail
     };
   }

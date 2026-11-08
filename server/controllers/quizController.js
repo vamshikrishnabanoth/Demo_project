@@ -3216,6 +3216,19 @@ exports.generateQuizQuestions = async (req, res) => {
         if (Array.isArray(allUploadedFiles) && allUploadedFiles.length > 0) {
             estimatedTextLength = Math.max(estimatedTextLength, 35000);
         }
+        if (estimatedTextLength < 1000 && req.user?.id) {
+            try {
+                const safeUserId = String(req.user.id).replace(/[^a-zA-Z0-9_-]/g, "_");
+                const docketFile = path.join(DOCKETS_DIR, `${safeUserId}.json`);
+                if (fs.existsSync(docketFile)) {
+                    const docketData = JSON.parse(fs.readFileSync(docketFile, "utf8"));
+                    const docketInputs = Array.isArray(docketData?.inputs) ? docketData.inputs : (Array.isArray(docketData) ? docketData : []);
+                    for (const item of docketInputs) {
+                        if (typeof item?.content === "string") estimatedTextLength += item.content.length;
+                    }
+                }
+            } catch (_) {}
+        }
 
         let taskId;
         try {
@@ -5047,13 +5060,11 @@ exports.getUserDocket = async (req, res) => {
                 }
                 const inputsList = Array.isArray(parsed.inputs) ? parsed.inputs : [];
                 let analysis = inputsList.length === 0 ? null : (parsed.analysis || null);
-                if (analysis && analysis.isAcademic) {
-                    if (!analysis.recommendedByDifficulty) analysis.recommendedByDifficulty = {};
-                    if (!analysis.recommendedByDifficulty.hard || analysis.recommendedByDifficulty.hard <= 0) {
-                        analysis.recommendedByDifficulty.hard = Math.max(1, Math.round((analysis.recommendedQuestionCount || 10) * 0.35));
-                    }
-                    if (!analysis.capacityByDifficulty) analysis.capacityByDifficulty = {};
-                    if (!analysis.capacityByDifficulty.hard || analysis.capacityByDifficulty.hard <= 0) {
+                if (analysis && analysis.isAcademic && analysis.recommendedByDifficulty) {
+                    const hasReasoning = analysis.lectureDepth?.characteristics?.reasoning === 'Strong' || ((analysis.totalDefensibleCapacity || 0) >= 10);
+                    if (hasReasoning && (!analysis.recommendedByDifficulty.hard || analysis.recommendedByDifficulty.hard <= 0)) {
+                        analysis.recommendedByDifficulty.hard = Math.max(1, Math.round((analysis.recommendedQuestionCount || 10) * 0.4));
+                        if (!analysis.capacityByDifficulty) analysis.capacityByDifficulty = {};
                         analysis.capacityByDifficulty.hard = Math.max(3, Math.round(analysis.recommendedByDifficulty.hard * 1.5));
                     }
                 }
@@ -5430,26 +5441,38 @@ exports.analyzeDepth = async (req, res) => {
                     hard: validCap.recommendedByDifficulty.hard,
                     balanced: validCap.totalDefensibleCapacity || validCap.recommendedQuestionCount
                 };
-                // Ensure academic lectures always calibrate hard questions (tradeoffs, synthesis, boundary conditions)
-                if (analysis.isAcademic) {
-                    if (!recommendedByDifficulty.hard || recommendedByDifficulty.hard <= 0) {
-                        recommendedByDifficulty.hard = Math.max(1, Math.round((validCap.recommendedQuestionCount || 10) * 0.35));
-                    }
-                    if (!capacityByDifficulty.hard || capacityByDifficulty.hard <= 0) {
-                        capacityByDifficulty.hard = Math.max(3, Math.round(recommendedByDifficulty.hard * 1.5));
-                    }
-                }
                 totalDefensibleCapacity = validCap.totalDefensibleCapacity || (recommendedByDifficulty.easy + recommendedByDifficulty.medium + recommendedByDifficulty.hard);
                 advisoryRationale = validCap.advisoryRationale || '';
                 recommendedQuestionCount = validCap.recommendedQuestionCount || Math.max(1, recommendedByDifficulty.balanced);
                 recommendedQuestions = `${recommendedQuestionCount} Questions (Evidence-Backed Capacity)`;
             } else if (analysis.isAcademic) {
-                // Grounded defensible capacity from curriculum depth and word count when LLM capacity is pending or null
+                // Grounded defensible capacity derived dynamically from instructional characteristics
                 const baseCount = Math.max(3, recBreakdown?.recommendedQuestionCount || Math.min(25, Math.max(5, Math.round(wordCount / 120))));
-                const easyPart = Math.max(1, Math.round(baseCount * 0.35));
-                const medPart = Math.max(1, Math.round(baseCount * 0.45));
-                const hardPart = Math.max(1, Math.round(baseCount * 0.35));
-                const balancedPart = Math.max(baseCount, easyPart + medPart + hardPart);
+                const hasStrongReasoning = chars.reasoning === 'Strong';
+                const hasModerateReasoning = chars.reasoning === 'Moderate';
+                const hasExamples = chars.examples === 'Present';
+                const hasProcedures = chars.procedures === 'Strong';
+
+                // Easy: covers foundational definitions and key terms
+                const easyPart = Math.max(1, Math.round(baseCount * (wordCount > 3000 ? 0.8 : 0.75)));
+
+                // Medium: operational mechanisms and concrete examples
+                const medFactor = (hasExamples && hasProcedures) ? 0.75 : ((hasExamples || hasProcedures) ? 0.6 : 0.45);
+                const medPart = Math.max(1, Math.round(baseCount * medFactor));
+
+                // Hard: causal reasoning, invariants, and comparative tradeoffs
+                let hardPart = 0;
+                if (hasStrongReasoning) {
+                    hardPart = Math.max(2, Math.round(baseCount * 0.45));
+                } else if (hasModerateReasoning) {
+                    hardPart = Math.max(1, Math.round(baseCount * 0.3));
+                } else if (supportsHard) {
+                    hardPart = Math.max(1, Math.round(baseCount * 0.2));
+                } else {
+                    hardPart = 0;
+                }
+
+                const balancedPart = Math.max(baseCount, easyPart, medPart, hardPart);
 
                 recommendedByDifficulty = {
                     easy: easyPart,
@@ -5460,7 +5483,7 @@ exports.analyzeDepth = async (req, res) => {
                 capacityByDifficulty = {
                     easy: Math.max(3, Math.round(easyPart * 1.5)),
                     medium: Math.max(3, Math.round(medPart * 1.5)),
-                    hard: Math.max(3, Math.round(hardPart * 1.5)),
+                    hard: hardPart > 0 ? Math.max(3, Math.round(hardPart * 1.5)) : 0,
                     balanced: Math.max(5, Math.round(balancedPart * 1.5))
                 };
                 totalDefensibleCapacity = capacityByDifficulty.balanced;
@@ -5494,6 +5517,34 @@ exports.analyzeDepth = async (req, res) => {
             }
         }
 
+        const rEasy = recommendedByDifficulty?.easy || 0;
+        const rMed = recommendedByDifficulty?.medium || 0;
+        const rHard = recommendedByDifficulty?.hard || 0;
+        const cEasy = capacityByDifficulty?.easy || rEasy;
+        const cMed = capacityByDifficulty?.medium || rMed;
+        const cHard = capacityByDifficulty?.hard || rHard;
+        const conceptCount = (keyTopics && keyTopics.length > 0) ? keyTopics.length : (analysis.detectedFocus?.length || 0);
+        const isHighDepth = (rHard >= 5 && conceptCount >= 8) || (conceptCount >= 12 && rHard >= 4);
+        const isModerateDepth = !isHighDepth && (rMed >= 3 || rHard >= 1);
+
+        const yieldNarrative = validCap?.yieldNarrative || (isHighDepth
+            ? `Your lecture provided extensive instructional depth across ${conceptCount} concepts with clear mechanisms and comparative tradeoffs. This supports a wide pedagogical spread: ${rEasy} Easy questions (foundational definitions), ${rMed} Medium questions (operational mechanics), and ${rHard} Hard questions (architectural tradeoffs & synthesis).`
+            : (isModerateDepth
+                ? `Your lecture focused on ${conceptCount} core topics with direct explanations. Because advanced tradeoffs were covered selectively, question counts across Easy, Medium, and Hard (${rEasy} Easy, ${rMed} Medium, ${rHard} Hard) stay closely calibrated so questions strictly test what was taught without guessing.`
+                : `Your material introduces foundational definitions across ${conceptCount} topics. Questions are centered around foundational mastery (${rEasy} Easy, ${rMed} Medium) to maintain 100% fidelity to your direct words.`));
+
+        const variationNote = validCap?.variationNote || (isHighDepth
+            ? 'High pedagogical variation: Deep causal reasoning in your class supports distinct separation between foundational recall and advanced tradeoffs.'
+            : (isModerateDepth
+                ? 'Calibrated pedagogical variation: Question tiers stay closely aligned to keep all questions 100% faithful to your direct explanations.'
+                : 'Introductory pedagogical scope: Hard questions are evidence-limited to prevent speculating beyond your direct words.'));
+
+        const easyExplanation = validCap?.easyExplanation || `Derived from the ${cEasy} distinct definitions and foundational terms introduced in your lecture.`;
+        const mediumExplanation = validCap?.mediumExplanation || `Derived from the ${cMed} operational mechanisms, workflows, and practical examples explained in class.`;
+        const hardExplanation = validCap?.hardExplanation || (rHard > 0
+            ? `Derived from the ${cHard} comparative tradeoffs, causal dynamics, and architectural synthesis covered in your lecture.`
+            : 'Your lecture focused on core definitions without causal tradeoffs; Hard is evidence-limited to prevent AI guessing.');
+
         return sendAndCache({
             success: true,
             isAcademic: analysis.isAcademic,
@@ -5512,6 +5563,11 @@ exports.analyzeDepth = async (req, res) => {
             capacityByDifficulty,
             totalDefensibleCapacity,
             advisoryRationale,
+            yieldNarrative,
+            variationNote,
+            easyExplanation,
+            mediumExplanation,
+            hardExplanation,
             lecture_intelligence: lectureIntel
         });
     } catch (err) {

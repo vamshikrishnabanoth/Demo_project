@@ -332,22 +332,51 @@ export default function TeachingScoreModal({
                             <div className="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-200">
                                 <span className="text-[10px] font-black text-emerald-800 block uppercase tracking-wider">Easy</span>
                                 <span className="text-xl font-black text-slate-900 my-0.5 block">{easyCap} Qs</span>
-                                <span className="text-[10px] text-slate-500 font-medium block">Key terms & concepts</span>
+                                <span className="text-[10px] text-slate-600 font-medium block">Key terms & definitions</span>
                             </div>
                             <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-200">
                                 <span className="text-[10px] font-black text-blue-800 block uppercase tracking-wider">Medium</span>
                                 <span className="text-xl font-black text-slate-900 my-0.5 block">{medCap} Qs</span>
-                                <span className="text-[10px] text-slate-500 font-medium block">How things work & logic</span>
+                                <span className="text-[10px] text-slate-600 font-medium block">Mechanisms & examples</span>
                             </div>
                             <div className="bg-purple-50/70 p-3 rounded-2xl border border-purple-200">
                                 <span className="text-[10px] font-black text-purple-800 block uppercase tracking-wider">Hard</span>
                                 <span className="text-xl font-black text-slate-900 my-0.5 block">{hardCap} Qs</span>
-                                <span className="text-[10px] text-slate-500 font-medium block">Deep analysis & edge cases</span>
+                                <span className="text-[10px] text-slate-600 font-medium block">Tradeoffs & synthesis</span>
                             </div>
                         </div>
-                        <p className="text-[11px] text-slate-500 text-center">
-                            Your lecture can support these questions without repeating concepts or hallucinating facts.
+                        <p className="text-[11px] text-slate-600 text-center font-medium">
+                            Pedagogically Adaptive: The spread between Easy, Medium, and Hard is derived dynamically from your lecture's depth and examples — never hardcoded formulas.
                         </p>
+                    </div>
+
+                    {/* SECTION 4: QUESTION QUALITY STANDARDS (THE MATERIAL CHECK & THE CONSTANT CHECK) */}
+                    <div className="space-y-2.5">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                            <span>🛡️</span>
+                            <span>Question Quality Standards (Fairness & Craftsmanship)</span>
+                        </h4>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-700">
+                            <div className="p-3 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-1.5">
+                                <p className="font-bold text-slate-900 flex items-center gap-1.5">
+                                    <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                                    <span>The Material Check (Fairness)</span>
+                                </p>
+                                <p className="text-[11px] text-slate-600 leading-relaxed">
+                                    100% honest to what you taught. Every premise and fact comes directly from your lecture slides, transcript, or assigned notes — zero outside trivia or unannounced footnotes.
+                                </p>
+                            </div>
+                            <div className="p-3 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-1.5">
+                                <p className="font-bold text-slate-900 flex items-center gap-1.5">
+                                    <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                                    <span>The Constant Check (Craftsmanship)</span>
+                                </p>
+                                <p className="text-[11px] text-slate-600 leading-relaxed">
+                                    Passes the "Cover the Options" test: the question stem clearly states the problem on its own. All 4 choices look like "brothers and sisters" with balanced length, no giveaway words, and zero joke options.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     {/* QUICK QUALITY CHECKS */}

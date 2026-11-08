@@ -2758,6 +2758,10 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
       return this._applyIntentRelativeBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
     }
 
+    if (planData.assessmentTargets && planData.assessmentTargets.length > 0 && planData.assessmentTargets.length < requestedCount && !evidencePackage.unifiedRawContent && !evidencePackage.hasVoice && deficitPolicy !== 'FILL_WITH_MEDIUM' && capacityPolicy !== 'ALLOW_SCOPE_SUPPLEMENTARY') {
+      return this._applyLegacyBloomQuotaBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy);
+    }
+
     // Default: LCA-CM 2D Topic × Difficulty Matrix Architecture
     let res = this._applyLcacmMatrixBlueprint(planData, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy, capacityPolicy);
     return this._enforceFinalCapacitySafetyGate(res, requestedDifficulty, requestedCount, evidencePackage, deficitPolicy, capacityPolicy);
@@ -2811,7 +2815,7 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
             instruction: `Assess engineering principles for ${planData.mainTopic || 'Engineering Subject'}.`
           });
         }
-      } else if (deficitPolicy === 'FAIL_CLOSED') {
+      } else if (deficitPolicy !== 'FILL_WITH_MEDIUM') {
         const availableCount = targets.length;
         const deficitCount = requestedCount - availableCount;
         const deficitReason = `Lecture evidence contains only ${availableCount} distinct assessable concept(s); requested ${requestedCount}. Remaining ${deficitCount} slot(s) withheld as capacity deficits to prevent hallucination.`;
@@ -3979,18 +3983,24 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     // and multi-angle cognitive approaches. totalDefensible represents distinct concept capacity,
     // not a hard ceiling that truncates delivered question count.
     // In Hard mode, if deficitPolicy !== 'FILL_WITH_MEDIUM', N_defensible is bounded by maxDefensibleH.
+    const availableConceptsCount = Array.isArray(planData.assessmentTargets) && planData.assessmentTargets.length > 0
+      ? planData.assessmentTargets.length
+      : N;
+    const isCurricularDeficit = availableConceptsCount < N && deficitPolicy !== 'FILL_WITH_MEDIUM' && (!evidencePackage?.inputModality || evidencePackage.inputModality !== 'TOPIC_SYNTHESIS');
+    const effectiveDefensible = isCurricularDeficit ? availableConceptsCount : N;
+
     let N_defensible;
     if (isBalanced) {
-      N_defensible = N;
+      N_defensible = effectiveDefensible;
     } else if (diffNorm.toLowerCase() === 'hard') {
       N_defensible = deficitPolicy === 'FILL_WITH_MEDIUM'
-        ? N
-        : Math.min(N, maxDefensibleH);
+        ? effectiveDefensible
+        : Math.min(effectiveDefensible, maxDefensibleH);
     } else if (diffNorm.toLowerCase() === 'easy') {
-      N_defensible = N;
+      N_defensible = effectiveDefensible;
     } else {
       // Medium
-      N_defensible = N;
+      N_defensible = effectiveDefensible;
     }
 
     let idealEasy = 0;

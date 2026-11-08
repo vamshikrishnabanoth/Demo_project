@@ -211,12 +211,11 @@ class LLMRouter {
     // 1. Primary (e.g. openai/gpt-oss-120b)
     // 2. High-speed reasoning model (qwen/qwen3.8-27b - ~1.0s latency, distinct daily quota)
     // 3. Fallback (openai/gpt-oss-20b)
-    const configuredModels = process.env.GROQ_MODELS ? process.env.GROQ_MODELS.split(',').map(m => m.trim()).filter(Boolean) : null;
-    const modelsToTry = (configuredModels && configuredModels.length > 0) ? configuredModels : (
-      operation === 'EVALUATION'
-        ? Array.from(new Set([primaryModel, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', fallbackModel].filter(Boolean)))
-        : Array.from(new Set([primaryModel, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b', fallbackModel].filter(Boolean)))
-    );
+    const configuredModels = process.env.GROQ_MODELS ? process.env.GROQ_MODELS.split(',').map(m => m.trim()).filter(Boolean) : [];
+    const baseModels = configuredModels.length > 0
+      ? configuredModels
+      : (operation === 'EVALUATION' ? ['openai/gpt-oss-120b', 'openai/gpt-oss-20b'] : ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b']);
+    const modelsToTry = Array.from(new Set([primaryModel, ...baseModels, fallbackModel].filter(Boolean)));
     const totalKeys = keys.length;
     const groqTimeoutMs = parseInt(process.env.GROQ_TIMEOUT_MS, 10) || 15000;
     let lastErr = null;
@@ -279,7 +278,7 @@ class LLMRouter {
                 { role: 'user', content: finalUserPrompt }
               ],
               temperature: temperature,
-              max_tokens: (currentModel.includes('qwen') || currentModel.includes('27b')) ? Math.min(resolvedMaxTokens, 900) : resolvedMaxTokens
+              max_tokens: resolvedMaxTokens || 2500
             };
             // Groq json_object is only supported on select models; openai/gpt-oss models fail validation if response_format is passed
             if (!currentModel.includes('openai') && !currentModel.includes('gpt-oss')) {

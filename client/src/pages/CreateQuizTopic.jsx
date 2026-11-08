@@ -226,6 +226,37 @@ export default function CreateQuizTopic() {
     const hasAudio = inputs.some(inp => inp.type === 'voice' || inp.type === 'audio');
     const hasDocFiles = inputs.some(inp => inp.type === 'document' || inp.type === 'file' || inp.type === 'pdf' || inp.file || inp.documentId);
     const isHybrid = hasAudio && hasDocFiles;
+
+    const topicCount = useMemo(() => {
+        if (keyTopics && keyTopics.length > 0) return keyTopics.length;
+        if (detectedFocus && detectedFocus.length > 0) return detectedFocus.length;
+        return 0;
+    }, [keyTopics, detectedFocus]);
+
+    const recEasyVal = useMemo(() => {
+        if (recommendedByDifficulty && recommendedByDifficulty.easy !== undefined) return Number(recommendedByDifficulty.easy);
+        return 10;
+    }, [recommendedByDifficulty]);
+
+    const recMedVal = useMemo(() => {
+        if (recommendedByDifficulty && recommendedByDifficulty.medium !== undefined) return Number(recommendedByDifficulty.medium);
+        return 10;
+    }, [recommendedByDifficulty]);
+
+    const recHardVal = useMemo(() => {
+        if (recommendedByDifficulty && recommendedByDifficulty.hard !== undefined) return Number(recommendedByDifficulty.hard);
+        return 0;
+    }, [recommendedByDifficulty]);
+
+    const recBalancedVal = useMemo(() => {
+        if (recommendedByDifficulty && recommendedByDifficulty.balanced !== undefined) return Number(recommendedByDifficulty.balanced);
+        return (recommendedQuestionCount && Number(recommendedQuestionCount) > 0) ? Number(recommendedQuestionCount) : 10;
+    }, [recommendedByDifficulty, recommendedQuestionCount]);
+
+    const isHighSpread = useMemo(() => {
+        return Math.abs(recEasyVal - recHardVal) >= 5 && recHardVal > 0;
+    }, [recEasyVal, recHardVal]);
+
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
@@ -2229,6 +2260,54 @@ export default function CreateQuizTopic() {
                                             </div>
                                         )}
 
+                                        {/* Expected Question Yield & Difficulty Spread (Directly Communicating Capacity to Teacher) */}
+                                        {recommendedByDifficulty && (
+                                            <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/80 shadow-2xs space-y-2.5">
+                                                <div className="flex items-center justify-between">
+                                                    <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                        <Sparkles size={13} className="text-[#ea580c] shrink-0" /> Expected Question Yield From Your Class
+                                                    </p>
+                                                    <span className="text-[9px] font-bold text-orange-900 bg-orange-100/90 px-2 py-0.5 rounded-md border border-orange-200/60">
+                                                        {isHighSpread ? 'High Pedagogical Depth' : 'Calibrated Focus'}
+                                                    </span>
+                                                </div>
+
+                                                {/* Narrative explaining what the teacher taught and what to expect */}
+                                                <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                                                    {isHighSpread
+                                                        ? `You taught ${topicCount} topics with deep causal reasoning and architectural comparisons. This supports a wide pedagogical spread: ${recEasyVal} Easy questions (foundational definitions), ${recMedVal} Medium questions (mechanisms & workflows), and ${recHardVal} Hard questions (architectural tradeoffs).`
+                                                        : `You covered ${topicCount} topics with focused explanations. To ensure questions strictly test what was taught without guessing, question counts across Easy (${recEasyVal} Qs), Medium (${recMedVal} Qs), and Hard (${recHardVal} Qs) stay closely calibrated to your direct words.`
+                                                    }
+                                                </p>
+
+                                                {/* 3-Tier Dynamic Yield Breakdown */}
+                                                <div className="grid grid-cols-3 gap-2 pt-0.5 text-center">
+                                                    <div className="p-2 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
+                                                        <span className="text-[9px] font-black uppercase tracking-wider text-emerald-800 block">Easy</span>
+                                                        <span className="text-base font-black text-slate-900 block my-0.5">{recEasyVal} Qs</span>
+                                                        <span className="text-[9px] text-slate-600 block leading-tight">Definitions & terms</span>
+                                                    </div>
+                                                    <div className="p-2 rounded-xl bg-blue-50/70 border border-blue-200/80">
+                                                        <span className="text-[9px] font-black uppercase tracking-wider text-blue-800 block">Medium</span>
+                                                        <span className="text-base font-black text-slate-900 block my-0.5">{recMedVal} Qs</span>
+                                                        <span className="text-[9px] text-slate-600 block leading-tight">Mechanisms & examples</span>
+                                                    </div>
+                                                    <div className="p-2 rounded-xl bg-purple-50/70 border border-purple-200/80">
+                                                        <span className="text-[9px] font-black uppercase tracking-wider text-purple-800 block">Hard</span>
+                                                        <span className="text-base font-black text-slate-900 block my-0.5">{recHardVal} Qs</span>
+                                                        <span className="text-[9px] text-slate-600 block leading-tight">Tradeoffs & synthesis</span>
+                                                    </div>
+                                                </div>
+
+                                                <p className="text-[10px] text-slate-500 italic pt-0.5">
+                                                    {isHighSpread
+                                                        ? 'High pedagogical variation: Rich explanations in your class support a distinct spread between foundational recall and complex tradeoffs.'
+                                                        : 'Calibrated pedagogical variation: Question tiers stay closely aligned so that all questions strictly reflect what was taught without guessing.'
+                                                    }
+                                                </p>
+                                            </div>
+                                        )}
+
                                         {/* Friendly Assurance Footer */}
                                         <div className="pt-1 flex items-center justify-between text-[11px] font-bold text-orange-950 bg-orange-100/60 p-2.5 rounded-xl border border-orange-200/50">
                                             <span className="flex items-center gap-1.5">
@@ -2319,6 +2398,19 @@ export default function CreateQuizTopic() {
                                                 </button>
                                             );
                                         })}
+                                    </div>
+
+                                    {/* Dynamic Teacher Guidance for Selected Difficulty */}
+                                    <div className="p-3 rounded-xl bg-orange-50/70 border border-orange-200/70 text-[11px] font-medium text-slate-700 flex items-start gap-2">
+                                        <Info size={14} className="text-[#ea580c] shrink-0 mt-0.5" />
+                                        <p className="leading-snug">
+                                            {difficulty === 'Easy' && `Easy Focus (${recEasyVal} Qs recommended) · Formulates questions strictly on the terms and core definitions you introduced in class.`}
+                                            {difficulty === 'Medium' && `Medium Focus (${recMedVal} Qs recommended) · Formulates questions on operational mechanisms, execution workflows, and practical examples explained in class.`}
+                                            {difficulty === 'Hard' && (recHardVal > 0
+                                                ? `Hard Focus (${recHardVal} Qs recommended) · Formulates questions on architectural tradeoffs, causal dynamics, and comparative synthesis from your lecture.`
+                                                : `Hard Focus (0 Qs recommended) · Your material focused on foundational definitions without causal tradeoffs. Hard is evidence-limited to prevent AI hallucination.`)}
+                                            {difficulty === 'Balanced' && `Balanced Focus (${recBalancedVal} Qs recommended) · Blends foundational terms (${recEasyVal} Easy), mechanisms (${recMedVal} Medium), and tradeoffs (${recHardVal} Hard) across your entire syllabus.`}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
