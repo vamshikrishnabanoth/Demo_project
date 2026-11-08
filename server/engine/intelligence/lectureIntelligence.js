@@ -1456,6 +1456,7 @@ ${promptEvidence}`;
 
     // 4. Overlapping Window Extraction (Bounded concurrency = 2)
     const allExtractedUnits = [];
+    const quarantinedUnits = [];
     const extractSingleWindow = async (win) => {
       const winParents = win.parents;
       const parentEvidenceTexts = winParents.map(p => {
