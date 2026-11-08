@@ -140,6 +140,7 @@ function getGroqWhisperPool() {
 }
 
 const _rawTranscribeAudioWithTimestamps = async (filePath) => {
+    let tempCompressedPath = null;
     // 1. Try local Python faster-whisper service ONLY if ENABLE_LOCAL_STT === 'true'
     if (process.env.ENABLE_LOCAL_STT === 'true') {
     try {
