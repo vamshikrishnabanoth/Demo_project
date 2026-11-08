@@ -305,8 +305,7 @@ class LLMRouter {
                 throw new Error(`Groq model '${currentModel}' returned empty content.`);
               }
               if (choice.finish_reason === 'length') {
-                console.warn(`⚠️ [LLMRouter] Completion truncated by max_tokens limit (${resolvedMaxTokens})`);
-                throw new Error(`LLM completion truncated by max_tokens limit (${resolvedMaxTokens})`);
+                console.warn(`⚠️ [LLMRouter] Completion truncated by max_tokens limit (${resolvedMaxTokens}). Returning received content for resilient parser extraction.`);
               }
 
               // Record production metrics
