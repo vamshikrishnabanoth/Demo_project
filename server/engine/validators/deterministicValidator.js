@@ -758,6 +758,43 @@ class DeterministicValidator {
           }
         }
       }
+
+      // 5d. Subsumptive Learning Objective Collision (Same Component Entity & Identical Core Competency Assertion)
+      const entities = ['generator', 'discriminator', 'transformer', 'attention', 'autoencoder', 'rnn', 'lstm', 'rule-based nlp'];
+      const sharedEntity = entities.find(e => candText.includes(e) && existingText.includes(e));
+
+      if (sharedEntity) {
+        // EXPLICIT COMPETENCY SEPARATION SHIELD:
+        // If one question assesses mathematical loss/gradient dynamics and the other assesses functional role, THEY MUST COEXIST.
+        const isMathLossDynamics = qText => /\b(?:loss|gradient|vanishing|saturat\w+|derivative|formula|backprop|divergence|minimax)\b/i.test(qText);
+        const candIsMath = isMathLossDynamics(candText + ' ' + (candidateMCQ.correctAnswer || ''));
+        const existIsMath = isMathLossDynamics(existingText + ' ' + (existing.correctAnswer || ''));
+
+        if (candIsMath === existIsMath) {
+          // CONFIRMATION CHECK: Only reject when both stems ask for high-level functional purpose
+          // AND both correct answers assert the identical operational competency
+          const isFunctionalGoal = qText => /\b(?:role|purpose|objective|goal|aim|win|converge|success)\b/i.test(qText);
+          if (isFunctionalGoal(candText) && isFunctionalGoal(existingText)) {
+            const assertsDeceivingDiscriminator = ans => /\b(?:fool|deceiv\w+|cannot\s+(?:identif\w*|distinguish\w*)|trick|mislead|synthetic\s+data\s+to)\b/i.test(ans);
+            const assertsDimensionalityReduction = ans => /\b(?:compress\w*|bottleneck|latent\s+space|dimensionality\s+reduction)\b/i.test(ans);
+
+            const candDeceives = assertsDeceivingDiscriminator(candidateMCQ.correctAnswer || '');
+            const existDeceives = assertsDeceivingDiscriminator(existing.correctAnswer || '');
+
+            const candCompresses = assertsDimensionalityReduction(candidateMCQ.correctAnswer || '');
+            const existCompresses = assertsDimensionalityReduction(existing.correctAnswer || '');
+
+            if ((candDeceives && existDeceives) || (candCompresses && existCompresses)) {
+              return {
+                isDuplicate: true,
+                similarity: 0.85,
+                reason: 'SUBSUMPTIVE_LEARNING_OBJECTIVE_DUPLICATE: Both questions assess identical operational competency for ' + sharedEntity + '.',
+                duplicateWith: existing.questionText
+              };
+            }
+          }
+        }
+      }
     }
 
     return { isDuplicate: false, similarity: 0 };

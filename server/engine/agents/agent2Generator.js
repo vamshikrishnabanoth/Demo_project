@@ -1843,7 +1843,10 @@ STRICT CONSTRAINTS:
      * The correct answer must NOT be substantially longer, more descriptive, or formatted differently than the distractors (all 4 options must be roughly equal in length).
      * NEVER use giveaway words like "always", "never", "all of the above", "none of the above", "both a and b".
      * NEVER provide grammatical giveaways (e.g. ending the stem with "an" when only one option starts with a vowel).
-   - STEM LENGTH & KAHOOT INSTANT-QUIZ BREVITY: Crisp, direct, problem-first question (target 15 to 35 words, max 45 words), followed by an optional clean 3–6 line code block. Absolutely FORBID fictional corporate backstories. Pose the core problem immediately. End with a clear question mark (?).
+   - STEM LENGTH & KAHOOT INSTANT-QUIZ BREVITY: Crisp, direct, problem-first question (target <= 25 words, max 35 words). Absolutely FORBID formulaic openings like "When comparing...", "When evaluating...", "When processing...", "When an AI system...". Ask the question directly: "Why does...", "How do...", "What causes...", "Which architectural tradeoff...". End with a clear question mark (?).
+   - OPTION LENGTH TARGET: Keep options concise—target 6 to 14 words per option (under 80 characters). Phrases or single concise sentences. Never write multi-sentence or paragraph-length options.
+   - NO FORMULAIC POLAR ROLE INVERSIONS: Absolutely NEVER construct 3 distractors by rephrasing the same comparative polar flip (e.g. repeatedly inverting Subject A vs Subject B). Each distractor must embody a distinct, independent conceptual trap.
+   - NO ACCIDENTAL FACTUAL TRUTHS UNDER STEM CONDITIONS: Distractors must be factually and conceptually FALSE under the stem's conditions. Never write a distractor that states an actual real-world truth answering the prompt's question merely because it wasn't in this introductory lecture.
    - CRITICAL ANTI-PERMUTATION RULE: Absolutely NEVER generate options that are merely permutations or trivial paraphrases of another option. All 4 choices must present fundamentally distinct technical ideas or distinct misconceptions.
 
 3b. CORE QUALITY CHECKLIST B (DISTRACTOR QUALITY - THE 3 WRONG OPTIONS):

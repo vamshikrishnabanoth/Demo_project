@@ -222,7 +222,10 @@ EVALUATION DIRECTIVES:
 1. OPTION-BY-OPTION AUDIT:
    - For the keyed option: verify whether it is technically true and directly supported by session evidence.
    - For each distractor: verify that it is plausible, clearly incorrect, and cannot be defended as true under a reasonable interpretation.
-   - Reject any question where a distractor could also be considered correct (AMBIGUOUS_DISTRACTOR / ACCIDENTAL_CORRECT_DISTRACTOR).
+   - CONTEXT-AWARE DISTRACTOR AUDIT & ACCIDENTAL DOUBLE-KEY REJECTION:
+     * Do NOT reject a distractor merely because it asserts a true computer science fact in isolation (e.g., stating in an autoencoder question that "gradient descent uses the chain rule" is true in ML, but definitely incorrect as an answer to the stem).
+     * You MUST reject a distractor with ACCIDENTAL_CORRECT_DISTRACTOR if, under the specific conditions, constraints, or causal question posed by the stem, the distractor is technically defensible as an alternative correct answer.
+     * Example: If the stem asks "Why are GANs unsuited for discrete text generation?", asserting that "GANs lack backpropagation algorithms capable of computing gradients across discrete text vocabulary spaces" is technically correct under those conditions and MUST BE REJECTED as an accidental double key.
    - Reject any question with ungrounded claims going beyond the provided evidence (UNGROUNDED_EVIDENCE_CLAIM).
 2. STEM–ANSWER RESPONSIVENESS & INTERROGATIVE MOOD:
    - The keyed answer MUST directly answer the question asked in the stem.

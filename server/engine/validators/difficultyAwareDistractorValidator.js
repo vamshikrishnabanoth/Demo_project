@@ -70,6 +70,18 @@ class DifficultyAwareDistractorValidator {
       condition: (stem) => /\b(?:minprice|price|cost|weight|distance|product)\b/i.test(stem),
       code: 'ERR_GENERIC_NON_DOMAIN_FILLER',
       reason: 'Generic counter filler used for a price or distance variable'
+    },
+    // Extreme giveaway absolutes creating implausible or giveaway claims
+    {
+      pattern: /\b(?:entirely\s+eliminates?(?:\s+the\s+need\s+for)?|completely\s+prevents?|guarantees\s+zero\s+(?:error|loss|uncertainty)|impossible\s+under\s+any\s+circumstances?)\b/i,
+      code: 'ERR_GIVEAWAY_EXTREME_ADVERB',
+      reason: 'Distractor uses an extreme absolute adverb that creates an obvious test-taking giveaway'
+    },
+    // Arbitrary non-mechanisms
+    {
+      pattern: /\b(?:shifts\s+to\s+(?:an\s+)?(?:entirely\s+)?unrelated|random\s+unrelated\s+tokens?|arbitrary\s+external\s+substitutions?)\b/i,
+      code: 'ERR_ARBITRARY_NON_MECHANISM',
+      reason: 'Distractor introduces an implausible arbitrary non-mechanism'
     }
   ];
 
@@ -96,7 +108,8 @@ class DifficultyAwareDistractorValidator {
     { domain: 'Hardware / CPU Microarchitecture', pattern: /\b(?:hardware clock cycles?|cpu clock drift|32-bit integer overflow in the alu|cache line eviction|branch target buffer)\b/i, allowedDomains: /\b(?:hardware|architecture|cpu|processor|alu|register|clock|circuit|embedded|microprocessor)\b/i },
     { domain: 'Web / Browser State', pattern: /\b(?:browser cache expiration|http cookie timeout|dom manipulation|localstorage quota|session storage)\b/i, allowedDomains: /\b(?:web|browser|http|dom|cookie|frontend|javascript|css|html)\b/i },
     { domain: 'Distributed Consensus', pattern: /\b(?:raft consensus election|paxos consensus round|byzantine fault tolerance|gossip protocol)\b/i, allowedDomains: /\b(?:distributed|consensus|raft|paxos|replication|byzantine|quorum)\b/i },
-    { domain: 'Git / Version Control', pattern: /\b(?:git\s+commit|commit\s+state|working\s+(?:directory|tree)|staging\s+area|git\s+push|git\s+pull|git\s+add|repository\s+clone|detached\s+head)\b/i, allowedDomains: /\b(?:git|vcs|version\s+control|repository|branch|commit)\b/i }
+    { domain: 'Git / Version Control', pattern: /\b(?:git\s+commit|commit\s+state|working\s+(?:directory|tree)|staging\s+area|git\s+push|git\s+pull|git\s+add|repository\s+clone|detached\s+head)\b/i, allowedDomains: /\b(?:git|vcs|version\s+control|repository|branch|commit)\b/i },
+    { domain: 'Relational Databases / SQL', pattern: /\b(?:relational databases?|sql\s+queries?|foreign\s+keys?|database\s+tables?|schema\s+migrations?|acid\s+transactions?)\b/i, allowedDomains: /\b(?:database|sql|relational|dbms|postgres|mysql|sqlite|data\s+warehouse|table)\b/i }
   ];
 
   /**
@@ -180,7 +193,7 @@ class DifficultyAwareDistractorValidator {
     // ─────────────────────────────────────────────────────────────────────────
     // Dimension 6: No Duplicate Reasoning (No synonymous or subset distractors across all options)
     // ─────────────────────────────────────────────────────────────────────────
-    const duplicateDim = this._validateNoDuplicateReasoning(options, stem);
+    const duplicateDim = this._validateNoDuplicateReasoning(options, stem, correctAnswer);
     if (!duplicateDim.passed) {
       flaws.push({ dimension: 'NO_DUPLICATE_REASONING', code: duplicateDim.code, message: duplicateDim.message });
       repairHints.push(`DIFFERENTIATE_DISTRACTOR_REASONING: ${duplicateDim.details}`);
@@ -211,7 +224,9 @@ class DifficultyAwareDistractorValidator {
       'ERR_FORMAT_ASYMMETRY',
       'ERR_IMPLAUSIBLE_SUBSET_RULE',
       'ERR_INPUT_SYNTAX_FILLER',
-      'ERR_GENERIC_NON_DOMAIN_FILLER'
+      'ERR_GENERIC_NON_DOMAIN_FILLER',
+      'ERR_GIVEAWAY_EXTREME_ADVERB',
+      'ERR_ARBITRARY_NON_MECHANISM'
     ];
     const hasFatalFlaw = flaws.some(f => fatalCodes.includes(f.code));
 
@@ -465,6 +480,35 @@ class DifficultyAwareDistractorValidator {
     const minLen = Math.min(...allLens);
     const ratio = minLen > 0 ? (maxLen / minLen) : 999;
 
+    // Live-quiz option length ceilings (180 char hard ceiling; 130 char soft threshold with justified technical exceptions)
+    for (let i = 0; i < options.length; i++) {
+      const opt = options[i];
+      if (opt.length > 180) {
+        return {
+          passed: false,
+          code: 'OPTION_TOO_VERBOSE',
+          affectedOptionIndices: [i],
+          message: 'Option [' + i + '] (' + opt.length + ' chars) exceeds 180-character live-quiz hard ceiling.',
+          details: 'Options must not be paragraph-length for live classroom playability.'
+        };
+      }
+      if (opt.length > 130) {
+        const isCode = this.isCodeSnippet(opt) || /`[^`]+`/.test(opt);
+        const isMath = /[$\\]|\b(?:log|O\(|theta\(|Omega\(|\\sum|\\frac)\b/i.test(opt);
+        const words = opt.trim().split(/\s+/).length;
+        const isComparativePhrase = words <= 20 && opt.length <= 150 && /\b(?:whereas|while|in contrast to)\b/i.test(opt);
+        if (!isCode && !isMath && !isComparativePhrase) {
+          return {
+            passed: false,
+            code: 'OPTION_TOO_VERBOSE',
+            affectedOptionIndices: [i],
+            message: 'Option [' + i + '] (' + opt.length + ' chars, ' + words + ' words) exceeds 130-character live-quiz threshold without a justified technical exception.',
+            details: 'Live-quiz options should preferably be 14 words or fewer and under 80 characters.'
+          };
+        }
+      }
+    }
+
     return {
       passed: true,
       lengthRatio: ratio.toFixed(2),
@@ -518,7 +562,7 @@ class DifficultyAwareDistractorValidator {
     exists: 'present'
   };
 
-  static _validateNoDuplicateReasoning(options, stem) {
+  static _validateNoDuplicateReasoning(options, stem, correctAnswer = '') {
     const normalizeToken = w => this.SYNONYM_MAP[w] || w;
     const cleanTokens = s => s.toLowerCase()
       .replace(/[^\w\s]/g, '')
@@ -604,6 +648,77 @@ class DifficultyAwareDistractorValidator {
         }
       }
     }
+    // Conservative check for 3 distractors rephrasing the exact same comparative polar role reversal
+    const distractors = options.filter(o => o !== correctAnswer);
+    if (distractors.length === 3) {
+      const compSplit = /\b(?:whereas|while|in\s+contrast\s+to|unlike|instead\s+of)\b/i;
+      const compDistractors = distractors.map(d => {
+        const parts = d.split(compSplit);
+        return parts.length === 2 ? { left: parts[0].trim().toLowerCase(), right: parts[1].trim().toLowerCase(), raw: d } : null;
+      });
+
+      if (compDistractors.every(Boolean)) {
+        const extractSubject = s => s.trim().split(/\s+/)[0].replace(/[^\w]/g, '').toLowerCase();
+        const s0 = extractSubject(compDistractors[0].left);
+        const s1 = extractSubject(compDistractors[1].left);
+        const s2 = extractSubject(compDistractors[2].left);
+        const r0 = extractSubject(compDistractors[0].right);
+        const r1 = extractSubject(compDistractors[1].right);
+        const r2 = extractSubject(compDistractors[2].right);
+
+        if (s0 === s1 && s1 === s2 && s0.length > 2 && r0 === r1 && r1 === r2 && r0.length > 2) {
+          // EXPLICIT FALSE-POSITIVE SHIELD: Check if distinct technical dimensions are tested
+          const distinctDimensions = [
+            /\b(?:memory|space|ram|storage|o\(1\)|o\(n\)|auxiliary)\b/i,
+            /\b(?:time|complexity|worst-case|best-case|average-case|speed)\b/i,
+            /\b(?:stable|stability|order\s+of\s+duplicate|unstable)\b/i,
+            /\b(?:recursive|recursion|stack|iterative|iterat)\b/i,
+            /\b(?:in-place|cache|locality|bandwidth)\b/i
+          ];
+          const hits = compDistractors.map(cd => distinctDimensions.findIndex(dim => dim.test(cd.raw)));
+          const testsDistinctDimensions = (hits[0] !== -1 && hits[1] !== -1 && hits[2] !== -1 && hits[0] !== hits[1] && hits[1] !== hits[2]);
+
+          if (!testsDistinctDimensions) {
+            const CONTRAST_CLUSTERS = [
+              {
+                name: 'sequence_vs_classification',
+                left: /\b(?:sequence|token\w*|word\w*|probabilit\w*|iterat\w*)\b/i,
+                right: /\b(?:class\w*|categor\w*|binary|label\w*|boundar\w*)\b/i
+              },
+              {
+                name: 'generative_vs_discriminative',
+                left: /\b(?:generat\w*|synthe\w*|creat\w*|produc\w*)\b/i,
+                right: /\b(?:discrimin\w*|classif\w*|distinguish|detect\w*)\b/i
+              },
+              {
+                name: 'continuous_vs_discrete',
+                left: /\b(?:continuous|pixel\w*|spatial|image\w*)\b/i,
+                right: /\b(?:discrete|text\w*|word\w*|token\w*|symbolic)\b/i
+              },
+              {
+                name: 'latent_compression_vs_reconstruction',
+                left: /\b(?:compress\w*|bottleneck|latent|dimension\w*)\b/i,
+                right: /\b(?:reconstruct\w*|decompress\w*|decod\w*)\b/i
+              }
+            ];
+
+            const matchesSameContrast = CONTRAST_CLUSTERS.some(cluster =>
+              compDistractors.every(cd => cluster.left.test(cd.left) && cluster.right.test(cd.right))
+            );
+
+            if (matchesSameContrast) {
+              return {
+                passed: false,
+                code: 'SYNONYMOUS_DISTRACTORS',
+                message: 'All three distractors rephrase the same comparative role inversion across the same property.',
+                details: 'Each distractor must embody an independent conceptual trap, not three polar flips of the same Subject A vs B relationship.'
+              };
+            }
+          }
+        }
+      }
+    }
+
     return { passed: true, details: 'Option choices represent distinct, non-overlapping conceptual choices' };
   }
 
