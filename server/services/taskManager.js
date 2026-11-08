@@ -109,16 +109,39 @@ function getActiveRunningJobCount() {
 
 /**
  * Calculate a bounded adaptive watchdog timeout based on workload.
- * Base preparation time (ingestion, evidence packaging, planning) + estimated question generation work.
- * Bounded between min (360s = 6m) and max (600s = 10m).
+ * Workload-Aware Operational SLA Policy:
+ * Base SLA floor: 420s (7 min) for small inputs (<= 15,000 chars)
+ * Medium SLA: 600s (10 min) for 15k - 30k chars
+ * Heavy SLA: 900s (15 min base) for > 30k chars (e.g. 75-min lecture = 59k chars, 25 Qs)
+ * Reconciles with the measured 19m51s (1191s) worst-case long-lecture baseline.
+ * Strictly bounded operational ceiling: 1200s (20 minutes). Never unbounded.
  */
-function calculateAdaptiveTimeoutMs(questionCount = 5) {
-  const count = parseInt(questionCount, 10) || 5;
-  const basePrepMs = 120000; // 120s for ingestion, audio handling/transcription, Agent 1 planning
-  const perQuestionMs = 12000; // 12s per question safety allowance with concurrency
-  const computed = basePrepMs + (count * perQuestionMs);
-  const minTimeoutMs = 360000; // 6 minutes floor
-  const maxTimeoutMs = 600000; // 10 minutes hard ceiling to prevent runaway jobs
+function calculateAdaptiveTimeoutMs(options = {}) {
+  let count = 5;
+  let textLength = 0;
+  if (typeof options === 'number') {
+    count = options;
+  } else if (typeof options === 'object' && options !== null) {
+    count = parseInt(options.questionCount, 10) || 5;
+    textLength = parseInt(options.textLength || options.charCount || 0, 10);
+  }
+
+  let baseSlaMs = 420000; // 7 min base
+  let perQuestionSafetyMs = 8000; // 8s per question for small inputs
+
+  if (textLength > 30000) {
+    // Heavy long-lecture workload (>30k chars / 75-min transcript e.g. 59,390 chars)
+    // Reconciled with measured 19m51s (1191s) worst-case peak API baseline
+    baseSlaMs = 900000; // 15 min base
+    perQuestionSafetyMs = 12000; // 12s per question (25 Qs = +300s -> 1200s total)
+  } else if (textLength > 15000) {
+    baseSlaMs = 600000; // 10 min base
+    perQuestionSafetyMs = 10000; // 10s per question
+  }
+
+  const computed = baseSlaMs + (count * perQuestionSafetyMs);
+  const minTimeoutMs = 420000;   // 7 minutes floor
+  const maxTimeoutMs = 1200000;  // 20 minutes strictly bounded operational ceiling
   return Math.min(maxTimeoutMs, Math.max(minTimeoutMs, computed));
 }
 
@@ -134,10 +157,12 @@ function createTask(options = {}) {
   const idempotencyKey = typeof options === 'object' ? options?.idempotencyKey : null;
   const timeoutMs = (typeof options === 'object' && options?.timeoutMs)
     ? options.timeoutMs
-    : calculateAdaptiveTimeoutMs(options?.questionCount || 5);
+    : calculateAdaptiveTimeoutMs(options);
 
   // 1. Idempotency Check: if identical request is currently active or fresh, reuse taskId
-  if (idempotencyKey && idempotencyIndex.has(idempotencyKey)) {
+  if (options?.isRetry && idempotencyKey) {
+    idempotencyIndex.delete(idempotencyKey);
+  } else if (idempotencyKey && idempotencyIndex.has(idempotencyKey)) {
     const existingId = idempotencyIndex.get(idempotencyKey);
     const existing = tasks.get(existingId);
     if (existing && (existing.status === 'RUNNING' || existing.status === 'COMPLETED')) {
@@ -174,6 +199,9 @@ function createTask(options = {}) {
     id,
     userId,
     idempotencyKey,
+    abortController: new AbortController(),
+    manifest: null,
+    isPublished: false,
     status: 'RUNNING',
     state: TaskStates.UPLOADED,
     stage: 0,
@@ -319,6 +347,12 @@ function completeTask(taskId, result) {
   const task = tasks.get(taskId);
   if (!task) return;
 
+  // DUAL-LOCK GUARD: Reject if task is no longer RUNNING or abort signal fired
+  if (task.status !== 'RUNNING' || task.abortController?.signal?.aborted) {
+    console.warn(`[TaskManager] completeTask rejected: task ${taskId} is terminal (${task.status}) or aborted (${task.abortController?.signal?.aborted}). Result discarded.`);
+    return;
+  }
+
   if (task.timeoutTimer) {
     clearTimeout(task.timeoutTimer);
     task.timeoutTimer = null;
@@ -331,6 +365,17 @@ function completeTask(taskId, result) {
   task.stageLabel = 'Completed';
   task.completedAt = Date.now();
   task.result = result;
+
+  // Build canonical manifest for publication provenance verification
+  if (result && Array.isArray(result.questions)) {
+    task.manifest = result.questions.map((q, idx) => ({
+      qOriginId: q.qOriginId || `${taskId}_q${String(idx + 1).padStart(2, '0')}`,
+      stem: q.questionText || q.question || '',
+      correctAnswer: q.correctAnswer || q.correct_answer || '',
+      conceptTested: q.concept_tag || q.sub_topic || q.conceptTested || 'General',
+      targetId: q.targetId || idx + 1
+    }));
+  }
 
   const durationMs = task.completedAt - task.createdAt;
   productionMetrics.recordLatency('total_job', durationMs);
@@ -353,6 +398,14 @@ function completeTask(taskId, result) {
 function failTask(taskId, error, errorCode = 'FAILED_INTERNAL') {
   const task = tasks.get(taskId);
   if (!task) return;
+
+  // Terminal state immutability
+  if (task.status !== 'RUNNING') return;
+
+  // Synchronously abort in-flight asynchronous operations
+  try {
+    task.abortController?.abort();
+  } catch (_) {}
 
   if (task.timeoutTimer) {
     clearTimeout(task.timeoutTimer);
@@ -458,6 +511,11 @@ function cancelTask(taskId, requestingUserId = null) {
 
   if (task.status !== 'RUNNING') return false;
 
+  // Synchronously abort in-flight asynchronous operations
+  try {
+    task.abortController?.abort();
+  } catch (_) {}
+
   if (task.timeoutTimer) {
     clearTimeout(task.timeoutTimer);
     task.timeoutTimer = null;
@@ -500,6 +558,46 @@ function runCleanup() {
 const _cleanupTimer = setInterval(runCleanup, CLEANUP_INTERVAL_MS);
 if (_cleanupTimer.unref) _cleanupTimer.unref();
 
+
+/**
+ * Preempt an in-flight task when the user requests a retry.
+ * Synchronously marks the old task CANCELLED and fires abort signal before the replacement starts.
+ */
+function preemptTaskForRetry(oldTaskId, requestingUserId = null) {
+  const oldTask = tasks.get(oldTaskId);
+  if (!oldTask) return false;
+
+  if (requestingUserId && oldTask.userId && oldTask.userId !== requestingUserId) {
+    return false;
+  }
+
+  if (oldTask.status === 'RUNNING') {
+    try {
+      oldTask.abortController?.abort();
+    } catch (_) {}
+
+    if (oldTask.timeoutTimer) {
+      clearTimeout(oldTask.timeoutTimer);
+      oldTask.timeoutTimer = null;
+    }
+
+    oldTask.status = 'CANCELLED';
+    oldTask.state = TaskStates.CANCELLED || 'CANCELLED';
+    oldTask.completedAt = Date.now();
+    oldTask.error = 'Superseded by generation retry.';
+    oldTask.errorCode = 'SUPERSEDED_BY_RETRY';
+
+    // Clear preempted task from idempotency index so retry generates a genuinely new task
+    if (oldTask.idempotencyKey) {
+      idempotencyIndex.delete(oldTask.idempotencyKey);
+    }
+
+    taskEmitter.emit(`task:${oldTaskId}`, { type: 'cancelled', taskId: oldTaskId });
+    return true;
+  }
+  return false;
+}
+
 module.exports = {
   TaskStates,
   TaskFailureCodes,
@@ -515,5 +613,6 @@ module.exports = {
   getUserActiveTasks,
   getActiveRunningJobCount,
   calculateAdaptiveTimeoutMs,
-  cancelTask
+  cancelTask,
+  preemptTaskForRetry
 };

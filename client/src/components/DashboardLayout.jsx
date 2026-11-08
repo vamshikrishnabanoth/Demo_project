@@ -32,6 +32,35 @@ import { uiTerminology } from '../utils/uiTerminology';
 
 import { prefetchRoute } from '../utils/routePrefetch';
 
+// Persistent & in-memory broadcast event deduplication
+const memoryProcessedEvents = new Set();
+
+export function isDuplicateBroadcastEvent(eventId) {
+    if (!eventId) return false;
+    try {
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+            const stored = JSON.parse(window.sessionStorage.getItem('seen_broadcast_events') || '[]');
+            if (stored.includes(eventId)) {
+                return true;
+            }
+            stored.push(eventId);
+            if (stored.length > 200) stored.shift();
+            window.sessionStorage.setItem('seen_broadcast_events', JSON.stringify(stored));
+            return false;
+        }
+    } catch (_) {}
+
+    if (memoryProcessedEvents.has(eventId)) {
+        return true;
+    }
+    memoryProcessedEvents.add(eventId);
+    if (memoryProcessedEvents.size > 200) {
+        const first = memoryProcessedEvents.values().next().value;
+        memoryProcessedEvents.delete(first);
+    }
+    return false;
+}
+
 export default function DashboardLayout({ children, role }) {
     const { logout, user } = useContext(AuthContext);
     const location  = useLocation();
@@ -71,6 +100,11 @@ export default function DashboardLayout({ children, role }) {
 
         const handleNewBroadcast = (broadcast) => {
             if (role !== 'student') return;
+            const eventId = broadcast?.eventId || (broadcast?.id ? `bcast_${broadcast.id}` : null);
+            if (eventId && isDuplicateBroadcastEvent(eventId)) {
+                console.log(`[DashboardLayout] Deduplicating repeated broadcast event: ${eventId}`);
+                return;
+            }
             toast.success(`New Announcement: ${broadcast.title}`, {
                 style: {
                     background: '#161618',

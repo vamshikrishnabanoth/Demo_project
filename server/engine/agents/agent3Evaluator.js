@@ -291,7 +291,8 @@ ${evidenceContext}
         model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
         sessionId: evidencePackage?.sessionId,
         maxTokens: 2500,
-        operation: 'EVALUATION'
+        operation: 'EVALUATION',
+        signal: evidencePackage?.abortSignal || target?.abortSignal
       });
       const evalTimeout = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Agent 3 LLM evaluation timed out after 15s')), evalTimeoutMs)

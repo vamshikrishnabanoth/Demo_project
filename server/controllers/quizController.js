@@ -1121,6 +1121,12 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             }
         };
 
+        if (taskId) {
+            const taskObj = getTask(taskId);
+            if (taskObj?.abortController) {
+                sessionInputs.abortSignal = taskObj.abortController.signal;
+            }
+        }
         const result = await pipelineOrchestrator.runPipeline(sessionInputs, progressCallback);
         if (result && result.questions && result.questions.length > 0) {
             console.log(`✅ [Baseline v1.0] 3-Agent Pipeline delivered ${result.questions.length} questions.`);
@@ -1247,58 +1253,175 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
 
 // No longer need extractCloudText because the Python service handles it now
 
-const autoBroadcastLiveQuiz = async (quiz, req) => {
-    try {
-        // Only auto-broadcast if it is an active live quiz and is not scheduled in the future and autoBroadcast is allowed
-        if (!quiz.isLive || !quiz.isActive || quiz.autoBroadcast === false) return;
+// ─────────────────────────────────────────────────────────────────────────────
+// REL-12: Durable Broadcast Lease & Atomic Delivery Management
+// ─────────────────────────────────────────────────────────────────────────────
+async function claimBroadcastDispatchLease(broadcastId, workerId, leaseTtlMs = 30000) {
+    const now = new Date();
+    const leaseToken = crypto.randomUUID();
+    const leaseExpiresAt = new Date(now.getTime() + leaseTtlMs);
 
-        const now = new Date();
-        if (quiz.startTime && new Date(quiz.startTime) > now) {
-            return;
+    const claimResult = await prisma.broadcast.updateMany({
+        where: {
+            id: broadcastId,
+            OR: [
+                { deliveryStatus: 'pending' },
+                {
+                    deliveryStatus: 'dispatching',
+                    leaseExpiresAt: { lte: now } // ONLY reclaim if prior lease expired
+                }
+            ]
+        },
+        data: {
+            deliveryStatus: 'dispatching',
+            leaseOwner: workerId,
+            leaseExpiresAt: leaseExpiresAt,
+            leaseToken: leaseToken
         }
+    });
 
-        // Avoid duplicate broadcasts for the same quiz
-        const existingBroadcast = await prisma.broadcast.findFirst({
-            where: { quizId: quiz.id }
+    return { acquired: claimResult.count === 1, leaseToken, leaseExpiresAt };
+}
+
+async function renewBroadcastLease(broadcastId, leaseToken, ttlMs = 30000) {
+    const now = new Date();
+    const newExpiresAt = new Date(now.getTime() + ttlMs);
+    const renewResult = await prisma.broadcast.updateMany({
+        where: {
+            id: broadcastId,
+            deliveryStatus: 'dispatching',
+            leaseToken: leaseToken,
+            leaseExpiresAt: { gt: now } // Invariant: Must be currently unexpired
+        },
+        data: {
+            leaseExpiresAt: newExpiresAt
+        }
+    });
+    return renewResult.count === 1 ? newExpiresAt : null;
+}
+
+async function completeBroadcastDispatch(broadcastId, quizId, workerId, leaseToken) {
+    const now = new Date();
+    try {
+        await prisma.$transaction(async (tx) => {
+            const bcastUpdate = await tx.broadcast.updateMany({
+                where: {
+                    id: broadcastId,
+                    deliveryStatus: 'dispatching',
+                    leaseToken: leaseToken,
+                    leaseExpiresAt: { gt: now } // Must be strictly unexpired
+                },
+                data: {
+                    deliveryStatus: 'delivered',
+                    leaseOwner: null,
+                    leaseExpiresAt: null,
+                    leaseToken: null
+                }
+            });
+
+            if (bcastUpdate.count === 0) {
+                throw new Error(`LEASE_INACTIVE: Worker ${workerId} lost active lease for broadcast ${broadcastId}`);
+            }
+
+            await tx.quiz.update({
+                where: { id: quizId },
+                data: { broadcastStatus: true }
+            });
         });
-        if (existingBroadcast) return;
+        return true;
+    } catch (err) {
+        console.warn(`[completeBroadcastDispatch] Transaction rolled back: ${err.message}`);
+        return false;
+    }
+}
 
-        // Fetch teacher details
-        const teacher = await prisma.user.findUnique({
-            where: { id: quiz.createdById },
-            select: { name: true, username: true }
-        });
+// In-process promise mutex to serialize simultaneous broadcasts for the same quiz
+const activeBroadcastMutex = new Map();
 
-        const title = `🚨 Live Arena Invitation: ${quiz.title}`;
-        const message = `Professor ${teacher.name || teacher.username} has launched a live quiz lobby! Click below to enter the Arena and start competing instantly.`;
+const executeAutoBroadcastLiveQuiz = async (quiz, req) => {
+    try {
+        if (!quiz.isLive || !quiz.isActive || quiz.autoBroadcast === false) return;
+        const now = new Date();
+        if (quiz.startTime && new Date(quiz.startTime) > now) return;
 
-        // Save Broadcast to PostgreSQL
-        const broadcast = await prisma.broadcast.create({
-            data: {
-                senderId: quiz.createdById,
-                quizId: quiz.id,
-                title,
-                message,
-                pin: quiz.joinCode,
-                assignedGroups: quiz.assignedGroups || [],
-                assignedStudents: quiz.assignedStudents || [],
-                expiresAt: quiz.endTime ? new Date(quiz.endTime) : new Date(now.getTime() + 2 * 60 * 60 * 1000), // Default 2 hours expiry
-                isPinned: true,
-                deliveryStatus: 'delivered'
-            },
+        // 1. Locate or create durable Broadcast row
+        let broadcast = await prisma.broadcast.findFirst({
+            where: { quizId: quiz.id },
             include: {
                 sender: { select: { name: true, username: true } },
                 quiz: { select: { title: true } }
             }
         });
 
-        console.log(`📡 [AUTO-BROADCAST] Generated broadcast for Live Quiz: ${quiz.title}`);
+        if (!broadcast) {
+            const teacher = await prisma.user.findUnique({
+                where: { id: quiz.createdById },
+                select: { name: true, username: true }
+            });
 
-        // Trigger Socket.io real-time notifications to online targeted students
-        const io = req.app.get('io');
-        const userSockets = req.app.get('userSockets');
+            const title = `🚨 Live Arena Invitation: ${quiz.title}`;
+            const message = `Professor ${teacher?.name || teacher?.username || 'Instructor'} has launched a live quiz lobby! Click below to enter the Arena.`;
 
-        if (io && userSockets) {
+            broadcast = await prisma.broadcast.create({
+                data: {
+                    senderId: quiz.createdById,
+                    quizId: quiz.id,
+                    title,
+                    message,
+                    pin: quiz.joinCode,
+                    assignedGroups: quiz.assignedGroups || [],
+                    assignedStudents: quiz.assignedStudents || [],
+                    expiresAt: quiz.endTime ? new Date(quiz.endTime) : new Date(now.getTime() + 2 * 60 * 60 * 1000),
+                    isPinned: true,
+                    deliveryStatus: 'pending' // Initial durable pending state
+                },
+                include: {
+                    sender: { select: { name: true, username: true } },
+                    quiz: { select: { title: true } }
+                }
+            });
+        }
+
+        // 2. If already delivered, skip socket dispatch
+        if (broadcast.deliveryStatus === 'delivered') {
+            console.log(`📡 [safeAutoBroadcast] Broadcast ${broadcast.id} already verified delivered for Quiz ${quiz.id}. Skipping duplicate emit.`);
+            return broadcast;
+        }
+
+        // 3. Atomically acquire dispatch lease
+        const workerId = `worker_${process.pid}_${crypto.randomBytes(3).toString('hex')}`;
+        const claim = await claimBroadcastDispatchLease(broadcast.id, workerId, 30000);
+        if (!claim.acquired) {
+            console.log(`📡 [safeAutoBroadcast] Broadcast ${broadcast.id} is actively held by another instance. Skipping concurrent dispatch.`);
+            return broadcast;
+        }
+
+        // 4. Dispatch Socket.IO notifications with stable eventId & heartbeat renewal
+        const io = req?.app?.get ? req.app.get('io') : null;
+        const userSockets = req?.app?.get ? req.app.get('userSockets') : null;
+
+        // If Socket.IO or userSockets is unavailable, do NOT mark delivered
+        if (!io || !userSockets) {
+            console.warn(`⚠️ [safeAutoBroadcast] Socket.IO instance or userSockets map unavailable on request. Skipping dispatch without marking delivered.`);
+            return broadcast;
+        }
+
+        let leaseActive = true;
+        let currentLeaseExpiresAt = claim.leaseExpiresAt;
+
+        const heartbeatTimer = setInterval(async () => {
+            const renewedExpiresAt = await renewBroadcastLease(broadcast.id, claim.leaseToken, 30000);
+            if (renewedExpiresAt) {
+                currentLeaseExpiresAt = renewedExpiresAt;
+            } else {
+                console.warn(`⚠️ [safeAutoBroadcast] Heartbeat renewal failed for broadcast ${broadcast.id}. Lease lost.`);
+                leaseActive = false;
+                clearInterval(heartbeatTimer);
+            }
+        }, 10000);
+        if (heartbeatTimer.unref) heartbeatTimer.unref();
+
+        try {
             const activeStudents = await prisma.user.findMany({
                 where: { role: 'student' }
             });
@@ -1308,9 +1431,7 @@ const autoBroadcastLiveQuiz = async (quiz, req) => {
                     (!assignedStudents || assignedStudents.length === 0)) {
                     return true;
                 }
-                if (assignedStudents && assignedStudents.includes(student.id)) {
-                    return true;
-                }
+                if (assignedStudents && assignedStudents.includes(student.id)) return true;
                 if (assignedGroups && assignedGroups.length > 0) {
                     try {
                         const groups = typeof assignedGroups === 'string' ? JSON.parse(assignedGroups) : assignedGroups;
@@ -1328,17 +1449,22 @@ const autoBroadcastLiveQuiz = async (quiz, req) => {
                 return false;
             };
 
-            activeStudents.forEach(student => {
+            for (const student of activeStudents) {
+                if (!leaseActive || Date.now() >= new Date(currentLeaseExpiresAt).getTime()) {
+                    console.warn(`⚠️ [safeAutoBroadcast] Lease expired or lost during socket dispatch for broadcast ${broadcast.id}. Halting emit loop.`);
+                    break;
+                }
                 if (isStudentTargeted(student, quiz.assignedGroups, quiz.assignedStudents)) {
                     const socketSet = userSockets.get(student.id);
                     if (socketSet && socketSet.size > 0) {
                         socketSet.forEach(socketId => {
                             io.to(socketId).emit('new_broadcast', {
+                                eventId: `bcast_${broadcast.id}`, // Stable idempotent event ID
                                 id: broadcast.id,
                                 title: broadcast.title,
                                 message: broadcast.message,
-                                senderName: broadcast.sender.name || broadcast.sender.username,
-                                quizTitle: broadcast.quiz.title,
+                                senderName: broadcast.sender?.name || broadcast.sender?.username || 'Instructor',
+                                quizTitle: broadcast.quiz?.title || quiz.title,
                                 pin: broadcast.pin,
                                 createdAt: broadcast.createdAt,
                                 expiresAt: broadcast.expiresAt,
@@ -1347,12 +1473,46 @@ const autoBroadcastLiveQuiz = async (quiz, req) => {
                         });
                     }
                 }
-            });
+            }
+
+            // 5. Complete dispatch atomically inside single Prisma transaction
+            if (!leaseActive || Date.now() >= new Date(currentLeaseExpiresAt).getTime()) {
+                console.warn(`⚠️ [safeAutoBroadcast] Lease expired before completion could be recorded for broadcast ${broadcast.id}.`);
+                return broadcast;
+            }
+
+            const delivered = await completeBroadcastDispatch(broadcast.id, quiz.id, workerId, claim.leaseToken);
+            if (!delivered) {
+                console.warn(`⚠️ [safeAutoBroadcast] completeBroadcastDispatch failed for broadcast ${broadcast.id} (lease expired or transaction rolled back). Dispatch not completed.`);
+                return broadcast;
+            }
+
+            console.log(`✅ [safeAutoBroadcast] Broadcast ${broadcast.id} successfully delivered for Quiz ${quiz.id}.`);
+        } finally {
+            clearInterval(heartbeatTimer);
         }
+
+        return broadcast;
     } catch (err) {
-        console.error('❌ Error executing auto-broadcast:', err);
+        console.error('❌ Error executing safeAutoBroadcastLiveQuiz:', err);
     }
 };
+
+const safeAutoBroadcastLiveQuiz = async (quiz, req) => {
+    if (!quiz || !quiz.id) return;
+    if (activeBroadcastMutex.has(quiz.id)) {
+        return await activeBroadcastMutex.get(quiz.id);
+    }
+    const broadcastPromise = executeAutoBroadcastLiveQuiz(quiz, req);
+    activeBroadcastMutex.set(quiz.id, broadcastPromise);
+    try {
+        return await broadcastPromise;
+    } finally {
+        activeBroadcastMutex.delete(quiz.id);
+    }
+};
+
+const autoBroadcastLiveQuiz = safeAutoBroadcastLiveQuiz;
 
 const generateJoinCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -1455,6 +1615,33 @@ exports.createQuiz = async (req, res) => {
             });
         }
 
+        // --- PROVENANCE & CANCELLATION ENFORCEMENT GUARD ---
+        const effectiveTaskId = req.body.taskId || req.body.sourceTaskId;
+        if (effectiveTaskId) {
+            const { getTask } = require('../services/taskManager');
+            const task = getTask(effectiveTaskId);
+            if (task) {
+                if (task.status === 'CANCELLED' || task.status === 'FAILED') {
+                    return res.status(400).json({
+                        msg: `Publication rejected: Task ${effectiveTaskId} is ${task.status} and cannot publish results.`,
+                        code: `TASK_${task.status}`
+                    });
+                }
+                if (task.manifest && Array.isArray(task.manifest) && task.manifest.length > 0) {
+                    const { validateSubmissionProvenance } = require('../services/provenanceValidator');
+                    const provResult = validateSubmissionProvenance(finalQuestions, task.manifest);
+                    if (!provResult.valid) {
+                        console.warn(`[createQuiz] Publication rejected for task ${effectiveTaskId}: Provenance violation: ${provResult.error}`);
+                        return res.status(400).json({
+                            msg: `Publication rejected: Question provenance verification failed (${provResult.error}). Teacher edits altered the fundamental concept, answer, or polarity scope.`,
+                            code: provResult.error,
+                            detail: provResult.detail
+                        });
+                    }
+                }
+            }
+        }
+
         if (isLive === 'true' || isLive === true) {
             // Automatic Cleanup: Deactivate existing active live quizzes for this teacher
             await prisma.quiz.updateMany({
@@ -1517,6 +1704,7 @@ exports.createQuiz = async (req, res) => {
         const newQuiz = await prisma.quiz.create({
             data: {
                 title: finalQuizTitle,
+                sourceTaskId: (req.body.taskId || req.body.sourceTaskId) || null,
                 description: `Level: ${difficulty || 'Medium'}`,
                 questions: finalQuestions,
                 createdById: req.user.id,
@@ -1588,6 +1776,21 @@ exports.createQuiz = async (req, res) => {
         res.status(201).json(newQuiz);
 
     } catch (err) {
+        // P2002 Idempotent Publication Recovery for sourceTaskId
+        if (err.code === 'P2002' && (err.meta?.target?.includes('sourceTaskId') || String(err.message).includes('sourceTaskId'))) {
+            const effectiveTaskId = req.body.taskId || req.body.sourceTaskId;
+            console.warn(`[createQuiz] Duplicate publication replay detected for task ${effectiveTaskId}. Initiating idempotent recovery.`);
+            const existing = await prisma.quiz.findUnique({
+                where: { sourceTaskId: effectiveTaskId }
+            });
+            if (existing) {
+                if (existing.isLive && existing.autoBroadcast) {
+                    await safeAutoBroadcastLiveQuiz(existing, req);
+                }
+                return res.status(200).json(existing);
+            }
+        }
+
         console.error('❌ Final CreateQuiz Error:', err.message);
         if (err.code === 'INSUFFICIENT_READABLE_EVIDENCE' || (err.message && err.message.includes('INSUFFICIENT_READABLE_EVIDENCE'))) {
             return res.status(400).json({
@@ -2979,6 +3182,12 @@ exports.generateQuizQuestions = async (req, res) => {
         const idempotencyKey = crypto.createHash('sha256').update(idempotencyRaw).digest('hex');
 
         const reqQuestionCount = parseInt(req.body.questionCount || req.body.question_count, 10) || 5;
+        if (req.body.retryFromTaskId) {
+            try {
+                const { preemptTaskForRetry } = require('../services/taskManager');
+                preemptTaskForRetry(req.body.retryFromTaskId, req.user?.id);
+            } catch (_) {}
+        }
         let taskId;
         try {
             taskId = createTask({ userId: req.user?.id, idempotencyKey, questionCount: reqQuestionCount });
@@ -3703,6 +3912,11 @@ exports.generateQuizQuestions = async (req, res) => {
                 lectureDepth = depthAnalysis.lectureDepth;
             }
 
+            const activeTaskObj = getTask(taskId);
+            if (!activeTaskObj || activeTaskObj.status !== 'RUNNING' || activeTaskObj.abortController?.signal?.aborted) {
+                console.warn(`[QuizController] Discarding late pipeline output for task ${taskId}: task terminal or aborted.`);
+                return;
+            }
             completeTask(taskId, {
                 questions:       finalQuestions,
                 title:           extractedTitle,
@@ -5197,7 +5411,7 @@ exports.analyzeDepth = async (req, res) => {
                 capacityByDifficulty = {
                     easy: Math.max(3, Math.round(easyPart * 1.5)),
                     medium: Math.max(3, Math.round(medPart * 1.5)),
-                    hard: supportsHard ? Math.max(1, Math.round(hardPart * 1.5)) : 1,
+                    hard: supportsHard ? Math.max(1, Math.round(hardPart * 1.5)) : 0,
                     balanced: Math.max(5, Math.round(balancedPart * 1.5))
                 };
                 totalDefensibleCapacity = capacityByDifficulty.balanced;
@@ -5647,7 +5861,7 @@ exports.analyzeLectureRecording = async (req, res) => {
 
     const { createTask, updateTaskStage, completeTask, failTask } = require('../services/taskManager');
     const lectureAnalyzer = require('../engine/evidence/lectureAnalyzer');
-    const taskId = createTask({ userId: req.user?.id, timeoutMs: 360000 });
+    const taskId = createTask({ userId: req.user?.id, textLength: rawText.length || (hasFile ? 60000 : 0) });
 
     res.json({ taskId, status: 'PROCESSING', message: 'Lecture analysis started successfully.' });
 

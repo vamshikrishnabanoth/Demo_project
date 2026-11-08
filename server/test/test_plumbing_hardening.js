@@ -46,26 +46,31 @@ async function runPlumbingTests() {
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Test 1: Adaptive Watchdog Timeout Floor & Ceiling
+  // Test 1: Adaptive Watchdog Timeout Floor & Ceiling (Workload-Aware SLA)
   // ──────────────────────────────────────────────────────────────────────────
-  runCheck('1.1 calculateAdaptiveTimeoutMs floors at 360s for small counts (5 Qs)', () => {
+  runCheck('1.1 calculateAdaptiveTimeoutMs floors at 420s for small counts (5 Qs)', () => {
     const timeout = calculateAdaptiveTimeoutMs(5);
-    assert.strictEqual(timeout, 360000, `Expected 360000 ms (6m floor), got ${timeout}`);
+    assert.strictEqual(timeout, 460000, `Expected 460000 ms (420s base + 5*8s), got ${timeout}`);
   });
 
-  runCheck('1.2 calculateAdaptiveTimeoutMs floors at 360s for 10 Qs', () => {
+  runCheck('1.2 calculateAdaptiveTimeoutMs scales for 10 Qs (500s)', () => {
     const timeout = calculateAdaptiveTimeoutMs(10);
-    assert.strictEqual(timeout, 360000, `Expected 360000 ms (6m floor), got ${timeout}`);
+    assert.strictEqual(timeout, 500000, `Expected 500000 ms (420s base + 10*8s), got ${timeout}`);
   });
 
-  runCheck('1.3 calculateAdaptiveTimeoutMs scales appropriately for 25 Qs (420s)', () => {
+  runCheck('1.3 calculateAdaptiveTimeoutMs scales appropriately for 25 Qs (620s)', () => {
     const timeout = calculateAdaptiveTimeoutMs(25);
-    assert.strictEqual(timeout, 420000, `Expected 420000 ms (420s / 7m), got ${timeout}`);
+    assert.strictEqual(timeout, 620000, `Expected 620000 ms (420s base + 25*8s), got ${timeout}`);
   });
 
-  runCheck('1.4 calculateAdaptiveTimeoutMs enforces hard ceiling of 600s for 100 Qs', () => {
+  runCheck('1.4 calculateAdaptiveTimeoutMs enforces strictly bounded ceiling of 1200s for 100 Qs', () => {
     const timeout = calculateAdaptiveTimeoutMs(100);
-    assert.strictEqual(timeout, 600000, `Expected 600000 ms (600s / 10m max), got ${timeout}`);
+    assert.strictEqual(timeout, 1200000, `Expected 1200000 ms (1200s / 20m max), got ${timeout}`);
+  });
+
+  runCheck('1.5 calculateAdaptiveTimeoutMs reconciles heavy 75-min lecture with 19m51s baseline', () => {
+    const timeout = calculateAdaptiveTimeoutMs({ questionCount: 25, textLength: 59390 });
+    assert.strictEqual(timeout, 1200000, `Expected 1200000 ms (20 min upper bound encompassing 19m51s), got ${timeout}`);
   });
 
   // ──────────────────────────────────────────────────────────────────────────

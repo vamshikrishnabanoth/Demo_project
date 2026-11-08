@@ -943,7 +943,8 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
         temperature: 0.2,
         model: process.env.AGENT1_MODEL || 'openai/gpt-oss-120b',
         sessionId: evidencePackage?.sessionId,
-        maxTokens: dynamicMaxTokens
+        maxTokens: dynamicMaxTokens,
+        signal: evidencePackage?.abortSignal
       });
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Agent 1 LLM planning timed out after 45s')), planTimeoutMs)

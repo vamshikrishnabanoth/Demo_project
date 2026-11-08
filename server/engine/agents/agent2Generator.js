@@ -1952,7 +1952,8 @@ Generate a single grounded multiple-choice question testing the assessment targe
         temperature: 0.2,
         model: fastModel,
         sessionId: evidencePackage?.sessionId,
-        maxTokens: 1800
+        maxTokens: 1800,
+        signal: evidencePackage?.abortSignal || target?.abortSignal
       });
       const genTimeout = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Agent 2 LLM generation timed out after 15s')), genTimeoutMs)

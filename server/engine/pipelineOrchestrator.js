@@ -159,6 +159,10 @@ class PipelineOrchestrator {
 
     // Initialize Session Trace Coordinator
     const trace = new SessionTrace(sessionId, progressCallback);
+    const abortSignal = sessionInputs.abortSignal || sessionInputs.signal;
+    if (abortSignal?.aborted) {
+      throw new Error('PIPELINE_ABORTED: Task was cancelled before pipeline start.');
+    }
     let plan = null;
     let evidencePackage = null;
 
@@ -200,6 +204,7 @@ class PipelineOrchestrator {
       const t1 = Date.now();
       evidencePackage = evidencePackager.packageSessionEvidence(sessionInputs);
       evidencePackage.sessionId = sessionId;
+      evidencePackage.abortSignal = abortSignal;
       if (sessionInputs.teachingUnits && !evidencePackage.teachingUnits) {
         evidencePackage.teachingUnits = sessionInputs.teachingUnits;
       }
@@ -588,6 +593,10 @@ class PipelineOrchestrator {
 
 
       async function processSingleTarget(currentTarget, workerId) {
+        if (abortSignal?.aborted) {
+          return { status: 'ABORTED' };
+        }
+        currentTarget.abortSignal = abortSignal;
         let tier = currentTarget.targetDifficulty || 'Medium';
         const targetStartTime = Date.now();
         const currentQNum = passingQuestions.length + 1;
@@ -945,6 +954,10 @@ class PipelineOrchestrator {
                   macroTopic: currentTarget.macroTopic || currentTarget.subtopic || 'Core Mechanism'
                 };
               }
+              if (evalResult.mcq) {
+                evalResult.mcq.qOriginId = `${sessionId}_q${String(passingQuestions.length + 1).padStart(2, '0')}_${require('crypto').randomBytes(3).toString('hex')}`;
+                evalResult.mcq.targetId = currentTarget.targetId;
+              }
               passingQuestions.push(evalResult.mcq);
               if (byTier[tier]) byTier[tier].accepted++;
 
@@ -1164,6 +1177,10 @@ class PipelineOrchestrator {
 
       async function executeWorker(workerId) {
         while (passingQuestions.length < requestedCount && iterationCount < MAX_TOTAL_ITERATIONS) {
+          if (abortSignal?.aborted) {
+            console.warn(`[PipelineOrchestrator] Worker ${workerId} received abort signal. Exiting worker loop.`);
+            break;
+          }
           if (candidateQueue.length === 0) {
             if (activeWorkers > 0) {
               await new Promise(r => setTimeout(r, 150));
@@ -1410,6 +1427,10 @@ class PipelineOrchestrator {
                validatedQuestions.length < maxDefensibleCapacity &&
                activeReservePool.length > 0 &&
                iterationCount < MAX_TOTAL_ITERATIONS) {
+          if (abortSignal?.aborted) {
+            console.warn('[PipelineOrchestrator] Replenishment loop received abort signal. Exiting.');
+            break;
+          }
 
           const nextReserve = activeReservePool.shift();
           if (!nextReserve) break;
@@ -1473,6 +1494,8 @@ class PipelineOrchestrator {
                   candidateMCQ.correctAnswerKey = ['A', 'B', 'C', 'D'][correctIdx];
                   candidateMCQ.correct_answer = candidateMCQ.correctAnswerKey;
                   candidateMCQ.correctAnswerText = candidateMCQ.correctAnswer;
+                  candidateMCQ.qOriginId = `${sessionId}_q${String(passingQuestions.length + 1).padStart(2, '0')}_${require('crypto').randomBytes(3).toString('hex')}`;
+                  candidateMCQ.targetId = nextReserve.targetId;
 
                   validatedQuestions.push(candidateMCQ);
                   if (!passingQuestions.includes(candidateMCQ)) {

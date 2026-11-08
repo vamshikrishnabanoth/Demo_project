@@ -66,6 +66,7 @@ model User {
 
 model Quiz {
   id               String   @id @default(uuid())
+  sourceTaskId     String?  @unique
   title            String
   description      String?
   questions        Json     // Stores the array of questions
@@ -179,6 +180,9 @@ model Broadcast {
   isPinned         Boolean  @default(false)
   scheduledFor     DateTime?
   deliveryStatus   String   @default("delivered") // 'delivered', 'scheduled', 'expired'
+  leaseOwner       String?
+  leaseExpiresAt   DateTime?
+  leaseToken       String?
 
   @@index([quizId])         // list broadcasts for a quiz
   @@index([senderId])       // list broadcasts sent by a teacher

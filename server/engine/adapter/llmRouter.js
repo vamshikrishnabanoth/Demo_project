@@ -31,6 +31,10 @@ class LLMRouter {
     this.activeProvider = process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : (process.env.GEMINI_API_KEY ? 'gemini' : 'local_ollama'));
     this.keyCooldowns = new Map();
     this.modelCooldowns = new Map();
+    // Process-local in-memory cache for daily token limits (12h TTL).
+    // Intentionally process-local: prevents repeated quota burn during instance lifecycle,
+    // while process restarts safely clear the cache to probe for refreshed daily quotas.
+    this.tpdExhaustedRoutes = new Map();
     this.invalidKeys = new Set();
     this.currentKeyIndex = 0;
   }
@@ -44,7 +48,8 @@ class LLMRouter {
    * Route completion request to active LLM provider with intelligent failover.
    * @param {Object} params - { prompt, systemPrompt, temperature, responseFormat, model, sessionId }
    */
-  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null }) {
+  async complete({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null }) {
+    const effectiveSignal = signal || abortSignal;
     if (!this.groqApiKey && process.env.GROQ_API_KEY) {
       this.groqApiKey = process.env.GROQ_API_KEY;
     }
@@ -74,7 +79,8 @@ class LLMRouter {
           model: (model && String(model).startsWith('gemini')) ? model : (process.env.GEMINI_MODEL || 'gemini-2.5-flash'),
           sessionId,
           maxTokens,
-          operation
+          operation,
+          signal: effectiveSignal
         });
       } catch (err) {
         errors.push(`Gemini (${err.message})`);
@@ -239,6 +245,12 @@ class LLMRouter {
           const isLastModel = mIdx === modelsToTry.length - 1;
 
           // Check if this specific model is currently in short-term cooldown on this key
+          // Check if route is in 12-hour TPD exhaustion
+          const tpdUntil = this.tpdExhaustedRoutes.get(`${keyIdx}_${currentModel}`) || 0;
+          if (Date.now() < tpdUntil) {
+            continue; // Skip directly: TPD route unavailable for 12 hours
+          }
+
           const modelCooldownUntil = this.modelCooldowns.get(`${keyIdx}_${currentModel}`) || 0;
           if (Date.now() < modelCooldownUntil - 50) {
             continue; // Skip directly to fallback model without network delay
@@ -276,7 +288,8 @@ class LLMRouter {
                     Authorization: `Bearer ${key}`,
                     'Content-Type': 'application/json'
                   },
-                  timeout: groqTimeoutMs
+                  timeout: groqTimeoutMs,
+                  signal: options?.signal || options?.abortSignal
                 }
               );
 
@@ -378,17 +391,10 @@ class LLMRouter {
 
                 if (isTPD) {
                   // Confirmed daily token limit on this specific model:
-                  // Mark THIS MODEL in cooldown on this key for 1 hour. Do NOT invalidate other models or the whole key!
-                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 15000);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Failing over to next model immediately.`);
-                  const allExhausted = modelsToTry.every(m => {
-                    const cd = this.modelCooldowns.get(`${keyIdx}_${m}`) || 0;
-                    return cd > Date.now() + 60000;
-                  });
-                  if (allExhausted) {
-                    this.keyCooldowns.set(keyIdx, Date.now() + 10000);
-                    console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} all models exhausted daily quota. Moving to next key.`);
-                  }
+                  // Mark THIS MODEL in tpdExhaustedRoutes for 12 hours. Do NOT invalidate other models or the whole key!
+                  const tpdDurationMs = 12 * 60 * 60 * 1000; // 12 hours
+                  this.tpdExhaustedRoutes.set(`${keyIdx}_${currentModel}`, Date.now() + tpdDurationMs);
+                  console.warn(`⚡ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Route marked unavailable for 12h.`);
                   break; // Break inner loop to try next model or next key
                 } else if (isLastModel) {
                   const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 3000), 15000) : 4000;
@@ -424,15 +430,45 @@ class LLMRouter {
         }
       }
 
-      // If pass completed without returning, check if transient cooldowns can expire
-      if (poolAttempt < 4 && this.keyCooldowns.size > 0) {
+      // Route accounting across all eligible routes for this operation:
+      let unattemptedCount = 0;
+      let tpmBackoffCount = 0;
+      let tpdExhaustedCount = 0;
+      const nowCheck = Date.now();
+
+      for (let kIdx = 0; kIdx < totalKeys; kIdx++) {
+        if (this.invalidKeys.has(kIdx)) continue;
+        for (const m of modelsToTry) {
+          const routeKey = `${kIdx}_${m}`;
+          const isTpd = this.tpdExhaustedRoutes.has(routeKey) && nowCheck < this.tpdExhaustedRoutes.get(routeKey);
+          const isTpm = this.modelCooldowns.has(routeKey) && nowCheck < this.modelCooldowns.get(routeKey);
+
+          if (isTpd) tpdExhaustedCount++;
+          else if (isTpm) tpmBackoffCount++;
+          else unattemptedCount++;
+        }
+      }
+
+      // 1. ALL ELIGIBLE ROUTES TPD-EXHAUSTED -> BREAK IMMEDIATELY! 0ms wait!
+      if (unattemptedCount === 0 && tpmBackoffCount === 0 && tpdExhaustedCount > 0) {
+        console.warn('⚡ [LLMRouter] All eligible Groq routes for this operation are TPD-exhausted. Fast-failing over to Gemini immediately (0ms delay).');
+        break; // Exits Loop 1 -> _callGroq throws -> fallback catches -> calls _callGemini()
+      }
+
+      // 2. UNATTEMPTED ROUTES EXIST -> CONTINUE IMMEDIATELY WITHOUT SLEEP
+      if (unattemptedCount > 0) {
+        continue;
+      }
+
+      // 3. TRANSIENT TPM COOLDOWNS -> SLEEP SHORTEST TPM AND RETRY
+      if (poolAttempt < 4 && tpmBackoffCount > 0) {
         if (process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production') {
           break;
         }
         const now = Date.now();
-        const shortCooldowns = Array.from(this.keyCooldowns.values()).filter(t => t - now <= 20000 && t - now > 0);
+        const shortCooldowns = Array.from(this.modelCooldowns.values()).filter(t => t - now <= 20000 && t - now > 0);
         const waitMs = shortCooldowns.length > 0 ? Math.min(Math.max(...shortCooldowns) - now + 300, 15000) : 3000;
-        console.warn(`⏳ [LLMRouter] Transient rate limit. Provider-aware wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
+        console.warn(`⏳ [LLMRouter] Transient TPM rate limit. Provider-aware wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
         await this._sleep(waitMs);
       }
     }
