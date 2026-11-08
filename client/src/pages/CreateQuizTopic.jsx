@@ -182,7 +182,7 @@ export default function CreateQuizTopic() {
 
     // 3. Question Count (Integer, default 10, range 1-30)
     const [questionCount, setQuestionCount] = useState(10);
-    const [capacityPolicy, setCapacityPolicy] = useState('ALLOW_SCOPE_SUPPLEMENTARY'); // 'ALLOW_SCOPE_SUPPLEMENTARY' | 'STRICT_SOURCE_ONLY'
+    const capacityPolicy = 'ALLOW_SCOPE_SUPPLEMENTARY'; // Locked to Standard Scope-Supplementary
 
     // Dynamic Lecture Depth & Curriculum Overview
     const [lectureDepth, setLectureDepth] = useState(null);
@@ -2320,43 +2320,6 @@ export default function CreateQuizTopic() {
                                 </div>
                             </div>
 
-                            {/* Capacity Policy Control */}
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-[var(--bg-accent)]"></span>
-                                    <h3 className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">Capacity Policy</h3>
-                                </div>
-                                <div className="bg-white border-2 border-[var(--border-color)] rounded-2xl p-4 space-y-3 shadow-sm">
-                                    <label className="flex items-start gap-3 cursor-pointer">
-                                        <input
-                                            type="radio"
-                                            name="capacityPolicy"
-                                            value="ALLOW_SCOPE_SUPPLEMENTARY"
-                                            checked={capacityPolicy === 'ALLOW_SCOPE_SUPPLEMENTARY'}
-                                            onChange={() => setCapacityPolicy('ALLOW_SCOPE_SUPPLEMENTARY')}
-                                            className="mt-1 text-[var(--bg-accent)] accent-[var(--bg-accent)]"
-                                        />
-                                        <div className="text-xs">
-                                            <div className="font-bold text-slate-800">Standard Scope-Supplementary (Recommended)</div>
-                                            <div className="text-slate-500 text-[11px] leading-tight mt-0.5">Prioritizes grounded lecture/material; supplements capacity deficits with in-scope curriculum questions.</div>
-                                        </div>
-                                    </label>
-                                    <label className="flex items-start gap-3 cursor-pointer pt-2 border-t border-slate-100">
-                                        <input
-                                            type="radio"
-                                            name="capacityPolicy"
-                                            value="STRICT_SOURCE_ONLY"
-                                            checked={capacityPolicy === 'STRICT_SOURCE_ONLY'}
-                                            onChange={() => setCapacityPolicy('STRICT_SOURCE_ONLY')}
-                                            className="mt-1 text-[var(--bg-accent)] accent-[var(--bg-accent)]"
-                                        />
-                                        <div className="text-xs">
-                                            <div className="font-bold text-slate-800">Strict Source-Only</div>
-                                            <div className="text-slate-500 text-[11px] leading-tight mt-0.5">Generates questions strictly from verifiable source evidence. Deficits are withheld.</div>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
 
                         </div>
                     </div>
