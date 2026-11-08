@@ -1413,9 +1413,12 @@ ${promptEvidence}`;
       throw new Error('R1_EXTRACTION_EMPTY_INPUT: No transcript parents or document text available for extraction.');
     }
 
-    // 3. Build Overlapping Parent Macro-Windows
-    const windowSizeParents = Math.min(3, Math.max(1, allParents.length));
-    const strideParents = allParents.length <= 2 ? 1 : 2;
+    // 3. Build Overlapping Parent Macro-Windows (calibrated for high throughput without rate-limit saturation)
+    const maxMacroWindows = 4;
+    const strideParents = allParents.length <= 3
+      ? 1
+      : Math.max(2, Math.ceil(allParents.length / maxMacroWindows));
+    const windowSizeParents = Math.min(allParents.length, strideParents + 2);
     const windows = [];
     const coveredParentIndices = new Set();
 
@@ -1451,11 +1454,9 @@ ${promptEvidence}`;
 
     console.log(`[LectureIntelligence] Generic R1 Extraction: ${allParents.length} parents mapped to ${windows.length} overlapping windows (windowSize=${windowSizeParents}, stride=${strideParents}). 100% parent coverage verified.`);
 
-    // 4. Overlapping Window Extraction Loop
+    // 4. Overlapping Window Extraction (Bounded concurrency = 2)
     const allExtractedUnits = [];
-    const quarantinedUnits = [];
-
-    for (const win of windows) {
+    const extractSingleWindow = async (win) => {
       const winParents = win.parents;
       const parentEvidenceTexts = winParents.map(p => {
         const childTexts = (p.childIds || []).map(cid => {
@@ -1506,10 +1507,6 @@ Respond with a JSON object in this format:
 
       const systemPrompt = "You are a pedagogical evidence extraction engine. You must respond with a JSON object containing a 'units' array of verified teaching units with exact verbatim quotes.";
 
-      if (win.windowIndex > 0) {
-        await new Promise(r => setTimeout(r, 1200));
-      }
-
       let responseStr = null;
       try {
         responseStr = await llmRouter.complete({
@@ -1528,7 +1525,7 @@ Respond with a JSON object in this format:
 
       if (!responseStr || typeof responseStr !== 'string' || responseStr.trim().length === 0) {
         console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} returned empty content. Continuing with neighboring windows.`);
-        continue;
+        return [];
       }
 
       let parsed = safeParseJson(responseStr, null);
@@ -1549,12 +1546,19 @@ Respond with a JSON object in this format:
 
       const rawUnits = Array.isArray(parsed?.units) ? parsed.units : (Array.isArray(parsed?.teachingUnits) ? parsed.teachingUnits : (Array.isArray(parsed) ? parsed : []));
 
-      for (const raw of rawUnits) {
-        if (!raw || (!raw.statement && !raw.subtopic)) continue;
-        allExtractedUnits.push({
-          ...raw,
-          windowIndex: win.windowIndex
-        });
+      return rawUnits.filter(raw => raw && (raw.statement || raw.subtopic)).map(raw => ({
+        ...raw,
+        windowIndex: win.windowIndex
+      }));
+    };
+
+    // Execute with controlled concurrency of 2 to balance latency and rate-limits
+    const concurrency = 2;
+    for (let i = 0; i < windows.length; i += concurrency) {
+      const chunk = windows.slice(i, i + concurrency);
+      const results = await Promise.all(chunk.map(win => extractSingleWindow(win)));
+      for (const resList of results) {
+        allExtractedUnits.push(...resList);
       }
     }
 

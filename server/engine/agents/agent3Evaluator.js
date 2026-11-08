@@ -22,6 +22,7 @@ const { validateQuestionCodeArtifacts } = require('../validators/astParser');
 const groundingGate = require('../validators/groundingGate');
 const verificationRecordGate = require('../validators/verificationRecordGate');
 const kmitStyleContract = require('../../config/kmitStyleContract');
+const independentAnswerVerifier = require('../validators/independentAnswerVerifier');
 
 const EVALUATOR_FAILURE_CODES = {
   OPTION_VALIDATION_ERROR: 'OPTION_VALIDATION_ERROR',
@@ -164,6 +165,30 @@ class Agent3Evaluator {
     // 4. Check if deterministic-only mode or fast-path bypass applies
     const isDeterministicOnly = options.skipLLM || process.env.AGENT3_MODE === 'deterministic_only';
     const preAudit = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
+
+    // 4a. Mandatory Independent Answer Verification Gate (Blind Solver Protocol)
+    const iavResult = await independentAnswerVerifier.verifyAnswerIndependently(
+      candidateMCQ,
+      target,
+      evidenceContext,
+      options
+    );
+
+    candidateMCQ.independentVerification = iavResult;
+    preAudit.independentVerification = iavResult;
+
+    if (!iavResult.passed) {
+      preAudit.passed = false;
+      preAudit.status = 'FAIL';
+      preAudit.verdict = 'FAIL';
+      preAudit.score = 0.1;
+      if (!preAudit.failureReasons.includes(iavResult.failureReason)) {
+        preAudit.failureReasons.push(iavResult.failureReason || 'INDEPENDENT_VERIFICATION_FAILED');
+      }
+      preAudit.failureReason = iavResult.details || `Independent answer verification failed: ${iavResult.failureReason}`;
+      preAudit.repairInstruction = `Reformulate question with an unambiguous, mathematically and factually correct answer key. Solver detected: ${iavResult.details || iavResult.failureReason}`;
+      return preAudit;
+    }
 
 
     if (isDeterministicOnly) {
@@ -881,6 +906,24 @@ ${evidenceContext}
     const hasAmbiguity = ambiguityCheck && ambiguityCheck.classification === 'POTENTIAL_MULTI_KEY';
     if (hasAmbiguity) {
       failureReasons.push(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
+    }
+
+    // 3a. Independent Answer Verification Domain & Invariant Checks
+    const domainChecks = independentAnswerVerifier.performDeterministicDomainChecks(
+      candidateMCQ.questionText || candidateMCQ.stem || '',
+      candidateMCQ.options || [],
+      requestedTier
+    );
+    if (domainChecks.ambiguityDetected) {
+      failureReasons.push('AMBIGUOUS_EQUIVALENT_OPTIONS');
+    }
+    const proposedKey = candidateMCQ.correctAnswer;
+    const proposedKeyIdx = typeof candidateMCQ.correctAnswerIndex === 'number'
+      ? candidateMCQ.correctAnswerIndex
+      : (candidateMCQ.options || []).indexOf(proposedKey);
+    const proposedViolation = domainChecks.checks.find(c => c.optionIndex === proposedKeyIdx);
+    if (proposedViolation) {
+      failureReasons.push(`MATHEMATICAL_RULE_VIOLATION_${proposedViolation.rule}`);
     }
 
     // 3b. Step 6 Difficulty-Aware Distractor Fitness Gate
