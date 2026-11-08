@@ -201,6 +201,30 @@ export default function TeachingScoreModal({
                         </div>
                     </div>
 
+                    {/* SECTION: WHAT WAS TAUGHT (LECTURE UNDERSTANDING & ASSURANCE) */}
+                    {whatWasTaught && (
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                                    <span>🎯</span>
+                                    <span>What Was Taught</span>
+                                </h4>
+                                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                                    <Check size={11} className="text-emerald-700" /> AI Verified
+                                </span>
+                            </div>
+                            <div className="p-3.5 bg-orange-50/70 rounded-2xl border border-orange-200/80 shadow-2xs space-y-2">
+                                <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                                    {whatWasTaught}
+                                </p>
+                                <div className="pt-1.5 border-t border-orange-200/50 flex items-center gap-1.5 text-[11px] font-bold text-orange-900">
+                                    <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                                    <span>Genuinely understood from your lecture · Used as evidence to build your quiz</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* SECTION 1: KEY TOPICS WE UNDERSTOOD */}
                     <div className="space-y-2.5">
                         <div className="flex items-center justify-between">

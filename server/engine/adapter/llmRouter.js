@@ -194,7 +194,7 @@ class LLMRouter {
       } else if (operation === 'QUESTION_GENERATION') {
         resolvedMaxTokens = 1600;
       } else if (operation === 'EVALUATION' || prompt.includes('[PEDAGOGICAL & FACTUAL TRUTHFULNESS EVALUATION]')) {
-        resolvedMaxTokens = 2500;
+        resolvedMaxTokens = 4096;
       } else
       if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
         resolvedMaxTokens = 1100; // Calibrated for single MCQ to reduce Groq TPM reservation
@@ -272,19 +272,24 @@ class LLMRouter {
               ? prompt
               : `${prompt}\n\nReturn strictly valid JSON format.`;
 
+            const requestPayload = {
+              model: currentModel,
+              messages: [
+                ...(sanitizedSystemPrompt ? [{ role: 'system', content: sanitizedSystemPrompt }] : []),
+                { role: 'user', content: finalUserPrompt }
+              ],
+              temperature: temperature,
+              max_tokens: (currentModel.includes('qwen') || currentModel.includes('27b')) ? Math.min(resolvedMaxTokens, 900) : resolvedMaxTokens
+            };
+            // Groq json_object is only supported on select models; openai/gpt-oss models fail validation if response_format is passed
+            if (!currentModel.includes('openai') && !currentModel.includes('gpt-oss')) {
+              requestPayload.response_format = { type: 'json_object' };
+            }
+
             try {
               const response = await axios.post(
                 'https://api.groq.com/openai/v1/chat/completions',
-                {
-                  model: currentModel,
-                  messages: [
-                    ...(sanitizedSystemPrompt ? [{ role: 'system', content: sanitizedSystemPrompt }] : []),
-                    { role: 'user', content: finalUserPrompt }
-                  ],
-                  temperature: temperature,
-                  response_format: { type: 'json_object' },
-                  max_tokens: (currentModel.includes('qwen') || currentModel.includes('27b')) ? Math.min(resolvedMaxTokens, 900) : resolvedMaxTokens
-                },
+                requestPayload,
                 {
                   headers: {
                     Authorization: `Bearer ${key}`,
@@ -391,23 +396,17 @@ class LLMRouter {
                 const extractedWaitSec = retryAfterSec || (retryMatch ? parseFloat(retryMatch[1]) : null);
                 const parsedWaitMs = extractedWaitSec ? Math.ceil(extractedWaitSec * 1000) + 400 : null;
 
+                const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 2500), 12000) : 3000;
+                this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
+                this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + cooldownMs);
                 if (isTPD) {
-                  // Confirmed daily token limit on this specific model:
-                  // Mark THIS MODEL in tpdExhaustedRoutes for 12 hours. Do NOT invalidate other models or the whole key!
                   const tpdDurationMs = 12 * 60 * 60 * 1000; // 12 hours
                   this.tpdExhaustedRoutes.set(`${keyIdx}_${currentModel}`, Date.now() + tpdDurationMs);
                   console.warn(`⚡ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Route marked unavailable for 12h.`);
-                  break; // Break inner loop to try next model or next key
-                } else if (isLastModel) {
-                  const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 3000), 15000) : 4000;
-                  this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' rate-limited. Backing off ${cooldownMs}ms (provider wait: ${extractedWaitSec || 'N/A'}s)...`);
                 } else {
-                  const modelCooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 2500), 12000) : 3000;
-                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + modelCooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Backing off ${modelCooldownMs}ms (provider wait: ${extractedWaitSec || 'N/A'}s)...`);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} hit rate limit (${extractedWaitSec || 'N/A'}s). Advancing to next key pool...`);
                 }
-                break; // Break inner loop to try fallback model or next key
+                break; // Break model loop to advance to next key in pool immediately
               } else if (status === 413) {
                 console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} request payload exceeded limits (413). Failing over to cloud fallback provider immediately.`);
                 throw new Error('Groq request payload too large (413)');

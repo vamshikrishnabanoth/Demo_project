@@ -2262,10 +2262,10 @@ export default function CreateQuizTopic() {
                                             </span>
                                             <div>
                                                 <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
-                                                    AI Verified: Lecture Understood
+                                                    Lecture Understood & Verified
                                                 </h4>
                                                 <p className="text-[10px] font-bold text-orange-800">
-                                                    Pedagogical Assurance & Concept Coverage
+                                                    What Was Taught & Verified Topics
                                                 </p>
                                             </div>
                                         </div>
@@ -2279,7 +2279,7 @@ export default function CreateQuizTopic() {
                                     {whatWasTaught && (
                                         <div className="space-y-1">
                                             <p className="text-[10px] font-black uppercase tracking-wider text-orange-900 flex items-center gap-1 font-bold">
-                                                <Target size={12} className="text-orange-700" /> What Was Understood
+                                                <Target size={12} className="text-orange-700" /> What Was Taught
                                             </p>
                                             <p className="text-xs text-slate-700 leading-relaxed font-medium bg-white/80 p-2.5 rounded-xl border border-orange-100 shadow-2xs">
                                                 {whatWasTaught}
@@ -2290,7 +2290,7 @@ export default function CreateQuizTopic() {
                                     {keyTopics && keyTopics.length > 0 && (
                                         <div className="space-y-1.5">
                                             <p className="text-[10px] font-black uppercase tracking-wider text-orange-900 flex items-center gap-1 font-bold">
-                                                <Tag size={12} className="text-orange-700" /> Key Topics Verified ({keyTopics.length})
+                                                <Tag size={12} className="text-orange-700" /> Key Topics Understood ({keyTopics.length})
                                             </p>
                                             <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                                                 {keyTopics.map((top, idx) => (
@@ -2305,14 +2305,14 @@ export default function CreateQuizTopic() {
                                     <div className="pt-1 flex items-center justify-between text-[11px] font-bold text-orange-950 bg-orange-100/60 p-2.5 rounded-xl border border-orange-200/50">
                                         <span className="flex items-center gap-1.5">
                                             <CheckCircle size={14} className="text-emerald-600 shrink-0" />
-                                            <span>Zero-Hallucination Verified · Evidence Grounded</span>
+                                            <span>Zero-Guessing · Direct Lecture Evidence</span>
                                         </span>
                                         <button
                                             type="button"
                                             onClick={() => setShowTeachingScoreModal(true)}
                                             className="text-orange-800 hover:text-orange-950 underline cursor-pointer text-[10px] font-black uppercase tracking-wider"
                                         >
-                                            See Full Rubric →
+                                            See Why This Score & Full Plan →
                                         </button>
                                     </div>
                                 </div>

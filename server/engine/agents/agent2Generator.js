@@ -1941,7 +1941,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
 `;
     }
 
-    const fastModel = process.env.AGENT2_MODEL || process.env.GENERATOR_MODEL || process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
+    const fastModel = process.env.AGENT2_MODEL || process.env.GENERATOR_MODEL || 'openai/gpt-oss-120b';
 
     let responseText;
     try {
@@ -1952,7 +1952,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
         temperature: 0.2,
         model: fastModel,
         sessionId: evidencePackage?.sessionId,
-        maxTokens: 1800,
+        maxTokens: 3500,
         signal: evidencePackage?.abortSignal || target?.abortSignal
       });
       const genTimeout = new Promise((_, reject) =>
@@ -1980,7 +1980,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
           temperature: 0.1,
           model: fastModel,
           sessionId: evidencePackage?.sessionId,
-          maxTokens: 1800
+          maxTokens: 3500
         });
         parsedMCQ = safeParseJson(repairResponse);
       } catch (repairErr) {
