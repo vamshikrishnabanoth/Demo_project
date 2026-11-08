@@ -5046,10 +5046,21 @@ exports.getUserDocket = async (req, res) => {
                     return res.json({ success: true, inputs: parsed, analysis: null });
                 }
                 const inputsList = Array.isArray(parsed.inputs) ? parsed.inputs : [];
+                let analysis = inputsList.length === 0 ? null : (parsed.analysis || null);
+                if (analysis && analysis.isAcademic) {
+                    if (!analysis.recommendedByDifficulty) analysis.recommendedByDifficulty = {};
+                    if (!analysis.recommendedByDifficulty.hard || analysis.recommendedByDifficulty.hard <= 0) {
+                        analysis.recommendedByDifficulty.hard = Math.max(1, Math.round((analysis.recommendedQuestionCount || 10) * 0.35));
+                    }
+                    if (!analysis.capacityByDifficulty) analysis.capacityByDifficulty = {};
+                    if (!analysis.capacityByDifficulty.hard || analysis.capacityByDifficulty.hard <= 0) {
+                        analysis.capacityByDifficulty.hard = Math.max(3, Math.round(analysis.recommendedByDifficulty.hard * 1.5));
+                    }
+                }
                 return res.json({
                     success: true,
                     inputs: inputsList,
-                    analysis: inputsList.length === 0 ? null : (parsed.analysis || null)
+                    analysis
                 });
             } catch (pErr) {
                 console.warn('Failed to parse docket file, returning empty:', pErr.message);
