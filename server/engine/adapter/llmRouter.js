@@ -99,7 +99,8 @@ class LLMRouter {
           fallbackModel,
           sessionId,
           maxTokens,
-          operation
+          operation,
+          signal: effectiveSignal
         });
       } catch (err) {
         errors.push(`Groq (${err.message})`);
@@ -182,7 +183,8 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null }) {
+  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null }) {
+    const effectiveSignal = signal || abortSignal;
     let resolvedMaxTokens = parseInt(maxTokens, 10);
     if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
       if (operation === 'LECTURE_INTELLIGENCE') {
@@ -289,7 +291,7 @@ class LLMRouter {
                     'Content-Type': 'application/json'
                   },
                   timeout: groqTimeoutMs,
-                  signal: options?.signal || options?.abortSignal
+                  signal: effectiveSignal || undefined
                 }
               );
 
@@ -479,7 +481,8 @@ class LLMRouter {
   /**
    * Call Google Gemini API as cloud fallback when Groq hits 429/failures.
    */
-  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null }) {
+  async _callGemini({ prompt, systemPrompt = '', temperature = 0.3, responseFormat = 'json', model = null, sessionId = null, maxTokens = null, signal = null, abortSignal = null }) {
+    const effectiveSignal = signal || abortSignal;
     let resolvedMaxTokens = parseInt(maxTokens, 10);
     if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {
       if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {

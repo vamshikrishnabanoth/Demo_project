@@ -3188,9 +3188,38 @@ exports.generateQuizQuestions = async (req, res) => {
                 preemptTaskForRetry(req.body.retryFromTaskId, req.user?.id);
             } catch (_) {}
         }
+        let estimatedTextLength = 0;
+        if (typeof req.body.text_prompts === 'string') {
+            try {
+                const parsedPrompts = JSON.parse(req.body.text_prompts);
+                if (Array.isArray(parsedPrompts)) {
+                    for (const p of parsedPrompts) {
+                        if (p && typeof p.content === 'string') estimatedTextLength += p.content.length;
+                    }
+                } else {
+                    estimatedTextLength += req.body.text_prompts.length;
+                }
+            } catch (_) {
+                estimatedTextLength += req.body.text_prompts.length;
+            }
+        }
+        if (req.body.inputs) {
+            try {
+                const inpArr = typeof req.body.inputs === 'string' ? JSON.parse(req.body.inputs) : req.body.inputs;
+                if (Array.isArray(inpArr)) {
+                    for (const item of inpArr) {
+                        if (typeof item?.content === 'string') estimatedTextLength += item.content.length;
+                    }
+                }
+            } catch (_) {}
+        }
+        if (Array.isArray(allUploadedFiles) && allUploadedFiles.length > 0) {
+            estimatedTextLength = Math.max(estimatedTextLength, 35000);
+        }
+
         let taskId;
         try {
-            taskId = createTask({ userId: req.user?.id, idempotencyKey, questionCount: reqQuestionCount });
+            taskId = createTask({ userId: req.user?.id, idempotencyKey, questionCount: reqQuestionCount, textLength: estimatedTextLength });
         } catch (bpErr) {
             return res.status(bpErr.statusCode || 429).json({ msg: bpErr.message, code: bpErr.code || 'SYSTEM_BUSY' });
         }

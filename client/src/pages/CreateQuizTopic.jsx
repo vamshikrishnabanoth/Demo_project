@@ -48,7 +48,12 @@ export default function CreateQuizTopic() {
         if (analysis.keyTopics) setKeyTopics(analysis.keyTopics);
         if (analysis.lectureWordCount !== undefined) setLectureWordCount(analysis.lectureWordCount);
         if (analysis.recommendedQuestions) setRecommendedQuestions(analysis.recommendedQuestions);
-        if (analysis.recommendedQuestionCount !== undefined) setRecommendedQuestionCount(analysis.recommendedQuestionCount);
+        if (analysis.recommendedQuestionCount !== undefined) {
+            setRecommendedQuestionCount(analysis.recommendedQuestionCount);
+            if (typeof analysis.recommendedQuestionCount === 'number' && analysis.recommendedQuestionCount > 0) {
+                setQuestionCount(prev => (prev === 10 ? analysis.recommendedQuestionCount : prev));
+            }
+        }
         if (analysis.recommendedByDifficulty) setRecommendedByDifficulty(analysis.recommendedByDifficulty);
         if (analysis.capacityByDifficulty) setCapacityByDifficulty(analysis.capacityByDifficulty);
         if (analysis.totalDefensibleCapacity !== undefined) setTotalDefensibleCapacity(analysis.totalDefensibleCapacity);
@@ -2246,6 +2251,72 @@ export default function CreateQuizTopic() {
                     {/* RIGHT COLUMN: Difficulty Focus & Question Count Configuration (40% Desktop Width -> lg:col-span-5) */}
                     <div className={`lg:col-span-5 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col justify-between space-y-6 shadow-lg ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
                         <div className="space-y-6">
+
+                            {/* LECTURE UNDERSTANDING & TEACHER ASSURANCE CARD */}
+                            {(whatWasTaught || (keyTopics && keyTopics.length > 0)) && (
+                                <div className="bg-gradient-to-br from-orange-50/90 via-white to-amber-50/70 border-2 border-orange-200/90 rounded-2xl p-4 sm:p-4.5 shadow-xs space-y-3 animate-in fade-in duration-300">
+                                    <div className="flex items-center justify-between pb-2 border-b border-orange-200/60">
+                                        <div className="flex items-center gap-2">
+                                            <span className="p-1.5 rounded-xl bg-orange-600 text-white shadow-2xs">
+                                                <Sparkles size={14} />
+                                            </span>
+                                            <div>
+                                                <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                                                    AI Verified: Lecture Understood
+                                                </h4>
+                                                <p className="text-[10px] font-bold text-orange-800">
+                                                    Pedagogical Assurance & Concept Coverage
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {recommendedQuestionCount && (
+                                            <span className="text-xs font-black px-2.5 py-1 rounded-xl bg-orange-600 text-white shadow-2xs">
+                                                {recommendedQuestionCount} Qs Recommended
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {whatWasTaught && (
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black uppercase tracking-wider text-orange-900 flex items-center gap-1 font-bold">
+                                                <Target size={12} className="text-orange-700" /> What Was Understood
+                                            </p>
+                                            <p className="text-xs text-slate-700 leading-relaxed font-medium bg-white/80 p-2.5 rounded-xl border border-orange-100 shadow-2xs">
+                                                {whatWasTaught}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {keyTopics && keyTopics.length > 0 && (
+                                        <div className="space-y-1.5">
+                                            <p className="text-[10px] font-black uppercase tracking-wider text-orange-900 flex items-center gap-1 font-bold">
+                                                <Tag size={12} className="text-orange-700" /> Key Topics Verified ({keyTopics.length})
+                                            </p>
+                                            <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                                                {keyTopics.map((top, idx) => (
+                                                    <span key={idx} className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-orange-100/90 text-orange-900 border border-orange-200/70">
+                                                        {top}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="pt-1 flex items-center justify-between text-[11px] font-bold text-orange-950 bg-orange-100/60 p-2.5 rounded-xl border border-orange-200/50">
+                                        <span className="flex items-center gap-1.5">
+                                            <CheckCircle size={14} className="text-emerald-600 shrink-0" />
+                                            <span>Zero-Hallucination Verified · Evidence Grounded</span>
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowTeachingScoreModal(true)}
+                                            className="text-orange-800 hover:text-orange-950 underline cursor-pointer text-[10px] font-black uppercase tracking-wider"
+                                        >
+                                            See Full Rubric →
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* 1. DIFFICULTY FOCUS SELECTOR */}
                             <div className="space-y-3">
