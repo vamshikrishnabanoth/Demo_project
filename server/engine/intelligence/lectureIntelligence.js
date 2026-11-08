@@ -358,6 +358,11 @@ class LectureIntelligence {
       const codeHard = Math.min(codeTraceCount, 8);
 
       totalHard = causalHard + critiqueHard + proofHard + invariantHard + codeHard;
+      if (totalHard === 0 && substantiveConceptCount >= 2) {
+        // Any substantive academic lecture supports hard assessment via cross-concept synthesis,
+        // architectural tradeoffs, and constraint/boundary analysis.
+        totalHard = Math.max(1, Math.min(8, Math.round(substantiveConceptCount * 0.4)));
+      }
     }
 
     const totalDefensibleCapacity = totalEasy + totalMedium + totalHard;
@@ -426,7 +431,7 @@ class LectureIntelligence {
     if (totalDefensibleCapacity > 0) {
       recEasy = Math.min(totalEasy, Math.max(1, Math.min(balancedRec, Math.round(balancedRec * 0.85))));
       recMedium = Math.min(totalMedium, Math.max(1, Math.min(balancedRec, Math.round(balancedRec * 0.85))));
-      recHard = totalHard > 0 ? Math.min(totalHard, Math.max(1, balancedRec)) : 0;
+      recHard = totalHard > 0 ? Math.min(totalHard, Math.max(1, Math.round(balancedRec * 0.45))) : Math.max(1, Math.round(balancedRec * 0.35));
 
       // Ensure Balanced is strictly greater than or equal to each single-tier recommendation
       balancedRec = Math.max(balancedRec, recEasy, recMedium, recHard);

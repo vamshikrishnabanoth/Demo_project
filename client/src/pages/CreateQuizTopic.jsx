@@ -2203,18 +2203,24 @@ export default function CreateQuizTopic() {
                                             </div>
                                         )}
 
-                                        {/* Document-Only Topics (when ONLY documents/PDFs are present) */}
-                                        {hasDocFiles && ((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
+                                        {/* Key Topics Understood (always visible for audio, document, and topic modes) */}
+                                        {((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <FileText size={13} className="text-[#c2410c] shrink-0" /> Topics Extracted from Document
-                                                </p>
-                                                <div className="flex flex-wrap gap-2 pt-0.5">
-                                                    {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
+                                                <div className="flex items-center justify-between">
+                                                    <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
+                                                        <Tag size={13} className="text-[#c2410c] shrink-0" /> Key Topics Understood ({((keyTopics && keyTopics.length > 0) ? keyTopics : detectedFocus).length})
+                                                    </p>
+                                                    {recommendedQuestionCount && (
+                                                        <span className="text-[10px] font-bold text-orange-800 bg-orange-100/90 px-2.5 py-0.5 rounded-lg border border-orange-200/60">
+                                                            {recommendedQuestionCount} Qs Recommended
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
+                                                    {((keyTopics && keyTopics.length > 0) ? keyTopics : detectedFocus)
                                                         .filter(t => t && t.length >= 3 && !/^\d+$/.test(t.trim()) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
-                                                        .slice(0, 8)
                                                         .map((topic, i) => (
-                                                        <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
+                                                        <span key={i} className="text-[11px] font-bold text-slate-800 bg-orange-50/80 hover:bg-orange-100/90 px-2.5 py-1 rounded-xl border border-orange-200/70 shadow-2xs transition-colors flex items-center gap-1.5">
                                                             <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
                                                             <span>{topic}</span>
                                                         </span>
@@ -2223,25 +2229,20 @@ export default function CreateQuizTopic() {
                                             </div>
                                         )}
 
-                                        {/* Topic-Only Syllabus (when ONLY topic is present) */}
-                                        {isPureTopic && ((keyTopics && keyTopics.length > 0) || (detectedFocus && detectedFocus.length > 0)) && (
-                                            <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
-                                                <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Academic Curriculum Scope
-                                                </p>
-                                                <div className="flex flex-wrap gap-2 pt-0.5">
-                                                    {(keyTopics && keyTopics.length > 0 ? keyTopics : detectedFocus)
-                                                        .filter(t => t && t.length >= 3 && !/^\d+$/.test(t.trim()) && !/^(obviously|clearly|should|would|could|can|will|s not|it's|that's|what|why|how)/i.test(t))
-                                                        .slice(0, 8)
-                                                        .map((topic, i) => (
-                                                        <span key={i} className="text-xs font-bold text-slate-700 bg-white hover:bg-orange-50/70 px-3 py-1 rounded-full border border-orange-200/80 shadow-2xs transition-colors flex items-center gap-1.5">
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-[#ea580c] shrink-0" />
-                                                            <span>{topic}</span>
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
+                                        {/* Friendly Assurance Footer */}
+                                        <div className="pt-1 flex items-center justify-between text-[11px] font-bold text-orange-950 bg-orange-100/60 p-2.5 rounded-xl border border-orange-200/50">
+                                            <span className="flex items-center gap-1.5">
+                                                <CheckCircle size={14} className="text-emerald-600 shrink-0" />
+                                                <span>Zero-Guessing · Direct Lecture Evidence · All Difficulties Supported</span>
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowTeachingScoreModal(true)}
+                                                className="text-orange-800 hover:text-orange-950 underline cursor-pointer text-[10px] font-black uppercase tracking-wider shrink-0"
+                                            >
+                                                See Rubric & Plan →
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
                             </>
@@ -2251,72 +2252,6 @@ export default function CreateQuizTopic() {
                     {/* RIGHT COLUMN: Difficulty Focus & Question Count Configuration (40% Desktop Width -> lg:col-span-5) */}
                     <div className={`lg:col-span-5 bg-[var(--bg-secondary)] backdrop-blur-md border border-[var(--border-color)] rounded-3xl p-5 lg:p-6 flex flex-col justify-between space-y-6 shadow-lg ${isGenerating ? 'pointer-events-none opacity-60' : ''}`}>
                         <div className="space-y-6">
-
-                            {/* LECTURE UNDERSTANDING & TEACHER ASSURANCE CARD */}
-                            {(whatWasTaught || (keyTopics && keyTopics.length > 0)) && (
-                                <div className="bg-gradient-to-br from-orange-50/90 via-white to-amber-50/70 border-2 border-orange-200/90 rounded-2xl p-4 sm:p-4.5 shadow-xs space-y-3 animate-in fade-in duration-300">
-                                    <div className="flex items-center justify-between pb-2 border-b border-orange-200/60">
-                                        <div className="flex items-center gap-2">
-                                            <span className="p-1.5 rounded-xl bg-orange-600 text-white shadow-2xs">
-                                                <Sparkles size={14} />
-                                            </span>
-                                            <div>
-                                                <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
-                                                    Lecture Understood & Verified
-                                                </h4>
-                                                <p className="text-[10px] font-bold text-orange-800">
-                                                    What Was Taught & Verified Topics
-                                                </p>
-                                            </div>
-                                        </div>
-                                        {recommendedQuestionCount && (
-                                            <span className="text-xs font-black px-2.5 py-1 rounded-xl bg-orange-600 text-white shadow-2xs">
-                                                {recommendedQuestionCount} Qs Recommended
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    {whatWasTaught && (
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase tracking-wider text-orange-900 flex items-center gap-1 font-bold">
-                                                <Target size={12} className="text-orange-700" /> What Was Taught
-                                            </p>
-                                            <p className="text-xs text-slate-700 leading-relaxed font-medium bg-white/80 p-2.5 rounded-xl border border-orange-100 shadow-2xs">
-                                                {whatWasTaught}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {keyTopics && keyTopics.length > 0 && (
-                                        <div className="space-y-1.5">
-                                            <p className="text-[10px] font-black uppercase tracking-wider text-orange-900 flex items-center gap-1 font-bold">
-                                                <Tag size={12} className="text-orange-700" /> Key Topics Understood ({keyTopics.length})
-                                            </p>
-                                            <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
-                                                {keyTopics.map((top, idx) => (
-                                                    <span key={idx} className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-orange-100/90 text-orange-900 border border-orange-200/70">
-                                                        {top}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="pt-1 flex items-center justify-between text-[11px] font-bold text-orange-950 bg-orange-100/60 p-2.5 rounded-xl border border-orange-200/50">
-                                        <span className="flex items-center gap-1.5">
-                                            <CheckCircle size={14} className="text-emerald-600 shrink-0" />
-                                            <span>Zero-Guessing · Direct Lecture Evidence</span>
-                                        </span>
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowTeachingScoreModal(true)}
-                                            className="text-orange-800 hover:text-orange-950 underline cursor-pointer text-[10px] font-black uppercase tracking-wider"
-                                        >
-                                            See Why This Score & Full Plan →
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
 
                             {/* 1. DIFFICULTY FOCUS SELECTOR */}
                             <div className="space-y-3">
@@ -2331,17 +2266,17 @@ export default function CreateQuizTopic() {
                                             const lvlKey = level.toLowerCase();
                                             const rawRec = recommendedByDifficulty ? recommendedByDifficulty[lvlKey] : null;
                                             const rawCap = capacityByDifficulty ? capacityByDifficulty[lvlKey] : null;
-                                            const isEvidenceLimited = (rawCap === 0) || (rawRec === 0);
-                                            const baseRec = (recommendedQuestionCount && Number(recommendedQuestionCount) > 0) ? Number(recommendedQuestionCount) : null;
-                                            const recVal = isEvidenceLimited
-                                                ? 0
-                                                : ((rawRec !== null && rawRec !== undefined && Number(rawRec) > 0)
-                                                    ? Number(rawRec)
-                                                    : (rawCap !== null && rawCap !== undefined && Number(rawCap) > 0)
-                                                        ? Number(rawCap)
-                                                        : (baseRec
-                                                            ? (level === 'Balanced' ? baseRec : (level === 'Hard' ? Math.max(1, Math.round(baseRec * 0.5)) : Math.max(1, Math.round(baseRec * 0.85))))
-                                                            : (rawRec !== null && rawRec !== undefined ? rawRec : null)));
+                                            const baseRec = (recommendedQuestionCount && Number(recommendedQuestionCount) > 0) ? Number(recommendedQuestionCount) : 10;
+                                            const isEvidenceLimited = false; // Always support all difficulties for academic lectures
+                                            const recVal = (rawRec !== null && rawRec !== undefined && Number(rawRec) > 0)
+                                                ? Number(rawRec)
+                                                : (rawCap !== null && rawCap !== undefined && Number(rawCap) > 0)
+                                                    ? Number(rawCap)
+                                                    : (level === 'Balanced'
+                                                        ? baseRec
+                                                        : (level === 'Hard'
+                                                            ? Math.max(1, Math.round(baseRec * 0.4))
+                                                            : Math.max(1, Math.round(baseRec * 0.85))));
                                             return (
                                                 <button
                                                     key={level}

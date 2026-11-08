@@ -95,9 +95,18 @@ export default function TeachingScoreModal({
 
     // Recommended Question Counts
     const recCount = recommendedQuestionCount || capacity.totalRecommended || breakdown.recommendedQuestionCount || 10;
-    const easyCap = capacity.easy ?? capacityByDifficulty?.Easy ?? Math.max(1, Math.round(recCount * 0.35));
-    const hardCap = capacity.hard ?? capacityByDifficulty?.Hard ?? 0;
-    const medCap = capacity.medium ?? capacityByDifficulty?.Medium ?? Math.max(0, recCount - easyCap - hardCap);
+    const hardRaw = capacity.hard ?? capacityByDifficulty?.hard ?? capacityByDifficulty?.Hard;
+    const hardCap = (hardRaw !== null && hardRaw !== undefined && Number(hardRaw) > 0)
+        ? Number(hardRaw)
+        : Math.max(1, Math.round(recCount * 0.3));
+    const easyRaw = capacity.easy ?? capacityByDifficulty?.easy ?? capacityByDifficulty?.Easy;
+    const easyCap = (easyRaw !== null && easyRaw !== undefined && Number(easyRaw) > 0)
+        ? Number(easyRaw)
+        : Math.max(1, Math.round(recCount * 0.35));
+    const medRaw = capacity.medium ?? capacityByDifficulty?.medium ?? capacityByDifficulty?.Medium;
+    const medCap = (medRaw !== null && medRaw !== undefined && Number(medRaw) > 0)
+        ? Number(medRaw)
+        : Math.max(1, Math.round(recCount * 0.35));
 
     // Friendly Rubric Categories Map
     const friendlyCategories = [

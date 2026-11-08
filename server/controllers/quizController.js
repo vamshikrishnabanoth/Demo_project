@@ -5419,6 +5419,15 @@ exports.analyzeDepth = async (req, res) => {
                     hard: validCap.recommendedByDifficulty.hard,
                     balanced: validCap.totalDefensibleCapacity || validCap.recommendedQuestionCount
                 };
+                // Ensure academic lectures always calibrate hard questions (tradeoffs, synthesis, boundary conditions)
+                if (analysis.isAcademic) {
+                    if (!recommendedByDifficulty.hard || recommendedByDifficulty.hard <= 0) {
+                        recommendedByDifficulty.hard = Math.max(1, Math.round((validCap.recommendedQuestionCount || 10) * 0.35));
+                    }
+                    if (!capacityByDifficulty.hard || capacityByDifficulty.hard <= 0) {
+                        capacityByDifficulty.hard = Math.max(3, Math.round(recommendedByDifficulty.hard * 1.5));
+                    }
+                }
                 totalDefensibleCapacity = validCap.totalDefensibleCapacity || (recommendedByDifficulty.easy + recommendedByDifficulty.medium + recommendedByDifficulty.hard);
                 advisoryRationale = validCap.advisoryRationale || '';
                 recommendedQuestionCount = validCap.recommendedQuestionCount || Math.max(1, recommendedByDifficulty.balanced);
@@ -5428,8 +5437,8 @@ exports.analyzeDepth = async (req, res) => {
                 const baseCount = Math.max(3, recBreakdown?.recommendedQuestionCount || Math.min(25, Math.max(5, Math.round(wordCount / 120))));
                 const easyPart = Math.max(1, Math.round(baseCount * 0.35));
                 const medPart = Math.max(1, Math.round(baseCount * 0.45));
-                const hardPart = supportsHard ? Math.max(1, baseCount - easyPart - medPart) : 0;
-                const balancedPart = easyPart + medPart + hardPart;
+                const hardPart = Math.max(1, Math.round(baseCount * 0.35));
+                const balancedPart = Math.max(baseCount, easyPart + medPart + hardPart);
 
                 recommendedByDifficulty = {
                     easy: easyPart,
@@ -5440,7 +5449,7 @@ exports.analyzeDepth = async (req, res) => {
                 capacityByDifficulty = {
                     easy: Math.max(3, Math.round(easyPart * 1.5)),
                     medium: Math.max(3, Math.round(medPart * 1.5)),
-                    hard: supportsHard ? Math.max(1, Math.round(hardPart * 1.5)) : 0,
+                    hard: Math.max(3, Math.round(hardPart * 1.5)),
                     balanced: Math.max(5, Math.round(balancedPart * 1.5))
                 };
                 totalDefensibleCapacity = capacityByDifficulty.balanced;
