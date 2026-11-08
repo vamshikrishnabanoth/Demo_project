@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "What is the primary reason fully connected autoencoders perform poorly on image data?",
+      "options": [
+        "They flatten the 2D image, losing spatial neighborhood information",
+        "They use too many convolutional layers, causing overfitting",
+        "They require a variational latent space, which is computationally expensive",
+        "They cannot be trained with backpropagation"
+      ],
+      "correctAnswer": "They flatten the 2D image, losing spatial neighborhood information",
+      "explanation": "Flattening an image into a 1‑D vector discards the spatial relationships between pixels, which degrades reconstruction quality in fully connected autoencoders.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Autoencoder architecture limitations"
+    },
+    {
+      "questionText": "In a variational autoencoder, what is the primary role of the KL‑divergence term in the loss function?",
+      "options": [
+        "It directly improves the pixel‑wise reconstruction accuracy of the decoder",
+        "It forces the learned latent distribution to stay close to a standard normal prior",
+        "It increases the capacity of the encoder by adding extra parameters",
+        "It acts as a dropout mechanism to prevent over‑fitting"
+      ],
+      "correctAnswer": "It forces the learned latent distribution to stay close to a standard normal prior",
+      "explanation": "The KL‑divergence term penalizes deviations of the encoder’s mean and variance from the N(0, I) prior, ensuring a smooth, continuous latent space suitable for sampling.",
+      "targetDifficulty": "Medium",
+      "subtopic": "VAE regularization"
+    },
+    {
+      "questionText": "How does the reparameterization trick enable backpropagation through the random sampling step in a variational autoencoder?",
+      "options": [
+        "By expressing the sampled latent variable as a deterministic function of the encoder’s mean and variance plus a noise term drawn from a standard normal distribution.",
+        "By approximating the gradient using Monte Carlo integration over multiple samples.",
+        "By preventing any gradient flow through the encoder during the sampling step.",
+        "By using a straight‑through estimator that treats the sampled value as if it were the mean."
+      ],
+      "correctAnswer": "By expressing the sampled latent variable as a deterministic function of the encoder’s mean and variance plus a noise term drawn from a standard normal distribution.",
+      "explanation": "The trick rewrites z = μ + σ·ε with ε~N(0,I), making z a differentiable function of μ and σ, so gradients can flow through the encoder parameters.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Reparameterization trick"
+    },
+    {
+      "questionText": "In a variational autoencoder (VAE), what does the encoder output for each input image?",
+      "options": [
+        "A single deterministic latent vector",
+        "A probability distribution characterized by a mean (μ) and a variance (σ²)",
+        "The reconstructed image itself",
+        "The total loss value for the training step"
+      ],
+      "correctAnswer": "A probability distribution characterized by a mean (μ) and a variance (σ²)",
+      "explanation": "The VAE encoder predicts two vectors—mean and variance—defining a Gaussian distribution in latent space, unlike a standard autoencoder that outputs a single point.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Variational Autoencoders – Latent Space Representation"
+    },
+    {
+      "questionText": "In a variational autoencoder, what is the consequence of allowing the encoder to set the variance to zero without regularization?",
+      "options": [
+        "The latent space becomes densely populated with overlapping points.",
+        "The model can perfectly reconstruct inputs but generates unrealistic samples from random latent points.",
+        "Training becomes unstable due to exploding gradients.",
+        "The decoder learns to ignore the latent variables."
+      ],
+      "correctAnswer": "The model can perfectly reconstruct inputs but generates unrealistic samples from random latent points.",
+      "explanation": "Without the KL‑divergence regularizer the encoder may collapse the variance to zero, pushing different inputs far apart to ease reconstruction, which leaves large empty gaps in latent space and yields gibberish when sampling.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Latent space regularization in VAEs"
+    },
+    {
+      "questionText": "Why can we sample arbitrary points from the latent Gaussian space of a trained VAE and still obtain realistic, novel images from the decoder?",
+      "options": [
+        "The decoder can map any latent vector to a realistic image because it has been trained on a wide variety of inputs.",
+        "The latent space is regularized to follow a standard normal distribution, so sampling from it yields plausible codes.",
+        "The encoder outputs deterministic codes that guarantee realism.",
+        "The reconstruction loss forces every possible latent vector to correspond to a training image."
+      ],
+      "correctAnswer": "The latent space is regularized to follow a standard normal distribution, so sampling from it yields plausible codes.",
+      "explanation": "During VAE training, a KL‑divergence term forces the posterior over latent variables to match a standard normal prior, making the latent space continuous and Gaussian; thus any random draw from this distribution can be decoded into a realistic image.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Latent space regularization (Gaussian prior) in VAEs"
+    },
+    {
+      "questionText": "What is the primary benefit of using convolutional autoencoders compared to fully connected autoencoders?",
+      "options": [
+        "They reduce computational complexity",
+        "They preserve spatial neighborhood information",
+        "They produce sharper reconstructions",
+        "They allow sampling from latent space"
+      ],
+      "correctAnswer": "They preserve spatial neighborhood information",
+      "explanation": "Convolutional layers process the 2D image without flattening, maintaining spatial relationships that fully connected layers lose.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Autoencoder Architecture"
+    },
+    {
+      "questionText": "What is the main role of the KL‑divergence term in the loss function of a variational autoencoder?",
+      "options": [
+        "It directly minimizes the pixel‑wise reconstruction error between input and output.",
+        "It forces the encoder’s latent distribution to stay close to a standard normal prior.",
+        "It increases the capacity of the decoder by adding extra parameters.",
+        "It provides a deterministic mapping from latent variables to reconstructed images."
+      ],
+      "correctAnswer": "It forces the encoder’s latent distribution to stay close to a standard normal prior.",
+      "explanation": "The KL‑divergence term measures the distance between the learned latent Gaussian (parameterized by μ and σ) and the standard Gaussian N(0, I). Minimizing it regularizes the latent space, keeping it smooth and enabling sampling.",
+      "targetDifficulty": "Medium",
+      "subtopic": "KL divergence regularization in VAEs"
+    },
+    {
+      "questionText": "In a Variational Autoencoder, how does the reparameterization trick enable gradients to flow through the stochastic sampling of the latent variable?",
+      "options": [
+        "By replacing the random variable with a deterministic function of the mean, variance, and a separate noise variable drawn from a standard normal distribution.",
+        "By using Monte Carlo integration to approximate gradients.",
+        "By discarding the stochastic node during backpropagation.",
+        "By training a separate network to predict gradients."
+      ],
+      "correctAnswer": "By replacing the random variable with a deterministic function of the mean, variance, and a separate noise variable drawn from a standard normal distribution.",
+      "explanation": "The trick rewrites the sampled latent vector as z = μ + σ·ε with ε~N(0,1), turning the sampling step into a differentiable operation with respect to μ and σ, allowing backpropagation.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Reparameterization trick in VAEs"
+    },
+    {
+      "questionText": "What is the main purpose of the reparameterization trick in a variational autoencoder (VAE)?",
+      "options": [
+        "It allows the model to sample latent variables without using any random numbers.",
+        "It enables backpropagation through the stochastic sampling step by expressing the sample as a deterministic function of the mean, variance, and a random epsilon.",
+        "It forces the latent distribution to become uniform instead of Gaussian.",
+        "It directly minimizes the reconstruction loss during training."
+      ],
+      "correctAnswer": "It enables backpropagation through the stochastic sampling step by expressing the sample as a deterministic function of the mean, variance, and a random epsilon.",
+      "explanation": "The reparameterization trick rewrites the random sampling z = μ + σ·ε (with ε~N(0,1)) so that gradients can flow through μ and σ during backpropagation.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Reparameterization Trick"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 11,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6478,
+    "cumulativeOutputTokens": 2337,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 22007
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:22:51.835Z"
+}

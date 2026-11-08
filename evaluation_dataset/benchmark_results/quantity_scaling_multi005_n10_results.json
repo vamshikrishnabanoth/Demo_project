@@ -1,0 +1,567 @@
+{
+  "benchmarkPhase": "PRIORITY_3_QUANTITY_SCALING",
+  "runId": "RUN_1_N10",
+  "datasetId": "MULTI_005",
+  "subject": "Algorithms",
+  "topic": "DAA - Best Time to Buy and Sell Stock / Minimum Spanning Trees",
+  "gitCommit": "4a526909887818a118d25cd2bee8f7cff6d01f2b",
+  "timestamp": "2026-10-30T17:41:06.647Z",
+  "parameters": {
+    "requestedCount": 10,
+    "deliveredCount": 10,
+    "difficulty": "Balanced",
+    "generationDurationSec": 581.7
+  },
+  "scalingMetrics": {
+    "capacityFulfillmentRate": "100.0%",
+    "usableYieldDelivered": "5 / 10",
+    "usablePercentageDelivered": "50.0%",
+    "usableYieldRequested": "5 / 10",
+    "usablePercentageRequested": "50.0%",
+    "usableYieldStrictDeduplicated": "4 / 10",
+    "usablePercentageStrictDeduplicated": "40.0%",
+    "latencySecondsTotal": 581.7,
+    "latencySecondsPerDeliveredQuestion": 58.2,
+    "uniqueConceptsCount": 10,
+    "redundancy": {
+      "totalPairs": 45,
+      "moderateSimilarityPairsCount": 2,
+      "highSimilarityNearDuplicatesCount": 0,
+      "nearDuplicateRate": "0.0%",
+      "pedagogicalOverlapNote": "Q4 (edge count identification: V-1) and Q8 (why V-1 edges) test the exact same structural invariant."
+    },
+    "difficultyDistribution": {
+      "Easy": 4,
+      "Medium": 6,
+      "Hard": 0
+    },
+    "topicBreadthDistribution": {
+      "Stock Trading (Single Transaction)": 3,
+      "General Algorithms & Greedy Paradigms": 2,
+      "Greedy MST (Kruskal/Prim)": 4,
+      "Stock Trading (Multi/DP)": 1
+    }
+  },
+  "dimensionPassRates": {
+    "dimension1_Correctness": "8 / 10",
+    "dimension2_Grounding": "7 / 10",
+    "dimension3_CognitiveFit": "10 / 10",
+    "dimension4_StemAlignment": "8 / 10"
+  },
+  "questions": [
+    {
+      "questionIndex": 1,
+      "difficulty": "Easy",
+      "topicClassification": "Stock Trading (Single Transaction)",
+      "concept": "Determining the profit outcome when stock prices are non-increasing.",
+      "stem": "If the stock price array is strictly non‑increasing, what profit does the algorithm output?",
+      "options": [
+        "The difference between first and last price values",
+        "Zero, because no profitable transaction exists",
+        "The total loss equal to the price decline",
+        "The sum of all positive daily differences"
+      ],
+      "correctAnswer": "Zero, because no profitable transaction exists",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 14,
+        "maxOptionWords": 8,
+        "optionLengthRatio": 1.33
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0,
+        "failureReasons": [
+          "AMBIGUOUS_DISTRACTOR"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed answer states the profit is zero, directly answering the question 'what profit does the algorithm output?'",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 2,
+      "difficulty": "Easy",
+      "topicClassification": "General Algorithms & Greedy Paradigms",
+      "concept": "Optimizing the 'Product of Array Except Self' algorithm to handle negative numbers without modifying the original array.",
+      "stem": "In the 'Product of Array Except Self' optimization, what is the primary constraint that prevents using the division-by-total-product method?",
+      "options": [
+        "The algorithm requires modifying the original array",
+        "The method fails when the array contains zeros",
+        "The total product may overflow integer limits",
+        "The division operation is computationally too slow"
+      ],
+      "correctAnswer": "The algorithm requires modifying the original array",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 19,
+        "maxOptionWords": 8,
+        "optionLengthRatio": 1.14
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 0,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 0
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "INCORRECT_OR_AMBIGUOUS_KEY",
+        "STEM_ANSWER_MISALIGNMENT"
+      ],
+      "primaryDisposition": "INCORRECT_OR_AMBIGUOUS_KEY",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.2,
+        "failureReasons": [
+          "Keyed answer is incorrect for the asked constraint",
+          "Stem answer misalignment (key does not directly answer the question)",
+          "Cognitive demand does not match intended COMPARE operation",
+          "No supporting evidence in session transcript",
+          "STEM_ANSWER_MISALIGNMENT",
+          "TIER_COGNITIVE_MISMATCH",
+          "FOREIGN_DOMAIN_CONTAMINATION"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": false,
+          "interrogativeMatch": false,
+          "responsivenessAnalysis": "The keyed option states a requirement about modifying the original array, which does not address the asked primary constraint preventing the division method.",
+          "mismatchDetails": "Keyed answer does not identify the correct constraint; therefore both responsiveness and interrogative match fail."
+        }
+      }
+    },
+    {
+      "questionIndex": 3,
+      "difficulty": "Medium",
+      "topicClassification": "General Algorithms & Greedy Paradigms",
+      "concept": "Understanding the constraint of not modifying the original array in the product problem.",
+      "stem": "why is the strategy of dividing the total product by the largest negative number preferred over modifying the array directly? \n\nThe interviewer explicitly forbids altering the original input array during the computation.",
+      "options": [
+        "It ensures the algorithm runs in constant space complexity",
+        "It avoids the O(n) overhead of creating a new array copy",
+        "It prevents integer overflow during the multiplication phase",
+        "It preserves the original array state as required by the constraint"
+      ],
+      "correctAnswer": "It preserves the original array state as required by the constraint",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 32,
+        "maxOptionWords": 11,
+        "optionLengthRatio": 1.38
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 0,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "primaryDisposition": "UNGROUNDED_EVIDENCE_CLAIM",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "FAILED",
+        "reasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM: Candidate asserts \"strategy\" dividing \"largest\", but evidence attributes this to \"zero basically\""
+        ]
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option D explains that the strategy is preferred because it preserves the original array state, directly addressing the 'why' asked in the stem.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 4,
+      "difficulty": "Easy",
+      "topicClassification": "Greedy MST (Kruskal/Prim)",
+      "concept": "Spanning Trees",
+      "stem": "In a connected undirected graph with V vertices, what is the exact number of edges in any spanning tree?",
+      "options": [
+        "2V edges",
+        "V - 1 edges",
+        "V edges",
+        "V + 1 edges"
+      ],
+      "correctAnswer": "V - 1 edges",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 19,
+        "maxOptionWords": 4,
+        "optionLengthRatio": 2
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0,
+        "failureReasons": [
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option 'V - 1 edges' directly provides the exact number of edges requested by the question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 5,
+      "difficulty": "Easy",
+      "topicClassification": "Greedy MST (Kruskal/Prim)",
+      "concept": "Combinations",
+      "stem": "In the TSP context, why is generating all permutations and combinations to find the minimum cost path considered computationally infeasible for 20 vertices?",
+      "options": [
+        "The exponential growth of combinations exceeds available compute resources",
+        "The algorithm requires a complete graph with no missing edges",
+        "Edge weights in the graph are negative, causing summation errors",
+        "The graph lacks sufficient connectivity to form valid paths"
+      ],
+      "correctAnswer": "The exponential growth of combinations exceeds available compute resources",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 23,
+        "maxOptionWords": 10,
+        "optionLengthRatio": 1.11
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 0,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "primaryDisposition": "UNGROUNDED_EVIDENCE_CLAIM",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "FAILED",
+        "reasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM: Candidate asserts \"tsp\" generating \"permutations\", but evidence attributes this to \"graph\""
+        ]
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.92,
+        "failureReasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM",
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks 'why' the brute-force approach is infeasible. The keyed option provides the causal reason: exponential growth exceeding resources. This directly answers the explanatory question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 6,
+      "difficulty": "Medium",
+      "topicClassification": "Stock Trading (Single Transaction)",
+      "concept": "Transaction",
+      "stem": "In the stock trading greedy algorithm, how does the operational constraint of 'one transaction' differ from 'infinite transactions' regarding profit calculation?",
+      "options": [
+        "One maximizes total volume traded; infinite minimizes the number of days held",
+        "One ignores price fluctuations; infinite only considers the first and last day",
+        "One requires holding until the final day; infinite allows immediate reversal",
+        "One seeks global min-max spread; infinite sums all positive daily gains"
+      ],
+      "correctAnswer": "One seeks global min-max spread; infinite sums all positive daily gains",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 21,
+        "maxOptionWords": 12,
+        "optionLengthRatio": 1.09
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.92,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks for the difference in operational constraints/profit calculation between 'one transaction' and 'infinite transactions'. The keyed option (D) correctly identifies that the single transaction strategy seeks the global minimum-maximum spread (buy lowest, sell highest), while the infinite transaction strategy sums all positive daily gains (buy yesterday, sell today if price rises). This directly answers the comparative question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 7,
+      "difficulty": "Medium",
+      "topicClassification": "Greedy MST (Kruskal/Prim)",
+      "concept": "Many Spanning Trees (Practical System Behavior)",
+      "stem": "When constructing a Minimum Spanning Tree (MST) for a connected undirected graph with N vertices, why is it computationally inefficient to generate all possible spanning trees to find the minimum cost?",
+      "options": [
+        "The number of edges in a spanning tree exceeds N.",
+        "The number of spanning trees grows exponentially as N increases.",
+        "Greedy algorithms cannot guarantee an optimal solution for MSTs.",
+        "Spanning trees are only valid if they contain cycles."
+      ],
+      "correctAnswer": "The number of spanning trees grows exponentially as N increases.",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 31,
+        "maxOptionWords": 10,
+        "optionLengthRatio": 1.11
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 0,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "primaryDisposition": "UNGROUNDED_EVIDENCE_CLAIM",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "FAILED",
+        "reasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM: Candidate asserts \"inefficient\" generate \"possible\", but evidence attributes this to \"out\""
+        ]
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.92,
+        "failureReasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks 'why' generating all spanning trees is inefficient. The keyed option provides the causal reason: the exponential growth of the number of spanning trees relative to N, which makes brute-force enumeration computationally infeasible. This directly answers the explanatory question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 8,
+      "difficulty": "Medium",
+      "topicClassification": "Greedy MST (Kruskal/Prim)",
+      "concept": "Multiple Spanning Trees (System Invariants & Bug Diagnostics)",
+      "stem": "When constructing a Minimum Spanning Tree (MST) for a connected undirected graph with V vertices, why must the resulting structure contain exactly V-1 edges?",
+      "options": [
+        "To maintain connectivity between all vertices while strictly avoiding any cycles.",
+        "To satisfy the requirement that every vertex has a degree of at least one.",
+        "To ensure the total edge weight remains the absolute minimum possible.",
+        "To allow the greedy algorithm to terminate after exactly V iterations."
+      ],
+      "correctAnswer": "To maintain connectivity between all vertices while strictly avoiding any cycles.",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 24,
+        "maxOptionWords": 14,
+        "optionLengthRatio": 1.27
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0,
+        "failureReasons": [
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "Option A directly explains that a tree with V vertices must have V-1 edges to maintain connectivity while avoiding cycles, which is the reason for the edge count.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 9,
+      "difficulty": "Medium",
+      "topicClassification": "Stock Trading (Multi/DP)",
+      "concept": "Array (Boundary Conditions & Edge Cases)",
+      "stem": "In the infinite transactions stock profit algorithm, why does the loop iterate only up to n-1 and compare prices[i] with prices[i+1]?",
+      "options": [
+        "To prevent the algorithm from incorrectly identifying a cycle in the price data",
+        "To ensure the algorithm terminates before reaching the final array index",
+        "To calculate the global maximum profit by finding the difference of all elements",
+        "To capture every upward trend by summing profits from consecutive daily increases"
+      ],
+      "correctAnswer": "To capture every upward trend by summing profits from consecutive daily increases",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 21,
+        "maxOptionWords": 13,
+        "optionLengthRatio": 1.18
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0,
+        "failureReasons": [
+          "AMBIGUOUS_DISTRACTOR"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "Option D directly explains that the loop compares each consecutive price pair to capture every upward trend, which answers the 'why' of the loop bound and comparison.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 10,
+      "difficulty": "Medium",
+      "topicClassification": "Stock Trading (Single Transaction)",
+      "concept": "Maximum Profit (State Transitions & Formulations)",
+      "stem": "Given the stock prices [3, 9, 1, 7, 2, 20] and the infinite transactions model, what is the maximum profit after processing all days?",
+      "options": [
+        "25",
+        "19",
+        "26",
+        "24"
+      ],
+      "correctAnswer": "25",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 24,
+        "maxOptionWords": 1,
+        "optionLengthRatio": 1
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 0,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 0
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "INCORRECT_CALCULATION",
+        "STEM_ANSWER_MISALIGNMENT"
+      ],
+      "primaryDisposition": "INCORRECT_CALCULATION",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0,
+        "failureReasons": [
+          "IncorrectKeyedAnswer",
+          "TIER_COGNITIVE_MISMATCH",
+          "STEM_ANSWER_MISALIGNMENT",
+          "FOREIGN_DOMAIN_CONTAMINATION"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "CALCULATION",
+          "isDirectlyResponsive": false,
+          "interrogativeMatch": false,
+          "responsivenessAnalysis": "Keyed answer does not match correct maximum profit.",
+          "mismatchDetails": "Keyed answer 25 is incorrect; correct profit is 30."
+        }
+      }
+    }
+  ]
+}

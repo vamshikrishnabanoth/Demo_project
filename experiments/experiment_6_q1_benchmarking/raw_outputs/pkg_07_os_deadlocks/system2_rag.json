@@ -1,0 +1,151 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "Which of the following is NOT one of the Coffman conditions required for a deadlock?",
+      "options": [
+        "Mutual Exclusion",
+        "Hold and Wait",
+        "No Preemption",
+        "Resource Starvation"
+      ],
+      "correctAnswer": "Resource Starvation",
+      "explanation": "The four Coffman conditions are Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait; Resource Starvation is not one of them.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Deadlock conditions"
+    },
+    {
+      "questionText": "According to the safety algorithm applied to the example in the excerpt, which process can be selected first for the safe sequence?",
+      "options": [
+        "P0",
+        "P1",
+        "P2",
+        "None of the above"
+      ],
+      "correctAnswer": "P1",
+      "explanation": "Initially Available = [3,3,2]. Need vectors are P0:[7,4,3], P1:[1,2,2], P2:[6,0,0]. Only P1's Need is less than or equal to Available, so P1 can be chosen first.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Banker's Algorithm – Safety Check"
+    },
+    {
+      "questionText": "After process P1 finishes and releases its allocated resources, what is the new Work vector?",
+      "options": [
+        "[5, 3, 2]",
+        "[3, 3, 2]",
+        "[6, 3, 2]",
+        "[5, 4, 2]"
+      ],
+      "correctAnswer": "[5, 3, 2]",
+      "explanation": "Work is updated by adding P1's allocation [2,0,0] to the initial Available vector [3,3,2], resulting in [5,3,2].",
+      "targetDifficulty": "Medium",
+      "subtopic": "Banker's Algorithm – Safety Check"
+    },
+    {
+      "questionText": "According to the Resource-Request algorithm described in the excerpt, what happens when a process's immediate request would cause the system to enter an unsafe state?",
+      "options": [
+        "The request is granted and the process continues execution.",
+        "The request is denied, the process is made to wait, and the tentative allocation is rolled back.",
+        "All processes are terminated to break the deadlock.",
+        "The system ignores the request and proceeds without any change."
+      ],
+      "correctAnswer": "The request is denied, the process is made to wait, and the tentative allocation is rolled back.",
+      "explanation": "The algorithm simulates the allocation; if the resulting state is unsafe, the request is not granted, the process must wait, and the system rolls back to the previous safe state.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Banker's Algorithm – Resource-Request Safety Check"
+    },
+    {
+      "questionText": "Which action directly eliminates the Circular Wait condition among Coffman's four necessary conditions for deadlock?",
+      "options": [
+        "Require processes to request all needed resources at once",
+        "Allow preemption of resources",
+        "Impose a total ordering on resource types and require processes to request resources in increasing order",
+        "Limit each process to hold at most one resource at a time"
+      ],
+      "correctAnswer": "Impose a total ordering on resource types and require processes to request resources in increasing order",
+      "explanation": "Assigning a global ordering and forcing requests to follow that order breaks the possibility of a circular chain of waiting processes, thus removing the Circular Wait condition.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Coffman conditions - Circular Wait"
+    },
+    {
+      "questionText": "During the execution of the Banker's safety algorithm, a process Pi can be marked as able to finish when:",
+      "options": [
+        "Its Need vector is less than or equal to the current Available vector",
+        "Its Need vector is less than or equal to the Work vector that is being updated during the algorithm",
+        "Its Allocation vector is less than or equal to the current Available vector",
+        "Its Max vector is less than or equal to the current Available vector"
+      ],
+      "correctAnswer": "Its Need vector is less than or equal to the Work vector that is being updated during the algorithm",
+      "explanation": "The safety algorithm uses a temporary Work vector (initially a copy of Available). A process can finish if Need_i ≤ Work, after which its Allocation is added to Work. This condition is checked iteratively to build a safe sequence.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Safety Algorithm condition"
+    },
+    {
+      "questionText": "During the safety check of the Banker's algorithm, which condition must be satisfied for a process to be selected to run?",
+      "options": [
+        "Its Need vector is less than or equal to the current Work vector",
+        "Its Allocation vector is greater than its Need vector",
+        "Its Max vector is less than the current Work vector",
+        "Its Need vector is greater than the current Work vector"
+      ],
+      "correctAnswer": "Its Need vector is less than or equal to the current Work vector",
+      "explanation": "The safety algorithm selects a process only if all its remaining resource needs can be met with the currently available resources (Work). This is expressed as Need ≤ Work.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Banker's Algorithm - Safety Condition"
+    },
+    {
+      "questionText": "In the Resource-Request algorithm described, what is the system's response when a process's immediate request would result in an unsafe state?",
+      "options": [
+        "The request is granted and the process proceeds.",
+        "The request is denied, the process is made to wait, and the state is rolled back.",
+        "The system terminates the requesting process immediately.",
+        "The system ignores the request and continues execution."
+      ],
+      "correctAnswer": "The request is denied, the process is made to wait, and the state is rolled back.",
+      "explanation": "The algorithm simulates the allocation; if the resulting state is unsafe, the request is not granted, the process waits, and the system rolls back to the previous safe state.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Deadlock avoidance – Resource-Request algorithm"
+    },
+    {
+      "questionText": "Which deadlock‑prevention technique specifically eliminates the Circular Wait condition?",
+      "options": [
+        "Assign a global integer ordering to resources and require requests in ascending order",
+        "Require each process to request all needed resources at once",
+        "Allow the OS to preempt resources from processes",
+        "Implement priority inheritance protocol"
+      ],
+      "correctAnswer": "Assign a global integer ordering to resources and require requests in ascending order",
+      "explanation": "By imposing a total order on resources and allowing requests only in increasing order, cycles in the resource‑allocation graph cannot form, thus breaking the Circular Wait Coffman condition.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Deadlock Prevention"
+    },
+    {
+      "questionText": "Which statement correctly defines a safe state in the context of the Banker's algorithm?",
+      "options": [
+        "A) A state where at least one process can obtain all its remaining resources from the currently available pool.",
+        "B) A state where there exists an ordering of all processes such that each process's remaining need can be satisfied by the available resources plus the resources released by all preceding processes in the order.",
+        "C) A state where every process has already been allocated its maximum demand.",
+        "D) A state where the sum of allocated resources equals the total number of resources in the system."
+      ],
+      "correctAnswer": "B) A state where there exists an ordering of all processes such that each process's remaining need can be satisfied by the available resources plus the resources released by all preceding processes in the order.",
+      "explanation": "A safe state requires a complete safe sequence; each process can finish when its need is met by current availability plus resources freed by earlier processes in that sequence.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Safe State Definition"
+    }
+  ],
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "validJson": 10,
+    "schemaValid": 10,
+    "groundingValid": 10,
+    "finalDelivered": 10,
+    "attritionCause": "None (Fulfilled via multi-pass overlapping window retrieval)"
+  },
+  "latency": {
+    "coldStartMs": 19582,
+    "cachedMs": 0
+  },
+  "totalChunks": 4,
+  "timestamp": "2026-11-05T19:56:00.872Z"
+}

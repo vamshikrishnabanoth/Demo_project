@@ -73,7 +73,7 @@ const ACADEMIC_DOMAIN_TERMS = new Set([
   'cache', 'latency', 'bandwidth', 'protocol', 'tcp', 'udp', 'ip', 'http', 'https', 'dns',
   'syn', 'ack', 'syn-ack', 'handshake', 'packet', 'packets', 'frame', 'frames', 'datagram', 'payload', 'syn cookies',
   'syn flood', 'flow control', 'congestion control', 'sliding window', 'mtu', 'rtt', 'checksum', 'header', 'headers',
-  'object-oriented', 'polymorphism', 'inheritance', 'encapsulation', 'abstraction', 'interface', 'class', 'struct',
+  'object-oriented', 'polymorphism', 'inheritance', 'encapsulation', 'abstraction', 'interface', 'abstract class', 'class hierarchy', 'struct',
   'pointer', 'pointers', 'memory allocation', 'garbage collection', 'memory leak', 'segmentation fault',
   'complexity', 'big-o', 'big-omega', 'big-theta', 'asymptotic notation', 'time complexity', 'space complexity',
   'neural network', 'neural networks', 'deep learning', 'machine learning', 'autoencoder', 'autoencoders', 'convolutional', 'recurrent', 'transformer', 'transformers',
@@ -86,7 +86,7 @@ const ACADEMIC_DOMAIN_TERMS = new Set([
   'consistency', 'linearizable', 'linearizability', 'availability', 'partition', 'partitions', 'distributed storage', 'replication', 'replica', 'replicas', 'quorum', 'consensus', 'raft', 'paxos', 'byzantine', 'fault tolerance',
   'cable', 'cables', 'coaxial', 'fiber', 'fiber optic', 'optical', 'ethernet', 'twisted pair',
   'buffer', 'buffers', 'pipeline', 'pipelines', 'producer', 'producers', 'consumer', 'consumers', 'invariant', 'invariants',
-  'cloud', 'cloud computing', 'iaas', 'paas', 'saas', 'virtualized', 'aws', 'infrastructure as a service', 'platform as a service', 'software as a service', 'serverless', 'lambda', 'elastic beanstalk', 'ec2', 's3', 'devops', 'kubernetes',
+  'cloud computing', 'cloud storage', 'cloud infrastructure', 'cloud computing', 'iaas', 'paas', 'saas', 'virtualized', 'aws', 'infrastructure as a service', 'platform as a service', 'software as a service', 'serverless', 'lambda', 'elastic beanstalk', 'ec2', 's3', 'devops', 'kubernetes',
   'interrupt', 'interrupts', 'isr', 'interrupt service routine', 'vector table', 'program counter', 'register',
   'registers', 'instruction cycle', 'polling', 'device driver',
   'automaton', 'automata', 'dfa', 'nfa', 'pda', 'turing machine', 'qubit', 'qubits', 'superposition', 'entanglement',
@@ -259,7 +259,7 @@ class DepthAnalyzer {
       return false;
     }
     const codePatterns = [
-      /\b(?:#include\s*<|#define\s+|import\s+[\w.]+|from\s+[\w.]+\s+import|def\s+\w+\s*\(|public\s+class\s+|class\s+\w+|function\s+\w+\s*\(|void\s+\w+\s*\(|int\s+main\s*\(|pid_t\s+|fork\s*\(\)|pthread_|malloc\s*\(|free\s*\(|printf\s*\(|cout\s*<<|cin\s*>>|System\.out\.println|console\.log|SELECT\s+.*\s+FROM|CREATE\s+TABLE|INSERT\s+INTO|ALTER\s+TABLE|UPDATE\s+.*\s+SET|DELETE\s+FROM)\b/i,
+      /\b(?:#include\s*<|#define\s+|import\s+[\w.]+|from\s+[\w.]+\s+import|def\s+\w+\s*\(|public\s+class\s+\w+|class\s+[A-Za-z0-9_]+\s*(?:\{|extends\b|implements\b|:|\([A-Za-z0-9_,\s]*\))|function\s+\w+\s*\(|void\s+\w+\s*\(|int\s+main\s*\(|pid_t\s+|fork\s*\(\)|pthread_|malloc\s*\(|free\s*\(|printf\s*\(|cout\s*<<|cin\s*>>|System\.out\.println|console\.log|SELECT\s+.*\s+FROM|CREATE\s+TABLE|INSERT\s+INTO|ALTER\s+TABLE|UPDATE\s+.*\s+SET|DELETE\s+FROM)\b/i,
       /\b(?:git\s+(?:config|init|clone|status|add|commit|push|pull|branch|checkout|switch|merge|rebase|log|diff|remote|reset|stash|fetch|tag|show)|npm\s+(?:install|run|test|build|init|start|ci)|docker\s+(?:run|build|ps|compose|exec|stop|images)|kubectl\s+[a-z]+|pip\s+install|cargo\s+[a-z]+)\b/i,
       /\b(?:--global|--save-dev|-m\s+"[^"]*"|--hard|--soft)\b/i,
       /[{}][\s\S]*[;{}]|=>|\b(?:return|sizeof|typedef|struct|enum)\b\s*[\w*&]+|\b(?:const|var)\b\s*[\w*&]+|\blet\b\s*[\w*&]+\s*(?:=|[;:,])/i,
@@ -474,6 +474,7 @@ class DepthAnalyzer {
     // ──────────────────────────────────────────────────────────────────────────
     const adminPatterns = [
       /\b(close your (?:lips|lapels|mouth|laptops|books|eyes))\b/i,
+      /\b(cricket|football|soccer|tennis|sports? match|match yesterday|class logistics|course logistics|see you (?:next week|tomorrow|later|soon))\b/i,
       /\b(stop talking|settle down|be quiet|silence in the (?:class|back))\b/i,
       /\b(roll number(?:s)?|stand up|sit down|attendance|absent|present)\b/i,
       /\b(exam will be (?:held|conducted)|mid-term examination|bring your (?:id|hall tickets|identity cards|calculator))\b/i,
@@ -606,7 +607,7 @@ class DepthAnalyzer {
     const hasDefRelation = /\b(is an?|are(?: words)?|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|come in .* types|known as|named as|classified into|provides?(?:\s+an?)?|delivers?(?:\s+an?)?|acts as|serves as|used (?:to|as|in)|is (?:formally |strictly |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?|symbolizes?|illustrates?|explores?|depicts?|conveys?|embodies?|signifies?|articulates?|examines?)\b/i.test(lower);
     const hasMechRelation = /\b(works by|applies|extract(?:s|ed|ing)?|transform(?:s|ed|ing)?|comput(?:es|ed|ing)?|divid(?:es|ed|ing)?|multiplie(?:s|d)?|calculat(?:es|ed|ing)?|connect(?:s|ed|ing)?|execut(?:es|ed|ing)?|process(?:es|ed|ing)?|generat(?:es|ed|ing)?|allocat(?:es|ed|ing)?|modifie(?:s|d|ying)?|conduc(?:ts|ted|ting)?|converts?|eliminat(?:es|ed|ing)?|reduc(?:es|ed|ing)?|increas(?:es|ed|ing)?|decreas(?:es|ed|ing)?|stores?|retrieves?|passes?|takes?|outputs?|returns?|handles?|implements?|travers(?:es|ed|ing)?|select(?:s|ed|ing)?|partition(?:s|ed|ing)?|discard(?:s|ed|ing)?|project(?:s|ed|ing)?|encod(?:es|ed|ing)?|decod(?:es|ed|ing)?|superpos(?:es|ed|ing)?|entangl(?:es|ed|ing)?|borrow(?:s|ed|ing)?|catalyzes?|inhibits?|regulates?|binds?|secretes?|synthesizes?|activates?|mediates?|triggers?|escalates?|ratifies?|mobilizes?|governs?|produce(?:s|d|ing)?|construct(?:s|ed|ing)?|break(?:s|ing)?|halt(?:s|ed|ing)?|tripl(?:e|es|ed|ing)?|doubl(?:e|es|ed|ing)?|erupt(?:s|ed|ing)?|paralyz(?:e|es|ed|ing)?|enact(?:s|ed|ing)?|ration(?:s|ed|ing)?)\b/i.test(lower);
     const hasRuleRelation = /\b(whenever|therefore|in order to|leads to|results in|prevents|causes|so that|guarantees?|ensures?|requires?|depends on|condition|conditions|properties|invariants?|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes|cannot have both|trade-offs?|trade off|choice between|consequently|forced to|mathematically impossible|as a result|due to|led to|must\s+(?:return|have|be|start|contain|group)|naming\s+convention)\b/i.test(lower) || /^(?:when|because|faced with)\b.*,/i.test(lower);
-    const hasComparisonRelation = /\b(in contrast|compared to|difference between|between .* and|neither .* nor|whereas|while|faster than|slower than|preferred over|differs? from|unlike|similar to|contrasted with|conflicts? with|counterpart|at the cost of|trade-offs?|trade off)\b/i.test(lower);
+    const hasComparisonRelation = /\b(in contrast|compared to|difference between|between .* and|neither .* nor|whereas|while\\s+(?:in\\s+contrast|on\\s+the\\s+other\\s+hand)|faster than|slower than|preferred over|differs? from|unlike|similar to|contrasted with|conflicts? with|counterpart|at the cost of|trade-offs?|trade off)\b/i.test(lower);
     const hasDemonstrative = /\b(look at|notice (?:what happens|that|how)|observe (?:that|how)|see (?:what happens|that|how)|here we (?:see|have|notice)|consider (?:this|the|an?)|suppose (?:we|that)|let us (?:see|examine|trace|look)|trace (?:through|the)|given (?:an?|the)|explore (?:the|how|what|whether)?|think about why|think carefully about|for example|for instance)\b/i.test(lower);
     const hasTraceExample = /\[[0-9,\s]+\]|\b(pivot|example|trace|step|produces)\b/i.test(lower);
     const hasSocraticCurricular = /\b(what happens (?:to|if|when)|why does|why do we|how does|can the|what is the effect of|will the|why would)\b/i.test(lower);
@@ -743,7 +744,7 @@ class DepthAnalyzer {
       'know', 'knowing', 'let', 'lets', 'now', 'here', 'there', 'first', 'second', 'third',
       'step', 'sentence', 'example', 'look', 'looks', 'looking', 'going', 'talk', 'talking',
       'about', 'discuss', 'discussing', 'thing', 'things', 'stuff', 'really', 'actually',
-      'basically', 'simply', 'maybe', 'probably', 'class', 'lecture', 'sir', 'maam', 'okay',
+      'basically', 'simply', 'maybe', 'probably', 'abstract class', 'class hierarchy', 'lecture', 'sir', 'maam', 'okay',
       'alright', 'everyone', 'everybody', 'student', 'students', 'teacher', 'we', 'you',
       'they', 'it', 'its', 'them', 'him', 'her', 'me', 'us', 'this', 'that', 'these', 'those', 'what', 'which', 'where', 'when', 'why',
       'how', 'come', 'coming', 'came', 'take', 'taking', 'took', 'give', 'giving', 'gave',
@@ -984,6 +985,242 @@ class DepthAnalyzer {
    * @param {String} text - Raw transcript or combined document text
    * @returns {Object} Pedagogy-aware analysis result
    */
+  _extractFormalDefinitions(curricularSegments = [], raw = '', teachingUnits = []) {
+    const formalDefinitions = [];
+    const seenConcepts = new Set();
+
+    // 1. Check teaching units first (highest provenance)
+    for (const u of teachingUnits) {
+      if (u.substanceType === 'DEFINITION_OR_FACT' || u.category === 'CONCEPT_DEFINITION' || u.predicateType === 'DEFINITION' || u.definition) {
+        const concept = String(u.subtopic || u.concept || u.topic || 'Core Concept').trim();
+        const predicate = String(u.statement || u.claim || u.definition || '').trim();
+        if (concept.length >= 3 && predicate.length >= 15 && !seenConcepts.has(concept.toLowerCase())) {
+          seenConcepts.add(concept.toLowerCase());
+          formalDefinitions.push({
+            concept,
+            definingPredicate: predicate,
+            sourceAnchor: u.transcriptExcerpt || u.sourceAnchor || u.evidenceText || null
+          });
+        }
+      }
+    }
+
+    // 2. Scan text for formal definition constructs (DEF-TC-08: concept linked to defining predicate)
+    const defPatterns = [
+      /\b([A-Z][a-zA-Z0-9_\s-]{2,35})\s+(?:is defined as|refers to|denotes|is a mechanism (?:that|which)|is a property where|means that)\s+([^.!?\n]{15,250})/g,
+      /\b([A-Z][a-zA-Z0-9_\s-]{2,35})\s+is\s+(?:an?|the)\s+([a-zA-Z0-9_\s\-(),]{2,50}\s+(?:algorithm|data structure|protocol|invariant|concept|pattern|model|tree|graph|technique|method|system)\s+(?:that|which|where)\s+[^.!?\n]{15,250})/g
+    ];
+
+    for (const pat of defPatterns) {
+      let m;
+      while ((m = pat.exec(raw)) !== null && formalDefinitions.length < 5) {
+        const concept = m[1].trim();
+        const predicate = m[2].trim();
+        const lower = concept.toLowerCase();
+        const stopWords = ['it', 'this', 'that', 'there', 'what', 'which', 'who'];
+        if (!stopWords.includes(lower) && !seenConcepts.has(lower) && concept.length >= 3 && predicate.length >= 15) {
+          seenConcepts.add(lower);
+          formalDefinitions.push({
+            concept,
+            definingPredicate: predicate,
+            sourceAnchor: m[0].trim()
+          });
+        }
+      }
+    }
+
+    return formalDefinitions;
+  }
+
+  _extractWorkedTraces(curricularSegments = [], raw = '', teachingUnits = []) {
+    const workedTraces = [];
+    const seenInputs = new Set();
+
+    // Check array literals or numerical test series in raw text (DEF-TC-08)
+    const arrayMatches = raw.match(/\[\s*-?\d+(?:\s*,\s*-?\d+)+\s*\]/g) || [];
+    for (const arrStr of arrayMatches) {
+      if (seenInputs.has(arrStr) || workedTraces.length >= 4) continue;
+      const idx = raw.indexOf(arrStr);
+      const contextSnippet = raw.slice(Math.max(0, idx - 60), Math.min(raw.length, idx + arrStr.length + 150));
+      const hasStateOp = /\b(?:update|assigned?|profit|min_price|buying price|cost|sum|product|count|index|mid|low|high|ptr|root|swap|push|pop|insert|delet|travers|iterat)\w*\b/i.test(contextSnippet);
+      const hasResult = /\b(?:output|result|yields|returns?|gives|equals?|answer is|total is|profit)\b/i.test(contextSnippet);
+
+      // Must have actual state variable transition or computed result - bare 'for example' disqualified
+      if (hasStateOp || hasResult) {
+        seenInputs.add(arrStr);
+        workedTraces.push({
+          description: `Trace evaluation on dataset ${arrStr}`,
+          input: arrStr,
+          operation: hasStateOp ? 'Step-by-step state variable update' : 'Direct evaluation',
+          result: hasResult ? 'Computed terminal result' : 'State transition verified'
+        });
+      }
+    }
+
+    // Check verified teaching units with worked trace substance
+    for (const u of teachingUnits) {
+      if ((u.substanceType === 'WORKED_EXAMPLE' || u.category === 'WORKED_EXAMPLE' || u.category === 'ALGORITHM_AND_CODE' || u.substanceType === 'ALGORITHMIC_TRACE') && workedTraces.length < 4) {
+        const inp = u.transcriptExcerpt || u.documentExcerpt || u.statement || '';
+        if (inp.length >= 10 && !seenInputs.has(inp.slice(0, 40))) {
+          seenInputs.add(inp.slice(0, 40));
+          workedTraces.push({
+            description: u.concept || 'Algorithmic worked trace',
+            input: inp,
+            operation: 'Algorithmic state evaluation',
+            result: 'Step-by-step transition observed'
+          });
+        }
+      }
+    }
+
+    return workedTraces;
+  }
+
+  _extractAlgorithmicCodeSequencing(curricularSegments = [], raw = '', algoCount = 0, chronoCount = 0, hasAlgorithmicTrace = false) {
+    const hasCodeSyntax = /(?:void|int|float|double|char|bool|def|class|function|return|let|const|var)\s+[a-zA-Z0-9_]+\s*\(|->|::|\bcout\s*<<|\bprintf\s*\(|\bconsole\.log\s*\(|[a-zA-Z0-9_]+\s*=\s*[a-zA-Z0-9_]+\s*\[|for\s*\([^)]*\)\s*\{|while\s*\([^)]*\)\s*\{/i.test(raw);
+    const lineMatches = raw.match(/\bline\s+\d+\b/gi) || [];
+    const hasLineCitations = lineMatches.length > 0 && /\b(?:update|logic|check|return|assign|loop|condition|call|break)\b/i.test(raw);
+    const evidenceLines = [];
+
+    if (hasLineCitations) {
+      evidenceLines.push(...lineMatches.slice(0, 3).map(l => `Referenced ${l} with algorithmic operational logic`));
+    }
+    if (hasCodeSyntax) {
+      evidenceLines.push('Syntax-verified programming constructs or function signatures present in evidence');
+    }
+    if (hasAlgorithmicTrace || (algoCount >= 2 && chronoCount >= 1)) {
+      evidenceLines.push('Multi-step chronological transitions with algorithmic operations observed');
+    }
+
+    return {
+      detected: Boolean(hasCodeSyntax || hasLineCitations || hasAlgorithmicTrace || (algoCount >= 2 && chronoCount >= 1)),
+      modality: hasCodeSyntax ? 'PROGRAMMING_CODE' : (hasLineCitations ? 'LINE_CITATIONS' : (hasAlgorithmicTrace ? 'ALGORITHMIC_TRACE' : 'NONE')),
+      evidenceLines
+    };
+  }
+
+  _extractComparativeReasoning(curricularSegments = [], raw = '', hasComp = false) {
+    const compPatterns = [
+      /\bcompare\s+([^,.:;]+?)\s+(?:with|to|and)\s+([^,.:;]+)/i,
+      /\b([a-zA-Z0-9_\s-]{3,30})\s+(?:vs\.?|versus|compared with|compared to|in contrast to)\s+([a-zA-Z0-9_\s-]{3,30})/i,
+      /\btrade-?offs?\s+between\s+([^,.:;]+?)\s+and\s+([^,.:;]+)/i,
+      /\bO\([^)]+\)\s+(?:vs\.?|versus|compared to|while|whereas)\s+O\([^)]+\)/i
+    ];
+
+    let contrast = null;
+    for (const p of compPatterns) {
+      const m = raw.match(p);
+      if (m) {
+        contrast = m[0].trim();
+        break;
+      }
+    }
+
+    return {
+      detected: Boolean(contrast || hasComp),
+      contrast: contrast || (hasComp ? 'Comparative distinctions and tradeoffs observed in curricular discourse' : null)
+    };
+  }
+
+  _buildCurricularEvidenceProfile({
+    raw = '',
+    academicStatus = 'PASS',
+    academicReason = null,
+    evidenceSufficiencyStatus = 'SUFFICIENT',
+    sufficiencyReason = null,
+    distinctConcepts = [],
+    formalDefinitions = [],
+    workedTraces = [],
+    algorithmicCode = { detected: false, modality: 'NONE', evidenceLines: [] },
+    comparativeReasoning = { detected: false, contrast: null },
+    recCount = 0,
+    capacityByDifficulty = { easy: 0, medium: 0, hard: 0 },
+    unsupportedHardDeficit = 0,
+    capacityWarning = null,
+    quizAlignmentData = null
+  }) {
+    const volumeLabel = raw.length > 3000 ? 'COMPREHENSIVE' : (raw.length > 1200 ? 'SUBSTANTIVE' : (raw.length > 400 ? 'COMPACT' : 'SPARSE'));
+    const supportedTiers = [];
+    if (academicStatus === 'PASS' && evidenceSufficiencyStatus === 'SUFFICIENT') {
+      supportedTiers.push('Easy');
+      if (raw.length >= 200 || distinctConcepts.length >= 2 || formalDefinitions.length > 0 || workedTraces.length > 0) {
+        supportedTiers.push('Medium');
+      }
+      if (capacityByDifficulty && capacityByDifficulty.hard > 0) {
+        supportedTiers.push('Hard');
+      }
+    }
+
+    const eligibleCount = distinctConcepts.length;
+    const deliveredCount = quizAlignmentData?.deliveredConceptCount !== undefined ? quizAlignmentData.deliveredConceptCount : null;
+    const plannedCount = quizAlignmentData?.plannedConceptCount !== undefined ? quizAlignmentData.plannedConceptCount : null;
+
+    let deliveredRatio = null;
+    let plannedRatio = null;
+    let coverageBreakdown = 'No eligible concepts identified in evidence';
+
+    if (eligibleCount > 0) {
+      if (deliveredCount !== null) {
+        deliveredRatio = parseFloat((deliveredCount / eligibleCount).toFixed(3));
+        coverageBreakdown = `${deliveredCount} of ${eligibleCount} eligible distinct concepts represented in delivered questions (${(deliveredRatio * 100).toFixed(1)}%)`;
+      } else {
+        coverageBreakdown = `${eligibleCount} eligible distinct concepts identified; quiz delivery pending`;
+      }
+      if (plannedCount !== null) {
+        plannedRatio = parseFloat((plannedCount / eligibleCount).toFixed(3));
+      }
+    }
+
+    return {
+      schemaVersion: '2.0.0',
+      evaluationTimestamp: new Date().toISOString(),
+      disclaimer: 'Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.',
+      prerequisiteGates: {
+        academicContentGate: {
+          status: academicStatus,
+          primaryDiscourse: academicStatus === 'PASS' ? 'ACADEMIC' : (academicStatus === 'FAIL' ? 'NON_ACADEMIC' : 'UNCERTAIN'),
+          evidenceAnchor: academicStatus === 'PASS'
+            ? (distinctConcepts.length > 0 ? `Verified academic concepts: ${distinctConcepts.slice(0, 4).join(', ')}` : 'Verified assessable curriculum presence.')
+            : null,
+          failureReason: academicReason
+        },
+        evidenceSufficiency: {
+          status: evidenceSufficiencyStatus,
+          distinctConceptCount: distinctConcepts.length,
+          assessableEvidenceVolume: volumeLabel,
+          supportedQuestionTiers: supportedTiers,
+          reason: sufficiencyReason || (evidenceSufficiencyStatus === 'SUFFICIENT'
+            ? `Evidence supports up to ${recCount} questions across [${supportedTiers.join(', ')}] tiers.`
+            : 'Evidence is insufficient to formulate defensible questions without extrapolation.')
+        }
+      },
+      observableEvidence: {
+        distinctConcepts,
+        formalDefinitions,
+        workedTraces,
+        algorithmicCodeSequencing: algorithmicCode,
+        comparativeReasoning
+      },
+      assessmentCapacity: {
+        easy: capacityByDifficulty?.easy ?? 0,
+        medium: capacityByDifficulty?.medium ?? 0,
+        hard: capacityByDifficulty?.hard ?? 0,
+        totalRecommended: recCount,
+        unsupportedHardDeficit: unsupportedHardDeficit ?? 0,
+        capacityWarning: capacityWarning || null
+      },
+      quizAlignment: {
+        eligibleConceptCount: eligibleCount,
+        plannedConceptCount: plannedCount,
+        deliveredConceptCount: deliveredCount,
+        deliveredCoverageRatio: deliveredRatio,
+        plannedCoverageRatio: plannedRatio,
+        coverageBreakdown,
+        conceptDistribution: quizAlignmentData?.conceptDistribution || {}
+      }
+    };
+  }
+
   analyzeLecture(text = '', options = {}) {
     const raw = (text || '').trim();
     const sourceModality = options.sourceModality || options.modality || 'UNIFIED';
@@ -1151,12 +1388,30 @@ class DepthAnalyzer {
     const isExplicitlyFictional = fictionalSegments.length > 0 && curricularSegments.length === 0;
     const isPredominantlyFictional = (fictionalSegments.length > 0 && fictionalSegments.length >= curricularSegments.length && !hasAcademicLexicon && !hasCodeOrTechnical) ||
       (fictionalSegments.length >= 2 && fictionalSegments.length > curricularSegments.length && !hasAcademicLexicon && !hasCodeOrTechnical);
-    const isPurelyAdmin = adminSegments.length > 0 && curricularSegments.length === 0 && !hasAcademicLexicon;
-    const isPredominantlyUnrelated = (unrelatedSegments.length > 0 && curricularSegments.length === 0 && !hasAcademicLexicon && !hasCodeOrTechnical) ||
-      (curricularSegments.length > 0 && curricularSegments.length < 3 && unrelatedSegments.length > curricularSegments.length * 2 && !hasAcademicLexicon && !hasCodeOrTechnical) ||
-      (curricularSegments.length > 0 && curricularSegments.length < 5 && unrelatedSegments.length >= curricularSegments.length * 3 && !hasAcademicLexicon && !hasCodeOrTechnical);
+    // DEF-TC-07: Subject-Matter Evidence Gate
+    // Require verified teaching units, programming code, syllabus headers, or
+    // curricular segments with an educational predicate (definition, mechanism, or invariant).
+    // Isolated single words (e.g. 'class' in 'class logistics', or 'tree' in conversation) without educational predicate do NOT qualify.
+    const hasTeachingUnits = Array.isArray(options.teachingUnits) && options.teachingUnits.length > 0;
+    const EDUCATIONAL_PREDICATE_TYPES = new Set([
+      'DEFINITION_OR_FACT', 'MECHANISM', 'RULE_OR_CONDITION', 'COMPARISON',
+      'FORMAL_DERIVATION', 'ALGORITHMIC_TRACE', 'CODE_IMPLEMENTATION',
+      'CURRICULAR_OUTLINE', 'WORKED_EXAMPLE', 'PROCEDURAL_STEP'
+    ]);
+    const hasCurricularPredicate = curricularSegments.some(s => 
+      EDUCATIONAL_PREDICATE_TYPES.has(s?.classification?.substanceType)
+    );
+    const isPurelyAdmin = adminSegments.length > 0 && curricularSegments.length === 0 && !hasCodeOrTechnical && !hasTeachingUnits;
+    const isPredominantlyUnrelated = (unrelatedSegments.length > 0 && curricularSegments.length === 0 && !hasCodeOrTechnical && !hasTeachingUnits) ||
+      (curricularSegments.length > 0 && curricularSegments.length < 3 && unrelatedSegments.length > curricularSegments.length * 2 && !hasCodeOrTechnical && !hasTeachingUnits) ||
+      (curricularSegments.length > 0 && curricularSegments.length < 5 && unrelatedSegments.length >= curricularSegments.length * 3 && !hasCodeOrTechnical && !hasTeachingUnits);
 
-    const hasAcademicSubstance = (curricularSegments.length >= 1 || detectedFocus.length >= 1 || hasAcademicLexicon || hasCodeOrTechnical || hasSyllabusHeader) && !isExplicitlyFictional && !isPredominantlyFictional && !isPredominantlyUnrelated;
+    const hasMeaningfulAcademicDiscourse = (curricularSegments.length >= 1 && (hasCurricularPredicate || detectedFocus.length >= 1)) ||
+      (hasTeachingUnits) ||
+      (hasCodeOrTechnical) ||
+      (hasSyllabusHeader);
+
+    const hasAcademicSubstance = hasMeaningfulAcademicDiscourse && !isExplicitlyFictional && !isPredominantlyFictional && !isPredominantlyUnrelated;
 
     if (!hasAcademicSubstance) {
       let reason = 'Question generation : Non-academic content detected. (NON_ACADEMIC_CONTENT: The provided material does not contain assessable educational subject matter or curriculum concepts.)';
@@ -1168,16 +1423,27 @@ class DepthAnalyzer {
         reason = 'Question generation : Non-academic content detected. (NON_ACADEMIC_CONTENT: Casual conversational dialogue or music lyrics without educational curriculum concepts.)';
       }
 
+      const academicClassification = isPurelyAdmin || isExplicitlyFictional || isPredominantlyFictional ? 'NON_ACADEMIC' : 'UNCERTAIN';
       return {
         sourceModality,
         isAcademic: false,
         isCurricular: false,
-        academicClassification: isPurelyAdmin || isExplicitlyFictional || isPredominantlyFictional ? 'NON_ACADEMIC' : 'UNCERTAIN',
+        academicClassification,
         reason,
-        teachingValueScore: Math.round(totalTeachingValue * 100),
+        teachingValueScore: null,
+        curricularEvidenceProfile: this._buildCurricularEvidenceProfile({
+          raw,
+          academicStatus: academicClassification === 'NON_ACADEMIC' ? 'FAIL' : 'UNCERTAIN',
+          academicReason: reason,
+          evidenceSufficiencyStatus: 'INSUFFICIENT_EVIDENCE',
+          sufficiencyReason: 'No assessable instructional curriculum detected in evidence.',
+          distinctConcepts: [],
+          recCount: 0
+        }),
         lectureDepth: {
           rating: 'Non-Academic',
-          score: 10,
+          score: null,
+          isDeprecated: true,
           characteristics: { conceptExplanation: 'None', reasoning: 'None', examples: 'None', procedures: 'None' },
           breakdown: {
             earnedRubric: [
@@ -1223,10 +1489,20 @@ class DepthAnalyzer {
         isCurricular: false,
         academicClassification: 'UNCERTAIN',
         reason: cohesion.reason,
-        teachingValueScore: Math.round(totalTeachingValue * 100),
+        teachingValueScore: null,
+        curricularEvidenceProfile: this._buildCurricularEvidenceProfile({
+          raw,
+          academicStatus: 'UNCERTAIN',
+          academicReason: cohesion.reason,
+          evidenceSufficiencyStatus: 'INSUFFICIENT_EVIDENCE',
+          sufficiencyReason: 'Ambiguous or conversational discourse lacking verified educational topic cohesion.',
+          distinctConcepts: [],
+          recCount: 0
+        }),
         lectureDepth: {
           rating: 'Non-Academic',
-          score: 10,
+          score: null,
+          isDeprecated: true,
           characteristics: { conceptExplanation: 'None', reasoning: 'None', examples: 'None', procedures: 'None' },
           breakdown: {
             earnedRubric: [
@@ -1450,41 +1726,211 @@ class DepthAnalyzer {
     }
 
     const wordCount = (curricularText || raw).split(/\s+/).filter(Boolean).length;
+    // Criterion B: Duration-based initial recommendation adjusted by evidence/depth:
+    // - 15–30 min: 5–8 questions
+    // - 30–45 min: 8–12 questions
+    // - 45–60 min: 10–15 questions
+    // - 60–90 min: 15–20 questions
+    const hasExplicitDuration = (typeof options.durationMinutes === 'number' && options.durationMinutes > 0) ||
+      (typeof options.duration === 'number' && options.duration > 0);
+    const durationMinutes = (typeof options.durationMinutes === 'number' && options.durationMinutes > 0)
+      ? options.durationMinutes
+      : ((typeof options.duration === 'number' && options.duration > 0)
+        ? (options.duration > 180 ? options.duration / 60 : options.duration)
+        : null);
+
     let recCount = 5;
     let rationale = '';
 
-    if (wordCount < 150) {
-      recCount = 3;
-      rationale = '3 Questions: Compact curricular substance. Best for a quick conceptual check without redundant targets.';
-    } else if (wordCount < 500 && curricularSegments.length <= 6) {
-      recCount = 5;
-      rationale = '5 Questions: Covers core definitions and primary mechanisms with balanced cognitive depth.';
-    } else if (wordCount < 1200 && curricularSegments.length <= 15) {
-      recCount = 8;
-      rationale = '8 Questions: Optimal for this substantive lecture. Thoroughly assesses concepts, procedural traces, and causal reasoning.';
-    } else if (wordCount < 2500 && curricularSegments.length <= 30) {
-      recCount = 12;
-      rationale = '12 Questions: Substantive lecture covering multiple instructional topics and mechanisms.';
-    } else if (wordCount < 4500 && curricularSegments.length <= 50) {
-      recCount = 18;
-      rationale = '18 Questions: Comprehensive lecture with extensive coverage across multiple concepts and practical traces.';
+    if (hasExplicitDuration) {
+      if (durationMinutes < 15) {
+        if (depthScore >= 75) {
+          recCount = 5;
+          rationale = '5 Questions: High instructional depth in short lecture. Covers core definitions and primary mechanisms.';
+        } else {
+          recCount = 4;
+          rationale = '4 Questions: Brief lecture scope. Focuses on foundational definitions and direct mechanisms.';
+        }
+      } else if (durationMinutes < 30) {
+        // 15–30 min range: 5–8 questions
+        if (depthScore >= 75) {
+          recCount = 8;
+          rationale = '8 Questions: 15–30 minute lecture with strong curricular depth and multiple distinct concepts.';
+        } else if (depthScore < 60) {
+          recCount = 5;
+          rationale = '5 Questions: 15–30 minute introductory lecture with moderate explanatory depth.';
+        } else {
+          recCount = 6;
+          rationale = '6 Questions: Balanced recommendation for 15–30 minute instructional session.';
+        }
+      } else if (durationMinutes < 45) {
+        // 30–45 min range: 8–12 questions
+        if (depthScore >= 75) {
+          recCount = 12;
+          rationale = '12 Questions: 30–45 minute comprehensive lecture covering multiple topics, procedural traces, and causal reasoning.';
+        } else if (depthScore < 60) {
+          recCount = 8;
+          rationale = '8 Questions: 30–45 minute lecture focused on foundational conceptual baseline.';
+        } else {
+          recCount = 10;
+          rationale = '10 Questions: Substantive 30–45 minute lecture covering core instructional topics and mechanisms.';
+        }
+      } else if (durationMinutes <= 60) {
+        // 45–60 min range: 10–15 questions
+        if (depthScore >= 75) {
+          recCount = 15;
+          rationale = '15 Questions: 45–60 minute comprehensive lecture with extensive coverage across multiple concepts and practical traces.';
+        } else if (depthScore < 60) {
+          recCount = 10;
+          rationale = '10 Questions: 45–60 minute lecture focused on primary mechanisms and key concepts.';
+        } else {
+          recCount = 12;
+          rationale = '12 Questions: Optimal coverage for 45–60 minute instructional lecture.';
+        }
+      } else if (durationMinutes <= 90) {
+        // 60–90 min range: 15–20 questions
+        if (depthScore >= 75) {
+          recCount = 20;
+          rationale = '20 Questions: 60–90 minute advanced session with broad multi-concept coverage and in-depth traces.';
+        } else if (depthScore < 60) {
+          recCount = 15;
+          rationale = '15 Questions: 60–90 minute lecture calibrated to substantive mechanisms.';
+        } else {
+          recCount = 18;
+          rationale = '18 Questions: Full-length 60–90 minute instructional lecture recommendation.';
+        }
+      } else {
+        // > 90 min range: 20–25 questions
+        recCount = (depthScore >= 75) ? 25 : 20;
+        rationale = `${recCount} Questions: Extended session (>90 min) with broad coverage across foundational concepts, application, and edge cases.`;
+      }
     } else {
-      recCount = 25;
-      rationale = '25 Questions: Full-length lecture with broad coverage across foundational concepts, application, and edge cases.';
+      // When no explicit duration is specified, scale by word count & segment density
+      if (wordCount < 150) {
+        recCount = 3;
+        rationale = '3 Questions: Compact curricular substance. Best for a quick conceptual check without redundant targets.';
+      } else if (wordCount < 500 && curricularSegments.length <= 6) {
+        recCount = 5;
+        rationale = '5 Questions: Covers core definitions and primary mechanisms with balanced cognitive depth.';
+      } else if (wordCount < 1200 && curricularSegments.length <= 15) {
+        recCount = 8;
+        rationale = '8 Questions: Optimal for this substantive lecture. Thoroughly assesses concepts, procedural traces, and causal reasoning.';
+      } else if (wordCount < 2500 && curricularSegments.length <= 30) {
+        recCount = 12;
+        rationale = '12 Questions: Substantive lecture covering multiple instructional topics and mechanisms.';
+      } else if (wordCount < 4500 && curricularSegments.length <= 50) {
+        recCount = 18;
+        rationale = '18 Questions: Comprehensive lecture with extensive coverage across multiple concepts and practical traces.';
+      } else {
+        recCount = 25;
+        rationale = '25 Questions: Full-length lecture with broad coverage across foundational concepts, application, and edge cases.';
+      }
     }
 
     // Conceptual density safety guard:
     // Repetitive lecture length must not inflate question capacity beyond what distinct concepts defensibly support.
     const distinctFocusCount = (detectedFocus && detectedFocus.length > 0) ? detectedFocus.length : 1;
-    const maxSupportedByConcepts = Math.min(25, Math.max(3, Math.round(distinctFocusCount * 2)));
+    // Conceptual density safety guard:
+    // Capacity is strictly anchored to distinct concepts to prevent repetitive lectures from inflating question recommendations.
+    // Each distinct substantive concept defensibly supports up to 3.5 targets across Bloom tiers (recall, mechanism, distinction, boundary).
+    const maxSupportedByConcepts = Math.min(25, Math.max(3, Math.round(distinctFocusCount * 3.5)));
     if (recCount > maxSupportedByConcepts) {
       recCount = maxSupportedByConcepts;
       rationale = `${recCount} Questions: Scaled to ${distinctFocusCount} distinct curricular concept(s) covered in lecture without redundant targets.`;
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // OBJECTIVE 4: Observable Evidence & Curricular Evidence Profile Construction
+    // ──────────────────────────────────────────────────────────────────────────
+    const allUnits = [
+      ...(options.teachingUnits || []),
+      ...(options.evidencePackage?.teachingUnits || [])
+    ];
+
+    const rawConcepts = [
+      ...(detectedFocus || []),
+      ...(allUnits.map(u => u.concept || u.topic || u.statement)),
+      ...(curricularSegments.flatMap(s => s.classification.concept_links || []))
+    ].filter(Boolean);
+
+    const stopConceptWords = new Set(['core subject matter', 'instructional content', 'lecture content', 'topic', 'concept', 'academic topic', 'general topic']);
+    const seenConcepts = new Set();
+    const distinctConcepts = [];
+    for (const c of rawConcepts) {
+      const clean = String(c).trim();
+      const lower = clean.toLowerCase();
+      if (clean.length >= 3 && clean.length <= 60 && !stopConceptWords.has(lower) && !seenConcepts.has(lower)) {
+        seenConcepts.add(lower);
+        distinctConcepts.push(clean);
+      }
+    }
+    if (distinctConcepts.length === 0 && (hasAcademicLexicon || hasCodeOrTechnical)) {
+      if (detectedFocus && detectedFocus.length > 0 && detectedFocus[0] !== 'Core Subject Matter') {
+        distinctConcepts.push(detectedFocus[0]);
+      } else {
+        distinctConcepts.push('Core Subject Matter');
+      }
+    }
+
+    const formalDefinitions = this._extractFormalDefinitions(curricularSegments, raw, allUnits);
+    const workedTraces = this._extractWorkedTraces(curricularSegments, raw, allUnits);
+    const algorithmicCode = this._extractAlgorithmicCodeSequencing(curricularSegments, raw, algoCount, chronoCount, hasAlgorithmicTrace);
+    const comparativeReasoning = this._extractComparativeReasoning(curricularSegments, raw, hasComp);
+
+    // DEF-TC-06: Decoupled Evidence Sufficiency Assessment
+    let evidenceSufficiencyStatus = 'SUFFICIENT';
+    let sufficiencyReason = null;
+    if (distinctConcepts.length === 0 && raw.length < 80 && !hasDef && !hasMech && allUnits.length === 0) {
+      evidenceSufficiencyStatus = 'INSUFFICIENT_EVIDENCE';
+      sufficiencyReason = 'Academic topic mentioned without sufficient explanatory predicate or mechanics to support assessment questions without guessing.';
+      recCount = 0;
+    } else if (raw.length < 150 && distinctConcepts.length <= 1) {
+      evidenceSufficiencyStatus = 'SUFFICIENT';
+      sufficiencyReason = 'Compact lecture covers foundational concept definitions with sufficient predicate to support introductory questions.';
+      recCount = Math.max(1, Math.min(3, recCount));
+    } else {
+      evidenceSufficiencyStatus = 'SUFFICIENT';
+      sufficiencyReason = `Evidence supports up to ${recCount} questions across assessable tiers.`;
+    }
+
+    // Objective 5 Difficulty Capacity Allocation (Frozen & Preserved)
+    const easyCapacity = Math.max(1, Math.round(recCount * 0.35));
+    let hardCapacity = 0;
+    if (hasFormalProof || (hasFormalDerivation && reasoning === 'Strong') || (hasInterpretiveDepth && reasoning === 'Strong')) {
+      hardCapacity = Math.max(1, Math.floor(recCount * 0.25));
+    }
+    const mediumCapacity = Math.max(0, recCount - easyCapacity - hardCapacity);
+    const capacityByDifficulty = {
+      easy: easyCapacity,
+      medium: mediumCapacity,
+      hard: hardCapacity
+    };
+    const unsupportedHardDeficit = (options.requestedDifficulty === 'Hard' && hardCapacity === 0) ? 2 : 0;
+    const capacityWarning = (hardCapacity === 0 && (options.difficulty === 'Hard' || options.difficulty === 'Balanced'))
+      ? 'Hard questions could not be supported by lecture evidence. No Hard questions can be defensibly generated.'
+      : null;
+
+    const curricularEvidenceProfile = this._buildCurricularEvidenceProfile({
+      raw,
+      academicStatus: 'PASS',
+      academicReason: null,
+      evidenceSufficiencyStatus,
+      sufficiencyReason,
+      distinctConcepts,
+      formalDefinitions,
+      workedTraces,
+      algorithmicCode,
+      comparativeReasoning,
+      recCount,
+      capacityByDifficulty,
+      unsupportedHardDeficit,
+      capacityWarning,
+      quizAlignmentData: options.quizAlignmentData || null
+    });
+
     let rating = 'Developing';
-    if (depthScore < 60) rating = 'Introductory';
-    else if (depthScore >= 75) rating = 'Comprehensive';
+    if (recCount < 5 || evidenceSufficiencyStatus === 'INSUFFICIENT_EVIDENCE') rating = 'Introductory';
+    else if (recCount >= 8 && reasoning === 'Strong') rating = 'Comprehensive';
     else rating = 'Developing';
 
     return {
@@ -1493,7 +1939,8 @@ class DepthAnalyzer {
       isCurricular: true,
       academicClassification: 'ACADEMIC',
       reason: null,
-      teachingValueScore: Math.round(totalTeachingValue * 100),
+      teachingValueScore: null, // RETIRED (DEF-TC-01, DEF-TC-04)
+      curricularEvidenceProfile, // THE AUTHORITATIVE OBJECTIVE 4 CONTRACT
       hasDef,
       hasMech,
       hasFormalDerivation,
@@ -1504,8 +1951,13 @@ class DepthAnalyzer {
       hasComp,
       hasCritique,
       lectureDepth: {
+        curricularEvidenceProfile,
+        label: 'Pedagogical Coverage & Depth Score — Internal Assessment',
+        assessmentType: 'INTERNAL_CURRICULAR_ANALYSIS',
+        disclaimer: 'Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.',
         rating,
-        score: depthScore,
+        score: null, // RETIRED COMPOSITE SCORE (DEF-TC-01, DEF-TC-02, DEF-TC-04)
+        isDeprecated: true,
         characteristics: {
           conceptExplanation: conceptExp,
           reasoning,
@@ -1514,11 +1966,46 @@ class DepthAnalyzer {
         },
         breakdown: {
           earnedRubric: [
-            { category: 'Baseline Curricular Substance', earned: basePoints, max: 40, status: 'Earned', description: 'Verified assessable curriculum concepts with substantive instructional predicate.' },
-            { category: 'Concept Definition & Explanation', earned: conceptPoints, max: 15, status: conceptExp, description: conceptExp === 'Strong' ? 'Comprehensive conceptual definitions and operational mechanisms.' : (conceptExp === 'Moderate' ? 'Introductory definitions present; could use deeper formal elaboration.' : 'Limited or missing definitions.') },
-            { category: 'Causal Reasoning & Invariants', earned: reasoningPoints, max: 15, status: reasoning, description: reasoning === 'Strong' ? 'Explicit causal justifications and operational rationale (answering why).' : (reasoning === 'Moderate' ? 'Basic causal reasoning detected.' : 'No causal links detected.') },
-            { category: 'Concrete Examples & Traces', earned: examplePoints, max: 15, status: examples, description: examples === 'Present' ? 'Practical examples, worked traces, or demonstrations.' : 'Missing concrete sample traces or demonstrations.' },
-            { category: 'Procedural Sequencing', earned: procedurePoints, max: 15, status: procedures, description: procedures === 'Strong' ? 'Detailed multi-step algorithmic or procedural progression.' : (procedures === 'Moderate' ? 'Basic procedural steps present.' : 'Sequential procedural steps missing.') }
+            {
+              category: 'Baseline Curricular Substance',
+              earned: basePoints,
+              max: 40,
+              status: 'Earned',
+              description: 'Verified assessable curriculum concepts with substantive instructional predicate.',
+              identifiableEvidence: (detectedFocus && detectedFocus.length > 0) ? `Detected ${detectedFocus.length} distinct instructional focus topics: ${detectedFocus.slice(0, 5).join(', ')}${detectedFocus.length > 5 ? '...' : ''}` : 'Basic curricular presence verified.'
+            },
+            {
+              category: 'Concept Definition & Explanation',
+              earned: conceptPoints,
+              max: 15,
+              status: conceptExp,
+              description: conceptExp === 'Strong' ? 'Comprehensive conceptual definitions and operational mechanisms.' : (conceptExp === 'Moderate' ? 'Introductory definitions present; could use deeper formal elaboration.' : 'Limited or missing definitions.'),
+              identifiableEvidence: hasDef ? 'Formal definition constructs and operational mechanics observed in curricular discourse.' : 'Informal conceptual mentions without rigorous textbook definition.'
+            },
+            {
+              category: 'Causal Reasoning & Invariants',
+              earned: reasoningPoints,
+              max: 15,
+              status: reasoning,
+              description: reasoning === 'Strong' ? 'Explicit causal justifications and operational rationale (answering why).' : (reasoning === 'Moderate' ? 'Basic causal reasoning detected.' : 'No causal links detected.'),
+              identifiableEvidence: `${totalReasonSignals} causal/deductive markers observed (explaining operational rationale, constraints, and error prevention).`
+            },
+            {
+              category: 'Concrete Examples & Traces',
+              earned: examplePoints,
+              max: 15,
+              status: examples,
+              description: examples === 'Present' ? 'Practical examples, worked traces, or demonstrations.' : 'Missing concrete sample traces or demonstrations.',
+              identifiableEvidence: isAcademicTrace ? 'Execution traces, sample input/output datasets, or worked code demonstrations identified in evidence.' : 'Abstract conceptual exposition without worked state traces.'
+            },
+            {
+              category: 'Procedural Sequencing',
+              earned: procedurePoints,
+              max: 15,
+              status: procedures,
+              description: procedures === 'Strong' ? 'Detailed multi-step algorithmic or procedural progression.' : (procedures === 'Moderate' ? 'Basic procedural steps present.' : 'Sequential procedural steps missing.'),
+              identifiableEvidence: `${chronoCount + algoCount} chronological and procedural execution transitions observed across lecture stages.`
+            }
           ],
           deductions,
           totalLostPoints,

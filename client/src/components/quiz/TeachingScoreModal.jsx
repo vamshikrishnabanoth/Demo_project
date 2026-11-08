@@ -1,32 +1,32 @@
 import React, { useMemo } from 'react';
 import {
     X,
-    Award,
     CheckCircle2,
-    Lightbulb,
+    XCircle,
+    AlertCircle,
     Sparkles,
     Scale,
     ArrowRight,
     BookOpen,
     Layers,
-    Cpu,
-    Check
+    Code,
+    Check,
+    FileText
 } from 'lucide-react';
 
 /**
- * TeachingScoreModal
+ * TeachingScoreModal (CurricularEvidenceProfile)
  *
- * Concise, visual, 1-screen teaching quality scorecard.
- * Displays:
- *  1. Overall quality score out of 100 with clear rating tier.
- *  2. 4 visual progress bars (Concept Clarity, Depth of Explanation, Examples & Practice, Lecture Structure).
- *  3. Neat point-wise highlights: What Was Taught, Key Strengths, and 1 Actionable Tip to reach 100.
- *  4. Quick 1-click button to apply recommended question count to Input 3.
+ * Evidence-grounded 4-section scorecard:
+ *  1. Prerequisite Gates (Academic Content Gate & Evidence Sufficiency Gate)
+ *  2. Observable Evidence Signals (Distinct concepts, formal definitions, worked traces, code, comparative reasoning)
+ *  3. Assessment Capacity (Easy, Medium, Hard, and transparent deficit warnings)
+ *  4. Curricular Coverage & Alignment (Eligible vs delivered concepts & coverage ratio)
  *
- * Honest & Transparent:
- *  - NO fake comparisons to previous lectures ("+4 from last lecture").
- *  - NO fake quotes or fabricated timestamps.
- *  - NO confusing multi-accordion text blocks.
+ * Honest & Non-Evaluative:
+ *  - NO fake composite percentages (retired from active scoring).
+ *  - NO claims of measuring teacher pedagogical efficacy or student learning.
+ *  - Clear disclaimers and transparent capacity accounting.
  */
 export default function TeachingScoreModal({
     isOpen,
@@ -41,46 +41,29 @@ export default function TeachingScoreModal({
     onApplyQuestionCount = null,
     lectureIntel = null,
     lectureWordCount = 0,
-    keyTopics = []
+    keyTopics = [],
+    curricularEvidenceProfile = null
 }) {
     if (!isOpen) return null;
 
-    const chars = lectureDepth?.characteristics || {};
-    const breakdown = lectureDepth?.breakdown || {};
-    const isNonAcademic = lectureDepth?.rating === 'Non-Academic';
+    const profile = curricularEvidenceProfile || lectureDepth?.curricularEvidenceProfile || null;
+    const academicGate = profile?.prerequisiteGates?.academicContentGate;
+    const sufficiencyGate = profile?.prerequisiteGates?.evidenceSufficiency;
+    const observable = profile?.observableEvidence || {};
+    const capacity = profile?.assessmentCapacity || {};
+    const alignment = profile?.quizAlignment || {};
 
-    // 1. Overall Score out of 100
-    const rawScore = lectureDepth?.score !== undefined ? lectureDepth.score : 85;
-    const score = isNonAcademic ? Math.min(15, rawScore) : Math.min(100, Math.max(10, rawScore));
+    const isNonAcademic = academicGate?.status === 'FAIL' || lectureDepth?.rating === 'Non-Academic';
 
-    // Rating Label & Color
-    let ratingLabel = 'Comprehensive';
-    let ratingColor = 'text-blue-600 bg-blue-50 border-blue-200';
-    let scoreRingColor = '#3b82f6';
-    if (isNonAcademic) {
-        ratingLabel = 'Non-Academic';
-        ratingColor = 'text-rose-600 bg-rose-50 border-rose-200';
-        scoreRingColor = '#f43f5e';
-    } else if (score >= 90) {
-        ratingLabel = 'Exemplary';
-        ratingColor = 'text-emerald-700 bg-emerald-50 border-emerald-200';
-        scoreRingColor = '#10b981';
-    } else if (score >= 75) {
-        ratingLabel = 'Comprehensive';
-        ratingColor = 'text-blue-700 bg-blue-50 border-blue-200';
-        scoreRingColor = '#3b82f6';
-    } else if (score >= 60) {
-        ratingLabel = 'Solid';
-        ratingColor = 'text-amber-700 bg-amber-50 border-amber-200';
-        scoreRingColor = '#f59e0b';
-    } else {
-        ratingLabel = 'Developing';
-        ratingColor = 'text-orange-700 bg-orange-50 border-orange-200';
-        scoreRingColor = '#f97316';
-    }
+    // 1. Prerequisite Gate Statuses
+    const academicStatus = academicGate?.status || (isNonAcademic ? 'FAIL' : 'PASS');
+    const sufficiencyStatus = sufficiencyGate?.status || (isNonAcademic ? 'INSUFFICIENT_EVIDENCE' : 'SUFFICIENT');
 
-    // 2. Extract Clean Concepts for dynamic citations & "What Was Taught"
+    // 2. Observable Concepts
     const concepts = useMemo(() => {
+        if (Array.isArray(observable.distinctConcepts) && observable.distinctConcepts.length > 0) {
+            return observable.distinctConcepts;
+        }
         const pool = [
             ...(Array.isArray(keyTopics) ? keyTopics : []),
             ...(Array.isArray(detectedFocus) ? detectedFocus : []),
@@ -97,202 +80,53 @@ export default function TeachingScoreModal({
                 unique.push(clean);
             }
         }
-        return unique.slice(0, 6);
-    }, [keyTopics, detectedFocus, lectureIntel]);
+        return unique.slice(0, 12);
+    }, [observable.distinctConcepts, keyTopics, detectedFocus, lectureIntel]);
 
-    const primaryConcept = concepts[0] || '';
-    const secondaryConcept = concepts[1] || '';
-    const tertiaryConcept = concepts[2] || '';
-
-    // 3. Compute 4 Pillar Scores (out of 25 each = 100 max)
-    let clarityScore = 18;
-    if (chars.conceptExplanation === 'Strong') clarityScore = 25;
-    else if (chars.conceptExplanation === 'Moderate') clarityScore = 19;
-    else if (chars.conceptExplanation === 'Developing') clarityScore = 14;
-    if (isNonAcademic) clarityScore = 3;
-
-    let depthScore = 16;
-    if (chars.reasoning === 'Strong') depthScore = 25;
-    else if (chars.reasoning === 'Moderate') depthScore = 18;
-    else if (chars.reasoning === 'Light') depthScore = 12;
-    if (isNonAcademic) depthScore = 2;
-
-    let examplesScore = 14;
-    if (chars.examples === 'Present') examplesScore = 25;
-    else if (chars.examples === 'Light') examplesScore = 13;
-    if (isNonAcademic) examplesScore = 2;
-
-    let structureScore = 17;
-    if (chars.procedures === 'Strong') structureScore = 25;
-    else if (chars.procedures === 'Moderate') structureScore = 19;
-    else if (chars.procedures === 'Light') structureScore = 13;
-    if (isNonAcademic) structureScore = 3;
-
-    const pillars = useMemo(() => {
-        const c1 = primaryConcept;
-        const c2 = secondaryConcept;
-        const c3 = tertiaryConcept;
-
-        let clarityReason = c1
-            ? `Standardized definitions & core nomenclature established for ${c1}${c2 ? ` and ${c2}` : ''}.`
-            : 'Clear foundational definitions and domain-specific terminology established.';
-        if (clarityScore < 20) {
-            clarityReason = c1
-                ? `Introduces ${c1}; providing explicit contrasting definitions with adjacent concepts will push clarity to 25.`
-                : 'Covers introductory terms; defining all prerequisite terminology explicitly will maximize clarity.';
-        }
-        if (isNonAcademic) {
-            clarityReason = 'No assessable academic definitions or curriculum terminology detected.';
-        }
-
-        let depthReason = c2 || c1
-            ? `Detailed causal reasoning explaining operational mechanisms & invariants behind ${c2 || c1}.`
-            : 'Detailed causal explanations answering why underlying mechanisms operate as they do.';
-        if (depthScore < 20) {
-            depthReason = c2 || c1
-                ? `Explains operational behavior for ${c2 || c1}; analyzing edge cases & failure modes will reach 25.`
-                : 'Explains standard behavior; exploring failure boundaries and trade-offs will reach full depth.';
-        }
-        if (isNonAcademic) {
-            depthReason = 'No theoretical or analytical explanations found in the material.';
-        }
-
-        let examplesReason = c2 || c1
-            ? `Concrete walkthroughs, sample traces & practical demonstrations applied to ${c2 || c1}.`
-            : 'Concrete technical demonstrations, sample code, and worked walkthroughs provided.';
-        if (examplesScore < 20) {
-            examplesReason = c2 || c1
-                ? `Conceptual illustrations present; adding a step-by-step trace or CLI demonstration for ${c2 || c1} will maximize score.`
-                : 'High-level examples present; adding worked step-by-step traces will maximize score.';
-        }
-        if (isNonAcademic) {
-            examplesReason = 'No practical engineering demonstrations or sample problem traces provided.';
-        }
-
-        let structureReason = c3 || c1
-            ? `Methodical procedural sequencing progressing logically from ${c3 || 'fundamentals'} to ${c1}.`
-            : 'Structured procedural sequence with clear chronological progression.';
-        if (structureScore < 20) {
-            structureReason = 'Sequential delivery detected; adding brief recap checkpoints between sections will enhance pacing.';
-        }
-        if (isNonAcademic) {
-            structureReason = 'Disjointed dialogue lacking structured instructional sequencing.';
-        }
-
-        return [
-            {
-                title: 'Concept Clarity',
-                score: clarityScore,
-                max: 25,
-                color: 'bg-emerald-500',
-                trackColor: 'bg-emerald-100',
-                textColor: 'text-emerald-700',
-                reason: clarityReason
-            },
-            {
-                title: 'Depth of Explanation',
-                score: depthScore,
-                max: 25,
-                color: 'bg-indigo-500',
-                trackColor: 'bg-indigo-100',
-                textColor: 'text-indigo-700',
-                reason: depthReason
-            },
-            {
-                title: 'Examples & Practice',
-                score: examplesScore,
-                max: 25,
-                color: 'bg-blue-500',
-                trackColor: 'bg-blue-100',
-                textColor: 'text-blue-700',
-                reason: examplesReason
-            },
-            {
-                title: 'Lecture Structure',
-                score: structureScore,
-                max: 25,
-                color: 'bg-amber-500',
-                trackColor: 'bg-amber-100',
-                textColor: 'text-amber-700',
-                reason: structureReason
-            }
-        ];
-    }, [clarityScore, depthScore, examplesScore, structureScore, isNonAcademic, primaryConcept, secondaryConcept, tertiaryConcept]);
-
-    // 4. Strengths Observed
-    const strengths = useMemo(() => {
-        const list = [];
-        if (breakdown.coveredAspects && breakdown.coveredAspects.length > 0) {
-            list.push(...breakdown.coveredAspects.slice(0, 2));
-        } else {
-            if (clarityScore >= 20) list.push(primaryConcept ? `Clear foundational definitions and domain terminology for ${primaryConcept}.` : 'Clear foundational definitions and consistent domain terminology.');
-            if (structureScore >= 20) list.push('Structured procedural sequence and step-by-step algorithmic pacing.');
-            if (examplesScore >= 20) list.push(secondaryConcept ? `Practical technical demonstrations and concrete worked examples on ${secondaryConcept}.` : 'Practical technical demonstrations and concrete worked examples.');
-            if (depthScore >= 20) list.push('Causal reasoning explaining why core mechanisms behave as they do.');
-        }
-        if (list.length === 0) {
-            list.push('Identified assessable subject matter curriculum.');
-        }
-        return list.slice(0, 2);
-    }, [breakdown.coveredAspects, clarityScore, structureScore, examplesScore, depthScore, primaryConcept, secondaryConcept]);
-
-    // 5. Mastery Distinction vs Actionable Tip
-    const isMastery = score >= 95;
-
-    const masteryVerdict = useMemo(() => {
-        const topics = [primaryConcept, secondaryConcept].filter(Boolean).join(' and ');
-        if (topics) {
-            return `Exemplary pedagogical delivery! Definitions, causal reasoning, practical traces, and logical progression are all thoroughly demonstrated with zero curricular deficits across ${topics}.`;
-        }
-        return 'Exemplary pedagogical delivery! All core rubric dimensions (concept clarity, depth of explanation, practical demonstrations, and procedural structure) are thoroughly demonstrated with zero curricular deficits.';
-    }, [primaryConcept, secondaryConcept]);
-
-    const actionableTip = useMemo(() => {
-        if (breakdown.actionableTips && breakdown.actionableTips.length > 0) {
-            const first = breakdown.actionableTips[0];
-            if (!first.toLowerCase().includes('outstanding pedagogical delivery')) {
-                return first;
-            }
-        }
-        // Fallback to lowest pillar
-        const sorted = [...pillars].sort((a, b) => a.score - b.score);
-        const lowest = sorted[0];
-        if (lowest.title === 'Depth of Explanation') {
-            return primaryConcept
-                ? `Explain why edge cases occur in ${primaryConcept} and contrast standard execution with a boundary failure to reinforce invariants.`
-                : 'Explain why edge cases occur and contrast standard execution with a boundary failure to reinforce invariants.';
-        } else if (lowest.title === 'Examples & Practice') {
-            return primaryConcept
-                ? `Include a concrete worked example or CLI command output showing variable state transitions for ${primaryConcept}.`
-                : 'Include a concrete worked example or CLI command output showing variable state transitions.';
-        } else if (lowest.title === 'Lecture Structure') {
-            return 'Add a brief 30-second summary recap between foundational rules and complex procedures.';
-        }
-        return 'Ensure explicit definitions are provided for all prerequisite terms before introducing syntax or operations.';
-    }, [breakdown.actionableTips, pillars, primaryConcept]);
-
-    // 6. Recommended Question Count
-    const recCount = recommendedQuestionCount || breakdown.recommendedQuestionCount || recommendedByDifficulty?.balanced || 5;
+    // 3. Recommended Questions & Capacity
+    const breakdown = lectureDepth?.breakdown || {};
+    const recCount = recommendedQuestionCount || capacity.totalRecommended || breakdown.recommendedQuestionCount || (isNonAcademic ? 0 : 3);
+    const easyCap = capacity.easy ?? capacityByDifficulty?.Easy ?? 1;
+    const medCap = capacity.medium ?? capacityByDifficulty?.Medium ?? 2;
+    const hardCap = capacity.hard ?? capacityByDifficulty?.Hard ?? 0;
+    const hardDeficit = capacity.unsupportedHardDeficit ?? 0;
 
     return (
-        <div className="fixed inset-0 z-[200] overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 select-none animate-in fade-in duration-200">
-            <div className="w-full max-w-2xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden relative flex flex-col my-auto">
-
-                {/* HEADER */}
-                <div className="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-                    <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-[var(--bg-accent)]/10 text-[var(--text-accent)] flex items-center justify-center">
-                            <Award size={18} />
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) onClose();
+            }}
+        >
+            <div
+                className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* MODAL HEADER */}
+                <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-xs">
+                            <BookOpen size={18} />
                         </div>
                         <div>
-                            <h2 className="text-base font-black text-slate-900 tracking-tight">Teaching Quality Scorecard</h2>
-                            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Automated Pedagogical Analysis</p>
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-base font-black text-slate-900 tracking-tight">
+                                    Curricular Evidence Profile
+                                </h3>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700">
+                                    Automated Assessment
+                                </span>
+                            </div>
+                            <p className="text-xs text-slate-600">
+                                Internal evidence density & assessment capacity audit
+                            </p>
                         </div>
                     </div>
+
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition-colors cursor-pointer"
+                        className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer"
                         aria-label="Close"
                     >
                         <X size={18} />
@@ -300,147 +134,183 @@ export default function TeachingScoreModal({
                 </div>
 
                 {/* MODAL BODY */}
-                <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(85vh-8rem)]">
+                <div className="p-6 overflow-y-auto space-y-5 text-slate-800 text-sm">
 
-                    {/* TOP SCORE BANNER */}
-                    <div className="bg-gradient-to-br from-slate-50 to-indigo-50/30 border border-slate-200/80 rounded-2xl p-5 flex items-center justify-between gap-4">
-                        <div className="space-y-1.5 flex-1">
-                            <div className="flex items-center gap-2">
-                                <span className={`text-[11px] font-black uppercase px-2.5 py-0.5 rounded-full border ${ratingColor}`}>
-                                    {ratingLabel}
-                                </span>
-                                {lectureWordCount > 0 && (
-                                    <span className="text-xs font-bold text-slate-400">
-                                        • ~{lectureWordCount.toLocaleString()} words
-                                    </span>
-                                )}
-                            </div>
-                            <h3 className="text-lg font-black text-slate-900 leading-tight">
-                                {score >= 80 ? 'Well-Structured Lecture Delivery' : 'Curriculum Substance Detected'}
-                            </h3>
-                            <p className="text-xs font-medium text-slate-600 line-clamp-2">
-                                {whatWasTaught || 'Assessed for concept clarity, explanatory reasoning, practical examples, and procedural progression.'}
-                            </p>
-                        </div>
-
-                        {/* Circular Score Badge */}
-                        <div className="shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-2xl bg-white border-2 border-slate-200 shadow-sm">
-                            <span className="text-3xl font-black text-slate-900 tracking-tight leading-none" style={{ color: scoreRingColor }}>
-                                {score}
-                            </span>
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">out of 100</span>
-                        </div>
+                    {/* Non-Evaluative Disclaimer */}
+                    <div className="p-3 bg-slate-100 border border-slate-200 rounded-xl text-[11px] leading-relaxed text-slate-600">
+                        <strong>Evaluation Disclaimer:</strong> Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does <strong>NOT</strong> measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.
                     </div>
 
-                    {/* 4 PILLARS (GRAPHICAL PROGRESS BARS) */}
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                                <Layers size={14} className="text-slate-400" />
-                                Pedagogical Breakdown
-                            </h4>
-                            <span className="text-[11px] font-bold text-slate-400">25 pts each</span>
-                        </div>
-
+                    {/* Section 1: Prerequisite Gates */}
+                    <div className="space-y-2">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+                            1. Prerequisite Gates (Non-Compensatory)
+                        </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {pillars.map((pillar) => {
-                                const pct = Math.round((pillar.score / pillar.max) * 100);
-                                return (
-                                    <div key={pillar.title} className="bg-white border border-slate-200/90 rounded-2xl p-4 flex flex-col justify-between space-y-2.5 shadow-xs hover:border-slate-300 transition-colors">
-                                        <div>
-                                            <div className="flex items-center justify-between text-xs mb-1.5">
-                                                <span className="font-bold text-slate-800">{pillar.title}</span>
-                                                <span className={`text-[11px] font-black px-2 py-0.5 rounded-md ${pillar.score >= 20 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : 'bg-slate-100 text-slate-700'}`}>
-                                                    {pillar.score}/{pillar.max}
-                                                </span>
-                                            </div>
-                                            {/* Progress Bar */}
-                                            <div className={`w-full h-1.5 rounded-full overflow-hidden ${pillar.trackColor}`}>
-                                                <div
-                                                    className={`h-full rounded-full transition-all duration-500 ${pillar.color}`}
-                                                    style={{ width: `${pct}%` }}
-                                                />
-                                            </div>
-                                        </div>
+                            {/* Academic Content Gate */}
+                            <div className={`p-3.5 rounded-xl border ${
+                                academicStatus === 'PASS'
+                                    ? 'bg-emerald-50/50 border-emerald-200'
+                                    : academicStatus === 'UNCERTAIN'
+                                    ? 'bg-amber-50/50 border-amber-200'
+                                    : 'bg-rose-50/50 border-rose-200'
+                            }`}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <span className="text-xs font-bold text-slate-900">Academic Content Gate</span>
+                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
+                                        academicStatus === 'PASS'
+                                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                            : academicStatus === 'UNCERTAIN'
+                                            ? 'bg-amber-100 text-amber-800 border-amber-300'
+                                            : 'bg-rose-100 text-rose-800 border-rose-300'
+                                    }`}>
+                                        {academicStatus}
+                                    </span>
+                                </div>
+                                <p className="text-[11px] text-slate-600 leading-tight">
+                                    {academicGate?.evidenceAnchor || academicGate?.failureReason || (academicStatus === 'PASS' ? 'Verified academic subject matter.' : 'Lacks assessable curriculum.')}
+                                </p>
+                            </div>
 
-                                        {/* Dynamic Evidence Reason */}
-                                        <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-2.5">
-                                            <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
-                                                <span className="font-bold mr-1 text-[10px] uppercase tracking-wider text-slate-400">Why:</span>
-                                                {pillar.reason}
-                                            </p>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                            {/* Evidence Sufficiency Gate */}
+                            <div className={`p-3.5 rounded-xl border ${
+                                sufficiencyStatus === 'SUFFICIENT'
+                                    ? 'bg-blue-50/50 border-blue-200'
+                                    : sufficiencyStatus === 'UNCERTAIN'
+                                    ? 'bg-amber-50/50 border-amber-200'
+                                    : 'bg-rose-50/50 border-rose-200'
+                            }`}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <span className="text-xs font-bold text-slate-900">Evidence Sufficiency</span>
+                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
+                                        sufficiencyStatus === 'SUFFICIENT'
+                                            ? 'bg-blue-100 text-blue-800 border-blue-300'
+                                            : sufficiencyStatus === 'UNCERTAIN'
+                                            ? 'bg-amber-100 text-amber-800 border-amber-300'
+                                            : 'bg-rose-100 text-rose-800 border-rose-300'
+                                    }`}>
+                                        {sufficiencyStatus}
+                                    </span>
+                                </div>
+                                <p className="text-[11px] text-slate-600 leading-tight">
+                                    {sufficiencyGate?.reason || (sufficiencyStatus === 'SUFFICIENT' ? 'Evidence supports defensible questions.' : 'Insufficient evidence volume.')}
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    {/* WHAT WAS TAUGHT (CONCEPT PILLS) */}
-                    {concepts.length > 0 && (
-                        <div className="space-y-2">
-                            <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                                <BookOpen size={14} className="text-slate-400" />
-                                Concepts Detected in Lecture
+                    {/* Section 2: Observable Evidence Signals */}
+                    <div className="space-y-2">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+                            2. Observable Evidence Signals
+                        </h4>
+                        <div className="bg-slate-50/60 border border-slate-200 rounded-xl p-3.5 space-y-3">
+                            <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
+                                <span className="font-bold text-slate-700">Verified Concepts Breadth:</span>
+                                <span className="font-mono font-bold text-slate-900">{concepts.length} distinct concepts</span>
+                            </div>
+                            {concepts.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 pt-1">
+                                    {concepts.map((c, i) => (
+                                        <span key={i} className="text-[11px] px-2 py-0.5 rounded-md bg-white text-slate-700 font-semibold border border-slate-200 shadow-2xs">
+                                            {c}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-200/60 text-center">
+                                <div className="bg-white p-2 rounded-lg border border-slate-200">
+                                    <span className="text-[10px] text-slate-500 block">Formal Definitions</span>
+                                    <span className="text-sm font-black text-slate-800">
+                                        {observable.formalDefinitions?.length ?? 0}
+                                    </span>
+                                </div>
+                                <div className="bg-white p-2 rounded-lg border border-slate-200">
+                                    <span className="text-[10px] text-slate-500 block">Worked Traces</span>
+                                    <span className="text-sm font-black text-slate-800">
+                                        {observable.workedTraces?.length ?? 0}
+                                    </span>
+                                </div>
+                                <div className="bg-white p-2 rounded-lg border border-slate-200">
+                                    <span className="text-[10px] text-slate-500 block">Code Sequencing</span>
+                                    <span className="text-sm font-black text-slate-800">
+                                        {observable.algorithmicCodeSequencing?.detected ? 'Detected' : 'None'}
+                                    </span>
+                                </div>
+                                <div className="bg-white p-2 rounded-lg border border-slate-200">
+                                    <span className="text-[10px] text-slate-500 block">Comparative Logic</span>
+                                    <span className="text-sm font-black text-slate-800">
+                                        {observable.comparativeReasoning?.detected ? 'Detected' : 'None'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Section 3: Assessment Capacity */}
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+                                3. Assessment Capacity
                             </h4>
-                            <div className="flex flex-wrap gap-1.5">
-                                {concepts.map((concept) => (
-                                    <span
-                                        key={concept}
-                                        className="text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200/80 px-2.5 py-1 rounded-lg"
-                                    >
-                                        {concept}
-                                    </span>
-                                ))}
+                            <span className="text-xs font-bold text-slate-700">
+                                Total Recommended: <span className="font-black text-slate-900">{recCount} Qs</span>
+                            </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3">
+                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                                <span className="text-[10px] font-bold text-emerald-700 block uppercase">Easy</span>
+                                <span className="text-lg font-black text-slate-900">{easyCap}</span>
+                                <span className="text-[10px] text-slate-400 block">Recall / Concepts</span>
+                            </div>
+                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                                <span className="text-[10px] font-bold text-blue-700 block uppercase">Medium</span>
+                                <span className="text-lg font-black text-slate-900">{medCap}</span>
+                                <span className="text-[10px] text-slate-400 block">Logic / Tracing</span>
+                            </div>
+                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                                <span className="text-[10px] font-bold text-purple-700 block uppercase">Hard</span>
+                                <span className="text-lg font-black text-slate-900">{hardCap}</span>
+                                <span className="text-[10px] text-slate-400 block">Multi-constraint</span>
                             </div>
                         </div>
-                    )}
 
-                    {/* KEY STRENGTHS & ACTIONABLE TIP / MASTERY DISTINCTION */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {/* Strengths */}
-                        <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-4 space-y-2">
-                            <div className="flex items-center gap-1.5 text-emerald-800 text-xs font-black uppercase tracking-wider">
-                                <CheckCircle2 size={15} className="text-emerald-600" />
-                                Key Strengths
-                            </div>
-                            <ul className="space-y-1.5 text-xs text-slate-700">
-                                {strengths.map((str, idx) => (
-                                    <li key={idx} className="flex items-start gap-1.5">
-                                        <span className="text-emerald-600 font-black">•</span>
-                                        <span className="font-medium leading-relaxed">{str}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        {/* Right Card: Mastery Distinction vs Tip to Reach 100 */}
-                        {isMastery ? (
-                            <div className="bg-gradient-to-br from-emerald-50/80 via-teal-50/40 to-slate-50 border border-emerald-200/80 rounded-2xl p-4 space-y-2 shadow-xs">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-1.5 text-emerald-900 text-xs font-black uppercase tracking-wider">
-                                        <Award size={15} className="text-emerald-600" />
-                                        Pedagogical Distinction
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-600 text-white shadow-xs">
-                                        Mastery Achieved
-                                    </span>
+                        {hardDeficit > 0 && (
+                            <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2">
+                                <AlertCircle size={14} className="mt-0.5 shrink-0 text-amber-600" />
+                                <div>
+                                    <strong>Capacity Warning:</strong> {hardDeficit} requested Hard target(s) exceed defensible evidence capacity and were safely reallocated.
                                 </div>
-                                <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                                    {masteryVerdict}
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="bg-amber-50/50 border border-amber-100 rounded-2xl p-4 space-y-2">
-                                <div className="flex items-center gap-1.5 text-amber-800 text-xs font-black uppercase tracking-wider">
-                                    <Lightbulb size={15} className="text-amber-600" />
-                                    Recommendation to Reach 100
-                                </div>
-                                <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                                    {actionableTip}
-                                </p>
                             </div>
                         )}
+                    </div>
+
+                    {/* Section 4: Curricular Coverage & Alignment */}
+                    <div className="space-y-2">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+                            4. Curricular Coverage & Quiz Alignment
+                        </h4>
+                        <div className="p-3.5 bg-slate-50/60 rounded-xl border border-slate-200 text-xs space-y-1.5">
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-600">Eligible Concepts:</span>
+                                <span className="font-bold text-slate-900">{alignment.eligibleConceptCount ?? concepts.length}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-600">Delivered / Represented Concepts:</span>
+                                <span className="font-bold text-slate-900">{alignment.deliveredConceptCount ?? alignment.plannedConceptCount ?? 'Pending generation'}</span>
+                            </div>
+                            <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
+                                <span className="font-bold text-slate-700">Delivered Coverage Ratio:</span>
+                                <span className="font-mono font-black text-slate-900">
+                                    {alignment.deliveredCoverageRatio !== null && alignment.deliveredCoverageRatio !== undefined
+                                        ? `${Math.round(alignment.deliveredCoverageRatio * 100)}%`
+                                        : (alignment.plannedCoverageRatio !== null && alignment.plannedCoverageRatio !== undefined
+                                            ? `${Math.round(alignment.plannedCoverageRatio * 100)}% (Planned)`
+                                            : 'N/A')}
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -462,8 +332,7 @@ export default function TeachingScoreModal({
                                 onApplyQuestionCount(recCount, 'Balanced');
                                 onClose();
                             }}
-                            className="px-4.5 py-2.5 rounded-xl bg-[var(--bg-accent)] hover:opacity-90 text-white font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-2 cursor-pointer active:scale-95 transition-all"
-                            style={{ backgroundColor: 'var(--bg-accent)', color: 'var(--text-on-accent)' }}
+                            className="px-4.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-2 cursor-pointer active:scale-95 transition-all"
                         >
                             <Sparkles size={14} />
                             Apply Recommended ({recCount} Qs)

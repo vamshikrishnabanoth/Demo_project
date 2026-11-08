@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "Using the midpoint formula, what is the price elasticity of demand for the textbook when the price rises from $10 to $14 and quantity demanded falls from 100 units to 60 units?",
+      "options": [
+        "-0.5",
+        "-1.0",
+        "-1.5",
+        "-2.0"
+      ],
+      "correctAnswer": "-1.5",
+      "explanation": "Midpoint %ΔQ = (60‑100)/((100+60)/2)=‑40/80=‑0.5; Midpoint %ΔP = (14‑10)/((10+14)/2)=4/12≈0.333. Elasticity = (‑0.5)/(0.333)≈‑1.5, indicating elastic demand.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Price elasticity of demand – midpoint formula"
+    },
+    {
+      "questionText": "According to the excerpt, if a good has a price elasticity of demand of 0.8 (|E_d|<1) and its price is increased, what is the most likely effect on total revenue?",
+      "options": [
+        "Total revenue will increase",
+        "Total revenue will decrease",
+        "Total revenue will remain unchanged",
+        "The effect on total revenue cannot be determined without more information"
+      ],
+      "correctAnswer": "Total revenue will increase",
+      "explanation": "When |E_d| is less than 1 the demand is inelastic, so the percentage drop in quantity is smaller than the percentage rise in price; the price effect dominates and total revenue rises.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Price elasticity of demand and total revenue"
+    },
+    {
+      "questionText": "When a government imposes a binding price ceiling below the equilibrium price, which of the following statements best describes the resulting deadweight loss?",
+      "options": [
+        "It is the area between the supply and demand curves above the ceiling price.",
+        "It is the area between the supply and demand curves below the ceiling price.",
+        "It is the area between the supply and demand curves above the equilibrium price.",
+        "It is the area between the supply and demand curves below the equilibrium price but above the ceiling price."
+      ],
+      "correctAnswer": "It is the area between the supply and demand curves below the equilibrium price but above the ceiling price.",
+      "explanation": "A binding price ceiling creates a gap between the quantity demanded and supplied at the lower price. The lost mutually beneficial trades are represented by the triangle formed by the supply and demand curves, lying below the equilibrium price and above the ceiling price.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Deadweight Loss"
+    },
+    {
+      "questionText": "Why do economists express price elasticity of demand using percentage changes instead of a simple slope?",
+      "options": [
+        "Because percentages are unit‑free and allow comparison across different goods",
+        "Because percentages always make the elasticity positive",
+        "Because slopes cannot be calculated for linear demand curves",
+        "Because percentages eliminate the need for calculus"
+      ],
+      "correctAnswer": "Because percentages are unit‑free and allow comparison across different goods",
+      "explanation": "Percentage changes remove the influence of measurement units, making elasticity comparable across goods, unlike a simple slope which varies with the units used for price and quantity.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Definition and measurement of price elasticity"
+    },
+    {
+      "questionText": "Which statement correctly describes the midpoint (arc) formula for calculating price elasticity of demand as used in the excerpt?",
+      "options": [
+        "It uses the initial quantity and price as the denominators in the percentage change calculations.",
+        "It averages the initial and final quantities and prices before computing percentage changes.",
+        "It always produces a positive elasticity value regardless of the direction of price change.",
+        "It ignores the change in price and focuses only on quantity changes."
+      ],
+      "correctAnswer": "It averages the initial and final quantities and prices before computing percentage changes.",
+      "explanation": "The midpoint formula computes percentage changes by dividing the change by the average of the initial and final values, as shown in the excerpt’s calculations.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Arc (midpoint) elasticity calculation"
+    },
+    {
+      "questionText": "According to the Total Revenue Test, if demand is elastic (|E_d| > 1), what action should a firm take to increase its total revenue?",
+      "options": [
+        "Raise the price of the good",
+        "Lower the price of the good",
+        "Keep the price unchanged",
+        "Increase output while keeping the price unchanged"
+      ],
+      "correctAnswer": "Lower the price of the good",
+      "explanation": "When demand is elastic, the percentage drop in quantity demanded exceeds the percentage rise in price, so lowering price raises total revenue.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Price elasticity of demand and total revenue"
+    },
+    {
+      "questionText": "Using the midpoint (arc) formula, what is the price elasticity of demand for the textbook when its price rises from $10 to $14 and quantity demanded falls from 100 units to 60 units?",
+      "options": [
+        "-0.5",
+        "-1.0",
+        "-1.5",
+        "-2.0"
+      ],
+      "correctAnswer": "-1.5",
+      "explanation": "ΔQ = 60‑100 = –40; average Q = (100+60)/2 = 80; %ΔQ = –40/80 = –0.5. ΔP = 14‑10 = 4; average P = (10+14)/2 = 12; %ΔP = 4/12 ≈ 0.333. Elasticity = (–0.5)/(0.333) ≈ –1.5.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Midpoint formula calculation of price elasticity"
+    },
+    {
+      "questionText": "According to the excerpt, which statement best describes a good whose price elasticity of demand is 0.8?",
+      "options": [
+        "Demand is elastic; a 1% price increase leads to more than 1% decrease in quantity.",
+        "Demand is inelastic; a 1% price increase leads to less than 1% decrease in quantity.",
+        "Demand is unit elastic; a 1% price increase leads to exactly a 1% decrease in quantity.",
+        "Demand is perfectly elastic; quantity demanded falls to zero with any price increase."
+      ],
+      "correctAnswer": "Demand is inelastic; a 1% price increase leads to less than 1% decrease in quantity.",
+      "explanation": "An elasticity magnitude less than 1 indicates inelastic demand, meaning the percentage change in quantity demanded is smaller than the percentage change in price.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Interpretation of price elasticity magnitude"
+    },
+    {
+      "questionText": "What does the deadweight loss triangle represent when a binding price ceiling is imposed?",
+      "options": [
+        "The loss of consumer surplus",
+        "The loss of producer surplus",
+        "The loss of mutually beneficial trades",
+        "The gain in government revenue"
+      ],
+      "correctAnswer": "The loss of mutually beneficial trades",
+      "explanation": "A binding price ceiling below equilibrium prevents some trades that would have benefited both buyers and sellers. The area between the supply and demand curves above the ceiling—the deadweight loss triangle—represents this loss of mutually beneficial trades.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Deadweight Loss"
+    },
+    {
+      "questionText": "Why do economists use percentage changes instead of simple slopes when calculating price elasticity of demand?",
+      "options": [
+        "Percentages make elasticity unit‑free and comparable across all goods.",
+        "Percentages simplify the algebraic calculations.",
+        "Percentages eliminate the need for price and quantity data.",
+        "Percentages increase the magnitude of the elasticity measure."
+      ],
+      "correctAnswer": "Percentages make elasticity unit‑free and comparable across all goods.",
+      "explanation": "A simple slope depends on the units used for price and quantity, so it varies with measurement units. Using percentage changes removes unit dependence, making elasticity comparable across different goods.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Price elasticity of demand – use of percentages"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6243,
+    "cumulativeOutputTokens": 1872,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 25746
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:23:28.030Z"
+}

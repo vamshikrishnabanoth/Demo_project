@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "What is the formula for price elasticity of demand (E_d) using the midpoint method?",
+      "options": [
+        "E_d = (%ΔQ)/( %ΔP )",
+        "E_d = [(Q2‑Q1)/((Q1+Q2)/2)] ÷ [(P2‑P1)/((P1+P2)/2)]",
+        "E_d = (ΔQ/ΔP) * (P/Q)",
+        "E_d = (P2‑P1)/(Q2‑Q1)"
+      ],
+      "correctAnswer": "E_d = [(Q2‑Q1)/((Q1+Q2)/2)] ÷ [(P2‑P1)/((P1+P2)/2)]",
+      "explanation": "The midpoint formula divides the change in quantity and price by their averages, eliminating base‑dependency.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Elasticity Formula"
+    },
+    {
+      "questionText": "If the price of a good rises from $4 to $5, what is the percentage change in price using the initial‑value method?",
+      "options": [
+        "20%",
+        "25%",
+        "33.3%",
+        "40%"
+      ],
+      "correctAnswer": "25%",
+      "explanation": "Change = $1; initial price = $4; 1/4 = 0.25 = 25%.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Percentage Change"
+    },
+    {
+      "questionText": "In the textbook example (price $10 → $14, quantity 100 → 60), what is the absolute value of the price elasticity of demand?",
+      "options": [
+        "0.75",
+        "1.00",
+        "1.50",
+        "2.00"
+      ],
+      "correctAnswer": "1.50",
+      "explanation": "Using the midpoint method gives E_d = -0.50/0.333 = -1.5; absolute value = 1.5.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Numerical Calculation"
+    },
+    {
+      "questionText": "When |E_d| > 1, demand is considered:",
+      "options": [
+        "Inelastic",
+        "Unit elastic",
+        "Elastic",
+        "Perfectly inelastic"
+      ],
+      "correctAnswer": "Elastic",
+      "explanation": "|E_d| greater than 1 indicates quantity changes proportionally more than price, i.e., elastic demand.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Elasticity Interpretation"
+    },
+    {
+      "questionText": "Which of the following best describes the Total Revenue Test?",
+      "options": [
+        "Raise price when demand is elastic, lower price when inelastic",
+        "Raise price when demand is inelastic, lower price when elastic",
+        "Raise price regardless of elasticity",
+        "Lower price regardless of elasticity"
+      ],
+      "correctAnswer": "Raise price when demand is inelastic, lower price when elastic",
+      "explanation": "If demand is inelastic, price increase raises total revenue; if elastic, price decrease raises revenue.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Revenue Implications"
+    },
+    {
+      "questionText": "Why do economists prefer percentage changes over simple slopes when measuring elasticity?",
+      "options": [
+        "Percentages are easier to calculate",
+        "Percentages remove unit dependence, allowing comparison across goods",
+        "Slopes are always negative",
+        "Percentages give larger numbers"
+      ],
+      "correctAnswer": "Percentages remove unit dependence, allowing comparison across goods",
+      "explanation": "Using percentages makes elasticity unit‑free, unlike slopes which vary with measurement units.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Conceptual Rationale"
+    },
+    {
+      "questionText": "If a good has a price elasticity of demand of |E_d| = 0.4, what happens to total revenue when price is increased?",
+      "options": [
+        "Total revenue falls",
+        "Total revenue rises",
+        "Total revenue stays the same",
+        "Cannot be determined without quantity data"
+      ],
+      "correctAnswer": "Total revenue rises",
+      "explanation": "|E_d| < 1 indicates inelastic demand; price increase outweighs quantity loss, raising revenue.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Revenue and Elasticity"
+    },
+    {
+      "questionText": "Which of the following goods is most likely to have elastic demand?",
+      "options": [
+        "Insulin",
+        "Electricity in the short run",
+        "A specific brand of soda with many substitutes",
+        "Gasoline for commuters"
+      ],
+      "correctAnswer": "A specific brand of soda with many substitutes",
+      "explanation": "Goods with many close substitutes tend to be price‑sensitive, i.e., elastic.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Determinants of Elasticity"
+    },
+    {
+      "questionText": "What is deadweight loss?",
+      "options": [
+        "The loss of consumer surplus due to a price ceiling",
+        "The gain in producer surplus from a tax",
+        "The loss of total surplus that results from mutually beneficial trades not occurring",
+        "The total revenue lost by a firm when demand is elastic"
+      ],
+      "correctAnswer": "The loss of total surplus that results from mutually beneficial trades not occurring",
+      "explanation": "Deadweight loss represents the welfare loss from prevented trades, shown as a triangle between supply and demand.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Welfare Analysis"
+    },
+    {
+      "questionText": "How does the direction of price change affect simple percentage calculations?",
+      "options": [
+        "It does not affect the percentage; both directions give the same result",
+        "An increase from $4 to $5 is 25% while a decrease from $5 to $4 is 20%",
+        "An increase always yields a larger percentage than a decrease of the same absolute amount",
+        "It only matters for elastic goods"
+      ],
+      "correctAnswer": "An increase from $4 to $5 is 25% while a decrease from $5 to $4 is 20%",
+      "explanation": "Using the initial value creates a base‑dependency; the two directions give different percentages.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Percentage Change Pitfall"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1261,
+    "cumulativeOutputTokens": 1197,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 2901
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:23:01.479Z"
+}

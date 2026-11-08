@@ -1,0 +1,164 @@
+{
+  "system": "System 3: Frozen KMIT Kahoot LCA-CM",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Computes a hash of the key and stores the node at the computed array index directly"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Enzyme-Substrate Reaction Scheme (State Transitions and Formulations). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Enzyme-Substrate Reaction Scheme"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Enzyme-Substrate Reaction Scheme (State Transitions and Formulations). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Enzyme-Substrate Reaction Scheme"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Enzyme-Substrate Reaction Scheme (State Transitions and Formulations). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Enzyme-Substrate Reaction Scheme"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Derivation of the Michaelis-Menten Equation (Boundary Conditions and Edge Cases). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Quasi-Steady-State Assumption"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Derivation of the Michaelis-Menten Equation (Boundary Conditions and Edge Cases). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Derivation of the Michaelis-Menten Equation"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Derivation of the Michaelis-Menten Equation (Boundary Conditions and Edge Cases). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Derivation of the Michaelis-Menten Equation"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Competitive Inhibition (System Invariants and Bug Diagnostics). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Physical Meaning of Km"
+    },
+    {
+      "questionText": "In Binary Search Tree (BST) operations, what is the key property of an inorder traversal?",
+      "options": [
+        "Visits all nodes at the current tree depth before proceeding to subsequent levels",
+        "Visits the root node last after completely traversing both subtrees in Left, Right, Root order",
+        "Visits the root node first before traversing either subtree in Root, Left, Right order",
+        "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right"
+      ],
+      "correctAnswer": "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Non-Competitive Inhibition (Core Foundations and Governing Principles). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Lineweaver-Burk Double-Reciprocal Plot"
+    },
+    {
+      "questionText": "In a Binary Search Tree (BST), what fundamental ordering property must hold for every node X?",
+      "options": [
+        "All keys in X's left subtree are strictly greater than X's key, and all keys in X's right subtree are strictly less than X's key",
+        "The left child must have a smaller key than X, but arbitrary descendants in the left subtree may exceed X",
+        "All keys in X's left subtree are strictly less than X's key, and all keys in X's right subtree are strictly greater than X's key",
+        "Keys are ordered chronologically by insertion timestamp rather than numerical comparison"
+      ],
+      "correctAnswer": "All keys in X's left subtree are strictly less than X's key, and all keys in X's right subtree are strictly greater than X's key",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Competitive Inhibition (System Invariants and Bug Diagnostics). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Competitive Inhibition"
+    },
+    {
+      "questionText": "In Binary Search Tree (BST) operations, what is the key property of an inorder traversal?",
+      "options": [
+        "Visits the root node first before traversing either subtree in Root, Left, Right order",
+        "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right",
+        "Visits all nodes at the current tree depth before proceeding to subsequent levels",
+        "Visits the root node last after completely traversing both subtrees in Left, Right, Root order"
+      ],
+      "correctAnswer": "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Enzyme-Substrate Reaction Scheme (State Transitions and Formulations). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Non-Competitive Inhibition"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1627,
+    "cumulativeOutputTokens": 2453,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 2360
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Decoupled operations)"
+  },
+  "tcScore": 83,
+  "pdi": 0.2,
+  "timestamp": "2026-11-05T20:25:47.885Z"
+}

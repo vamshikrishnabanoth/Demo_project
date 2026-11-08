@@ -190,6 +190,7 @@ class EvidencePackager {
       academicFailureReason: primaryAnalysis.reason,
       teachingValueScore: primaryAnalysis.teachingValueScore,
       lectureDepth: primaryAnalysis.lectureDepth,
+      curricularEvidenceProfile: primaryAnalysis.curricularEvidenceProfile || null,
       detectedFocus: primaryAnalysis.detectedFocus,
       retainedSegments: primaryAnalysis.retainedSegments || [],
       curricularSegments,
@@ -210,7 +211,9 @@ class EvidencePackager {
         sourceId: c.sourceId,
         snippet: (c.content || '').substring(0, 150)
       })),
-      unifiedRawContent: rawContent
+      unifiedRawContent: rawContent,
+      teachingUnits: sessionInputs.teachingUnits || sessionInputs.pedagogicalReconstruction || null,
+      pedagogicalReconstruction: sessionInputs.pedagogicalReconstruction || sessionInputs.teachingUnits || null
     };
 
     const isTopicSynthesis = sessionInputs.inputModality === 'TOPIC_SYNTHESIS' ||
@@ -237,6 +240,7 @@ class EvidencePackager {
         packageData.isAcademic = true;
         packageData.isCurricular = true;
         packageData.academicFailureReason = null;
+        packageData.curricularEvidenceProfile = topicCheck.curricularEvidenceProfile || null;
         packageData.lectureDepth = {
           score: 90,
           rating: 'Advanced Curriculum',

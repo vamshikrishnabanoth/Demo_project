@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "Which data structure is essential for implementing Breadth-First Search?",
+      "options": [
+        "Stack",
+        "Queue",
+        "Priority Queue",
+        "Deque"
+      ],
+      "correctAnswer": "Queue",
+      "explanation": "BFS requires FIFO order to explore vertices level by level.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Data Structures"
+    },
+    {
+      "questionText": "During BFS, the queue always contains vertices from at most how many consecutive levels?",
+      "options": [
+        "One",
+        "Two",
+        "Three",
+        "Four"
+      ],
+      "correctAnswer": "Two",
+      "explanation": "The invariant guarantees the queue holds vertices from at most two consecutive distance levels.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Invariant"
+    },
+    {
+      "questionText": "Why must BFS maintain a visited set?",
+      "options": [
+        "To store distances",
+        "To avoid revisiting vertices and infinite loops",
+        "To keep track of parent nodes",
+        "To sort vertices"
+      ],
+      "correctAnswer": "To avoid revisiting vertices and infinite loops",
+      "explanation": "Without marking visited, the algorithm could loop in cycles or enqueue duplicates.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Visited"
+    },
+    {
+      "questionText": "In the example graph, what is the shortest path distance from A to E?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "correctAnswer": "3",
+      "explanation": "The path A-B-D-E or A-C-D-E has 3 edges.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Example Graph"
+    },
+    {
+      "questionText": "What is the time complexity of BFS on a graph represented with adjacency lists?",
+      "options": [
+        "O(V^2)",
+        "O(V+E)",
+        "O(E log V)",
+        "O(V log V)"
+      ],
+      "correctAnswer": "O(V+E)",
+      "explanation": "Each vertex and each edge is processed a constant number of times.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Complexity"
+    },
+    {
+      "questionText": "Using a stack instead of a queue in BFS would produce which algorithm?",
+      "options": [
+        "BFS",
+        "DFS",
+        "Dijkstra",
+        "Prim"
+      ],
+      "correctAnswer": "DFS",
+      "explanation": "A LIFO stack leads to depth-first traversal.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Algorithmic Equivalence"
+    },
+    {
+      "questionText": "When is a vertex removed from the queue during BFS?",
+      "options": [
+        "Before being enqueued",
+        "After all its neighbors are processed",
+        "After being marked visited",
+        "When it is dequeued from the front"
+      ],
+      "correctAnswer": "When it is dequeued from the front",
+      "explanation": "Dequeue operation removes the front element of the FIFO queue.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Queue Operations"
+    },
+    {
+      "questionText": "In a star graph with V vertices, what is the maximum number of vertices that can be in the queue simultaneously?",
+      "options": [
+        "1",
+        "2",
+        "V-1",
+        "V"
+      ],
+      "correctAnswer": "V-1",
+      "explanation": "After processing the center, all V-1 leaves are enqueued.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Space Complexity"
+    },
+    {
+      "questionText": "To visit all vertices in a disconnected graph using BFS, what must you do?",
+      "options": [
+        "Run BFS once from any vertex",
+        "Run BFS for each connected component",
+        "Use DFS instead",
+        "Use Dijkstra"
+      ],
+      "correctAnswer": "Run BFS for each connected component",
+      "explanation": "An outer loop over all vertices ensures each component is processed.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Disconnected Graphs"
+    },
+    {
+      "questionText": "Which of the following is NOT a property of BFS?",
+      "options": [
+        "Visits vertices in order of distance from source",
+        "Uses a FIFO queue",
+        "Guarantees shortest paths in unweighted graphs",
+        "Uses recursion"
+      ],
+      "correctAnswer": "Uses recursion",
+      "explanation": "BFS is iterative and uses a queue, not recursion.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS Properties"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1351,
+    "cumulativeOutputTokens": 844,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 3771
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:21:40.787Z"
+}

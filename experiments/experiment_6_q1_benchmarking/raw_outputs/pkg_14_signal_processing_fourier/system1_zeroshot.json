@@ -1,0 +1,48 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "What is the relationship between the sampling frequency f_s and the sampling interval T_s?",
+      "options": [
+        "f_s = T_s",
+        "f_s = 1/T_s",
+        "f_s = T_s^2",
+        "f_s = sqrt(T_s)"
+      ],
+      "correctAnswer": "f_s = 1/T_s",
+      "explanation": "Sampling frequency is the reciprocal of the sampling interval.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Sampling Interval"
+    },
+    {
+      "questionText": "In the DFT, what does the coefficient X[0] represent?",
+      "options": [
+        "Highest frequency component",
+        "DC component",
+        "Nyquist frequency",
+        "Spectral resolution"
+      ],
+      "correctAnswer": "DC component",
+      "explanation": "X[0] is the sum of all samples and represents the DC level.",
+      "targetDifficulty": "Easy",
+      "subtopic": "DFT Coefficients"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1217,
+    "cumulativeOutputTokens": 171,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 5450
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 2,
+    "finalDelivered": 2,
+    "qqf": 0.2,
+    "attritionCause": "LLM compliance under-generation (spontaneous completion termination)"
+  },
+  "timestamp": "2026-11-05T20:28:58.788Z"
+}

@@ -566,6 +566,11 @@ router.get('/:id', auth, quizController.getQuizById);
 // @desc    Publish/Unpublish a quiz
 router.put('/publish/:id', auth, teacherOrAdmin, quizController.publishQuiz);
 
+// @route   POST api/quiz/:id/approve
+// @desc    Explicit instructor approval for quizzes generated under capacity deficit
+router.post('/:id/approve', auth, teacherOrAdmin, quizController.approveQuiz);
+router.post('/approve/:id', auth, teacherOrAdmin, quizController.approveQuiz);
+
 // @route   DELETE api/quiz/:id
 // @desc    Delete a quiz
 router.delete('/:id', auth, teacherOrAdmin, quizController.deleteQuiz);

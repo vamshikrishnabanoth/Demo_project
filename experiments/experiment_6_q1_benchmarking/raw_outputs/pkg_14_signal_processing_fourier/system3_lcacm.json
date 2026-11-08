@@ -1,0 +1,164 @@
+{
+  "system": "System 3: Frozen KMIT Kahoot LCA-CM",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "In an algorithm counting element frequencies in an array of size N using nested loops, what is the primary role of the outer loop?",
+      "options": [
+        "Sorts the input array in descending numerical order before frequency counting begins",
+        "Counts all duplicate occurrences across the entire array in a single constant-time pass",
+        "Stores the running frequencies directly into an auxiliary hash set without iterations",
+        "Iterates through each element one by one to select it as the current target to count"
+      ],
+      "correctAnswer": "Iterates through each element one by one to select it as the current target to count",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Relationship between sampling frequency and time interval. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Sampling and Discretization"
+    },
+    {
+      "questionText": "Given an array arr = [3, 1, 3] processed by nested loops for frequency counting, what is the recorded frequency of the element 3 after the first outer loop pass (i = 0)?",
+      "options": [
+        "3, because the inner loop counts all elements regardless of value",
+        "2, because the inner loop matches arr[0] at indices 0 and 2",
+        "0, because frequency counters initialize only after all iterations finish",
+        "1, because the inner loop only counts occurrences strictly after index i"
+      ],
+      "correctAnswer": "2, because the inner loop matches arr[0] at indices 0 and 2",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Spectral resolution calculation. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "DFT Mathematical Definition and Frequency Bins"
+    },
+    {
+      "questionText": "Given an array arr = [3, 1, 3] processed by nested loops for frequency counting, what is the recorded frequency of the element 3 after the first outer loop pass (i = 0)?",
+      "options": [
+        "1, because the inner loop only counts occurrences strictly after index i",
+        "3, because the inner loop counts all elements regardless of value",
+        "0, because frequency counters initialize only after all iterations finish",
+        "2, because the inner loop matches arr[0] at indices 0 and 2"
+      ],
+      "correctAnswer": "2, because the inner loop matches arr[0] at indices 0 and 2",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Relationship between sampling frequency and time interval (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "DFT Mathematical Definition and Frequency Bins"
+    },
+    {
+      "questionText": "In an algorithm counting element frequencies in an array of size N using nested loops, what is the primary role of the outer loop?",
+      "options": [
+        "Iterates through each element one by one to select it as the current target to count",
+        "Sorts the input array in descending numerical order before frequency counting begins",
+        "Stores the running frequencies directly into an auxiliary hash set without iterations",
+        "Counts all duplicate occurrences across the entire array in a single constant-time pass"
+      ],
+      "correctAnswer": "Iterates through each element one by one to select it as the current target to count",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Relationship between sampling frequency and time interval (TRACE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "DFT Numerical Calculation"
+    },
+    {
+      "questionText": "Given an array arr = [3, 1, 3] processed by nested loops for frequency counting, what is the recorded frequency of the element 3 after the first outer loop pass (i = 0)?",
+      "options": [
+        "1, because the inner loop only counts occurrences strictly after index i",
+        "3, because the inner loop counts all elements regardless of value",
+        "2, because the inner loop matches arr[0] at indices 0 and 2",
+        "0, because frequency counters initialize only after all iterations finish"
+      ],
+      "correctAnswer": "2, because the inner loop matches arr[0] at indices 0 and 2",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Relationship between sampling frequency and time interval (COMPARE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nyquist-Shannon Sampling Theorem"
+    },
+    {
+      "questionText": "Given an array arr = [3, 1, 3] processed by nested loops for frequency counting, what is the recorded frequency of the element 3 after the first outer loop pass (i = 0)?",
+      "options": [
+        "0, because frequency counters initialize only after all iterations finish",
+        "1, because the inner loop only counts occurrences strictly after index i",
+        "2, because the inner loop matches arr[0] at indices 0 and 2",
+        "3, because the inner loop counts all elements regardless of value"
+      ],
+      "correctAnswer": "2, because the inner loop matches arr[0] at indices 0 and 2",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Relationship between sampling frequency and time interval (PREDICT_CONSTRAINT). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nyquist-Shannon Sampling Theorem"
+    },
+    {
+      "questionText": "Given an array arr = [3, 1, 3] processed by nested loops for frequency counting, what is the recorded frequency of the element 3 after the first outer loop pass (i = 0)?",
+      "options": [
+        "2, because the inner loop matches arr[0] at indices 0 and 2",
+        "1, because the inner loop only counts occurrences strictly after index i",
+        "0, because frequency counters initialize only after all iterations finish",
+        "3, because the inner loop counts all elements regardless of value"
+      ],
+      "correctAnswer": "2, because the inner loop matches arr[0] at indices 0 and 2",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Relationship between sampling frequency and time interval (DIAGNOSE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nyquist-Shannon Sampling Theorem"
+    },
+    {
+      "questionText": "Given an array arr = [3, 1, 3] processed by nested loops for frequency counting, what is the recorded frequency of the element 3 after the first outer loop pass (i = 0)?",
+      "options": [
+        "0, because frequency counters initialize only after all iterations finish",
+        "3, because the inner loop counts all elements regardless of value",
+        "2, because the inner loop matches arr[0] at indices 0 and 2",
+        "1, because the inner loop only counts occurrences strictly after index i"
+      ],
+      "correctAnswer": "2, because the inner loop matches arr[0] at indices 0 and 2",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Spectral resolution calculation (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Aliasing and Spectral Folding"
+    },
+    {
+      "questionText": "Given an array arr = [3, 1, 3] processed by nested loops for frequency counting, what is the recorded frequency of the element 3 after the first outer loop pass (i = 0)?",
+      "options": [
+        "3, because the inner loop counts all elements regardless of value",
+        "2, because the inner loop matches arr[0] at indices 0 and 2",
+        "0, because frequency counters initialize only after all iterations finish",
+        "1, because the inner loop only counts occurrences strictly after index i"
+      ],
+      "correctAnswer": "2, because the inner loop matches arr[0] at indices 0 and 2",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Spectral resolution calculation (TRACE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Aliasing and Spectral Folding"
+    },
+    {
+      "questionText": "In an algorithm counting element frequencies in an array of size N using nested loops, what is the primary role of the outer loop?",
+      "options": [
+        "Sorts the input array in descending numerical order before frequency counting begins",
+        "Stores the running frequencies directly into an auxiliary hash set without iterations",
+        "Iterates through each element one by one to select it as the current target to count",
+        "Counts all duplicate occurrences across the entire array in a single constant-time pass"
+      ],
+      "correctAnswer": "Iterates through each element one by one to select it as the current target to count",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Spectral resolution calculation (COMPARE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Practical Application: CD Audio Sampling"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1542,
+    "cumulativeOutputTokens": 2186,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 7653
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Decoupled operations)"
+  },
+  "tcScore": 83,
+  "pdi": 0.2,
+  "timestamp": "2026-11-05T20:29:29.001Z"
+}

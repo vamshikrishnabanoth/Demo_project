@@ -422,7 +422,7 @@ export default function PipelineInspectorDrawer({
             {/* ── METRICS STRIP ── */}
             <div className="bg-white border-b border-slate-200 px-6 py-2.5 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 shrink-0 text-xs">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">PDI Mode</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Modality Mode</span>
                 <span className="font-black text-slate-900 font-mono uppercase">{representationMode}</span>
               </div>
               <div>

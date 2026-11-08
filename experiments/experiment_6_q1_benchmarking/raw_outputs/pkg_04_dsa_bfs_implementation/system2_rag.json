@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "In Breadth-First Search, which data structure is essential to maintain the invariant that vertices are processed in non‑decreasing order of their distance from the source?",
+      "options": [
+        "FIFO Queue",
+        "LIFO Stack",
+        "Priority Queue",
+        "Deque"
+      ],
+      "correctAnswer": "FIFO Queue",
+      "explanation": "BFS uses a FIFO queue so that vertices discovered earlier (closer to the source) are dequeued before those discovered later, preserving the layer‑by‑layer order.",
+      "targetDifficulty": "Easy",
+      "subtopic": "BFS queue invariant"
+    },
+    {
+      "questionText": "Why does Breadth‑First Search maintain a visited set (or mark vertices as visited) when traversing a general graph?",
+      "options": [
+        "It guarantees each vertex is processed exactly once, preventing infinite loops caused by cycles.",
+        "It records the shortest‑path distance from the source to each vertex.",
+        "It orders vertices by their identifier so that lower‑ID vertices are explored first.",
+        "It stores parent pointers needed for reconstructing the BFS tree."
+      ],
+      "correctAnswer": "It guarantees each vertex is processed exactly once, preventing infinite loops caused by cycles.",
+      "explanation": "Marking vertices as visited ensures that a vertex is enqueued only once, which avoids revisiting nodes in cycles and prevents the algorithm from looping indefinitely.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS visited set and cycle handling"
+    },
+    {
+      "questionText": "What is the worst‑case asymptotic space complexity of Breadth‑First Search when using an adjacency‑list representation?",
+      "options": [
+        "O(V)",
+        "O(E)",
+        "O(V+E)",
+        "O(1)"
+      ],
+      "correctAnswer": "O(V)",
+      "explanation": "In the worst case (e.g., a star graph) the queue can hold up to V vertices and the visited array also requires V entries, giving Θ(V) space.",
+      "targetDifficulty": "Easy",
+      "subtopic": "BFS space complexity"
+    },
+    {
+      "questionText": "Why is a visited boolean array (or hash set) essential when performing Breadth‑First Search on a general graph?",
+      "options": [
+        "It prevents revisiting vertices, avoiding infinite loops and redundant enqueues",
+        "It ensures vertices are processed in order of increasing vertex IDs",
+        "It stores the shortest‑path distance from the source for each vertex",
+        "It sorts each vertex's adjacency list alphabetically"
+      ],
+      "correctAnswer": "It prevents revisiting vertices, avoiding infinite loops and redundant enqueues",
+      "explanation": "In graphs with cycles, marking vertices as visited stops BFS from enqueuing the same vertex repeatedly, which would otherwise cause infinite loops or unnecessary work.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Visited tracking in BFS"
+    },
+    {
+      "questionText": "In the BFS traversal described for the graph with vertices A‑E, what distance (number of edges) from the source vertex A is assigned to vertex D when it is first discovered?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctAnswer": "2",
+      "explanation": "Vertex D is first reached via A→B→D (or A→C→D), which uses two edges, so its distance from A is 2.",
+      "targetDifficulty": "Easy",
+      "subtopic": "BFS distance labeling"
+    },
+    {
+      "questionText": "What is the overall time complexity of Breadth‑First Search on an undirected graph represented with adjacency lists, expressed in terms of the number of vertices V and edges E?",
+      "options": [
+        "O(V)",
+        "O(E)",
+        "O(V+E)",
+        "O(V·E)"
+      ],
+      "correctAnswer": "O(V+E)",
+      "explanation": "Each vertex is enqueued/dequeued once (O(V)) and each edge is examined twice in an undirected adjacency list (O(E)), giving O(V+E).",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS time complexity"
+    },
+    {
+      "questionText": "During the execution of Breadth‑First Search on an unweighted graph, the FIFO queue can contain vertices from how many distinct distance levels at any given time?",
+      "options": [
+        "One",
+        "Two",
+        "Three",
+        "All levels"
+      ],
+      "correctAnswer": "Two",
+      "explanation": "The BFS invariant states that the queue holds vertices from at most two consecutive levels: some at distance d followed by some at distance d+1.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS queue invariant"
+    },
+    {
+      "questionText": "After processing vertex B in the BFS traversal described, which of the following correctly represents the contents of the queue (front to rear)?",
+      "options": [
+        "[C, D]",
+        "[D, C]",
+        "[B, C]",
+        "[A, C]"
+      ],
+      "correctAnswer": "[C, D]",
+      "explanation": "When B is dequeued, its unvisited neighbor D is enqueued after the existing queue element C, resulting in queue [C, D] (front C, rear D).",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS queue ordering"
+    },
+    {
+      "questionText": "In the worst case, what is the maximum number of vertices that can be stored in the BFS queue simultaneously for an undirected graph with V vertices?",
+      "options": [
+        "O(1)",
+        "O(V)",
+        "O(E)",
+        "O(V + E)"
+      ],
+      "correctAnswer": "O(V)",
+      "explanation": "A star graph can place all V‑1 leaf vertices in the queue at once, so the queue size can grow to Θ(V). The visited array also uses Θ(V) space, giving overall space complexity O(V).",
+      "targetDifficulty": "Easy",
+      "subtopic": "BFS Space Complexity"
+    },
+    {
+      "questionText": "What is the effect of replacing the FIFO queue with a LIFO stack in the BFS algorithm for an unweighted graph?",
+      "options": [
+        "The algorithm still finds shortest paths but explores them in a different order",
+        "Vertices are explored in order of decreasing distance from the source",
+        "The algorithm behaves like Depth‑First Search and may fail to find shortest paths",
+        "The algorithm terminates early without visiting all vertices"
+      ],
+      "correctAnswer": "The algorithm behaves like Depth‑First Search and may fail to find shortest paths",
+      "explanation": "Using a LIFO stack changes the exploration order to last‑in‑first‑out, causing the search to dive deep along a single path (DFS). This breaks the BFS invariant that vertices are processed layer by layer, so the first discovered path to a vertex is no longer guaranteed to be the shortest.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Impact of data structure choice on BFS correctness"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6562,
+    "cumulativeOutputTokens": 1468,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 18129
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:22:25.014Z"
+}

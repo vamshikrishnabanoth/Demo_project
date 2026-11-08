@@ -1,0 +1,162 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "According to Carnot's theorem, which statement is true about heat engines operating between two temperatures?",
+      "options": [
+        "A reversible engine can never be more efficient than an irreversible engine operating between the same temperatures.",
+        "A reversible engine can never be less efficient than an irreversible engine operating between the same temperatures.",
+        "No heat engine operating between two given temperatures can be more efficient than a reversible engine operating between the same temperatures.",
+        "All heat engines operating between two temperatures have the same efficiency.",
+        ""
+      ],
+      "correctAnswer": "No heat engine operating between two given temperatures can be more efficient than a reversible engine operating between the same temperatures.",
+      "explanation": "Carnot’s theorem states that a reversible engine sets the upper bound on efficiency for any engine between the same two reservoirs.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Carnot Cycle"
+    },
+    {
+      "questionText": "The thermal efficiency of a heat engine is defined as the ratio of which two quantities?",
+      "options": [
+        "Net work output to the heat rejected to the cold reservoir",
+        "Net work output to the heat absorbed from the hot reservoir",
+        "Heat rejected to the cold reservoir to the heat absorbed from the hot reservoir",
+        "Heat absorbed from the hot reservoir to the net work output",
+        ""
+      ],
+      "correctAnswer": "Net work output to the heat absorbed from the hot reservoir",
+      "explanation": "Efficiency η = W/Q_H, the useful work divided by the heat input.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Efficiency"
+    },
+    {
+      "questionText": "During the reversible isothermal expansion (process 1→2) of an ideal gas, what happens to its internal energy?",
+      "options": [
+        "It increases proportionally to the volume change.",
+        "It decreases proportionally to the volume change.",
+        "It remains constant.",
+        "It oscillates as the gas expands.",
+        ""
+      ],
+      "correctAnswer": "It remains constant.",
+      "explanation": "For an ideal gas at constant temperature, ΔU = nC_VΔT = 0.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Isothermal Process"
+    },
+    {
+      "questionText": "Which relationship correctly links the volume ratios in the adiabatic processes of the Carnot cycle?",
+      "options": [
+        "(V2/V1)^(γ−1) = (V3/V4)^(γ+1)",
+        "(V2/V1)^(γ−1) = (V3/V4)^(γ−1)",
+        "(V2/V1)^(γ+1) = (V3/V4)^(γ−1)",
+        "(V2/V1)^(γ−1) = (V4/V3)^(γ−1)",
+        ""
+      ],
+      "correctAnswer": "(V2/V1)^(γ−1) = (V3/V4)^(γ−1)",
+      "explanation": "From the adiabatic equations T_H V2^(γ−1)=T_C V3^(γ−1) and T_H V1^(γ−1)=T_C V4^(γ−1).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Adiabatic Process"
+    },
+    {
+      "questionText": "What is the expression for the Carnot efficiency of a heat engine operating between temperatures T_H and T_C?",
+      "options": [
+        "η = 1 − T_H/T_C",
+        "η = 1 − T_C/T_H",
+        "η = T_H/T_C",
+        "η = T_C/T_H",
+        ""
+      ],
+      "correctAnswer": "η = 1 − T_C/T_H",
+      "explanation": "Carnot efficiency depends only on the reservoir temperatures: η_Carnot = 1 − T_C/T_H.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Efficiency"
+    },
+    {
+      "questionText": "For a steam turbine operating between T_H = 800 K and T_C = 300 K, what is the maximum theoretical efficiency?",
+      "options": [
+        "0.625",
+        "0.375",
+        "0.5",
+        "0.75",
+        ""
+      ],
+      "correctAnswer": "0.625",
+      "explanation": "η = 1 − 300/800 = 0.625 or 62.5 %.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Numerical Example"
+    },
+    {
+      "questionText": "During the reversible adiabatic expansion (process 2→3) of the Carnot cycle, what happens to the working fluid’s temperature?",
+      "options": [
+        "It increases from T_C to T_H",
+        "It remains constant at T_H",
+        "It decreases from T_H to T_C",
+        "It oscillates between T_H and T_C",
+        ""
+      ],
+      "correctAnswer": "It decreases from T_H to T_C",
+      "explanation": "Adiabatic expansion uses internal energy to do work, causing the temperature to drop.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Adiabatic Process"
+    },
+    {
+      "questionText": "Which statement correctly describes the Clausius inequality for irreversible cycles?",
+      "options": [
+        "∮dQ/T = 0",
+        "∮dQ/T ≥ 0",
+        "∮dQ/T ≤ 0",
+        "∮dQ/T = ∞",
+        ""
+      ],
+      "correctAnswer": "∮dQ/T ≤ 0",
+      "explanation": "For irreversible cycles the cyclic integral of dQ/T is negative, indicating entropy generation.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Clausius Inequality"
+    },
+    {
+      "questionText": "Which Carnot cycle process rejects heat Q_C to the cold reservoir?",
+      "options": [
+        "Reversible Isothermal Expansion",
+        "Reversible Adiabatic Expansion",
+        "Reversible Isothermal Compression",
+        "Reversible Adiabatic Compression",
+        ""
+      ],
+      "correctAnswer": "Reversible Isothermal Compression",
+      "explanation": "During isothermal compression at T_C, the gas rejects heat to the cold sink.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Isothermal Process"
+    },
+    {
+      "questionText": "If a heat engine receives Q_H = 2000 J and has an efficiency of 62.5 %, what is the net work output W?",
+      "options": [
+        "1250 J",
+        "750 J",
+        "2000 J",
+        "125 J",
+        ""
+      ],
+      "correctAnswer": "1250 J",
+      "explanation": "W = η·Q_H = 0.625·2000 J = 1250 J.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Work Calculation"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1519,
+    "cumulativeOutputTokens": 1209,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 2710
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:26:57.298Z"
+}

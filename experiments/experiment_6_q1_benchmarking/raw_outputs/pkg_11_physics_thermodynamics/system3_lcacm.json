@@ -1,0 +1,164 @@
+{
+  "system": "System 3: Frozen KMIT Kahoot LCA-CM",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "When analyzing Equals (Prediction) in Equals, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Executes postconditions prior to checking input boundary parameters",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Equals (Prediction). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Equals"
+    },
+    {
+      "questionText": "When analyzing Equals (Prediction) in Equals, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Equals (Prediction). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Equals"
+    },
+    {
+      "questionText": "When analyzing Minus (Cause / Effect) in Minus, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Minus (Cause / Effect). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Minus"
+    },
+    {
+      "questionText": "When analyzing Minus (Cause / Effect) in Minus, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Minus (Cause / Effect). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Minus"
+    },
+    {
+      "questionText": "When analyzing Temperature (Comparison / Tradeoff) in Temperature, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Temperature (Comparison / Tradeoff). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Temperature"
+    },
+    {
+      "questionText": "When analyzing Temperature (Comparison / Tradeoff) in Temperature, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Executes postconditions prior to checking input boundary parameters"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Temperature (Comparison / Tradeoff). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Temperature"
+    },
+    {
+      "questionText": "In the study of Times, what is the fundamental role or definition of Minus (Flow / Trace)?",
+      "options": [
+        "Defines the canonical structure and operational invariants for Minus (Flow / Trace) within the domain",
+        "Acts as an auxiliary background queue that bypasses primary domain state verification",
+        "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+        "Applies global locking constraints across unrelated external system services"
+      ],
+      "correctAnswer": "Defines the canonical structure and operational invariants for Minus (Flow / Trace) within the domain",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Minus (Flow / Trace). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Times"
+    },
+    {
+      "questionText": "When analyzing Times (Scenario Analysis) in Times, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Executes postconditions prior to checking input boundary parameters",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Skips prerequisite state verification and writes intermediate results directly without validation"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Times (Scenario Analysis). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Times"
+    },
+    {
+      "questionText": "In the study of Reversible, what is the fundamental role or definition of Reversible (Application)?",
+      "options": [
+        "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+        "Defines the canonical structure and operational invariants for Reversible (Application) within the domain",
+        "Applies global locking constraints across unrelated external system services",
+        "Acts as an auxiliary background queue that bypasses primary domain state verification"
+      ],
+      "correctAnswer": "Defines the canonical structure and operational invariants for Reversible (Application) within the domain",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Reversible (Application). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Reversible"
+    },
+    {
+      "questionText": "In the study of Reversible, what is the fundamental role or definition of Reversible (Application)?",
+      "options": [
+        "Defines the canonical structure and operational invariants for Reversible (Application) within the domain",
+        "Applies global locking constraints across unrelated external system services",
+        "Acts as an auxiliary background queue that bypasses primary domain state verification",
+        "Inverts execution dependencies by finalizing outcomes before validating initial inputs"
+      ],
+      "correctAnswer": "Defines the canonical structure and operational invariants for Reversible (Application) within the domain",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Reversible (Application). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Reversible"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1844,
+    "cumulativeOutputTokens": 2207,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 19886
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Decoupled operations)"
+  },
+  "tcScore": 83,
+  "pdi": 0.2,
+  "timestamp": "2026-11-05T20:27:46.052Z"
+}

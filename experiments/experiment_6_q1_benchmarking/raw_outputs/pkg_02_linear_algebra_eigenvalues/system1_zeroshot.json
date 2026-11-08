@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "What is the definition of an eigenvector of a matrix A?",
+      "options": [
+        "A non‑zero vector x such that Ax=0",
+        "A vector x (possibly zero) that satisfies Ax=λx for some scalar λ",
+        "A non‑zero vector x that satisfies Ax=λx for some scalar λ",
+        "A vector x that is orthogonal to Ax"
+      ],
+      "correctAnswer": "A non‑zero vector x that satisfies Ax=λx for some scalar λ",
+      "explanation": "By definition, an eigenvector is a non‑zero vector whose direction is unchanged by the transformation, satisfying Ax=λx.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Definition"
+    },
+    {
+      "questionText": "For the 3‑D projection matrix P that projects onto the xy‑plane, which of the following is an eigenvalue?",
+      "options": [
+        "2",
+        "-1",
+        "0",
+        "3"
+      ],
+      "correctAnswer": "0",
+      "explanation": "The vector along the z‑axis is sent to the zero vector, so its eigenvalue is 0.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Projection matrix"
+    },
+    {
+      "questionText": "Which property relates the trace of a 2×2 matrix A to its eigenvalues λ₁ and λ₂?",
+      "options": [
+        "λ₁·λ₂ equals the trace",
+        "λ₁+λ₂ equals the trace",
+        "λ₁−λ₂ equals the trace",
+        "|λ₁|+|λ₂| equals the trace"
+      ],
+      "correctAnswer": "λ₁+λ₂ equals the trace",
+      "explanation": "The sum of the eigenvalues of any square matrix equals the sum of its diagonal entries, i.e., the trace.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Trace and determinant properties"
+    },
+    {
+      "questionText": "The characteristic equation det(A−λI)=0 is derived by requiring which condition on (A−λI)?",
+      "options": [
+        "It be invertible",
+        "It have full rank",
+        "It be singular (non‑invertible)",
+        "Its rows be orthogonal"
+      ],
+      "correctAnswer": "It be singular (non‑invertible)",
+      "explanation": "A non‑zero eigenvector exists only when (A−λI) has a non‑trivial nullspace, which occurs when the matrix is singular, i.e., its determinant is zero.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Characteristic equation"
+    },
+    {
+      "questionText": "For the matrix A=[[4,−5],[2,−3]], what is det(A−λI) after expansion?",
+      "options": [
+        "λ²−λ−2",
+        "λ²+λ−2",
+        "λ²−λ+2",
+        "λ²+λ+2"
+      ],
+      "correctAnswer": "λ²−λ−2",
+      "explanation": "Computing (4−λ)(−3−λ)−(−5)(2) yields λ²−λ−2.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Computing eigenvalues"
+    },
+    {
+      "questionText": "Which vector is an eigenvector of A=[[4,−5],[2,−3]] corresponding to λ=2?",
+      "options": [
+        "[5,2]ᵀ",
+        "[2,5]ᵀ",
+        "[1,−1]ᵀ",
+        "[−5,−2]ᵀ"
+      ],
+      "correctAnswer": "[5,2]ᵀ",
+      "explanation": "Solving (A−2I)x=0 gives 2x₁−5x₂=0, so a non‑zero solution is x₁=5, x₂=2.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Finding eigenvectors"
+    },
+    {
+      "questionText": "Why does a real 90° rotation matrix in the plane have no real eigenvectors?",
+      "options": [
+        "Because its determinant is zero",
+        "Because its trace is zero",
+        "Because any real vector would be rotated out of its original direction",
+        "Because its characteristic polynomial has repeated roots"
+      ],
+      "correctAnswer": "Because any real vector would be rotated out of its original direction",
+      "explanation": "A 90° rotation changes the direction of every non‑zero real vector, so no real vector remains parallel to its image.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Rotation matrix"
+    },
+    {
+      "questionText": "If λ is an eigenvalue of a square matrix A, what must be true about the matrix (A−λI)?",
+      "options": [
+        "It is orthogonal",
+        "It is singular",
+        "It is diagonalizable",
+        "It has full rank"
+      ],
+      "correctAnswer": "It is singular",
+      "explanation": "Existence of a non‑zero eigenvector means (A−λI) has a non‑trivial nullspace, which occurs only when the matrix is singular (determinant zero).",
+      "targetDifficulty": "Hard",
+      "subtopic": "Singularity and eigenvalues"
+    },
+    {
+      "questionText": "What are the eigenvalues of the matrix A=[[4,−5],[2,−3]]?",
+      "options": [
+        "2 and −1",
+        "1 and −2",
+        "3 and −2",
+        "0 and 1"
+      ],
+      "correctAnswer": "2 and −1",
+      "explanation": "The characteristic polynomial λ²−λ−2 factors as (λ−2)(λ+1), giving eigenvalues 2 and −1.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Computing eigenvalues"
+    },
+    {
+      "questionText": "For an n×n matrix, the characteristic polynomial is of degree n. What does this imply about the number of eigenvalues (counting multiplicity)?",
+      "options": [
+        "At most n eigenvalues",
+        "Exactly n eigenvalues",
+        "At least n eigenvalues",
+        "Never more than n−1 eigenvalues"
+      ],
+      "correctAnswer": "Exactly n eigenvalues",
+      "explanation": "Fundamental theorem of algebra guarantees n roots (real or complex) of the degree‑n characteristic polynomial, counting multiplicities.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Algebraic multiplicity"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1305,
+    "cumulativeOutputTokens": 1084,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 3547
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:21:11.297Z"
+}

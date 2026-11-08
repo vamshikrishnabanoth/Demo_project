@@ -61,6 +61,27 @@ class LLMRouter {
       primaryModel = model;
     }
 
+    const preferredProvider = process.env.DEFAULT_LLM_PROVIDER || (this.groqApiKey ? 'groq' : (this.geminiApiKey ? 'gemini' : 'local_ollama'));
+
+    // 0. If preferred provider is Gemini, try Gemini first
+    if (preferredProvider === 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
+      try {
+        return await this._callGemini({
+          prompt,
+          systemPrompt,
+          temperature,
+          responseFormat,
+          model: (model && String(model).startsWith('gemini')) ? model : (process.env.GEMINI_MODEL || 'gemini-2.5-flash'),
+          sessionId,
+          maxTokens,
+          operation
+        });
+      } catch (err) {
+        errors.push(`Gemini (${err.message})`);
+        console.warn(`⚠️ [LLMRouter] Primary Gemini provider failed: ${err.message}. Trying Groq fallback...`);
+      }
+    }
+
     // 1. Try Primary Groq Cloud (bounded retry on 429, with high-quality fallback)
     if (this.groqApiKey) {
       try {
@@ -81,7 +102,7 @@ class LLMRouter {
     }
 
     // 2. Try Gemini Provider (Cloud Fallback for Groq 429 / failure)
-    if (this.geminiApiKey || process.env.GEMINI_API_KEY) {
+    if (preferredProvider !== 'gemini' && (this.geminiApiKey || process.env.GEMINI_API_KEY)) {
       try {
         return await this._callGemini({
           prompt,
@@ -165,7 +186,7 @@ class LLMRouter {
       } else if (operation === 'QUESTION_GENERATION') {
         resolvedMaxTokens = 1600;
       } else if (operation === 'EVALUATION' || prompt.includes('[PEDAGOGICAL & FACTUAL TRUTHFULNESS EVALUATION]')) {
-        resolvedMaxTokens = 1400;
+        resolvedMaxTokens = 2500;
       } else
       if (prompt.includes('[ASSESSMENT TARGET]') || prompt.includes('candidate MCQ') || prompt.includes('single multiple-choice') || prompt.includes('single grounded')) {
         resolvedMaxTokens = 1100; // Calibrated for single MCQ to reduce Groq TPM reservation
@@ -183,14 +204,13 @@ class LLMRouter {
     // 2. High-speed reasoning model (qwen/qwen3.8-27b - ~1.0s latency, distinct daily quota)
     // 3. Fallback (openai/gpt-oss-20b)
     const configuredModels = process.env.GROQ_MODELS ? process.env.GROQ_MODELS.split(',').map(m => m.trim()).filter(Boolean) : null;
-    const modelsToTry = (configuredModels && configuredModels.length > 0) ? configuredModels : Array.from(new Set([
-      primaryModel,
-      'openai/gpt-oss-120b',
-      'openai/gpt-oss-20b',
-      'qwen/qwen3.8-27b',
-      fallbackModel
-    ].filter(Boolean)));
+    const modelsToTry = (configuredModels && configuredModels.length > 0) ? configuredModels : (
+      operation === 'EVALUATION'
+        ? Array.from(new Set([primaryModel, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', fallbackModel].filter(Boolean)))
+        : Array.from(new Set([primaryModel, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'qwen/qwen3.8-27b', fallbackModel].filter(Boolean)))
+    );
     const totalKeys = keys.length;
+    const groqTimeoutMs = parseInt(process.env.GROQ_TIMEOUT_MS, 10) || 15000;
     let lastErr = null;
 
     // Distribute concurrent calls evenly across available keys by advancing starting key index per invocation
@@ -256,14 +276,18 @@ class LLMRouter {
                     Authorization: `Bearer ${key}`,
                     'Content-Type': 'application/json'
                   },
-                  timeout: 15000
+                  timeout: groqTimeoutMs
                 }
               );
 
               const choice = response.data.choices[0];
               const content = choice.message.content;
+              if (!content || typeof content !== 'string' || !content.trim()) {
+                throw new Error(`Groq model '${currentModel}' returned empty content.`);
+              }
               if (choice.finish_reason === 'length') {
                 console.warn(`⚠️ [LLMRouter] Completion truncated by max_tokens limit (${resolvedMaxTokens})`);
+                throw new Error(`LLM completion truncated by max_tokens limit (${resolvedMaxTokens})`);
               }
 
               // Record production metrics
@@ -302,6 +326,11 @@ class LLMRouter {
               const errorMsg = err.response?.data?.error?.message || err.message || '';
               const isTPD = errorMsg.includes('tokens per day') || errorMsg.includes('TPD');
               const isRateLimit = status === 429 || errorMsg.includes('429') || errorMsg.includes('Rate limit') || isTPD;
+              const isTimeout = err.code === 'ECONNABORTED' || errorMsg.includes('timeout') || err.message?.includes('timeout');
+              if (isTimeout) {
+                console.warn(`⏳ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' client request timed out after ${groqTimeoutMs}ms. Failing over to alternative model or key...`);
+                productionMetrics.inc('provider_timeout_count');
+              }
 
               if (errorMsg.includes('Failed to validate JSON') && attempts === 1) {
                 console.warn(`⚠️ [LLMRouter] Groq strict JSON validator rejected '${currentModel}'. Retrying with relaxed JSON prompt...`);
@@ -322,10 +351,13 @@ class LLMRouter {
                         Authorization: `Bearer ${key}`,
                         'Content-Type': 'application/json'
                       },
-                      timeout: 15000
+                      timeout: groqTimeoutMs
                     }
                   );
                   const content = retryResp.data.choices[0].message.content;
+                  if (!content || typeof content !== 'string' || !content.trim()) {
+                    throw new Error(`Groq relaxed JSON retry on '${currentModel}' returned empty content.`);
+                  }
                   this.keyCooldowns.delete(keyIdx);
                   this.modelCooldowns.delete(`${keyIdx}_${currentModel}`);
                   this.currentKeyIndex = (keyIdx + 1) % totalKeys;
@@ -359,13 +391,13 @@ class LLMRouter {
                   }
                   break; // Break inner loop to try next model or next key
                 } else if (isLastModel) {
-                  const cooldownMs = parsedWaitMs ? Math.min(parsedWaitMs, 8000) : 3000;
+                  const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 3000), 15000) : 4000;
                   this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' rate-limited. Backing off ${cooldownMs}ms...`);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' rate-limited. Backing off ${cooldownMs}ms (provider wait: ${extractedWaitSec || 'N/A'}s)...`);
                 } else {
-                  const modelCooldownMs = parsedWaitMs ? Math.min(parsedWaitMs, 6000) : 2500;
+                  const modelCooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 2500), 12000) : 3000;
                   this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + modelCooldownMs);
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Failing over to next model or key...`);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' hit TPM limit. Backing off ${modelCooldownMs}ms (provider wait: ${extractedWaitSec || 'N/A'}s)...`);
                 }
                 break; // Break inner loop to try fallback model or next key
               } else if (status === 413) {
@@ -398,9 +430,9 @@ class LLMRouter {
           break;
         }
         const now = Date.now();
-        const shortCooldowns = Array.from(this.keyCooldowns.values()).filter(t => t - now <= 15000 && t - now > 0);
-        const waitMs = shortCooldowns.length > 0 ? Math.min(Math.min(...shortCooldowns) - now + 200, 6000) : 3000;
-        console.warn(`⏳ [LLMRouter] Transient rate limit. Bounded wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
+        const shortCooldowns = Array.from(this.keyCooldowns.values()).filter(t => t - now <= 20000 && t - now > 0);
+        const waitMs = shortCooldowns.length > 0 ? Math.min(Math.max(...shortCooldowns) - now + 300, 15000) : 3000;
+        console.warn(`⏳ [LLMRouter] Transient rate limit. Provider-aware wait ${waitMs}ms before pool pass ${poolAttempt + 2}...`);
         await this._sleep(waitMs);
       }
     }
@@ -428,7 +460,8 @@ class LLMRouter {
     }
 
     if (this.geminiCooldownUntil && Date.now() < this.geminiCooldownUntil) {
-      throw new Error(`Gemini provider temporarily in cooldown until ${new Date(this.geminiCooldownUntil).toISOString()}`);
+      const wait = Math.min(3000, Math.max(500, this.geminiCooldownUntil - Date.now()));
+      await this._sleep(wait);
     }
 
     let GoogleGenerativeAI;
@@ -444,17 +477,18 @@ class LLMRouter {
     const candidateModels = Array.from(new Set([
       process.env.GEMINI_MODEL,
       model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
-      'gemini-flash-latest',
       'gemini-2.5-flash',
-      'gemini-3.8-flash',
-      'gemini-3.1-flash-lite'
+      'gemini-3.5-flash-lite',
+      'gemini-3.5-flash',
+      'gemma-4-26b-a4b-it'
     ].filter(Boolean)));
 
     let lastErr = null;
 
-    for (const geminiModelName of candidateModels) {
-      try {
-        const modelConfig = {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      for (const geminiModelName of candidateModels) {
+        try {
+          const modelConfig = {
           model: geminiModelName,
           generationConfig: {
             temperature: typeof temperature === 'number' ? temperature : 0.3,
@@ -506,13 +540,13 @@ class LLMRouter {
         const status = err.status || (msg.includes('429') ? 429 : (msg.includes('403') ? 403 : (msg.includes('404') ? 404 : 500)));
 
         if (status === 429 || msg.includes('RESOURCE_EXHAUSTED')) {
-          const cooldownMs = 3000;
+          const cooldownMs = 4000;
           this.geminiCooldownUntil = Date.now() + cooldownMs;
           console.warn(`⚠️ [LLMRouter] Gemini hit transient rate limit (429). Bounded cooldown ${cooldownMs}ms...`);
           await this._sleep(cooldownMs);
-          continue; // Try next candidate model in cascade
+          continue;
         } else if (status === 403 || msg.includes('PERMISSION_DENIED') || msg.includes('leaked') || msg.includes('API key')) {
-          this.geminiCooldownUntil = Date.now() + 3600000; // 1-hour cooldown for invalid/leaked key
+          this.geminiCooldownUntil = Date.now() + 3600000;
           console.warn(`🚨 [LLMRouter] Gemini authentication error (${msg}). Marking key unavailable.`);
           break;
         } else if (status === 404 || msg.includes('not found') || msg.includes('is not supported')) {
@@ -520,10 +554,12 @@ class LLMRouter {
           continue;
         } else {
           console.warn(`⚠️ [LLMRouter] Gemini call failed for '${geminiModelName}': ${msg}`);
+          await this._sleep(1500);
           continue;
         }
       }
     }
+  }
 
     throw lastErr || new Error('All Gemini candidate models failed');
   }

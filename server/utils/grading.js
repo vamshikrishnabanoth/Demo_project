@@ -43,16 +43,30 @@ function resolveCorrectOptionText(questionOrRaw, optionsInput) {
         question = { correctAnswer: questionOrRaw };
     }
 
-    const rawCorrect = (
-        question.correctAnswer ||
-        question.correct_answer ||
-        question.correct_ans ||
-        question.answer ||
-        ''
-    ).toString().trim();
+    let rawCorrect = '';
+    const rawVal = (
+        question.correctAnswer !== undefined && question.correctAnswer !== null ? question.correctAnswer :
+        question.correct_answer !== undefined && question.correct_answer !== null ? question.correct_answer :
+        question.correct_ans !== undefined && question.correct_ans !== null ? question.correct_ans :
+        question.answer !== undefined && question.answer !== null ? question.answer :
+        question.correct_option !== undefined && question.correct_option !== null ? question.correct_option :
+        question.correctOption !== undefined && question.correctOption !== null ? question.correctOption :
+        null
+    );
 
-    if (!rawCorrect) {
-        // No correct answer specified — return empty string (will never match)
+    if (rawVal === null || rawVal === undefined) {
+        return '';
+    }
+
+    // Direct exact integer index check
+    if (typeof rawVal === 'number' && Number.isInteger(rawVal)) {
+        if (rawVal >= 0 && rawVal < options.length) {
+            return options[rawVal];
+        }
+    }
+
+    rawCorrect = rawVal.toString().trim();
+    if (rawCorrect === '') {
         return '';
     }
 
@@ -61,28 +75,28 @@ function resolveCorrectOptionText(questionOrRaw, optionsInput) {
     }
 
     // 1. Direct exact match (case-insensitive)
-    const exactMatch = options.find(o => o.toLowerCase() === rawCorrect.toLowerCase());
+    const exactMatch = options.find(o => o.trim().toLowerCase() === rawCorrect.toLowerCase());
     if (exactMatch) return exactMatch;
 
-    // 2. Normalized match (ignoring extra spaces & punctuation)
-    const cleanRaw = rawCorrect.toLowerCase().replace(/[\s\W]+/g, '');
-    if (cleanRaw) {
-        const cleanMatch = options.find(o => o.toLowerCase().replace(/[\s\W]+/g, '') === cleanRaw);
-        if (cleanMatch) return cleanMatch;
+    // 2. Strip leading option prefix like "A) ", "(A) ", "A. ", "Option A: "
+    const strippedPrefix = rawCorrect.replace(/^(?:\(?[a-fA-F]\)?[.:]?\s*|(?:option|choice|answer)\s*[a-fA-F][.:]?\s*)/i, '').trim();
+    if (strippedPrefix && strippedPrefix.toLowerCase() !== rawCorrect.toLowerCase()) {
+        const prefixExactMatch = options.find(o => o.trim().toLowerCase() === strippedPrefix.toLowerCase());
+        if (prefixExactMatch) return prefixExactMatch;
     }
 
     // 3. Label match: "A", "B", "C", "D", "a", "b"...
     const labels = ['a', 'b', 'c', 'd', 'e', 'f'];
     const cleanedLabel = rawCorrect.toLowerCase()
         .replace(/^(option|choice|answer|select)\s*/i, '')
-        .replace(/[.\s:]/g, '');
+        .replace(/[.\s:)]/g, '');
 
     const labelIdx = labels.indexOf(cleanedLabel);
     if (labelIdx !== -1 && options[labelIdx] !== undefined) {
         return options[labelIdx];
     }
 
-    // 4. Numeric index (0-based): "0", "1", "2", "3"
+    // 4. Numeric index (0-based or 1-based string): "0", "1", "2", "3"
     if (/^\d+$/.test(cleanedLabel)) {
         const num = parseInt(cleanedLabel, 10);
         if (num >= 0 && num < options.length) {
@@ -94,7 +108,14 @@ function resolveCorrectOptionText(questionOrRaw, optionsInput) {
         }
     }
 
-    // 5. correctOption / correct_option field (integer index)
+    // 5. Normalized match (ignoring extra spaces & punctuation)
+    const cleanRaw = (strippedPrefix || rawCorrect).toLowerCase().replace(/[\s\W]+/g, '');
+    if (cleanRaw) {
+        const cleanMatch = options.find(o => o.toLowerCase().replace(/[\s\W]+/g, '') === cleanRaw);
+        if (cleanMatch) return cleanMatch;
+    }
+
+    // 6. correctOption / correct_option field (integer index)
     const idxField = question.correct_option !== undefined ? question.correct_option : question.correctOption;
     if (idxField !== undefined && idxField !== null) {
         const num = parseInt(idxField, 10);
@@ -103,7 +124,6 @@ function resolveCorrectOptionText(questionOrRaw, optionsInput) {
         }
     }
 
-    // No match found — return the raw value as-is (better than guessing options[0])
     return rawCorrect;
 }
 
@@ -122,13 +142,16 @@ function gradeAnswer(studentRawAnswer, question) {
     if (!question) return { isCorrect: false, points: 0, resolvedCorrect: '' };
 
     const studentStr = (studentRawAnswer || '').toString().trim();
-    const studentLower = studentStr.toLowerCase();
-
     if (!studentStr) {
         // Empty answer — always wrong
         const resolvedCorrect = resolveCorrectOptionText(question);
         return { isCorrect: false, points: 0, resolvedCorrect };
     }
+
+    const studentLower = studentStr.toLowerCase();
+    // Strip presentation label prefix like "A) ", "(A) ", "A. ", "Option A: "
+    const strippedStudent = studentStr.replace(/^(?:\(?[a-fA-F]\)?[.:]?\s*|(?:option|choice|answer)\s*[a-fA-F][.:]?\s*)/i, '').trim();
+    const strippedLower = strippedStudent.toLowerCase();
 
     const rawOptions = Array.isArray(question.options) ? question.options : [];
     const normOptions = rawOptions.map(o => (typeof o === 'string' ? o : (o?.text || o?.label || String(o))).trim());
@@ -140,16 +163,20 @@ function gradeAnswer(studentRawAnswer, question) {
     let isCorrect = false;
 
     // Layer 1: Direct text comparison (case-insensitive)
-    if (studentLower === resolvedLower) {
+    if (studentLower === resolvedLower || (strippedLower && strippedLower === resolvedLower)) {
         isCorrect = true;
     }
 
     // Layer 2: Normalized comparison (ignore spaces & punctuation) for typos/encoding issues
+    // Invariant: Never match via punctuation stripping if student deliberately picked a distinct other distractor
     if (!isCorrect) {
-        const studentClean = studentLower.replace(/[\s\W]+/g, '');
-        const resolvedClean = resolvedLower.replace(/[\s\W]+/g, '');
-        if (studentClean && resolvedClean && studentClean === resolvedClean) {
-            isCorrect = true;
+        const isAnotherDistractor = normOptions.some(o => o.toLowerCase().trim() === studentLower && o.toLowerCase().trim() !== resolvedLower);
+        if (!isAnotherDistractor) {
+            const studentClean = studentLower.replace(/[\s\W]+/g, '');
+            const resolvedClean = resolvedLower.replace(/[\s\W]+/g, '');
+            if (studentClean && resolvedClean && studentClean === resolvedClean) {
+                isCorrect = true;
+            }
         }
     }
 
@@ -199,9 +226,16 @@ function gradeAnswer(studentRawAnswer, question) {
                 targetIdx = labels.indexOf(optIdxCandidate.trim().toLowerCase());
             }
             if (targetIdx >= 0 && targetIdx < normOptions.length) {
-                const targetText = normOptions[targetIdx].toLowerCase();
-                if (studentLower === targetText || studentLower.replace(/[\s\W]+/g, '') === targetText.replace(/[\s\W]+/g, '')) {
+                const targetText = normOptions[targetIdx].toLowerCase().trim();
+                const isAnotherDistractor = normOptions.some(o => o.toLowerCase().trim() === studentLower && o.toLowerCase().trim() !== targetText);
+                if (studentLower === targetText || (strippedLower && strippedLower === targetText)) {
                     isCorrect = true;
+                } else if (!isAnotherDistractor) {
+                    const studentClean = studentLower.replace(/[\s\W]+/g, '');
+                    const targetClean = targetText.replace(/[\s\W]+/g, '');
+                    if (studentClean && targetClean && studentClean === targetClean) {
+                        isCorrect = true;
+                    }
                 }
             }
         }

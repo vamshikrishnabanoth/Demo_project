@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "Which of the following is NOT one of the three essential primitives of a strategic form game?",
+      "options": [
+        "A finite set of players",
+        "A set of available pure strategies",
+        "A payoff function",
+        "Mixed strategy probabilities"
+      ],
+      "correctAnswer": "Mixed strategy probabilities",
+      "explanation": "Strategic form games include players, pure strategy sets, and payoff functions; mixed strategies are not a primitive.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Strategic Form Game"
+    },
+    {
+      "questionText": "Strict dominance requires that for all opponent actions, the dominating strategy yields a strictly higher payoff.",
+      "options": [
+        "The dominating strategy must yield a higher payoff for at least one opponent action.",
+        "The dominating strategy must yield a higher payoff for all opponent actions.",
+        "The dominating strategy must yield a higher payoff for some opponent actions and equal for others.",
+        "The dominating strategy must yield a higher payoff only when the opponent chooses a specific action."
+      ],
+      "correctAnswer": "The dominating strategy must yield a higher payoff for all opponent actions.",
+      "explanation": "Strict dominance means the payoff is strictly higher for every possible opponent strategy.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Strict Dominance"
+    },
+    {
+      "questionText": "In finite games with strict dominance, does the order of elimination affect the final surviving set?",
+      "options": [
+        "Yes, it can change the outcome.",
+        "No, it does not affect the final set.",
+        "It depends on the number of players.",
+        "Only if there are mixed strategies."
+      ],
+      "correctAnswer": "No, it does not affect the final set.",
+      "explanation": "IESDS with strict dominance is order‑independent in finite games.",
+      "targetDifficulty": "Medium",
+      "subtopic": "IESDS"
+    },
+    {
+      "questionText": "Which method is used to find pure Nash equilibria in a payoff matrix?",
+      "options": [
+        "Dominance Solving",
+        "Best Response Method",
+        "Mixed Strategy Analysis",
+        "Iterated Elimination"
+      ],
+      "correctAnswer": "Best Response Method",
+      "explanation": "The Best Response Method underlines best responses to locate pure Nash equilibria.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Best Response Method"
+    },
+    {
+      "questionText": "In the Prisoner's Dilemma, which strategy strictly dominates for each player?",
+      "options": [
+        "Cooperate",
+        "Defect",
+        "Randomize",
+        "No dominance"
+      ],
+      "correctAnswer": "Defect",
+      "explanation": "Defect yields a higher payoff regardless of the opponent’s choice.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Prisoner's Dilemma"
+    },
+    {
+      "questionText": "What is the unique Nash equilibrium in the Prisoner's Dilemma?",
+      "options": [
+        "(Cooperate, Cooperate)",
+        "(Defect, Defect)",
+        "(Cooperate, Defect)",
+        "(Defect, Cooperate)"
+      ],
+      "correctAnswer": "(Defect, Defect)",
+      "explanation": "Both players defecting is the only mutual best response.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Prisoner's Dilemma"
+    },
+    {
+      "questionText": "A Nash equilibrium in pure strategies is defined as:",
+      "options": [
+        "A strategy profile where each player maximizes total payoff.",
+        "A strategy profile where no player can improve payoff by unilateral deviation.",
+        "A strategy profile where players randomize over actions.",
+        "A strategy profile where payoffs are equal."
+      ],
+      "correctAnswer": "A strategy profile where no player can improve payoff by unilateral deviation.",
+      "explanation": "Mutual best responses mean no profitable unilateral deviation.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Nash Equilibrium"
+    },
+    {
+      "questionText": "Which statement about Pareto efficiency in the Prisoner's Dilemma is correct?",
+      "options": [
+        "(1,1) is Pareto superior to (3,3).",
+        "(3,3) is Pareto superior to (1,1).",
+        "Both outcomes are Pareto efficient.",
+        "Neither outcome is Pareto efficient."
+      ],
+      "correctAnswer": "(3,3) is Pareto superior to (1,1).",
+      "explanation": "Cooperating gives higher payoffs to both, making (3,3) Pareto superior.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Pareto Efficiency"
+    },
+    {
+      "questionText": "In a 2x2 dominance‑solvable game, what does IESDS result in?",
+      "options": [
+        "Multiple equilibria.",
+        "No equilibrium.",
+        "A unique strategy profile.",
+        "Mixed strategy equilibrium."
+      ],
+      "correctAnswer": "A unique strategy profile.",
+      "explanation": "IESDS eliminates dominated strategies until a single profile remains.",
+      "targetDifficulty": "Hard",
+      "subtopic": "IESDS"
+    },
+    {
+      "questionText": "Which of the following topics will NOT be covered in this week's assessment?",
+      "options": [
+        "Pure strategy dominance",
+        "IESDS elimination",
+        "Mixed strategy Nash equilibria",
+        "Identifying pure Nash equilibria"
+      ],
+      "correctAnswer": "Mixed strategy Nash equilibria",
+      "explanation": "The assessment focuses on pure strategy concepts; mixed strategies are covered next week.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Course Coverage"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1350,
+    "cumulativeOutputTokens": 1154,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 3297
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:26:27.036Z"
+}

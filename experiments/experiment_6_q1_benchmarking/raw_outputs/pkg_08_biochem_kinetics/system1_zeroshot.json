@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "What does Vmax represent in Michaelis‑Menten kinetics?",
+      "options": [
+        "Maximum velocity when all enzyme active sites are saturated",
+        "Substrate concentration at half‑Vmax",
+        "Rate constant for ES formation",
+        "Inhibition constant"
+      ],
+      "correctAnswer": "Maximum velocity when all enzyme active sites are saturated",
+      "explanation": "Vmax is reached when every enzyme molecule is bound to substrate, giving the highest possible reaction rate.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Michaelis‑Menten fundamentals"
+    },
+    {
+      "questionText": "At low substrate concentrations the reaction rate is first‑order with respect to substrate. What kinetic order does the reaction exhibit under these conditions?",
+      "options": [
+        "Zero‑order",
+        "First‑order with respect to substrate",
+        "Second‑order",
+        "Negative‑order"
+      ],
+      "correctAnswer": "First‑order with respect to substrate",
+      "explanation": "When [S] << Km, v0 ≈ (Vmax/Km)[S], showing a linear dependence on [S].",
+      "targetDifficulty": "Easy",
+      "subtopic": "Rate laws"
+    },
+    {
+      "questionText": "Using the steady‑state derivation, what is the expression for the concentration of the enzyme‑substrate complex [ES]?",
+      "options": [
+        "[E_total]*[S]/(Km+[S])",
+        "[E_total]*Km/([S]+Km)",
+        "[E_total]/(1+Km/[S])",
+        "[E_total]*[S]*Km"
+      ],
+      "correctAnswer": "[E_total]*[S]/(Km+[S])",
+      "explanation": "Solving the quasi‑steady‑state equation gives [ES]=[E_total][S]/(Km+[S]).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Derivation of Michaelis‑Menten equation"
+    },
+    {
+      "questionText": "At what substrate concentration does the reaction velocity equal half of Vmax?",
+      "options": [
+        "When [S]=Vmax",
+        "When [S]=Km",
+        "When [S]=0",
+        "When [S]=2·Vmax"
+      ],
+      "correctAnswer": "When [S]=Km",
+      "explanation": "Setting v0=Vmax/2 in the Michaelis‑Menten equation yields [S]=Km.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Km interpretation"
+    },
+    {
+      "questionText": "In a Lineweaver‑Burk double‑reciprocal plot, what is the slope of the straight line?",
+      "options": [
+        "Km/Vmax",
+        "Vmax/Km",
+        "1/Vmax",
+        "-1/Km"
+      ],
+      "correctAnswer": "Km/Vmax",
+      "explanation": "Taking reciprocals gives 1/v0 = (Km/Vmax)(1/[S]) + 1/Vmax, so slope = Km/Vmax.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Lineweaver‑Burk analysis"
+    },
+    {
+      "questionText": "Which kinetic parameter changes in the presence of a competitive inhibitor?",
+      "options": [
+        "Vmax decreases",
+        "Km decreases",
+        "Vmax unchanged, Km increases",
+        "Both Vmax and Km unchanged"
+      ],
+      "correctAnswer": "Vmax unchanged, Km increases",
+      "explanation": "Competitive inhibitors raise the apparent Km but cannot affect the maximal rate because high [S] outcompetes the inhibitor.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Competitive inhibition"
+    },
+    {
+      "questionText": "During non‑competitive inhibition, which parameter remains unchanged?",
+      "options": [
+        "Vmax",
+        "Km",
+        "Both Vmax and Km",
+        "Slope of Lineweaver‑Burk plot"
+      ],
+      "correctAnswer": "Km",
+      "explanation": "Non‑competitive inhibitors lower Vmax while leaving substrate affinity (Km) unchanged.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Non‑competitive inhibition"
+    },
+    {
+      "questionText": "Which of the following is NOT part of the basic Michaelis‑Menten mechanism?",
+      "options": [
+        "Enzyme (E)",
+        "Substrate (S)",
+        "Product (P)",
+        "Allosteric site"
+      ],
+      "correctAnswer": "Allosteric site",
+      "explanation": "The classic scheme involves E, S, ES, and P; allosteric sites belong to more complex models.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Mechanistic basics"
+    },
+    {
+      "questionText": "On a Lineweaver‑Burk plot, the inhibited and uninhibited lines intersect at the same y‑intercept. Which type of inhibition does this indicate?",
+      "options": [
+        "Competitive",
+        "Non‑competitive",
+        "Uncompetitive",
+        "Mixed"
+      ],
+      "correctAnswer": "Competitive",
+      "explanation": "Competitive inhibition leaves 1/Vmax (y‑intercept) unchanged while increasing the slope.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Inhibition patterns"
+    },
+    {
+      "questionText": "In the steady‑state derivation, what does the term (k‑1 + k2) represent?",
+      "options": [
+        "Rate of ES formation",
+        "Total rate constant for ES breakdown",
+        "Michaelis constant",
+        "Maximum velocity"
+      ],
+      "correctAnswer": "Total rate constant for ES breakdown",
+      "explanation": "(k‑1 + k2) multiplies [ES] to give the overall rate at which ES is lost, either back to E+S or forward to product.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Derivation details"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1302,
+    "cumulativeOutputTokens": 1042,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 3827
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:25:23.097Z"
+}

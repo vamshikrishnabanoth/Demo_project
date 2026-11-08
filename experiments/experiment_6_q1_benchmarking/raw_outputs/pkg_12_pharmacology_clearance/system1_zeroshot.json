@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "What does the apparent volume of distribution (V₍) represent in a one‑compartment model?",
+      "options": [
+        "The anatomical fluid volume of the body",
+        "The proportionality factor relating dose to plasma concentration",
+        "The rate constant for drug elimination",
+        "The time required for plasma concentration to halve"
+      ],
+      "correctAnswer": "The proportionality factor relating dose to plasma concentration",
+      "explanation": "Vd is defined as Dose divided by C0, linking the amount of drug to the measured plasma concentration, not an actual anatomical volume.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Volume of Distribution"
+    },
+    {
+      "questionText": "Which formula correctly expresses the elimination half‑life (t₁/2) for first‑order kinetics?",
+      "options": [
+        "t\\u2081/2 = 0.693 \\\\* k_e",
+        "t₁/2 = 0.693 / k_e",
+        "t\\u2081/2 = k_e / 0.693",
+        "t\\u2081/2 = ln(2) \\\\* k_e"
+      ],
+      "correctAnswer": "t₁/2 = 0.693 / k_e",
+      "explanation": "Derivation from ln(0.5) = -k_e t gives t1/2 = 0.693/k_e.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Half‑Life"
+    },
+    {
+      "questionText": "Using the example values (C0=25 mg/L, k_e=0.1 hr⁻¹), what is the plasma concentration after 12 hours?",
+      "options": [
+        "7.53 mg/L",
+        "12.5 mg/L",
+        "3.0 mg/L",
+        "15 mg/L"
+      ],
+      "correctAnswer": "7.53 mg/L",
+      "explanation": "C(12)=25·e^(‑0.1·12)=25·e^(‑1.2)≈25·0.301=7.53 mg/L.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Exponential Decay"
+    },
+    {
+      "questionText": "A 70‑kg patient receives 500 mg IV bolus and C0 is measured at 25 mg/L. What is the apparent Vd?",
+      "options": [
+        "10 L",
+        "20 L",
+        "25 L",
+        "30 L"
+      ],
+      "correctAnswer": "20 L",
+      "explanation": "Vd = Dose / C0 = 500 mg / 25 mg·L⁻¹ = 20 L.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Volume of Distribution"
+    },
+    {
+      "questionText": "Given k_e = 0.1 hr⁻¹ and Vd = 20 L, what is the systemic clearance (CL)?",
+      "options": [
+        "0.5 L/hr",
+        "2.0 L/hr",
+        "5.0 L/hr",
+        "10 L/hr"
+      ],
+      "correctAnswer": "2.0 L/hr",
+      "explanation": "CL = k_e × Vd = 0.1 hr⁻¹ × 20 L = 2.0 L/hr.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Clearance"
+    },
+    {
+      "questionText": "Which relationship correctly links clearance (CL), elimination rate constant (k_e), and volume of distribution (Vd)?",
+      "options": [
+        "CL = k_e / Vd",
+        "CL = k_e × Vd",
+        "CL = Vd / k_e",
+        "CL = k_e + Vd"
+      ],
+      "correctAnswer": "CL = k_e × Vd",
+      "explanation": "From the derivation CL = (k_e·Amount)/(Amount/Vd) = k_e·Vd.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Clearance"
+    },
+    {
+      "questionText": "A drug has Vd = 150 L and CL = 3 L/hr. What is its elimination half‑life?",
+      "options": [
+        "34.65 hr",
+        "6.93 hr",
+        "0.693 hr",
+        "15 hr"
+      ],
+      "correctAnswer": "34.65 hr",
+      "explanation": "k_e = CL/Vd = 3/150 = 0.02 hr⁻¹; t1/2 = 0.693/k_e = 0.693/0.02 = 34.65 hr.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Half‑Life"
+    },
+    {
+      "questionText": "Which statement about first‑order elimination is FALSE?",
+      "options": [
+        "The elimination rate is proportional to the amount remaining",
+        "The half‑life is independent of concentration",
+        "Clearance changes with concentration",
+        "A semi‑log plot of concentration vs time is linear"
+      ],
+      "correctAnswer": "Clearance changes with concentration",
+      "explanation": "In first‑order kinetics, clearance (CL = k_e·Vd) is constant; it does not vary with concentration.",
+      "targetDifficulty": "Hard",
+      "subtopic": "First‑Order Kinetics"
+    },
+    {
+      "questionText": "On a semi‑logarithmic plot of plasma concentration versus time, the slope equals:",
+      "options": [
+        "-k_e",
+        "-k_e/2.303",
+        "-2.303·k_e",
+        "-1/k_e"
+      ],
+      "correctAnswer": "-k_e/2.303",
+      "explanation": "Because log10(C) = log10(C0) – (k_e/2.303)·t, the slope is –k_e/2.303.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Graphical Analysis"
+    },
+    {
+      "questionText": "Which clinical scenario would most likely require moving beyond the one‑compartment, first‑order model described in the lecture?",
+      "options": [
+        "Low‑dose IV bolus of a water‑soluble drug",
+        "High‑dose phenytoin showing saturation kinetics",
+        "A drug whose Vd equals plasma volume",
+        "A drug with constant clearance across concentrations"
+      ],
+      "correctAnswer": "High‑dose phenytoin showing saturation kinetics",
+      "explanation": "Saturation (capacity‑limited) elimination follows Michaelis‑Menten kinetics, violating the constant‑clearance assumption of the simple model.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Non‑linear Kinetics"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1467,
+    "cumulativeOutputTokens": 1031,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 5006
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:27:51.065Z"
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { PackageCheck, Hash, Lock, CheckCircle2, Rocket, Play, Share2, Eye, ShieldCheck, Award, Sparkles, BookOpen, Brain, TrendingUp, Check, Info } from 'lucide-react';
+import { PackageCheck, Hash, Lock, CheckCircle2, Rocket, Play, Eye, ShieldCheck, Award, Sparkles, BookOpen, Brain, TrendingUp, Layers } from 'lucide-react';
 
 export default function PublishingViewer({
   taskId = '',
@@ -11,32 +11,46 @@ export default function PublishingViewer({
   onPreviewQuiz = null,
   teacherAnalysis = null,
   tcScore = null,
-  pdi = null
+  pdi = null,
+  curricularEvidenceProfile = null,
+  sessionModality = null
 }) {
   const isReady = status === 'COMPLETED';
   const displayHash = sha256 || (taskId ? `sha256_${taskId.replace(/-/g, '').substring(0, 32)}...` : 'sha256_e3b0c44298fc1c149afbf4c8996fb924...');
 
-  const rawScore = (tcScore !== null && tcScore !== undefined) 
-    ? tcScore 
-    : (teacherAnalysis?.tcScore !== null && teacherAnalysis?.tcScore !== undefined ? teacherAnalysis.tcScore : null);
-  const effectiveTcScore = rawScore !== null ? Math.round(Number(rawScore)) : null;
+  const profile = curricularEvidenceProfile || teacherAnalysis?.curricularEvidenceProfile || null;
+  const alignment = profile?.quizAlignment || {};
+  const observable = profile?.observableEvidence || {};
+  const capacity = profile?.assessmentCapacity || {};
+
+  const deliveredCoverageRatio = alignment.deliveredCoverageRatio !== null && alignment.deliveredCoverageRatio !== undefined
+    ? alignment.deliveredCoverageRatio
+    : (alignment.plannedCoverageRatio !== null && alignment.plannedCoverageRatio !== undefined ? alignment.plannedCoverageRatio : null);
 
   const rawPdi = (pdi !== null && pdi !== undefined) 
     ? pdi 
     : (teacherAnalysis?.pdi !== null && teacherAnalysis?.pdi !== undefined ? teacherAnalysis.pdi : null);
   const effectivePdi = rawPdi !== null ? Number(rawPdi) : null;
 
-  const critique = teacherAnalysis?.pedagogicalCritique || {};
-  const hasAnalysis = effectiveTcScore !== null && teacherAnalysis !== null;
+  // Neutral Session Modality Display (No evaluative PDI score or autonomy claims)
+  const sessionModalityDisplay = (() => {
+    if (sessionModality) return sessionModality;
+    if (teacherAnalysis?.sessionModality) return teacherAnalysis.sessionModality;
+    if (profile?.sessionModality) return profile.sessionModality;
+    const hasAudio = Boolean(teacherAnalysis?.hasVoice || teacherAnalysis?.hasAudio || teacherAnalysis?.transcriptText);
+    const hasDocs = Boolean(teacherAnalysis?.hasDocs || teacherAnalysis?.documentTexts?.length > 0 || teacherAnalysis?.hasAlignedDocs);
+    if (hasAudio && hasDocs) return 'Audio + Document';
+    if (hasAudio && !hasDocs) return 'Audio only';
+    if (!hasAudio && hasDocs) return 'Document only';
+    if (effectivePdi !== null) {
+      if (effectivePdi < 0.25) return 'Audio only';
+      if (effectivePdi >= 0.6) return 'Document only';
+      return 'Audio + Document';
+    }
+    return 'Multi-Modal Source';
+  })();
 
-  const getScoreBadge = (score) => {
-    if (score === null) return { label: 'Not Evaluated', color: 'text-slate-600 bg-slate-100 border-slate-200' };
-    if (score >= 85) return { label: 'Exemplary Instructional Rigor', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' };
-    if (score >= 70) return { label: 'Strong Curricular Depth', color: 'text-blue-700 bg-blue-50 border-blue-200' };
-    return { label: 'Foundational Overview', color: 'text-amber-700 bg-amber-50 border-amber-200' };
-  };
-
-  const scoreBadge = getScoreBadge(effectiveTcScore);
+  const distinctConcepts = observable.distinctConcepts || [];
 
   return (
     <div className="space-y-5">
@@ -98,127 +112,92 @@ export default function PublishingViewer({
         </div>
       </div>
 
-      {/* ── TEACHER PERFORMANCE & LECTURE INTELLIGENCE SCORECARD (B2B COMMERCIAL READY) ── */}
+      {/* ── CURRICULAR EVIDENCE PROFILE & ALIGNMENT ── */}
       <div className="bg-white border border-indigo-100 rounded-2xl p-6 shadow-sm space-y-5">
         <div className="flex items-start justify-between flex-wrap gap-4 pb-4 border-b border-slate-100">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
-                <Award size={18} />
+                <Layers size={18} />
               </span>
               <span className="text-[11px] font-black uppercase tracking-wider text-indigo-700">
-                Faculty Analytics & Lecture Intelligence
+                Curricular Evidence Profile & Alignment
               </span>
             </div>
-            <h3 className="text-base font-black text-slate-900">Teaching Quality & Explanatory Scorecard</h3>
+            <h3 className="text-base font-black text-slate-900">Instructional Evidence & Assessment Alignment</h3>
             <p className="text-xs text-slate-500">
-              {hasAnalysis
-                ? 'Automated cognitive assessment of instructor delivery, causal explanations, and pedagogical completeness.'
-                : 'Faculty delivery analytics require recorded classroom audio or synchronized instruction. Not evaluated for this session.'}
+              Automated audit of evidence density, concept breadth, and quiz alignment. Evaluates internal curricular capacity without making evaluative claims of teacher effectiveness.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Teaching Score</span>
-              {hasAnalysis ? (
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Curricular Coverage</span>
+              {deliveredCoverageRatio !== null ? (
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-black text-indigo-600 font-mono">{effectiveTcScore}</span>
-                  <span className="text-xs font-bold text-slate-400">/ 100</span>
+                  <span className="text-2xl font-black text-indigo-600 font-mono">
+                    {Math.round(deliveredCoverageRatio * 100)}%
+                  </span>
                 </div>
               ) : (
-                <span className="text-sm font-bold text-slate-500">Not Evaluated</span>
+                <span className="text-sm font-bold text-slate-500">N/A</span>
               )}
             </div>
-            <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${scoreBadge.color}`}>
-              {scoreBadge.label}
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border text-indigo-700 bg-indigo-50 border-indigo-200">
+              Curricular Alignment
             </span>
           </div>
         </div>
 
-        {/* 4-Dimension Pedagogical Rubric Grid */}
+        {/* 4-Dimension Evidence Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
             <div className="flex items-center gap-1.5 text-indigo-700 font-bold">
               <BookOpen size={14} />
-              <span>Explanatory Depth</span>
+              <span>Concept Breadth</span>
             </div>
             <p className="text-[11px] text-slate-600 leading-snug">
-              {hasAnalysis && Array.isArray(critique.explanatoryDepth) && critique.explanatoryDepth.length > 0
-                ? critique.explanatoryDepth[0]
-                : (hasAnalysis ? 'Defines foundational concepts with domain-accurate terminology.' : 'Requires classroom audio')}
+              {distinctConcepts.length > 0
+                ? `${distinctConcepts.length} distinct concepts verified across session evidence.`
+                : 'Verified foundational curriculum concepts.'}
             </p>
           </div>
 
           <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
             <div className="flex items-center gap-1.5 text-blue-700 font-bold">
               <Brain size={14} />
-              <span>Reasoning Depth</span>
+              <span>Observable Signals</span>
             </div>
             <p className="text-[11px] text-slate-600 leading-snug">
-              {hasAnalysis && Array.isArray(critique.reasoningDepth) && critique.reasoningDepth.length > 0
-                ? critique.reasoningDepth[0]
-                : (hasAnalysis ? 'Explains causal mechanisms and state invariants.' : 'Requires classroom audio')}
+              {observable.formalDefinitions?.length || 0} formal definition(s), {observable.workedTraces?.length || 0} worked trace(s) verified in transcript.
             </p>
           </div>
 
           <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
             <div className="flex items-center gap-1.5 text-teal-700 font-bold">
               <Sparkles size={14} />
-              <span>Demonstrations</span>
+              <span>Assessment Capacity</span>
             </div>
             <p className="text-[11px] text-slate-600 leading-snug">
-              {hasAnalysis && Array.isArray(critique.practicalDemonstrations) && critique.practicalDemonstrations.length > 0
-                ? critique.practicalDemonstrations[0]
-                : (hasAnalysis ? 'Provides code trace snippets and memory layouts.' : 'Requires classroom audio')}
+              Capacity: {capacity.easy ?? 1} Easy, {capacity.medium ?? 2} Medium, {capacity.hard ?? 0} Hard. Total: {capacity.totalRecommended ?? questionCount} Qs.
             </p>
           </div>
 
           <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
             <div className="flex items-center gap-1.5 text-purple-700 font-bold">
-              <TrendingUp size={14} />
-              <span>PDI Delivery Index</span>
+              <Layers size={14} />
+              <span>Session Modality</span>
             </div>
             <p className="text-[11px] text-slate-600 leading-snug">
-              {effectivePdi !== null ? (
-                <>
-                  PDI = <span className="font-mono font-bold text-slate-900">{effectivePdi.toFixed(3)}</span> (
-                  {effectivePdi < 0.25 ? 'High Spoken Autonomy' : (effectivePdi < 0.6 ? 'Balanced Multi-Modal' : 'Document-Guided')}
-                  )
-                </>
-              ) : (
-                'Not Available'
-              )}
+              <span className="font-semibold text-slate-900">{sessionModalityDisplay}</span>
             </p>
           </div>
         </div>
 
-        {/* Actionable Feedback for Instructor */}
-        {hasAnalysis && critique.limitationsOfExcerpt && critique.limitationsOfExcerpt !== 'Non-academic content.' && (
-          <div className="p-3.5 bg-amber-50/60 border border-amber-200 rounded-xl flex items-start gap-2.5 text-xs text-amber-900">
-            <span className="p-1 rounded-md bg-amber-100 text-amber-700 shrink-0 mt-0.5">
-              <Sparkles size={12} />
-            </span>
-            <div className="space-y-0.5">
-              <span className="font-bold text-[11px] text-amber-950 uppercase tracking-wider block">
-                Classroom Optimization Suggestion
-              </span>
-              <p className="text-[11px] text-amber-800 leading-relaxed">
-                {critique.limitationsOfExcerpt}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* B2B Commercial Readiness Callout */}
-        <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
-          <span className="font-medium">
-            KMIT Faculty Intelligence Engine &bull; Designed for Premier Coaching & Engineering Classrooms (Physics Wallah, Allen, Kota, Universities)
-          </span>
-          <span className="font-bold text-indigo-600 flex items-center gap-1">
-            <ShieldCheck size={13} /> Institutional Analytics Ready
-          </span>
-        </div>
+        {/* Disclaimer */}
+        <p className="text-[11px] text-slate-400 italic">
+          Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.
+        </p>
       </div>
 
       {/* Stage 16: Live Classroom Ready Card */}

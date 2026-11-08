@@ -1,0 +1,2025 @@
+{
+  "testCount": 10,
+  "requestedCount": 10,
+  "recommendedCount": 12,
+  "deliveredCount": 10,
+  "pipelineStatus": "COMPLETED",
+  "durationMs": 171326,
+  "conformance": {
+    "isFullyConformant": true,
+    "totalRecommended": 12,
+    "totalRequested": 10,
+    "totalDelivered": 10,
+    "deficitCount": 0
+  },
+  "difficultyDistribution": {
+    "Easy": 5,
+    "Medium": 4,
+    "Hard": 1
+  },
+  "plannedPrimaryTargets": [
+    {
+      "targetId": "T01",
+      "concept": "Understanding the basic logic of counting occurrences of a single specific element in an array.",
+      "plannedDifficulty": "Easy"
+    },
+    {
+      "targetId": "T02",
+      "concept": "Recognizing the structural requirement of using two nested loops to calculate frequencies for all elements in an array.",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T03",
+      "concept": "Applying the frequency counting logic to a specific array to determine the count of a particular value.",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T04",
+      "concept": "Understanding the basic logic of counting occurrences of a single specific element in an array. - Foundational Definition & Core Properties",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T05",
+      "concept": "Recognizing the structural requirement of using two nested loops to calculate frequencies for all elements in an array. - Foundational Definition & Core Properties",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T06",
+      "concept": "Applying the frequency counting logic to a specific array to determine the count of a particular value. - Foundational Definition & Core Properties",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T07",
+      "concept": "Arrays - Foundational Definition & Core Properties",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T08",
+      "concept": "Frequency Array - Foundational Definition & Core Properties",
+      "plannedDifficulty": "Easy"
+    },
+    {
+      "targetId": "T09",
+      "concept": "Mean - Foundational Definition & Core Properties",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T10",
+      "concept": "Every Element - Foundational Definition & Core Properties",
+      "plannedDifficulty": "Easy"
+    }
+  ],
+  "plannedReserveTargets": [
+    {
+      "targetId": "R01",
+      "concept": "Linear Search for Frequency - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R02",
+      "concept": "Linear Search for Frequency - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R03",
+      "concept": "Linear Search for Frequency - Reserve Hard Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R04",
+      "concept": "Nested Loop Logic for All Elements - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R05",
+      "concept": "Nested Loop Logic for All Elements - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R06",
+      "concept": "Nested Loop Logic for All Elements - Reserve Hard Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R07",
+      "concept": "Frequency Array (Counting Sort Concept) - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R08",
+      "concept": "Frequency Array (Counting Sort Concept) - Reserve Easy Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R09",
+      "concept": "Frequency Array (Counting Sort Concept) - Reserve Hard Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R10",
+      "concept": "Index-Value Mapping in Arrays - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R11",
+      "concept": "Index-Value Mapping in Arrays - Reserve Easy Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R12",
+      "concept": "Index-Value Mapping in Arrays - Reserve Hard Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R13",
+      "concept": "Time and Space Efficiency Tradeoffs - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R14",
+      "concept": "Time and Space Efficiency Tradeoffs - Reserve Easy Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R15",
+      "concept": "Time and Space Efficiency Tradeoffs - Reserve Hard Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R16",
+      "concept": "Code Tracing and State Tracking - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R17",
+      "concept": "Code Tracing and State Tracking - Reserve Easy Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R18",
+      "concept": "Code Tracing and State Tracking - Reserve Hard Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    }
+  ],
+  "rejectedTargets": [
+    {
+      "targetId": "T03",
+      "concept": "Applying the frequency counting logic to a specific array to determine the count of a particular value.",
+      "subtopic": "Nested Loop Logic for All Elements",
+      "targetDifficulty": "Hard",
+      "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+      "status": "REJECTED",
+      "reason": "DUPLICATE_QUESTION: ANSWER_COLLISION_DUPLICATE: Equivalent correct answer with significant stem similarity",
+      "failureReasons": [
+        "DUPLICATE_QUESTION"
+      ],
+      "attempts": 1,
+      "repairAttempted": false,
+      "repairSuccessful": false
+    },
+    {
+      "targetId": "T05",
+      "concept": "Recognizing the structural requirement of using two nested loops to calculate frequencies for all elements in an array. - Foundational Definition & Core Properties",
+      "subtopic": "Frequency Array (Counting Sort Concept)",
+      "targetDifficulty": "Hard",
+      "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+      "status": "REJECTED",
+      "reason": "FOREIGN_DOMAIN_CONTAMINATION; TIER_COGNITIVE_MISMATCH",
+      "failureReasons": [
+        "STEM_ANSWER_MISALIGNMENT",
+        "FOREIGN_DOMAIN_CONTAMINATION",
+        "TIER_COGNITIVE_MISMATCH"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "T05",
+        "questionText": "Why is a nested loop structure necessary when constructing a frequency array for an arbitrary input sequence?",
+        "question": "Why is a nested loop structure necessary when constructing a frequency array for an arbitrary input sequence?",
+        "options": [
+          "It continuously updates global configuration settings as new unique keys are encountered",
+          "It decouples the frequency tallying phase from the primary array memory allocation process",
+          "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+          "It isolates individual data ranges dynamically to handle negative integers within the same counting pass"
+        ],
+        "correctAnswerIndex": 2,
+        "correctAnswer": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+        "explanation": "Building a frequency array requires traversing through the input data using an outer loop for every element in order to evaluate and count its occurrences across the dataset.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Tests the student's understanding of the causal execution mechanics behind nested loops in frequency array construction.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "Outer for loop for? Traversing through the array for every element.",
+          "computedOrTracedKey": "The outer loop visits each element in sequence, while internal iteration steps check or tally counts across the data range.",
+          "distractorRationales": {
+            "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+            "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+            "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+          },
+          "byLetter": {
+            "A": "Plausible student misconception based on misconception inversion.",
+            "B": "Plausible student misconception based on misconception inversion.",
+            "D": "Plausible student misconception based on misconception inversion."
+          }
+        },
+        "usedArchetypes": [
+          "MISCONCEPTION_INVERSION",
+          "NEAR_MISS_MECHANISM"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Hard",
+          "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Recognizing the structural requirement of using two nested loops to calculate frequencies for all elements in an array. - Foundational Definition & Core Properties",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "distractorRationales": {
+            "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+            "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+            "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+          "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+          "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+        },
+        "correctAnswerText": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+        "correct_option": 2,
+        "correctOption": 2,
+        "correctAnswerKey": "C",
+        "correct_answer": "C",
+        "correct_answer_text": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+        "distractorRationalesByLetter": {
+          "A": "Plausible student misconception based on misconception inversion.",
+          "B": "Plausible student misconception based on misconception inversion.",
+          "D": "Plausible student misconception based on misconception inversion."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "score": 0.4,
+        "verdict": "FAIL",
+        "failureReasons": [
+          "STEM_ANSWER_MISALIGNMENT",
+          "FOREIGN_DOMAIN_CONTAMINATION",
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "failureReason": "FOREIGN_DOMAIN_CONTAMINATION; TIER_COGNITIVE_MISMATCH",
+        "repairInstruction": "Rewrite the stem and correct answer to accurately reflect the actual mechanics of frequency arrays taught in session evidence (single loop with direct index mapping, or clarify when nested loops occur such as in brute-force frequency counting without an auxiliary frequency array).",
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": false,
+          "interrogativeMatch": false,
+          "responsivenessAnalysis": "The keyed answer attempts to explain why a nested loop is used by stating it matches each element against all elements. However, in computer science, frequency arrays specifically avoid nested loops by using direct index mapping in $O(N)$ time. Thus, the answer justifies a brute-force search rather than a proper frequency array mechanism.",
+          "mismatchDetails": "The keyed option describes an inefficient brute-force search rather than the actual mechanism of a frequency array, resulting in fundamental canonical domain contradiction."
+        },
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "It allows multidimensional frequency tracking across non-contiguous memory blocks.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible distractor introducing advanced-sounding terms like multidimensional tracking and non-contiguous memory, but incorrect for basic frequency arrays.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Session evidence discusses basic frequency array creation."
+          },
+          {
+            "slot": "B",
+            "text": "It matches each array element against all elements to count occurrences without direct indexing.",
+            "isKey": true,
+            "verdict": "AMBIGUOUS",
+            "justification": "While the lecture mentions two loops (outer loop traversing every element), describing a frequency array as matching each element against all elements without direct indexing describes brute-force counting, not an efficient frequency array/counting sort concept.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "That means, how many for loops? Two. ... Outer for loop for? Traversing through the array for every element."
+          },
+          {
+            "slot": "C",
+            "text": "It permits simultaneous sorting and frequency counting in linear time.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible because frequency arrays relate to counting sort, but a basic frequency array does not sort simultaneously in a single nested loop step.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Session evidence introduces frequency array building."
+          },
+          {
+            "slot": "D",
+            "text": "It dynamically resizes the frequency array when negative numbers are encountered.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Good distractor playing on the student question in evidence regarding negative numbers, but unrelated to nested loops.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "She's asking if array contains negative numbers."
+          }
+        ],
+        "cognitiveAudit": {
+          "requestedDifficulty": "Hard",
+          "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+          "evaluatedCognitiveDemand": "UNCERTAIN",
+          "isCalibrated": false,
+          "mismatchDetails": "Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.); failing conservative calibration for requested Hard tier (PREDICT_CONSTRAINT)"
+        },
+        "evidenceGrounding": {
+          "tier": "EVIDENCE_DERIVED",
+          "groundingScore": 0.6,
+          "foreignDomainDetected": false
+        },
+        "passed": false,
+        "verificationMethod": "LLM_EVALUATION",
+        "isFallback": false,
+        "isLLMVerified": true,
+        "tier": "EVIDENCE_DERIVED",
+        "groundingScore": 0.6,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Rewrite the question to accurately reflect the single-pass $O(n)$ nature of standard frequency array construction via direct indexing, or frame it around the trade-offs of using nested loops versus direct indexing.",
+          "originalMCQ": {
+            "targetId": "T05",
+            "questionText": "Why is a nested loop structure necessary when constructing a frequency array for an arbitrary input sequence?",
+            "question": "Why is a nested loop structure necessary when constructing a frequency array for an arbitrary input sequence?",
+            "options": [
+              "It continuously updates global configuration settings as new unique keys are encountered",
+              "It decouples the frequency tallying phase from the primary array memory allocation process",
+              "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+              "It isolates individual data ranges dynamically to handle negative integers within the same counting pass"
+            ],
+            "correctAnswerIndex": 2,
+            "correctAnswer": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+            "explanation": "Building a frequency array requires traversing through the input data using an outer loop for every element in order to evaluate and count its occurrences across the dataset.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the student's understanding of the causal execution mechanics behind nested loops in frequency array construction.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Outer for loop for? Traversing through the array for every element.",
+              "computedOrTracedKey": "The outer loop visits each element in sequence, while internal iteration steps check or tally counts across the data range.",
+              "distractorRationales": {
+                "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+                "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+                "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+              },
+              "byLetter": {
+                "A": "Plausible student misconception based on misconception inversion.",
+                "B": "Plausible student misconception based on misconception inversion.",
+                "D": "Plausible student misconception based on misconception inversion."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Recognizing the structural requirement of using two nested loops to calculate frequencies for all elements in an array. - Foundational Definition & Core Properties",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+                "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+                "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+              "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+              "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+            },
+            "correctAnswerText": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+            "correct_option": 2,
+            "correctOption": 2,
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+            "distractorRationalesByLetter": {
+              "A": "Plausible student misconception based on misconception inversion.",
+              "B": "Plausible student misconception based on misconception inversion.",
+              "D": "Plausible student misconception based on misconception inversion."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "T05",
+            "questionText": "Why is a nested loop structure required when constructing a basic frequency array via element scanning rather than direct index mapping?",
+            "question": "Why is a nested loop structure required when constructing a basic frequency array via element scanning rather than direct index mapping?",
+            "options": [
+              "It allows multidimensional frequency tracking across non-contiguous memory blocks.",
+              "It matches each array element against all elements to count occurrences without direct indexing.",
+              "It permits simultaneous sorting and frequency counting in linear time.",
+              "It dynamically resizes the frequency array when negative numbers are encountered."
+            ],
+            "correctAnswerIndex": 1,
+            "correctAnswer": "It matches each array element against all elements to count occurrences without direct indexing.",
+            "explanation": "When direct indexing into a frequency array is not used, a naive frequency count requires an outer loop to select each target element and an inner loop to scan the entire data array to count its occurrences.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the cognitive distinction between direct-index single-pass frequency building and exhaustive nested-loop comparison scanning.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Lecture transcript notes traversing through the array for every element using two for loops to determine how many times an element appears.",
+              "computedOrTracedKey": "An outer loop traverses each element while an inner loop scans the dataset to tally frequencies when direct index mapping is omitted.",
+              "distractorRationales": {
+                "It permits simultaneous sorting and frequency counting in linear time.": "Confuses counting sort efficiency with nested-loop comparison mechanisms.",
+                "It allows multidimensional frequency tracking across non-contiguous memory blocks.": "Assumes an advanced multidimensional data structure instead of basic frequency counting.",
+                "It dynamically resizes the frequency array when negative numbers are encountered.": "Misattributes dynamic memory management to frequency array loop bounds."
+              },
+              "byLetter": {
+                "A": "Assumes an advanced multidimensional data structure instead of basic frequency counting.",
+                "C": "Confuses counting sort efficiency with nested-loop comparison mechanisms.",
+                "D": "Misattributes dynamic memory management to frequency array loop bounds."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Hard",
+              "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Recognizing the structural requirement of using two nested loops to calculate frequencies for all elements in an array. - Foundational Definition & Core Properties",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "It permits simultaneous sorting and frequency counting in linear time.": "Confuses counting sort efficiency with nested-loop comparison mechanisms.",
+                "It allows multidimensional frequency tracking across non-contiguous memory blocks.": "Assumes an advanced multidimensional data structure instead of basic frequency counting.",
+                "It dynamically resizes the frequency array when negative numbers are encountered.": "Misattributes dynamic memory management to frequency array loop bounds."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "It permits simultaneous sorting and frequency counting in linear time.": "Confuses counting sort efficiency with nested-loop comparison mechanisms.",
+              "It allows multidimensional frequency tracking across non-contiguous memory blocks.": "Assumes an advanced multidimensional data structure instead of basic frequency counting.",
+              "It dynamically resizes the frequency array when negative numbers are encountered.": "Misattributes dynamic memory management to frequency array loop bounds."
+            },
+            "correctAnswerText": "It matches each array element against all elements to count occurrences without direct indexing.",
+            "correct_option": 1,
+            "correctOption": 1,
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "It matches each array element against all elements to count occurrences without direct indexing.",
+            "distractorRationalesByLetter": {
+              "A": "Assumes an advanced multidimensional data structure instead of basic frequency counting.",
+              "C": "Confuses counting sort efficiency with nested-loop comparison mechanisms.",
+              "D": "Misattributes dynamic memory management to frequency array loop bounds."
+            }
+          }
+        },
+        "repaired": false,
+        "mcq": {
+          "targetId": "T05",
+          "questionText": "Why is a nested loop structure necessary when constructing a frequency array for an arbitrary input sequence?",
+          "question": "Why is a nested loop structure necessary when constructing a frequency array for an arbitrary input sequence?",
+          "options": [
+            "It continuously updates global configuration settings as new unique keys are encountered",
+            "It decouples the frequency tallying phase from the primary array memory allocation process",
+            "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+            "It isolates individual data ranges dynamically to handle negative integers within the same counting pass"
+          ],
+          "correctAnswerIndex": 2,
+          "correctAnswer": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+          "explanation": "Building a frequency array requires traversing through the input data using an outer loop for every element in order to evaluate and count its occurrences across the dataset.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Tests the student's understanding of the causal execution mechanics behind nested loops in frequency array construction.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "Outer for loop for? Traversing through the array for every element.",
+            "computedOrTracedKey": "The outer loop visits each element in sequence, while internal iteration steps check or tally counts across the data range.",
+            "distractorRationales": {
+              "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+              "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+              "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+            },
+            "byLetter": {
+              "A": "Plausible student misconception based on misconception inversion.",
+              "B": "Plausible student misconception based on misconception inversion.",
+              "D": "Plausible student misconception based on misconception inversion."
+            }
+          },
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Hard",
+            "intendedCognitiveOperation": "PREDICT_CONSTRAINT",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Recognizing the structural requirement of using two nested loops to calculate frequencies for all elements in an array. - Foundational Definition & Core Properties",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "distractorRationales": {
+              "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+              "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+              "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "It isolates individual data ranges dynamically to handle negative integers within the same counting pass": "Plausible student misconception based on misconception inversion.",
+            "It decouples the frequency tallying phase from the primary array memory allocation process": "Plausible student misconception based on misconception inversion.",
+            "It continuously updates global configuration settings as new unique keys are encountered": "Plausible student misconception based on misconception inversion."
+          },
+          "correctAnswerText": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+          "correct_option": 2,
+          "correctOption": 2,
+          "correctAnswerKey": "C",
+          "correct_answer": "C",
+          "correct_answer_text": "It allows the outer loop to traverse every element while the inner loop scans the remainder to tally duplicate occurrences",
+          "distractorRationalesByLetter": {
+            "A": "Plausible student misconception based on misconception inversion.",
+            "B": "Plausible student misconception based on misconception inversion.",
+            "D": "Plausible student misconception based on misconception inversion."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T07",
+      "concept": "Arrays - Foundational Definition & Core Properties",
+      "subtopic": "Index-Value Mapping in Arrays",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+      "status": "REJECTED",
+      "reason": "Semantic evaluation unavailable: Medium difficulty question cannot be certified without semantic quality evaluation (safeParseJson: Failed to parse repaired JSON: Expected ',' or ']' after array element in JSON at position 1878 (line 33 column 6). Extracted candidate: \"{\n  \"status\": \"PASS\",\n  \"score\": 1.0,\n  \"verdict\": \"PASS\",\n  \"failureReasons\": [],\n  \"failureReason\": null,\n  \"repairIns...\")",
+      "failureReasons": [
+        "SEMANTIC_EVALUATION_UNAVAILABLE"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "T07",
+        "questionText": "Why does evaluating element frequencies in an array typically require two nested iteration loops rather than a single linear pass?",
+        "question": "Why does evaluating element frequencies in an array typically require two nested iteration loops rather than a single linear pass?",
+        "options": [
+          "One loop tracks pointer positions while the other handles array variable declarations.",
+          "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+          "The outer loop validates memory bounds while the inner loop assigns unique index values.",
+          "One loop counts total array length while the inner loop modifies element indices directly."
+        ],
+        "correctAnswerIndex": 1,
+        "correctAnswer": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+        "explanation": "Evaluating frequency requires an outer loop to select each value in turn, and an inner loop to iterate through the array to check and count occurrences for that specific value.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Tests understanding of the operational mechanism behind nested array iteration used for frequency counting.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "Evidence 1 states that one for loop changes the value of n while the other for loop checks the frequency of n in the given array.",
+          "computedOrTracedKey": "Outer loop selects target element -> inner loop scans array for matches -> frequency count is accumulated.",
+          "distractorRationales": {
+            "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+            "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+            "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+          },
+          "byLetter": {
+            "A": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+            "C": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+            "D": "Plausible student misconception based on misconception inversion."
+          }
+        },
+        "usedArchetypes": [
+          "MISCONCEPTION_INVERSION",
+          "NEAR_MISS_MECHANISM"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Arrays - Foundational Definition & Core Properties",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "distractorRationales": {
+            "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+            "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+            "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+          "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+          "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+        },
+        "correctAnswerText": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+        "correct_option": 1,
+        "correctOption": 1,
+        "correctAnswerKey": "B",
+        "correct_answer": "B",
+        "correct_answer_text": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+        "distractorRationalesByLetter": {
+          "A": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+          "C": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+          "D": "Plausible student misconception based on misconception inversion."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "passed": false,
+        "score": 0.95,
+        "verdict": "FAIL",
+        "tier": "UNVERIFIED_EVALUATION_FAILURE",
+        "groundingScore": 0.39,
+        "failureReasons": [
+          "SEMANTIC_EVALUATION_UNAVAILABLE"
+        ],
+        "failureReason": "Semantic evaluation unavailable: Medium difficulty question cannot be certified without semantic quality evaluation (safeParseJson: Failed to parse repaired JSON: Expected ',' or ']' after array element in JSON at position 1878 (line 33 column 6). Extracted candidate: \"{\n  \"status\": \"PASS\",\n  \"score\": 1.0,\n  \"verdict\": \"PASS\",\n  \"failureReasons\": [],\n  \"failureReason\": null,\n  \"repairIns...\")",
+        "repairInstruction": null,
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "The outer loop changes the target value being checked while the inner loop scans the entire array to count occurrences.",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "Keyed answer verified against session evidence",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": " \nassess foundational understanding and definition of arrays.\n\n[relevant multimodal context (hybrid bm25 + dense)]\n[evidence 1] [spoken lecture demons..."
+          },
+          {
+            "slot": "B",
+            "text": "The outer loop initializes the array memory while the inner loop stages the elements for final commit.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible, distinct alternative concept grounded in taught domain",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": null
+          },
+          {
+            "slot": "C",
+            "text": "The outer loop tracks working states while the inner loop updates the index-value mapping directly in place.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible, distinct alternative concept grounded in taught domain",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": null
+          },
+          {
+            "slot": "D",
+            "text": "The outer loop permanently records the target value while the inner loop modifies array indexes.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible, distinct alternative concept grounded in taught domain",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": null
+          }
+        ],
+        "verificationStatus": "VERIFICATION_UNSUPPORTED",
+        "verifiedProgrammatically": false,
+        "verificationAudit": {
+          "status": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "reason": "Archetype \"CONCEPTUAL_CONTRAST\" requires qualitative academic review; deterministic simulation not supported"
+        },
+        "cognitiveAudit": {
+          "requestedDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "evaluatedCognitiveDemand": "UNCERTAIN",
+          "actualCognitiveDemand": "UNCERTAIN",
+          "isCalibrated": true,
+          "mismatchDetails": null,
+          "classificationReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration."
+        },
+        "evidenceGrounding": {
+          "tier": "DIRECT_EVIDENCE",
+          "groundingScore": 0.39,
+          "foreignDomainDetected": false
+        },
+        "verificationMethod": "UNAUDITED_HEURISTIC_FALLBACK",
+        "isFallback": true,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Ensure question is unambiguous, grounded, and matches requested difficulty.",
+          "originalMCQ": {
+            "targetId": "T07",
+            "questionText": "Why does evaluating element frequencies in an array typically require two nested iteration loops rather than a single linear pass?",
+            "question": "Why does evaluating element frequencies in an array typically require two nested iteration loops rather than a single linear pass?",
+            "options": [
+              "One loop tracks pointer positions while the other handles array variable declarations.",
+              "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+              "The outer loop validates memory bounds while the inner loop assigns unique index values.",
+              "One loop counts total array length while the inner loop modifies element indices directly."
+            ],
+            "correctAnswerIndex": 1,
+            "correctAnswer": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+            "explanation": "Evaluating frequency requires an outer loop to select each value in turn, and an inner loop to iterate through the array to check and count occurrences for that specific value.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests understanding of the operational mechanism behind nested array iteration used for frequency counting.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Evidence 1 states that one for loop changes the value of n while the other for loop checks the frequency of n in the given array.",
+              "computedOrTracedKey": "Outer loop selects target element -> inner loop scans array for matches -> frequency count is accumulated.",
+              "distractorRationales": {
+                "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+                "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+                "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+              },
+              "byLetter": {
+                "A": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+                "C": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+                "D": "Plausible student misconception based on misconception inversion."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Arrays - Foundational Definition & Core Properties",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+                "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+                "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+              "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+              "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+            },
+            "correctAnswerText": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+            "correct_option": 1,
+            "correctOption": 1,
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+            "distractorRationalesByLetter": {
+              "A": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+              "C": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+              "D": "Plausible student misconception based on misconception inversion."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "T07",
+            "questionText": "Why do nested loops become necessary when calculating the frequency of each distinct element across an array instead of a single traversal?",
+            "question": "Why do nested loops become necessary when calculating the frequency of each distinct element across an array instead of a single traversal?",
+            "options": [
+              "The outer loop changes the target value being checked while the inner loop scans the entire array to count occurrences.",
+              "The outer loop initializes the array memory while the inner loop stages the elements for final commit.",
+              "The outer loop tracks working states while the inner loop updates the index-value mapping directly in place.",
+              "The outer loop permanently records the target value while the inner loop modifies array indexes."
+            ],
+            "correctAnswerIndex": 0,
+            "correctAnswer": "The outer loop changes the target value being checked while the inner loop scans the entire array to count occurrences.",
+            "explanation": "Calculating frequencies requires iterating through distinct target values with an outer loop while an inner loop checks every element in the array to tally matches.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests understanding of sequential mechanics and operational state transitions when using nested loops for frequency counting in arrays.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "The outer for loop is for the changing value of n and the other for loop is for checking the frequency of n in the given array.",
+              "computedOrTracedKey": "Outer loop controls the current target value being evaluated, while the inner loop iterates across all array elements to tally its frequency.",
+              "distractorRationales": {
+                "The outer loop permanently records the target value while the inner loop modifies array indexes.": "Confuses operational iteration with permanent staging or persistence states.",
+                "The outer loop initializes the array memory while the inner loop stages the elements for final commit.": "Applies incorrect version control and staging analogies to basic array traversal mechanics.",
+                "The outer loop tracks working states while the inner loop updates the index-value mapping directly in place.": "Misrepresents working memory states as direct index-value mutations without nested scanning."
+              },
+              "byLetter": {
+                "B": "Applies incorrect version control and staging analogies to basic array traversal mechanics.",
+                "C": "Misrepresents working memory states as direct index-value mutations without nested scanning.",
+                "D": "Confuses operational iteration with permanent staging or persistence states."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Arrays - Foundational Definition & Core Properties",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "The outer loop permanently records the target value while the inner loop modifies array indexes.": "Confuses operational iteration with permanent staging or persistence states.",
+                "The outer loop initializes the array memory while the inner loop stages the elements for final commit.": "Applies incorrect version control and staging analogies to basic array traversal mechanics.",
+                "The outer loop tracks working states while the inner loop updates the index-value mapping directly in place.": "Misrepresents working memory states as direct index-value mutations without nested scanning."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "The outer loop permanently records the target value while the inner loop modifies array indexes.": "Confuses operational iteration with permanent staging or persistence states.",
+              "The outer loop initializes the array memory while the inner loop stages the elements for final commit.": "Applies incorrect version control and staging analogies to basic array traversal mechanics.",
+              "The outer loop tracks working states while the inner loop updates the index-value mapping directly in place.": "Misrepresents working memory states as direct index-value mutations without nested scanning."
+            },
+            "correctAnswerText": "The outer loop changes the target value being checked while the inner loop scans the entire array to count occurrences.",
+            "correct_option": 0,
+            "correctOption": 0,
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "The outer loop changes the target value being checked while the inner loop scans the entire array to count occurrences.",
+            "distractorRationalesByLetter": {
+              "B": "Applies incorrect version control and staging analogies to basic array traversal mechanics.",
+              "C": "Misrepresents working memory states as direct index-value mutations without nested scanning.",
+              "D": "Confuses operational iteration with permanent staging or persistence states."
+            }
+          }
+        },
+        "auditNotice": "Audited via deterministic option-by-option fallback (standard validation).",
+        "isLLMVerified": false,
+        "criticUnavailable": true,
+        "criticUnavailableReason": "safeParseJson: Failed to parse repaired JSON: Expected ',' or ']' after array element in JSON at position 1878 (line 33 column 6). Extracted candidate: \"{\n  \"status\": \"PASS\",\n  \"score\": 1.0,\n  \"verdict\": \"PASS\",\n  \"failureReasons\": [],\n  \"failureReason\": null,\n  \"repairIns...\"",
+        "repaired": false,
+        "mcq": {
+          "targetId": "T07",
+          "questionText": "Why does evaluating element frequencies in an array typically require two nested iteration loops rather than a single linear pass?",
+          "question": "Why does evaluating element frequencies in an array typically require two nested iteration loops rather than a single linear pass?",
+          "options": [
+            "One loop tracks pointer positions while the other handles array variable declarations.",
+            "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+            "The outer loop validates memory bounds while the inner loop assigns unique index values.",
+            "One loop counts total array length while the inner loop modifies element indices directly."
+          ],
+          "correctAnswerIndex": 1,
+          "correctAnswer": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+          "explanation": "Evaluating frequency requires an outer loop to select each value in turn, and an inner loop to iterate through the array to check and count occurrences for that specific value.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Tests understanding of the operational mechanism behind nested array iteration used for frequency counting.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "Evidence 1 states that one for loop changes the value of n while the other for loop checks the frequency of n in the given array.",
+            "computedOrTracedKey": "Outer loop selects target element -> inner loop scans array for matches -> frequency count is accumulated.",
+            "distractorRationales": {
+              "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+              "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+              "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+            },
+            "byLetter": {
+              "A": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+              "C": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+              "D": "Plausible student misconception based on misconception inversion."
+            }
+          },
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Arrays - Foundational Definition & Core Properties",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "distractorRationales": {
+              "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+              "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+              "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "The outer loop validates memory bounds while the inner loop assigns unique index values.": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+            "One loop tracks pointer positions while the other handles array variable declarations.": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+            "One loop counts total array length while the inner loop modifies element indices directly.": "Plausible student misconception based on misconception inversion."
+          },
+          "correctAnswerText": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+          "correct_option": 1,
+          "correctOption": 1,
+          "correctAnswerKey": "B",
+          "correct_answer": "B",
+          "correct_answer_text": "The outer loop sequentially selects each target value, while the inner loop scans the array to tally occurrences.",
+          "distractorRationalesByLetter": {
+            "A": "Mistakes runtime algorithmic iteration with compile-time variable declaration steps.",
+            "C": "Confuses algorithmic frequency counting with memory boundary checking and index assignment.",
+            "D": "Plausible student misconception based on misconception inversion."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T09",
+      "concept": "Mean - Foundational Definition & Core Properties",
+      "subtopic": "Time and Space Efficiency Tradeoffs",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+      "status": "REJECTED",
+      "reason": "FOREIGN_DOMAIN_CONTAMINATION; TIER_COGNITIVE_MISMATCH; UNGROUNDED_EVIDENCE_CLAIM",
+      "failureReasons": [
+        "FOREIGN_DOMAIN_CONTAMINATION",
+        "TIER_COGNITIVE_MISMATCH",
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "T09",
+        "questionText": "Why must developers carefully balance execution time and memory consumption during algorithm design?",
+        "question": "Why must developers carefully balance execution time and memory consumption during algorithm design?",
+        "options": [
+          "Saving memory automatically increases processor execution speed without trade-offs",
+          "Execution loops override memory storage limits during intermediate runtime transitions",
+          "Minimizing execution time requires allocating unlimited memory resources permanently",
+          "Hardware resources like CPU time and memory capacity are both finite system constraints"
+        ],
+        "correctAnswerIndex": 3,
+        "correctAnswer": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+        "explanation": "Just as biological systems require balanced foundational inputs like sunlight, water, and air, a program must simultaneously manage both time and space efficiently because hardware resources are finite constraints.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Tests the foundational understanding of why time and space efficiency trade-offs are critical resource management concerns in software engineering.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "Lecture evidence emphasizes that just like plants need sunlight and water, programs fundamentally depend on balancing time and space efficiency.",
+          "computedOrTracedKey": "Software resource management requires evaluating the dual constraints of time efficiency and space efficiency rather than assuming infinite capacity.",
+          "distractorRationales": {
+            "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+            "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+            "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+          },
+          "byLetter": {
+            "A": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+            "B": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries.",
+            "C": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources."
+          }
+        },
+        "usedArchetypes": [
+          "MISCONCEPTION_INVERSION",
+          "NEAR_MISS_MECHANISM"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Mean - Foundational Definition & Core Properties",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "distractorRationales": {
+            "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+            "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+            "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+          "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+          "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+        },
+        "correctAnswerText": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+        "correct_option": 3,
+        "correctOption": 3,
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+        "distractorRationalesByLetter": {
+          "A": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+          "B": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries.",
+          "C": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "score": 0.92,
+        "verdict": "FAIL",
+        "failureReasons": [
+          "FOREIGN_DOMAIN_CONTAMINATION",
+          "TIER_COGNITIVE_MISMATCH",
+          "UNGROUNDED_EVIDENCE_CLAIM"
+        ],
+        "failureReason": "FOREIGN_DOMAIN_CONTAMINATION; TIER_COGNITIVE_MISMATCH; UNGROUNDED_EVIDENCE_CLAIM",
+        "repairInstruction": null,
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks why a program must balance time and space efficiency, and option A directly provides the core computational trade-off (optimizing speed often increases memory consumption), explaining the necessity of balance.",
+          "mismatchDetails": null
+        },
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "Optimizing exclusively for execution speed can drastically increase memory consumption",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "Directly explains the core computer science principle of the time-space tradeoff mentioned in the lecture evidence.",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": "Your code has to be time efficient and space efficient."
+          },
+          {
+            "slot": "B",
+            "text": "It permanently commits intermediate loop states to external storage automatically",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible procedural misunderstanding regarding storage, but factually incorrect about automatic external commitment.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Evidence 3 (loop execution)"
+          },
+          {
+            "slot": "C",
+            "text": "Iterative traversal requires storing every historical loop iteration in memory",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible distractor representing a misconception that standard loops store all historical states.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Evidence 3 (for loop counting)"
+          },
+          {
+            "slot": "D",
+            "text": "Skipping the initial index check guarantees instantaneous data retrieval",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Nonsensical algorithmic claim framed as a procedural trick.",
+            "distractorPlausibility": "LOW",
+            "evidenceCitation": "Evidence 3 (array indexing)"
+          }
+        ],
+        "cognitiveAudit": {
+          "requestedDifficulty": "Medium",
+          "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+          "evaluatedCognitiveDemand": "UNCERTAIN",
+          "isCalibrated": false,
+          "mismatchDetails": "Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.); failing conservative calibration for requested Medium tier (EXPLAIN_MECHANISM)"
+        },
+        "evidenceGrounding": {
+          "tier": "EVIDENCE_DERIVED",
+          "groundingScore": 0.9,
+          "foreignDomainDetected": false
+        },
+        "passed": false,
+        "verificationMethod": "LLM_EVALUATION",
+        "isFallback": false,
+        "isLLMVerified": true,
+        "tier": "EVIDENCE_DERIVED",
+        "groundingScore": 0.9,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Require operational mechanism comparison, sequential state transition analysis, or tradeoff evaluation. Ground all options strictly in lecture evidence for \"Mean - Foundational Definition & Core Properties\"; do not introduce external or foreign domain concepts.",
+          "originalMCQ": {
+            "targetId": "T09",
+            "questionText": "Why must developers carefully balance execution time and memory consumption during algorithm design?",
+            "question": "Why must developers carefully balance execution time and memory consumption during algorithm design?",
+            "options": [
+              "Saving memory automatically increases processor execution speed without trade-offs",
+              "Execution loops override memory storage limits during intermediate runtime transitions",
+              "Minimizing execution time requires allocating unlimited memory resources permanently",
+              "Hardware resources like CPU time and memory capacity are both finite system constraints"
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+            "explanation": "Just as biological systems require balanced foundational inputs like sunlight, water, and air, a program must simultaneously manage both time and space efficiently because hardware resources are finite constraints.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the foundational understanding of why time and space efficiency trade-offs are critical resource management concerns in software engineering.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Lecture evidence emphasizes that just like plants need sunlight and water, programs fundamentally depend on balancing time and space efficiency.",
+              "computedOrTracedKey": "Software resource management requires evaluating the dual constraints of time efficiency and space efficiency rather than assuming infinite capacity.",
+              "distractorRationales": {
+                "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+                "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+                "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+              },
+              "byLetter": {
+                "A": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+                "B": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries.",
+                "C": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Mean - Foundational Definition & Core Properties",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+                "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+                "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+              "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+              "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+            },
+            "correctAnswerText": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+            "distractorRationalesByLetter": {
+              "A": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+              "B": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries.",
+              "C": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "T09",
+            "questionText": "Why must a program balance both time and space efficiency when processing datasets using iterative loops?",
+            "question": "Why must a program balance both time and space efficiency when processing datasets using iterative loops?",
+            "options": [
+              "Optimizing exclusively for execution speed can drastically increase memory consumption",
+              "It permanently commits intermediate loop states to external storage automatically",
+              "Iterative traversal requires storing every historical loop iteration in memory",
+              "Skipping the initial index check guarantees instantaneous data retrieval"
+            ],
+            "correctAnswerIndex": 0,
+            "correctAnswer": "Optimizing exclusively for execution speed can drastically increase memory consumption",
+            "explanation": "In computational design, time and space efficiency represent core operational tradeoffs. Focusing solely on reducing execution duration through redundant unrolling or caching often inflates memory consumption, requiring developers to carefully balance both constraints.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the foundational understanding of why resource tradeoffs exist between time and space efficiency during iterative processing.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Programs must be both time efficient and space efficient as foundational requirements for developers.",
+              "computedOrTracedKey": "Balancing time and space efficiency requires recognizing that optimizing execution speed can introduce heavy memory trade-offs.",
+              "distractorRationales": {
+                "It permanently commits intermediate loop states to external storage automatically": "Represents a procedural misunderstanding of loop execution, falsely assuming automatic persistence.",
+                "Skipping the initial index check guarantees instantaneous data retrieval": "Represents an incorrect boundary condition assumption that bypasses foundational loop mechanics.",
+                "Iterative traversal requires storing every historical loop iteration in memory": "Represents a common misconception that basic iterative loops inherently retain all past states."
+              },
+              "byLetter": {
+                "B": "Represents a procedural misunderstanding of loop execution, falsely assuming automatic persistence.",
+                "C": "Represents a common misconception that basic iterative loops inherently retain all past states.",
+                "D": "Represents an incorrect boundary condition assumption that bypasses foundational loop mechanics."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Mean - Foundational Definition & Core Properties",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "It permanently commits intermediate loop states to external storage automatically": "Represents a procedural misunderstanding of loop execution, falsely assuming automatic persistence.",
+                "Skipping the initial index check guarantees instantaneous data retrieval": "Represents an incorrect boundary condition assumption that bypasses foundational loop mechanics.",
+                "Iterative traversal requires storing every historical loop iteration in memory": "Represents a common misconception that basic iterative loops inherently retain all past states."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "It permanently commits intermediate loop states to external storage automatically": "Represents a procedural misunderstanding of loop execution, falsely assuming automatic persistence.",
+              "Skipping the initial index check guarantees instantaneous data retrieval": "Represents an incorrect boundary condition assumption that bypasses foundational loop mechanics.",
+              "Iterative traversal requires storing every historical loop iteration in memory": "Represents a common misconception that basic iterative loops inherently retain all past states."
+            },
+            "correctAnswerText": "Optimizing exclusively for execution speed can drastically increase memory consumption",
+            "correct_option": 0,
+            "correctOption": 0,
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "Optimizing exclusively for execution speed can drastically increase memory consumption",
+            "distractorRationalesByLetter": {
+              "B": "Represents a procedural misunderstanding of loop execution, falsely assuming automatic persistence.",
+              "C": "Represents a common misconception that basic iterative loops inherently retain all past states.",
+              "D": "Represents an incorrect boundary condition assumption that bypasses foundational loop mechanics."
+            }
+          }
+        },
+        "repaired": false,
+        "mcq": {
+          "targetId": "T09",
+          "questionText": "Why must developers carefully balance execution time and memory consumption during algorithm design?",
+          "question": "Why must developers carefully balance execution time and memory consumption during algorithm design?",
+          "options": [
+            "Saving memory automatically increases processor execution speed without trade-offs",
+            "Execution loops override memory storage limits during intermediate runtime transitions",
+            "Minimizing execution time requires allocating unlimited memory resources permanently",
+            "Hardware resources like CPU time and memory capacity are both finite system constraints"
+          ],
+          "correctAnswerIndex": 3,
+          "correctAnswer": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+          "explanation": "Just as biological systems require balanced foundational inputs like sunlight, water, and air, a program must simultaneously manage both time and space efficiently because hardware resources are finite constraints.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Tests the foundational understanding of why time and space efficiency trade-offs are critical resource management concerns in software engineering.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "Lecture evidence emphasizes that just like plants need sunlight and water, programs fundamentally depend on balancing time and space efficiency.",
+            "computedOrTracedKey": "Software resource management requires evaluating the dual constraints of time efficiency and space efficiency rather than assuming infinite capacity.",
+            "distractorRationales": {
+              "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+              "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+              "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+            },
+            "byLetter": {
+              "A": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+              "B": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries.",
+              "C": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources."
+            }
+          },
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "EXPLAIN_MECHANISM",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Mean - Foundational Definition & Core Properties",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "distractorRationales": {
+              "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+              "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+              "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "Minimizing execution time requires allocating unlimited memory resources permanently": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources.",
+            "Saving memory automatically increases processor execution speed without trade-offs": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+            "Execution loops override memory storage limits during intermediate runtime transitions": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries."
+          },
+          "correctAnswerText": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+          "correct_option": 3,
+          "correctOption": 3,
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "Hardware resources like CPU time and memory capacity are both finite system constraints",
+          "distractorRationalesByLetter": {
+            "A": "Represents the procedural misconception that optimizing one resource automatically and perfectly optimizes the other.",
+            "B": "Confuses algorithmic loop execution with physical hardware memory allocation boundaries.",
+            "C": "Represents the misconception that time-space efficiency is mutually exclusive and requires infinite resources."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "R03",
+      "concept": "Linear Search for Frequency - Reserve Hard Peer",
+      "subtopic": "Linear Search for Frequency",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "COMPARE",
+      "status": "REJECTED",
+      "reason": "DUPLICATE_QUESTION: PEDAGOGICAL_REDUNDANCY: High similarity testing identical concept and reasoning task",
+      "failureReasons": [
+        "DUPLICATE_QUESTION"
+      ],
+      "attempts": 1,
+      "repairAttempted": false,
+      "repairSuccessful": false
+    },
+    {
+      "targetId": "R04",
+      "concept": "Nested Loop Logic for All Elements - Reserve Medium Peer",
+      "subtopic": "Nested Loop Logic for All Elements",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "COMPARE",
+      "status": "REJECTED",
+      "reason": "STYLE_OPTION_EXCESSIVE_LENGTH; TIER_COGNITIVE_MISMATCH",
+      "failureReasons": [
+        "STYLE_OPTION_EXCESSIVE_LENGTH",
+        "TIER_COGNITIVE_MISMATCH"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "R04",
+        "questionText": "When determining the frequency of every element in an array using a dual nested loop approach, what is the specific operational role assigned to each loop?",
+        "question": "When determining the frequency of every element in an array using a dual nested loop approach, what is the specific operational role assigned to each loop?",
+        "options": [
+          "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.",
+          "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+          "The outer loop checks element frequencies while the inner loop iterates through unique elements.",
+          "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks."
+        ],
+        "correctAnswerIndex": 1,
+        "correctAnswer": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+        "explanation": "In a nested loop frequency-counting algorithm, the outer loop systematically changes and selects each value from the array, while the inner loop checks and counts the frequency of that specific element across the array.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Tests understanding of the distinct operational roles and state transitions of outer versus inner loops in frequency-checking algorithms.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "Evidence explicitly states the outer for loop changes the value of n, while the inner for loop checks the frequency of that element in the given array.",
+          "computedOrTracedKey": "Outer loop = selecting target elements (a[0], a[1], etc.); Inner loop = checking frequency of the selected element.",
+          "distractorRationales": {
+            "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+            "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+            "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+          },
+          "byLetter": {
+            "A": "Attributes an incorrect dynamic memory mutation task to the traversal loops.",
+            "C": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+            "D": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans."
+          }
+        },
+        "usedArchetypes": [
+          "MISCONCEPTION_INVERSION",
+          "NEAR_MISS_MECHANISM"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Nested Loop Logic for All Elements - Reserve Medium Peer",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "distractorRationales": {
+            "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+            "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+            "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+          "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+          "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+        },
+        "correctAnswerText": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+        "correct_option": 1,
+        "correctOption": 1,
+        "correctAnswerKey": "B",
+        "correct_answer": "B",
+        "correct_answer_text": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+        "distractorRationalesByLetter": {
+          "A": "Attributes an incorrect dynamic memory mutation task to the traversal loops.",
+          "C": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+          "D": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "score": 1,
+        "verdict": "FAIL",
+        "failureReasons": [
+          "STYLE_OPTION_EXCESSIVE_LENGTH",
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "failureReason": "STYLE_OPTION_EXCESSIVE_LENGTH; TIER_COGNITIVE_MISMATCH",
+        "repairInstruction": null,
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option correctly identifies the distinct functional roles of the outer and inner loops in a frequency-counting dual-loop pattern, directly addressing the interrogative focus of the stem.",
+          "mismatchDetails": null
+        },
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "The outer loop scans adjacent pairs for sorting, while the inner loop counts total occurrences.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Incorrectly associates the loops with sorting adjacent pairs rather than frequency counting.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Evidence 1 & 2"
+          },
+          {
+            "slot": "B",
+            "text": "The outer loop calculates cumulative sums, while the inner loop resets the frequency counter for each iteration.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Confuses frequency counting with cumulative sums and counter resets.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Evidence 1 & 2"
+          },
+          {
+            "slot": "C",
+            "text": "The outer loop filters out duplicate entries, while the inner loop processes unique elements sequentially.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Minstates the role as deduplication rather than frequency checking across all array elements.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Evidence 1 & 2"
+          },
+          {
+            "slot": "D",
+            "text": "The outer loop iterates through each target value in the array, while the inner loop checks its frequency against all elements.",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "Directly matches the lecture explanation where the outer loop changes the value of n and the inner loop checks its frequency.",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": "Evidence 1: 'outer for loop is for the changing value of n'; Evidence 2: 'inner for loop is for actually checking the frequency'"
+          }
+        ],
+        "cognitiveAudit": {
+          "requestedDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "evaluatedCognitiveDemand": "RECALL",
+          "isCalibrated": false,
+          "mismatchDetails": "Question demands only factual definition/recall, but Medium operational mechanism/tradeoff analysis (COMPARE) was requested"
+        },
+        "evidenceGrounding": {
+          "tier": "DIRECT_EVIDENCE",
+          "groundingScore": 1,
+          "foreignDomainDetected": false
+        },
+        "passed": false,
+        "verificationMethod": "LLM_EVALUATION",
+        "isFallback": false,
+        "isLLMVerified": true,
+        "tier": "DIRECT_EVIDENCE",
+        "groundingScore": 1,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Require operational mechanism comparison, sequential state transition analysis, or tradeoff evaluation.",
+          "originalMCQ": {
+            "targetId": "R04",
+            "questionText": "When determining the frequency of every element in an array using a dual nested loop approach, what is the specific operational role assigned to each loop?",
+            "question": "When determining the frequency of every element in an array using a dual nested loop approach, what is the specific operational role assigned to each loop?",
+            "options": [
+              "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.",
+              "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+              "The outer loop checks element frequencies while the inner loop iterates through unique elements.",
+              "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks."
+            ],
+            "correctAnswerIndex": 1,
+            "correctAnswer": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+            "explanation": "In a nested loop frequency-counting algorithm, the outer loop systematically changes and selects each value from the array, while the inner loop checks and counts the frequency of that specific element across the array.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests understanding of the distinct operational roles and state transitions of outer versus inner loops in frequency-checking algorithms.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Evidence explicitly states the outer for loop changes the value of n, while the inner for loop checks the frequency of that element in the given array.",
+              "computedOrTracedKey": "Outer loop = selecting target elements (a[0], a[1], etc.); Inner loop = checking frequency of the selected element.",
+              "distractorRationales": {
+                "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+                "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+                "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+              },
+              "byLetter": {
+                "A": "Attributes an incorrect dynamic memory mutation task to the traversal loops.",
+                "C": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+                "D": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "COMPARE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Nested Loop Logic for All Elements - Reserve Medium Peer",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+                "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+                "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+              "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+              "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+            },
+            "correctAnswerText": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+            "correct_option": 1,
+            "correctOption": 1,
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+            "distractorRationalesByLetter": {
+              "A": "Attributes an incorrect dynamic memory mutation task to the traversal loops.",
+              "C": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+              "D": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "R04",
+            "questionText": "When determining the frequency of each element in an array using a dual-loop pattern, what is the distinct operational role assigned to the outer loop versus the inner loop?",
+            "question": "When determining the frequency of each element in an array using a dual-loop pattern, what is the distinct operational role assigned to the outer loop versus the inner loop?",
+            "options": [
+              "The outer loop scans adjacent pairs for sorting, while the inner loop counts total occurrences.",
+              "The outer loop calculates cumulative sums, while the inner loop resets the frequency counter for each iteration.",
+              "The outer loop filters out duplicate entries, while the inner loop processes unique elements sequentially.",
+              "The outer loop iterates through each target value in the array, while the inner loop checks its frequency against all elements."
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "The outer loop iterates through each target value in the array, while the inner loop checks its frequency against all elements.",
+            "explanation": "According to the lecture evidence, the outer for loop is responsible for changing the value of n (such as a[0], a[1], etc.) across the array, while the inner for loop is used to actually check the frequency of that element against the given array.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the student's ability to compare and distinguish the specific operational responsibilities of nested loops used for frequency counting.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Lecture evidence explicitly states: 'outer for loop is for the changing value of n And can be a of 0, a of 1, a of 2, anything' and 'inner for loop is for actually checking the frequency of a of x.'",
+              "computedOrTracedKey": "Outer loop selects the current element to evaluate; inner loop scans the collection to count how many times that selected element appears.",
+              "distractorRationales": {
+                "The outer loop scans adjacent pairs for sorting, while the inner loop counts total occurrences.": "Confuses frequency counting nested loops with sorting algorithms like bubble sort that compare adjacent elements.",
+                "The outer loop calculates cumulative sums, while the inner loop resets the frequency counter for each iteration.": "Misattributes prefix sum logic or accumulator patterns to frequency counting structures.",
+                "The outer loop filters out duplicate entries, while the inner loop processes unique elements sequentially.": "Incorrectly assumes the primary role of the outer loop is deduplication rather than iterating through each distinct target element for counting."
+              },
+              "byLetter": {
+                "A": "Confuses frequency counting nested loops with sorting algorithms like bubble sort that compare adjacent elements.",
+                "B": "Misattributes prefix sum logic or accumulator patterns to frequency counting structures.",
+                "C": "Incorrectly assumes the primary role of the outer loop is deduplication rather than iterating through each distinct target element for counting."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "COMPARE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Nested Loop Logic for All Elements - Reserve Medium Peer",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM",
+                "MISCONCEPTION_INVERSION"
+              ],
+              "distractorRationales": {
+                "The outer loop scans adjacent pairs for sorting, while the inner loop counts total occurrences.": "Confuses frequency counting nested loops with sorting algorithms like bubble sort that compare adjacent elements.",
+                "The outer loop calculates cumulative sums, while the inner loop resets the frequency counter for each iteration.": "Misattributes prefix sum logic or accumulator patterns to frequency counting structures.",
+                "The outer loop filters out duplicate entries, while the inner loop processes unique elements sequentially.": "Incorrectly assumes the primary role of the outer loop is deduplication rather than iterating through each distinct target element for counting."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": false,
+              "issues": [
+                "OPTION_EXCESSIVE_LENGTH"
+              ],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "styleIssues": [
+              "OPTION_EXCESSIVE_LENGTH"
+            ],
+            "distractorRationales": {
+              "The outer loop scans adjacent pairs for sorting, while the inner loop counts total occurrences.": "Confuses frequency counting nested loops with sorting algorithms like bubble sort that compare adjacent elements.",
+              "The outer loop calculates cumulative sums, while the inner loop resets the frequency counter for each iteration.": "Misattributes prefix sum logic or accumulator patterns to frequency counting structures.",
+              "The outer loop filters out duplicate entries, while the inner loop processes unique elements sequentially.": "Incorrectly assumes the primary role of the outer loop is deduplication rather than iterating through each distinct target element for counting."
+            },
+            "correctAnswerText": "The outer loop iterates through each target value in the array, while the inner loop checks its frequency against all elements.",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The outer loop iterates through each target value in the array, while the inner loop checks its frequency against all elements.",
+            "distractorRationalesByLetter": {
+              "A": "Confuses frequency counting nested loops with sorting algorithms like bubble sort that compare adjacent elements.",
+              "B": "Misattributes prefix sum logic or accumulator patterns to frequency counting structures.",
+              "C": "Incorrectly assumes the primary role of the outer loop is deduplication rather than iterating through each distinct target element for counting."
+            }
+          }
+        },
+        "repaired": false,
+        "mcq": {
+          "targetId": "R04",
+          "questionText": "When determining the frequency of every element in an array using a dual nested loop approach, what is the specific operational role assigned to each loop?",
+          "question": "When determining the frequency of every element in an array using a dual nested loop approach, what is the specific operational role assigned to each loop?",
+          "options": [
+            "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.",
+            "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+            "The outer loop checks element frequencies while the inner loop iterates through unique elements.",
+            "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks."
+          ],
+          "correctAnswerIndex": 1,
+          "correctAnswer": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+          "explanation": "In a nested loop frequency-counting algorithm, the outer loop systematically changes and selects each value from the array, while the inner loop checks and counts the frequency of that specific element across the array.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Tests understanding of the distinct operational roles and state transitions of outer versus inner loops in frequency-checking algorithms.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "Evidence explicitly states the outer for loop changes the value of n, while the inner for loop checks the frequency of that element in the given array.",
+            "computedOrTracedKey": "Outer loop = selecting target elements (a[0], a[1], etc.); Inner loop = checking frequency of the selected element.",
+            "distractorRationales": {
+              "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+              "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+              "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+            },
+            "byLetter": {
+              "A": "Attributes an incorrect dynamic memory mutation task to the traversal loops.",
+              "C": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+              "D": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans."
+            }
+          },
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "COMPARE",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Nested Loop Logic for All Elements - Reserve Medium Peer",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "distractorRationales": {
+              "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+              "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+              "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "The outer loop checks element frequencies while the inner loop iterates through unique elements.": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+            "The outer loop tracks array indices backward while the inner loop counts forward to eliminate duplicate checks.": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans.",
+            "The outer loop dynamically resizes the array while the inner loop calculates cumulative frequencies.": "Attributes an incorrect dynamic memory mutation task to the traversal loops."
+          },
+          "correctAnswerText": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+          "correct_option": 1,
+          "correctOption": 1,
+          "correctAnswerKey": "B",
+          "correct_answer": "B",
+          "correct_answer_text": "The outer loop selects each target element sequentially while the inner loop scans the array to count occurrences.",
+          "distractorRationalesByLetter": {
+            "A": "Attributes an incorrect dynamic memory mutation task to the traversal loops.",
+            "C": "Inverts the operational responsibilities of the nested loops, falsely claiming the outer loop performs the frequency scanning.",
+            "D": "Introduces a false optimization mechanism regarding backward indexing and duplicate elimination not present in standard nested-loop scans."
+          }
+        }
+      }
+    }
+  ],
+  "unfulfilledTargets": [],
+  "questions": [
+    {
+      "index": 1,
+      "targetId": "T01",
+      "concept": "Understanding the basic logic of counting occurrences of a single specific element in an array.",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "What is the primary role of the outer loop when finding the frequency of every element in an array using linear search?",
+      "options": [
+        "To reverse the order of elements before counting duplicate occurrences",
+        "To compare a single user-provided target value against every index in the array",
+        "To iterate through each element of the array so its frequency can be computed",
+        "To terminate the program once the first duplicate frequency is found"
+      ],
+      "correctAnswer": "To iterate through each element of the array so its frequency can be computed",
+      "correctKey": "C",
+      "explanation": "When finding the frequency of every element in an array, an outer loop is used to select and visit each individual element sequentially, while the inner mechanism checks or counts its occurrences across the array.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 2,
+      "targetId": "T02",
+      "concept": "Recognizing the structural requirement of using two nested loops to calculate frequencies for all elements in an array.",
+      "tier": "Hard",
+      "bloomLevel": "Understand",
+      "stem": "Why is a dual nested loop structure structurally required when calculating the frequency of every element in an unindexed array rather than a single linear traversal?",
+      "options": [
+        "A single traversal only evaluates adjacent elements, requiring a second loop to handle non-contiguous memory allocations.",
+        "The outer loop sequentially selects each target element while the inner loop scans the entire array to count its occurrences.",
+        "Dual iteration layers are necessary to prevent off-by-one boundary faults during dynamic memory reallocation.",
+        "One loop alters the array dimensions while the inner loop dynamically updates index references."
+      ],
+      "correctAnswer": "The outer loop sequentially selects each target element while the inner loop scans the entire array to count its occurrences.",
+      "correctKey": "B",
+      "explanation": "Calculating the frequency of all elements requires selecting each element one by one using an outer loop (changing the target value such as a[0], a[1], etc.) and then using an inner loop to check its frequency across the entire array.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 3,
+      "targetId": "T04",
+      "concept": "Understanding the basic logic of counting occurrences of a single specific element in an array. - Foundational Definition & Core Properties",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "When building a frequency array for an input array containing duplicate elements, why does the iteration skip counting an element if it has already been encountered?",
+      "options": [
+        "To permanently delete duplicate entries from the original input array during the scan",
+        "To trigger an immediate termination of the frequency calculation loop upon the first duplicate",
+        "To automatically resize the frequency array bounds downward when duplicates are detected",
+        "To prevent redundant processing and avoid recounting the same element multiple times"
+      ],
+      "correctAnswer": "To prevent redundant processing and avoid recounting the same element multiple times",
+      "correctKey": "D",
+      "explanation": "During frequency array construction, checking whether an element has already been processed prevents redundant loops and avoids recounting duplicate occurrences.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 4,
+      "targetId": "T06",
+      "concept": "Applying the frequency counting logic to a specific array to determine the count of a particular value. - Foundational Definition & Core Properties",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "Given the array [1, 2, 11, 21, 2, 30], what is the frequency of the value 2 after completing the outer and inner frequency-counting loop passes?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "1"
+      ],
+      "correctAnswer": "2",
+      "correctKey": "A",
+      "explanation": "Tracing the frequency counting logic across the array [1, 2, 11, 21, 2, 30], the value 2 appears at indices 1 and 4, resulting in a total frequency count of 2.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 5,
+      "targetId": "T08",
+      "concept": "Frequency Array - Foundational Definition & Core Properties",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "What are the two primary resource factors that are critically important for evaluating program efficiency?",
+      "options": [
+        "CPU frequency and memory bandwidth",
+        "Compilation speed and execution threads",
+        "Time and space complexity",
+        "Network latency and storage capacity"
+      ],
+      "correctAnswer": "Time and space complexity",
+      "correctKey": "C",
+      "explanation": "In program evaluation and efficiency tradeoffs, the fundamental resources emphasized are time and space, analogous to essential elements like sunlight and water for plants.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 6,
+      "targetId": "T10",
+      "concept": "Every Element - Foundational Definition & Core Properties",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "What is the primary purpose of utilizing a nested loop structure when determining the frequency of elements in an array?",
+      "options": [
+        "To iterate through the array and check the frequency of each individual element",
+        "To reverse the storage sequence of variables within local memory",
+        "To bypass array bounds checking and prevent runtime segmentation faults",
+        "To sort the elements in ascending order prior to counting"
+      ],
+      "correctAnswer": "To iterate through the array and check the frequency of each individual element",
+      "correctKey": "A",
+      "explanation": "According to the lecture evidence, traversing through the array for every element requires repeating code via loops, where the inner loop is specifically responsible for checking the frequency of an element.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 7,
+      "targetId": "R01",
+      "concept": "Linear Search for Frequency - Reserve Medium Peer",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "When counting element frequencies in a dataset using linear search across elements versus employing a dedicated frequency array when data values are within a limited range, how do their operational mechanisms diverge?",
+      "options": [
+        "Linear search requires sorted input data, whereas a frequency array processes arbitrary unbounded streams.",
+        "Linear search utilizes recursive backtracking, whereas a frequency array executes iterative pointer traversal.",
+        "Linear search constructs an auxiliary hash map, whereas a frequency array sorts the input data in place.",
+        "Linear search relies on repeated element scans, whereas a frequency array maps data values directly to indices for counting."
+      ],
+      "correctAnswer": "Linear search relies on repeated element scans, whereas a frequency array maps data values directly to indices for counting.",
+      "correctKey": "D",
+      "explanation": "When data is within a limited range, using a frequency array allows direct index-based counting rather than repeatedly scanning elements using linear search to check if they have been counted or to tally occurrences.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 8,
+      "targetId": "R02",
+      "concept": "Linear Search for Frequency - Reserve Easy Peer",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "What technique is used during the building of a frequency array to check if a specific element or its frequency has already been processed or counted?",
+      "options": [
+        "Binary search",
+        "Hashing lookup",
+        "Linear search",
+        "Merge sort"
+      ],
+      "correctAnswer": "Linear search",
+      "correctKey": "C",
+      "explanation": "When building a frequency array and checking whether an element has been previously counted or visited, a linear search is performed across the elements.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 9,
+      "targetId": "R05",
+      "concept": "Nested Loop Logic for All Elements - Reserve Easy Peer",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "What is the primary role of the outer for loop when finding the frequency of all elements in an array?",
+      "options": [
+        "Traversing backward through the array to reverse order",
+        "Changing the target value being checked for frequency",
+        "Checking the frequency of a single fixed element repeatedly",
+        "Resetting the frequency counter to zero on each pass"
+      ],
+      "correctAnswer": "Changing the target value being checked for frequency",
+      "correctKey": "B",
+      "explanation": "According to the lecture evidence, the outer for loop is used for changing the value of n (such as a[0], a[1], a[2], etc.), while the inner logic checks the frequency of that element in the given array.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 10,
+      "targetId": "R06",
+      "concept": "Nested Loop Logic for All Elements - Reserve Hard Peer",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "When determining the frequency of every element in an array using a dual nested loop structure, how do the roles of the outer and inner loops diverge during execution?",
+      "options": [
+        "The outer loop counts the total frequency sum, while the inner loop filters out duplicate array entries.",
+        "The outer loop iterates through distinct target elements, while the inner loop scans the entire array to count occurrences.",
+        "The outer loop sorts the array elements in ascending order, while the inner loop validates boundary conditions.",
+        "The outer loop manages the memory allocation size, while the inner loop dynamically resizes the working array."
+      ],
+      "correctAnswer": "The outer loop iterates through distinct target elements, while the inner loop scans the entire array to count occurrences.",
+      "correctKey": "B",
+      "explanation": "In nested loop frequency counting, the outer loop systematically selects and changes the target element (such as a[0], a[1], etc.), while the inner loop iterates through the collection to check and count how many times that specific target appears.",
+      "groundingStatus": "GROUNDED"
+    }
+  ]
+}

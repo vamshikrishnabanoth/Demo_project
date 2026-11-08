@@ -1,0 +1,164 @@
+{
+  "system": "System 3: Frozen KMIT Kahoot LCA-CM",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "When analyzing Understanding the layer-by-layer expansion principle of BFS in BFS Core Definition & Motivation, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Executes postconditions prior to checking input boundary parameters"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Understanding the layer-by-layer expansion principle of BFS. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS Core Definition & Motivation"
+    },
+    {
+      "questionText": "When tracing an in-order traversal (Left -> Root -> Right), how does the BST ordering property guarantee that output keys appear in ascending sorted order?",
+      "options": [
+        "Visits keys in arbitrary order because traversal order does not depend on subtree arrangement",
+        "Visits both subtrees simultaneously using parallel pointers without comparing key values",
+        "Visits all left-subtree keys before the root and all right-subtree keys after, ensuring keys strictly smaller than the root are processed first",
+        "Visits the root node before any subtree, ensuring the largest key is processed first"
+      ],
+      "correctAnswer": "Visits all left-subtree keys before the root and all right-subtree keys after, ensuring keys strictly smaller than the root are processed first",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Distinguishing between FIFO Queue and LIFO Stack implications for traversal. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Queue vs Stack Data Structure Selection"
+    },
+    {
+      "questionText": "When analyzing FIFO Queue Invariant & Shortest Path Guarantee (Core Foundations and Governing Principles) in FIFO Queue Invariant & Shortest Path Guarantee, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Executes postconditions prior to checking input boundary parameters",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for FIFO Queue Invariant & Shortest Path Guarantee (Core Foundations and Governing Principles). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "FIFO Queue Invariant & Shortest Path Guarantee"
+    },
+    {
+      "questionText": "When tracing an in-order traversal (Left -> Root -> Right), how does the BST ordering property guarantee that output keys appear in ascending sorted order?",
+      "options": [
+        "Visits keys in arbitrary order because traversal order does not depend on subtree arrangement",
+        "Visits both subtrees simultaneously using parallel pointers without comparing key values",
+        "Visits all left-subtree keys before the root and all right-subtree keys after, ensuring keys strictly smaller than the root are processed first",
+        "Visits the root node before any subtree, ensuring the largest key is processed first"
+      ],
+      "correctAnswer": "Visits all left-subtree keys before the root and all right-subtree keys after, ensuring keys strictly smaller than the root are processed first",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Distinguishing between FIFO Queue and LIFO Stack implications for traversal (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Visited Tracker & Cycle Prevention"
+    },
+    {
+      "questionText": "When tracing an in-order traversal (Left -> Root -> Right), how does the BST ordering property guarantee that output keys appear in ascending sorted order?",
+      "options": [
+        "Visits both subtrees simultaneously using parallel pointers without comparing key values",
+        "Visits all left-subtree keys before the root and all right-subtree keys after, ensuring keys strictly smaller than the root are processed first",
+        "Visits keys in arbitrary order because traversal order does not depend on subtree arrangement",
+        "Visits the root node before any subtree, ensuring the largest key is processed first"
+      ],
+      "correctAnswer": "Visits all left-subtree keys before the root and all right-subtree keys after, ensuring keys strictly smaller than the root are processed first",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Distinguishing between FIFO Queue and LIFO Stack implications for traversal (TRACE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Visited Tracker & Cycle Prevention"
+    },
+    {
+      "questionText": "In Binary Search Tree (BST) operations, what is the key property of an inorder traversal?",
+      "options": [
+        "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right",
+        "Visits the root node last after completely traversing both subtrees in Left, Right, Root order",
+        "Visits all nodes at the current tree depth before proceeding to subsequent levels",
+        "Visits the root node first before traversing either subtree in Root, Left, Right order"
+      ],
+      "correctAnswer": "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Distinguishing between FIFO Queue and LIFO Stack implications for traversal (PREDICT_CONSTRAINT). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Step-by-Step Execution Trace"
+    },
+    {
+      "questionText": "In Binary Search Tree (BST) operations, what is the key property of an inorder traversal?",
+      "options": [
+        "Visits the root node first before traversing either subtree in Root, Left, Right order",
+        "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right",
+        "Visits the root node last after completely traversing both subtrees in Left, Right, Root order",
+        "Visits all nodes at the current tree depth before proceeding to subsequent levels"
+      ],
+      "correctAnswer": "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Distinguishing between FIFO Queue and LIFO Stack implications for traversal (DIAGNOSE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Time Complexity Analysis (O(V+E))"
+    },
+    {
+      "questionText": "In the study of Space Complexity Analysis (O(V)), what is the fundamental role or definition of FIFO Queue Invariant & Shortest Path Guarantee (Core Foundations and Governing Principles)?",
+      "options": [
+        "Acts as an auxiliary background queue that bypasses primary domain state verification",
+        "Defines the canonical structure and operational invariants for FIFO Queue Invariant & Shortest Path Guarantee (Core Foundations and Governing Principles) within the domain",
+        "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+        "Applies global locking constraints across unrelated external system services"
+      ],
+      "correctAnswer": "Defines the canonical structure and operational invariants for FIFO Queue Invariant & Shortest Path Guarantee (Core Foundations and Governing Principles) within the domain",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for FIFO Queue Invariant & Shortest Path Guarantee (Core Foundations and Governing Principles). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Space Complexity Analysis (O(V))"
+    },
+    {
+      "questionText": "When analyzing Visited Tracker & Cycle Prevention (Operational Mechanics and Execution Steps) in Disconnected Graph Handling, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Executes postconditions prior to checking input boundary parameters",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Visited Tracker & Cycle Prevention (Operational Mechanics and Execution Steps). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Disconnected Graph Handling"
+    },
+    {
+      "questionText": "When analyzing Step-by-Step Execution Trace (State Transitions and Formulations) in Disconnected Graph Handling, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Executes postconditions prior to checking input boundary parameters",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Step-by-Step Execution Trace (State Transitions and Formulations). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Disconnected Graph Handling"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1676,
+    "cumulativeOutputTokens": 2612,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 4
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Decoupled operations)"
+  },
+  "tcScore": 83,
+  "pdi": 0.2,
+  "timestamp": "2026-11-05T20:22:25.835Z"
+}

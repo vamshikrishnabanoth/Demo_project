@@ -552,7 +552,7 @@ export default function PipelineOutput() {
         {/* ── KEY METRICS STRIP ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
           <div className="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">PDI Path</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Modality Path</span>
             <span className="text-xs font-black text-slate-900 uppercase font-mono">{representationMode}</span>
           </div>
 

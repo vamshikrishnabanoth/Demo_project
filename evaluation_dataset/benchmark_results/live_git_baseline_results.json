@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-29T12:30:31.665Z",
+    "benchmarkPhase": "PHASE_1_LIVE_GIT_BASELINE",
+    "gitCommit": "4a526909887818a118d25cd2bee8f7cff6d01f2b",
+    "governance": {
+      "productionCodeFrozen": true,
+      "groundingGateUnchanged": true,
+      "cap001Preserved": true,
+      "noRemotePush": true,
+      "noEc2Deploy": true
+    },
+    "assets": {
+      "audio": {
+        "file": "git_lecture.mp3",
+        "sha256": "b53b1a566eea7cd607a5fe03e1457f747fb4becad7b73681e3e3010f3a25de89",
+        "sizeBytes": 6948316,
+        "transcriptionDurationSec": 4.774,
+        "transcriptLengthChars": 10731
+      },
+      "slides": {
+        "file": "git_lecture_slides.pptx",
+        "sha256": "e303c945ed37bd9062112d412ff5a8270cbd5ba991cbe3ebcb85a20390f1f410",
+        "sizeBytes": 32898,
+        "extractedLengthChars": 2222
+      }
+    },
+    "generationParameters": {
+      "requestedCount": 3,
+      "requestedDifficulty": "Balanced",
+      "pipelineDurationSec": 30.127,
+      "pipelineStatus": "COMPLETED"
+    }
+  },
+  "summaryMetrics": {
+    "requestedCount": 3,
+    "deliveredCount": 3,
+    "usableCount": 2,
+    "allDimensionsPassRate": "0.67",
+    "dimensionPassRates": {
+      "correctness": "3 / 3",
+      "grounding": "2 / 3",
+      "cognitiveFit": "3 / 3",
+      "stemAlignment": "3 / 3"
+    }
+  },
+  "questions": [
+    {
+      "questionIndex": 1,
+      "difficulty": "Medium",
+      "stem": "What does the git init command do when executed in a project directory?",
+      "options": [
+        "It removes the .git directory from the project",
+        "It stages all current files for commit",
+        "It creates an empty repository",
+        "It displays the repository's commit history"
+      ],
+      "correctAnswer": "It creates an empty repository",
+      "correctKey": "C",
+      "wordCounts": {
+        "stemWords": 13,
+        "maxOptionWords": 8,
+        "optionLengthRatio": 1.6
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.65,
+        "failureReasons": [
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option 'It creates an empty repository' directly answers the question 'What does the git init command do'.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 2,
+      "difficulty": "Medium",
+      "stem": "In a Git workflow, a file appears red in `git status`. After running `git add`, it turns green. What mechanism causes this color change?\n\n```bash\n$ git status # A.txt is red\n$ git add A.txt\n$ git status # A.txt is green\n```",
+      "options": [
+        "The file is synchronized with the remote origin server",
+        "The file is deleted from the working directory to clear conflicts",
+        "The file is permanently sealed into the repository history",
+        "The file is moved from the working directory to the staging area"
+      ],
+      "correctAnswer": "The file is moved from the working directory to the staging area",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 44,
+        "maxOptionWords": 12,
+        "optionLengthRatio": 1.33
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The answer correctly identifies that git add moves the file from the working directory to the staging area, which is the mechanism that changes its status color.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 3,
+      "difficulty": "Medium",
+      "stem": "A developer runs `git reset --soft HEAD~1` on a branch. Why does the working directory remain unchanged while the branch pointer moves back one commit?",
+      "options": [
+        "The command creates a new synthetic commit to preserve the original history",
+        "The command reverts file contents to match the previous commit's state",
+        "The command deletes the previous commit object from the repository database",
+        "The command only updates the branch pointer, leaving index and working tree intact"
+      ],
+      "correctAnswer": "The command only updates the branch pointer, leaving index and working tree intact",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 25,
+        "maxOptionWords": 13,
+        "optionLengthRatio": 1.18
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 0,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "primaryDisposition": "UNGROUNDED_EVIDENCE_CLAIM",
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.95,
+        "failureReasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed answer explains that the command only updates the branch pointer, leaving the index and working tree unchanged, which directly addresses why the working directory remains unchanged.",
+          "mismatchDetails": null
+        }
+      }
+    }
+  ],
+  "infrastructureEvents": {
+    "providerErrors": [],
+    "inconclusiveAttempts": 0,
+    "failoverOccurred": false
+  }
+}

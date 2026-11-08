@@ -1,0 +1,137 @@
+{
+  "benchmarkPhase": "PHASE_2_MULTI_LECTURE_EXPANSION",
+  "datasetId": "MULTI_001",
+  "subject": "Computer Science and Engineering",
+  "topic": "Computer Organization and Architecture - Unit IV (Memory/Paging)",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "gitCommit": "4a526909887818a118d25cd2bee8f7cff6d01f2b",
+  "timestamp": "2026-10-29T13:17:53.901Z",
+  "assets": {
+    "audio": {
+      "filename": "audio.mp3",
+      "sha256": "446933531a934aa288dfda192e5dd2629b9221844884fd6a1aaf625d7d82f76a",
+      "fileSizeBytes": 372549165,
+      "durationSeconds": 9313.7,
+      "transcriptLengthChars": 125629,
+      "compressionTimeSec": 60.3,
+      "transcriptionTimeSec": 30.3
+    },
+    "material": {
+      "filename": "material.pdf",
+      "sha256": "e7404de57c2421ba706d7768a29fdfd47ed5f5bddac888afac3a94ddf6e3f8d3",
+      "fileSizeBytes": 2784705,
+      "numPages": 50,
+      "extractedChars": 66131
+    }
+  },
+  "pipelineExecution": {
+    "sessionId": "live_multi001_eval_1793279781622",
+    "requestedCount": 3,
+    "deliveredCount": 2,
+    "generationDurationSec": 83.222,
+    "pipelineStatus": "COMPLETED_WITH_PARTIAL_FULFILLMENT"
+  },
+  "evaluationSummary": {
+    "usableCount": 2,
+    "usableYield": "2 / 2",
+    "usablePercentage": "100.0%",
+    "dimensionPassRates": {
+      "dimension1_Correctness": "2 / 2",
+      "dimension2_Grounding": "2 / 2",
+      "dimension3_CognitiveFit": "2 / 2",
+      "dimension4_StemAlignment": "2 / 2"
+    }
+  },
+  "questions": [
+    {
+      "questionIndex": 1,
+      "difficulty": "Medium",
+      "stem": "Which of the following correctly describes the role of main memory in program execution?",
+      "options": [
+        "Main memory stores program instructions so the CPU can fetch and execute them.",
+        "Main memory retains data permanently even when the computer is powered off.",
+        "Main memory only holds temporary data, not program code, during execution.",
+        "Secondary memory holds the instructions that the CPU executes directly."
+      ],
+      "correctAnswer": "Main memory stores program instructions so the CPU can fetch and execute them.",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 14,
+        "maxOptionWords": 13,
+        "optionLengthRatio": 1.3
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.95,
+        "failureReasons": [
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "Option A directly states that main memory stores program instructions so the CPU can fetch and execute them, which precisely answers the question asking for the correct description of main memory's role.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 2,
+      "difficulty": "Medium",
+      "stem": "When the CPU stores a value to address 0xFF00 that is mapped to a UART, how does the operation differ between memory‑mapped I/O and isolated I/O?",
+      "options": [
+        "Only the memory write line activates, leaving the I/O device unchanged",
+        "The CPU must issue a special I/O instruction to affect the device",
+        "A dedicated I/O write line activates, but the memory location is untouched",
+        "The same write line drives both memory and I/O, performing the device write"
+      ],
+      "correctAnswer": "The same write line drives both memory and I/O, performing the device write",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 26,
+        "maxOptionWords": 13,
+        "optionLengthRatio": 1.18
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option D explains that the same write line is used for both memory and the UART, directly addressing how the operation differs from isolated I/O which would require a separate mechanism.",
+          "mismatchDetails": null
+        }
+      }
+    }
+  ]
+}

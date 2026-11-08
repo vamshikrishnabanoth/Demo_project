@@ -1,0 +1,709 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-29T10:50:53.160Z",
+    "checkpointA": {
+      "commit": "7373ba6",
+      "description": "Historical Baseline (archived)"
+    },
+    "checkpointB": {
+      "commit": "6393677",
+      "description": "Immediate Pre-Workstream 1 (Style Contract v1.2, no stem-alignment gate)"
+    },
+    "checkpointC": {
+      "commit": "4a52690",
+      "description": "Current Implementation (Agent 3 Interrogative Mood & Stem-Answer Alignment Gate)"
+    },
+    "models": {
+      "groqModel": "qwen/qwen3.8-27b",
+      "geminiModel": "gemini-3.5-flash-lite"
+    }
+  },
+  "diagnosticEvaluations": [
+    {
+      "fixtureId": "FIX-01",
+      "name": "Master Theorem Case 3 Regularity Condition",
+      "defectiveCandidate": {
+        "stem": "Does the recurrence relation T(n) = 4T(n/2) + n^3 satisfy the regularity condition for Case 3 of the Master Theorem?",
+        "key": "The regularity condition requires a*f(n/b) <= c*f(n) for some constant c < 1 and all sufficiently large n.",
+        "checkpointB": {
+          "status": "PASS",
+          "verdict": "PASS",
+          "failureReasons": [],
+          "score": 0.95
+        },
+        "checkpointC": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "STEM_ANSWER_MISALIGNMENT: The keyed option does not directly answer the yes/no question posed in the stem.",
+            "STEM_ANSWER_MISALIGNMENT"
+          ],
+          "score": 0,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "POLAR_YES_NO",
+            "isDirectlyResponsive": false,
+            "interrogativeMatch": false,
+            "responsivenessAnalysis": "The stem asks a yes/no question about whether the recurrence satisfies the regularity condition. The keyed option merely restates the condition's definition and does not provide a yes or no answer, thus failing to directly resolve the query.",
+            "mismatchDetails": "Keyed option is a definition, not a direct affirmative/negative response."
+          }
+        }
+      },
+      "cleanCandidate": {
+        "stem": "Does the recurrence relation T(n) = 4T(n/2) + n^3 satisfy the regularity condition for Case 3 of the Master Theorem?",
+        "key": "Yes, because 4*(n/2)^3 = 0.5*n^3 <= c*n^3 holds for c = 0.5 < 1.",
+        "checkpointB": {
+          "status": "PASS",
+          "verdict": "PASS",
+          "failureReasons": [],
+          "score": 0.95
+        },
+        "checkpointC": {
+          "status": "PASS",
+          "verdict": "PASS",
+          "failureReasons": [],
+          "score": 0.97,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "POLAR_YES_NO",
+            "isDirectlyResponsive": true,
+            "interrogativeMatch": true,
+            "responsivenessAnalysis": "The keyed option (A) directly answers the yes/no question by stating \"Yes\" and providing the correct regularity‑condition calculation, matching the polar interrogative mood.",
+            "mismatchDetails": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "FIX-02",
+      "name": "Process vs Thread Context Switching & TLB Dynamics",
+      "defectiveCandidate": {
+        "stem": "Why are thread context switches significantly faster than process context switches in modern operating systems?",
+        "key": "Processes and threads are fundamental operating system abstraction units.",
+        "checkpointB": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "KEYED_OPTION_INCORRECT",
+            "NO_VALID_CORRECT_OPTION_PRESENT",
+            "AMBIGUOUS_DISTRACTOR"
+          ],
+          "score": 0
+        },
+        "checkpointC": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "KEYED_ANSWER_INCORRECT",
+            "STEM_ANSWER_MISALIGNMENT",
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "EXPLANATORY_WHY",
+            "isDirectlyResponsive": false,
+            "interrogativeMatch": false,
+            "responsivenessAnalysis": "The keyed option merely states that processes and threads are fundamental abstractions, which does not explain the speed difference between thread and process context switches.",
+            "mismatchDetails": "Keyed option fails to address the 'why' aspect of the question."
+          }
+        }
+      },
+      "cleanCandidate": {
+        "stem": "Why are thread context switches significantly faster than process context switches in modern operating systems?",
+        "key": "Shared address spaces avoid expensive translation lookaside buffer flushes.",
+        "checkpointB": {
+          "status": "PASS",
+          "verdict": "PASS",
+          "failureReasons": [],
+          "score": 0.95
+        },
+        "checkpointC": {
+          "status": "PASS",
+          "verdict": "PASS",
+          "failureReasons": [],
+          "score": 0.95,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "EXPLANATORY_WHY",
+            "isDirectlyResponsive": true,
+            "interrogativeMatch": true,
+            "responsivenessAnalysis": "The keyed option explains that shared address spaces avoid costly TLB flushes, directly answering why thread switches are faster.",
+            "mismatchDetails": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "FIX-03",
+      "name": "Git Version Control Core Lifecycle & Fast-Forward Merge",
+      "defectiveCandidate": {
+        "stem": "Which scenario enables Git to perform a fast-forward merge between two branches?",
+        "key": "Git creates a synthetic merge commit to resolve divergent branch histories.",
+        "checkpointB": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "KEYED_OPTION_INCORRECT",
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0
+        },
+        "checkpointC": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "Keyed answer is factually incorrect and does not answer the question",
+            "No option correctly describes the condition for a fast‑forward merge",
+            "Cognitive demand does not match intended ANALYZE operation",
+            "STEM_ANSWER_MISALIGNMENT",
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "IDENTIFICATION_WHICH",
+            "isDirectlyResponsive": false,
+            "interrogativeMatch": false,
+            "responsivenessAnalysis": "The keyed option describes creation of a synthetic merge commit, which is unrelated to the scenario that enables a fast‑forward merge. It fails to identify the required condition (linear ancestry).",
+            "mismatchDetails": "Keyed answer does not directly answer the 'which scenario' query and does not match the interrogative mood."
+          }
+        }
+      },
+      "cleanCandidate": {
+        "stem": "Which scenario enables Git to perform a fast-forward merge between two branches?",
+        "key": "The target branch head is directly reachable from the source branch without divergent commits.",
+        "checkpointB": {
+          "status": "PASS",
+          "verdict": "PASS",
+          "failureReasons": [],
+          "score": 0.95
+        },
+        "checkpointC": {
+          "status": "PASS",
+          "verdict": "PASS",
+          "failureReasons": [],
+          "score": 0.95,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "IDENTIFICATION_WHICH",
+            "isDirectlyResponsive": true,
+            "interrogativeMatch": true,
+            "responsivenessAnalysis": "The stem asks for the specific scenario enabling a fast-forward merge. The keyed option correctly identifies the condition where the target branch head is an ancestor of the source branch head (directly reachable without divergence), which is the precise definition of a fast-merge scenario.",
+            "mismatchDetails": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "FIX-04",
+      "name": "Recursive GCD Termination & Euclidean Mechanics",
+      "defectiveCandidate": {
+        "stem": "When implementing a downward search loop to compute the greatest common divisor of two positive integers, why is checking candidate divisors down to 1 guaranteed to find a solution?",
+        "key": "Represents the core domain structure and operational rules for GCD established in the lecture.",
+        "checkpointB": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "AMBIGUOUS_DISTRACTOR",
+            "UNGROUNDED_EVIDENCE_CLAIM",
+            "TIER_COGNITIVE_MISMATCH",
+            "FOREIGN_DOMAIN_CONTAMINATION"
+          ],
+          "score": 0.1
+        },
+        "checkpointC": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "Keyed answer does not correctly answer the “why” question; it is vague and not supported by evidence",
+            "Stem‑answer misalignment: keyed option is not directly responsive to the explanatory query",
+            "Cognitive difficulty mismatch: question requires recall/explanation, not Hard‑level evaluation",
+            "STEM_ANSWER_MISALIGNMENT",
+            "UNGROUNDED_EVIDENCE_CLAIM"
+          ],
+          "score": 0,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "EXPLANATORY_WHY",
+            "isDirectlyResponsive": false,
+            "interrogativeMatch": false,
+            "responsivenessAnalysis": "The keyed option merely references \"core domain structure\" without explaining that 1 is a universal divisor, so it fails to directly answer the why‑question.",
+            "mismatchDetails": "Keyed answer is vague and does not provide the required explanation."
+          }
+        }
+      },
+      "cleanCandidate": {
+        "stem": "When implementing a downward search loop to compute the greatest common divisor of two positive integers, why is checking candidate divisors down to 1 guaranteed to find a solution?",
+        "key": "One is a universal common divisor of all positive integers, guaranteeing loop termination.",
+        "checkpointB": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0
+        },
+        "checkpointC": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "EXPLANATORY_WHY",
+            "isDirectlyResponsive": true,
+            "interrogativeMatch": true,
+            "responsivenessAnalysis": "The keyed option explains that 1 is a universal common divisor, directly answering why checking down to 1 guarantees a solution.",
+            "mismatchDetails": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "FIX-05",
+      "name": "Computer Organization Paging & Address Translation",
+      "defectiveCandidate": {
+        "stem": "Which component of a virtual address remains completely unmodified during address translation into a physical address?",
+        "key": "The page table base register controls memory bus multiplexing.",
+        "checkpointB": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "KEYED_OPTION_INCORRECT",
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0
+        },
+        "checkpointC": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "Keyed answer is incorrect and does not answer the question.",
+            "No option correctly identifies the page offset as the unchanged component.",
+            "STEM_ANSWER_MISALIGNMENT",
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "IDENTIFICATION_WHICH",
+            "isDirectlyResponsive": false,
+            "interrogativeMatch": false,
+            "responsivenessAnalysis": "The keyed option refers to the page table base register, which is unrelated to the virtual address bits that remain unchanged during translation. The correct answer should be the page offset.",
+            "mismatchDetails": "Keyed option does not identify any component of the virtual address, let alone the unchanged part."
+          }
+        }
+      },
+      "cleanCandidate": {
+        "stem": "Which component of a virtual address remains completely unmodified during address translation into a physical address?",
+        "key": "The page offset within the page frame.",
+        "checkpointB": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0.95
+        },
+        "checkpointC": {
+          "status": "FAIL",
+          "verdict": "FAIL",
+          "failureReasons": [
+            "TIER_COGNITIVE_MISMATCH"
+          ],
+          "score": 0.85,
+          "stemAnswerAlignment": {
+            "interrogativeMood": "IDENTIFICATION_WHICH",
+            "isDirectlyResponsive": true,
+            "interrogativeMatch": true,
+            "responsivenessAnalysis": "The keyed option directly names the component of the virtual address that stays unchanged, satisfying the 'which component' query.",
+            "mismatchDetails": null
+          }
+        }
+      }
+    }
+  ],
+  "repairExperiments": [
+    {
+      "fixtureId": "FIX-01",
+      "name": "Master Theorem Case 3 Regularity Condition",
+      "checkpointB": {
+        "status": "FAIL",
+        "repaired": false,
+        "instruction": null,
+        "finalStem": "Does the recurrence relation T(n) = 4T(n/2) + n^3 satisfy the regularity condition for Case 3 of the Master Theorem?",
+        "finalKey": "The regularity condition requires a*f(n/b) <= c*f(n) for some constant c < 1 and all sufficiently large n."
+      },
+      "checkpointC": {
+        "status": "PASS",
+        "repaired": true,
+        "instruction": null,
+        "finalStem": "For the recurrence T(n)=4T(n/2)+n^3, does the regularity condition of Master Theorem case 3 hold?",
+        "finalKey": "Yes, the regularity condition holds since 4·(n/2)^3 = 0.5·n^3 ≤ 0.5·n^3",
+        "stemAnswerAlignment": {
+          "interrogativeMood": "POLAR_YES_NO",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks a yes/no question about whether the regularity condition holds. Option C answers \"Yes\" and provides the supporting calculation, directly resolving the query.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "fixtureId": "FIX-02",
+      "name": "Process vs Thread Context Switching & TLB Dynamics",
+      "checkpointB": {
+        "status": "FAIL",
+        "repaired": false,
+        "instruction": null,
+        "finalStem": "Why are thread context switches significantly faster than process context switches in modern operating systems?",
+        "finalKey": "Processes and threads are fundamental operating system abstraction units."
+      },
+      "checkpointC": {
+        "status": "PASS",
+        "repaired": true,
+        "instruction": null,
+        "finalStem": "In a multi-threaded application, why is a context switch between two threads significantly faster than a switch between two processes?",
+        "finalKey": "Threads share the same address space and page tables",
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option explains that threads share the same address space and page tables, eliminating TLB flushes and thus making thread switches faster than process switches.",
+          "mismatchDetails": null
+        }
+      }
+    }
+  ],
+  "historicalComparisons": [
+    {
+      "fixtureId": "FIX-02",
+      "historicalTestId": "ARCH_04",
+      "name": "Process vs Thread Memory Isolation & TLB Dynamics",
+      "questions": [
+        {
+          "targetId": "T01",
+          "difficulty": "Easy",
+          "stem": "In virtual memory systems, what is the primary role of Identify the specific resources that constitute a process's isolated execution environment. during instruction execution?",
+          "correctAnswer": "Translates virtual page numbers into physical memory frames using page table entries",
+          "audit": {
+            "stemWords": 24,
+            "maxOptWords": 13,
+            "lengthRatio": 1.18,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T02",
+          "difficulty": "Medium",
+          "stem": "When analyzing Distinguish between resources shared among sibling threads and resources maintained privately by each thread. in Thread Sharing, how does the mechanism execute its operational sequence?",
+          "correctAnswer": "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+          "audit": {
+            "stemWords": 27,
+            "maxOptWords": 13,
+            "lengthRatio": 1.63,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T03",
+          "difficulty": "Hard",
+          "stem": "When the operating system performs a context switch between two threads within the same process, the transition is significantly faster than a switch between two distinct processes. Which causal mechanism best explains why the shared memory architecture of threads eliminates the specific performance penalty associated with process switches?",
+          "correctAnswer": "Threads share the same physical memory pages, which allows the hardware to skip the page table walk entirely during the context transition.",
+          "audit": {
+            "stemWords": 48,
+            "maxOptWords": 23,
+            "lengthRatio": 1.05,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "FAILED",
+            "groundingReason": null
+          }
+        }
+      ]
+    },
+    {
+      "fixtureId": "FIX-04",
+      "historicalTestId": "ARCH_05",
+      "name": "KMIT Recursion, GCD/LCM & Euclidean Algorithm (Deepa Madam)",
+      "questions": [
+        {
+          "targetId": "T01",
+          "difficulty": "Easy",
+          "stem": "In the study of GCD (Greatest Common Divisor) Algorithms, what is the fundamental role or definition of Identify the base case and return value for a recursive GCD implementation based on the modulo operation.?",
+          "correctAnswer": "Represents the core domain structure and operational rules for Identify the base case and return value for a recursive GCD implementation based on the modulo operation. established in the lecture",
+          "audit": {
+            "stemWords": 34,
+            "maxOptWords": 30,
+            "lengthRatio": 3.33,
+            "passesStyle": false,
+            "styleIssues": [
+              "OPTION_EXCESSIVE_LENGTH"
+            ],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T02",
+          "difficulty": "Medium",
+          "stem": "In a recursive string reversal function where the base case returns the single character when length is 1, how does the operational mechanism of constructing the final string differ between the recursive call phase (going down) and the return phase (coming back)?",
+          "correctAnswer": "The string is fully constructed during the recursive call phase by appending the first character to the result before the base case is reached.",
+          "audit": {
+            "stemWords": 42,
+            "maxOptWords": 26,
+            "lengthRatio": 1.3,
+            "passesStyle": false,
+            "styleIssues": [
+              "OPTION_EXCESSIVE_LENGTH"
+            ],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T03",
+          "difficulty": "Medium",
+          "stem": "In the recursive palindrome checker described, given an initial string of length 1, how does the operational execution path and return value differ between the base case condition and the recursive comparison condition?",
+          "correctAnswer": "The base case returns the string length as an integer, while the recursive case returns a boolean indicating character equality.",
+          "audit": {
+            "stemWords": 33,
+            "maxOptWords": 22,
+            "lengthRatio": 1.38,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T04",
+          "difficulty": "Medium",
+          "stem": "When analyzing Identify the algorithmic approach for GCD mentioned as an efficient alternative to simple iteration. in GCD (Greatest Common Divisor) Algorithms, how does the mechanism execute its operational sequence?",
+          "correctAnswer": "Validates taught preconditions and processes state updates in accordance with the lecture specification",
+          "audit": {
+            "stemWords": 30,
+            "maxOptWords": 13,
+            "lengthRatio": 1.63,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "FAILED",
+            "groundingReason": null
+          }
+        },
+        {
+          "targetId": "T05",
+          "difficulty": "Hard",
+          "stem": "When deleting a node with two children from a Binary Search Tree, what diagnostic sequence ensures BST invariants remain valid?",
+          "correctAnswer": "Finds the inorder successor (smallest in right subtree), replaces the target node's key with the successor's key, and deletes the successor node",
+          "audit": {
+            "stemWords": 20,
+            "maxOptWords": 22,
+            "lengthRatio": 1.69,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "FAILED",
+            "groundingReason": null
+          }
+        }
+      ]
+    }
+  ],
+  "pipelineGenerationEvaluations": [
+    {
+      "fixtureId": "FIX-02",
+      "name": "Process vs Thread Context Switching & TLB Dynamics",
+      "questionsDelivered": 3,
+      "candidates": [
+        {
+          "stem": "Which statement correctly defines the isolation boundaries of a process?",
+          "options": [
+            "A thread and a process have identical isolation boundaries.",
+            "A process shares its virtual address space with other processes.",
+            "A thread has its own private file descriptor table.",
+            "A process has a private virtual address space, file descriptor table, and page tables."
+          ],
+          "correctAnswer": "A process has a private virtual address space, file descriptor table, and page tables.",
+          "audit": {
+            "stemWords": 10,
+            "maxOptWords": 14,
+            "lengthRatio": 1.56,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "checkpointB": {
+            "status": "PASS",
+            "verdict": "PASS",
+            "failureReasons": []
+          },
+          "checkpointC": {
+            "status": "PASS",
+            "verdict": "PASS",
+            "failureReasons": [],
+            "stemAnswerAlignment": {
+              "interrogativeMood": "IDENTIFICATION_WHICH",
+              "isDirectlyResponsive": true,
+              "interrogativeMatch": true,
+              "responsivenessAnalysis": "Option D explicitly states that a process has a private virtual address space, file descriptor table, and page tables, directly answering the request to define the isolation boundaries of a process.",
+              "mismatchDetails": null
+            }
+          }
+        },
+        {
+          "stem": "Within a multi-threaded process, which resource is maintained privately by each thread rather than shared with sibling threads?",
+          "options": [
+            "The heap memory segment",
+            "The thread stack and registers",
+            "The global variable table",
+            "The open file descriptors"
+          ],
+          "correctAnswer": "The thread stack and registers",
+          "audit": {
+            "stemWords": 18,
+            "maxOptWords": 5,
+            "lengthRatio": 1.25,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "checkpointB": {
+            "status": "FAIL",
+            "verdict": "FAIL",
+            "failureReasons": [
+              "TIER_COGNITIVE_MISMATCH"
+            ]
+          },
+          "checkpointC": {
+            "status": "PASS",
+            "verdict": "PASS",
+            "failureReasons": [],
+            "stemAnswerAlignment": {
+              "interrogativeMood": "IDENTIFICATION_WHICH",
+              "isDirectlyResponsive": true,
+              "interrogativeMatch": true,
+              "responsivenessAnalysis": "The keyed option (B) explicitly names the thread stack and registers, which the stem asks for: the resource that each thread keeps private. This directly answers the identification query.",
+              "mismatchDetails": null
+            }
+          }
+        },
+        {
+          "stem": "If a scheduler switches from one thread to another within the same process, why is the context switch typically an order of magnitude faster than switching between two processes?",
+          "options": [
+            "Threads share the address space, so no TLB flush is required during the switch.",
+            "Process switches are faster because they reuse the same page tables across processes.",
+            "Thread switches are quicker because they do not involve any kernel involvement.",
+            "Threads avoid saving register state, which eliminates most of the switch overhead."
+          ],
+          "correctAnswer": "Threads share the address space, so no TLB flush is required during the switch.",
+          "audit": {
+            "stemWords": 29,
+            "maxOptWords": 14,
+            "lengthRatio": 1.17,
+            "passesStyle": true,
+            "styleIssues": [],
+            "groundingStatus": "PASSED",
+            "groundingReason": null
+          },
+          "checkpointB": {
+            "status": "FAIL",
+            "verdict": "FAIL",
+            "failureReasons": [
+              "SEMANTIC_EVALUATION_UNAVAILABLE"
+            ]
+          },
+          "checkpointC": {
+            "status": "FAIL",
+            "verdict": "FAIL",
+            "failureReasons": [
+              "SEMANTIC_EVALUATION_UNAVAILABLE"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "fixtureId": "FIX-04",
+      "name": "Recursive GCD Termination & Euclidean Mechanics",
+      "questionsDelivered": 0,
+      "candidates": []
+    }
+  ],
+  "summaryMetrics": {
+    "alignmentPrecision": {
+      "checkpointB": {
+        "numerator": 0,
+        "denominator": 0,
+        "value": "N/A (0 alignment rejections emitted)"
+      },
+      "checkpointC": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": "1.00"
+      }
+    },
+    "alignmentRecall": {
+      "checkpointB": {
+        "numerator": 4,
+        "denominator": 5,
+        "value": "0.80"
+      },
+      "checkpointC": {
+        "numerator": 5,
+        "denominator": 5,
+        "value": "1.00"
+      }
+    },
+    "falseRejectionRate": {
+      "checkpointB": {
+        "numerator": 2,
+        "denominator": 5,
+        "value": "0.40"
+      },
+      "checkpointC": {
+        "numerator": 2,
+        "denominator": 5,
+        "value": "0.40"
+      }
+    },
+    "repairSuccessRate": {
+      "checkpointB": {
+        "numerator": 0,
+        "denominator": 2,
+        "value": "0.00"
+      },
+      "checkpointC": {
+        "numerator": 2,
+        "denominator": 2,
+        "value": "1.00"
+      }
+    },
+    "answerKeyDefensibilityOnFreshPipeline": {
+      "checkpointB": {
+        "numerator": 1,
+        "denominator": 3,
+        "value": "0.33"
+      },
+      "checkpointC": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": "0.67"
+      }
+    },
+    "evidenceGroundingOnFreshPipeline": {
+      "checkpointB": {
+        "numerator": 1,
+        "denominator": 3,
+        "value": "0.33"
+      },
+      "checkpointC": {
+        "numerator": 2,
+        "denominator": 3,
+        "value": "0.67"
+      }
+    },
+    "totalDurationSeconds": "4626.1"
+  }
+}

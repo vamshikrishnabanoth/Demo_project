@@ -182,6 +182,7 @@ export default function CreateQuizTopic() {
 
     // 3. Question Count (Integer, default 10, range 1-30)
     const [questionCount, setQuestionCount] = useState(10);
+    const [capacityPolicy, setCapacityPolicy] = useState('ALLOW_SCOPE_SUPPLEMENTARY'); // 'ALLOW_SCOPE_SUPPLEMENTARY' | 'STRICT_SOURCE_ONLY'
 
     // Dynamic Lecture Depth & Curriculum Overview
     const [lectureDepth, setLectureDepth] = useState(null);
@@ -1335,6 +1336,7 @@ export default function CreateQuizTopic() {
         formData.append('question_count', questionCount);
         formData.append('difficulty', difficulty);
         formData.append('deficitPolicy', 'FILL_WITH_MEDIUM');
+        formData.append('capacityPolicy', capacityPolicy);
 
         // 3. Text prompts: voice transcripts, text inputs, and fallback text for restored documents without live File
         const textInputs = inputs.filter(inp => {
@@ -1478,26 +1480,22 @@ export default function CreateQuizTopic() {
                                 type="button"
                                 onClick={() => setShowTeachingScoreModal(true)}
                                 className="bg-[#fff8f3] hover:bg-orange-100/80 border-2 border-[#f5d0b5] hover:border-orange-300 rounded-2xl px-4 py-2.5 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
-                                title="Click to view pedagogical quality score, PDI & recommended questions breakdown"
+                                title="Click to view curricular evidence profile & recommended questions breakdown"
                             >
                                 <div className="w-9 h-9 rounded-xl bg-orange-500/15 border border-orange-300/60 flex items-center justify-center text-[#ea580c] shrink-0 group-hover:scale-105 transition-transform">
                                     <Award size={20} />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">{isTopicOnly ? 'Curriculum Scope' : hasAudio ? 'Lecture Quality Score' : 'Pedagogical Quality / PDI'}</p>
+                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">{isTopicOnly ? 'Curriculum Scope' : 'Curricular Evidence Profile'}</p>
                                         <span className="text-[9px] font-bold text-[#c2410c] bg-orange-100 px-1.5 py-0.2 rounded-full group-hover:bg-[#ea580c] group-hover:text-white transition-colors flex items-center gap-1">
                                             <span>Instructional Digest</span>
                                             <Info size={10} className="shrink-0" />
                                         </span>
                                     </div>
                                     <p className="text-sm font-black text-[#c2410c] flex items-center gap-1.5">
-                                        <span>{lectureDepth.rating || 'Comprehensive'} ({lectureDepth.score}/100)</span>
-                                        {typeof pdi === 'number' && (
-                                            <span className="text-[10px] font-mono font-black text-white bg-[#ea580c] px-1.5 py-0.5 rounded-md shadow-2xs">
-                                                PDI: {pdi.toFixed(2)}
-                                            </span>
-                                        )}
+                                        <span>{lectureDepth.rating || 'Comprehensive'} </span>
+                                        <span className="text-[10px] font-bold text-orange-800 bg-orange-100 px-2 py-0.5 rounded-md">{isTopicOnly ? 'Topic Curriculum' : hasAudio && hasDocFiles ? 'Audio + Document' : hasAudio ? 'Audio only' : 'Document only'}</span>
                                     </p>
                                 </div>
                                 <div className="w-16 bg-orange-200 h-2 rounded-full overflow-hidden shrink-0 hidden sm:block">
@@ -2319,6 +2317,44 @@ export default function CreateQuizTopic() {
                                             className="w-full accent-[var(--bg-accent)] bg-slate-100 h-2 rounded-lg cursor-pointer disabled:opacity-50"
                                         />
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Capacity Policy Control */}
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-[var(--bg-accent)]"></span>
+                                    <h3 className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">Capacity Policy</h3>
+                                </div>
+                                <div className="bg-white border-2 border-[var(--border-color)] rounded-2xl p-4 space-y-3 shadow-sm">
+                                    <label className="flex items-start gap-3 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name="capacityPolicy"
+                                            value="ALLOW_SCOPE_SUPPLEMENTARY"
+                                            checked={capacityPolicy === 'ALLOW_SCOPE_SUPPLEMENTARY'}
+                                            onChange={() => setCapacityPolicy('ALLOW_SCOPE_SUPPLEMENTARY')}
+                                            className="mt-1 text-[var(--bg-accent)] accent-[var(--bg-accent)]"
+                                        />
+                                        <div className="text-xs">
+                                            <div className="font-bold text-slate-800">Standard Scope-Supplementary (Recommended)</div>
+                                            <div className="text-slate-500 text-[11px] leading-tight mt-0.5">Prioritizes grounded lecture/material; supplements capacity deficits with in-scope curriculum questions.</div>
+                                        </div>
+                                    </label>
+                                    <label className="flex items-start gap-3 cursor-pointer pt-2 border-t border-slate-100">
+                                        <input
+                                            type="radio"
+                                            name="capacityPolicy"
+                                            value="STRICT_SOURCE_ONLY"
+                                            checked={capacityPolicy === 'STRICT_SOURCE_ONLY'}
+                                            onChange={() => setCapacityPolicy('STRICT_SOURCE_ONLY')}
+                                            className="mt-1 text-[var(--bg-accent)] accent-[var(--bg-accent)]"
+                                        />
+                                        <div className="text-xs">
+                                            <div className="font-bold text-slate-800">Strict Source-Only</div>
+                                            <div className="text-slate-500 text-[11px] leading-tight mt-0.5">Generates questions strictly from verifiable source evidence. Deficits are withheld.</div>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
 

@@ -29,10 +29,10 @@ function tokenize(text) {
  * Deterministically selects the relevant evidence span for a specific target.
  * @param {Object} target - AssessmentTarget
  * @param {Object|string} evidencePackageOrContent - EvidencePackage object or raw string
- * @param {number} maxContextChars - Maximum character budget for context window (default: 2000, validated by A/B experiment)
+ * @param {number} maxContextChars - Maximum character budget for context window (default: 4000, validated for curricular narrative coverage)
  * @returns {string} Formatted evidence context
  */
-function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', maxContextChars = 2000) {
+function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', maxContextChars = 4000) {
   const isPackage = typeof evidencePackageOrContent === 'object' && evidencePackageOrContent !== null;
   const evidencePackage = isPackage ? evidencePackageOrContent : null;
   const effectiveMaxChars = (evidencePackage && typeof evidencePackage.maxContextCharsOverride === 'number')
@@ -41,11 +41,65 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
   const rawContent = evidencePackage ? (evidencePackage.unifiedRawContent || '') : String(evidencePackageOrContent || '');
 
   const supporting = (target.supportingEvidence || target.evidenceSpan || '').trim();
+  const activeStore = evidencePackage?.multimodalStore || evidencePackage?.hierarchicalStore;
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Primary Path: Multimodal Hybrid Retrieval (Dense + BM25 + Content-Type Boost + Reranker)
+  // Path 0: Exact Chunk-ID Lookup (Highest Precedence)
   // ──────────────────────────────────────────────────────────────────────────
-  const activeStore = evidencePackage?.multimodalStore || evidencePackage?.hierarchicalStore;
+  const targetChunkIds = Array.isArray(target.sourceChunks) && target.sourceChunks.length > 0
+    ? target.sourceChunks
+    : (Array.isArray(target.supportingChunks) && target.supportingChunks.length > 0 ? target.supportingChunks : []);
+
+  if (activeStore && targetChunkIds.length > 0) {
+    const validChunks = [];
+    const missingChunkIds = [];
+
+    for (const cid of targetChunkIds) {
+      const chunk = activeStore.childMap?.[cid] ||
+        activeStore.children?.find(c => c.evidenceId === cid || c.childId === cid) ||
+        activeStore.parentMap?.[cid];
+      if (chunk && typeof chunk.text === 'string' && chunk.text.trim().length > 0) {
+        validChunks.push(chunk);
+      } else {
+        missingChunkIds.push(cid);
+      }
+    }
+
+    if (missingChunkIds.length > 0) {
+      console.warn(`⚠️ [EvidenceContextSelector] Target ${target.targetId || target.concept} references invalid/missing chunk ID(s): ${missingChunkIds.join(', ')}`);
+    }
+
+    if (validChunks.length > 0) {
+      const parts = [];
+      if (supporting) {
+        parts.push(`[DIRECT TARGET EVIDENCE]\n${supporting}`);
+      }
+
+      // Format exact retrieved chunks with identity, source type, timing, offsets, and authoritative role tags
+      const chunkTexts = validChunks.map(c => {
+        const eid = c.evidenceId || c.childId || c.id || 'CHUNK';
+        const sType = (c.sourceType || 'TRANSCRIPT').toUpperCase();
+        const roleTag = (sType === 'SLIDE' || sType === 'DOCUMENT' || sType === 'CODE')
+          ? ' [TECHNICAL SPECIFICATION & ARTIFACT REFERENCE]'
+          : ' [SPOKEN LECTURE DEMONSTRATION & TEACHING EMPHASIS]';
+        const timing = c.timeSpan?.formatted ? ` | Time: ${c.timeSpan.formatted}` : '';
+        const offsetInfo = (typeof c.start === 'number' && typeof c.end === 'number') ? ` | Offsets: [${c.start}..${c.end}]` : '';
+        return `=== [EXACT EVIDENCE CHUNK: ${eid} (${sType})${roleTag}${timing}${offsetInfo}] ===\n${c.text.trim()}`;
+      });
+
+      let fullExactContext = chunkTexts.join('\n\n');
+      if (fullExactContext.length > effectiveMaxChars) {
+        fullExactContext = fullExactContext.substring(0, effectiveMaxChars);
+      }
+
+      parts.push(`[VERIFIED TEACHING UNIT EVIDENCE (EXACT CHUNK LOOKUP)]\n${fullExactContext}`);
+      return parts.join('\n\n');
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Fallback Retrieval Paths (Only when exact sourceChunks are unavailable)
+  // ──────────────────────────────────────────────────────────────────────────
   if (activeStore && Array.isArray(activeStore.children) && activeStore.children.length > 0) {
     try {
       const candidates = HybridRetriever.retrieveForTarget(activeStore, target, { topK: 4 });
@@ -60,7 +114,7 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
           if (fullContext.length > effectiveMaxChars) {
             fullContext = fullContext.substring(0, effectiveMaxChars);
           }
-          parts.push('[RELEVANT MULTIMODAL CONTEXT (HYBRID BM25 + DENSE)]\n' + fullContext);
+          parts.push('[RELEVANT MULTIMODAL CONTEXT (HYBRID BM25 + DENSE FALLBACK)]\n' + fullContext);
           return parts.join('\n\n');
         }
       }
@@ -69,30 +123,22 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
     }
   }
 
-  // ──────────────────────────────────────────────────────────────────────────
   // Secondary Path: Dual-Level Hierarchical RAG + Cross-Material Alignment
-  // ──────────────────────────────────────────────────────────────────────────
   if (evidencePackage && evidencePackage.hierarchicalStore && Array.isArray(evidencePackage.hierarchicalStore.children)) {
     try {
       const retrieved = HierarchicalRetriever.retrieveForTarget(evidencePackage.hierarchicalStore, target, 2);
-
-      // Verify hierarchical retrieval found a reliable match
       if (retrieved && retrieved.retrievedContent && retrieved.retrievedContent.length > 50 && retrieved.relevanceScore > 0) {
         let extraCrossModalContent = '';
-
-        // Cross-Material Alignment Expansion (Step 2)
         if (evidencePackage.alignmentGraph && Object.keys(evidencePackage.alignmentGraph).length > 0) {
           const expandedEids = CrossMaterialAligner.expandEvidenceWithAlignment(
             evidencePackage.hierarchicalStore,
             retrieved.matchedChildIds,
             evidencePackage.alignmentGraph
           );
-
           for (const eid of expandedEids) {
             if (!retrieved.matchedChildIds.includes(eid)) {
               const childObj = evidencePackage.hierarchicalStore.childMap?.[eid];
               const parentObj = childObj?.parentId ? evidencePackage.hierarchicalStore.parentMap?.[childObj.parentId] : null;
-
               if (parentObj) {
                 const pSource = (parentObj.sourceType || '').toUpperCase();
                 const roleTag = (pSource === 'SLIDE' || pSource === 'DOCUMENT' || pSource === 'CODE')
@@ -109,7 +155,6 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
             }
           }
         }
-
         const parts = [];
         if (supporting) {
           parts.push('[DIRECT TARGET EVIDENCE]\n' + supporting);
@@ -118,7 +163,7 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
         if (fullContext.length > effectiveMaxChars) {
           fullContext = fullContext.substring(0, effectiveMaxChars);
         }
-        parts.push('[RELEVANT SESSION CONTEXT (HIERARCHICAL & ALIGNED)]\n' + fullContext);
+        parts.push('[RELEVANT SESSION CONTEXT (HIERARCHICAL & ALIGNED FALLBACK)]\n' + fullContext);
         return parts.join('\n\n');
       }
     } catch (hierErr) {
@@ -126,21 +171,18 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
     }
   }
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // Fallback Path: Sliding-Window Keyword Matcher (Retained for 100% Resilience)
-  // ──────────────────────────────────────────────────────────────────────────
+  // Fallback Path: Sliding-Window Keyword Matcher
   const content = rawContent || '';
   if (content.length === 0) {
     return target.supportingEvidence || target.concept || 'No content provided.';
   }
 
-  // If content is already shorter than window, return it entirely
   if (content.length <= effectiveMaxChars) {
     const parts = [];
     if (supporting) {
       parts.push('[DIRECT TARGET EVIDENCE]\n' + supporting);
     }
-    parts.push('[RELEVANT SESSION CONTEXT]\n' + content.trim());
+    parts.push('[RELEVANT SESSION CONTEXT (DIRECT CONTENT)]\n' + content.trim());
     return parts.join('\n\n');
   }
 
@@ -149,8 +191,6 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
   const instruction = (target.instruction || '').trim();
 
   let matchIndex = -1;
-
-  // 1. Direct Substring Search for Supporting Evidence
   if (supporting.length > 8) {
     matchIndex = content.indexOf(supporting);
     if (matchIndex === -1) {
@@ -159,7 +199,6 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
     }
   }
 
-  // 2. Semantic Block Scoring across the entire transcript
   if (matchIndex === -1) {
     const queryTokens = new Set([
       ...tokenize(concept),
@@ -167,13 +206,11 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
       ...tokenize(supporting),
       ...tokenize(instruction)
     ]);
-
     if (queryTokens.size > 0) {
       const blockSize = 600;
       const step = 300;
       let bestScore = -1;
       let bestPos = 0;
-
       for (let pos = 0; pos < content.length; pos += step) {
         const block = content.substring(pos, pos + blockSize).toLowerCase();
         let score = 0;
@@ -186,14 +223,13 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
           bestPos = pos;
         }
       }
-
       if (bestScore > 0) {
         matchIndex = bestPos;
       }
     }
   }
 
-  // 3. Extract surrounding window around matchIndex
+  // CRITICAL REQUIREMENT: Do NOT silently fall back to transcript character index 0!
   let windowText = '';
   if (matchIndex !== -1) {
     const halfWindow = Math.floor(effectiveMaxChars / 2);
@@ -202,21 +238,20 @@ function getTargetEvidenceContext(target = {}, evidencePackageOrContent = '', ma
     const adjustedStart = Math.max(0, end - effectiveMaxChars);
     windowText = content.substring(adjustedStart, end);
   } else {
-    windowText = content.substring(0, effectiveMaxChars);
+    // If no match found, do NOT return character 0 of the lecture introduction!
+    // Return supporting evidence directly and warn explicitly.
+    console.warn(`⚠️ [EvidenceContextSelector] No keyword or semantic match found for target "${concept}". Suppressing silent fallback to transcript index 0.`);
+    windowText = supporting || concept || 'Target evidence could not be localized within transcript.';
   }
 
   const parts = [];
   if (supporting) {
     parts.push('[DIRECT TARGET EVIDENCE]\n' + supporting);
   }
-  parts.push('[RELEVANT SESSION CONTEXT]\n' + windowText.trim());
-
+  parts.push('[RELEVANT SESSION CONTEXT (LOCALIZED WINDOW)]\n' + windowText.trim());
   return parts.join('\n\n');
 }
 
-/**
- * Format seconds into mm:ss
- */
 function formatTs(seconds) {
   if (typeof seconds !== 'number' || isNaN(seconds) || seconds < 0) return '00:00';
   const total = Math.floor(seconds);
@@ -254,35 +289,21 @@ function resolveTargetProvenance(target = {}, evidencePackage = null, evalResult
 
   // 1. Identify matched evidence children from the active store
   let matchedChildren = [];
-  try {
-    const candidates = HybridRetriever.retrieveForTarget(activeStore, target, { topK: 3 });
-    if (candidates && candidates.length > 0) {
-      matchedChildren = candidates.map(c => c.child).filter(Boolean);
-    }
-  } catch (_) {}
 
-  if (matchedChildren.length === 0) {
-    try {
-      const hierRetrieved = HierarchicalRetriever.retrieveForTarget(activeStore, target, 2);
-      if (hierRetrieved && Array.isArray(hierRetrieved.matchedChildIds)) {
-        matchedChildren = hierRetrieved.matchedChildIds
-          .map(cid => activeStore.childMap?.[cid])
-          .filter(Boolean);
-      }
-    } catch (_) {}
-  }
-
-  // Check if target specified explicit sourceChunks that are missing from active store
+  // Prioritize explicit verified sourceChunks on target to prevent provenance loss during reserve promotion
   const hasExplicitSourceChunks = Array.isArray(target.sourceChunks) && target.sourceChunks.length > 0;
   const invalidSourceChunks = hasExplicitSourceChunks
-    ? target.sourceChunks.filter(cid => !activeStore.childMap?.[cid])
+    ? target.sourceChunks.filter(cid => !activeStore.childMap?.[cid] && !activeStore.children?.some(c => c.evidenceId === cid || c.childId === cid))
     : [];
 
-  // Fallback to target's existing sourceChunks if valid
-  if (matchedChildren.length === 0 && hasExplicitSourceChunks) {
+  if (hasExplicitSourceChunks) {
     matchedChildren = target.sourceChunks
-      .map(cid => activeStore.childMap?.[cid])
+      .map(cid => activeStore.childMap?.[cid] || activeStore.children?.find(c => c.evidenceId === cid || c.childId === cid))
       .filter(Boolean);
+  }
+
+  // Only if no explicit source chunks are available or valid, fall back to retrieval
+  if (matchedChildren.length === 0) {
   }
 
   // If still no specific match, bind to the most representative child in store ONLY if no explicit invalid chunks were passed

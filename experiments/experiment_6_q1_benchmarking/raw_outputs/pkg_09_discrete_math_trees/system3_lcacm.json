@@ -1,0 +1,164 @@
+{
+  "system": "System 3: Frozen KMIT Kahoot LCA-CM",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Definition of Minimum Spanning Tree. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "MST definition"
+    },
+    {
+      "questionText": "When analyzing Statement of the Cut Property theorem in Cut Property, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Statement of the Cut Property theorem. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Cut Property"
+    },
+    {
+      "questionText": "When analyzing Reasoning behind the Cut Property via exchange argument in Kruskal's algorithm steps, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Executes postconditions prior to checking input boundary parameters"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Reasoning behind the Cut Property via exchange argument. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Kruskal's algorithm steps"
+    },
+    {
+      "questionText": "In a Binary Search Tree (BST), what fundamental ordering property must hold for every node X?",
+      "options": [
+        "The left child must have a smaller key than X, but arbitrary descendants in the left subtree may exceed X",
+        "Keys are ordered chronologically by insertion timestamp rather than numerical comparison",
+        "All keys in X's left subtree are strictly greater than X's key, and all keys in X's right subtree are strictly less than X's key",
+        "All keys in X's left subtree are strictly less than X's key, and all keys in X's right subtree are strictly greater than X's key"
+      ],
+      "correctAnswer": "All keys in X's left subtree are strictly less than X's key, and all keys in X's right subtree are strictly greater than X's key",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Definition of Minimum Spanning Tree (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Disjoint Set Union (DSU)"
+    },
+    {
+      "questionText": "In the study of Time complexity analysis, what is the fundamental role or definition of Statement of the Cut Property theorem (RECOGNIZE)?",
+      "options": [
+        "Acts as an auxiliary background queue that bypasses primary domain state verification",
+        "Applies global locking constraints across unrelated external system services",
+        "Defines the canonical structure and operational invariants for Statement of the Cut Property theorem (RECOGNIZE) within the domain",
+        "Inverts execution dependencies by finalizing outcomes before validating initial inputs"
+      ],
+      "correctAnswer": "Defines the canonical structure and operational invariants for Statement of the Cut Property theorem (RECOGNIZE) within the domain",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Statement of the Cut Property theorem (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Time complexity analysis"
+    },
+    {
+      "questionText": "In the study of Algorithm trace example, what is the fundamental role or definition of Statement of the Cut Property theorem (TRACE)?",
+      "options": [
+        "Defines the canonical structure and operational invariants for Statement of the Cut Property theorem (TRACE) within the domain",
+        "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+        "Applies global locking constraints across unrelated external system services",
+        "Acts as an auxiliary background queue that bypasses primary domain state verification"
+      ],
+      "correctAnswer": "Defines the canonical structure and operational invariants for Statement of the Cut Property theorem (TRACE) within the domain",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Statement of the Cut Property theorem (TRACE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Algorithm trace example"
+    },
+    {
+      "questionText": "When analyzing Statement of the Cut Property theorem (COMPARE) in Comparison with Prim's algorithm, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Statement of the Cut Property theorem (COMPARE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Comparison with Prim's algorithm"
+    },
+    {
+      "questionText": "When analyzing Statement of the Cut Property theorem (PREDICT_CONSTRAINT) in Comparison with Prim's algorithm, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Statement of the Cut Property theorem (PREDICT_CONSTRAINT). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Comparison with Prim's algorithm"
+    },
+    {
+      "questionText": "When analyzing Statement of the Cut Property theorem (DIAGNOSE) in Edge case handling, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Statement of the Cut Property theorem (DIAGNOSE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Edge case handling"
+    },
+    {
+      "questionText": "When analyzing Reasoning behind the Cut Property via exchange argument (RECOGNIZE) in Edge case handling, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Executes postconditions prior to checking input boundary parameters",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Reasoning behind the Cut Property via exchange argument (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Edge case handling"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1794,
+    "cumulativeOutputTokens": 2451,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 9084
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Decoupled operations)"
+  },
+  "tcScore": 83,
+  "pdi": 0.2,
+  "timestamp": "2026-11-05T20:26:23.732Z"
+}

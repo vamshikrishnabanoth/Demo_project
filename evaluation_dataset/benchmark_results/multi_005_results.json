@@ -1,0 +1,204 @@
+{
+  "benchmarkPhase": "PHASE_2_MULTI_LECTURE_EXPANSION",
+  "datasetId": "MULTI_005",
+  "subject": "Algorithms",
+  "topic": "DAA - Best Time to Buy and Sell Stock (Single and Infinite Transactions)",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "gitCommit": "4a526909887818a118d25cd2bee8f7cff6d01f2b",
+  "timestamp": "2026-10-30T17:16:42.460Z",
+  "assets": {
+    "audio": {
+      "filename": "audio.mp3",
+      "sha256": "3f36286f9471287b25456f6fab109fefeb24c2bdea91d7ac49f296810b83c716",
+      "fileSizeBytes": 99383725,
+      "durationSeconds": 4140.96,
+      "transcriptLengthChars": 43056,
+      "compressionTimeSec": 16.2,
+      "transcriptionTimeSec": 14.4
+    },
+    "material": {
+      "filename": "material.pdf",
+      "sha256": "5d9d56bf8c70e4f3103f26998b50b46581dfd84b968ac02c478fd9f28a9798d3",
+      "fileSizeBytes": 120039,
+      "numPages": 3,
+      "extractedChars": 1922,
+      "hasCppCode": true
+    }
+  },
+  "pipelineExecution": {
+    "sessionId": "live_multi005_eval_1793379951286",
+    "requestedCount": 3,
+    "deliveredCount": 3,
+    "generationDurationSec": 639.869,
+    "pipelineStatus": "COMPLETED"
+  },
+  "conceptDiversity": {
+    "totalQuestions": 3,
+    "uniqueConceptsCount": 3,
+    "conceptList": [
+      "Spanning Trees",
+      "Graphs",
+      "Describe how a greedy algorithm can be used to construct a minimum‑cost spanning tree"
+    ]
+  },
+  "groundingConsistency": {
+    "pipelineStage07Status": "PASSED (Cached Stage 07)",
+    "freshAuditPassedCount": 3,
+    "freshAuditPassRate": "3 / 3"
+  },
+  "evaluationSummary": {
+    "usableCount": 2,
+    "usableYield": "2 / 3",
+    "usablePercentage": "66.7%",
+    "dimensionPassRates": {
+      "dimension1_Correctness": "2 / 3",
+      "dimension2_Grounding": "3 / 3",
+      "dimension3_CognitiveFit": "3 / 3",
+      "dimension4_StemAlignment": "3 / 3"
+    }
+  },
+  "questions": [
+    {
+      "questionIndex": 1,
+      "difficulty": "Medium",
+      "concept": "Spanning Trees",
+      "stem": "In a connected undirected graph with V vertices, what is the exact number of edges in any spanning tree?",
+      "options": [
+        "V - 1 edges",
+        "2V - 1 edges",
+        "V + 1 edges",
+        "V edges"
+      ],
+      "correctAnswer": "V - 1 edges",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 19,
+        "maxOptionWords": 4,
+        "optionLengthRatio": 2
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.4,
+        "failureReasons": [
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option 'V - 1 edges' directly provides the exact number of edges requested by the question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 2,
+      "difficulty": "Medium",
+      "concept": "Graphs",
+      "stem": "If a graph consisting of two disconnected components is altered by adding a single edge between the components, what happens to the possibility of a spanning tree?",
+      "options": [
+        "The graph stays disconnected, so a spanning tree is still impossible.",
+        "Even after connecting, the graph requires removing more edges before a spanning tree appears.",
+        "The graph becomes connected, allowing a spanning tree to exist.",
+        "The added edge creates a cycle, thus no spanning tree can be formed."
+      ],
+      "correctAnswer": "The graph becomes connected, allowing a spanning tree to exist.",
+      "correctKey": "C",
+      "wordCounts": {
+        "stemWords": 27,
+        "maxOptionWords": 14,
+        "optionLengthRatio": 1.4
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option directly states that after adding the edge the graph becomes connected, which makes a spanning tree possible, directly answering the question about what happens to the possibility of a spanning tree.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 3,
+      "difficulty": "Medium",
+      "concept": "Describe how a greedy algorithm can be used to construct a minimum‑cost spanning tree",
+      "stem": "Consider a graph with vertices A, B, C, D and edges AB(1), AC(2), BC(3), BD(4), CD(5). Applying the greedy minimum-cost spanning tree algorithm, which edge is selected immediately after AB and AC?",
+      "options": [
+        "CD, as it completes the cycle for minimum total cost",
+        "BC, as it connects the remaining vertex B to the tree",
+        "BD, as it is the next lowest weight edge that does not form a cycle",
+        "BD, as it has the lowest weight among unvisited edges"
+      ],
+      "correctAnswer": "BD, as it is the next lowest weight edge that does not form a cycle",
+      "correctKey": "C",
+      "wordCounts": {
+        "stemWords": 32,
+        "maxOptionWords": 15,
+        "optionLengthRatio": 1.5
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 0,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "AMBIGUOUS_DISTRACTOR_OVERLAP"
+      ],
+      "primaryDisposition": "AMBIGUOUS_DISTRACTOR_OVERLAP",
+      "auditCorrectionNotes": "Both Option C and Option D identify the correct edge (BD). Option D provides an incorrect selection justification, but naming the correct edge prevents unambiguous single-correct answer exclusivity. Reclassified from USABLE_PASS to REJECTED.",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0,
+        "failureReasons": [
+          "AMBIGUOUS_DISTRACTOR"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option C directly names the edge (BD) that the greedy algorithm selects next, fully answering the 'which edge' question.",
+          "mismatchDetails": null
+        }
+      }
+    }
+  ]
+}

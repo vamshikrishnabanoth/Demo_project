@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "According to the Cut Property theorem for minimum spanning trees, what is true about the strictly minimum‑weight edge that crosses any cut (S, V\\S) in a connected, weighted graph?",
+      "options": [
+        "It belongs to at least one minimum spanning tree",
+        "It belongs to every minimum spanning tree",
+        "It may be excluded from all minimum spanning trees",
+        "It is never part of any minimum spanning tree"
+      ],
+      "correctAnswer": "It belongs to every minimum spanning tree",
+      "explanation": "The Cut Property states that if an edge is the unique lightest edge crossing a cut, it must be included in every MST; otherwise a lighter spanning tree could be formed, contradicting minimality.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Cut Property"
+    },
+    {
+      "questionText": "During Kruskal's algorithm, under what condition is an examined edge (u, v) added to the forest F?",
+      "options": [
+        "If Find(u) equals Find(v)",
+        "If Find(u) does not equal Find(v)",
+        "If the edge has the maximum weight among remaining edges",
+        "If adding the edge would create a cycle"
+      ],
+      "correctAnswer": "If Find(u) does not equal Find(v)",
+      "explanation": "Kruskal adds an edge only when its endpoints belong to different DSU sets; otherwise the edge would create a cycle and is discarded.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Cycle detection with Union-Find in Kruskal's algorithm"
+    },
+    {
+      "questionText": "During the step‑by‑step execution of Kruskal's algorithm on the 5‑vertex graph described, which edge is the first one that is discarded because its endpoints are already in the same component?",
+      "options": [
+        "(B, D) with weight 3",
+        "(A, C) with weight 4",
+        "(C, E) with weight 6",
+        "(D, E) with weight 5"
+      ],
+      "correctAnswer": "(B, D) with weight 3",
+      "explanation": "When processing edge (B, D) of weight 3, both B and D are already in the component {A, B, C, D}, so adding it would form a cycle. Hence Kruskal's algorithm discards this edge as the first cycle‑creating edge.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Kruskal's algorithm – cycle detection using Union‑Find"
+    },
+    {
+      "questionText": "According to the lecture excerpt, which statement best describes when Prim's algorithm is preferred over Kruskal's algorithm?",
+      "options": [
+        "Prim's algorithm is preferred for sparse graphs where the number of edges m is much less than n².",
+        "Prim's algorithm is preferred for dense graphs where the number of edges m is close to n².",
+        "Prim's algorithm is preferred when the graph contains negative edge weights.",
+        "Prim's algorithm is preferred for directed graphs requiring arborescences."
+      ],
+      "correctAnswer": "Prim's algorithm is preferred for dense graphs where the number of edges m is close to n².",
+      "explanation": "The excerpt states that Prim's algorithm is favored for dense graphs (m ≈ n²), while Kruskal's algorithm performs better on sparse graphs.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Algorithm selection based on graph density"
+    },
+    {
+      "questionText": "According to the Cut Property theorem, which statement is always true for a connected, weighted graph?",
+      "options": [
+        "If an edge is the maximum‑weight edge crossing a cut, it must be in every minimum spanning tree.",
+        "If an edge is the unique minimum‑weight edge crossing a cut, it must be in at least one minimum spanning tree.",
+        "If an edge is a strictly minimum‑weight edge crossing a cut, it must belong to every minimum spanning tree.",
+        "If an edge does not cross any cut, it cannot be part of any minimum spanning tree."
+      ],
+      "correctAnswer": "If an edge is a strictly minimum‑weight edge crossing a cut, it must belong to every minimum spanning tree.",
+      "explanation": "The Cut Property states that the unique lightest edge crossing any cut is included in every MST, guaranteeing its presence in all optimal spanning trees.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Cut Property (MST)"
+    },
+    {
+      "questionText": "According to the cut property discussed in the excerpt, which statement correctly explains why edge (B, C) with weight 1 must belong to every minimum spanning tree of the graph?",
+      "options": [
+        "It is the cheapest edge crossing the cut that separates vertex B from the rest of the vertices.",
+        "It is the only edge incident to vertex B in the graph.",
+        "Adding it would create a cycle with previously selected edges, so it must be excluded.",
+        "Its weight equals the maximum weight among all edges, guaranteeing inclusion."
+      ],
+      "correctAnswer": "It is the cheapest edge crossing the cut that separates vertex B from the rest of the vertices.",
+      "explanation": "The cut property states that the minimum‑weight edge crossing any cut of the graph is always in the MST. The cut that isolates vertex B from {A,C,D,E} is crossed by edge (B,C) with the smallest weight (1), so it must be in every MST.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Cut Property in Minimum Spanning Trees"
+    },
+    {
+      "questionText": "In Kruskal's algorithm, what specific test is performed on each edge to decide whether it should be added to the MST?",
+      "options": [
+        "The edge's weight is lower than the current maximum weight in the MST",
+        "Find(u) ≠ Find(v), meaning the edge's endpoints are in different components",
+        "The edge is the lightest among all remaining edges",
+        "The edge does not belong to any cycle in the original graph"
+      ],
+      "correctAnswer": "Find(u) ≠ Find(v), meaning the edge's endpoints are in different components",
+      "explanation": "Kruskal uses a union‑find structure; an edge is added only if its two vertices are in different sets (Find(u) ≠ Find(v)), which guarantees no cycle is formed.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Kruskal's algorithm – edge selection criterion"
+    },
+    {
+      "questionText": "Which type of graph is Kruskal's algorithm generally more efficient for compared to Prim's algorithm?",
+      "options": [
+        "Dense graphs where the number of edges m is close to n²",
+        "Sparse graphs where the number of edges m is much less than n²",
+        "Graphs that contain negative edge weights",
+        "Directed graphs requiring arborescences"
+      ],
+      "correctAnswer": "Sparse graphs where the number of edges m is much less than n²",
+      "explanation": "Kruskal's algorithm runs in O(m log n) and performs best when m is small (sparse graphs), whereas Prim's algorithm with a Fibonacci heap runs in O(m + n log n) and is preferred for dense graphs.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Algorithm selection and complexity for MST algorithms"
+    },
+    {
+      "questionText": "In the cut‑property proof, after adding the strictly minimum‑weight edge e* (which crosses a cut) to a spanning tree T that does not contain e*, why does the resulting graph contain exactly one cycle?",
+      "options": [
+        "Because T is already a tree, and adding any single edge to a tree creates exactly one cycle",
+        "Because the added edge connects two previously disconnected components, forming a cycle",
+        "Because the graph becomes a complete graph, which always contains a single cycle",
+        "Because e* is the only edge that can cross the cut, forcing a unique cycle"
+      ],
+      "correctAnswer": "Because T is already a tree, and adding any single edge to a tree creates exactly one cycle",
+      "explanation": "A spanning tree is connected and acyclic; adding one extra edge introduces precisely one simple cycle, which is used in the exchange argument.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Cut Property Proof (Exchange Argument)"
+    },
+    {
+      "questionText": "What operation contributes the most to the overall time complexity of Kruskal's algorithm?",
+      "options": [
+        "Sorting all edges by weight",
+        "Performing Find operations in the DSU",
+        "Executing Union operations in the DSU",
+        "Checking for cycles after each edge insertion"
+      ],
+      "correctAnswer": "Sorting all edges by weight",
+      "explanation": "Sorting the m edges takes O(m log m) time, which dominates the O(m·α(n)) time of the DSU operations, so it is the primary factor in the algorithm's total running time.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Kruskal's algorithm time complexity"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 5970,
+    "cumulativeOutputTokens": 1969,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 20293
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 4,
+  "timestamp": "2026-11-05T20:26:13.844Z"
+}

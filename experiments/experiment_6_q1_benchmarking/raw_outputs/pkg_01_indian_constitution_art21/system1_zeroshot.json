@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "What is the exact wording of Article 21 of the Indian Constitution?",
+      "options": [
+        "No person shall be deprived of his life or personal liberty except according to procedure established by law.",
+        "No citizen shall be deprived of his life or personal liberty except according to due process of law.",
+        "Every person has the right to life and liberty, subject to reasonable restrictions.",
+        "The State may deprive any person of life or liberty only in accordance with the Constitution."
+      ],
+      "correctAnswer": "No person shall be deprived of his life or personal liberty except according to procedure established by law.",
+      "explanation": "Article 21 contains a single sentence with that exact phrasing.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Text of Article 21"
+    },
+    {
+      "questionText": "Why did the drafters of the Indian Constitution avoid using the phrase \"due process of law\"?",
+      "options": [
+        "They wanted to adopt language from the Japanese Constitution of 1946.",
+        "They believed \"due process\" gave too much power to the judiciary, as seen in the US Lochner era.",
+        "They thought \"due process\" was too vague for Indian legislation.",
+        "All of the above."
+      ],
+      "correctAnswer": "All of the above.",
+      "explanation": "The framers were influenced by Japanese wording, feared US-style judicial overreach, and found \"due process\" vague.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Drafting choice"
+    },
+    {
+      "questionText": "Which constitutional advisor consulted with Justice Felix Frankfurter, leading to the adoption of \"procedure established by law\"?",
+      "options": [
+        "M.N. Roy",
+        "Sir B.N. Rau",
+        "Dr. B.R. Ambedkar",
+        "K.M. Munshi"
+      ],
+      "correctAnswer": "Sir B.N. Rau",
+      "explanation": "Sir B.N. Rau traveled to the US and discussed the due‑process issue with Justice Frankfurter.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Historical influence"
+    },
+    {
+      "questionText": "In A.K. Gopalan v. State of Madras, how did the Supreme Court interpret \"procedure established by law\"?",
+      "options": [
+        "As any legislative procedure, regardless of fairness",
+        "As a procedure that must be fair, reasonable, and just",
+        "As a procedure subject to judicial review for substantive justice",
+        "As a procedure limited to criminal cases only"
+      ],
+      "correctAnswer": "As any legislative procedure, regardless of fairness",
+      "explanation": "The Court took a literal view: any law passed by Parliament satisfied the clause, even if unjust.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Gopalan interpretation"
+    },
+    {
+      "questionText": "What does the \"Silo Theory\" (doctrine of mutual exclusivity) assert about Fundamental Rights?",
+      "options": [
+        "All Fundamental Rights are interdependent and form a single continuum",
+        "Each Fundamental Right operates in a separate, non‑overlapping compartment",
+        "Fundamental Rights can be suspended during emergencies",
+        "Article 21 overrides all other rights"
+      ],
+      "correctAnswer": "Each Fundamental Right operates in a separate, non‑overlapping compartment",
+      "explanation": "Gopalan held that rights like Article 19 and Article 21 are distinct silos that cannot be cross‑invoked.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Doctrine of mutual exclusivity"
+    },
+    {
+      "questionText": "Which Supreme Court case overturned the Gopalan doctrine and introduced a broader interpretation of Article 21?",
+      "options": [
+        "ADM Jabalpur v. Shivkant Shukla",
+        "Maneka Gandhi v. Union of India",
+        "Kesavananda Bharati v. State of Kerala",
+        "S. R. Bommai v. Union of India"
+      ],
+      "correctAnswer": "Maneka Gandhi v. Union of India",
+      "explanation": "The 1978 Maneka Gandhi judgment rejected the literalist view and linked Article 21 with fairness and natural justice.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Maneka Gandhi case"
+    },
+    {
+      "questionText": "What is the \"Golden Triangle\" as articulated by Justice P.N. Bhagwati?",
+      "options": [
+        "The relationship between Articles 14, 19 and 21",
+        "The three stages of judicial review: validity, reasonableness, and proportionality",
+        "The three pillars of Indian democracy: Legislature, Executive, Judiciary",
+        "The three rights: right to life, right to equality, right to freedom"
+      ],
+      "correctAnswer": "The relationship between Articles 14, 19 and 21",
+      "explanation": "Justice Bhagwati described an organic connection among these three Articles, forming the Golden Triangle.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Interrelationship of rights"
+    },
+    {
+      "questionText": "In Maneka Gandhi's case, which specific freedom was held to be part of \"personal liberty\" under Article 21?",
+      "options": [
+        "Freedom of speech",
+        "Freedom of movement within India",
+        "Right to travel abroad",
+        "Freedom of religion"
+      ],
+      "correctAnswer": "Right to travel abroad",
+      "explanation": "The Court recognized the right to travel abroad as an essential component of personal liberty.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Right to travel"
+    },
+    {
+      "questionText": "Which landmark judgment later recognized the fundamental right to privacy as part of Article 21?",
+      "options": [
+        "Vishaka v. State of Rajasthan",
+        "Puttaswamy v. Union of India",
+        "Shreya Singhal v. Union of India",
+        "K.S. Puttaswamy (Retd.) v. Union of India"
+      ],
+      "correctAnswer": "Puttaswamy v. Union of India",
+      "explanation": "The Supreme Court in Puttaswamy (2017) declared privacy a fundamental right under Article 21.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Privacy right"
+    },
+    {
+      "questionText": "According to the lecture, what limits the scope of Article 21?",
+      "options": [
+        "The existence of a valid statutory law with a fair, non‑arbitrary procedure",
+        "The discretion of the President alone",
+        "The absence of any legislative provision",
+        "The exclusive jurisdiction of the Supreme Court"
+      ],
+      "correctAnswer": "The existence of a valid statutory law with a fair, non‑arbitrary procedure",
+      "explanation": "Article 21 does not grant absolute immunity; it allows regulation when law is fair, non‑arbitrary, and serves legitimate state interests.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Limits of personal liberty"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1388,
+    "cumulativeOutputTokens": 1449,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 3712
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:20:42.928Z"
+}

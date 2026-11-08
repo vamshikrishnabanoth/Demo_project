@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "A signal is sampled at 8000 Hz and a 256‑point DFT is computed. What frequency in Hertz does bin k = 20 correspond to?",
+      "options": [
+        "125 Hz",
+        "250 Hz",
+        "625 Hz",
+        "1000 Hz"
+      ],
+      "correctAnswer": "625 Hz",
+      "explanation": "The bin frequency is f_k = k·f_s/N = 20·8000/256 = 20·31.25 = 625 Hz.",
+      "targetDifficulty": "Medium",
+      "subtopic": "DFT frequency bin mapping"
+    },
+    {
+      "questionText": "A continuous‑time signal contains frequency components up to 8 kHz. What is the minimum sampling rate that guarantees no aliasing according to the Nyquist criterion?",
+      "options": [
+        "8 kHz",
+        "12 kHz",
+        "16 kHz",
+        "20 kHz"
+      ],
+      "correctAnswer": "16 kHz",
+      "explanation": "Nyquist requires f_s > 2·f_max, so f_s must exceed 2·8 kHz = 16 kHz; the smallest rate satisfying this is 16 kHz.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nyquist Sampling Theorem"
+    },
+    {
+      "questionText": "A continuous‑time signal contains a sinusoidal component at 7 kHz. If the signal is sampled at a rate of 10 kHz, at what frequency will this component appear in the discrete‑time (sampled) spectrum due to aliasing?",
+      "options": [
+        "3 kHz",
+        "5 kHz",
+        "7 kHz",
+        "13 kHz"
+      ],
+      "correctAnswer": "3 kHz",
+      "explanation": "Aliasing folds frequencies above f_Nyquist (5 kHz) back into the baseband: f_alias = |f_original – k·f_s|. Here, 7 kHz – 1·10 kHz = –3 kHz, whose magnitude is 3 kHz.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Aliasing and Nyquist frequency"
+    },
+    {
+      "questionText": "If a signal is sampled at f_s = 10 kHz and a 512‑point DFT is computed, what is the frequency spacing Δf between adjacent DFT bins?",
+      "options": [
+        "19.53 Hz",
+        "20 Hz",
+        "9.77 Hz",
+        "0.5 Hz"
+      ],
+      "correctAnswer": "19.53 Hz",
+      "explanation": "Δf = f_s / N = 10,000 Hz / 512 ≈ 19.531 Hz, which rounds to 19.53 Hz.",
+      "targetDifficulty": "Easy",
+      "subtopic": "DFT frequency bin spacing"
+    },
+    {
+      "questionText": "Given the discrete sequence x=[1,2,0,-1] of length N=4, what is the DFT coefficient X[2] (k=2) equal to?",
+      "options": [
+        "0",
+        "2",
+        "1 - j",
+        "√10"
+      ],
+      "correctAnswer": "0",
+      "explanation": "For k=2, the twiddle factor is e^{-j2πkn/N}=e^{-jπn}=(-1)^n. Thus X[2]=1·1+2·(-1)+0·1+(-1)·(-1)=1-2+0+1=0.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Discrete Fourier Transform (DFT) bin calculation"
+    },
+    {
+      "questionText": "A continuous‑time signal contains frequency components up to 15 kHz. According to the Nyquist criterion, what is the minimum sampling rate that must be used to avoid aliasing?",
+      "options": [
+        "20 kHz",
+        "30 kHz",
+        "40 kHz",
+        "45 kHz"
+      ],
+      "correctAnswer": "30 kHz",
+      "explanation": "To prevent aliasing the sampling rate f_s must satisfy f_s > 2 f_max. Here f_max = 15 kHz, so the smallest integer rate that meets the condition is just above 30 kHz; the standard choice is 30 kHz.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nyquist criterion / sampling theorem"
+    },
+    {
+      "questionText": "According to the Nyquist‑Shannon Sampling Theorem, what is the minimum sampling frequency f_s required to sample a continuous‑time signal whose highest frequency component is f_max = 3 kHz without incurring aliasing?",
+      "options": [
+        "f_s ≥ 2 × f_max (i.e., at least 6 kHz)",
+        "f_s ≥ f_max (i.e., at least 3 kHz)",
+        "f_s ≥ 0.5 × f_max (i.e., at least 1.5 kHz)",
+        "f_s ≥ 4 × f_max (i.e., at least 12 kHz)"
+      ],
+      "correctAnswer": "f_s ≥ 2 × f_max (i.e., at least 6 kHz)",
+      "explanation": "The Nyquist‑Shannon theorem states that to avoid aliasing the sampling frequency must be at least twice the highest frequency present in the signal (the Nyquist rate). For f_max = 3 kHz, the minimum f_s is 2 × 3 kHz = 6 kHz.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nyquist-Shannon Sampling Theorem"
+    },
+    {
+      "questionText": "According to the Nyquist‑Shannon Sampling Theorem, what is the minimum sampling frequency required to sample a continuous‑time signal whose highest frequency component is 15 kHz without causing aliasing?",
+      "options": [
+        "30 kHz",
+        "30.1 kHz",
+        "15 kHz",
+        "45 kHz"
+      ],
+      "correctAnswer": "30.1 kHz",
+      "explanation": "The sampling rate must be strictly greater than twice the highest frequency (f_s > 2·f_max). For f_max = 15 kHz, 2·f_max = 30 kHz, so any rate just above 30 kHz (e.g., 30.1 kHz) satisfies the criterion.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nyquist Sampling Theorem"
+    },
+    {
+      "questionText": "A signal is sampled at a rate of 44.1 kHz. What is the highest analog frequency that can be represented without aliasing?",
+      "options": [
+        "22.05 kHz",
+        "44.1 kHz",
+        "20 kHz",
+        "30 kHz"
+      ],
+      "correctAnswer": "22.05 kHz",
+      "explanation": "The Nyquist frequency equals half the sampling rate: f_Nyquist = f_s / 2 = 44.1 kHz / 2 = 22.05 kHz. Frequencies above this will fold (alias) into the baseband.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Nyquist frequency"
+    },
+    {
+      "questionText": "A continuous‑time signal is sampled at a rate of f_s = 8 kHz and a 16‑point DFT is computed from the sampled data. What is the frequency spacing Δf between adjacent DFT bins?",
+      "options": [
+        "500 Hz",
+        "250 Hz",
+        "800 Hz",
+        "125 Hz"
+      ],
+      "correctAnswer": "500 Hz",
+      "explanation": "Δf = f_s / N = 8000 Hz / 16 = 500 Hz. This is the spectral resolution of the DFT.",
+      "targetDifficulty": "Easy",
+      "subtopic": "DFT frequency bin spacing (spectral resolution)"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6086,
+    "cumulativeOutputTokens": 1281,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 20932
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:29:20.532Z"
+}

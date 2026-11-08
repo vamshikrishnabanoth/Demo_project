@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "For a connected graph with n vertices, how many edges does any spanning tree contain?",
+      "options": [
+        "n",
+        "n-1",
+        "m",
+        "n+1"
+      ],
+      "correctAnswer": "n-1",
+      "explanation": "A spanning tree connects all n vertices without cycles, requiring exactly n‑1 edges.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Spanning Tree Basics"
+    },
+    {
+      "questionText": "What does the Cut Property guarantee about a strictly minimum‑weight edge that crosses a cut?",
+      "options": [
+        "It belongs to at least one MST",
+        "It belongs to every MST",
+        "It can be discarded",
+        "It creates a cycle"
+      ],
+      "correctAnswer": "It belongs to every MST",
+      "explanation": "If an edge is the unique cheapest crossing a cut, it must appear in every minimum spanning tree.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Cut Property"
+    },
+    {
+      "questionText": "Which data structure does Kruskal's algorithm use to detect cycles efficiently?",
+      "options": [
+        "Adjacency matrix",
+        "Priority queue",
+        "Disjoint Set Union (Union-Find)",
+        "Stack"
+      ],
+      "correctAnswer": "Disjoint Set Union (Union-Find)",
+      "explanation": "DSU maintains connected components; a cycle is detected when both endpoints are in the same set.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Kruskal's Algorithm"
+    },
+    {
+      "questionText": "In the cut‑and‑paste proof of the Cut Property, adding the minimum edge e* to a spanning tree T creates which structure?",
+      "options": [
+        "A new spanning tree",
+        "A disconnected forest",
+        "A unique cycle",
+        "A directed acyclic graph"
+      ],
+      "correctAnswer": "A unique cycle",
+      "explanation": "Adding any edge to a tree introduces exactly one cycle, which is then used to exchange edges.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Cut Property Proof"
+    },
+    {
+      "questionText": "During the Kruskal trace on the 5‑vertex example, which edge is the first to be discarded?",
+      "options": [
+        "(B, D) weight 3",
+        "(A, C) weight 4",
+        "(C, E) weight 6",
+        "(D, E) weight 5"
+      ],
+      "correctAnswer": "(B, D) weight 3",
+      "explanation": "When (B, D) is examined, B and D are already in the same component, so adding it would form a cycle.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Kruskal Example Trace"
+    },
+    {
+      "questionText": "What is the overall time complexity of Kruskal's algorithm when using a DSU with union‑by‑rank and path compression?",
+      "options": [
+        "O(m log n)",
+        "O(m log m)",
+        "O(n^2)",
+        "O(m α(n))"
+      ],
+      "correctAnswer": "O(m log m)",
+      "explanation": "Sorting the m edges dominates; DSU operations are near‑linear (α(n)≈4).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Complexity Analysis"
+    },
+    {
+      "questionText": "If a cut has two edges that share the same minimum weight, which statement about the Cut Property is true?",
+      "options": [
+        "Both edges must appear in every MST",
+        "At least one of them must appear in every MST",
+        "Neither can appear in any MST",
+        "Exactly one will appear in every MST"
+      ],
+      "correctAnswer": "At least one of them must appear in every MST",
+      "explanation": "When the minimum crossing edge is not unique, any one of the minimum‑weight edges can be chosen for an MST; at least one will be present.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Cut Property Edge Cases"
+    },
+    {
+      "questionText": "For which type of graph is Prim's algorithm generally more efficient than Kruskal's algorithm?",
+      "options": [
+        "Sparse graphs with m ≈ n",
+        "Dense graphs where m is close to n^2",
+        "Graphs with negative edge weights",
+        "Disconnected graphs"
+      ],
+      "correctAnswer": "Dense graphs where m is close to n^2",
+      "explanation": "Prim with a Fibonacci heap runs in O(m + n log n), which is better than Kruskal's O(m log m) when m is near n^2.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Algorithm Comparison"
+    },
+    {
+      "questionText": "After applying path compression and union‑by‑rank, what is the amortized time complexity of a Find operation in the DSU?",
+      "options": [
+        "O(1)",
+        "O(log n)",
+        "O(α(n))",
+        "O(n)"
+      ],
+      "correctAnswer": "O(α(n))",
+      "explanation": "The inverse Ackermann function α(n) grows extremely slowly, making Find practically constant time.",
+      "targetDifficulty": "Hard",
+      "subtopic": "DSU Complexity"
+    },
+    {
+      "questionText": "What is the total weight of the MST produced by Kruskal's algorithm on the example 5‑vertex graph?",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "9"
+      ],
+      "correctAnswer": "10",
+      "explanation": "Selected edges have weights 1, 2, 2, and 5; their sum is 10.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Example Result"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1469,
+    "cumulativeOutputTokens": 1038,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 4838
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:25:52.733Z"
+}

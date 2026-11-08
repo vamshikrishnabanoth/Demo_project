@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "For the projection matrix P that projects vectors in ℝ³ onto the xy‑plane, which statement about its eigenvalues and eigenvectors is correct?",
+      "options": [
+        "All vectors in the xy‑plane are eigenvectors with eigenvalue 0.",
+        "The normal vector (0,0,1) is an eigenvector with eigenvalue 1.",
+        "Vectors in the xy‑plane are eigenvectors with eigenvalue 1, and the normal vector is an eigenvector with eigenvalue 0.",
+        "No non‑zero eigenvectors exist for P."
+      ],
+      "correctAnswer": "Vectors in the xy‑plane are eigenvectors with eigenvalue 1, and the normal vector is an eigenvector with eigenvalue 0.",
+      "explanation": "Projecting a vector already in the xy‑plane leaves it unchanged, so λ=1 for those vectors; projecting the z‑axis vector gives the zero vector, so λ=0 for (0,0,1).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Eigenvalues and eigenvectors of projection matrices"
+    },
+    {
+      "questionText": "Given the matrix \\(A=\\begin{pmatrix}4&-5\\\\2&-3\\end{pmatrix}\\), which statement about the relationship between its eigenvalues and its trace is correct?",
+      "options": [
+        "The sum of the eigenvalues equals 7.",
+        "The sum of the eigenvalues equals 1.",
+        "The sum of the eigenvalues equals -1.",
+        "The sum of the eigenvalues equals 0."
+      ],
+      "correctAnswer": "The sum of the eigenvalues equals 1.",
+      "explanation": "The trace of a matrix is the sum of its diagonal entries: 4+(-3)=1. For any square matrix, the sum of its eigenvalues (counting multiplicities) equals the trace, so the eigenvalues of A sum to 1.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Trace–eigenvalue relationship"
+    },
+    {
+      "questionText": "If a 2×2 matrix has eigenvalues λ₁ = 2 and λ₂ = −1, what is the determinant of the matrix?",
+      "options": [
+        "-2",
+        "2",
+        "-1",
+        "1"
+      ],
+      "correctAnswer": "-2",
+      "explanation": "For any square matrix, the product of its eigenvalues equals its determinant. Here 2 × (−1) = −2.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Eigenvalue‑determinant relationship"
+    },
+    {
+      "questionText": "Consider the 2×2 matrix Q that represents a counter‑clockwise rotation by 90° in the plane. Which statement about its eigenvalues and eigenvectors over the real numbers is correct?",
+      "options": [
+        "Q has two distinct real eigenvalues, 1 and -1, with corresponding eigenvectors.",
+        "Q has a single real eigenvalue 0, and all vectors are eigenvectors.",
+        "Q has no real eigenvalues, and therefore no non‑zero real eigenvectors.",
+        "Q has real eigenvalues 0 and 1, with eigenvectors along the x‑ and y‑axes."
+      ],
+      "correctAnswer": "Q has no real eigenvalues, and therefore no non‑zero real eigenvectors.",
+      "explanation": "A 90° rotation changes the direction of every non‑zero real vector, so no real vector remains parallel to itself. Hence the eigenvalues are complex (±i) and there are no real eigenvectors.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Eigenvalues of rotation matrices"
+    },
+    {
+      "questionText": "Why is the equation det(A - λI)=0 used to determine the eigenvalues of a matrix A?",
+      "options": [
+        "Because (A - λI) must be invertible for a non‑zero eigenvector to exist.",
+        "Because a non‑zero eigenvector exists only when (A - λI) is singular, i.e., its determinant equals zero.",
+        "Because the determinant directly gives the sum of the eigenvalues of A.",
+        "Because the determinant of (A - λI) equals the trace of A."
+      ],
+      "correctAnswer": "Because a non‑zero eigenvector exists only when (A - λI) is singular, i.e., its determinant equals zero.",
+      "explanation": "An eigenvector x≠0 satisfies (A‑λI)x=0, which is possible only if (A‑λI) is singular; a matrix is singular exactly when its determinant is zero, leading to the characteristic equation det(A‑λI)=0.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Characteristic equation and eigenvalue determination"
+    },
+    {
+      "questionText": "For the matrix A = [[4, -5],[2, -3]], which of the following vectors is an eigenvector associated with the eigenvalue λ = 2?",
+      "options": [
+        "[5, 2]",
+        "[2, 5]",
+        "[1, 1]",
+        "[0, 0]"
+      ],
+      "correctAnswer": "[5, 2]",
+      "explanation": "Solving (A-2I)x=0 gives 2x1-5x2=0, so x1=5, x2=2 up to scalar multiples; thus [5,2] is an eigenvector.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Eigenvectors of a 2×2 matrix"
+    },
+    {
+      "questionText": "For the 3×3 projection matrix P that projects every vector in ℝ³ onto the xy‑plane, which statement about its eigenvalues is correct?",
+      "options": [
+        "It has eigenvalues 1, 1, 0.",
+        "It has eigenvalues 1, 0, -1.",
+        "It has eigenvalues 2, 1, 0.",
+        "It has eigenvalues i, -i, 0."
+      ],
+      "correctAnswer": "It has eigenvalues 1, 1, 0.",
+      "explanation": "Vectors lying in the xy‑plane are unchanged by P, giving eigenvalue 1 with multiplicity 2; the unit vector along the z‑axis is sent to 0, giving eigenvalue 0.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Eigenvalues of projection matrices"
+    },
+    {
+      "questionText": "For any 2 × 2 matrix A with eigenvalues λ₁ and λ₂, which statement is always true?",
+      "options": [
+        "The sum of the eigenvalues equals the trace of A.",
+        "The product of the eigenvalues equals the trace of A.",
+        "The difference of the eigenvalues equals the determinant of A.",
+        "The sum of the squares of the eigenvalues equals the determinant of A."
+      ],
+      "correctAnswer": "The sum of the eigenvalues equals the trace of A.",
+      "explanation": "For an n × n matrix, the characteristic polynomial expands to λⁿ – (trace A)λⁿ⁻¹ + … + (–1)ⁿdet A. Hence for a 2 × 2 matrix λ₁ + λ₂ = trace A and λ₁·λ₂ = det A. Only the first statement holds universally.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Eigenvalue properties – trace and determinant relationship"
+    },
+    {
+      "questionText": "For a 2×2 matrix A with eigenvalues λ₁=2 and λ₂=−1, which of the following must be the trace of A?",
+      "options": [
+        "1",
+        "-1",
+        "0",
+        "2"
+      ],
+      "correctAnswer": "1",
+      "explanation": "The trace of a matrix equals the sum of its eigenvalues: 2 + (−1) = 1.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Trace–eigenvalue relationship"
+    },
+    {
+      "questionText": "If an eigenvalue λ of a matrix A is –3, what geometric effect does A have on its corresponding eigenvector?",
+      "options": [
+        "It stretches the eigenvector by a factor of 3 without changing its direction",
+        "It shrinks the eigenvector to the zero vector",
+        "It stretches the eigenvector by a factor of 3 and reverses its direction",
+        "It rotates the eigenvector by 90 degrees"
+      ],
+      "correctAnswer": "It stretches the eigenvector by a factor of 3 and reverses its direction",
+      "explanation": "A negative eigenvalue scales the eigenvector by the absolute value of λ and flips its direction; thus λ = –3 means a stretch by 3 and a reversal.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Geometric interpretation of eigenvalues"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6412,
+    "cumulativeOutputTokens": 1631,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 21922
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:21:34.024Z"
+}

@@ -1,99 +1,156 @@
 import React from 'react';
-import { GraduationCap, CheckCircle2, XCircle, AlertCircle, Sparkles, BookOpen } from 'lucide-react';
+import { GraduationCap, CheckCircle2, XCircle, AlertCircle, Sparkles, BookOpen, Layers } from 'lucide-react';
 
-export default function AcademicityViewer({ isAcademic = true, failureReason = null, lectureDepth = null, detectedFocus = [] }) {
-  const depthScore = lectureDepth?.score || (isAcademic ? 85 : 20);
-  const depthRating = lectureDepth?.rating || (isAcademic ? 'Substantive' : 'Non-Curricular');
+export default function AcademicityViewer({
+  isAcademic = true,
+  failureReason = null,
+  lectureDepth = null,
+  detectedFocus = [],
+  curricularEvidenceProfile = null
+}) {
+  const profile = curricularEvidenceProfile || lectureDepth?.curricularEvidenceProfile || null;
+  const academicGate = profile?.prerequisiteGates?.academicContentGate;
+  const sufficiencyGate = profile?.prerequisiteGates?.evidenceSufficiency;
+
+  const academicStatus = academicGate?.status || (isAcademic ? 'PASS' : 'FAIL');
+  const sufficiencyStatus = sufficiencyGate?.status || (isAcademic ? 'SUFFICIENT' : 'INSUFFICIENT_EVIDENCE');
+  const distinctConcepts = profile?.observableEvidence?.distinctConcepts || detectedFocus || [];
 
   return (
     <div className="space-y-4">
-      {/* Main Gate Card */}
-      <div className={`rounded-xl border p-5 ${
-        isAcademic
-          ? 'bg-emerald-50/50 border-emerald-200 text-emerald-950'
-          : 'bg-rose-50 border-rose-200 text-rose-950'
-      }`}>
-        <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-emerald-200/60">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-xs ${
-              isAcademic ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
+      {/* Prerequisite Gate Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Gate 1: Academic Content Gate */}
+        <div className={`rounded-xl border p-5 ${
+          academicStatus === 'PASS'
+            ? 'bg-emerald-50/50 border-emerald-200 text-emerald-950'
+            : academicStatus === 'UNCERTAIN'
+            ? 'bg-amber-50/50 border-amber-200 text-amber-950'
+            : 'bg-rose-50/50 border-rose-200 text-rose-950'
+        }`}>
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200/60">
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold shadow-xs ${
+                academicStatus === 'PASS' ? 'bg-emerald-600 text-white' : academicStatus === 'UNCERTAIN' ? 'bg-amber-600 text-white' : 'bg-rose-600 text-white'
+              }`}>
+                <GraduationCap size={18} />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900">Academic Content Gate</h4>
+                <p className="text-xs text-slate-600">Educational curriculum verification</p>
+              </div>
+            </div>
+
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black border ${
+              academicStatus === 'PASS'
+                ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                : academicStatus === 'UNCERTAIN'
+                ? 'bg-amber-100 text-amber-800 border-amber-300'
+                : 'bg-rose-100 text-rose-800 border-rose-300'
             }`}>
-              <GraduationCap size={20} />
-            </div>
-            <div>
-              <h4 className="text-sm font-black text-slate-900">Curricular & Academic Content Gate</h4>
-              <p className="text-xs text-slate-600">Verification of assessable pedagogy and syllabus depth</p>
-            </div>
+              {academicStatus === 'PASS' && <CheckCircle2 size={13} className="text-emerald-700" />}
+              {academicStatus === 'UNCERTAIN' && <AlertCircle size={13} className="text-amber-700" />}
+              {academicStatus === 'FAIL' && <XCircle size={13} className="text-rose-700" />}
+              {academicStatus}
+            </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            {isAcademic ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
-                <CheckCircle2 size={14} className="text-emerald-700" />
-                ✓ PASS — Valid Academic Content
-              </span>
+          <div className="mt-3 text-xs leading-relaxed">
+            {academicStatus === 'PASS' ? (
+              <p className="text-slate-700">
+                {academicGate?.evidenceAnchor || 'Content verified as academic subject matter with objective curriculum concepts.'}
+              </p>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300">
-                <XCircle size={14} className="text-rose-700" />
-                ✕ FAILED — Insufficient Academic Depth
-              </span>
+              <p className="font-mono text-rose-800 bg-white/80 p-2.5 rounded border border-rose-200">
+                {academicGate?.failureReason || failureReason || 'Material lacks educational curriculum concepts or is non-academic.'}
+              </p>
             )}
           </div>
         </div>
 
-        {/* Reason / Narrative */}
-        <div className="mt-4 text-xs leading-relaxed space-y-2">
-          {isAcademic ? (
-            <p className="text-slate-700">
-              The submitted lecture audio and documents contain rigorous, assessable academic subject matter.
-              Conceptual definitions, functional mechanisms, and factual structures were successfully verified.
-            </p>
-          ) : (
-            <div className="p-3 bg-white/80 rounded-lg border border-rose-200 font-mono text-rose-800">
-              <strong>Failure Cause:</strong> {failureReason || 'Content lacks assessable educational concepts or is non-academic banter.'}
+        {/* Gate 2: Evidence Sufficiency Gate */}
+        <div className={`rounded-xl border p-5 ${
+          sufficiencyStatus === 'SUFFICIENT'
+            ? 'bg-blue-50/50 border-blue-200 text-blue-950'
+            : sufficiencyStatus === 'UNCERTAIN'
+            ? 'bg-amber-50/50 border-amber-200 text-amber-950'
+            : 'bg-rose-50/50 border-rose-200 text-rose-950'
+        }`}>
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200/60">
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold shadow-xs ${
+                sufficiencyStatus === 'SUFFICIENT' ? 'bg-blue-600 text-white' : sufficiencyStatus === 'UNCERTAIN' ? 'bg-amber-600 text-white' : 'bg-rose-600 text-white'
+              }`}>
+                <Layers size={18} />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900">Evidence Sufficiency</h4>
+                <p className="text-xs text-slate-600">Observable assessment capacity</p>
+              </div>
             </div>
-          )}
+
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black border ${
+              sufficiencyStatus === 'SUFFICIENT'
+                ? 'bg-blue-100 text-blue-800 border-blue-300'
+                : sufficiencyStatus === 'UNCERTAIN'
+                ? 'bg-amber-100 text-amber-800 border-amber-300'
+                : 'bg-rose-100 text-rose-800 border-rose-300'
+            }`}>
+              {sufficiencyStatus === 'SUFFICIENT' && <CheckCircle2 size={13} className="text-blue-700" />}
+              {sufficiencyStatus === 'UNCERTAIN' && <AlertCircle size={13} className="text-amber-700" />}
+              {sufficiencyStatus === 'INSUFFICIENT_EVIDENCE' && <XCircle size={13} className="text-rose-700" />}
+              {sufficiencyStatus}
+            </span>
+          </div>
+
+          <div className="mt-3 text-xs leading-relaxed">
+            <p className="text-slate-700">
+              {sufficiencyGate?.reason || (sufficiencyStatus === 'SUFFICIENT' ? 'Observable evidence supports quiz question generation.' : 'Evidence volume is insufficient for defensible assessment targets.')}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Lecture Depth Metrics */}
+      {/* Honest Observational Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
           <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">
-            Instructional Depth Score
+            Distinct Verified Concepts
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-900">{depthScore}</span>
-            <span className="text-xs text-slate-400">/ 100</span>
+            <span className="text-2xl font-black text-slate-900">{distinctConcepts.length}</span>
+            <span className="text-xs text-slate-400">concepts</span>
           </div>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
           <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">
-            Pedagogical Rating
+            Assessable Evidence Volume
           </span>
-          <span className="text-base font-black text-emerald-700">{depthRating}</span>
+          <span className="text-base font-black text-blue-700">
+            {sufficiencyGate?.assessableEvidenceVolume || (isAcademic ? 'MODERATE' : 'NONE')}
+          </span>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
           <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">
-            Assessability Status
+            Pipeline Assessment Status
           </span>
           <span className="text-base font-black text-slate-800">
-            {isAcademic ? 'Fully Assessable' : 'Pipeline Blocked'}
+            {academicStatus === 'PASS' && sufficiencyStatus === 'SUFFICIENT' ? 'Fully Assessable' : 'Pipeline Blocked'}
           </span>
         </div>
       </div>
 
-      {/* Focus Topics if detected */}
-      {detectedFocus && detectedFocus.length > 0 && (
+      {/* Verified Concepts Breadth */}
+      {distinctConcepts.length > 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs space-y-2">
           <h5 className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
             <Sparkles size={13} className="text-orange-500" />
-            Detected Syllabus Focus Points:
+            Verified Curricular Concepts ({distinctConcepts.length}):
           </h5>
           <div className="flex flex-wrap gap-2 pt-1">
-            {detectedFocus.map((topic, i) => (
+            {distinctConcepts.map((topic, i) => (
               <span key={i} className="text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold border border-slate-200">
                 {topic}
               </span>
@@ -101,6 +158,11 @@ export default function AcademicityViewer({ isAcademic = true, failureReason = n
           </div>
         </div>
       )}
+
+      {/* Disclaimer */}
+      <p className="text-[11px] text-slate-400 italic">
+        Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.
+      </p>
     </div>
   );
 }

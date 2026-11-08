@@ -47,9 +47,9 @@ function StageTelemetryBanner({
         };
       case 'pdi':
         return {
-          title: 'Stage 02B: PDI Representation Router',
+          title: 'Stage 02B: Modality Representation Router',
           execution: 'SEQUENTIAL',
-          engine: 'Deterministic Modality Split (PDI Policy C+B)',
+          engine: 'Deterministic Modality Split Engine',
           isFallback: false,
           provenance: 'Deterministic Rule Engine',
           material: `Selected Mode: ${pipelineResult?.representationMode || evidencePackage?.representationMode || 'UNIFIED'}`
@@ -317,13 +317,19 @@ export default function StageOutputPanel({
           failureReason={evidencePackage?.academicFailureReason || null}
           lectureDepth={evidencePackage?.lectureDepth || pipelineResult?.lectureDepth}
           detectedFocus={evidencePackage?.detectedFocus || sessionInputs.keyTopics || [...new Set(questions.map(q => q.concept_tag || q.sub_topic).filter(Boolean))]}
+          curricularEvidenceProfile={pipelineResult?.curricularEvidenceProfile || evidencePackage?.curricularEvidenceProfile || null}
         />
       )}
 
       {/* 7. AGENT 1 TARGET PLANNER */}
       {selectedStageId === 'planner' && (
         (plan || questions.length > 0) ? (
-          <TargetViewer plan={plan} tcScore={tcScore} questions={questions} />
+          <TargetViewer
+            plan={plan}
+            tcScore={tcScore}
+            questions={questions}
+            curricularEvidenceProfile={pipelineResult?.curricularEvidenceProfile || plan?.curricularEvidenceProfile || null}
+          />
         ) : (
           renderWaitingState('Agent 1 Curriculum Planner')
         )
@@ -412,6 +418,8 @@ export default function StageOutputPanel({
           teacherAnalysis={pipelineResult?.teacherAnalysis || pipelineResult?.lectureIntelligence || pipelineResult?.lecture_intelligence || null}
           tcScore={pipelineResult?.tcScore ?? null}
           pdi={pipelineResult?.pdi ?? null}
+          curricularEvidenceProfile={pipelineResult?.curricularEvidenceProfile || null}
+          sessionModality={pipelineResult?.sessionModality || sessionInputs?.sessionModality || null}
         />
       )}
     </div>

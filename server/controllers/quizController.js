@@ -686,8 +686,14 @@ const extractText = async (filePath) => {
         let extracted = '';
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(filePath);
-            const data = await pdfParse(dataBuffer);
-            extracted = data.text || '';
+            try {
+                const PdfMultimodalExtractor = require('../engine/documentRouter/pdfMultimodalExtractor');
+                const docModel = await PdfMultimodalExtractor.extract(dataBuffer, { filename: path.basename(filePath) });
+                extracted = docModel.toUnifiedText();
+            } catch (_) {
+                const data = await pdfParse(dataBuffer);
+                extracted = data.text || '';
+            }
         } else if (ext === '.docx') {
             const result = await mammoth.extractRawText({ path: filePath });
             extracted = result.value || '';
@@ -918,7 +924,7 @@ function resolveGenerationErrorCode(err, pipelineResult) {
     return err?.errorCode || 'FAILED_GENERATION';
 }
 
-const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null, inputModality = null) => {
+const generateQuestions = async (type, content, count = 5, difficulty = 'Medium', source_material_id = null, target_ratios = null, inputs = null, topic_weights = null, taskId = null, callbackUrl = null, isolated_narratives = null, questionStyle = 'MIXED', deficitPolicy = null, inputModality = null, capacityPolicy = 'ALLOW_SCOPE_SUPPLEMENTARY') => {
     try {
         console.log(`🚀 [Baseline v1.0] Executing 3-Agent Pipeline: ${type || 'multi-input'} | Count: ${count} | Style: ${questionStyle}`);
 
@@ -1030,6 +1036,7 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
             difficulty: difficulty,
             count: parseInt(count),
             deficitPolicy: deficitPolicy || 'FILL_WITH_MEDIUM',
+            capacityPolicy: capacityPolicy || 'ALLOW_SCOPE_SUPPLEMENTARY',
             inputModality: isTopicMode ? 'TOPIC_SYNTHESIS' : (inputModality || 'UNIFIED'),
             topic: (inputs && inputs[0] && inputs[0].content && inputs[0].type === 'text') ? inputs[0].content.trim() : (content || '')
         };
@@ -1127,6 +1134,13 @@ const generateQuestions = async (type, content, count = 5, difficulty = 'Medium'
                     tObj.shortfallCategory = result.shortfallCategory || null;
                     tObj.requestedCount = sessionInputs.count;
                     tObj.deliveredCount = result.questions.length;
+                    tObj.groundedCount = result.groundedCount;
+                    tObj.supplementaryCount = result.supplementaryCount;
+                    tObj.distinctTargetCount = result.distinctTargetCount;
+                    tObj.repeatedTargetCount = result.repeatedTargetCount;
+                    tObj.difficultyDeficits = result.difficultyDeficits;
+                    tObj.capacityPolicy = result.capacityPolicy;
+                    tObj.sessionModality = result.sessionModality;
                     tObj.representation_mode = tObj.representation_mode || result.representationMode || null;
                     tObj.pipelineResult = result;
                     tObj.capacityDeficitReport = result.capacityDeficitReport || null;
@@ -1421,12 +1435,21 @@ exports.createQuiz = async (req, res) => {
             finalQuestions = finalQuestions.map(q => {
                 let options = Array.isArray(q.options) ? q.options : [];
                 options = options.map(o => typeof o === 'string' ? o : (o?.text || o?.label || String(o)));
-                const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
+                const rawCorrect = (
+                    q.correctAnswer !== undefined && q.correctAnswer !== null ? q.correctAnswer :
+                    q.correct_answer !== undefined && q.correct_answer !== null ? q.correct_answer :
+                    q.correct_ans !== undefined && q.correct_ans !== null ? q.correct_ans :
+                    q.answer !== undefined && q.answer !== null ? q.answer :
+                    ''
+                );
                 const correctString = resolveCorrectOptionText(rawCorrect, options);
+                const correctIdx = options.findIndex(o => o.trim().toLowerCase() === correctString.trim().toLowerCase());
                 return {
                     ...q,
                     options,
-                    correctAnswer: correctString
+                    correctAnswer: correctString,
+                    correct_option: correctIdx,
+                    correctOption: correctIdx
                 };
             });
         }
@@ -1963,13 +1986,19 @@ const normalizeQuestions = (questions) => {
             );
         }
 
-        const rawCorrect = (q.correctAnswer || q.correct_answer || q.correct_ans || '').toString().trim();
+        const rawCorrect = (
+            q.correctAnswer !== undefined && q.correctAnswer !== null ? q.correctAnswer :
+            q.correct_answer !== undefined && q.correct_answer !== null ? q.correct_answer :
+            q.correct_ans !== undefined && q.correct_ans !== null ? q.correct_ans :
+            q.answer !== undefined && q.answer !== null ? q.answer :
+            ''
+        );
         // Resolve correctAnswer to full text — use resolveCorrectOptionText which handles labels/indexes
         const correctString = resolveCorrectOptionText(rawCorrect, options);
 
         // Find the index of the correct option in the stored options array.
         // Use -1 if not found (don't guess index 0 — that would mark the wrong answer as correct).
-        const correctIdx = options.findIndex(o => o.toLowerCase().trim() === correctString.toLowerCase().trim());
+        const correctIdx = options.findIndex(o => o.trim().toLowerCase() === correctString.trim().toLowerCase());
 
         return {
             ...q,
@@ -2594,6 +2623,36 @@ exports.publishQuiz = async (req, res) => {
             const questions = Array.isArray(quiz.questions) ? quiz.questions : [];
             if (questions.length === 0) {
                 return res.status(400).json({ msg: 'Cannot publish a quiz with no questions.' });
+            }
+
+            // Work Item 4: Explicit Instructor Review Contract
+            // Quizzes generated with a capacity deficit require explicit instructor approval before publication
+            const firstQ = questions[0] || {};
+            const qCapReport = firstQ.metadata?.capacityReport || firstQ.metadata?.capacityDeficitReport || null;
+            const requiresApproval = Boolean(qCapReport?.instructorApprovalRequired || (qCapReport && (qCapReport.capacityDeficit > 0 || qCapReport.unfulfilledDeficitCount > 0)));
+            const isApproved = Boolean(quiz.isApprovedByInstructor || firstQ.metadata?.isApprovedByInstructor || req.body.approveCapacityDeficit || req.body.approved);
+
+            if (requiresApproval && !isApproved) {
+                return res.status(403).json({
+                    msg: 'Explicit instructor approval is required before publishing a quiz generated under capacity deficit.',
+                    instructorApprovalRequired: true,
+                    capacityWarning: qCapReport?.capacityWarning || `This lecture supports approximately ${qCapReport?.totalDefensibleCapacity || 5} distinct assessment targets. Generating ${qCapReport?.requestedCount || 10} questions may produce repeated assessment targets. Recommended count: ${qCapReport?.recommendedQuestionCount || 5}.`,
+                    capacityReport: qCapReport,
+                    options: qCapReport?.options || [
+                        { action: 'ACCEPT_DEFENSIBLE_COUNT', label: `Accept defensible question count (${qCapReport?.totalDefensibleCapacity || 5} questions)` },
+                        { action: 'ADD_MATERIALS', label: 'Provide additional lecture materials' },
+                        { action: 'EXPAND_SCOPE', label: 'Expand lecture scope' }
+                    ]
+                });
+            }
+
+            if (isApproved && requiresApproval && questions.length > 0) {
+                questions[0].metadata = {
+                    ...(questions[0].metadata || {}),
+                    isApprovedByInstructor: true,
+                    approvedAt: new Date().toISOString(),
+                    approvedBy: req.user.id
+                };
             }
 
             const publishedAt = new Date().toISOString();
@@ -3559,10 +3618,11 @@ exports.generateQuizQuestions = async (req, res) => {
             const isTopicModeRequest = req.body.input_modality === 'TOPIC_SYNTHESIS' ||
                 ((!allUploadedFiles || allUploadedFiles.length === 0) && (!fileConfigs || fileConfigs.length === 0) && parsedInputs && parsedInputs.every(inp => inp.type === 'text') && (topic || parsedInputs[0]?.content));
             const explicitModality = isTopicModeRequest ? 'TOPIC_SYNTHESIS' : (req.body.input_modality || null);
+            const reqCapacityPolicy = req.body.capacityPolicy || req.body.capacity_policy || 'ALLOW_SCOPE_SUPPLEMENTARY';
 
             let finalQuestions = [];
             if (parsedInputs && parsedInputs.length > 0) {
-                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality);
+                finalQuestions = await generateQuestions(null, null, questionCount, difficulty, source_material_id, blendedRatios, parsedInputs, parsedTopicWeights, taskId, callbackUrl, parsedIsolatedNarratives, derivedStyle, deficitPolicy, explicitModality, reqCapacityPolicy);
             } else if (req.file) {
                 if (isVoiceSource && extractedText) {
                     const voiceInput = [{
@@ -3656,6 +3716,13 @@ exports.generateQuizQuestions = async (req, res) => {
                 shortfallCategory: (finalTaskObj && finalTaskObj.shortfallCategory) || pResult?.shortfallCategory || null,
                 requestedCount:  (finalTaskObj && finalTaskObj.requestedCount) || questionCount,
                 deliveredCount:  finalQuestions.length,
+                groundedCount:   (finalTaskObj && finalTaskObj.pipelineResult?.groundedCount) ?? (finalTaskObj && finalTaskObj.groundedCount) ?? finalQuestions.filter(q => q.provenance !== 'SCOPE_SUPPLEMENTARY' && !q.isSupplementary).length,
+                supplementaryCount: (finalTaskObj && finalTaskObj.pipelineResult?.supplementaryCount) ?? (finalTaskObj && finalTaskObj.supplementaryCount) ?? finalQuestions.filter(q => q.provenance === 'SCOPE_SUPPLEMENTARY' || q.isSupplementary).length,
+                distinctTargetCount: (finalTaskObj && finalTaskObj.pipelineResult?.distinctTargetCount) ?? (finalTaskObj && finalTaskObj.distinctTargetCount) ?? new Set(finalQuestions.map(q => q.conceptTested || q.target?.concept || q.concept || '').filter(Boolean)).size,
+                repeatedTargetCount: (finalTaskObj && finalTaskObj.pipelineResult?.repeatedTargetCount) ?? (finalTaskObj && finalTaskObj.repeatedTargetCount) ?? finalQuestions.filter(q => (q.isRepeatedTarget || q.repeatedTarget) && !q.isSupplementary).length,
+                difficultyDeficits: (finalTaskObj && finalTaskObj.pipelineResult?.difficultyDeficits) ?? (finalTaskObj && finalTaskObj.difficultyDeficits) ?? null,
+                capacityPolicy:  (finalTaskObj && finalTaskObj.pipelineResult?.capacityPolicy) ?? (finalTaskObj && finalTaskObj.capacityPolicy) ?? (req.body.capacityPolicy || 'ALLOW_SCOPE_SUPPLEMENTARY'),
+                sessionModality: (finalTaskObj && finalTaskObj.pipelineResult?.sessionModality) ?? (finalTaskObj && finalTaskObj.sessionModality) ?? null,
                 notice:          (finalTaskObj && finalTaskObj.pipelineNotice) || (finalQuestions.length < questionCount ? `${finalQuestions.length} evidence-grounded questions were generated from the available instructional content. One additional question could not be validated against the available evidence.` : null),
                 alignmentWarning: (finalTaskObj && finalTaskObj.alignmentWarning) || null,
                 unalignedDocuments: (finalTaskObj && finalTaskObj.unalignedDocuments) || [],
@@ -3666,6 +3733,7 @@ exports.generateQuizQuestions = async (req, res) => {
                 pipelineResult:  (finalTaskObj && finalTaskObj.pipelineResult) || null,
                 plan:            (finalTaskObj && finalTaskObj.pipelineResult?.plan) || null,
                 evidencePackage: (finalTaskObj && finalTaskObj.pipelineResult?.evidencePackage) || null,
+                curricularEvidenceProfile: (finalTaskObj && finalTaskObj.pipelineResult?.curricularEvidenceProfile) || null,
                 tcScore:         (finalTaskObj && finalTaskObj.pipelineResult?.tcScore) || null,
                 teacherAnalysis: (finalTaskObj && finalTaskObj.pipelineResult?.teacherAnalysis) || null,
                 pdi:             (finalTaskObj && finalTaskObj.pipelineResult?.pdi) || null,
@@ -4599,9 +4667,16 @@ exports.getFileMetadata = async (req, res) => {
 
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(absolutePath);
-            const data = await pdfParse(dataBuffer);
-            totalCount = data.numpages || 1;
-            extractedText = data.text || '';
+            try {
+                const PdfMultimodalExtractor = require('../engine/documentRouter/pdfMultimodalExtractor');
+                const docModel = await PdfMultimodalExtractor.extract(dataBuffer, { filename: path.basename(absolutePath) });
+                totalCount = docModel.totalPages || docModel.pages.length || 1;
+                extractedText = docModel.toUnifiedText();
+            } catch (_) {
+                const data = await pdfParse(dataBuffer);
+                totalCount = data.numpages || 1;
+                extractedText = data.text || '';
+            }
         } else if (['.docx'].includes(ext)) {
             const result = await mammoth.extractRawText({ path: absolutePath });
             extractedText = result.value || '';
@@ -5862,3 +5937,44 @@ exports.endQuiz = async (req, res) => {
     }
 };
 
+
+/**
+ * Work Item 4: Explicit Instructor Approval for Quizzes Generated with Capacity Deficit
+ */
+exports.approveQuiz = async (req, res) => {
+    try {
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: req.params.id }
+        });
+        if (!quiz) return res.status(404).json({ msg: 'Quiz not found' });
+        if (quiz.createdById !== req.user.id) return res.status(401).json({ msg: 'User not authorized' });
+
+        let questions = Array.isArray(quiz.questions) ? [...quiz.questions] : [];
+        if (questions.length > 0 && questions[0]) {
+            questions[0] = {
+                ...questions[0],
+                metadata: {
+                    ...(questions[0].metadata || {}),
+                    isApprovedByInstructor: true,
+                    approvedAt: new Date().toISOString(),
+                    approvedBy: req.user.id
+                }
+            };
+        }
+
+        const updated = await prisma.quiz.update({
+            where: { id: req.params.id },
+            data: { questions }
+        });
+
+        return res.json({
+            msg: 'Quiz capacity deficit approved by instructor. Quiz is now eligible for publication.',
+            isApprovedByInstructor: true,
+            quizId: updated.id,
+            quiz: updated
+        });
+    } catch (err) {
+        console.error('Error approving quiz:', err);
+        return res.status(500).json({ msg: 'Failed to approve quiz: ' + err.message });
+    }
+};

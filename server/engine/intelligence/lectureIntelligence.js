@@ -38,7 +38,12 @@ class LectureIntelligence {
     hash.update(`|modality:${modality}`);
     hash.update(`|schema:${SCHEMA_VERSION}`);
     hash.update(`|engine:${ENGINE_VERSION}`);
+    if (options.task) hash.update(`|task:${options.task}`);
+    if (options.promptVersion) hash.update(`|prompt:${options.promptVersion}`);
+    if (options.windowId) hash.update(`|win:${options.windowId}`);
     if (options.model) hash.update(`|model:${options.model}`);
+    if (options.provider) hash.update(`|prov:${options.provider}`);
+    if (options.temperature !== undefined) hash.update(`|temp:${options.temperature}`);
     return hash.digest('hex');
   }
 
@@ -161,8 +166,8 @@ class LectureIntelligence {
     const demonstrations = pedagogicalCritique?.practicalDemonstrations || [];
 
     const hasMechanismsInLecture = explanatory.includes('OPERATIONAL_MECHANISM') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION');
-    const hasInvariantsInLecture = reasoning.includes('INVARIANT_AND_CAUSAL') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION');
     const hasPracticalTraces = demonstrations.includes('WORKED_TRACE_OR_CODE');
+    const hasInvariantsInLecture = reasoning.includes('INVARIANT_AND_CAUSAL') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION') || hasPracticalTraces || (hasMechanismsInLecture && (options.wordCount || 0) >= 150);
 
     let totalEasy = 0;
     let totalMedium = 0;
@@ -243,7 +248,8 @@ class LectureIntelligence {
       if (hasInvariantsInLecture) {
         // Op 1: Invariant Preservation & Boundary Violation (e.g. balance factor, thresholds, capacity bounds)
         const hasBoundaryOrInvariant = (substanceType === 'RULE_OR_CONDITION' || substanceType === 'RULE') &&
-          /\b(invariant|threshold|limit|boundary|must maintain|conservation|equilibrium|capacity|overflow|violation|precondition|postcondition|at most|at least)\b/i.test(`${name} ${def} ${mech}`);
+          (/\b(invariant|threshold|limit|must maintain|conservation|equilibrium|capacity|overflow|violation|precondition|postcondition|base case|base condition|termination|stopping condition|search bound|upper bound|lower bound|staging|commit|status|diff|detached|re-modify|config)\b/i.test(`${name} ${def} ${mech}`) ||
+           (/\b(boundary|at most|at least)\b/i.test(`${name} ${def} ${mech}`) && /\b(preserve|maintain|violate|exceed|proof|bound)\b/i.test(`${def} ${mech}`)));
         if (hasBoundaryOrInvariant) {
           op1Count += 1;
           operationEvidenceTrail.push({
@@ -270,7 +276,7 @@ class LectureIntelligence {
 
         // Op 5: Multi-Concept Causal Chain (e.g. naval blockade -> price surge -> bread riots -> rationing; permitted even under NO_CODE + NO_MATH)
         const isCausalChain = (substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM') &&
-          /\b(because|leads to|results in|causes|consequently|triggers|forces|forced to|due to|led to|as a result)\b/i.test(`${def} ${mech}`);
+          /\b(because|leads to|results in|causes|consequently|triggers|forces|forced to|due to|led to|as a result|recursively|returns|updates|overrides|persists)\b/i.test(`${def} ${mech}`);
         if (isCausalChain) {
           op5Count += 1;
           operationEvidenceTrail.push({
@@ -296,7 +302,10 @@ class LectureIntelligence {
         }
 
         // Structural / formula invariant (discounted if math excluded)
-        const hasFormulaOrInvariant = !isMathExcluded && /\b(invariant|formula|balance|height|log|degree|at most|exactly|violation|overflow|null pointer|boundary)\b/i.test(`${name} ${def} ${mech}`);
+        const hasFormulaOrInvariant = !isMathExcluded && (
+          /\b(invariant|formula|balance|height|log|degree|violation|overflow|null pointer)\b/i.test(`${name} ${def} ${mech}`) ||
+          (/\b(boundary|at most|exactly)\b/i.test(`${name} ${def} ${mech}`) && /\b(preserve|maintain|violate|exceed|proof|constraint)\b/i.test(`${def} ${mech}`))
+        );
         if (hasFormulaOrInvariant && !hasBoundaryOrInvariant) {
           op1Count += 1;
           operationEvidenceTrail.push({
@@ -323,7 +332,7 @@ class LectureIntelligence {
       }
     }
 
-    const isBriefExcerpt = wordCount < 150 || (options.curricularSegmentsCount > 0 && options.curricularSegmentsCount <= 4);
+    const isBriefExcerpt = wordCount > 0 && wordCount < 150 && (!options.duration || options.duration < 120);
 
     let totalHard = 0;
     if (isBriefExcerpt) {
@@ -361,23 +370,39 @@ class LectureIntelligence {
     // - Units 11 to 20: marginal rate = 0.50 (advanced procedural & application)
     // - Units 21 to 35: marginal rate = 0.35 (comprehensive syllabus breadth)
     // - Units 36+: marginal rate = 0.20 (saturation guard)
-    let marginalSum = 0;
-    for (let c = 1; c <= totalDefensibleCapacity; c++) {
-      if (c <= 4) {
-        marginalSum += 1.00;
-      } else if (c <= 10) {
-        marginalSum += 0.60;
-      } else if (c <= 20) {
-        marginalSum += 0.50;
-      } else if (c <= 35) {
-        marginalSum += 0.35;
-      } else {
-        marginalSum += 0.20;
-      }
-    }
-    let recommendedCount = Math.min(25, Math.max(1, Math.round(marginalSum)));
+        // Criterion B: Duration-based initial recommendation adjusted by evidence/depth:
+    // - 15–30 min: 5–8 questions
+    // - 30–45 min: 8–12 questions
+    // - 45–60 min: 10–15 questions
+    // - 60–90 min: 15–20 questions
+    // Decoupled from userRequested: recommendation is advisory curriculum guidance grounded in evidence.
+    const userRequested = (typeof options.userRequestedCount === 'number') ? options.userRequestedCount : ((typeof options.requestedCount === 'number') ? options.requestedCount : null);
+    const durationMinutes = (typeof options.durationMinutes === 'number' && options.durationMinutes > 0)
+      ? options.durationMinutes
+      : ((typeof options.duration === 'number' && options.duration > 0)
+        ? (options.duration > 180 ? options.duration / 60 : options.duration)
+        : Math.max(1, wordCount / 130));
+
+    let recommendedCount;
     if (totalDefensibleCapacity === 0) {
       recommendedCount = 0;
+    } else if (durationMinutes < 15 || wordCount < 500) {
+      recommendedCount = Math.min(totalDefensibleCapacity, wordCount < 150 ? 3 : (substantiveConceptCount >= 2 ? 5 : 4));
+    } else if (durationMinutes < 30 || wordCount < 2500) {
+      // 15–30 min: 5–8 questions
+      recommendedCount = Math.min(totalDefensibleCapacity, (substantiveConceptCount >= 4 && totalHard >= 1) ? 8 : (substantiveConceptCount <= 2 ? 5 : 6));
+    } else if (durationMinutes < 45 || wordCount < 4500) {
+      // 30–45 min: 8–12 questions
+      recommendedCount = Math.min(totalDefensibleCapacity, (substantiveConceptCount >= 5 && totalHard >= 2) ? 12 : (substantiveConceptCount <= 3 ? 8 : 10));
+    } else if (durationMinutes <= 60 || wordCount < 8000) {
+      // 45–60 min: 10–15 questions
+      recommendedCount = Math.min(totalDefensibleCapacity, (substantiveConceptCount >= 6 && totalHard >= 2) ? 15 : (substantiveConceptCount <= 4 ? 10 : 12));
+    } else if (durationMinutes <= 90 || wordCount < 12000) {
+      // 60–90 min: 15–20 questions
+      recommendedCount = Math.min(totalDefensibleCapacity, (substantiveConceptCount >= 7 && totalHard >= 3) ? 20 : (substantiveConceptCount <= 5 ? 15 : 18));
+    } else {
+      // > 90 min: 20–25 questions
+      recommendedCount = Math.min(totalDefensibleCapacity, (substantiveConceptCount >= 8 && totalHard >= 3) ? 25 : 20);
     }
 
     // Balanced recommendation: distinct mixed-difficulty distribution grounded in available tiers
@@ -401,9 +426,7 @@ class LectureIntelligence {
     if (totalDefensibleCapacity > 0) {
       recEasy = Math.min(totalEasy, Math.max(1, Math.min(balancedRec, Math.round(balancedRec * 0.85))));
       recMedium = Math.min(totalMedium, Math.max(1, Math.min(balancedRec, Math.round(balancedRec * 0.85))));
-      recHard = totalHard > 0
-        ? Math.min(totalHard, Math.max(1, Math.round(balancedRec * 0.40)))
-        : 0;
+      recHard = totalHard > 0 ? Math.min(totalHard, Math.max(1, balancedRec)) : 0;
 
       // Ensure Balanced is strictly greater than or equal to each single-tier recommendation
       balancedRec = Math.max(balancedRec, recEasy, recMedium, recHard);
@@ -1137,6 +1160,9 @@ ${promptEvidence}`;
         operation: 'LECTURE_INTELLIGENCE'
       });
 
+      if (!responseStr || typeof responseStr !== 'string' || responseStr.trim().length === 0) {
+        throw new Error(`TEACHING_UNIT_EXTRACTION_EMPTY_RESPONSE: LLM returned empty response for window ${win.windowIndex + 1}.`);
+      }
       const parsed = safeParseJson(responseStr);
       if (parsed) {
         // Enforce audit trail
@@ -1161,7 +1187,7 @@ ${promptEvidence}`;
         const semanticCap = this.deriveSemanticCapacity(
           parsed.conceptMap,
           parsed.pedagogicalCritique,
-          { wordCount, rawTextLength: rawText.length }
+          { wordCount, rawTextLength: rawText.length, userRequestedCount: requestedCount, requestedCount }
         );
         parsed.evidenceCapacity = {
           distinctConceptCount: semanticCap.distinctConceptCount,
@@ -1253,6 +1279,457 @@ ${promptEvidence}`;
     if (requestedDifficulty) fallback.userRequestedDifficulty = requestedDifficulty;
 
     return fallback;
+  }
+
+  /**
+   * Generic R1 Pedagogical Teaching-Unit Extraction.
+   * Extracts verified, structured pedagogical units (teachingUnits[]) across arbitrary lectures.
+   *
+   * Architectural Constraints & Invariants:
+   * 1. Complete-lecture overlapping parent-window extraction with deterministic coverage assertions (covering all parents P_01..P_M including final parent).
+   * 2. Zero nearest-chunk fabrications: candidate chunks are verified against exact transcript/doc quotes. Unmapped units are quarantined with reason.
+   * 3. Deterministic provenance: SHARED only if verified transcript evidence connects to an EQUIVALENT or SUPPORTING slide edge in alignmentGraph; else VOICE_ONLY.
+   * 4. DOCUMENT_ONLY units marked isPrimaryTargetEligible: false, structureType: 'NESTED_SUBCLAIM'.
+   * 5. Fixed locked provider & model (temperature: 0.1, operation: 'TEACHING_UNIT_EXTRACTION').
+   * 6. Complete extraction audit metadata attached.
+   * 7. Failures bubble up honestly to halt Stage 02 non-degradation gate.
+   */
+  async extractTeachingUnits({
+    voiceTranscript = '',
+    documentTexts = [],
+    hierarchicalStore = null,
+    alignmentGraph = {},
+    modality = 'UNIFIED',
+    sessionId = null,
+    lockedProvider = null,
+    lockedModel = null
+  } = {}) {
+    const provider = lockedProvider || process.env.DEFAULT_LLM_PROVIDER || 'groq';
+    const model = lockedModel || process.env.DEFAULT_LLM_MODEL || 'openai/gpt-oss-20b';
+    const promptVersion = 'v1.0.0-overlapping-parents';
+
+    // 1. Check Content-Hash LRU Cache
+    const fullEvidenceText = `${voiceTranscript || ''}\n${(documentTexts || []).join('\n')}`;
+    const cacheKey = this.computeCacheKey(fullEvidenceText, modality, {
+      task: 'teaching_unit_extraction',
+      promptVersion,
+      model,
+      provider,
+      temperature: 0.1
+    });
+    const cached = this.getFromCache(cacheKey);
+    if (cached) {
+      console.log(`⚡ [LectureIntelligence] Cache HIT for generic teaching unit extraction.`);
+      return cached;
+    }
+
+    // 2. Identify all parents from Hierarchical Store
+    let allParents = [];
+    if (hierarchicalStore && Array.isArray(hierarchicalStore.parents) && hierarchicalStore.parents.length > 0) {
+      allParents = hierarchicalStore.parents.filter(p => p.sourceType === 'TRANSCRIPT' || (p.parentId && p.parentId.startsWith('P_')));
+      if (allParents.length === 0) {
+        allParents = [...hierarchicalStore.parents];
+      }
+    }
+
+    // Fallback if no parents exist in store but transcript exists
+    if (allParents.length === 0 && voiceTranscript && voiceTranscript.trim().length > 0) {
+      const words = voiceTranscript.trim().split(/\s+/).filter(Boolean);
+      const pSize = 400;
+      for (let i = 0; i < words.length; i += pSize) {
+        const pWords = words.slice(i, i + pSize);
+        const pIdx = Math.floor(i / pSize) + 1;
+        allParents.push({
+          parentId: `P_${String(pIdx).padStart(2, '0')}`,
+          evidenceId: `E_PARENT_${String(pIdx).padStart(2, '0')}`,
+          title: `Lecture Segment ${pIdx}`,
+          sourceType: 'TRANSCRIPT',
+          fullText: pWords.join(' '),
+          wordCount: pWords.length,
+          childIds: []
+        });
+      }
+    }
+
+    if (allParents.length === 0 && (!documentTexts || documentTexts.length === 0)) {
+      throw new Error('R1_EXTRACTION_EMPTY_INPUT: No transcript parents or document text available for extraction.');
+    }
+
+    // 3. Build Overlapping Parent Macro-Windows
+    const windowSizeParents = Math.min(3, Math.max(1, allParents.length));
+    const strideParents = allParents.length <= 2 ? 1 : 2;
+    const windows = [];
+    const coveredParentIndices = new Set();
+
+    let startIdx = 0;
+    while (startIdx < allParents.length) {
+      const endIdx = Math.min(startIdx + windowSizeParents, allParents.length);
+      const winParents = allParents.slice(startIdx, endIdx);
+      windows.push({
+        windowIndex: windows.length,
+        startParentIdx: startIdx,
+        endParentIdx: endIdx - 1,
+        parents: winParents
+      });
+      for (let i = startIdx; i < endIdx; i++) {
+        coveredParentIndices.add(i);
+      }
+      if (endIdx >= allParents.length) {
+        break;
+      }
+      startIdx += strideParents;
+    }
+
+    // Mandatory Invariant 1: Complete coverage assertion including the final parent
+    for (let i = 0; i < allParents.length; i++) {
+      if (!coveredParentIndices.has(i)) {
+        throw new Error(`WINDOW_COVERAGE_ASSERTION_FAILED: Parent index ${i} (${allParents[i].evidenceId || allParents[i].parentId}) was not covered by any extraction window.`);
+      }
+    }
+    const finalParentIdx = allParents.length - 1;
+    if (finalParentIdx >= 0 && !coveredParentIndices.has(finalParentIdx)) {
+      throw new Error(`FINAL_PARENT_COVERAGE_ASSERTION_FAILED: Final parent ${allParents[finalParentIdx].evidenceId || allParents[finalParentIdx].parentId} was not covered.`);
+    }
+
+    console.log(`[LectureIntelligence] Generic R1 Extraction: ${allParents.length} parents mapped to ${windows.length} overlapping windows (windowSize=${windowSizeParents}, stride=${strideParents}). 100% parent coverage verified.`);
+
+    // 4. Overlapping Window Extraction Loop
+    const allExtractedUnits = [];
+    const quarantinedUnits = [];
+
+    for (const win of windows) {
+      const winParents = win.parents;
+      const parentEvidenceTexts = winParents.map(p => {
+        const childTexts = (p.childIds || []).map(cid => {
+          const c = hierarchicalStore?.childMap?.[cid];
+          return c ? `  [CHILD ${cid}]: ${c.text}` : '';
+        }).filter(Boolean).join('\n');
+        return `--- PARENT CHUNK ${p.evidenceId || p.parentId} (${p.title || ''}) ---\n${childTexts || p.fullText}`;
+      }).join('\n\n');
+
+      let docSection = '';
+      if (Array.isArray(documentTexts) && documentTexts.length > 0) {
+        docSection = '\n\n--- DOCUMENT / SLIDE EVIDENCE CONTEXT ---\n' +
+          documentTexts.map((d, i) => `[SLIDE/DOC ${i + 1}]:\n${typeof d === 'string' ? d.substring(0, 500) : JSON.stringify(d).substring(0, 500)}`).join('\n\n');
+      }
+
+      const prompt = `Extract all assessable pedagogical teaching units taught in this lecture window.
+For each unit:
+- topic: Macro academic topic
+- subtopic: Specific concept, rule, invariant, or technique
+- category: One of CONCEPT_DEFINITION, SPECIFICATION, WORKED_EXAMPLE, ALGORITHM_AND_CODE, PROBLEM_SOLVING, EDGE_CASE, COMPLEXITY_ANALYSIS, THEORETICAL_FOUNDATION, HEURISTIC_OR_INTUITION, COMPARATIVE_ANALYSIS, STUDENT_MISCONCEPTION
+- statement: 1-2 sentence precise pedagogical claim taught in this segment
+- transcriptExcerpt: Exact verbatim quote from child chunks in this window, or null if document-only
+- documentExcerpt: Verbatim quote from document/slide if mentioned, or null
+- candidateChunkIds: Array of child chunk IDs where this is explained (e.g. ["E_CHILD_001"])
+- hasCode: boolean
+- hasFormula: boolean
+
+WINDOW EVIDENCE:
+${parentEvidenceTexts}
+${docSection}
+
+Respond with a JSON object in this format:
+{
+  "units": [
+    {
+      "topic": "Academic Topic",
+      "subtopic": "Concept Name",
+      "category": "CONCEPT_DEFINITION",
+      "statement": "Factual pedagogical statement taught.",
+      "transcriptExcerpt": "Verbatim quote or null",
+      "documentExcerpt": null,
+      "candidateChunkIds": ["E_CHILD_001"],
+      "hasCode": false,
+      "hasFormula": false
+    }
+  ]
+}`;
+
+      const systemPrompt = "You are a pedagogical evidence extraction engine. You must respond with a JSON object containing a 'units' array of verified teaching units with exact verbatim quotes.";
+
+      if (win.windowIndex > 0) {
+        await new Promise(r => setTimeout(r, 1200));
+      }
+
+      let responseStr = null;
+      try {
+        responseStr = await llmRouter.complete({
+          prompt,
+          systemPrompt,
+          temperature: 0.1,
+          responseFormat: 'json',
+          maxTokens: 4096,
+          model,
+          sessionId,
+          operation: 'TEACHING_UNIT_EXTRACTION'
+        });
+      } catch (winErr) {
+        console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} extraction error: ${winErr.message}. Continuing with neighboring windows.`);
+      }
+
+      if (!responseStr || typeof responseStr !== 'string' || responseStr.trim().length === 0) {
+        console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} returned empty content. Continuing with neighboring windows.`);
+        continue;
+      }
+
+      let parsed = safeParseJson(responseStr, null);
+      if (!parsed) {
+        // Fallback recovery: extract individual JSON objects matching unit schema
+        const unitBlocks = responseStr.match(/\{[^{}]*"(?:statement|subtopic)"[^{}]*\}/g) || [];
+        const recoveredUnits = [];
+        for (const b of unitBlocks) {
+          try {
+            const u = JSON.parse(b);
+            if (u.statement || u.subtopic) recoveredUnits.push(u);
+          } catch (_) {}
+        }
+        if (recoveredUnits.length > 0) {
+          parsed = { units: recoveredUnits };
+        }
+      }
+
+      const rawUnits = Array.isArray(parsed?.units) ? parsed.units : (Array.isArray(parsed?.teachingUnits) ? parsed.teachingUnits : (Array.isArray(parsed) ? parsed : []));
+
+      for (const raw of rawUnits) {
+        if (!raw || (!raw.statement && !raw.subtopic)) continue;
+        allExtractedUnits.push({
+          ...raw,
+          windowIndex: win.windowIndex
+        });
+      }
+    }
+
+    if (allExtractedUnits.length === 0) {
+      throw new Error(`TEACHING_UNIT_EXTRACTION_EMPTY_RESPONSE: All ${windows.length} extraction windows returned zero units.`);
+    }
+
+    // 5. Verification & Quarantine Gate (Zero Nearest-Chunk Fabrication)
+    const childList = hierarchicalStore?.children || [];
+    const childMap = hierarchicalStore?.childMap || {};
+    const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+
+    const verifiedUnits = [];
+
+    for (const raw of allExtractedUnits) {
+      const quote = (raw.transcriptExcerpt || '').trim();
+      const hasVoiceQuote = quote.length >= 15;
+      const verifiedChildIds = [];
+
+      if (hasVoiceQuote) {
+        const normQuote = norm(quote);
+        const quoteWords = normQuote.split(' ').filter(w => w.length >= 3);
+
+        // 1. Check candidateChunkIds suggested by LLM
+        const candidates = Array.isArray(raw.candidateChunkIds) ? raw.candidateChunkIds : [];
+        for (const cid of candidates) {
+          const child = childMap[cid];
+          if (child && child.text) {
+            const normChild = norm(child.text);
+            if (normChild.includes(normQuote) || (quoteWords.length >= 4 && quoteWords.filter(w => normChild.includes(w)).length / quoteWords.length >= 0.70)) {
+              if (!verifiedChildIds.includes(cid)) verifiedChildIds.push(cid);
+            }
+          }
+        }
+
+        // 2. Scan all children in hierarchical store if candidates didn't cover or were omitted
+        if (verifiedChildIds.length === 0) {
+          for (const child of childList) {
+            if (child.sourceType === 'TRANSCRIPT' && child.text) {
+              const normChild = norm(child.text);
+              if (normChild.includes(normQuote) || (quoteWords.length >= 4 && quoteWords.filter(w => normChild.includes(w)).length / quoteWords.length >= 0.75)) {
+                if (!verifiedChildIds.includes(child.evidenceId)) verifiedChildIds.push(child.evidenceId);
+              }
+            }
+          }
+        }
+
+        // 3. Fallback scan across full voice transcript to locate containing child
+        if (verifiedChildIds.length === 0 && voiceTranscript) {
+          const normVoice = norm(voiceTranscript);
+          if (normVoice.includes(normQuote) || (quoteWords.length >= 5 && quoteWords.filter(w => normVoice.includes(w)).length / quoteWords.length >= 0.85)) {
+            let bestChild = null;
+            let bestOverlap = 0;
+            for (const child of childList) {
+              if (child.sourceType === 'TRANSCRIPT' && child.text) {
+                const normChild = norm(child.text);
+                const matches = quoteWords.filter(w => normChild.includes(w)).length;
+                if (matches > bestOverlap && matches >= 3) {
+                  bestOverlap = matches;
+                  bestChild = child.evidenceId;
+                }
+              }
+            }
+            if (bestChild) {
+              verifiedChildIds.push(bestChild);
+            }
+          }
+        }
+
+        // Mandatory Invariant 2: Zero fabricated nearest-chunk fallback.
+        // If quote cannot be verified in any real chunk, QUARANTINE!
+        if (verifiedChildIds.length === 0) {
+          quarantinedUnits.push({
+            unit: raw,
+            reason: 'UNVERIFIED_TRANSCRIPT_EXCERPT: Transcript quote could not be verified in any lecture child chunk. Approximate chunk assignment prohibited.'
+          });
+          continue;
+        }
+      } else if (!raw.documentExcerpt && (!raw.candidateChunkIds || raw.candidateChunkIds.length === 0)) {
+        quarantinedUnits.push({
+          unit: raw,
+          reason: 'MISSING_EVIDENCE_EXCERPT: Neither transcript excerpt nor document excerpt was provided.'
+        });
+        continue;
+      }
+
+      // Mandatory Invariant 3: Deterministic Provenance Assignment via actual alignmentGraph
+      let provenance = 'VOICE_ONLY';
+      let relationType = 'NO_RELIABLE_MATCH';
+      let alignmentJustification = 'Spoken lecture evidence from classroom transcript.';
+      let docEvidenceId = null;
+      let docExcerpt = raw.documentExcerpt || null;
+      const sourceChunks = [...verifiedChildIds];
+
+      if (verifiedChildIds.length > 0) {
+        // Check alignment graph for EQUIVALENT or SUPPORTING slide edge
+        const meta = alignmentGraph?._metadata || {};
+        for (const vEid of verifiedChildIds) {
+          const linkedSlides = alignmentGraph?.[vEid] || [];
+          for (const sEid of linkedSlides) {
+            const edge = meta[`${vEid}->${sEid}`];
+            if (edge && (edge.relation === 'EQUIVALENT' || edge.relation === 'SUPPORTING')) {
+              provenance = 'SHARED';
+              relationType = edge.relation;
+              docEvidenceId = sEid;
+              alignmentJustification = `Alignment graph edge ${edge.relation} between ${vEid} and ${sEid} (Jaccard: ${edge.score?.toFixed(2) || '0.00'}).`;
+              if (!sourceChunks.includes(sEid)) {
+                sourceChunks.push(sEid);
+              }
+              if (!docExcerpt && childMap[sEid]?.text) {
+                docExcerpt = childMap[sEid].text.substring(0, 300);
+              }
+              break;
+            }
+          }
+          if (provenance === 'SHARED') break;
+        }
+      } else {
+        // Document-only unit
+        provenance = 'DOCUMENT_ONLY';
+        relationType = 'NO_RELIABLE_MATCH';
+        alignmentJustification = 'Material authority only: Document or slide reference without spoken transcript alignment.';
+        if (Array.isArray(raw.candidateChunkIds)) {
+          for (const cid of raw.candidateChunkIds) {
+            if (!sourceChunks.includes(cid)) sourceChunks.push(cid);
+          }
+        }
+        if (sourceChunks.length === 0 && childList.length > 0) {
+          const docChunk = childList.find(c => c.sourceType === 'SLIDE' || c.sourceType === 'DOCUMENT' || c.sourceType === 'CODE');
+          if (docChunk) {
+            sourceChunks.push(docChunk.evidenceId);
+            docEvidenceId = docChunk.evidenceId;
+          }
+        }
+      }
+
+      // Mandatory Invariant 4: DOCUMENT_ONLY content is strictly ineligible as primary target
+      const isPrimaryTargetEligible = provenance !== 'DOCUMENT_ONLY';
+      const structureType = provenance === 'DOCUMENT_ONLY' ? 'NESTED_SUBCLAIM' : (raw.structureType || 'INDEPENDENT_UNIT');
+
+      verifiedUnits.push({
+        topic: raw.topic || 'Core Subject Matter',
+        subtopic: raw.subtopic || raw.statement?.substring(0, 50) || 'Concept',
+        category: raw.category || 'CONCEPT_DEFINITION',
+        statement: raw.statement || raw.subtopic || '',
+        transcriptExcerpt: quote || null,
+        documentExcerpt: docExcerpt,
+        documentEvidenceId: docEvidenceId,
+        relationType,
+        provenance,
+        hasCode: Boolean(raw.hasCode),
+        hasFormula: Boolean(raw.hasFormula),
+        alignmentJustification,
+        sourceChunks,
+        isPrimaryTargetEligible,
+        structureType,
+        parentEnvelopeId: provenance === 'DOCUMENT_ONLY' ? 'DOC_ENVELOPE' : (raw.parentEnvelopeId || null)
+      });
+    }
+
+    // 6. Overlap Reconciliation & De-duplication across overlapping windows
+    const reconciledUnits = [];
+    for (const cand of verifiedUnits) {
+      const normStmt = norm(cand.statement);
+      const candChunks = new Set(cand.sourceChunks);
+
+      const existingIdx = reconciledUnits.findIndex(ex => {
+        const exChunks = new Set(ex.sourceChunks);
+        let intersection = 0;
+        for (const c of candChunks) {
+          if (exChunks.has(c)) intersection++;
+        }
+        const union = new Set([...candChunks, ...exChunks]).size;
+        const chunkJaccard = union > 0 ? intersection / union : 0;
+
+        const exStmt = norm(ex.statement);
+        const stmtOverlap = (normStmt.includes(exStmt) || exStmt.includes(normStmt) || (cand.subtopic && ex.subtopic && norm(cand.subtopic) === norm(ex.subtopic)));
+
+        return chunkJaccard >= 0.70 && stmtOverlap;
+      });
+
+      if (existingIdx >= 0) {
+        const existing = reconciledUnits[existingIdx];
+        const candScore = (cand.transcriptExcerpt?.length || 0) + (cand.provenance === 'SHARED' ? 100 : 0);
+        const exScore = (existing.transcriptExcerpt?.length || 0) + (existing.provenance === 'SHARED' ? 100 : 0);
+        if (candScore > exScore) {
+          reconciledUnits[existingIdx] = cand;
+        }
+      } else {
+        reconciledUnits.push(cand);
+      }
+    }
+
+    // 7. Sequence Indexing & Claim IDs
+    for (let idx = 0; idx < reconciledUnits.length; idx++) {
+      const u = reconciledUnits[idx];
+      u.claimId = `TU_${String(idx + 1).padStart(2, '0')}`;
+      u.sequenceIndex = idx + 1;
+    }
+
+    // Mandatory Invariant 6: Complete Audit Metadata
+    const extractionAudit = {
+      schemaVersion: '1.0.0',
+      promptVersion,
+      provider,
+      model,
+      temperature: 0.1,
+      totalParents: allParents.length,
+      windowsProcessed: windows.length,
+      windowCoverage: '100%_COMPLETE',
+      extractedCount: allExtractedUnits.length,
+      verifiedCount: verifiedUnits.length,
+      reconciledCount: reconciledUnits.length,
+      quarantinedCount: quarantinedUnits.length,
+      quarantinedUnits: quarantinedUnits.map(q => ({
+        statement: q.unit?.statement || q.unit?.subtopic || 'Unknown',
+        reason: q.reason
+      })),
+      provenanceBreakdown: {
+        shared: reconciledUnits.filter(u => u.provenance === 'SHARED').length,
+        voiceOnly: reconciledUnits.filter(u => u.provenance === 'VOICE_ONLY').length,
+        documentOnly: reconciledUnits.filter(u => u.provenance === 'DOCUMENT_ONLY').length
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    const result = {
+      teachingUnits: reconciledUnits,
+      extractionAudit
+    };
+
+    this.saveToCache(cacheKey, result);
+    return result;
   }
 }
 

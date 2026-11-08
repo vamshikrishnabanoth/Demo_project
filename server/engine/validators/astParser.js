@@ -176,8 +176,9 @@ function validateSQLQuery(sqlQuery, syntheticSchema = null) {
     return _heuristicSyntaxCheck(trimmed, 'SQL');
   }
 
+  let db = null;
   try {
-    const db = new sqliteEngine(':memory:');
+    db = new sqliteEngine(':memory:');
 
     // Default synthetic tables for standard CS/DB coursework
     const defaultSchema = `
@@ -203,7 +204,6 @@ function validateSQLQuery(sqlQuery, syntheticSchema = null) {
       stmt.all();
     }
 
-    db.close();
     return { valid: true, language: 'SQL' };
   } catch (err) {
     // If the error is about an unknown table, the syntax might still be valid SQL,
@@ -229,6 +229,10 @@ function validateSQLQuery(sqlQuery, syntheticSchema = null) {
       language: 'SQL',
       reason: msg
     };
+  } finally {
+    if (db) {
+      try { db.close(); } catch (_) {}
+    }
   }
 }
 

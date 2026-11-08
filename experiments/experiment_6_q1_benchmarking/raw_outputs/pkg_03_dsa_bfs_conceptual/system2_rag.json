@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "Which data structure must Breadth-First Search (BFS) use to guarantee that vertices are explored in non‑decreasing order of distance from the source?",
+      "options": [
+        "Stack (LIFO)",
+        "Queue (FIFO)",
+        "Priority Queue",
+        "Binary Heap"
+      ],
+      "correctAnswer": "Queue (FIFO)",
+      "explanation": "BFS relies on a FIFO queue so that vertices are dequeued in the same order they were discovered, preserving the invariant that all vertices at distance d are processed before any at distance d+1, ensuring shortest‑path discovery.",
+      "targetDifficulty": "Easy",
+      "subtopic": "BFS traversal data structure"
+    },
+    {
+      "questionText": "In the BFS traversal described, why is vertex D not enqueued when processing vertex C?",
+      "options": [
+        "Because D has already been visited earlier through B",
+        "Because D is not a neighbor of C",
+        "Because the queue is full",
+        "Because BFS only enqueues vertices at distance 3 or more"
+      ],
+      "correctAnswer": "Because D has already been visited earlier through B",
+      "explanation": "The visited set records that D was discovered via B, so when C examines its neighbors it sees D as already visited and does not enqueue it again, preventing duplicate processing and infinite loops.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS visited set and cycle handling"
+    },
+    {
+      "questionText": "What is the worst‑case time complexity of Breadth‑First Search (BFS) on an undirected graph when the graph is represented with adjacency lists?",
+      "options": [
+        "A. O(V)",
+        "B. O(E)",
+        "C. O(V + E)",
+        "D. O(V * E)"
+      ],
+      "correctAnswer": "C. O(V + E)",
+      "explanation": "Each vertex is enqueued and dequeued once (O(V)) and each edge is examined twice via adjacency lists (total O(E)), giving O(V+E).",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS time complexity"
+    },
+    {
+      "questionText": "What is the primary reason for maintaining a visited boolean array (or hash set) during Breadth‑First Search on a general graph?",
+      "options": [
+        "To record the order in which vertices are discovered",
+        "To prevent revisiting vertices and avoid infinite loops caused by cycles",
+        "To store each vertex’s distance from the source vertex",
+        "To give priority to vertices with a lower degree"
+      ],
+      "correctAnswer": "To prevent revisiting vertices and avoid infinite loops caused by cycles",
+      "explanation": "The visited structure ensures each vertex is processed at most once, which stops the algorithm from looping indefinitely in cycles and from enqueuing the same vertex multiple times.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS visited tracking"
+    },
+    {
+      "questionText": "In the BFS traversal of the 5‑node graph described, what distance is assigned to vertex E from the source vertex A?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctAnswer": "3",
+      "explanation": "BFS discovers vertices in order of increasing shortest‑path length from the source. The traversal reaches E after visiting D, which is at distance 2, so E receives distance 3.",
+      "targetDifficulty": "Easy",
+      "subtopic": "BFS distance computation"
+    },
+    {
+      "questionText": "Which statement correctly explains how to ensure that a breadth‑first search visits every vertex in a graph that may consist of multiple disconnected components?",
+      "options": [
+        "A single BFS started from any vertex will eventually visit all vertices, even in separate components.",
+        "BFS automatically adds vertices from other components to the queue when the current component is exhausted.",
+        "To visit all vertices, BFS must be invoked repeatedly for each vertex that remains unvisited after a previous BFS run.",
+        "BFS cannot be applied to disconnected graphs."
+      ],
+      "correctAnswer": "To visit all vertices, BFS must be invoked repeatedly for each vertex that remains unvisited after a previous BFS run.",
+      "explanation": "A single BFS only reaches vertices in the source's connected component; to cover a disconnected graph you need to start a new BFS from each still‑unvisited vertex.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS on disconnected graphs"
+    },
+    {
+      "questionText": "During the execution of Breadth‑First Search, which invariant about the contents of the FIFO queue guarantees that vertices are processed in non‑decreasing order of their distance from the source?",
+      "options": [
+        "The queue may contain vertices from any distance levels as long as they were discovered earlier",
+        "The queue contains vertices from at most two consecutive distance levels, with all vertices at distance d appearing before any at distance d+1",
+        "The queue is ordered by vertex identifier, not by distance",
+        "The queue is emptied completely before any newly discovered vertices are enqueued"
+      ],
+      "correctAnswer": "The queue contains vertices from at most two consecutive distance levels, with all vertices at distance d appearing before any at distance d+1",
+      "explanation": "BFS maintains the invariant that the queue holds vertices from at most two successive layers (distance d and d+1). This FIFO ordering ensures vertices are expanded in non‑decreasing distance, yielding shortest‑path guarantees.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS queue invariant"
+    },
+    {
+      "questionText": "In the BFS example on the 5‑node graph, what is the main purpose of the visited set?",
+      "options": [
+        "It prevents the algorithm from enqueuing the same vertex more than once, avoiding infinite loops and redundant work.",
+        "It stores the distance from the source vertex for each node.",
+        "It records the order in which vertices are dequeued from the queue.",
+        "It sorts the adjacency lists of each vertex alphabetically."
+      ],
+      "correctAnswer": "It prevents the algorithm from enqueuing the same vertex more than once, avoiding infinite loops and redundant work.",
+      "explanation": "The visited set ensures each vertex is marked once, so BFS does not revisit vertices, which would cause cycles to loop indefinitely or enqueue duplicates.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS visited set and cycle handling"
+    },
+    {
+      "questionText": "What is the overall asymptotic space complexity of a breadth‑first search (BFS) when implemented with an adjacency‑list representation, considering both the queue and the visited array?",
+      "options": [
+        "O(1)",
+        "O(E)",
+        "O(V)",
+        "O(V+E)"
+      ],
+      "correctAnswer": "O(V)",
+      "explanation": "In the worst case the queue can hold up to all V vertices (e.g., a star graph) and the visited array also stores V boolean flags, giving a total space usage proportional to V.",
+      "targetDifficulty": "Medium",
+      "subtopic": "BFS space complexity"
+    },
+    {
+      "questionText": "In BFS on an unweighted graph, what is the primary purpose of maintaining a visited boolean array (or hash set)?",
+      "options": [
+        "To ensure each vertex is enqueued only once, preventing infinite loops caused by cycles.",
+        "To prioritize vertices with smaller degree when expanding the frontier.",
+        "To store the distance from the source for each vertex during traversal.",
+        "To sort vertices alphabetically before they are processed."
+      ],
+      "correctAnswer": "To ensure each vertex is enqueued only once, preventing infinite loops caused by cycles.",
+      "explanation": "The visited structure marks vertices that have already been discovered, so they are not enqueued again. This avoids revisiting vertices in cycles and prevents infinite loops or redundant work.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Visited tracking in BFS"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6556,
+    "cumulativeOutputTokens": 1795,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 19134
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:22:00.727Z"
+}

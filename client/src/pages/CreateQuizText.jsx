@@ -659,7 +659,7 @@ export default function CreateQuizText() {
                         <div className="flex items-center gap-3.5 min-w-0">
                             <div className="px-2.5 py-1.5 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] text-[10px] font-black uppercase tracking-[0.18em] flex items-center gap-1.5">
                                 <span className="w-2 h-2 rounded-full bg-[var(--bg-accent)] animate-pulse" />
-                                PDI PATH: {representationMode}
+                                MODALITY PATH: {representationMode}
                             </div>
                             <p className="text-xs text-[var(--text-secondary)] font-medium leading-relaxed truncate">
                                 {representationMode === 'UNIFIED' && 'Multimodal Dual-Source Synthesis: Spoken Teacher Authority (WHY) + Slide/Document Artifacts (WHAT).'}

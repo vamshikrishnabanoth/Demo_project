@@ -30,6 +30,57 @@ function countWords(text = '') {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+/**
+ * Decomposes long unpunctuated speech into natural clause-level propositions.
+ * Respects discourse markers, conjunctions, punctuation, and bounds chunk sizes
+ * to prevent monolithic chunks (e.g., Whisper 565-word unpunctuated blocks).
+ */
+function breakLongSegment(text = '', targetWords = 75, maxWords = 85) {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= maxWords) return [text.trim()];
+
+  const boundaryRegex = /(?<=[,;:\n])\s+|(?<=\s)(?=\b(?:now\s+if\s+i\s+say|now\s+if\s+you|now\s+run|okay\s+now|so\s+what\s+happened|look\s+at\s+this|look\s+at\s+the|can\s+anyone\s+tell|can\s+you\s+tell|what\s+would\s+the|let's\s+look\s+at|the\\s+problem\\s+statement|this\s+is\s+test\s+case|how\s+many\s+of\s+you|in\s+this\s+case|give\s+5\s+elements|give\s+six\s+elements|the\s+other\s+version\s+is|is\s+that\s+helping\s+you|initially\s+we\s+say|what\s+you\s+are\s+basically\s+doing|so\s+there\s+is|and\s+then|because|since|so\s+that|therefore|however|otherwise|and\s+|so\s+|but\s+|then\s+|if\s+|when\s+|where\s+|while\s+|which\s+|provided\s+)\b)/i;
+
+  const rawParts = text.split(boundaryRegex).map(p => p.trim()).filter(Boolean);
+  const result = [];
+  let cur = [];
+  let curCount = 0;
+
+  for (const part of rawParts) {
+    const pWords = part.split(/\s+/).filter(Boolean);
+    if (pWords.length > maxWords) {
+      if (cur.length > 0) {
+        result.push(cur.join(' '));
+        cur = [];
+        curCount = 0;
+      }
+      for (let i = 0; i < pWords.length; i += targetWords) {
+        result.push(pWords.slice(i, i + targetWords).join(' '));
+      }
+      continue;
+    }
+
+    if (curCount + pWords.length <= maxWords) {
+      cur.push(part);
+      curCount += pWords.length;
+    } else {
+      if (cur.length > 0) {
+        result.push(cur.join(' '));
+        cur = [];
+        curCount = 0;
+      }
+      cur.push(part);
+      curCount += pWords.length;
+    }
+  }
+
+  if (cur.length > 0) {
+    result.push(cur.join(' '));
+  }
+
+  return result;
+}
+
 class HierarchicalChunker {
   /**
    * Build dual-level Parent-Child evidence store from session inputs.
@@ -80,11 +131,14 @@ class HierarchicalChunker {
       for (const sent of sentences) {
         const text = sent.trim();
         if (!text) continue;
-        segmentsToProcess.push({
-          text,
-          start: null,
-          end: null
-        });
+        const subParts = breakLongSegment(text, CHILD_WINDOW_WORDS, 85);
+        for (const sp of subParts) {
+          segmentsToProcess.push({
+            text: sp,
+            start: null,
+            end: null
+          });
+        }
       }
     }
 
@@ -101,6 +155,29 @@ class HierarchicalChunker {
         const sTime = typeof seg.start === 'number' ? seg.start : null;
         const eTime = typeof seg.end === 'number' ? seg.end : null;
 
+        const segWordCount = countWords(text);
+        const curWordCount = countWords(currWords.join(' '));
+        if (curWordCount >= CHILD_WINDOW_WORDS || (curWordCount >= 20 && curWordCount + segWordCount > 95)) {
+          if (currWords.length > 0) {
+            const cText = currWords.join(' ');
+            const cid = `C_${String(childIdx).padStart(3, '0')}`;
+            const eid = `E_CHILD_${String(childIdx).padStart(3, '0')}`;
+            tempChildren.push({
+              childId: cid,
+              evidenceId: eid,
+              start: hasRealTimestamps ? currStart : null,
+              end: hasRealTimestamps ? currEnd : null,
+              hasRealTimestamps,
+              text: cText,
+              wordCount: countWords(cText),
+              keywords: tokenizeKeywords(cText)
+            });
+            childIdx++;
+            currWords = [];
+            currStart = null;
+            currEnd = null;
+          }
+        }
         if (currWords.length === 0) {
           currStart = sTime;
         }
@@ -108,26 +185,6 @@ class HierarchicalChunker {
           currEnd = eTime;
         }
         currWords.push(text);
-
-        if (countWords(currWords.join(' ')) >= CHILD_WINDOW_WORDS) {
-          const cText = currWords.join(' ');
-          const cid = `C_${String(childIdx).padStart(3, '0')}`;
-          const eid = `E_CHILD_${String(childIdx).padStart(3, '0')}`;
-          tempChildren.push({
-            childId: cid,
-            evidenceId: eid,
-            start: hasRealTimestamps ? currStart : null,
-            end: hasRealTimestamps ? currEnd : null,
-            hasRealTimestamps,
-            text: cText,
-            wordCount: countWords(cText),
-            keywords: tokenizeKeywords(cText)
-          });
-          childIdx++;
-          currWords = [];
-          currStart = null;
-          currEnd = null;
-        }
       }
 
       if (currWords.length > 0) {
@@ -353,6 +410,7 @@ class HierarchicalChunker {
                 evidenceId: cEid,
                 parentId: pEid,
                 sourceType: 'SLIDE',
+                pageNumber: parseInt(slideNum, 10) || (sIdx + 1),
                 text: cText,
                 wordCount: countWords(cText),
                 keywords: tokenizeKeywords(cText)
@@ -365,8 +423,9 @@ class HierarchicalChunker {
             const parentObj = {
               parentId: pId,
               evidenceId: pEid,
-              title: `Document Section ${slideNum}.${pIdx} Context`,
+              title: docText.includes('--- Page ') ? `Page ${slideNum}.${pIdx} Context` : `Document Section ${slideNum}.${pIdx} Context`,
               sourceType: 'SLIDE',
+              pageNumber: parseInt(slideNum, 10) || (sIdx + 1),
               fullText: pText,
               wordCount: countWords(pText),
               childIds: pChildIds
@@ -384,8 +443,9 @@ class HierarchicalChunker {
           const parentObj = {
             parentId: pId,
             evidenceId: pEid,
-            title: `Slide ${slideNum} Full Context`,
+            title: docText.includes('--- Page ') ? `Page ${slideNum} Full Context` : `Slide ${slideNum} Full Context`,
             sourceType: 'SLIDE',
+            pageNumber: parseInt(slideNum, 10) || (sIdx + 1),
             fullText: secText,
             wordCount: secWords,
             childIds: [cEid]
@@ -397,6 +457,7 @@ class HierarchicalChunker {
             evidenceId: cEid,
             parentId: pEid,
             sourceType: 'SLIDE',
+            pageNumber: parseInt(slideNum, 10) || (sIdx + 1),
             text: secText,
             wordCount: secWords,
             keywords: tokenizeKeywords(secText)

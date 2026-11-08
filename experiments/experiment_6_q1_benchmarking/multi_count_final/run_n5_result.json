@@ -1,0 +1,1476 @@
+{
+  "testCount": 5,
+  "requestedCount": 5,
+  "recommendedCount": 12,
+  "deliveredCount": 5,
+  "pipelineStatus": "COMPLETED",
+  "durationMs": 216178,
+  "conformance": {
+    "isFullyConformant": true,
+    "totalRecommended": 12,
+    "totalRequested": 5,
+    "totalDelivered": 5,
+    "deficitCount": 0
+  },
+  "difficultyDistribution": {
+    "Easy": 2,
+    "Medium": 3,
+    "Hard": 0
+  },
+  "plannedPrimaryTargets": [
+    {
+      "targetId": "T01",
+      "concept": "Counting frequency of each element using nested loops",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T02",
+      "concept": "Comparing time and space complexity of frequency array vs linear search",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T03",
+      "concept": "Using two arrays to store values and their frequencies separately",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T04",
+      "concept": "Building a frequency array where indices represent values",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T05",
+      "concept": "When a frequency array is suitable based on input value range",
+      "plannedDifficulty": "Easy"
+    }
+  ],
+  "plannedReserveTargets": [
+    {
+      "targetId": "R01",
+      "concept": "Frequency Array - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R02",
+      "concept": "Frequency Array - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R03",
+      "concept": "Frequency Array - Reserve Hard Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R04",
+      "concept": "Time and Space Tradeoffs - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R05",
+      "concept": "Time and Space Tradeoffs - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R06",
+      "concept": "Time and Space Tradeoffs - Reserve Hard Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R07",
+      "concept": "Two-Array Approach - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R08",
+      "concept": "Two-Array Approach - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R09",
+      "concept": "Two-Array Approach - Reserve Hard Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R10",
+      "concept": "Implementation Details - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R11",
+      "concept": "Implementation Details - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R12",
+      "concept": "Implementation Details - Reserve Hard Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R13",
+      "concept": "Range Suitability - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R14",
+      "concept": "Range Suitability - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R15",
+      "concept": "Range Suitability - Reserve Hard Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    }
+  ],
+  "rejectedTargets": [
+    {
+      "targetId": "T02",
+      "concept": "Comparing time and space complexity of frequency array vs linear search",
+      "subtopic": "Time and Space Tradeoffs",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "TRACE",
+      "status": "REJECTED",
+      "reason": "Semantic evaluation unavailable: Medium difficulty question cannot be certified without semantic quality evaluation (Agent 3 LLM evaluation timed out after 15s)",
+      "failureReasons": [
+        "SEMANTIC_EVALUATION_UNAVAILABLE"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "T02",
+        "questionText": "When determining the frequency of elements within a small, fixed range of values, which approach generally offers better time efficiency compared to a linear search through a large dataset?",
+        "question": "When determining the frequency of elements within a small, fixed range of values, which approach generally offers better time efficiency compared to a linear search through a large dataset?",
+        "options": [
+          "Employing a frequency array with direct indexing",
+          "Using a hash map for dynamic key storage",
+          "Implementing a balanced binary search tree",
+          "Performing repeated sorting and counting"
+        ],
+        "correctAnswerIndex": 0,
+        "correctAnswer": "Employing a frequency array with direct indexing",
+        "explanation": "For a small, fixed range of values, a frequency array allows direct access to counts using the value as an index, resulting in O(1) average time complexity for updates and lookups. This is significantly more time-efficient than a linear search through a large dataset, which would have O(N) complexity for each lookup or update.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Tests the understanding of time efficiency tradeoffs between frequency arrays and linear search for specific data characteristics.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "EVIDENCE 3 states: 'Only these 5 values. So should I go for frequency array? Yes. Why? Because frequency array size? 5. And customer each time I will check what? What is your frequency? You? How How many 1, how many 0's, how many 2's, how many 3's, how many 4's. And then at the end will I know how many people purchased 4th car? Clearly go to that index and check the value.' This highlights the efficiency of direct indexing for a small, fixed range.",
+          "computedOrTracedKey": "A frequency array with direct indexing allows for O(1) access to count frequencies for elements within its defined range. A linear search through a large dataset would require O(N) operations per element, making the frequency array approach more time-efficient for this specific scenario.",
+          "distractorRationales": {
+            "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+            "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+            "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+          },
+          "byLetter": {
+            "B": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+            "C": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+            "D": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+          }
+        },
+        "usedArchetypes": [
+          "NEAR_MISS_MECHANISM",
+          "MISCONCEPTION_INVERSION"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "TRACE",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Comparing time and space complexity of frequency array vs linear search",
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM",
+            "MISCONCEPTION_INVERSION"
+          ],
+          "distractorRationales": {
+            "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+            "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+            "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+          "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+          "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+        },
+        "correctAnswerText": "Employing a frequency array with direct indexing",
+        "correct_option": 0,
+        "correctOption": 0,
+        "correctAnswerKey": "A",
+        "correct_answer": "A",
+        "correct_answer_text": "Employing a frequency array with direct indexing",
+        "distractorRationalesByLetter": {
+          "B": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+          "C": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+          "D": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "passed": false,
+        "score": 0.95,
+        "verdict": "FAIL",
+        "tier": "UNVERIFIED_EVALUATION_FAILURE",
+        "groundingScore": 0.22,
+        "failureReasons": [
+          "SEMANTIC_EVALUATION_UNAVAILABLE"
+        ],
+        "failureReason": "Semantic evaluation unavailable: Medium difficulty question cannot be certified without semantic quality evaluation (Agent 3 LLM evaluation timed out after 15s)",
+        "repairInstruction": null,
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "Linear search, due to its minimal memory overhead.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible, distinct alternative concept grounded in taught domain",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": null
+          },
+          {
+            "slot": "B",
+            "text": "Hash map, due to its dynamic resizing capabilities.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible, distinct alternative concept grounded in taught domain",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": null
+          },
+          {
+            "slot": "C",
+            "text": "Frequency array, by using direct index mapping.",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "Keyed answer verified against session evidence",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": " \n\"time and space. you can't misuse them. so your code has to be time efficient and space efficient.\"\n\n[relevant multimodal context (hybrid bm25 + den..."
+          },
+          {
+            "slot": "D",
+            "text": "Binary search, by repeatedly halving the search space.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible, distinct alternative concept grounded in taught domain",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": null
+          }
+        ],
+        "verificationStatus": "VERIFICATION_UNSUPPORTED",
+        "verifiedProgrammatically": false,
+        "verificationAudit": {
+          "status": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "reason": "Archetype \"CONCEPTUAL_CONTRAST\" requires qualitative academic review; deterministic simulation not supported"
+        },
+        "cognitiveAudit": {
+          "requestedDifficulty": "Medium",
+          "intendedCognitiveOperation": "TRACE",
+          "evaluatedCognitiveDemand": "UNCERTAIN",
+          "actualCognitiveDemand": "UNCERTAIN",
+          "isCalibrated": true,
+          "mismatchDetails": null,
+          "classificationReasoning": "Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration."
+        },
+        "evidenceGrounding": {
+          "tier": "DIRECT_EVIDENCE",
+          "groundingScore": 0.22,
+          "foreignDomainDetected": false
+        },
+        "verificationMethod": "UNAUDITED_HEURISTIC_FALLBACK",
+        "isFallback": true,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Ground all options strictly in lecture evidence for \"Comparing time and space complexity of frequency array vs linear search\"; do not introduce external or foreign domain concepts.",
+          "originalMCQ": {
+            "targetId": "T02",
+            "questionText": "When determining the frequency of elements within a small, fixed range of values, which approach generally offers better time efficiency compared to a linear search through a large dataset?",
+            "question": "When determining the frequency of elements within a small, fixed range of values, which approach generally offers better time efficiency compared to a linear search through a large dataset?",
+            "options": [
+              "Employing a frequency array with direct indexing",
+              "Using a hash map for dynamic key storage",
+              "Implementing a balanced binary search tree",
+              "Performing repeated sorting and counting"
+            ],
+            "correctAnswerIndex": 0,
+            "correctAnswer": "Employing a frequency array with direct indexing",
+            "explanation": "For a small, fixed range of values, a frequency array allows direct access to counts using the value as an index, resulting in O(1) average time complexity for updates and lookups. This is significantly more time-efficient than a linear search through a large dataset, which would have O(N) complexity for each lookup or update.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the understanding of time efficiency tradeoffs between frequency arrays and linear search for specific data characteristics.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "EVIDENCE 3 states: 'Only these 5 values. So should I go for frequency array? Yes. Why? Because frequency array size? 5. And customer each time I will check what? What is your frequency? You? How How many 1, how many 0's, how many 2's, how many 3's, how many 4's. And then at the end will I know how many people purchased 4th car? Clearly go to that index and check the value.' This highlights the efficiency of direct indexing for a small, fixed range.",
+              "computedOrTracedKey": "A frequency array with direct indexing allows for O(1) access to count frequencies for elements within its defined range. A linear search through a large dataset would require O(N) operations per element, making the frequency array approach more time-efficient for this specific scenario.",
+              "distractorRationales": {
+                "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+                "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+                "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+              },
+              "byLetter": {
+                "B": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+                "C": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+                "D": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "TRACE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Comparing time and space complexity of frequency array vs linear search",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM",
+                "MISCONCEPTION_INVERSION"
+              ],
+              "distractorRationales": {
+                "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+                "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+                "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+              "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+              "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+            },
+            "correctAnswerText": "Employing a frequency array with direct indexing",
+            "correct_option": 0,
+            "correctOption": 0,
+            "correctAnswerKey": "A",
+            "correct_answer": "A",
+            "correct_answer_text": "Employing a frequency array with direct indexing",
+            "distractorRationalesByLetter": {
+              "B": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+              "C": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+              "D": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "T02",
+            "questionText": "When determining the frequency of elements within a small, fixed range of values, which approach offers better time efficiency by directly accessing counts?",
+            "question": "When determining the frequency of elements within a small, fixed range of values, which approach offers better time efficiency by directly accessing counts?",
+            "options": [
+              "Linear search, due to its minimal memory overhead.",
+              "Hash map, due to its dynamic resizing capabilities.",
+              "Frequency array, by using direct index mapping.",
+              "Binary search, by repeatedly halving the search space."
+            ],
+            "correctAnswerIndex": 2,
+            "correctAnswer": "Frequency array, by using direct index mapping.",
+            "explanation": "For a small, fixed range of values, a frequency array provides O(1) time complexity for accessing the count of any element. This is because each element's count is stored at an index corresponding to its value, allowing direct access without iteration. Linear search requires iterating through elements, binary search requires a sorted array and iteration, and a hash map introduces overhead for hashing and collision resolution, making them less efficient for this specific scenario.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the understanding of time efficiency tradeoffs between frequency arrays and other search methods for specific data characteristics.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Evidence 3 discusses using a frequency array for a small, fixed range of values (e.g., 0-4) to quickly find element frequencies by direct index access.",
+              "computedOrTracedKey": "A frequency array allows O(1) access time to an element's count by using the element's value as an index, which is more efficient than iterative search methods for a small, fixed range.",
+              "distractorRationales": {
+                "Linear search, due to its minimal memory overhead.": "This is incorrect. While linear search might have minimal memory overhead, its time complexity is O(N), which is less efficient than O(1) for frequency arrays in this context. Students might confuse space efficiency with time efficiency.",
+                "Binary search, by repeatedly halving the search space.": "This is incorrect. Binary search requires a sorted array and still has a time complexity of O(log N), which is less efficient than O(1) for direct access. Students might incorrectly apply binary search as a general 'fast search' solution.",
+                "Hash map, due to its dynamic resizing capabilities.": "This is incorrect. While hash maps offer average O(1) access, they introduce overhead for hashing and potential collisions, making a simple frequency array more direct and efficient for a small, fixed integer range. Students might consider hash maps as a universal solution for fast lookups without considering the specific constraints."
+              },
+              "byLetter": {
+                "A": "This is incorrect. While linear search might have minimal memory overhead, its time complexity is O(N), which is less efficient than O(1) for frequency arrays in this context. Students might confuse space efficiency with time efficiency.",
+                "B": "This is incorrect. While hash maps offer average O(1) access, they introduce overhead for hashing and potential collisions, making a simple frequency array more direct and efficient for a small, fixed integer range. Students might consider hash maps as a universal solution for fast lookups without considering the specific constraints.",
+                "D": "This is incorrect. Binary search requires a sorted array and still has a time complexity of O(log N), which is less efficient than O(1) for direct access. Students might incorrectly apply binary search as a general 'fast search' solution."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "TRACE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Comparing time and space complexity of frequency array vs linear search",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM",
+                "MISCONCEPTION_INVERSION"
+              ],
+              "distractorRationales": {
+                "Linear search, due to its minimal memory overhead.": "This is incorrect. While linear search might have minimal memory overhead, its time complexity is O(N), which is less efficient than O(1) for frequency arrays in this context. Students might confuse space efficiency with time efficiency.",
+                "Binary search, by repeatedly halving the search space.": "This is incorrect. Binary search requires a sorted array and still has a time complexity of O(log N), which is less efficient than O(1) for direct access. Students might incorrectly apply binary search as a general 'fast search' solution.",
+                "Hash map, due to its dynamic resizing capabilities.": "This is incorrect. While hash maps offer average O(1) access, they introduce overhead for hashing and potential collisions, making a simple frequency array more direct and efficient for a small, fixed integer range. Students might consider hash maps as a universal solution for fast lookups without considering the specific constraints."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "Linear search, due to its minimal memory overhead.": "This is incorrect. While linear search might have minimal memory overhead, its time complexity is O(N), which is less efficient than O(1) for frequency arrays in this context. Students might confuse space efficiency with time efficiency.",
+              "Binary search, by repeatedly halving the search space.": "This is incorrect. Binary search requires a sorted array and still has a time complexity of O(log N), which is less efficient than O(1) for direct access. Students might incorrectly apply binary search as a general 'fast search' solution.",
+              "Hash map, due to its dynamic resizing capabilities.": "This is incorrect. While hash maps offer average O(1) access, they introduce overhead for hashing and potential collisions, making a simple frequency array more direct and efficient for a small, fixed integer range. Students might consider hash maps as a universal solution for fast lookups without considering the specific constraints."
+            },
+            "correctAnswerText": "Frequency array, by using direct index mapping.",
+            "correct_option": 2,
+            "correctOption": 2,
+            "correctAnswerKey": "C",
+            "correct_answer": "C",
+            "correct_answer_text": "Frequency array, by using direct index mapping.",
+            "distractorRationalesByLetter": {
+              "A": "This is incorrect. While linear search might have minimal memory overhead, its time complexity is O(N), which is less efficient than O(1) for frequency arrays in this context. Students might confuse space efficiency with time efficiency.",
+              "B": "This is incorrect. While hash maps offer average O(1) access, they introduce overhead for hashing and potential collisions, making a simple frequency array more direct and efficient for a small, fixed integer range. Students might consider hash maps as a universal solution for fast lookups without considering the specific constraints.",
+              "D": "This is incorrect. Binary search requires a sorted array and still has a time complexity of O(log N), which is less efficient than O(1) for direct access. Students might incorrectly apply binary search as a general 'fast search' solution."
+            }
+          }
+        },
+        "auditNotice": "Audited via deterministic option-by-option fallback (standard validation).",
+        "isLLMVerified": false,
+        "criticUnavailable": true,
+        "criticUnavailableReason": "Agent 3 LLM evaluation timed out after 15s",
+        "repaired": false,
+        "mcq": {
+          "targetId": "T02",
+          "questionText": "When determining the frequency of elements within a small, fixed range of values, which approach generally offers better time efficiency compared to a linear search through a large dataset?",
+          "question": "When determining the frequency of elements within a small, fixed range of values, which approach generally offers better time efficiency compared to a linear search through a large dataset?",
+          "options": [
+            "Employing a frequency array with direct indexing",
+            "Using a hash map for dynamic key storage",
+            "Implementing a balanced binary search tree",
+            "Performing repeated sorting and counting"
+          ],
+          "correctAnswerIndex": 0,
+          "correctAnswer": "Employing a frequency array with direct indexing",
+          "explanation": "For a small, fixed range of values, a frequency array allows direct access to counts using the value as an index, resulting in O(1) average time complexity for updates and lookups. This is significantly more time-efficient than a linear search through a large dataset, which would have O(N) complexity for each lookup or update.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Tests the understanding of time efficiency tradeoffs between frequency arrays and linear search for specific data characteristics.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "EVIDENCE 3 states: 'Only these 5 values. So should I go for frequency array? Yes. Why? Because frequency array size? 5. And customer each time I will check what? What is your frequency? You? How How many 1, how many 0's, how many 2's, how many 3's, how many 4's. And then at the end will I know how many people purchased 4th car? Clearly go to that index and check the value.' This highlights the efficiency of direct indexing for a small, fixed range.",
+            "computedOrTracedKey": "A frequency array with direct indexing allows for O(1) access to count frequencies for elements within its defined range. A linear search through a large dataset would require O(N) operations per element, making the frequency array approach more time-efficient for this specific scenario.",
+            "distractorRationales": {
+              "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+              "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+              "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+            },
+            "byLetter": {
+              "B": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+              "C": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+              "D": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+            }
+          },
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM",
+            "MISCONCEPTION_INVERSION"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "TRACE",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Comparing time and space complexity of frequency array vs linear search",
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "distractorRationales": {
+              "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+              "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+              "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "Using a hash map for dynamic key storage": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+            "Implementing a balanced binary search tree": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+            "Performing repeated sorting and counting": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+          },
+          "correctAnswerText": "Employing a frequency array with direct indexing",
+          "correct_option": 0,
+          "correctOption": 0,
+          "correctAnswerKey": "A",
+          "correct_answer": "A",
+          "correct_answer_text": "Employing a frequency array with direct indexing",
+          "distractorRationalesByLetter": {
+            "B": "While hash maps offer O(1) average time complexity, they introduce overhead for hashing and collision resolution. For a small, fixed integer range, a frequency array is simpler and often faster due to direct indexing without hashing. This distractor represents a plausible alternative but not the most optimal for the specific constraints.",
+            "C": "Binary search trees offer O(log N) time complexity for search, insertion, and deletion. This is better than linear search but worse than the O(1) direct access of a frequency array for a fixed, small range. This represents a procedural sequence error by choosing a less efficient data structure for the given constraints.",
+            "D": "Sorting a large dataset would typically take O(N log N) time, and then counting frequencies would take O(N). This is significantly less time-efficient than either a frequency array or even a linear search for individual lookups, representing a clear procedural inefficiency."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "R03",
+      "concept": "Frequency Array - Reserve Hard Peer",
+      "subtopic": "Frequency Array",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "RECALL",
+      "status": "REJECTED",
+      "reason": "TIER_COGNITIVE_MISMATCH",
+      "failureReasons": [
+        "TIER_COGNITIVE_MISMATCH"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "R03",
+        "questionText": "What is the primary purpose of a frequency array in computer science problem-solving?",
+        "question": "What is the primary purpose of a frequency array in computer science problem-solving?",
+        "options": [
+          "To store elements in sorted order for quick retrieval.",
+          "To enable efficient searching through binary tree structures.",
+          "To manage dynamic memory allocation for variable-sized data.",
+          "To track the count of occurrences for each distinct data item."
+        ],
+        "correctAnswerIndex": 3,
+        "correctAnswer": "To track the count of occurrences for each distinct data item.",
+        "explanation": "A frequency array is used to count the occurrences of each distinct element within a given dataset, especially when the data is limited or within a specific range. This allows for efficient tracking of how many times each value appears.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Tests the student's ability to recall the fundamental purpose and application of a frequency array.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "EVIDENCE 1 and EVIDENCE 3 explicitly discuss the concept of a 'frequency array' and its use for 'frequency stuff' and 'day to day problem solving' when 'data is limited or the data is in range'. EVIDENCE 2 demonstrates its construction by incrementing counts for elements.",
+          "computedOrTracedKey": "The core function of a frequency array, as demonstrated and discussed, is to count how many times each unique value appears in a dataset. This directly aligns with 'track the count of occurrences for each distinct data item'.",
+          "distractorRationales": {
+            "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+            "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+            "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+          },
+          "byLetter": {
+            "A": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+            "B": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure.",
+            "C": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies."
+          }
+        },
+        "usedArchetypes": [
+          "NEAR_MISS_MECHANISM",
+          "MISCONCEPTION_INVERSION"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "RECALL",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Frequency Array - Reserve Hard Peer",
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM",
+            "MISCONCEPTION_INVERSION"
+          ],
+          "distractorRationales": {
+            "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+            "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+            "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+          "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+          "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+        },
+        "correctAnswerText": "To track the count of occurrences for each distinct data item.",
+        "correct_option": 3,
+        "correctOption": 3,
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "To track the count of occurrences for each distinct data item.",
+        "distractorRationalesByLetter": {
+          "A": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+          "B": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure.",
+          "C": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "score": 0.95,
+        "verdict": "FAIL",
+        "failureReasons": [
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "failureReason": "TIER_COGNITIVE_MISMATCH",
+        "repairInstruction": null,
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option directly identifies the primary purpose of a frequency array, which is to map data elements to their counts, as asked by the stem.",
+          "mismatchDetails": null
+        },
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "To efficiently perform complex mathematical operations on data.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "While frequency counts can be used in mathematical operations, the primary purpose of the frequency array itself is not to perform complex mathematical operations, but to store counts. This is a plausible distractor because frequency data often feeds into such operations.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "EVIDENCE 1, EVIDENCE 2, EVIDENCE 3 (The lecture focuses on building and using the array for counts, not as a direct calculator for complex math.)"
+          },
+          {
+            "slot": "B",
+            "text": "To store unique elements in sorted order for quick retrieval.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "A frequency array stores counts, not necessarily unique elements in sorted order. While it can implicitly show unique elements and their counts, its primary mechanism isn't sorting or storing unique elements in a sorted list. Other data structures like sorted arrays or hash sets are better suited for that specific purpose.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "EVIDENCE 1, EVIDENCE 2, EVIDENCE 3 (The lecture describes incrementing counts at indices, not sorting or storing unique elements explicitly.)"
+          },
+          {
+            "slot": "C",
+            "text": "To reduce memory consumption by compressing redundant data.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "A frequency array can sometimes be memory-efficient for data within a small, known range compared to other methods (like storing all raw data), but its primary purpose isn't data compression. In fact, if the range is very large and data is sparse, it can be memory-inefficient. This is a plausible distractor as memory efficiency is a common concern in data structures.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "EVIDENCE 1, EVIDENCE 2, EVIDENCE 3 (The lecture emphasizes counting occurrences, not memory compression as the main goal.)"
+          },
+          {
+            "slot": "D",
+            "text": "To directly map each data element to its count of occurrences.",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "EVIDENCE 2 explicitly demonstrates this by showing how to increment counts at indices corresponding to data elements (e.g., 'Put 3 here. 1, 2, 3. 3 here. 1, 2. 2 here.'). EVIDENCE 1 and 3 also refer to the 'frequency array' in the context of 'frequency stuff' and 'data is limited or the data is in range', which directly implies counting occurrences of elements within that range.",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": "EVIDENCE 1, EVIDENCE 2, EVIDENCE 3"
+          }
+        ],
+        "cognitiveAudit": {
+          "requestedDifficulty": "Medium",
+          "intendedCognitiveOperation": "RECALL",
+          "evaluatedCognitiveDemand": "RECALL",
+          "isCalibrated": false,
+          "mismatchDetails": "Question demands only factual definition/recall, but Medium operational mechanism/tradeoff analysis (RECALL) was requested"
+        },
+        "evidenceGrounding": {
+          "tier": "DIRECT_EVIDENCE",
+          "groundingScore": 0.95,
+          "foreignDomainDetected": false
+        },
+        "passed": false,
+        "verificationMethod": "LLM_EVALUATION",
+        "isFallback": false,
+        "isLLMVerified": true,
+        "tier": "DIRECT_EVIDENCE",
+        "groundingScore": 0.95,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Require operational mechanism comparison, sequential state transition analysis, or tradeoff evaluation.",
+          "originalMCQ": {
+            "targetId": "R03",
+            "questionText": "What is the primary purpose of a frequency array in computer science problem-solving?",
+            "question": "What is the primary purpose of a frequency array in computer science problem-solving?",
+            "options": [
+              "To store elements in sorted order for quick retrieval.",
+              "To enable efficient searching through binary tree structures.",
+              "To manage dynamic memory allocation for variable-sized data.",
+              "To track the count of occurrences for each distinct data item."
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "To track the count of occurrences for each distinct data item.",
+            "explanation": "A frequency array is used to count the occurrences of each distinct element within a given dataset, especially when the data is limited or within a specific range. This allows for efficient tracking of how many times each value appears.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the student's ability to recall the fundamental purpose and application of a frequency array.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "EVIDENCE 1 and EVIDENCE 3 explicitly discuss the concept of a 'frequency array' and its use for 'frequency stuff' and 'day to day problem solving' when 'data is limited or the data is in range'. EVIDENCE 2 demonstrates its construction by incrementing counts for elements.",
+              "computedOrTracedKey": "The core function of a frequency array, as demonstrated and discussed, is to count how many times each unique value appears in a dataset. This directly aligns with 'track the count of occurrences for each distinct data item'.",
+              "distractorRationales": {
+                "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+                "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+                "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+              },
+              "byLetter": {
+                "A": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+                "B": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure.",
+                "C": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "RECALL",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Frequency Array - Reserve Hard Peer",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM",
+                "MISCONCEPTION_INVERSION"
+              ],
+              "distractorRationales": {
+                "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+                "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+                "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+              "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+              "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+            },
+            "correctAnswerText": "To track the count of occurrences for each distinct data item.",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "To track the count of occurrences for each distinct data item.",
+            "distractorRationalesByLetter": {
+              "A": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+              "B": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure.",
+              "C": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "R03",
+            "questionText": "What is the primary purpose of a frequency array when dealing with data that is limited or within a specific range?",
+            "question": "What is the primary purpose of a frequency array when dealing with data that is limited or within a specific range?",
+            "options": [
+              "To efficiently perform complex mathematical operations on data.",
+              "To store unique elements in sorted order for quick retrieval.",
+              "To reduce memory consumption by compressing redundant data.",
+              "To directly map each data element to its count of occurrences."
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "To directly map each data element to its count of occurrences.",
+            "explanation": "A frequency array is used to count the occurrences of each distinct data element. When data is limited or within a range, each index of the frequency array can correspond to a data value, and the value at that index stores its frequency.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the student's understanding of the core function and application of a frequency array.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Evidence 1 and 3 state that a frequency array is used for 'frequency stuff' when 'data is limited or the data is in range', implying its role in counting occurrences. Evidence 2 demonstrates building it by incrementing counts at indices corresponding to data values.",
+              "computedOrTracedKey": "The core mechanism of a frequency array is to use array indices to represent data values and store their counts. This directly maps each data element to its frequency.",
+              "distractorRationales": {
+                "To store unique elements in sorted order for quick retrieval.": "This describes a sorted array or a set, not the primary function of a frequency array, which focuses on counts rather than just uniqueness or sorting. An incompletely prepared student might confuse data organization methods.",
+                "To efficiently perform complex mathematical operations on data.": "While frequency data can be used for mathematical operations, the frequency array itself is a data structure for counting, not a tool for performing complex math. This is a plausible but incorrect generalization of its utility.",
+                "To reduce memory consumption by compressing redundant data.": "A frequency array can be memory efficient for certain data distributions, but its primary purpose is not data compression. It stores counts, which might increase memory if the range is very large and data is sparse. A student might incorrectly assume its efficiency extends to compression."
+              },
+              "byLetter": {
+                "A": "While frequency data can be used for mathematical operations, the frequency array itself is a data structure for counting, not a tool for performing complex math. This is a plausible but incorrect generalization of its utility.",
+                "B": "This describes a sorted array or a set, not the primary function of a frequency array, which focuses on counts rather than just uniqueness or sorting. An incompletely prepared student might confuse data organization methods.",
+                "C": "A frequency array can be memory efficient for certain data distributions, but its primary purpose is not data compression. It stores counts, which might increase memory if the range is very large and data is sparse. A student might incorrectly assume its efficiency extends to compression."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "RECALL",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Frequency Array - Reserve Hard Peer",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM",
+                "MISCONCEPTION_INVERSION"
+              ],
+              "distractorRationales": {
+                "To store unique elements in sorted order for quick retrieval.": "This describes a sorted array or a set, not the primary function of a frequency array, which focuses on counts rather than just uniqueness or sorting. An incompletely prepared student might confuse data organization methods.",
+                "To efficiently perform complex mathematical operations on data.": "While frequency data can be used for mathematical operations, the frequency array itself is a data structure for counting, not a tool for performing complex math. This is a plausible but incorrect generalization of its utility.",
+                "To reduce memory consumption by compressing redundant data.": "A frequency array can be memory efficient for certain data distributions, but its primary purpose is not data compression. It stores counts, which might increase memory if the range is very large and data is sparse. A student might incorrectly assume its efficiency extends to compression."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "To store unique elements in sorted order for quick retrieval.": "This describes a sorted array or a set, not the primary function of a frequency array, which focuses on counts rather than just uniqueness or sorting. An incompletely prepared student might confuse data organization methods.",
+              "To efficiently perform complex mathematical operations on data.": "While frequency data can be used for mathematical operations, the frequency array itself is a data structure for counting, not a tool for performing complex math. This is a plausible but incorrect generalization of its utility.",
+              "To reduce memory consumption by compressing redundant data.": "A frequency array can be memory efficient for certain data distributions, but its primary purpose is not data compression. It stores counts, which might increase memory if the range is very large and data is sparse. A student might incorrectly assume its efficiency extends to compression."
+            },
+            "correctAnswerText": "To directly map each data element to its count of occurrences.",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "To directly map each data element to its count of occurrences.",
+            "distractorRationalesByLetter": {
+              "A": "While frequency data can be used for mathematical operations, the frequency array itself is a data structure for counting, not a tool for performing complex math. This is a plausible but incorrect generalization of its utility.",
+              "B": "This describes a sorted array or a set, not the primary function of a frequency array, which focuses on counts rather than just uniqueness or sorting. An incompletely prepared student might confuse data organization methods.",
+              "C": "A frequency array can be memory efficient for certain data distributions, but its primary purpose is not data compression. It stores counts, which might increase memory if the range is very large and data is sparse. A student might incorrectly assume its efficiency extends to compression."
+            }
+          }
+        },
+        "repaired": false,
+        "mcq": {
+          "targetId": "R03",
+          "questionText": "What is the primary purpose of a frequency array in computer science problem-solving?",
+          "question": "What is the primary purpose of a frequency array in computer science problem-solving?",
+          "options": [
+            "To store elements in sorted order for quick retrieval.",
+            "To enable efficient searching through binary tree structures.",
+            "To manage dynamic memory allocation for variable-sized data.",
+            "To track the count of occurrences for each distinct data item."
+          ],
+          "correctAnswerIndex": 3,
+          "correctAnswer": "To track the count of occurrences for each distinct data item.",
+          "explanation": "A frequency array is used to count the occurrences of each distinct element within a given dataset, especially when the data is limited or within a specific range. This allows for efficient tracking of how many times each value appears.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Tests the student's ability to recall the fundamental purpose and application of a frequency array.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "EVIDENCE 1 and EVIDENCE 3 explicitly discuss the concept of a 'frequency array' and its use for 'frequency stuff' and 'day to day problem solving' when 'data is limited or the data is in range'. EVIDENCE 2 demonstrates its construction by incrementing counts for elements.",
+            "computedOrTracedKey": "The core function of a frequency array, as demonstrated and discussed, is to count how many times each unique value appears in a dataset. This directly aligns with 'track the count of occurrences for each distinct data item'.",
+            "distractorRationales": {
+              "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+              "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+              "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+            },
+            "byLetter": {
+              "A": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+              "B": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure.",
+              "C": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies."
+            }
+          },
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM",
+            "MISCONCEPTION_INVERSION"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "RECALL",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Frequency Array - Reserve Hard Peer",
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "distractorRationales": {
+              "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+              "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+              "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "To store elements in sorted order for quick retrieval.": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+            "To manage dynamic memory allocation for variable-sized data.": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies.",
+            "To enable efficient searching through binary tree structures.": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure."
+          },
+          "correctAnswerText": "To track the count of occurrences for each distinct data item.",
+          "correct_option": 3,
+          "correctOption": 3,
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "To track the count of occurrences for each distinct data item.",
+          "distractorRationalesByLetter": {
+            "A": "This describes the purpose of sorted arrays or data structures like balanced binary search trees, not a frequency array. A frequency array's primary role is counting, not sorting the original data.",
+            "B": "This describes the purpose of data structures like binary search trees or hash tables for efficient searching, not a frequency array. While a frequency array can be used to quickly check if an item exists (if its count > 0), its primary purpose is not general-purpose searching through a tree structure.",
+            "C": "This relates to memory management concepts (e.g., heaps, dynamic arrays) and is unrelated to the specific function of a frequency array, which is about counting data item frequencies."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "R04",
+      "concept": "Time and Space Tradeoffs - Reserve Medium Peer",
+      "subtopic": "Time and Space Tradeoffs",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "COMPARE",
+      "status": "REJECTED",
+      "reason": "FOREIGN_DOMAIN_CONTAMINATION",
+      "failureReasons": [
+        "FOREIGN_DOMAIN_CONTAMINATION"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "R04",
+        "questionText": "When designing a program, what is the primary operational tradeoff between time efficiency and space efficiency?",
+        "question": "When designing a program, what is the primary operational tradeoff between time efficiency and space efficiency?",
+        "options": [
+          "Space efficiency directly impacts the program's user interface.",
+          "Time efficiency is only relevant for large datasets.",
+          "Increasing time efficiency always reduces program complexity.",
+          "Optimizing for one often requires sacrificing the other."
+        ],
+        "correctAnswerIndex": 3,
+        "correctAnswer": "Optimizing for one often requires sacrificing the other.",
+        "explanation": "The lecture emphasizes that both time and space are critical resources for a program, implying a balance. Often, algorithms that run faster (time-efficient) might use more memory (less space-efficient), and vice-versa. This is a fundamental tradeoff in program design.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "To assess the understanding of the fundamental tradeoff between time and space efficiency in program design.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "Evidence 1 and 3 explicitly state that 'Time and space' are important for a program and that 'your code has to be time efficient and space efficient.' This implies a need to balance or consider both, which naturally leads to the concept of a tradeoff.",
+          "computedOrTracedKey": "The core concept of a 'tradeoff' means that improving one aspect (e.g., time) often comes at the cost of another (e.g., space). This is the most direct and accurate interpretation of the need for both efficiencies.",
+          "distractorRationales": {
+            "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+            "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+            "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+          },
+          "byLetter": {
+            "A": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+            "B": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets.",
+            "C": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity."
+          }
+        },
+        "usedArchetypes": [
+          "NEAR_MISS_MECHANISM",
+          "MISCONCEPTION_INVERSION"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Time and Space Tradeoffs - Reserve Medium Peer",
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM",
+            "MISCONCEPTION_INVERSION"
+          ],
+          "distractorRationales": {
+            "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+            "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+            "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+          "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+          "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+        },
+        "correctAnswerText": "Optimizing for one often requires sacrificing the other.",
+        "correct_option": 3,
+        "correctOption": 3,
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "Optimizing for one often requires sacrificing the other.",
+        "distractorRationalesByLetter": {
+          "A": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+          "B": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets.",
+          "C": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "score": 0.95,
+        "verdict": "FAIL",
+        "failureReasons": [
+          "FOREIGN_DOMAIN_CONTAMINATION"
+        ],
+        "failureReason": "FOREIGN_DOMAIN_CONTAMINATION",
+        "repairInstruction": null,
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option directly identifies the trade-off relationship between time and space complexity for the two specified approaches.",
+          "mismatchDetails": null
+        },
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "Nested loops increase space complexity while reducing the total execution time required.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "This incorrectly claims nested loops reduce execution time; nested loops typically result in O(n^2) time complexity, which is slower than O(n) memory-intensive approaches.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "EVIDENCE 3"
+          },
+          {
+            "slot": "B",
+            "text": "Nested loops minimize space usage but increase time complexity compared to memory-intensive methods.",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "This accurately reflects the standard computer science trade-off: nested loops use O(1) auxiliary space but O(n^2) time, whereas hash-based/array-based counting uses O(n) space but O(n) time.",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": "EVIDENCE 3"
+          },
+          {
+            "slot": "C",
+            "text": "Memory-intensive methods always require more time to execute than nested loop implementations.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "This is factually incorrect; memory-intensive methods (like frequency arrays or hash maps) are generally faster (O(n)) than nested loops (O(n^2)).",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "EVIDENCE 3"
+          },
+          {
+            "slot": "D",
+            "text": "Both approaches maintain identical time and space complexity regardless of the input size.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "This contradicts the fundamental concept of time and space trade-offs taught in the session.",
+            "distractorPlausibility": "LOW",
+            "evidenceCitation": "EVIDENCE 3"
+          }
+        ],
+        "cognitiveAudit": {
+          "requestedDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "evaluatedCognitiveDemand": "COMPARE",
+          "isCalibrated": true,
+          "mismatchDetails": null
+        },
+        "evidenceGrounding": {
+          "tier": "EVIDENCE_DERIVED",
+          "groundingScore": 0.95,
+          "foreignDomainDetected": false
+        },
+        "passed": false,
+        "verificationMethod": "LLM_EVALUATION",
+        "isFallback": false,
+        "isLLMVerified": true,
+        "tier": "EVIDENCE_DERIVED",
+        "groundingScore": 0.95,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Ground all options strictly in lecture evidence for \"Time and Space Tradeoffs - Reserve Medium Peer\"; do not introduce external or foreign domain concepts.",
+          "originalMCQ": {
+            "targetId": "R04",
+            "questionText": "When designing a program, what is the primary operational tradeoff between time efficiency and space efficiency?",
+            "question": "When designing a program, what is the primary operational tradeoff between time efficiency and space efficiency?",
+            "options": [
+              "Space efficiency directly impacts the program's user interface.",
+              "Time efficiency is only relevant for large datasets.",
+              "Increasing time efficiency always reduces program complexity.",
+              "Optimizing for one often requires sacrificing the other."
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "Optimizing for one often requires sacrificing the other.",
+            "explanation": "The lecture emphasizes that both time and space are critical resources for a program, implying a balance. Often, algorithms that run faster (time-efficient) might use more memory (less space-efficient), and vice-versa. This is a fundamental tradeoff in program design.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "To assess the understanding of the fundamental tradeoff between time and space efficiency in program design.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Evidence 1 and 3 explicitly state that 'Time and space' are important for a program and that 'your code has to be time efficient and space efficient.' This implies a need to balance or consider both, which naturally leads to the concept of a tradeoff.",
+              "computedOrTracedKey": "The core concept of a 'tradeoff' means that improving one aspect (e.g., time) often comes at the cost of another (e.g., space). This is the most direct and accurate interpretation of the need for both efficiencies.",
+              "distractorRationales": {
+                "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+                "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+                "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+              },
+              "byLetter": {
+                "A": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+                "B": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets.",
+                "C": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "COMPARE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Time and Space Tradeoffs - Reserve Medium Peer",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM",
+                "MISCONCEPTION_INVERSION"
+              ],
+              "distractorRationales": {
+                "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+                "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+                "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+              "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+              "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+            },
+            "correctAnswerText": "Optimizing for one often requires sacrificing the other.",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Optimizing for one often requires sacrificing the other.",
+            "distractorRationalesByLetter": {
+              "A": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+              "B": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets.",
+              "C": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "R04",
+            "questionText": "When calculating element frequencies in an array, how does using a nested loop approach compare to an approach that utilizes extra memory for tracking counts?",
+            "question": "When calculating element frequencies in an array, how does using a nested loop approach compare to an approach that utilizes extra memory for tracking counts?",
+            "options": [
+              "Nested loops increase space complexity while reducing the total execution time required.",
+              "Nested loops minimize space usage but increase time complexity compared to memory-intensive methods.",
+              "Memory-intensive methods always require more time to execute than nested loop implementations.",
+              "Both approaches maintain identical time and space complexity regardless of the input size."
+            ],
+            "correctAnswerIndex": 1,
+            "correctAnswer": "Nested loops minimize space usage but increase time complexity compared to memory-intensive methods.",
+            "explanation": "The lecture emphasizes that developers must balance time and space efficiency. A nested loop approach avoids allocating additional data structures (minimizing space) but requires repeated iterations over the input (increasing time complexity), whereas using extra memory (like a frequency array or hash map) trades space for faster lookup times.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Assess the student's ability to evaluate the fundamental time-space tradeoff inherent in algorithmic design.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "The lecture explicitly states that programs must be both time and space efficient, implying a tradeoff between these two resources.",
+              "computedOrTracedKey": "Nested loops: O(n^2) time, O(1) space. Frequency array/map: O(n) time, O(n) space. The tradeoff is clear: nested loops sacrifice time for space efficiency.",
+              "distractorRationales": {
+                "Nested loops increase space complexity while reducing the total execution time required.": "Plausible student misconception based on misconception inversion.",
+                "Both approaches maintain identical time and space complexity regardless of the input size.": "Plausible student misconception based on misconception inversion.",
+                "Memory-intensive methods always require more time to execute than nested loop implementations.": "Plausible student misconception based on misconception inversion."
+              },
+              "byLetter": {
+                "A": "Plausible student misconception based on misconception inversion.",
+                "C": "Plausible student misconception based on misconception inversion.",
+                "D": "Plausible student misconception based on misconception inversion."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "COMPARE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Time and Space Tradeoffs - Reserve Medium Peer",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "Nested loops increase space complexity while reducing the total execution time required.": "Plausible student misconception based on misconception inversion.",
+                "Both approaches maintain identical time and space complexity regardless of the input size.": "Plausible student misconception based on misconception inversion.",
+                "Memory-intensive methods always require more time to execute than nested loop implementations.": "Plausible student misconception based on misconception inversion."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "Nested loops increase space complexity while reducing the total execution time required.": "Plausible student misconception based on misconception inversion.",
+              "Both approaches maintain identical time and space complexity regardless of the input size.": "Plausible student misconception based on misconception inversion.",
+              "Memory-intensive methods always require more time to execute than nested loop implementations.": "Plausible student misconception based on misconception inversion."
+            },
+            "correctAnswerText": "Nested loops minimize space usage but increase time complexity compared to memory-intensive methods.",
+            "correct_option": 1,
+            "correctOption": 1,
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "Nested loops minimize space usage but increase time complexity compared to memory-intensive methods.",
+            "distractorRationalesByLetter": {
+              "A": "Plausible student misconception based on misconception inversion.",
+              "C": "Plausible student misconception based on misconception inversion.",
+              "D": "Plausible student misconception based on misconception inversion."
+            }
+          }
+        },
+        "repaired": false,
+        "mcq": {
+          "targetId": "R04",
+          "questionText": "When designing a program, what is the primary operational tradeoff between time efficiency and space efficiency?",
+          "question": "When designing a program, what is the primary operational tradeoff between time efficiency and space efficiency?",
+          "options": [
+            "Space efficiency directly impacts the program's user interface.",
+            "Time efficiency is only relevant for large datasets.",
+            "Increasing time efficiency always reduces program complexity.",
+            "Optimizing for one often requires sacrificing the other."
+          ],
+          "correctAnswerIndex": 3,
+          "correctAnswer": "Optimizing for one often requires sacrificing the other.",
+          "explanation": "The lecture emphasizes that both time and space are critical resources for a program, implying a balance. Often, algorithms that run faster (time-efficient) might use more memory (less space-efficient), and vice-versa. This is a fundamental tradeoff in program design.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "To assess the understanding of the fundamental tradeoff between time and space efficiency in program design.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "Evidence 1 and 3 explicitly state that 'Time and space' are important for a program and that 'your code has to be time efficient and space efficient.' This implies a need to balance or consider both, which naturally leads to the concept of a tradeoff.",
+            "computedOrTracedKey": "The core concept of a 'tradeoff' means that improving one aspect (e.g., time) often comes at the cost of another (e.g., space). This is the most direct and accurate interpretation of the need for both efficiencies.",
+            "distractorRationales": {
+              "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+              "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+              "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+            },
+            "byLetter": {
+              "A": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+              "B": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets.",
+              "C": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity."
+            }
+          },
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM",
+            "MISCONCEPTION_INVERSION"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "COMPARE",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Time and Space Tradeoffs - Reserve Medium Peer",
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM",
+              "MISCONCEPTION_INVERSION"
+            ],
+            "distractorRationales": {
+              "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+              "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+              "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "Increasing time efficiency always reduces program complexity.": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity.",
+            "Space efficiency directly impacts the program's user interface.": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+            "Time efficiency is only relevant for large datasets.": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets."
+          },
+          "correctAnswerText": "Optimizing for one often requires sacrificing the other.",
+          "correct_option": 3,
+          "correctOption": 3,
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "Optimizing for one often requires sacrificing the other.",
+          "distractorRationalesByLetter": {
+            "A": "This is incorrect. While space efficiency can indirectly affect performance, which might impact UI responsiveness, it does not directly impact the user interface design or aesthetics. This represents an incorrect cause-and-effect assumption, confusing resource management with presentation.",
+            "B": "This is a common conceptual misconception. While the impact of time efficiency is more pronounced with large datasets, it is relevant for all programs, as even small inefficiencies can accumulate or affect real-time systems. It's a boundary condition error to limit its relevance solely to large datasets.",
+            "C": "This is incorrect because increasing time efficiency (e.g., by using a more complex algorithm or data structure) might actually increase the program's code complexity, even if it reduces execution time. It's a procedural sequence error to assume a direct inverse relationship between time efficiency and code complexity."
+          }
+        }
+      }
+    }
+  ],
+  "unfulfilledTargets": [
+    {
+      "targetId": "R02",
+      "concept": "Frequency Array - Reserve Easy Peer",
+      "subtopic": "Frequency Array",
+      "targetDifficulty": "Easy",
+      "intendedCognitiveOperation": "RECALL",
+      "status": "UNFULFILLED_PROVIDER_FAILURE",
+      "reason": "LLM generation error on target \"Frequency Array - Reserve Easy Peer\": Agent 2 LLM generation timed out after 15s",
+      "attempts": 1,
+      "repairAttempted": false,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "R02",
+        "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+        "isUnfulfilled": true,
+        "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+        "message": "LLM generation error on target \"Frequency Array - Reserve Easy Peer\": Agent 2 LLM generation timed out after 15s",
+        "metadata": {
+          "targetDifficulty": "Easy",
+          "achievedDifficulty": null,
+          "intendedCognitiveOperation": "RECALL",
+          "achievedCognitiveOperation": null,
+          "concept": "Frequency Array - Reserve Easy Peer",
+          "isCapacityLimited": false
+        }
+      }
+    }
+  ],
+  "questions": [
+    {
+      "index": 1,
+      "targetId": "T03",
+      "concept": "Using two arrays to store values and their frequencies separately",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "When using the Two-Array Approach to count frequencies for an input array like [2, 3, 2, 5], what is the primary purpose of the second array?",
+      "options": [
+        "To temporarily hold elements that have already been counted to avoid re-processing.",
+        "To store the original input elements in sorted order for faster access.",
+        "To maintain a separate list of all unique elements encountered so far.",
+        "To store the frequency count of each unique element from the input array."
+      ],
+      "correctAnswer": "To store the frequency count of each unique element from the input array.",
+      "correctKey": "D",
+      "explanation": "The Two-Array Approach, as discussed, involves using a second array specifically to track and store the frequency of each unique element present in the input array. This allows for efficient counting and retrieval of how many times each number appears.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 2,
+      "targetId": "T04",
+      "concept": "Building a frequency array where indices represent values",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "Given an array `arr = [2, 0, 2, 1]` and a frequency array `freq` initialized to zeros, what will be the value at `freq[2]` after processing `arr` to build the frequency array?",
+      "options": [
+        "3",
+        "0",
+        "1",
+        "2"
+      ],
+      "correctAnswer": "2",
+      "correctKey": "D",
+      "explanation": "The frequency array uses indices as values and stores their counts. For `arr = [2, 0, 2, 1]`: \n1. `arr[0] = 2`: Increment `freq[2]` (becomes 1).\n2. `arr[1] = 0`: Increment `freq[0]` (becomes 1).\n3. `arr[2] = 2`: Increment `freq[2]` (becomes 2).\n4. `arr[3] = 1`: Increment `freq[1]` (becomes 1).\nTherefore, `freq[2]` will be 2.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 3,
+      "targetId": "T05",
+      "concept": "When a frequency array is suitable based on input value range",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "When is a frequency array considered suitable for counting occurrences of input values?",
+      "options": [
+        "When the input data is limited or falls within a specific range.",
+        "When the input values are extremely diverse and sparse.",
+        "When the data requires complex mathematical transformations.",
+        "When the primary goal is to sort elements in descending order."
+      ],
+      "correctAnswer": "When the input data is limited or falls within a specific range.",
+      "correctKey": "A",
+      "explanation": "A frequency array is suitable when the input data values are limited or fall within a specific, manageable range, allowing indices to represent values and array elements to store frequencies. This approach becomes inefficient with extremely diverse or sparse data.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 4,
+      "targetId": "R05",
+      "concept": "Time and Space Tradeoffs - Reserve Easy Peer",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "What are the two critical resources a program must manage efficiently?",
+      "options": [
+        "Time and space",
+        "Speed and accuracy",
+        "Memory and bandwidth",
+        "Sunlight and water"
+      ],
+      "correctAnswer": "Time and space",
+      "correctKey": "A",
+      "explanation": "The lecture explicitly states that for a program, the most important critical things are time and space, drawing an analogy to plants needing sunlight and water.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 5,
+      "targetId": "R06",
+      "concept": "Time and Space Tradeoffs - Reserve Hard Peer",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "When optimizing a program to count element frequencies, how does a nested-loop approach compare to using an auxiliary frequency array in terms of operational efficiency?",
+      "options": [
+        "Nested loops are always preferred because they eliminate the need for space overhead.",
+        "Nested loops provide superior time efficiency by avoiding extra memory allocation.",
+        "Frequency arrays reduce time complexity but require additional space for storage.",
+        "Both approaches maintain identical time and space complexity regardless of input size."
+      ],
+      "correctAnswer": "Frequency arrays reduce time complexity but require additional space for storage.",
+      "correctKey": "C",
+      "explanation": "The nested-loop approach typically results in O(n^2) time complexity, whereas using an auxiliary frequency array allows for O(n) time complexity at the cost of O(k) additional space, illustrating the fundamental time-space tradeoff.",
+      "groundingStatus": "GROUNDED"
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "system": "System 3: Frozen KMIT Kahoot LCA-CM",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "In the study of Textual Interpretation of Article 21, what is the fundamental role or definition of Universal applicability of Article 21 to all persons, not just citizens?",
+      "options": [
+        "Acts as an auxiliary background queue that bypasses primary domain state verification",
+        "Inverts execution dependencies by finalizing outcomes before validating initial inputs",
+        "Defines the canonical structure and operational invariants for Universal applicability of Article 21 to all persons, not just citizens within the domain",
+        "Applies global locking constraints across unrelated external system services"
+      ],
+      "correctAnswer": "Defines the canonical structure and operational invariants for Universal applicability of Article 21 to all persons, not just citizens within the domain",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Universal applicability of Article 21 to all persons, not just citizens. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Textual Interpretation of Article 21"
+    },
+    {
+      "questionText": "When analyzing Universal applicability of Article 21 to all persons, not just citizens (RECOGNIZE) in Historical Drafting Context (Due Process vs. Procedure Established by Law), how does the mechanism execute its operational sequence?",
+      "options": [
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Executes postconditions prior to checking input boundary parameters",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Universal applicability of Article 21 to all persons, not just citizens (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Historical Drafting Context (Due Process vs. Procedure Established by Law)"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Computes a hash of the key and stores the node at the computed array index directly"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Historical Drafting Context (Due Process vs. Procedure Established by Law) (State Transitions and Formulations). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Historical Drafting Context (Due Process vs. Procedure Established by Law)"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for A.K. Gopalan v. State of Madras (Silo Theory) (Boundary Conditions and Edge Cases). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "A.K. Gopalan v. State of Madras (Silo Theory)"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for A.K. Gopalan v. State of Madras (Silo Theory) (Boundary Conditions and Edge Cases). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "A.K. Gopalan v. State of Madras (Silo Theory)"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Substantive Due Process and Unenumerated Rights (Design Tradeoffs and Comparative Analysis). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Maneka Gandhi v. Union of India (Golden Triangle)"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree",
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Computes a hash of the key and stores the node at the computed array index directly"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Limits of Article 21 (System Invariants and Bug Diagnostics). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Maneka Gandhi v. Union of India (Golden Triangle)"
+    },
+    {
+      "questionText": "In Binary Search Tree (BST) operations, what is the key property of an inorder traversal?",
+      "options": [
+        "Visits the root node last after completely traversing both subtrees in Left, Right, Root order",
+        "Visits the root node first before traversing either subtree in Root, Left, Right order",
+        "Visits all nodes at the current tree depth before proceeding to subsequent levels",
+        "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right"
+      ],
+      "correctAnswer": "Visits tree nodes in ascending sorted numerical order by traversing Left, Root, Right",
+      "correct_option": 3,
+      "explanation": "Derived directly from session evidence for Article 21: Life and Personal Liberty in the Indian Constitution (Core Foundations and Governing Principles). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Substantive Due Process and Unenumerated Rights"
+    },
+    {
+      "questionText": "When inserting a new key into a Binary Search Tree, how does the insertion algorithm operate?",
+      "options": [
+        "Searches leaf nodes in arbitrary sequence until finding an available empty slot regardless of key value",
+        "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+        "Computes a hash of the key and stores the node at the computed array index directly",
+        "Always places the new key at the root node and shifts all existing nodes into the right subtree"
+      ],
+      "correctAnswer": "Traverses downward from root comparing keys, moving left if smaller and right if larger until an empty child pointer is found",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Textual Interpretation of Article 21 (Operational Mechanics and Execution Steps). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Substantive Due Process and Unenumerated Rights"
+    },
+    {
+      "questionText": "In a Binary Search Tree (BST), what fundamental ordering property must hold for every node X?",
+      "options": [
+        "All keys in X's left subtree are strictly greater than X's key, and all keys in X's right subtree are strictly less than X's key",
+        "The left child must have a smaller key than X, but arbitrary descendants in the left subtree may exceed X",
+        "All keys in X's left subtree are strictly less than X's key, and all keys in X's right subtree are strictly greater than X's key",
+        "Keys are ordered chronologically by insertion timestamp rather than numerical comparison"
+      ],
+      "correctAnswer": "All keys in X's left subtree are strictly less than X's key, and all keys in X's right subtree are strictly greater than X's key",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Limits of Article 21 (System Invariants and Bug Diagnostics). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Limits of Article 21"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1713,
+    "cumulativeOutputTokens": 2599,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 2127
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Decoupled operations)"
+  },
+  "tcScore": 83,
+  "pdi": 0.2,
+  "timestamp": "2026-11-05T20:21:07.744Z"
+}

@@ -374,6 +374,175 @@ function verifyRelationalGrounding(qText, ansText, evidenceRecords, rawEvidence 
   return { isJustified: true };
 }
 
+/**
+ * Variable-level grounding verification for code-mechanics assertions.
+ * Prevents evidence about one variable (e.g. `count = 0`) from falsely validating
+ * claims about another variable (e.g. `j = 0`).
+ * Fails closed when an asserted variable action/relationship is unsupported in evidence.
+ */
+function verifyVariableGrounding(qText, ansText, rawContent) {
+  const fullText = (qText + ' ' + ansText).toLowerCase();
+  const rawLower = (rawContent || '').toLowerCase();
+
+  const nonVarWords = new Set([
+    'the', 'an', 'a', 'to', 'for', 'each', 'every', 'all', 'new', 'next', 'previous',
+    'first', 'last', 'element', 'array', 'loop', 'value', 'zero', 'it', 'this', 'that',
+    'which', 'what', 'when', 'outer', 'inner', 'algorithm', 'method', 'function',
+    'be', 'must', 'should', 'will', 'can', 'may', 'might', 'would', 'could',
+    'is', 'are', 'was', 'were', 'have', 'has', 'had', 'do', 'does', 'did',
+    'get', 'gets', 'got', 'become', 'being', 'been',
+    // Ordinary English technical words that must not be treated as variable names:
+    'virtual', 'update', 'table', 'routing', 'process', 'memory', 'cache', 'network',
+    'system', 'program', 'code', 'file', 'data', 'query', 'record', 'entry', 'key',
+    'instruction', 'address', 'page', 'frame', 'thread', 'stack', 'heap', 'server',
+    'client', 'class', 'object', 'module', 'package', 'node', 'tree', 'graph',
+    'state', 'size', 'length', 'time', 'space', 'role', 'action', 'step', 'operation'
+  ]);
+
+  const assertedVarActions = [];
+
+  // Pattern 1: Action with explicit variable qualifier: e.g. "reset variable count to 0", "reset index j to 0", "reinitialize inner loop index"
+  const actionVarValRegex = /\b(reinitialize|re-initialize|reinitializes|re-initializes|reset|resets|resetting|set|sets|setting|initialize|initializes|initializing|update|updates|updating|assign|assigns|assigning|increment|increments|incrementing|decrement|decrements|decrementing)\s+(?:the\s+)?(?:inner\s+|outer\s+)?(?:loop\s+)?(?:variable|index|counter|pointer|flag)\s+([a-z_][a-z0-9_]*)\s*(?:to\s+([0-9a-z_]+))?\b/gi;
+
+  // Pattern 1b: Generic multi-word index/counter action: e.g. "reinitialize the inner loop index", "reset the inner loop counter"
+  const genericLoopActionRegex = /\b(reinitialize|re-initialize|reinitializes|re-initializes|reset|resets|resetting|initialize|initializes|initializing)\s+(?:the\s+)?(inner\s+loop\s+index|inner\s+loop\s+counter|outer\s+loop\s+index|outer\s+loop\s+counter|loop\s+index|loop\s+counter)\b/gi;
+
+  // Pattern 2: Assignment syntax: e.g. "j = 0", "count = 0", "variable count is reset to 0", "index j is reset to 0"
+  const assignVarRegex = /\b(?:(?:variable|index|counter|pointer|flag)\s+([a-z_][a-z0-9_]*)|([a-z])|(count|counter|sum|total|idx|ptr|pos|len|temp|val|flag|visited|min|max))\s*(?:=|\s+(?:(?:is|must\s+be|should\s+be|will\s+be|can\s+be|gets)\s+)?(?:reset|resets|set|sets|initialized?)\s+to)\s*([0-9a-z_]+)\b/gi;
+
+  // Pattern 2b: Increment / decrement syntax: e.g. "j++", "count++", "variable j is incremented", "increment variable j"
+  const incDecSuffixRegex = /\b(?:(?:variable|index|counter|pointer|flag)\s+([a-z_][a-z0-9_]*)|([a-z])|(count|counter|sum|total|idx|ptr|pos|len|temp|val|flag|visited))\s*(\+\+|\-\-)\b/gi;
+  const incDecVerbRegex = /\b(?:(?:variable|index|counter|pointer|flag)\s+([a-z_][a-z0-9_]*)|([a-z])|(count|counter|sum|total|idx|ptr|pos|len|temp|val|flag|visited))\s+(?:is|must\s+be|should\s+be|will\s+be|gets|is\s+being)\s+(incremented|decremented|increased|decreased)\b/gi;
+
+  let match;
+  while ((match = actionVarValRegex.exec(fullText)) !== null) {
+    const action = match[1].toLowerCase();
+    const varName = match[2].toLowerCase();
+    const targetVal = match[3] ? match[3].toLowerCase() : null;
+    if (!nonVarWords.has(varName)) {
+      assertedVarActions.push({ varName, action, targetVal, rawMatch: match[0] });
+    }
+  }
+
+  while ((match = genericLoopActionRegex.exec(fullText)) !== null) {
+    const rawAction = match[1].toLowerCase();
+    const action = rawAction.includes('init') ? 'initialize' : 'reset';
+    const varName = match[2].toLowerCase().replace(/\s+/g, ' ');
+    assertedVarActions.push({ varName, action, targetVal: null, rawMatch: match[0] });
+  }
+
+  while ((match = assignVarRegex.exec(fullText)) !== null) {
+    const varName = (match[1] || match[2] || match[3] || '').toLowerCase();
+    const targetVal = match[4] ? match[4].toLowerCase() : null;
+    if (varName && !nonVarWords.has(varName)) {
+      assertedVarActions.push({ varName, action: 'assign', targetVal, rawMatch: match[0] });
+    }
+  }
+
+  while ((match = incDecSuffixRegex.exec(fullText)) !== null) {
+    const varName = (match[1] || match[2] || match[3] || '').toLowerCase();
+    const op = match[4];
+    const action = op === '++' ? 'increment' : 'decrement';
+    if (varName && !nonVarWords.has(varName)) {
+      assertedVarActions.push({ varName, action, targetVal: null, rawMatch: match[0] });
+    }
+  }
+
+  while ((match = incDecVerbRegex.exec(fullText)) !== null) {
+    const varName = (match[1] || match[2] || match[3] || '').toLowerCase();
+    const action = match[4].toLowerCase().includes('inc') ? 'increment' : 'decrement';
+    if (varName && !nonVarWords.has(varName)) {
+      assertedVarActions.push({ varName, action, targetVal: null, rawMatch: match[0] });
+    }
+  }
+
+  // Pattern 3: Question stem specifies subject variable and answer asserts action on it (e.g. "what must happen to inner loop index j? It must be reset to 0")
+  const stemVarMatch = (qText || '').match(/\b(?:variable|index|counter|pointer|flag)\s+([a-z_][a-z0-9_]*)\b/i);
+  if (stemVarMatch) {
+    const stemVar = stemVarMatch[1].toLowerCase();
+    if (!nonVarWords.has(stemVar)) {
+      const ansActionMatch = (ansText || '').match(/\b(?:(?:it\s+)?(?:is|must\s+be|should\s+be|will\s+be|can\s+be|gets)?\s*)?(reset|set|initialize|increment|decrement|update|assign)\w*(?:(?:\s+it)?\s+to\s+([0-9a-z_]+))?\b/i);
+      if (ansActionMatch) {
+        const action = ansActionMatch[1].toLowerCase();
+        const targetVal = ansActionMatch[2] ? ansActionMatch[2].toLowerCase() : null;
+        assertedVarActions.push({ varName: stemVar, action, targetVal, rawMatch: `${stemVar} -> ${ansActionMatch[0]}` });
+      } else if (/\b(\+\+|\-\-)\b/.test(ansText)) {
+        const action = ansText.includes('++') ? 'increment' : 'decrement';
+        assertedVarActions.push({ varName: stemVar, action, targetVal: null, rawMatch: `${stemVar} -> ${action}` });
+      }
+    }
+  }
+
+  if (assertedVarActions.length === 0) {
+    return { isJustified: true };
+  }
+
+  // Prepare non-loop evidence to prevent loop-header initializations from validating resets
+  const nonLoopEvidence = rawLower
+    .replace(/\bfor\s*\([^)]*\)/gi, ' ')
+    .replace(/\bfor\s+(?:(?:int|var|let)\s+)?[a-z0-9_]+\s*=\s*0[^\n;]*[;\n]/gi, ' ');
+
+  for (const item of assertedVarActions) {
+    const { varName, action, targetVal } = item;
+    const varEscaped = varName.replace(/[^a-zA-Z0-9_\s]/g, '').trim().replace(/\s+/g, '\\s+');
+    const valPattern = targetVal ? '(?:\\s*=\\s*' + targetVal + '|\\s+to\\s+' + targetVal + '|\\s+to\\s+zero)?' : '';
+
+    let hasDirectEvidence = false;
+    if (action.includes('reset')) {
+      const resetPatternA = new RegExp('\\b(?:reset|resets|resetting)\\w*\\s+(?:the\\s+)?(?:inner\\s+|outer\\s+)?(?:variable\\s+|index\\s+|counter\\s+)?\\b' + varEscaped + '\\b', 'i');
+      const resetPatternB = new RegExp('\\b' + varEscaped + '\\b\\s*(?:variable\\s+|counter\\s+|index\\s+)?(?:is|must\\s+be|should\\s+be|was|gets)?\\s*reset', 'i');
+      const hasStandaloneAssign = new RegExp('\\b' + varEscaped + '\\s*=\\s*(?:0|zero)\\b', 'i').test(nonLoopEvidence);
+
+      hasDirectEvidence = resetPatternA.test(rawLower) || resetPatternB.test(rawLower) || hasStandaloneAssign;
+    } else if (action.includes('initialize') || action.includes('init')) {
+      const loopInitPattern = new RegExp('\\bfor\\s*\\([^;]*\\b' + varEscaped + '\\s*=\\s*' + (targetVal || '0'), 'i');
+      const loopInitSpeech = new RegExp('\\bfor\\s+(?:(?:int|var|let)\\s+)?\\b' + varEscaped + '\\s*=\\s*' + (targetVal || '0'), 'i');
+      const directActionPattern = new RegExp('\\b(?:initialize|initializes|initializing|init)\\w*\\s+(?:the\\s+)?(?:inner\\s+|outer\\s+)?(?:variable\\s+|index\\s+|counter\\s+)?\\b' + varEscaped + '\\b', 'i');
+      const hasStandaloneAssign = new RegExp('\\b' + varEscaped + '\\s*=\\s*(?:0|zero)\\b', 'i').test(nonLoopEvidence);
+
+      hasDirectEvidence = directActionPattern.test(rawLower) || loopInitPattern.test(rawLower) || loopInitSpeech.test(rawLower) || hasStandaloneAssign;
+    } else if (action.includes('increment') || action === '++') {
+      const incPatternA = new RegExp('\\b' + varEscaped + '\\s*\\+\\+', 'i');
+      const incPatternB = new RegExp('\\+\\+\\s*' + varEscaped + '\\b', 'i');
+      const incPatternC = new RegExp('\\b' + varEscaped + '\\s*=\\s*' + varEscaped + '\\s*\\+\\s*1\\b', 'i');
+      const incPatternD = new RegExp('\\b(?:increment|increments|incrementing)\\w*\\s+(?:the\\s+)?(?:inner\\s+|outer\\s+)?(?:variable\\s+|index\\s+|counter\\s+)?\\b' + varEscaped + '\\b', 'i');
+      const incPatternE = new RegExp('\\b' + varEscaped + '\\b\\s*(?:variable\\s+|counter\\s+|index\\s+)?(?:is|must\\s+be|should\\s+be|was|gets)?\\s*incremented', 'i');
+
+      hasDirectEvidence = incPatternA.test(rawLower) || incPatternB.test(rawLower) || incPatternC.test(rawLower) || incPatternD.test(rawLower) || incPatternE.test(rawLower);
+    } else {
+      const directActionPattern = new RegExp('\\b(?:set|update|assign)\\w*\\s+(?:the\\s+)?(?:inner\\s+|outer\\s+)?(?:variable\\s+|index\\s+|counter\\s+)?\\b' + varEscaped + '\\b' + valPattern, 'i');
+      const directAssignPattern = new RegExp('\\b' + varEscaped + '\\s*(?:=|is\\s+set)\\s*(?:to\\s+)?' + (targetVal || ''), 'i');
+      hasDirectEvidence = directActionPattern.test(rawLower) || directAssignPattern.test(rawLower);
+    }
+
+    if (!hasDirectEvidence) {
+      let otherVarName = null;
+      if (action.includes('reset')) {
+        const otherVarResetMatch = rawLower.match(/\b(count|counter|sum|flag|visited|total)\s*(?:=|is\s+reset|resets?\s+to|\s+to\s+zero)/i) ||
+                                  rawLower.match(/\b(?:reset|resets|resetting)\s+(?:the\s+)?(?:variable\s+|counter\s+)?(count|counter|sum|flag|visited|total)\b/i) ||
+                                  rawLower.match(/\b(count|counter|sum|flag|visited|total)\b\s*(?:variable\s+|counter\s+)?(?:is|must\s+be|should\s+be|was|gets)?\s*reset/i);
+        otherVarName = otherVarResetMatch ? (otherVarResetMatch[1] || otherVarResetMatch[0]) : null;
+      } else if (action.includes('increment') || action === '++') {
+        const otherVarIncMatch = rawLower.match(/\b(count|counter|sum|flag|visited|total|[a-z])\s*\+\+/i) ||
+                                rawLower.match(/\b(?:increment|increments|incrementing)\s+(?:the\s+)?(?:variable\s+|counter\s+)?([a-z_][a-z0-9_]*)\b/i);
+        otherVarName = otherVarIncMatch ? (otherVarIncMatch[1] || otherVarIncMatch[0]) : null;
+      }
+
+      const actionLabel = action.includes('reset') ? 'reset/assigned' : (action.includes('increment') ? 'incremented' : (action.includes('init') ? 'reinitialized/initialized' : action));
+      const detailMsg = (otherVarName && otherVarName.toLowerCase() !== varName)
+        ? `Candidate asserts variable '${varName}' is ${actionLabel}, but lecture evidence only attributes this action to '${otherVarName}'.`
+        : `Candidate asserts variable '${varName}' is ${actionLabel}, but this specific variable relationship is unsupported in lecture evidence.`;
+
+      return {
+        isJustified: false,
+        reason: 'UNGROUNDED_VARIABLE_CLAIM: ' + detailMsg
+      };
+    }
+  }
+
+  return { isJustified: true };
+}
+
 class GroundingGate {
   /**
    * Run Final Grounding Gate on passing quiz questions.
@@ -457,6 +626,29 @@ class GroundingGate {
       return { isJustified: true, reason: 'Topic curriculum mode: canonical subject verification' };
     }
 
+    const isSupplementary = Boolean(
+      q?.provenance === 'SCOPE_SUPPLEMENTARY' ||
+      q?.isSupplementary ||
+      q?.target?.isSupplementary ||
+      q?.target?.provenance === 'SCOPE_SUPPLEMENTARY' ||
+      q?.metadata?.isSupplementary ||
+      q?.metadata?.provenance === 'SCOPE_SUPPLEMENTARY'
+    );
+    if (isSupplementary) {
+      const fullStem = (qText + ' ' + ansText).toLowerCase();
+      // Rule 4: Never claim a supplementary question was taught in the lecture
+      if (/\b(?:in the lecture|as the instructor (?:said|explained|mentioned)|in this recording|the lecturer stated)\b/i.test(fullStem)) {
+        return {
+          isJustified: false,
+          reason: 'SUPPLEMENTARY_CLAIM_VIOLATION: Supplementary question falsely claims to be taught in the recorded lecture.'
+        };
+      }
+      return {
+        isJustified: true,
+        reason: 'SCOPE_SUPPLEMENTARY: Verified within authorized curriculum topic scope'
+      };
+    }
+
     if (!rawContent || rawContent.length < 50) {
       return { isJustified: false, reason: 'INSUFFICIENT_READABLE_EVIDENCE: Session content too sparse to verify grounding' };
     }
@@ -480,6 +672,15 @@ class GroundingGate {
       if (hasProhibitedCode) {
         return { isJustified: false, reason: 'TEACHER_BOUNDARY_VIOLATION: Code syntax generated despite explicit NO_CODE instruction' };
       }
+    }
+
+    // Variable-level grounding audit for code mechanics assertions
+    const varAudit = verifyVariableGrounding(qText, ansText, rawContent);
+    if (!varAudit.isJustified) {
+      return {
+        isJustified: false,
+        reason: varAudit.reason
+      };
     }
 
     // Stopwords list: common grammatical, question scaffolding, and domain-neutral scenario reasoning words

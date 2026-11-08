@@ -44,8 +44,8 @@ export default function PdiViewer({
               <GitBranch size={16} />
             </div>
             <div>
-              <h4 className="text-sm font-black text-slate-900">Adaptive PDI Representation Router</h4>
-              <p className="text-xs text-slate-500">Pedagogical Delivery Index & Modality Decision Engine</p>
+              <h4 className="text-sm font-black text-slate-900">Adaptive Modality Representation Router</h4>
+              <p className="text-xs text-slate-500">Deterministic Input Routing & Representation Engine</p>
             </div>
           </div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-orange-50 text-orange-700 border border-orange-200">

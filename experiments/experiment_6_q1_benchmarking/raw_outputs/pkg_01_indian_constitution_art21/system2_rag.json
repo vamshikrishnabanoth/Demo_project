@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "In the landmark case A.K. Gopalan v. State of Madras (1950), how did the Supreme Court interpret the phrase “procedure established by law” in Article 21 of the Indian Constitution?",
+      "options": [
+        "It required that the procedure be fair, just, and reasonable before it could be upheld",
+        "It meant any procedure enacted by a competent legislature, irrespective of its fairness or reasonableness",
+        "It mandated conformity with international human‑rights standards in addition to domestic law",
+        "It allowed the Court to scrutinise the substantive justice of the law before upholding it"
+      ],
+      "correctAnswer": "It meant any procedure enacted by a competent legislature, irrespective of its fairness or reasonableness",
+      "explanation": "The Court took a literal, formalistic view, holding that as long as Parliament followed proper legislative process, the law’s substantive fairness could not be questioned.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Interpretation of Article 21 – Procedure established by law"
+    },
+    {
+      "questionText": "Which doctrine did the Supreme Court articulate in A.K. Gopalan v. State of Madras, describing Fundamental Rights in Part III as separate, non‑overlapping compartments?",
+      "options": [
+        "Golden Triangle doctrine",
+        "Silo Theory (doctrine of mutual exclusivity)",
+        "Basic Structure doctrine",
+        "Doctrine of Progressive Realisation"
+      ],
+      "correctAnswer": "Silo Theory (doctrine of mutual exclusivity)",
+      "explanation": "In Gopalan the Court held that each Fundamental Right formed a distinct 'silo', meaning rights under Article 19 could not be invoked to challenge a detention under Article 21, establishing the doctrine of mutual exclusivity.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Doctrine of Silo Theory / Relationship among Fundamental Rights"
+    },
+    {
+      "questionText": "Which principles did Justice Bhagwati say the procedure prescribed by law must satisfy to comply with Article 21?",
+      "options": [
+        "Fairness",
+        "Reasonableness",
+        "Natural justice",
+        "All of the above"
+      ],
+      "correctAnswer": "All of the above",
+      "explanation": "Justice Bhagwati held that the procedure cannot be arbitrary; it must meet the standards of fairness, reasonableness, and natural justice, i.e., all three criteria.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Golden Triangle doctrine"
+    },
+    {
+      "questionText": "According to the lecture excerpt, which foreign constitution supplied the phrase that was adopted in Article 21 of the Indian Constitution as 'procedure established by law'?",
+      "options": [
+        "The Japanese Constitution of 1946",
+        "The United States Constitution",
+        "The French Civil Code",
+        "The German Basic Law (Grundgesetz)"
+      ],
+      "correctAnswer": "The Japanese Constitution of 1946",
+      "explanation": "The excerpt states that the Drafting Committee deliberately adopted 'procedure established by law' from Article 31 of the Japanese Constitution of 1946, rejecting the American 'due process' terminology.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Historical origins of Article 21"
+    },
+    {
+      "questionText": "In the landmark judgment of Maneka Gandhi v. Union of India, how did the Supreme Court describe the relationship among Articles 14, 19 and 21 of the Indian Constitution?",
+      "options": [
+        "They are independent and unrelated provisions.",
+        "They form a ‘Golden Triangle’ with an organic connection between them.",
+        "Article 14 supersedes Articles 19 and 21 in all cases.",
+        "Article 21 is limited solely to procedural fairness and does not involve Articles 14 or 19."
+      ],
+      "correctAnswer": "They form a ‘Golden Triangle’ with an organic connection between them.",
+      "explanation": "Justice P.N. Bhagwati held that the three articles are interlinked, creating a ‘Golden Triangle’ where the substantive fairness of law (Art 14) informs the procedural liberty (Art 21) and the expressive freedoms (Art 19).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Golden Triangle doctrine"
+    },
+    {
+      "questionText": "According to the excerpt, personal liberty under Article 21 may be constitutionally regulated when which combination of conditions is satisfied?",
+      "options": [
+        "No statutory law exists, and the state acts arbitrarily.",
+        "A valid statutory law exists, the state follows a fair and non‑arbitrary procedure, and legitimate state interests are balanced.",
+        "The procedure is fanciful but the outcome is beneficial.",
+        "Only the Supreme Court's opinion is needed, irrespective of statutory law."
+      ],
+      "correctAnswer": "A valid statutory law exists, the state follows a fair and non‑arbitrary procedure, and legitimate state interests are balanced.",
+      "explanation": "The passage states that personal liberty can be regulated where a valid law exists, the procedure is fair and non‑arbitrary, and state interests are balanced.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Limits on Personal Liberty under Article 21"
+    },
+    {
+      "questionText": "Why did the Drafting Committee of the Indian Constitution replace the American term 'due process of law' with the phrase 'procedure established by law' in Article 21?",
+      "options": [
+        "To align Indian constitutional language with the Japanese Constitution of 1946",
+        "To avoid the kind of judicial overreach that occurred in the United States during the Lochner era",
+        "To restrict the protection of personal liberty exclusively to Indian citizens",
+        "To incorporate principles from the British common law tradition"
+      ],
+      "correctAnswer": "To avoid the kind of judicial overreach that occurred in the United States during the Lochner era",
+      "explanation": "The framers, after consulting Justice Felix Frankfurter, rejected 'due process' because the US Supreme Court had used it to strike down progressive legislation during the Lochner era, and they preferred a more restrained wording.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Historical rationale behind Article 21 phrasing"
+    },
+    {
+      "questionText": "According to the excerpt, which doctrine did the Supreme Court establish in the Gopalan case regarding the relationship among Fundamental Rights?",
+      "options": [
+        "Silo Theory (doctrine of mutual exclusivity)",
+        "Golden Triangle doctrine",
+        "Doctrine of Harmonious Construction",
+        "Doctrine of Progressive Realisation"
+      ],
+      "correctAnswer": "Silo Theory (doctrine of mutual exclusivity)",
+      "explanation": "The excerpt states that Gopalan established the 'Silo Theory' or doctrine of mutual exclusivity, treating each Fundamental Right as a separate, water‑tight compartment.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Doctrine of Fundamental Rights interpretation"
+    },
+    {
+      "questionText": "Justice Bhagwati held that the procedure prescribed by law under Article 21 must satisfy which set of principles?",
+      "options": [
+        "Legality, proportionality, and transparency",
+        "Fairness, reasonableness, and natural justice",
+        "Equality, liberty, and fraternity",
+        "Sovereignty, integrity, and security"
+      ],
+      "correctAnswer": "Fairness, reasonableness, and natural justice",
+      "explanation": "Bhagwati read the substantive due‑process standards of fairness, reasonableness and natural justice—derived from Article 14—into the procedural guarantee of Article 21.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Due process interpretation of Article 21"
+    },
+    {
+      "questionText": "What legal principle regarding the phrase “procedure established by law” was established by the Supreme Court in A.K. Gopalan v. State of Madras?",
+      "options": [
+        "It requires that the procedure be fair and reasonable.",
+        "It allows the Court to examine the substantive justice of the law.",
+        "It means any procedure enacted by a competent legislature, irrespective of fairness.",
+        "It mandates alignment with international human rights standards."
+      ],
+      "correctAnswer": "It means any procedure enacted by a competent legislature, irrespective of fairness.",
+      "explanation": "In Gopalan, the Court took a literal view, holding that ‘procedure established by law’ merely refers to any procedure validly enacted by Parliament, without assessing its fairness or reasonableness.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Interpretation of Article 21 and judicial review"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6869,
+    "cumulativeOutputTokens": 1994,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 21064
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:21:04.802Z"
+}

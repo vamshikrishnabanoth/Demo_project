@@ -1,0 +1,153 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "What is the primary drawback of a fully connected autoencoder when applied to images?",
+      "options": [
+        "It requires more training epochs",
+        "It flattens the image and loses spatial neighborhood information",
+        "It cannot learn non‑linear representations",
+        "It produces higher reconstruction loss than convolutional autoencoders"
+      ],
+      "correctAnswer": "It flattens the image and loses spatial neighborhood information",
+      "explanation": "Flattening removes the 2‑D spatial relationships, causing loss of neighborhood information.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Fully Connected Autoencoders"
+    },
+    {
+      "questionText": "In a convolutional autoencoder, which operation helps preserve spatial features before encoding?",
+      "options": [
+        "Flattening",
+        "Max‑pooling",
+        "Dropout",
+        "Batch normalization"
+      ],
+      "correctAnswer": "Max‑pooling",
+      "explanation": "Pooling reduces dimensions while retaining spatial hierarchy, unlike flattening which discards it.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Convolutional Autoencoders"
+    },
+    {
+      "questionText": "Why does sampling random points in the latent space of a plain convolutional autoencoder often produce noise?",
+      "options": [
+        "The latent vectors are deterministic and not regularized",
+        "The decoder is not trained on random vectors",
+        "The encoder outputs binary codes",
+        "The network uses a sigmoid activation at the bottleneck"
+      ],
+      "correctAnswer": "The latent vectors are deterministic and not regularized",
+      "explanation": "Without a probabilistic regularization, the latent space contains gaps, so random points map to meaningless outputs.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Latent Space Characteristics"
+    },
+    {
+      "questionText": "What two parameters does a Variational Autoencoder encoder output for each latent dimension?",
+      "options": [
+        "Weight and bias",
+        "Mean (μ) and variance (σ²)",
+        "Maximum likelihood and entropy",
+        "Gradient and Hessian"
+      ],
+      "correctAnswer": "Mean (μ) and variance (σ²)",
+      "explanation": "VAE encoder predicts the parameters of a Gaussian distribution: mean and variance.",
+      "targetDifficulty": "Easy",
+      "subtopic": "VAE Encoder Output"
+    },
+    {
+      "questionText": "What is the purpose of the KL‑divergence term in the VAE loss function?",
+      "options": [
+        "To increase reconstruction fidelity",
+        "To penalize large decoder weights",
+        "To regularize the latent distribution toward a standard normal",
+        "To speed up training convergence"
+      ],
+      "correctAnswer": "To regularize the latent distribution toward a standard normal",
+      "explanation": "KL‑divergence measures how far the learned Gaussian deviates from N(0, I) and pushes it toward that prior.",
+      "targetDifficulty": "Medium",
+      "subtopic": "VAE Loss Components"
+    },
+    {
+      "questionText": "If a VAE were trained without the KL‑divergence regularizer, which undesirable behavior is most likely?",
+      "options": [
+        "The decoder would ignore the latent code",
+        "The variance would collapse to zero and latent points would be pushed far apart",
+        "Training loss would never decrease",
+        "The model would overfit to the training set"
+      ],
+      "correctAnswer": "The variance would collapse to zero and latent points would be pushed far apart",
+      "explanation": "Without regularization, the network can set σ→0 and separate classes arbitrarily to ease reconstruction, creating empty gaps.",
+      "targetDifficulty": "Hard",
+      "subtopic": "VAE Regularization"
+    },
+    {
+      "questionText": "Which of the following best describes the reparameterization trick used in VAEs?",
+      "options": [
+        "Sampling a latent vector directly from a learned distribution",
+        "Adding Gaussian noise to the input image",
+        "Expressing a random sample as μ + σ·ε where ε∼N(0,1)",
+        "Using a deterministic encoder and stochastic decoder"
+      ],
+      "correctAnswer": "Expressing a random sample as μ + σ·ε where ε∼N(0,1)",
+      "explanation": "The trick rewrites sampling so gradients can flow through μ and σ during back‑propagation.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Reparameterization Trick"
+    },
+    {
+      "questionText": "How does reconstruction accuracy typically change when moving from a plain autoencoder to a Variational Autoencoder, according to the lecture?",
+      "options": [
+        "It decreases from 80‑90% to 50‑60%",
+        "It stays roughly the same",
+        "It improves from 50‑60% to 80‑90%",
+        "It drops below 40%",
+        "It improves from 70‑80% to 95‑100%"
+      ],
+      "correctAnswer": "It improves from 50‑60% to 80‑90%",
+      "explanation": "The lecture states VAE reconstruction accuracy rises from about 50‑60% up to 80‑90%.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Performance Comparison"
+    },
+    {
+      "questionText": "Why are autoencoders useful for reducing computational complexity in image processing tasks?",
+      "options": [
+        "They increase the number of training images",
+        "They compress images while preserving essential features",
+        "They replace convolutional layers with fully connected ones",
+        "They eliminate the need for data augmentation"
+      ],
+      "correctAnswer": "They compress images while preserving essential features",
+      "explanation": "Autoencoders create a lower‑dimensional representation, lowering storage and computation while keeping important information.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Motivation for Autoencoders"
+    },
+    {
+      "questionText": "What characteristic of the latent space enables a VAE to generate novel, realistic images from random samples?",
+      "options": [
+        "Deterministic encoding of each input",
+        "Uniform distribution of latent vectors",
+        "Smooth, continuous distribution matching a standard Gaussian",
+        "Sparse coding of features"
+      ],
+      "correctAnswer": "Smooth, continuous distribution matching a standard Gaussian",
+      "explanation": "Regularizing to N(0, I) makes any random point likely to decode into a plausible image.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Generative Capability"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1109,
+    "cumulativeOutputTokens": 1383,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 3168
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:22:29.015Z"
+}

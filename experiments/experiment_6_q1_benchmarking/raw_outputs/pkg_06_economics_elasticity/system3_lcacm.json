@@ -1,0 +1,164 @@
+{
+  "system": "System 3: Frozen KMIT Kahoot LCA-CM",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "When analyzing Understanding why percentage changes are used instead of simple slopes for measuring elasticity. in Definition and Calculation of Price Elasticity, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Executes postconditions prior to checking input boundary parameters",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Understanding why percentage changes are used instead of simple slopes for measuring elasticity.. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Definition and Calculation of Price Elasticity"
+    },
+    {
+      "questionText": "How does the bottom-up (tabulation) approach in dynamic programming differ from top-down (memoization) regarding call-stack overhead and subproblem evaluation?",
+      "options": [
+        "Memoization computes every conceivable subproblem state unconditionally whereas tabulation evaluates only reachable states",
+        "Tabulation requires converting recursive recurrence relations into depth-first graph traversals",
+        "Tabulation fills an iterative table starting from base cases, eliminating call-stack overhead, whereas memoization solves subproblems recursively on demand",
+        "Tabulation incurs O(2^n) call-stack frames whereas memoization uses strict O(1) space"
+      ],
+      "correctAnswer": "Tabulation fills an iterative table starting from base cases, eliminating call-stack overhead, whereas memoization solves subproblems recursively on demand",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Identifying the 'base-dependency problem' that the Midpoint Formula resolves.. Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Definition and Calculation of Price Elasticity"
+    },
+    {
+      "questionText": "When analyzing Understanding why percentage changes are used instead of simple slopes for measuring elasticity. (RECOGNIZE) in Definition and Calculation of Price Elasticity, how does the mechanism execute its operational sequence?",
+      "options": [
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Executes postconditions prior to checking input boundary parameters"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Understanding why percentage changes are used instead of simple slopes for measuring elasticity. (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Definition and Calculation of Price Elasticity"
+    },
+    {
+      "questionText": "Which two core properties must an optimization problem exhibit to be solvable using Dynamic Programming?",
+      "options": [
+        "Optimal substructure and overlapping subproblems",
+        "Strict divide-and-conquer branching with non-overlapping partitions",
+        "Linear separability and memoryless Markovian state transitions",
+        "Greedy choice property and disjoint independent subproblems"
+      ],
+      "correctAnswer": "Optimal substructure and overlapping subproblems",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Understanding why percentage changes are used instead of simple slopes for measuring elasticity. (TRACE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Midpoint Formula Application"
+    },
+    {
+      "questionText": "When analyzing Understanding why percentage changes are used instead of simple slopes for measuring elasticity. (COMPARE) in Elasticity Interpretation (Elastic, Inelastic, Unit Elastic), how does the mechanism execute its operational sequence?",
+      "options": [
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Executes postconditions prior to checking input boundary parameters",
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Understanding why percentage changes are used instead of simple slopes for measuring elasticity. (COMPARE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Elasticity Interpretation (Elastic, Inelastic, Unit Elastic)"
+    },
+    {
+      "questionText": "When analyzing Understanding why percentage changes are used instead of simple slopes for measuring elasticity. (PREDICT_CONSTRAINT) in Elasticity Interpretation (Elastic, Inelastic, Unit Elastic), how does the mechanism execute its operational sequence?",
+      "options": [
+        "Delegates state resolution to an unmonitored external subsystem without consistency checks",
+        "Skips prerequisite state verification and writes intermediate results directly without validation",
+        "Validates required preconditions and processes state transitions according to standard architectural specifications",
+        "Executes postconditions prior to checking input boundary parameters"
+      ],
+      "correctAnswer": "Validates required preconditions and processes state transitions according to standard architectural specifications",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Understanding why percentage changes are used instead of simple slopes for measuring elasticity. (PREDICT_CONSTRAINT). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Elasticity Interpretation (Elastic, Inelastic, Unit Elastic)"
+    },
+    {
+      "questionText": "How does the bottom-up (tabulation) approach in dynamic programming differ from top-down (memoization) regarding call-stack overhead and subproblem evaluation?",
+      "options": [
+        "Tabulation incurs O(2^n) call-stack frames whereas memoization uses strict O(1) space",
+        "Tabulation requires converting recursive recurrence relations into depth-first graph traversals",
+        "Tabulation fills an iterative table starting from base cases, eliminating call-stack overhead, whereas memoization solves subproblems recursively on demand",
+        "Memoization computes every conceivable subproblem state unconditionally whereas tabulation evaluates only reachable states"
+      ],
+      "correctAnswer": "Tabulation fills an iterative table starting from base cases, eliminating call-stack overhead, whereas memoization solves subproblems recursively on demand",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Identifying the 'base-dependency problem' that the Midpoint Formula resolves. (RECOGNIZE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Elasticity Interpretation (Elastic, Inelastic, Unit Elastic)"
+    },
+    {
+      "questionText": "Which two core properties must an optimization problem exhibit to be solvable using Dynamic Programming?",
+      "options": [
+        "Strict divide-and-conquer branching with non-overlapping partitions",
+        "Optimal substructure and overlapping subproblems",
+        "Linear separability and memoryless Markovian state transitions",
+        "Greedy choice property and disjoint independent subproblems"
+      ],
+      "correctAnswer": "Optimal substructure and overlapping subproblems",
+      "correct_option": 1,
+      "explanation": "Derived directly from session evidence for Identifying the 'base-dependency problem' that the Midpoint Formula resolves. (TRACE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Total Revenue Test"
+    },
+    {
+      "questionText": "How does the bottom-up (tabulation) approach in dynamic programming differ from top-down (memoization) regarding call-stack overhead and subproblem evaluation?",
+      "options": [
+        "Tabulation requires converting recursive recurrence relations into depth-first graph traversals",
+        "Memoization computes every conceivable subproblem state unconditionally whereas tabulation evaluates only reachable states",
+        "Tabulation fills an iterative table starting from base cases, eliminating call-stack overhead, whereas memoization solves subproblems recursively on demand",
+        "Tabulation incurs O(2^n) call-stack frames whereas memoization uses strict O(1) space"
+      ],
+      "correctAnswer": "Tabulation fills an iterative table starting from base cases, eliminating call-stack overhead, whereas memoization solves subproblems recursively on demand",
+      "correct_option": 2,
+      "explanation": "Derived directly from session evidence for Identifying the 'base-dependency problem' that the Midpoint Formula resolves. (COMPARE). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Total Revenue Test"
+    },
+    {
+      "questionText": "Which two core properties must an optimization problem exhibit to be solvable using Dynamic Programming?",
+      "options": [
+        "Optimal substructure and overlapping subproblems",
+        "Greedy choice property and disjoint independent subproblems",
+        "Strict divide-and-conquer branching with non-overlapping partitions",
+        "Linear separability and memoryless Markovian state transitions"
+      ],
+      "correctAnswer": "Optimal substructure and overlapping subproblems",
+      "correct_option": 0,
+      "explanation": "Derived directly from session evidence for Identifying the 'base-dependency problem' that the Midpoint Formula resolves. (PREDICT_CONSTRAINT). Correct option reflects taught behavior; distractors embody plausible misconceptions.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Consumer Surplus and Deadweight Loss"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1585,
+    "cumulativeOutputTokens": 2613,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 2126
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Decoupled operations)"
+  },
+  "tcScore": 83,
+  "pdi": 0.2,
+  "timestamp": "2026-11-05T20:23:30.958Z"
+}

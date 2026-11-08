@@ -1,0 +1,188 @@
+{
+  "benchmarkPhase": "PHASE_2_MULTI_LECTURE_EXPANSION",
+  "datasetId": "MULTI_003",
+  "subject": "Artificial Intelligence",
+  "topic": "Variational Autoencoders with Fashion MNIST",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "gitCommit": "4a526909887818a118d25cd2bee8f7cff6d01f2b",
+  "timestamp": "2026-10-30T16:15:28.118Z",
+  "assets": {
+    "audio": {
+      "filename": "audio.mp3",
+      "sha256": "e169d7fdb55795954eecf784972d6b1453195ea47e605a07414c39f36ecbd8eb",
+      "fileSizeBytes": 65777095,
+      "durationSeconds": 1644.43,
+      "transcriptLengthChars": 22262,
+      "compressionTimeSec": 7,
+      "transcriptionTimeSec": 3.9
+    },
+    "material": {
+      "filename": "material.pdf",
+      "sha256": "48c975486e7cef9148f8bb4b300bd28a77302c631aba85c51b8c2156b49bc2e9",
+      "fileSizeBytes": 626697,
+      "numPages": 29,
+      "extractedChars": 28383
+    }
+  },
+  "pipelineExecution": {
+    "sessionId": "live_multi003_eval_1793376877980",
+    "requestedCount": 3,
+    "deliveredCount": 3,
+    "generationDurationSec": 41.199,
+    "pipelineStatus": "COMPLETED"
+  },
+  "evaluationSummary": {
+    "usableCount": 2,
+    "usableYield": "2 / 3",
+    "usablePercentage": "66.7%",
+    "dimensionPassRates": {
+      "dimension1_Correctness": "3 / 3",
+      "dimension2_Grounding": "2 / 3",
+      "dimension3_CognitiveFit": "3 / 3",
+      "dimension4_StemAlignment": "3 / 3"
+    }
+  },
+  "questions": [
+    {
+      "questionIndex": 1,
+      "difficulty": "Medium",
+      "stem": "What is the primary purpose of a standard autoencoder when applied to images?",
+      "options": [
+        "Compress the image and then reconstruct it, preserving key features.",
+        "Only reduce image size without attempting any reconstruction.",
+        "Generate new images by sampling from a learned latent distribution.",
+        "Classify images into predefined categories after encoding."
+      ],
+      "correctAnswer": "Compress the image and then reconstruct it, preserving key features.",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 13,
+        "maxOptionWords": 10,
+        "optionLengthRatio": 1.43
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0,
+        "failureReasons": [
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option directly states the primary purpose of a standard autoencoder—compressing and reconstructing images while preserving key features, which answers the stem’s question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 2,
+      "difficulty": "Medium",
+      "stem": "Given identical encoder outputs, how does removing the KL‑divergence regularization affect a VAE’s ability to generate new samples compared to keeping the regularization?",
+      "options": [
+        "Generated images will be identical to training examples.",
+        "Samples will be less diverse and sampling will be less meaningful.",
+        "The model will still sample effectively because reconstruction loss dominates.",
+        "Samples will be more diverse but lack coherent structure."
+      ],
+      "correctAnswer": "Samples will be less diverse and sampling will be less meaningful.",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 23,
+        "maxOptionWords": 11,
+        "optionLengthRatio": 1.38
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 0,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "primaryDisposition": "UNGROUNDED_EVIDENCE_CLAIM",
+      "groundingAudit": {
+        "status": "FAILED",
+        "reasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM: Candidate asserts \"vae ability\" generate \"new\", but evidence attributes this to \"meaningful latent space\""
+        ]
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed answer directly explains that without KL‑divergence regularization, the VAE’s latent distribution is no longer constrained to a standard normal, resulting in samples that are less diverse and less meaningful, which is precisely what the stem asks.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 3,
+      "difficulty": "Medium",
+      "stem": "In a VAE variant where the encoder outputs only a point estimate (mean) without variance, which modification to the latent space processing is required to maintain the probabilistic structure needed for generalization?",
+      "options": [
+        "It reduces the size of the latent vector",
+        "Use the point estimate directly as the decoder input",
+        "Apply KL divergence directly to the raw input image",
+        "Sample from a Gaussian distribution centered at the mean"
+      ],
+      "correctAnswer": "Sample from a Gaussian distribution centered at the mean",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 32,
+        "maxOptionWords": 9,
+        "optionLengthRatio": 1.13
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.95,
+        "failureReasons": [
+          "FOREIGN_DOMAIN_CONTAMINATION",
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option D explicitly states the required modification—sampling from a Gaussian distribution centered at the mean—which directly answers the \"which modification\" query.",
+          "mismatchDetails": null
+        }
+      }
+    }
+  ]
+}

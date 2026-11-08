@@ -12,6 +12,7 @@
 
 const crypto = require('crypto');
 const { OPTION_SET_CONTRACT } = require('../contracts/pipelineContracts');
+const DifficultyAwareDistractorValidator = require('./difficultyAwareDistractorValidator');
 
 const SCHEMA_PLACEHOLDER_OPTIONS = new Set([
   'contrasting algorithmic approach or property',
@@ -202,6 +203,14 @@ class DeterministicValidator {
         }
         // Permuted list duplicate or identical bag-of-words
         else {
+          // If both options are code snippets and differ, check if their normalized code tokens differ
+          if (DifficultyAwareDistractorValidator.isCodeSnippet(options[i]) && DifficultyAwareDistractorValidator.isCodeSnippet(options[j])) {
+            const cleanCode = s => s.replace(/\s+/g, '');
+            if (cleanCode(options[i]) !== cleanCode(options[j])) {
+              continue; // Distinct code expressions with different operators, variables, or constants!
+            }
+          }
+
           const t1 = this._tokenize(options[i]);
           const t2 = this._tokenize(options[j]);
           if (t1.size >= 2 && t2.size >= 2) {
@@ -280,6 +289,24 @@ class DeterministicValidator {
       }
     }
 
+    // 7. Interrogative Mood & Option Alignment Check (Advisory alignment check)
+    if (stem && typeof stem === 'string') {
+      const stemLower = stem.trim().toLowerCase();
+      const isWhyQuestion = /\bwhy\s+(?:does|is|must|do|should|would|did|can)\b/i.test(stemLower);
+      if (isWhyQuestion) {
+        const imperativeStarts = /^(?:start|begin|run|execute|call|push|add|commit|reset|print|loop|increment|decrement)\b/i;
+        const nonReasonCount = options.filter(opt => {
+          const t = String(opt || '').trim();
+          return imperativeStarts.test(t) && !/^(?:to|because|in order to|by|since|for)\b/i.test(t);
+        }).length;
+        if (nonReasonCount >= 2) {
+          warnings.push({
+            code: 'INTERROGATIVE_MOOD_MISMATCH',
+            message: `Question asks "${stem.slice(0, 45)}..." (Why question), but ${nonReasonCount} option(s) are framed as imperative actions rather than causal reasons.`
+          });
+        }
+      }
+    }
     return {
       isValid: errors.length === 0,
       errors,
@@ -557,11 +584,16 @@ class DeterministicValidator {
 
     const normAnswer = (ans) => {
       if (!ans || typeof ans !== 'string') return '';
-      return ans.toLowerCase().trim()
+      let cleaned = ans.toLowerCase().trim()
         .replace(/^(?:it|the|a|an)\s+/i, '')
+        .replace(/^(?:integer|value|number|constant)\s+/i, '')
+        .replace(/[,;:(].*$/, '')
+        .replace(/\s+(?:indicating|meaning|signifying|whereby|because|since)\b.*$/i, '')
         .replace(/[.,;!?]+$/, '')
         .replace(/\s+/g, ' ')
         .trim();
+      const numWords = { 'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4' };
+      return numWords[cleaned] || cleaned;
     };
 
     const candidateNormAns = normAnswer(candidateMCQ.correctAnswer);
@@ -601,7 +633,29 @@ class DeterministicValidator {
         };
       }
 
-      // 2. Direct/semantic answer collision with significant stem overlap (DIMENSION-INDEPENDENT)
+      // 2. Terminal Contract / Non-Profit Output Equivalence (Boundary Return Value Duplication)
+      // Detects equivalent terminal non-profit output questions (e.g. Q7 and Q12) assessing identical boundary return specification
+      const isTerminalOutputAsk = (text) => {
+        const lower = String(text || '').toLowerCase();
+        const hasOutputAsk = /\b(?:what (?:integer|value|result|number|output) (?:must be |is )?(?:printed|returned|produced|output)|what is the (?:final )?(?:return value|output|result))\b/i.test(lower);
+        const hasNonProfitCondition = /\b(?:no profit|zero profit|non-profit|strictly decreases?|decreasing|non-increasing|loss only|cannot (?:make|realize) a? ?profit)\b/i.test(lower);
+        return hasOutputAsk && hasNonProfitCondition;
+      };
+
+      const hasZeroAnswer = (ans) => /\b(?:0|zero)\b/i.test(String(ans || ''));
+      const isTerminalMatch = isTerminalOutputAsk(candText) && isTerminalOutputAsk(existingText) &&
+        (semanticAnswerMatch || (hasZeroAnswer(candidateMCQ.correctAnswer) && hasZeroAnswer(existing.correctAnswer)));
+
+      if (isTerminalMatch) {
+        return {
+          isDuplicate: true,
+          similarity: 1.0,
+          reason: 'TERMINAL_CONTRACT_DUPLICATE: Equivalent terminal non-profit output question assessing identical boundary return specification',
+          duplicateWith: existing.questionText
+        };
+      }
+
+      // 2b. Direct/semantic answer collision with significant stem overlap (DIMENSION-INDEPENDENT)
       if (semanticAnswerMatch && sim >= 0.25) {
         return {
           isDuplicate: true,
@@ -645,6 +699,64 @@ class DeterministicValidator {
           reason: 'PEDAGOGICAL_REDUNDANCY: High similarity testing identical concept and reasoning task',
           duplicateWith: existing.questionText
         };
+      }
+
+      // 5b. Comparative Algorithmic Cluster Duplication (Tradeoff Redundancy)
+      const isComparativeCand = /\b(tradeoff|compare|advantage|limitation|drawback|alternative|instead of|rather than)\b/i.test(candText);
+      const isComparativeExist = /\b(tradeoff|compare|advantage|limitation|drawback|alternative|instead of|rather than)\b/i.test(existingText);
+      if (isComparativeCand && isComparativeExist && sameConcept && (sim >= 0.25 || semanticAnswerMatch)) {
+        return {
+          isDuplicate: true,
+          similarity: sim,
+          reason: 'COMPARATIVE_CLUSTER_DUPLICATE: Redundant comparative tradeoff question on identical algorithmic concept',
+          duplicateWith: existing.questionText
+        };
+      }
+
+      // 5c. Functional Mechanism & Component Duplicate (Stem Overlap on Core Architectural Mechanisms)
+      const MECHANISM_PATTERNS = [
+        /\bouter\s+(?:for\s+)?loop\b/i,
+        /\binner\s+(?:for\s+)?loop\b/i,
+        /\bnested\s+loops?\b/i,
+        /\btwo\s+loops\b/i,
+        /\bfrequency\s+array\b/i,
+        /\blinear\s+search\b/i,
+        /\bvisited\s+array\b/i,
+        /\bspanning\s+tree\b/i
+      ];
+
+      for (const mechPat of MECHANISM_PATTERNS) {
+        if (mechPat.test(candText) && mechPat.test(existingText)) {
+          const stemSim = this.calculateSimilarity(candidateMCQ.questionText, existing.questionText || '');
+          const ansSim = this.calculateSimilarity(candidateMCQ.correctAnswer || '', existing.correctAnswer || '');
+
+          // Check 5c.1: Surface token similarity on same mechanism (Jaccard >= 0.28)
+          if (stemSim >= 0.28) {
+            return {
+              isDuplicate: true,
+              similarity: stemSim,
+              reason: `FUNCTIONAL_MECHANISM_DUPLICATE: Stem similarity (${(stemSim * 100).toFixed(0)}%) on identical architectural mechanism (${mechPat.source})`,
+              duplicateWith: existing.questionText
+            };
+          }
+
+          // Check 5c.2: Functional Target Duplicate (rephrased stems asking for role/purpose/necessity of loop structure in frequency counting)
+          const isRoleOrPurposeInquiry = /\b(?:role|purpose|why|necessary|require|function|logic)\b/i.test(candidateMCQ.questionText) &&
+                                        /\b(?:role|purpose|why|necessary|require|function|logic)\b/i.test(existing.questionText);
+          const candExplainsDualRole = /\b(?:outer|first|repeat|iterat|select|pick|compar|every\s+element|each\s+(?:target\s+)?element|all\s+elements)\b/i.test(candidateMCQ.correctAnswer || '') &&
+                                       /\b(?:inner|second|scans?|counts?|evaluat|check|frequency|occurrences)\b/i.test(candidateMCQ.correctAnswer || '');
+          const existExplainsDualRole = /\b(?:outer|first|repeat|iterat|select|pick|compar|every\s+element|each\s+(?:target\s+)?element|all\s+elements)\b/i.test(existing.correctAnswer || '') &&
+                                        /\b(?:inner|second|scans?|counts?|evaluat|check|frequency|occurrences)\b/i.test(existing.correctAnswer || '');
+
+          if (isRoleOrPurposeInquiry && candExplainsDualRole && existExplainsDualRole && (stemSim >= 0.14 || ansSim >= 0.20)) {
+            return {
+              isDuplicate: true,
+              similarity: stemSim,
+              reason: `FUNCTIONAL_TARGET_DUPLICATE: Rephrased inquiry testing identical architectural role (${mechPat.source}) with matching operational answer mechanism`,
+              duplicateWith: existing.questionText
+            };
+          }
+        }
       }
     }
 

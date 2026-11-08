@@ -1,0 +1,645 @@
+{
+  "title": "Q1 Multimodal Benchmark Corpus Evaluation Report (14 Packages × 3 Systems)",
+  "executionDate": "2026-11-05T20:29:29.005Z",
+  "pinnedModel": "openai/gpt-oss-120b",
+  "totalPackages": 14,
+  "totalSystemRuns": 42,
+  "macroStats": {
+    "system1": {
+      "meanDelivered": 9,
+      "meanQQF": 0.9,
+      "meanASDV": 0.944,
+      "meanApiCalls": 1,
+      "meanLatencyMs": 3555,
+      "totalInputTokens": 18904,
+      "totalOutputTokens": 14052
+    },
+    "system2": {
+      "meanDelivered": 10,
+      "meanQQF": 1,
+      "meanASDV": 0.967,
+      "meanApiCalls": 10.1,
+      "meanLatencyMs": 22308,
+      "totalInputTokens": 85767,
+      "totalOutputTokens": 25103
+    },
+    "system3": {
+      "meanDelivered": 10,
+      "meanQQF": 1,
+      "meanASDV": 1,
+      "meanApiCalls": 1,
+      "meanLatencyMs": 5619,
+      "totalInputTokens": 23128,
+      "totalOutputTokens": 35473
+    }
+  },
+  "divisionAggregates": {
+    "Social Sciences, Humanities & Law": {
+      "count": 4,
+      "s1_qqf": 4,
+      "s2_qqf": 4,
+      "s3_qqf": 4,
+      "s1_asdv": 3.967,
+      "s2_asdv": 3.934,
+      "s3_asdv": 4
+    },
+    "AI & Applied Mathematical Sciences": {
+      "count": 2,
+      "s1_qqf": 2,
+      "s2_qqf": 2,
+      "s3_qqf": 2,
+      "s1_asdv": 1.933,
+      "s2_asdv": 1.867,
+      "s3_asdv": 2
+    },
+    "Computing & Information Sciences": {
+      "count": 4,
+      "s1_qqf": 3.4,
+      "s2_qqf": 4,
+      "s3_qqf": 4,
+      "s1_asdv": 3.567,
+      "s2_asdv": 3.767,
+      "s3_asdv": 4
+    },
+    "Life & Biomedical Sciences": {
+      "count": 2,
+      "s1_qqf": 2,
+      "s2_qqf": 2,
+      "s3_qqf": 2,
+      "s1_asdv": 2,
+      "s2_asdv": 2,
+      "s3_asdv": 2
+    },
+    "Physical & Engineering Sciences": {
+      "count": 2,
+      "s1_qqf": 1.2,
+      "s2_qqf": 2,
+      "s3_qqf": 2,
+      "s1_asdv": 1.75,
+      "s2_asdv": 1.967,
+      "s3_asdv": 2
+    }
+  },
+  "packageResults": [
+    {
+      "package_id": "pkg_01_indian_constitution_art21",
+      "division": "Social Sciences, Humanities & Law",
+      "subject": "Constitutional Law of India",
+      "topic": "Article 21: Protection of Life and Personal Liberty",
+      "transcriptChars": 4850,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 3712,
+          "inputTokens": 1388,
+          "outputTokens": 1449
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 10,
+          "latencyMs": 21064,
+          "inputTokens": 6869,
+          "outputTokens": 1994
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2127,
+          "inputTokens": 1713,
+          "outputTokens": 2599,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_02_linear_algebra_eigenvalues",
+      "division": "AI & Applied Mathematical Sciences",
+      "subject": "Linear Algebra",
+      "topic": "Eigenvalues and Eigenvectors of Linear Operators",
+      "transcriptChars": 4517,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.933,
+          "asdvSummary": "28/30",
+          "apiCalls": 1,
+          "latencyMs": 3547,
+          "inputTokens": 1305,
+          "outputTokens": 1084
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.867,
+          "asdvSummary": "26/30",
+          "apiCalls": 10,
+          "latencyMs": 21922,
+          "inputTokens": 6412,
+          "outputTokens": 1631
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2177,
+          "inputTokens": 1630,
+          "outputTokens": 2621,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_03_dsa_bfs_conceptual",
+      "division": "Computing & Information Sciences",
+      "subject": "Data Structures and Algorithms",
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "transcriptChars": 4702,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.8,
+          "asdvSummary": "24/30",
+          "apiCalls": 1,
+          "latencyMs": 3771,
+          "inputTokens": 1351,
+          "outputTokens": 844
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.9,
+          "asdvSummary": "27/30",
+          "apiCalls": 10,
+          "latencyMs": 19134,
+          "inputTokens": 6556,
+          "outputTokens": 1795
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2278,
+          "inputTokens": 1676,
+          "outputTokens": 2612,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_04_dsa_bfs_implementation",
+      "division": "Computing & Information Sciences",
+      "subject": "Data Structures and Algorithms",
+      "topic": "Breadth-First Search (BFS) Graph Traversal",
+      "transcriptChars": 4702,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.9,
+          "asdvSummary": "27/30",
+          "apiCalls": 1,
+          "latencyMs": 2251,
+          "inputTokens": 1351,
+          "outputTokens": 975
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.9,
+          "asdvSummary": "27/30",
+          "apiCalls": 10,
+          "latencyMs": 18129,
+          "inputTokens": 6562,
+          "outputTokens": 1468
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 4,
+          "inputTokens": 1676,
+          "outputTokens": 2612,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_05_deep_learning_vaes",
+      "division": "AI & Applied Mathematical Sciences",
+      "subject": "Deep Generative Models",
+      "topic": "Autoencoders and Variational Autoencoders (VAEs)",
+      "transcriptChars": 3733,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "31/31",
+          "apiCalls": 1,
+          "latencyMs": 3168,
+          "inputTokens": 1109,
+          "outputTokens": 1383
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 11,
+          "latencyMs": 22007,
+          "inputTokens": 6478,
+          "outputTokens": 2337
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 5927,
+          "inputTokens": 1434,
+          "outputTokens": 2459,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_06_economics_elasticity",
+      "division": "Social Sciences, Humanities & Law",
+      "subject": "Principles of Microeconomics",
+      "topic": "Price Elasticity of Demand and Market Welfare",
+      "transcriptChars": 4340,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2901,
+          "inputTokens": 1261,
+          "outputTokens": 1197
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 10,
+          "latencyMs": 25746,
+          "inputTokens": 6243,
+          "outputTokens": 1872
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2126,
+          "inputTokens": 1585,
+          "outputTokens": 2613,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_07_os_deadlocks",
+      "division": "Computing & Information Sciences",
+      "subject": "Operating Systems Principles",
+      "topic": "Deadlock Characterization, Prevention, and Banker's Algorithm",
+      "transcriptChars": 5536,
+      "metrics": {
+        "system1": {
+          "delivered": 4,
+          "qqf": 0.4,
+          "asdv": 1,
+          "asdvSummary": "12/12",
+          "apiCalls": 1,
+          "latencyMs": 2357,
+          "inputTokens": 1384,
+          "outputTokens": 644
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.967,
+          "asdvSummary": "29/30",
+          "apiCalls": 10,
+          "latencyMs": 19600,
+          "inputTokens": 1384,
+          "outputTokens": 1823
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 18500,
+          "inputTokens": 1384,
+          "outputTokens": 2681,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_08_biochem_kinetics",
+      "division": "Life & Biomedical Sciences",
+      "subject": "Molecular Enzymology & Cellular Metabolism",
+      "topic": "Michaelis-Menten Enzyme Kinetics & Catalytic Regulation",
+      "transcriptChars": 4507,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 3827,
+          "inputTokens": 1302,
+          "outputTokens": 1042
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 10,
+          "latencyMs": 20798,
+          "inputTokens": 6476,
+          "outputTokens": 1845
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2360,
+          "inputTokens": 1627,
+          "outputTokens": 2453,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_09_discrete_math_trees",
+      "division": "Computing & Information Sciences",
+      "subject": "Graph Theory and Network Algorithms",
+      "topic": "Spanning Trees, Cut Property, and Kruskal's Algorithm with DSU",
+      "transcriptChars": 5175,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.867,
+          "asdvSummary": "26/30",
+          "apiCalls": 1,
+          "latencyMs": 4838,
+          "inputTokens": 1469,
+          "outputTokens": 1038
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 10,
+          "latencyMs": 20293,
+          "inputTokens": 5970,
+          "outputTokens": 1969
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 9084,
+          "inputTokens": 1794,
+          "outputTokens": 2451,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_10_microecon_game_theory",
+      "division": "Social Sciences, Humanities & Law",
+      "subject": "Applied Microeconomic Theory",
+      "topic": "Strategic Form Games, Dominance Solvability, and Pure Nash Equilibrium",
+      "transcriptChars": 4699,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.967,
+          "asdvSummary": "29/30",
+          "apiCalls": 1,
+          "latencyMs": 3297,
+          "inputTokens": 1350,
+          "outputTokens": 1154
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.967,
+          "asdvSummary": "29/30",
+          "apiCalls": 10,
+          "latencyMs": 23718,
+          "inputTokens": 6610,
+          "outputTokens": 2065
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2197,
+          "inputTokens": 1675,
+          "outputTokens": 2720,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_11_physics_thermodynamics",
+      "division": "Physical & Engineering Sciences",
+      "subject": "Engineering Thermodynamics & Statistical Physics",
+      "topic": "The Carnot Cycle, Maximum Theoretical Efficiency, and Entropy",
+      "transcriptChars": 5374,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.75,
+          "asdvSummary": "30/40",
+          "apiCalls": 1,
+          "latencyMs": 2710,
+          "inputTokens": 1519,
+          "outputTokens": 1209
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 10,
+          "latencyMs": 27240,
+          "inputTokens": 6310,
+          "outputTokens": 2160
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 19886,
+          "inputTokens": 1844,
+          "outputTokens": 2207,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_12_pharmacology_clearance",
+      "division": "Life & Biomedical Sciences",
+      "subject": "Pharmacokinetics and Biopharmaceutics",
+      "topic": "One-Compartment Intravenous Pharmacokinetics: Clearance and Half-Life",
+      "transcriptChars": 5166,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 5006,
+          "inputTokens": 1467,
+          "outputTokens": 1031
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 10,
+          "latencyMs": 23143,
+          "inputTokens": 7008,
+          "outputTokens": 1443
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2134,
+          "inputTokens": 1792,
+          "outputTokens": 2635,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_13_logic_predicates",
+      "division": "Social Sciences, Humanities & Law",
+      "subject": "Formal Symbolic Logic & Model Theory",
+      "topic": "First-Order Predicate Logic: Quantifiers, Variable Binding, and Semantics",
+      "transcriptChars": 5021,
+      "metrics": {
+        "system1": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2938,
+          "inputTokens": 1431,
+          "outputTokens": 831
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.967,
+          "asdvSummary": "29/30",
+          "apiCalls": 10,
+          "latencyMs": 28582,
+          "inputTokens": 6803,
+          "outputTokens": 1420
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 2209,
+          "inputTokens": 1756,
+          "outputTokens": 2624,
+          "tcScore": 83
+        }
+      }
+    },
+    {
+      "package_id": "pkg_14_signal_processing_fourier",
+      "division": "Physical & Engineering Sciences",
+      "subject": "Digital Signal Processing (DSP) & Linear Systems",
+      "topic": "Discrete Fourier Transform (DFT) and Nyquist-Shannon Sampling Theorem",
+      "transcriptChars": 4167,
+      "metrics": {
+        "system1": {
+          "delivered": 2,
+          "qqf": 0.2,
+          "asdv": 1,
+          "asdvSummary": "6/6",
+          "apiCalls": 1,
+          "latencyMs": 5450,
+          "inputTokens": 1217,
+          "outputTokens": 171
+        },
+        "system2": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 0.967,
+          "asdvSummary": "29/30",
+          "apiCalls": 10,
+          "latencyMs": 20932,
+          "inputTokens": 6086,
+          "outputTokens": 1281
+        },
+        "system3": {
+          "delivered": 10,
+          "qqf": 1,
+          "asdv": 1,
+          "asdvSummary": "30/30",
+          "apiCalls": 1,
+          "latencyMs": 7653,
+          "inputTokens": 1542,
+          "outputTokens": 2186,
+          "tcScore": 83
+        }
+      }
+    }
+  ]
+}

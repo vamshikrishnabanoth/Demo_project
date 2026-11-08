@@ -1,0 +1,198 @@
+{
+  "benchmarkPhase": "PHASE_2_MULTI_LECTURE_EXPANSION",
+  "datasetId": "MULTI_004",
+  "subject": "Data Structures",
+  "topic": "Binary Trees and Different Types of Trees",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "gitCommit": "4a526909887818a118d25cd2bee8f7cff6d01f2b",
+  "timestamp": "2026-10-30T17:00:13.189Z",
+  "assets": {
+    "audio": {
+      "filename": "audio.mp3",
+      "sha256": "fb55cd3c9292139649d44442d053cb02d3481d350e9426d045c859c7d0cf97d4",
+      "fileSizeBytes": 46403551,
+      "durationSeconds": 3365.77,
+      "transcriptLengthChars": 27422,
+      "compressionTimeSec": 12.8,
+      "transcriptionTimeSec": 8.5
+    },
+    "material": {
+      "filename": "slides.pptx",
+      "sha256": "15b88b605867f1b31c6dc4a24925758021e35ed9ead5b93f414ff52bff69cb9b",
+      "fileSizeBytes": 616968,
+      "slideCount": 16,
+      "extractedChars": 5074
+    }
+  },
+  "pipelineExecution": {
+    "sessionId": "live_multi004_eval_1793377266568",
+    "requestedCount": 3,
+    "deliveredCount": 3,
+    "generationDurationSec": 2335.205,
+    "pipelineStatus": "COMPLETED_WITH_PARTIAL_FULFILLMENT"
+  },
+  "conceptDiversity": {
+    "totalQuestions": 3,
+    "uniqueConceptsCount": 3,
+    "conceptList": [
+      "Differentiate internal nodes from leaf (external) nodes in a binary tree.",
+      "State the maximum degree (number of children) any node can have in a binary tree.",
+      "Binary Trees"
+    ]
+  },
+  "groundingConsistency": {
+    "pipelineStage07Status": "NOT_PASSED",
+    "freshAuditPassedCount": 3,
+    "freshAuditPassRate": "3 / 3"
+  },
+  "evaluationSummary": {
+    "usableCount": 3,
+    "usableYield": "3 / 3",
+    "usablePercentage": "100.0%",
+    "dimensionPassRates": {
+      "dimension1_Correctness": "3 / 3",
+      "dimension2_Grounding": "3 / 3",
+      "dimension3_CognitiveFit": "3 / 3",
+      "dimension4_StemAlignment": "3 / 3"
+    }
+  },
+  "questions": [
+    {
+      "questionIndex": 1,
+      "difficulty": "Medium",
+      "concept": "Differentiate internal nodes from leaf (external) nodes in a binary tree.",
+      "stem": "A full binary tree contains 31 nodes in total. How many external (leaf) nodes does it have?",
+      "options": [
+        "Sixteen leaf nodes are present",
+        "Fifteen leaf nodes",
+        "Seventeen leaf nodes appear",
+        "Thirty leaf nodes would exist"
+      ],
+      "correctAnswer": "Sixteen leaf nodes are present",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 17,
+        "maxOptionWords": 5,
+        "optionLengthRatio": 1.67
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "CALCULATION",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option provides the exact number of leaf nodes, directly answering the 'How many' question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 2,
+      "difficulty": "Medium",
+      "concept": "State the maximum degree (number of children) any node can have in a binary tree.",
+      "stem": "A system designer proposes converting a general tree into a binary tree by linking siblings. If a node originally had four children, does the resulting structure violate the binary tree degree constraint?",
+      "options": [
+        "No, because the maximum degree is strictly two",
+        "Yes, because the node retains four direct children",
+        "No, because internal nodes can have unlimited children",
+        "Yes, because the height exceeds the degree limit"
+      ],
+      "correctAnswer": "No, because the maximum degree is strictly two",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 32,
+        "maxOptionWords": 8,
+        "optionLengthRatio": 1
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "POLAR_YES_NO",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks a yes/no question about whether the converted structure violates the binary‑tree degree constraint. Option A answers \"No\" and explains that the maximum degree in a binary tree is two, directly resolving the query.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 3,
+      "difficulty": "Medium",
+      "concept": "Binary Trees",
+      "stem": "If a full binary tree with N = 2L − 1 nodes gains an extra child on one leaf, what happens to the relationship between total nodes N and leaves L?",
+      "options": [
+        "The equality still holds; N remains equal to 2L − 1.",
+        "The equality no longer holds; N is greater than 2L − 1.",
+        "Leaves double, making N equal to 2L.",
+        "The tree becomes complete, so N equals 2^h − 1."
+      ],
+      "correctAnswer": "The equality no longer holds; N is greater than 2L − 1.",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 31,
+        "maxOptionWords": 12,
+        "optionLengthRatio": 1.71
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.95,
+        "failureReasons": [
+          "UNGROUNDED_EVIDENCE_CLAIM"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "GENERAL",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option B explicitly states that the equality N = 2L‑1 no longer holds and that N becomes greater than 2L‑1, directly answering the question about how the N‑L relationship changes after adding a child.",
+          "mismatchDetails": null
+        }
+      }
+    }
+  ]
+}

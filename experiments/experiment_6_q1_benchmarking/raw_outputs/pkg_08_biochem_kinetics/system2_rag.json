@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "According to the quasi‑steady‑state assumption in Michaelis‑Menten kinetics, which expression correctly gives the concentration of the enzyme‑substrate complex [ES]?",
+      "options": [
+        "[ES] = [E_total]·[S]/(Km + [S])",
+        "[ES] = Km·[E_total]/([S] + Km)",
+        "[ES] = [E_total]·Km/([S]·(Km + [S]))",
+        "[ES] = ([E_total] – [S])/(Km·[S])"
+      ],
+      "correctAnswer": "[ES] = [E_total]·[S]/(Km + [S])",
+      "explanation": "Applying the quasi‑steady‑state assumption and substituting [E] = [E_total] – [ES] leads to [ES] = [E_total][S]/(Km + [S]), which is the standard Michaelis‑Menten expression for the ES complex concentration.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Quasi‑steady‑state derivation of Michaelis‑Menten equation"
+    },
+    {
+      "questionText": "Which statement correctly describes the effect of a competitive inhibitor on the kinetic parameters observed in a Lineweaver‑Burk plot?",
+      "options": [
+        "Vmax is unchanged while the apparent Km increases",
+        "Vmax decreases while Km remains unchanged",
+        "Both Vmax and Km decrease",
+        "Both Vmax and Km remain unchanged"
+      ],
+      "correctAnswer": "Vmax is unchanged while the apparent Km increases",
+      "explanation": "In competitive inhibition the inhibitor competes with substrate for the active site, so maximal velocity (Vmax) is unchanged, but a higher substrate concentration is needed to reach half‑Vmax, resulting in an increased apparent Km. This shifts the Lineweaver‑Burk line upward (greater slope) while keeping the y‑intercept (1/Vmax) the same.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Competitive inhibition"
+    },
+    {
+      "questionText": "Which of the following statements correctly describes the effect of a non‑competitive inhibitor on enzyme kinetic parameters as observed in a Lineweaver‑Burk plot?",
+      "options": [
+        "Vmax is unchanged while Km increases",
+        "Vmax decreases while Km remains unchanged",
+        "Both Vmax and Km are unchanged",
+        "Both Vmax and Km decrease"
+      ],
+      "correctAnswer": "Vmax decreases while Km remains unchanged",
+      "explanation": "In non‑competitive inhibition the inhibitor binds to an allosteric site, lowering the number of active enzymes. This reduces Vmax but does not affect substrate affinity, so Km stays the same. On a Lineweaver‑Burk plot the y‑intercept (1/Vmax) rises while the x‑intercept (-1/Km) stays the same.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Enzyme inhibition kinetics"
+    },
+    {
+      "questionText": "According to the Michaelis‑Menten model described, what is the kinetic order of the reaction with respect to substrate when the substrate concentration is much higher than the Michaelis constant (i.e., at high [S])?",
+      "options": [
+        "Zero-order",
+        "First-order",
+        "Second-order",
+        "Negative-order"
+      ],
+      "correctAnswer": "Zero-order",
+      "explanation": "At high [S] all enzyme active sites are saturated, so the reaction rate approaches Vmax and no longer depends on [S]; the reaction is therefore zero‑order with respect to substrate.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Reaction order in Michaelis-Menten kinetics"
+    },
+    {
+      "questionText": "What does the parameter Vmax represent in the Michaelis‑Menten equation derived in the excerpt?",
+      "options": [
+        "The maximum substrate concentration that can be achieved",
+        "The reaction rate when the enzyme is fully saturated with substrate",
+        "The substrate concentration at which the reaction rate is half of its maximum",
+        "The ratio of Km to the catalytic constant k2"
+      ],
+      "correctAnswer": "The reaction rate when the enzyme is fully saturated with substrate",
+      "explanation": "Vmax is defined as k2 × [E_total]; it is the rate obtained when all enzyme molecules are bound in the ES complex, i.e., when the enzyme is saturated with substrate.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Michaelis‑Menten kinetics – definition of Vmax"
+    },
+    {
+      "questionText": "Why can increasing substrate concentration overcome the effects of a competitive inhibitor but not a non‑competitive inhibitor?",
+      "options": [
+        "A competitive inhibitor binds to the same active site as the substrate, so high substrate concentrations outcompete the inhibitor.",
+        "A competitive inhibitor binds to an allosteric site, and substrate cannot affect its binding.",
+        "A competitive inhibitor permanently modifies the enzyme, making it impossible for substrate to bind.",
+        "A competitive inhibitor increases the enzyme's Vmax, allowing substrate to overcome inhibition."
+      ],
+      "correctAnswer": "A competitive inhibitor binds to the same active site as the substrate, so high substrate concentrations outcompete the inhibitor.",
+      "explanation": "Competitive inhibitors occupy the active site; excess substrate can displace them, restoring activity, whereas non‑competitive inhibitors bind elsewhere and reduce Vmax regardless of substrate level.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Competitive inhibition"
+    },
+    {
+      "questionText": "According to the derivation, which equation correctly expresses the concentration of the enzyme‑substrate complex [ES] in terms of total enzyme concentration [E_total], substrate concentration [S], and the Michaelis constant Km?",
+      "options": [
+        "[ES] = [E_total] * [S] / (Km + [S])",
+        "[ES] = Km * [E_total] / ([S] + Km)",
+        "[ES] = [E_total] / (1 + Km/[S])",
+        "[ES] = ([E_total] * Km) / ([S] + Km)"
+      ],
+      "correctAnswer": "[ES] = [E_total] * [S] / (Km + [S])",
+      "explanation": "Starting from the steady‑state condition k1[E][S]=(k‑1+k2)[ES] and substituting [E]=[E_total]‑[ES] leads to [ES]=[E_total][S]/(Km+[S]), which is the standard Michaelis‑Menten expression for the ES complex concentration.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Michaelis-Menten derivation"
+    },
+    {
+      "questionText": "Based on the excerpt, what does the x‑intercept of a Lineweaver‑Burk double‑reciprocal plot represent in terms of the Michaelis constant (Km)?",
+      "options": [
+        "x‑intercept = -Km",
+        "x‑intercept = -1/Km",
+        "x‑intercept = 1/Km",
+        "x‑intercept = Km"
+      ],
+      "correctAnswer": "x‑intercept = -1/Km",
+      "explanation": "The excerpt states that the x‑intercept of the Lineweaver‑Burk plot is -1/Km, derived from the rearranged Michaelis‑Menten equation (1/v0 = (Km/Vmax)(1/[S]) + 1/Vmax).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Lineweaver‑Burk plot interpretation"
+    },
+    {
+      "questionText": "In a Lineweaver‑Burk (double‑reciprocal) plot, what change is observed in the y‑intercept when an enzyme is inhibited by a non‑competitive inhibitor compared with the uninhibited enzyme?",
+      "options": [
+        "The y‑intercept remains unchanged",
+        "The y‑intercept increases (shifts upward)",
+        "The y‑intercept decreases (shifts downward)",
+        "Both the x‑ and y‑intercepts shift equally"
+      ],
+      "correctAnswer": "The y‑intercept increases (shifts upward)",
+      "explanation": "Non‑competitive inhibition lowers Vmax while Km stays the same, so 1/Vmax (the y‑intercept) becomes larger, moving the line upward on the plot.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Lineweaver‑Burk analysis of non‑competitive inhibition"
+    },
+    {
+      "questionText": "According to the Michaelis‑Menten derivation, which expression correctly gives the maximum initial reaction velocity (Vmax) in terms of the catalytic rate constant and total enzyme concentration?",
+      "options": [
+        "Vmax = k2 [E_total]",
+        "Vmax = k1 [E_total]",
+        "Vmax = (k-1 + k2) [E_total]",
+        "Vmax = k2 / [E_total]"
+      ],
+      "correctAnswer": "Vmax = k2 [E_total]",
+      "explanation": "When all enzyme molecules are in the ES complex (saturation), the rate of product formation is limited by the catalytic step k2, so Vmax = k2 [E_total].",
+      "targetDifficulty": "Medium",
+      "subtopic": "Michaelis‑Menten kinetics – Vmax definition"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6476,
+    "cumulativeOutputTokens": 1845,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 20798
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:25:44.712Z"
+}

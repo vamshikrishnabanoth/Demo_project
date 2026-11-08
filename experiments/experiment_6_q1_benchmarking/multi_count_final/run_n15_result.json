@@ -1,0 +1,1804 @@
+{
+  "testCount": 15,
+  "requestedCount": 15,
+  "recommendedCount": 12,
+  "deliveredCount": 15,
+  "pipelineStatus": "COMPLETED",
+  "durationMs": 214517,
+  "conformance": {
+    "isFullyConformant": true,
+    "totalRecommended": 12,
+    "totalRequested": 15,
+    "totalDelivered": 15,
+    "deficitCount": 0
+  },
+  "difficultyDistribution": {
+    "Easy": 5,
+    "Medium": 7,
+    "Hard": 3
+  },
+  "plannedPrimaryTargets": [
+    {
+      "targetId": "T01",
+      "concept": "Understanding basic variable declaration and pseudocode structure for array frequency counting",
+      "plannedDifficulty": "Easy"
+    },
+    {
+      "targetId": "T02",
+      "concept": "Determining the frequency of a specific user-given element within an array",
+      "plannedDifficulty": "Easy"
+    },
+    {
+      "targetId": "T03",
+      "concept": "Setting the initial search element dynamically to a[0]",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T04",
+      "concept": "Using nested loops to compute the frequency for every element in an array",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T05",
+      "concept": "Outer for loop function in traversing through the array for every element",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T06",
+      "concept": "Balancing time and space constraints in code development",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T07",
+      "concept": "Balancing time and space constraints in code development",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T08",
+      "concept": "Balancing time and space constraints in code development",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T09",
+      "concept": "Avoiding repeated checks to optimize execution time",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T10",
+      "concept": "Mapping array indices to represent the actual element values",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T11",
+      "concept": "Mapping array indices to represent the actual element values",
+      "plannedDifficulty": "Medium"
+    },
+    {
+      "targetId": "T12",
+      "concept": "Tracing index-based frequency storage for repeated elements",
+      "plannedDifficulty": "Hard"
+    },
+    {
+      "targetId": "T13",
+      "concept": "Distinguishing between single element checks and global array traversal logic",
+      "plannedDifficulty": "Easy"
+    },
+    {
+      "targetId": "T14",
+      "concept": "Determining lowest and highest bounds to construct a frequency array",
+      "plannedDifficulty": "Easy"
+    },
+    {
+      "targetId": "T15",
+      "concept": "Interpreting input data streams for range-restricted frequency tracking",
+      "plannedDifficulty": "Easy"
+    }
+  ],
+  "plannedReserveTargets": [
+    {
+      "targetId": "R01",
+      "concept": "Variable declaration and pseudocode - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R02",
+      "concept": "Variable declaration and pseudocode - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R03",
+      "concept": "Variable declaration and pseudocode - Reserve Hard Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R04",
+      "concept": "Single element frequency calculation - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R05",
+      "concept": "Single element frequency calculation - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R06",
+      "concept": "Single element frequency calculation - Reserve Hard Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R07",
+      "concept": "Nested loop traversal for all elements - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R08",
+      "concept": "Nested loop traversal for all elements - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R09",
+      "concept": "Nested loop traversal for all elements - Reserve Hard Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R10",
+      "concept": "Time and space efficiency in programming - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R11",
+      "concept": "Time and space efficiency in programming - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R12",
+      "concept": "Time and space efficiency in programming - Reserve Hard Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R13",
+      "concept": "Frequency count array mapping (Indices as values) - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R14",
+      "concept": "Frequency count array mapping (Indices as values) - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R15",
+      "concept": "Frequency count array mapping (Indices as values) - Reserve Hard Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R16",
+      "concept": "Range-bound frequency counting scenarios - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R17",
+      "concept": "Range-bound frequency counting scenarios - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R18",
+      "concept": "Range-bound frequency counting scenarios - Reserve Hard Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R19",
+      "concept": "Handling large data with limited value ranges - Reserve Medium Peer",
+      "plannedDifficulty": "Medium",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R20",
+      "concept": "Handling large data with limited value ranges - Reserve Easy Peer",
+      "plannedDifficulty": "Easy",
+      "promotedDifficulty": null
+    },
+    {
+      "targetId": "R21",
+      "concept": "Handling large data with limited value ranges - Reserve Hard Peer",
+      "plannedDifficulty": "Hard",
+      "promotedDifficulty": null
+    }
+  ],
+  "rejectedTargets": [
+    {
+      "targetId": "T01",
+      "concept": "Understanding basic variable declaration and pseudocode structure for array frequency counting",
+      "subtopic": "Variable declaration and pseudocode",
+      "targetDifficulty": "Easy",
+      "intendedCognitiveOperation": "RECALL",
+      "status": "REJECTED",
+      "reason": "UNGROUNDED_RELATIONAL_CLAIM",
+      "failureReasons": [
+        "UNGROUNDED_RELATIONAL_CLAIM"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "T01",
+        "questionText": "Why is the frequency counter variable initialized inside the outer loop rather than outside when counting occurrences in an array?",
+        "question": "Why is the frequency counter variable initialized inside the outer loop rather than outside when counting occurrences in an array?",
+        "options": [
+          "To eliminate the need for nested traversal loops during array processing",
+          "To prevent syntax errors related to variable scope declarations",
+          "To accumulate total frequencies across all evaluated elements continuously",
+          "To ensure the counter resets to zero for each distinct number being checked"
+        ],
+        "correctAnswerIndex": 3,
+        "correctAnswer": "To ensure the counter resets to zero for each distinct number being checked",
+        "explanation": "Declaring and resetting the count variable inside the outer loop ensures that the occurrence count restarts at zero every time the target reference number changes.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Tests the student's recall of why state variables must be re-initialized per iteration when counting frequencies in pseudocode algorithms.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "Lecture evidence explicitly notes: why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0.",
+          "computedOrTracedKey": "Outer loop shifts target number -> count resets to 0 -> inner loop counts occurrences for that specific number.",
+          "distractorRationales": {
+            "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+            "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+            "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+          },
+          "byLetter": {
+            "A": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement.",
+            "B": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+            "C": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency."
+          }
+        },
+        "usedArchetypes": [
+          "MISCONCEPTION_INVERSION",
+          "NEAR_MISS_MECHANISM"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Understanding basic variable declaration and pseudocode structure for array frequency counting",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "distractorRationales": {
+            "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+            "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+            "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+          "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+          "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+        },
+        "correctAnswerText": "To ensure the counter resets to zero for each distinct number being checked",
+        "correct_option": 3,
+        "correctOption": 3,
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "To ensure the counter resets to zero for each distinct number being checked",
+        "distractorRationalesByLetter": {
+          "A": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement.",
+          "B": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+          "C": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "score": 1,
+        "verdict": "FAIL",
+        "failureReasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM"
+        ],
+        "failureReason": "UNGROUNDED_RELATIONAL_CLAIM",
+        "repairInstruction": null,
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks for the reason behind declaring and resetting the frequency count variable inside the outer loop, and option B directly answers this by stating it ensures the count resets to zero for each new target number.",
+          "mismatchDetails": null
+        },
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "To accumulate the total occurrence count of all distinct elements together",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible surface-level confusion regarding what an aggregated count would do if not reset, but contradicts the purpose of finding individual frequencies.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Every time the main number changes, count should be resetted to 0."
+          },
+          {
+            "slot": "B",
+            "text": "To ensure the count resets to zero for each new target number being checked",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "Directly supported by the lecturer stating that the count variable is placed inside the first loop so that it resets to 0 every time the main number changes.",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": "why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0."
+          },
+          {
+            "slot": "C",
+            "text": "To maintain a permanent global frequency record across all array iterations",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Inverts the actual reason (which is to restart the count per iteration rather than maintain a global record).",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Every time the main number changes, count should be resetted to 0."
+          },
+          {
+            "slot": "D",
+            "text": "To prevent memory leaks caused by uninitialized array pointer allocations",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Uses technical jargon about memory leaks which is irrelevant to variable scoping and resetting inside a loop.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Variable declaration, where to implement and all that stuff?"
+          }
+        ],
+        "cognitiveAudit": {
+          "requestedDifficulty": "Easy",
+          "intendedCognitiveOperation": "RECALL",
+          "evaluatedCognitiveDemand": "RECALL",
+          "isCalibrated": true,
+          "mismatchDetails": null
+        },
+        "evidenceGrounding": {
+          "tier": "DIRECT_EVIDENCE",
+          "groundingScore": 1,
+          "foreignDomainDetected": false
+        },
+        "passed": false,
+        "verificationMethod": "LLM_EVALUATION",
+        "isFallback": false,
+        "isLLMVerified": true,
+        "tier": "DIRECT_EVIDENCE",
+        "groundingScore": 1,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Ensure question is unambiguous, grounded, and matches requested difficulty.",
+          "originalMCQ": {
+            "targetId": "T01",
+            "questionText": "Why is the frequency counter variable initialized inside the outer loop rather than outside when counting occurrences in an array?",
+            "question": "Why is the frequency counter variable initialized inside the outer loop rather than outside when counting occurrences in an array?",
+            "options": [
+              "To eliminate the need for nested traversal loops during array processing",
+              "To prevent syntax errors related to variable scope declarations",
+              "To accumulate total frequencies across all evaluated elements continuously",
+              "To ensure the counter resets to zero for each distinct number being checked"
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "To ensure the counter resets to zero for each distinct number being checked",
+            "explanation": "Declaring and resetting the count variable inside the outer loop ensures that the occurrence count restarts at zero every time the target reference number changes.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the student's recall of why state variables must be re-initialized per iteration when counting frequencies in pseudocode algorithms.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Lecture evidence explicitly notes: why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0.",
+              "computedOrTracedKey": "Outer loop shifts target number -> count resets to 0 -> inner loop counts occurrences for that specific number.",
+              "distractorRationales": {
+                "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+                "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+                "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+              },
+              "byLetter": {
+                "A": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement.",
+                "B": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+                "C": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Understanding basic variable declaration and pseudocode structure for array frequency counting",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+                "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+                "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+              "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+              "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+            },
+            "correctAnswerText": "To ensure the counter resets to zero for each distinct number being checked",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "To ensure the counter resets to zero for each distinct number being checked",
+            "distractorRationalesByLetter": {
+              "A": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement.",
+              "B": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+              "C": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "T01",
+            "questionText": "What is the primary reason for declaring and resetting the frequency count variable inside the outer loop rather than outside?",
+            "question": "What is the primary reason for declaring and resetting the frequency count variable inside the outer loop rather than outside?",
+            "options": [
+              "To accumulate the total occurrence count of all distinct elements together",
+              "To ensure the count resets to zero for each new target number being checked",
+              "To maintain a permanent global frequency record across all array iterations",
+              "To prevent memory leaks caused by uninitialized array pointer allocations"
+            ],
+            "correctAnswerIndex": 1,
+            "correctAnswer": "To ensure the count resets to zero for each new target number being checked",
+            "explanation": "According to the lecture evidence, the count variable is declared inside the first loop so that every time the main number changes, the count is properly reset to 0 before counting its occurrences in the array.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests direct recall of variable scoping and placement rationale for frequency counting logic in pseudocode.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0.",
+              "computedOrTracedKey": "Placing the count declaration inside the outer loop guarantees reinitialization to zero per distinct element iteration.",
+              "distractorRationales": {
+                "To accumulate the total occurrence count of all distinct elements together": "Represents a surface misconception that variables should accumulate totals globally rather than per distinct element.",
+                "To prevent memory leaks caused by uninitialized array pointer allocations": "Represents an inappropriate low-level memory management misconception unrelated to loop scoping.",
+                "To maintain a permanent global frequency record across all array iterations": "Inverts the required reset behavior, assuming state must persist globally across iterations."
+              },
+              "byLetter": {
+                "A": "Represents a surface misconception that variables should accumulate totals globally rather than per distinct element.",
+                "C": "Inverts the required reset behavior, assuming state must persist globally across iterations.",
+                "D": "Represents an inappropriate low-level memory management misconception unrelated to loop scoping."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Easy",
+              "intendedCognitiveOperation": "RECALL",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Understanding basic variable declaration and pseudocode structure for array frequency counting",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "To accumulate the total occurrence count of all distinct elements together": "Represents a surface misconception that variables should accumulate totals globally rather than per distinct element.",
+                "To prevent memory leaks caused by uninitialized array pointer allocations": "Represents an inappropriate low-level memory management misconception unrelated to loop scoping.",
+                "To maintain a permanent global frequency record across all array iterations": "Inverts the required reset behavior, assuming state must persist globally across iterations."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "To accumulate the total occurrence count of all distinct elements together": "Represents a surface misconception that variables should accumulate totals globally rather than per distinct element.",
+              "To prevent memory leaks caused by uninitialized array pointer allocations": "Represents an inappropriate low-level memory management misconception unrelated to loop scoping.",
+              "To maintain a permanent global frequency record across all array iterations": "Inverts the required reset behavior, assuming state must persist globally across iterations."
+            },
+            "correctAnswerText": "To ensure the count resets to zero for each new target number being checked",
+            "correct_option": 1,
+            "correctOption": 1,
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "To ensure the count resets to zero for each new target number being checked",
+            "distractorRationalesByLetter": {
+              "A": "Represents a surface misconception that variables should accumulate totals globally rather than per distinct element.",
+              "C": "Inverts the required reset behavior, assuming state must persist globally across iterations.",
+              "D": "Represents an inappropriate low-level memory management misconception unrelated to loop scoping."
+            }
+          }
+        },
+        "repaired": false,
+        "mcq": {
+          "targetId": "T01",
+          "questionText": "Why is the frequency counter variable initialized inside the outer loop rather than outside when counting occurrences in an array?",
+          "question": "Why is the frequency counter variable initialized inside the outer loop rather than outside when counting occurrences in an array?",
+          "options": [
+            "To eliminate the need for nested traversal loops during array processing",
+            "To prevent syntax errors related to variable scope declarations",
+            "To accumulate total frequencies across all evaluated elements continuously",
+            "To ensure the counter resets to zero for each distinct number being checked"
+          ],
+          "correctAnswerIndex": 3,
+          "correctAnswer": "To ensure the counter resets to zero for each distinct number being checked",
+          "explanation": "Declaring and resetting the count variable inside the outer loop ensures that the occurrence count restarts at zero every time the target reference number changes.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Tests the student's recall of why state variables must be re-initialized per iteration when counting frequencies in pseudocode algorithms.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "Lecture evidence explicitly notes: why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0.",
+            "computedOrTracedKey": "Outer loop shifts target number -> count resets to 0 -> inner loop counts occurrences for that specific number.",
+            "distractorRationales": {
+              "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+              "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+              "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+            },
+            "byLetter": {
+              "A": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement.",
+              "B": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+              "C": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency."
+            }
+          },
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Easy",
+            "intendedCognitiveOperation": "RECALL",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Understanding basic variable declaration and pseudocode structure for array frequency counting",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "distractorRationales": {
+              "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+              "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+              "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "To accumulate total frequencies across all evaluated elements continuously": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency.",
+            "To prevent syntax errors related to variable scope declarations": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+            "To eliminate the need for nested traversal loops during array processing": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement."
+          },
+          "correctAnswerText": "To ensure the counter resets to zero for each distinct number being checked",
+          "correct_option": 3,
+          "correctOption": 3,
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "To ensure the counter resets to zero for each distinct number being checked",
+          "distractorRationalesByLetter": {
+            "A": "Represents a high-level role confusion, falsely attributing loop structure elimination to variable placement.",
+            "B": "Confuses algorithmic logic and state reset requirements with language-specific syntax rules for variable scoping.",
+            "C": "Represents the misconception that a single persistent counter should track all elements together instead of per-item frequency."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "T07",
+      "concept": "Balancing time and space constraints in code development",
+      "subtopic": "Time and space efficiency in programming",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "TRACE",
+      "status": "REJECTED",
+      "reason": "FOREIGN_DOMAIN_CONTAMINATION; TIER_COGNITIVE_MISMATCH",
+      "failureReasons": [
+        "FOREIGN_DOMAIN_CONTAMINATION",
+        "TIER_COGNITIVE_MISMATCH"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "T07",
+        "questionText": "When tracing a nested loop where duplicate elements trigger an immediate break condition during the second occurrence, what is the precise sequential effect on the execution state?",
+        "question": "When tracing a nested loop where duplicate elements trigger an immediate break condition during the second occurrence, what is the precise sequential effect on the execution state?",
+        "options": [
+          "The outer loop resets its index pointer immediately upon encountering the first duplicate value.",
+          "The counter increments twice before the loop restarts from the initial index position.",
+          "The internal state permanently records the duplicate count across all subsequent global iterations.",
+          "The current iteration terminates early to prevent duplicate counting during subsequent passes."
+        ],
+        "correctAnswerIndex": 3,
+        "correctAnswer": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+        "explanation": "According to the execution trace logic, when an element is encountered a second time, the loop breaks to avoid erroneous recount operations, ensuring the counter increments only on the initial occurrence.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Assess operational state transitions and cause-and-effect handling of duplicate elements in nested loop execution tracing.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "Spoken lecture demonstration notes detailing loop break mechanics upon finding an already counted element (Evidence 3: 'if i is becoming equal to x... So, I will break it for the next time. So only first time it is going to increment, second time when it comes it is going to break').",
+          "computedOrTracedKey": "Tracing the duplicate detection rule reveals that the break statement stops redundant incrementing during subsequent encounters of the same element.",
+          "distractorRationales": {
+            "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+            "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+            "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+          },
+          "byLetter": {
+            "A": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset.",
+            "B": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+            "C": "Represents a misconception that local transient state modifications alter global permanent output history prematurely."
+          }
+        },
+        "usedArchetypes": [
+          "MISCONCEPTION_INVERSION",
+          "NEAR_MISS_MECHANISM"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "TRACE",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Balancing time and space constraints in code development",
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "distractorRationales": {
+            "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+            "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+            "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": true,
+          "issues": [],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "distractorRationales": {
+          "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+          "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+          "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+        },
+        "correctAnswerText": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+        "correct_option": 3,
+        "correctOption": 3,
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+        "distractorRationalesByLetter": {
+          "A": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset.",
+          "B": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+          "C": "Represents a misconception that local transient state modifications alter global permanent output history prematurely."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "score": 0.94,
+        "verdict": "FAIL",
+        "failureReasons": [
+          "FOREIGN_DOMAIN_CONTAMINATION",
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "failureReason": "FOREIGN_DOMAIN_CONTAMINATION; TIER_COGNITIVE_MISMATCH",
+        "repairInstruction": null,
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The question asks for the operational state transition upon encountering a duplicate value for the second time, and the keyed option directly identifies the breaking behavior mentioned in the lecture evidence.",
+          "mismatchDetails": null
+        },
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "The frequency counter increments continuously across all subsequent duplicate passes.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible procedural misunderstanding of what happens without a break, but contradicts the lecture's explicit rule to prevent overcounting.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Else may break why do I have? Already counted... It will give me a wrong count. So, I will break it for the next time."
+          },
+          {
+            "slot": "B",
+            "text": "The inner traversal terminates early via a break to prevent duplicate counting.",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "Directly matches the lecture evidence where a break is executed upon a second occurrence to prevent incorrect frequency increments.",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": "Else may what you should do? Break... second time when it comes it is going to break is her logic."
+          },
+          {
+            "slot": "C",
+            "text": "The execution state permanently commits to final output without validation.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Represents an incorrect state transition (premature program termination) rather than loop control flow.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Session evidence discusses inner loop control (break) rather than full program exit."
+          },
+          {
+            "slot": "D",
+            "text": "The algorithm restarts execution from the beginning of the dataset.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible state misinterpretation of loop resetting versus breaking out of a traversal.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Session evidence states: 'Should I do it again from here? It will give me a wrong count. So, I will break it'."
+          }
+        ],
+        "cognitiveAudit": {
+          "requestedDifficulty": "Medium",
+          "intendedCognitiveOperation": "TRACE",
+          "evaluatedCognitiveDemand": "UNCERTAIN",
+          "isCalibrated": false,
+          "mismatchDetails": "Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: Question does not exhibit distinct structural features of recall, operational mechanism, trace, or scenario diagnosis; failing conservative calibration.); failing conservative calibration for requested Medium tier (TRACE)"
+        },
+        "evidenceGrounding": {
+          "tier": "DIRECT_EVIDENCE",
+          "groundingScore": 0.98,
+          "foreignDomainDetected": false
+        },
+        "passed": false,
+        "verificationMethod": "LLM_EVALUATION",
+        "isFallback": false,
+        "isLLMVerified": true,
+        "tier": "DIRECT_EVIDENCE",
+        "groundingScore": 0.98,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Require operational mechanism comparison, sequential state transition analysis, or tradeoff evaluation. Ground all options strictly in lecture evidence for \"Balancing time and space constraints in code development\"; do not introduce external or foreign domain concepts.",
+          "originalMCQ": {
+            "targetId": "T07",
+            "questionText": "When tracing a nested loop where duplicate elements trigger an immediate break condition during the second occurrence, what is the precise sequential effect on the execution state?",
+            "question": "When tracing a nested loop where duplicate elements trigger an immediate break condition during the second occurrence, what is the precise sequential effect on the execution state?",
+            "options": [
+              "The outer loop resets its index pointer immediately upon encountering the first duplicate value.",
+              "The counter increments twice before the loop restarts from the initial index position.",
+              "The internal state permanently records the duplicate count across all subsequent global iterations.",
+              "The current iteration terminates early to prevent duplicate counting during subsequent passes."
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+            "explanation": "According to the execution trace logic, when an element is encountered a second time, the loop breaks to avoid erroneous recount operations, ensuring the counter increments only on the initial occurrence.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Assess operational state transitions and cause-and-effect handling of duplicate elements in nested loop execution tracing.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Spoken lecture demonstration notes detailing loop break mechanics upon finding an already counted element (Evidence 3: 'if i is becoming equal to x... So, I will break it for the next time. So only first time it is going to increment, second time when it comes it is going to break').",
+              "computedOrTracedKey": "Tracing the duplicate detection rule reveals that the break statement stops redundant incrementing during subsequent encounters of the same element.",
+              "distractorRationales": {
+                "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+                "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+                "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+              },
+              "byLetter": {
+                "A": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset.",
+                "B": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+                "C": "Represents a misconception that local transient state modifications alter global permanent output history prematurely."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "TRACE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Balancing time and space constraints in code development",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+                "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+                "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+              "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+              "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+            },
+            "correctAnswerText": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+            "distractorRationalesByLetter": {
+              "A": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset.",
+              "B": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+              "C": "Represents a misconception that local transient state modifications alter global permanent output history prematurely."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "T07",
+            "questionText": "When evaluating an algorithm that tracks recurring elements using nested iteration and a conditional break, what operational state transition occurs when a duplicate value is encountered for the second time?",
+            "question": "When evaluating an algorithm that tracks recurring elements using nested iteration and a conditional break, what operational state transition occurs when a duplicate value is encountered for the second time?",
+            "options": [
+              "The frequency counter increments continuously across all subsequent duplicate passes.",
+              "The inner traversal terminates early via a break to prevent duplicate counting.",
+              "The execution state permanently commits to final output without validation.",
+              "The algorithm restarts execution from the beginning of the dataset."
+            ],
+            "correctAnswerIndex": 1,
+            "correctAnswer": "The inner traversal terminates early via a break to prevent duplicate counting.",
+            "explanation": "Based on the algorithmic trace logic presented in the evidence, when a previously processed element is encountered again (the second time), the execution triggers a break condition to avoid redundant incrementing and incorrect counts.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Assesses procedural state tracking and operational mechanics when handling duplicate conditions and intermediate loop breaks.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Evidence 3 demonstrates that when an element is encountered a second time, the logic executes a break to prevent incorrect duplicate counting.",
+              "computedOrTracedKey": "Second occurrence triggers break -> halts further increments for that element -> prevents wrong count.",
+              "distractorRationales": {
+                "The algorithm restarts execution from the beginning of the dataset.": "Represents procedural error assuming the loop resets entirely rather than breaking locally.",
+                "The frequency counter increments continuously across all subsequent duplicate passes.": "Represents intermediate state misunderstanding where duplicate guards are ignored and counts continue updating incorrectly.",
+                "The execution state permanently commits to final output without validation.": "Represents confusion of an intermediate step with final global commit history."
+              },
+              "byLetter": {
+                "A": "Represents intermediate state misunderstanding where duplicate guards are ignored and counts continue updating incorrectly.",
+                "C": "Represents confusion of an intermediate step with final global commit history.",
+                "D": "Represents procedural error assuming the loop resets entirely rather than breaking locally."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "TRACE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Balancing time and space constraints in code development",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "The algorithm restarts execution from the beginning of the dataset.": "Represents procedural error assuming the loop resets entirely rather than breaking locally.",
+                "The frequency counter increments continuously across all subsequent duplicate passes.": "Represents intermediate state misunderstanding where duplicate guards are ignored and counts continue updating incorrectly.",
+                "The execution state permanently commits to final output without validation.": "Represents confusion of an intermediate step with final global commit history."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "The algorithm restarts execution from the beginning of the dataset.": "Represents procedural error assuming the loop resets entirely rather than breaking locally.",
+              "The frequency counter increments continuously across all subsequent duplicate passes.": "Represents intermediate state misunderstanding where duplicate guards are ignored and counts continue updating incorrectly.",
+              "The execution state permanently commits to final output without validation.": "Represents confusion of an intermediate step with final global commit history."
+            },
+            "correctAnswerText": "The inner traversal terminates early via a break to prevent duplicate counting.",
+            "correct_option": 1,
+            "correctOption": 1,
+            "correctAnswerKey": "B",
+            "correct_answer": "B",
+            "correct_answer_text": "The inner traversal terminates early via a break to prevent duplicate counting.",
+            "distractorRationalesByLetter": {
+              "A": "Represents intermediate state misunderstanding where duplicate guards are ignored and counts continue updating incorrectly.",
+              "C": "Represents confusion of an intermediate step with final global commit history.",
+              "D": "Represents procedural error assuming the loop resets entirely rather than breaking locally."
+            }
+          }
+        },
+        "repaired": false,
+        "mcq": {
+          "targetId": "T07",
+          "questionText": "When tracing a nested loop where duplicate elements trigger an immediate break condition during the second occurrence, what is the precise sequential effect on the execution state?",
+          "question": "When tracing a nested loop where duplicate elements trigger an immediate break condition during the second occurrence, what is the precise sequential effect on the execution state?",
+          "options": [
+            "The outer loop resets its index pointer immediately upon encountering the first duplicate value.",
+            "The counter increments twice before the loop restarts from the initial index position.",
+            "The internal state permanently records the duplicate count across all subsequent global iterations.",
+            "The current iteration terminates early to prevent duplicate counting during subsequent passes."
+          ],
+          "correctAnswerIndex": 3,
+          "correctAnswer": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+          "explanation": "According to the execution trace logic, when an element is encountered a second time, the loop breaks to avoid erroneous recount operations, ensuring the counter increments only on the initial occurrence.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Assess operational state transitions and cause-and-effect handling of duplicate elements in nested loop execution tracing.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "Spoken lecture demonstration notes detailing loop break mechanics upon finding an already counted element (Evidence 3: 'if i is becoming equal to x... So, I will break it for the next time. So only first time it is going to increment, second time when it comes it is going to break').",
+            "computedOrTracedKey": "Tracing the duplicate detection rule reveals that the break statement stops redundant incrementing during subsequent encounters of the same element.",
+            "distractorRationales": {
+              "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+              "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+              "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+            },
+            "byLetter": {
+              "A": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset.",
+              "B": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+              "C": "Represents a misconception that local transient state modifications alter global permanent output history prematurely."
+            }
+          },
+          "usedArchetypes": [
+            "MISCONCEPTION_INVERSION",
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "TRACE",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Balancing time and space constraints in code development",
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "distractorRationales": {
+              "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+              "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+              "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": true,
+            "issues": [],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "distractorRationales": {
+            "The counter increments twice before the loop restarts from the initial index position.": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+            "The internal state permanently records the duplicate count across all subsequent global iterations.": "Represents a misconception that local transient state modifications alter global permanent output history prematurely.",
+            "The outer loop resets its index pointer immediately upon encountering the first duplicate value.": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset."
+          },
+          "correctAnswerText": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+          "correct_option": 3,
+          "correctOption": 3,
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "The current iteration terminates early to prevent duplicate counting during subsequent passes.",
+          "distractorRationalesByLetter": {
+            "A": "Represents a procedural sequence error by confusing inner loop break control flow with an outer loop index reset.",
+            "B": "Represents an intermediate state misunderstanding, assuming that duplicate elements cause double-counting rather than triggering a break.",
+            "C": "Represents a misconception that local transient state modifications alter global permanent output history prematurely."
+          }
+        }
+      }
+    },
+    {
+      "targetId": "R03",
+      "concept": "Variable declaration and pseudocode - Reserve Hard Peer",
+      "subtopic": "Variable declaration and pseudocode",
+      "targetDifficulty": "Medium",
+      "intendedCognitiveOperation": "COMPARE",
+      "status": "REJECTED",
+      "reason": "UNGROUNDED_RELATIONAL_CLAIM; TIER_COGNITIVE_MISMATCH",
+      "failureReasons": [
+        "UNGROUNDED_RELATIONAL_CLAIM",
+        "TIER_COGNITIVE_MISMATCH"
+      ],
+      "attempts": 2,
+      "repairAttempted": true,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "R03",
+        "questionText": "When implementing frequency counting for an array with limited value ranges, how does resetting a counter variable inside the outer loop structurally compare to placing it outside?",
+        "question": "When implementing frequency counting for an array with limited value ranges, how does resetting a counter variable inside the outer loop structurally compare to placing it outside?",
+        "options": [
+          "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.",
+          "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.",
+          "Placing it outside aggregates the total count across all elements into a single cumulative sum.",
+          "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value."
+        ],
+        "correctAnswerIndex": 3,
+        "correctAnswer": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+        "explanation": "Declaring and resetting the count variable inside the outer for loop guarantees that when the main number being evaluated changes, the count starts fresh from zero for that new element. Placing it outside would accumulate counts across iterations incorrectly.",
+        "questionArchetype": "CONCEPTUAL_CONTRAST",
+        "pedagogicalIntent": "Tests the student's understanding of variable scoping and state reset mechanics within nested loop structures for frequency counting.",
+        "verificationRecord": {
+          "verificationStatus": "VERIFICATION_UNSUPPORTED",
+          "verifiedProgrammatically": false,
+          "factualBasis": "Lecture evidence explicitly states: 'why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0. That's why count would always be inside.'",
+          "computedOrTracedKey": "Placing the count initialization inside the outer loop scope ensures state reset on each outer iteration, whereas placing it outside retains cumulative state.",
+          "distractorRationales": {
+            "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+            "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+            "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+          },
+          "byLetter": {
+            "A": "Plausible student misconception based on near miss mechanism.",
+            "B": "Plausible student misconception based on near miss mechanism.",
+            "C": "Plausible student misconception based on near miss mechanism."
+          }
+        },
+        "usedArchetypes": [
+          "NEAR_MISS_MECHANISM"
+        ],
+        "metadata": {
+          "dimension": "Conceptual",
+          "cognitiveLevel": "Understand",
+          "targetDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "concept": "Variable declaration and pseudocode - Reserve Hard Peer",
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM"
+          ],
+          "distractorRationales": {
+            "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+            "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+            "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+          },
+          "capacityLimitation": null,
+          "isCapacityLimited": false
+        },
+        "styleAudit": {
+          "passesStyle": false,
+          "issues": [
+            "OPTION_EXCESSIVE_LENGTH"
+          ],
+          "warnings": [],
+          "standardsVersion": "1.3.0"
+        },
+        "styleIssues": [
+          "OPTION_EXCESSIVE_LENGTH"
+        ],
+        "distractorRationales": {
+          "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+          "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+          "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+        },
+        "correctAnswerText": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+        "correct_option": 3,
+        "correctOption": 3,
+        "correctAnswerKey": "D",
+        "correct_answer": "D",
+        "correct_answer_text": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+        "distractorRationalesByLetter": {
+          "A": "Plausible student misconception based on near miss mechanism.",
+          "B": "Plausible student misconception based on near miss mechanism.",
+          "C": "Plausible student misconception based on near miss mechanism."
+        }
+      },
+      "evalDecision": {
+        "status": "FAIL",
+        "score": 0.98,
+        "verdict": "FAIL",
+        "failureReasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM",
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "failureReason": "UNGROUNDED_RELATIONAL_CLAIM; TIER_COGNITIVE_MISMATCH",
+        "repairInstruction": null,
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks for the operational consequence of declaring the counter variable inside the outer loop, and option D precisely identifies the correct mechanical consequence discussed in the lecture evidence: resetting the counter to zero for each distinct target element.",
+          "mismatchDetails": null
+        },
+        "optionAnalysis": [
+          {
+            "slot": "A",
+            "text": "The outer loop iterator increments twice as fast, skipping alternate elements.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Incorrect loop iterator behavior; declaring a counter inside a loop does not alter loop control variable increments.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Evidence 3"
+          },
+          {
+            "slot": "B",
+            "text": "The counter accumulates the total frequency across all array elements without resetting.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Describes the exact opposite behavior of what placing the counter inside the loop achieves.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Evidence 3"
+          },
+          {
+            "slot": "C",
+            "text": "The algorithm terminates prematurely due to variable out-of-scope compilation errors.",
+            "isKey": false,
+            "verdict": "PLAUSIBLE_DISTRACTOR",
+            "justification": "Plausible distractor regarding scope in strictly typed languages, but pseudocode scopes allow inner block declarations without compile termination.",
+            "distractorPlausibility": "HIGH",
+            "evidenceCitation": "Evidence 3"
+          },
+          {
+            "slot": "D",
+            "text": "The counter correctly resets to zero for each distinct target element being evaluated.",
+            "isKey": true,
+            "verdict": "VALID_KEY",
+            "justification": "Directly matches the lecture rationale: 'Every time the main number changes, count should be resetted to 0. That's why count would always be inside.'",
+            "distractorPlausibility": "N/A",
+            "evidenceCitation": "Evidence 3: 'why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0.'"
+          }
+        ],
+        "cognitiveAudit": {
+          "requestedDifficulty": "Medium",
+          "intendedCognitiveOperation": "COMPARE",
+          "evaluatedCognitiveDemand": "RECALL",
+          "isCalibrated": false,
+          "mismatchDetails": "Question demands only factual definition/recall, but Medium operational mechanism/tradeoff analysis (COMPARE) was requested"
+        },
+        "evidenceGrounding": {
+          "tier": "DIRECT_EVIDENCE",
+          "groundingScore": 1,
+          "foreignDomainDetected": false
+        },
+        "passed": false,
+        "verificationMethod": "LLM_EVALUATION",
+        "isFallback": false,
+        "isLLMVerified": true,
+        "tier": "DIRECT_EVIDENCE",
+        "groundingScore": 1,
+        "repair": {
+          "attempted": true,
+          "successful": false,
+          "repairAttempts": 1,
+          "instruction": "Ensure question is unambiguous, grounded, and matches requested difficulty.",
+          "originalMCQ": {
+            "targetId": "R03",
+            "questionText": "When implementing frequency counting for an array with limited value ranges, how does resetting a counter variable inside the outer loop structurally compare to placing it outside?",
+            "question": "When implementing frequency counting for an array with limited value ranges, how does resetting a counter variable inside the outer loop structurally compare to placing it outside?",
+            "options": [
+              "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.",
+              "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.",
+              "Placing it outside aggregates the total count across all elements into a single cumulative sum.",
+              "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value."
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+            "explanation": "Declaring and resetting the count variable inside the outer for loop guarantees that when the main number being evaluated changes, the count starts fresh from zero for that new element. Placing it outside would accumulate counts across iterations incorrectly.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the student's understanding of variable scoping and state reset mechanics within nested loop structures for frequency counting.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Lecture evidence explicitly states: 'why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0. That's why count would always be inside.'",
+              "computedOrTracedKey": "Placing the count initialization inside the outer loop scope ensures state reset on each outer iteration, whereas placing it outside retains cumulative state.",
+              "distractorRationales": {
+                "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+                "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+                "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+              },
+              "byLetter": {
+                "A": "Plausible student misconception based on near miss mechanism.",
+                "B": "Plausible student misconception based on near miss mechanism.",
+                "C": "Plausible student misconception based on near miss mechanism."
+              }
+            },
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "COMPARE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Variable declaration and pseudocode - Reserve Hard Peer",
+              "usedArchetypes": [
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+                "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+                "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": false,
+              "issues": [
+                "OPTION_EXCESSIVE_LENGTH"
+              ],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "styleIssues": [
+              "OPTION_EXCESSIVE_LENGTH"
+            ],
+            "distractorRationales": {
+              "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+              "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+              "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+            },
+            "correctAnswerText": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+            "distractorRationalesByLetter": {
+              "A": "Plausible student misconception based on near miss mechanism.",
+              "B": "Plausible student misconception based on near miss mechanism.",
+              "C": "Plausible student misconception based on near miss mechanism."
+            }
+          },
+          "repairedMCQ": {
+            "targetId": "R03",
+            "questionText": "When designing pseudocode to count element frequencies in an array, what is the operational consequence of declaring the counter variable inside the outer loop rather than before it?",
+            "question": "When designing pseudocode to count element frequencies in an array, what is the operational consequence of declaring the counter variable inside the outer loop rather than before it?",
+            "options": [
+              "The outer loop iterator increments twice as fast, skipping alternate elements.",
+              "The counter accumulates the total frequency across all array elements without resetting.",
+              "The algorithm terminates prematurely due to variable out-of-scope compilation errors.",
+              "The counter correctly resets to zero for each distinct target element being evaluated."
+            ],
+            "correctAnswerIndex": 3,
+            "correctAnswer": "The counter correctly resets to zero for each distinct target element being evaluated.",
+            "explanation": "Placing the count variable inside the outer loop ensures that every time the main number being evaluated changes, the count is reset to zero for the next distinct element.",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "pedagogicalIntent": "Tests the operational understanding of variable scope and state initialization timing within nested loops when counting element occurrences.",
+            "verificationRecord": {
+              "verificationStatus": "VERIFICATION_UNSUPPORTED",
+              "verifiedProgrammatically": false,
+              "factualBasis": "Lecture evidence explicitly states: 'why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0.'",
+              "computedOrTracedKey": "Initializing the counter inside the outer loop scope forces a state reset upon each iteration of the outer target, preventing carry-over of counts between distinct elements.",
+              "distractorRationales": {
+                "The counter accumulates the total frequency across all array elements without resetting.": "Represents the opposite behavior (what happens if the counter is declared outside the loop), which students might confuse with inner loop accumulation.",
+                "The algorithm terminates prematurely due to variable out-of-scope compilation errors.": "A misconception about block scoping rules, assuming pseudocode constructs automatically trigger compilation failures.",
+                "The outer loop iterator increments twice as fast, skipping alternate elements.": "A procedural confusion between variable declaration scope and loop iterator step increments."
+              },
+              "byLetter": {
+                "A": "A procedural confusion between variable declaration scope and loop iterator step increments.",
+                "B": "Represents the opposite behavior (what happens if the counter is declared outside the loop), which students might confuse with inner loop accumulation.",
+                "C": "A misconception about block scoping rules, assuming pseudocode constructs automatically trigger compilation failures."
+              }
+            },
+            "usedArchetypes": [
+              "MISCONCEPTION_INVERSION",
+              "NEAR_MISS_MECHANISM"
+            ],
+            "metadata": {
+              "dimension": "Conceptual",
+              "cognitiveLevel": "Understand",
+              "targetDifficulty": "Medium",
+              "intendedCognitiveOperation": "COMPARE",
+              "questionArchetype": "CONCEPTUAL_CONTRAST",
+              "concept": "Variable declaration and pseudocode - Reserve Hard Peer",
+              "usedArchetypes": [
+                "MISCONCEPTION_INVERSION",
+                "NEAR_MISS_MECHANISM"
+              ],
+              "distractorRationales": {
+                "The counter accumulates the total frequency across all array elements without resetting.": "Represents the opposite behavior (what happens if the counter is declared outside the loop), which students might confuse with inner loop accumulation.",
+                "The algorithm terminates prematurely due to variable out-of-scope compilation errors.": "A misconception about block scoping rules, assuming pseudocode constructs automatically trigger compilation failures.",
+                "The outer loop iterator increments twice as fast, skipping alternate elements.": "A procedural confusion between variable declaration scope and loop iterator step increments."
+              },
+              "capacityLimitation": null,
+              "isCapacityLimited": false
+            },
+            "styleAudit": {
+              "passesStyle": true,
+              "issues": [],
+              "warnings": [],
+              "standardsVersion": "1.3.0"
+            },
+            "distractorRationales": {
+              "The counter accumulates the total frequency across all array elements without resetting.": "Represents the opposite behavior (what happens if the counter is declared outside the loop), which students might confuse with inner loop accumulation.",
+              "The algorithm terminates prematurely due to variable out-of-scope compilation errors.": "A misconception about block scoping rules, assuming pseudocode constructs automatically trigger compilation failures.",
+              "The outer loop iterator increments twice as fast, skipping alternate elements.": "A procedural confusion between variable declaration scope and loop iterator step increments."
+            },
+            "correctAnswerText": "The counter correctly resets to zero for each distinct target element being evaluated.",
+            "correct_option": 3,
+            "correctOption": 3,
+            "correctAnswerKey": "D",
+            "correct_answer": "D",
+            "correct_answer_text": "The counter correctly resets to zero for each distinct target element being evaluated.",
+            "distractorRationalesByLetter": {
+              "A": "A procedural confusion between variable declaration scope and loop iterator step increments.",
+              "B": "Represents the opposite behavior (what happens if the counter is declared outside the loop), which students might confuse with inner loop accumulation.",
+              "C": "A misconception about block scoping rules, assuming pseudocode constructs automatically trigger compilation failures."
+            }
+          }
+        },
+        "repaired": false,
+        "mcq": {
+          "targetId": "R03",
+          "questionText": "When implementing frequency counting for an array with limited value ranges, how does resetting a counter variable inside the outer loop structurally compare to placing it outside?",
+          "question": "When implementing frequency counting for an array with limited value ranges, how does resetting a counter variable inside the outer loop structurally compare to placing it outside?",
+          "options": [
+            "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.",
+            "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.",
+            "Placing it outside aggregates the total count across all elements into a single cumulative sum.",
+            "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value."
+          ],
+          "correctAnswerIndex": 3,
+          "correctAnswer": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+          "explanation": "Declaring and resetting the count variable inside the outer for loop guarantees that when the main number being evaluated changes, the count starts fresh from zero for that new element. Placing it outside would accumulate counts across iterations incorrectly.",
+          "questionArchetype": "CONCEPTUAL_CONTRAST",
+          "pedagogicalIntent": "Tests the student's understanding of variable scoping and state reset mechanics within nested loop structures for frequency counting.",
+          "verificationRecord": {
+            "verificationStatus": "VERIFICATION_UNSUPPORTED",
+            "verifiedProgrammatically": false,
+            "factualBasis": "Lecture evidence explicitly states: 'why am I declaring count variable inside the first for loop? Every time the main number changes, count should be resetted to 0. That's why count would always be inside.'",
+            "computedOrTracedKey": "Placing the count initialization inside the outer loop scope ensures state reset on each outer iteration, whereas placing it outside retains cumulative state.",
+            "distractorRationales": {
+              "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+              "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+              "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+            },
+            "byLetter": {
+              "A": "Plausible student misconception based on near miss mechanism.",
+              "B": "Plausible student misconception based on near miss mechanism.",
+              "C": "Plausible student misconception based on near miss mechanism."
+            }
+          },
+          "usedArchetypes": [
+            "NEAR_MISS_MECHANISM"
+          ],
+          "metadata": {
+            "dimension": "Conceptual",
+            "cognitiveLevel": "Understand",
+            "targetDifficulty": "Medium",
+            "intendedCognitiveOperation": "COMPARE",
+            "questionArchetype": "CONCEPTUAL_CONTRAST",
+            "concept": "Variable declaration and pseudocode - Reserve Hard Peer",
+            "usedArchetypes": [
+              "NEAR_MISS_MECHANISM"
+            ],
+            "distractorRationales": {
+              "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+              "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+              "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+            },
+            "capacityLimitation": null,
+            "isCapacityLimited": false
+          },
+          "styleAudit": {
+            "passesStyle": false,
+            "issues": [
+              "OPTION_EXCESSIVE_LENGTH"
+            ],
+            "warnings": [],
+            "standardsVersion": "1.3.0"
+          },
+          "styleIssues": [
+            "OPTION_EXCESSIVE_LENGTH"
+          ],
+          "distractorRationales": {
+            "Placing it outside aggregates the total count across all elements into a single cumulative sum.": "Plausible student misconception based on near miss mechanism.",
+            "Placing it outside causes cumulative frequency accumulation across iterations rather than resetting per distinct element.": "Plausible student misconception based on near miss mechanism.",
+            "Placing it inside forces an immediate termination of the inner loop whenever a frequency match is found.": "Plausible student misconception based on near miss mechanism."
+          },
+          "correctAnswerText": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+          "correct_option": 3,
+          "correctOption": 3,
+          "correctAnswerKey": "D",
+          "correct_answer": "D",
+          "correct_answer_text": "Placing it inside ensures the count variable resets to zero every time the outer loop shifts to a new target value.",
+          "distractorRationalesByLetter": {
+            "A": "Plausible student misconception based on near miss mechanism.",
+            "B": "Plausible student misconception based on near miss mechanism.",
+            "C": "Plausible student misconception based on near miss mechanism."
+          }
+        }
+      }
+    }
+  ],
+  "unfulfilledTargets": [
+    {
+      "targetId": "T06",
+      "concept": "Balancing time and space constraints in code development",
+      "subtopic": "Nested loop traversal for all elements",
+      "targetDifficulty": "Hard",
+      "intendedCognitiveOperation": "DIAGNOSE",
+      "status": "UNFULFILLED_MALFORMED_OUTPUT",
+      "reason": "Model output for target \"Balancing time and space constraints in code development\" provided 0 options (exactly 4 required).",
+      "attempts": 1,
+      "repairAttempted": false,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "T06",
+        "fulfillmentStatus": "UNFULFILLED_MALFORMED_OUTPUT",
+        "isUnfulfilled": true,
+        "unfulfilledReason": "INSUFFICIENT_OPTIONS_COUNT",
+        "message": "Model output for target \"Balancing time and space constraints in code development\" provided 0 options (exactly 4 required).",
+        "metadata": {
+          "targetDifficulty": "Hard",
+          "achievedDifficulty": null,
+          "intendedCognitiveOperation": "DIAGNOSE",
+          "achievedCognitiveOperation": null,
+          "concept": "Balancing time and space constraints in code development",
+          "isCapacityLimited": false
+        }
+      }
+    },
+    {
+      "targetId": "T12",
+      "concept": "Tracing index-based frequency storage for repeated elements",
+      "subtopic": "Frequency count array mapping (Indices as values)",
+      "targetDifficulty": "Hard",
+      "intendedCognitiveOperation": "DIAGNOSE",
+      "status": "UNFULFILLED_PROVIDER_FAILURE",
+      "reason": "LLM generation error on target \"Tracing index-based frequency storage for repeated elements\": Agent 2 LLM generation timed out after 15s",
+      "attempts": 1,
+      "repairAttempted": false,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "T12",
+        "fulfillmentStatus": "UNFULFILLED_PROVIDER_FAILURE",
+        "isUnfulfilled": true,
+        "unfulfilledReason": "PROVIDER_UNAVAILABLE",
+        "message": "LLM generation error on target \"Tracing index-based frequency storage for repeated elements\": Agent 2 LLM generation timed out after 15s",
+        "metadata": {
+          "targetDifficulty": "Hard",
+          "achievedDifficulty": null,
+          "intendedCognitiveOperation": "DIAGNOSE",
+          "achievedCognitiveOperation": null,
+          "concept": "Tracing index-based frequency storage for repeated elements",
+          "isCapacityLimited": false
+        }
+      }
+    },
+    {
+      "targetId": "R05",
+      "concept": "Single element frequency calculation - Reserve Easy Peer",
+      "subtopic": "Single element frequency calculation",
+      "targetDifficulty": "Easy",
+      "intendedCognitiveOperation": "RECALL",
+      "status": "UNFULFILLED_MALFORMED_OUTPUT",
+      "reason": "Model output for target \"Single element frequency calculation - Reserve Easy Peer\" specified correctAnswer not present in options array.",
+      "attempts": 1,
+      "repairAttempted": false,
+      "repairSuccessful": false,
+      "mcq": {
+        "targetId": "R05",
+        "fulfillmentStatus": "UNFULFILLED_MALFORMED_OUTPUT",
+        "isUnfulfilled": true,
+        "unfulfilledReason": "CORRECT_ANSWER_MISMATCH",
+        "message": "Model output for target \"Single element frequency calculation - Reserve Easy Peer\" specified correctAnswer not present in options array.",
+        "metadata": {
+          "targetDifficulty": "Easy",
+          "achievedDifficulty": null,
+          "intendedCognitiveOperation": "RECALL",
+          "achievedCognitiveOperation": null,
+          "concept": "Single element frequency calculation - Reserve Easy Peer",
+          "isCapacityLimited": false
+        }
+      }
+    }
+  ],
+  "questions": [
+    {
+      "index": 1,
+      "targetId": "T02",
+      "concept": "Determining the frequency of a specific user-given element within an array",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "What is the primary objective when calculating the frequency of a single user-specified element within an array?",
+      "options": [
+        "Sorting the array elements into ascending order",
+        "Counting how many times that specific target value appears",
+        "Finding the maximum numerical value stored in the array",
+        "Removing all duplicate entries from the array storage"
+      ],
+      "correctAnswer": "Counting how many times that specific target value appears",
+      "correctKey": "B",
+      "explanation": "Calculating the frequency of a specific user-given element involves checking each array position to count how many times that target value appears.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 2,
+      "targetId": "T03",
+      "concept": "Setting the initial search element dynamically to a[0]",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "Why does initializing the target search element to the first array index (a[0]) eliminate the need for external user input during frequency calculation?",
+      "options": [
+        "It permanently stores the calculated global frequency history into a static cache.",
+        "It assumes the frequency of the first element is always one without verifying array contents.",
+        "It establishes the initial comparison value directly from the dataset instead of prompting the user.",
+        "It skips traversing the remaining array indices by automatically evaluating all duplicate entries."
+      ],
+      "correctAnswer": "It establishes the initial comparison value directly from the dataset instead of prompting the user.",
+      "correctKey": "C",
+      "explanation": "Initializing the search element to a[0] replaces user input by automatically selecting the first element of the array as the initial target for frequency checking.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 3,
+      "targetId": "T04",
+      "concept": "Using nested loops to compute the frequency for every element in an array",
+      "tier": "Hard",
+      "bloomLevel": "Understand",
+      "stem": "Why does computing the frequency of every element in an array require a nested loop structure rather than a single linear traversal?",
+      "options": [
+        "A single loop processes elements in parallel rather than sequentially, violating sequential array order.",
+        "A single loop tracks running totals without resetting state for subsequent distinct elements.",
+        "The outer loop increments indices while the inner loop evaluates the target element across all positions.",
+        "The outer loop sorts the entire array to group matching elements before a linear count."
+      ],
+      "correctAnswer": "The outer loop increments indices while the inner loop evaluates the target element across all positions.",
+      "correctKey": "C",
+      "explanation": "Computing the frequency of all elements requires an outer loop to select each target value sequentially and an inner loop to scan the entire array to count occurrences of that specific target.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 4,
+      "targetId": "T05",
+      "concept": "Outer for loop function in traversing through the array for every element",
+      "tier": "Hard",
+      "bloomLevel": "Understand",
+      "stem": "Why is a nested outer for loop specifically required when determining the frequency of every element in an array?",
+      "options": [
+        "It dynamically resizes the array bounds on each iteration to eliminate already counted elements from memory.",
+        "It iterates through each target element sequentially so the inner loop can scan the entire array to count its occurrences.",
+        "It manages the memory allocation pointer for tracking visited array indices during the parallel scanning phase.",
+        "It reverses the traversal direction to prevent infinite looping when duplicate elements are encountered."
+      ],
+      "correctAnswer": "It iterates through each target element sequentially so the inner loop can scan the entire array to count its occurrences.",
+      "correctKey": "B",
+      "explanation": "The outer for loop systematically selects each individual element in the array as a target value, allowing the inner loop to traverse the entire collection to count how many times that specific element appears.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 5,
+      "targetId": "T08",
+      "concept": "Balancing time and space constraints in code development",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "Why is breaking out of a loop upon encountering a previously processed item critical when evaluating time and space efficiency in program execution?",
+      "options": [
+        "It permanently writes the intermediate execution count directly to global repository history",
+        "It forces an immediate restart of the entire intermediate state transition sequence",
+        "It automatically replaces the current working state with the final finalized output state",
+        "It prevents redundant recounting of already processed elements during sequential execution"
+      ],
+      "correctAnswer": "It prevents redundant recounting of already processed elements during sequential execution",
+      "correctKey": "D",
+      "explanation": "In iterative processing, when an element is encountered a second time, continuing without a break causes duplicate items to be recounted redundantly, leading to incorrect operational counts and inefficient execution.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 6,
+      "targetId": "T09",
+      "concept": "Avoiding repeated checks to optimize execution time",
+      "tier": "Hard",
+      "bloomLevel": "Understand",
+      "stem": "Why must an algorithm break or skip execution when encountering a previously recorded element during frequency counting rather than re-evaluating it?",
+      "options": [
+        "It prevents resetting the global time complexity baseline to linear scale.",
+        "It guarantees that elements are sorted in ascending order prior to counting.",
+        "It ensures the space allocation remains constrained within static stack limits.",
+        "It avoids redundant re-counting that produces an incorrect final frequency tally."
+      ],
+      "correctAnswer": "It avoids redundant re-counting that produces an incorrect final frequency tally.",
+      "correctKey": "D",
+      "explanation": "As demonstrated in the lecture evidence, re-evaluating an element that has already been counted leads to duplicate counting, which yields an incorrect total frequency count. Breaking or skipping on subsequent occurrences ensures each element is counted exactly once.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 7,
+      "targetId": "T10",
+      "concept": "Mapping array indices to represent the actual element values",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "When using a single frequency count array where indices represent the original data values and stored elements represent their frequencies, how are the roles of values and frequencies structured during mapping?",
+      "options": [
+        "Indices act as the original values while the elements stored at those indices represent their frequencies",
+        "Both array indices and stored elements represent frequency counts without storing original data",
+        "Indices store the frequency counts while array values represent the original data items",
+        "Stored array elements act as pointers to independent secondary frequency tracking tables"
+      ],
+      "correctAnswer": "Indices act as the original values while the elements stored at those indices represent their frequencies",
+      "correctKey": "A",
+      "explanation": "In frequency count array mapping where a single container is used, the array indices correspond directly to the values from the dataset, and the numbers stored at those indices represent the frequency counts.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 8,
+      "targetId": "T11",
+      "concept": "Mapping array indices to represent the actual element values",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "Why does configuring array indices to represent the original element values enable efficient frequency counting without requiring nested search loops or sorting?",
+      "options": [
+        "It converts values into temporary hash keys that require collision resolution procedures.",
+        "It permits direct O(1) access to frequency tallies by using element values directly as array indices.",
+        "It mandates nested iteration to verify existing frequencies before updating any index value.",
+        "It requires secondary sorting to align values sequentially before incrementing frequency tallies."
+      ],
+      "correctAnswer": "It permits direct O(1) access to frequency tallies by using element values directly as array indices.",
+      "correctKey": "B",
+      "explanation": "Making array indices represent the actual element values allows direct O(1) access to frequency counts without requiring nested search loops or sorting, directly aligning with the core mechanism taught in the lecture evidence.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 9,
+      "targetId": "T13",
+      "concept": "Distinguishing between single element checks and global array traversal logic",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "What is the primary role of a frequency array when solving problems involving limited or range-bound data?",
+      "options": [
+        "To replace conditional statements with recursive function calls for every element",
+        "To maintain a single isolated counter variable for checking one specific target value",
+        "To store the original input elements in sorted order without duplicates",
+        "To count and record the occurrences of each element within the specified range"
+      ],
+      "correctAnswer": "To count and record the occurrences of each element within the specified range",
+      "correctKey": "D",
+      "explanation": "A frequency array is specifically used to count and record how many times each data value appears when the data is within a limited range.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 10,
+      "targetId": "T14",
+      "concept": "Determining lowest and highest bounds to construct a frequency array",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "When constructing a frequency array for data within a limited value range, what do the indices of the frequency array represent?",
+      "options": [
+        "The iteration counts of the loops",
+        "The pointers to external memory blocks",
+        "The values from the given dataset",
+        "The frequencies of the data items"
+      ],
+      "correctAnswer": "The values from the given dataset",
+      "correctKey": "C",
+      "explanation": "When working with frequency arrays for data with limited value ranges, the indices of the frequency array correspond directly to the values present in the data, while the array data itself stores the frequency counts.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 11,
+      "targetId": "T15",
+      "concept": "Interpreting input data streams for range-restricted frequency tracking",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "When working with a large volume of input data restricted to a specific limited range, which data structure is most appropriate for tracking element frequencies?",
+      "options": [
+        "A linked list",
+        "A frequency array",
+        "A nested matrix",
+        "A priority queue"
+      ],
+      "correctAnswer": "A frequency array",
+      "correctKey": "B",
+      "explanation": "According to the lecture evidence, whenever problems require frequency tracking and the data is limited or within a specific range, a frequency array is used where indices represent the values and stored data represents frequencies.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 12,
+      "targetId": "R01",
+      "concept": "Variable declaration and pseudocode - Reserve Medium Peer",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "When implementing pseudocode to count element frequencies in a bounded data range, how does declaring a frequency array compare to using nested iteration loops?",
+      "options": [
+        "A frequency array requires sorting the input data beforehand, whereas nested loops process unsorted arrays directly.",
+        "Nested loops execute in linear time complexity, whereas a frequency array requires quadratic time to initialize counts.",
+        "Nested loops allocate dynamic memory for each comparison, whereas a frequency array runs entirely in constant space.",
+        "A frequency array trades additional memory space to achieve more efficient frequency lookups compared to nested loops."
+      ],
+      "correctAnswer": "A frequency array trades additional memory space to achieve more efficient frequency lookups compared to nested loops.",
+      "correctKey": "D",
+      "explanation": "When working with limited or ranged data for frequency counting, utilizing a frequency array optimizes operational performance by avoiding repeated nested scans at the cost of additional storage space.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 13,
+      "targetId": "R02",
+      "concept": "Variable declaration and pseudocode - Reserve Easy Peer",
+      "tier": "Easy",
+      "bloomLevel": "Understand",
+      "stem": "Why must the count variable be initialized or reset to zero inside the outer loop when tracking element occurrences?",
+      "options": [
+        "To prevent index out of bounds errors in the array",
+        "To ensure the count resets for each new distinct number",
+        "To ensure the array size parameter increments correctly",
+        "To accumulate total counts across all array elements"
+      ],
+      "correctAnswer": "To ensure the count resets for each new distinct number",
+      "correctKey": "B",
+      "explanation": "When counting occurrences of different numbers in an array using nested iteration, the count variable must be reset to zero every time the main number being checked changes. Placing the initialization inside the outer loop ensures correct frequency tracking for each distinct value.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 14,
+      "targetId": "R04",
+      "concept": "Single element frequency calculation - Reserve Medium Peer",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "When calculating the frequency of each distinct element in an array without taking target inputs from the user, how is the target element determined for each iteration?",
+      "options": [
+        "By selecting the middle element of the array as the fixed target",
+        "By taking each element from the array sequentially starting from the first element",
+        "By prompting the user for a new search target value at each step",
+        "By sorting the entire array and picking the maximum numerical value"
+      ],
+      "correctAnswer": "By taking each element from the array sequentially starting from the first element",
+      "correctKey": "B",
+      "explanation": "In frequency calculation algorithms where target inputs from the user are eliminated, the algorithm iterates through the array by automatically taking each element sequentially starting from the first element (a of 0) to compute its frequency.",
+      "groundingStatus": "GROUNDED"
+    },
+    {
+      "index": 15,
+      "targetId": "R06",
+      "concept": "Single element frequency calculation - Reserve Hard Peer",
+      "tier": "Medium",
+      "bloomLevel": "Understand",
+      "stem": "What distinguishes the updated approach of calculating element frequencies automatically from the earlier method where an element 'n' was supplied by the user?",
+      "options": [
+        "The frequency of every element is determined sequentially by iterating through array values rather than relying on explicit user input.",
+        "User inputs are validated beforehand to ensure all elements are sorted prior to any frequency calculation.",
+        "An external lookup table is pre-allocated by the user before the algorithm computes individual frequencies.",
+        "The target value is supplied externally while the array elements remain entirely static throughout the entire execution."
+      ],
+      "correctAnswer": "The frequency of every element is determined sequentially by iterating through array values rather than relying on explicit user input.",
+      "correctKey": "A",
+      "explanation": "In the updated frequency calculation approach, the algorithm begins automatically from the first element (a of 0) of the array to find frequencies without taking any target element 'n' from the user.",
+      "groundingStatus": "GROUNDED"
+    }
+  ]
+}

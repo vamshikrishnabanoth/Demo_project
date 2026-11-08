@@ -160,6 +160,12 @@ export default function QuizQuestionEditor({
                                 <Target size={13} className="inline mr-1" aria-hidden="true" /> Objective: {question.assessment_objective}
                             </p>
                         )}
+                        {(question.metadata?.repeatedTarget || question.repeatedTarget) && (
+                            <div className="mt-2 text-xs font-mono text-purple-700 bg-purple-50 px-3 py-1.5 rounded-lg border border-purple-200 flex items-center gap-1.5">
+                                <span className="font-bold">Repeated Target (Occurrence {question.metadata?.targetOccurrence || question.targetOccurrence || 2}):</span>
+                                <span>{question.metadata?.cognitiveApproach || question.cognitiveApproach || 'Multi-angle cognitive variation'}</span>
+                            </div>
+                        )}
                         {question.difficulty_reason && Array.isArray(question.difficulty_reason) && (
                             <div className="mt-2 text-xs font-mono text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
                                 <span className="font-bold text-amber-700"><Scale size={13} className="inline mr-1" aria-hidden="true" /> Calibration Rationale:</span>

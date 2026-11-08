@@ -1,0 +1,152 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "model": "openai/gpt-oss-120b",
+  "questions": [
+    {
+      "questionText": "Which of the following is an individual constant in First-Order Logic?",
+      "options": [
+        "A variable",
+        "A predicate symbol",
+        "An individual constant",
+        "A quantifier"
+      ],
+      "correctAnswer": "An individual constant",
+      "explanation": "Individual constants denote specific objects in the domain, e.g., s for Socrates.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Syntax: Individual Constants"
+    },
+    {
+      "questionText": "Which of the following is a 2-place predicate?",
+      "options": [
+        "H(x)",
+        "A(x,y)",
+        "∀x",
+        "∃y"
+      ],
+      "correctAnswer": "A(x,y)",
+      "explanation": "A(x,y) takes two arguments, representing a relation between two individuals.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Syntax: Predicate Symbols"
+    },
+    {
+      "questionText": "Which statement is logically equivalent to ¬∀x H(x)?",
+      "options": [
+        "∀x ¬H(x)",
+        "∃x H(x)",
+        "∃x ¬H(x)",
+        "¬∃x H(x)"
+      ],
+      "correctAnswer": "∃x ¬H(x)",
+      "explanation": "Negating a universal quantifier yields an existential quantifier with negated predicate.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Quantifier Duality"
+    },
+    {
+      "questionText": "Which of the following contains a free variable?",
+      "options": [
+        "∀x P(x)",
+        "∃y Q(y)",
+        "P(z)",
+        "∀x ∃y R(x,y)"
+      ],
+      "correctAnswer": "P(z)",
+      "explanation": "P(z) has no quantifier binding z, so z is free.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Scope and Binding"
+    },
+    {
+      "questionText": "In the model M = ⟨{p1,l1,l2},I⟩ with I(A) = {(p1,l1)}, which of the following is true?",
+      "options": [
+        "p1 admires l2",
+        "l1 admires p1",
+        "p1 admires l1",
+        "l2 admires l1"
+      ],
+      "correctAnswer": "p1 admires l1",
+      "explanation": "The only pair in I(A) is (p1,l1).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Model Evaluation"
+    },
+    {
+      "questionText": "Which inference rule allows us to infer ∃x φ from φ[c]?",
+      "options": [
+        "Universal Instantiation",
+        "Existential Generalization",
+        "Modus Ponens",
+        "Universal Generalization"
+      ],
+      "correctAnswer": "Existential Generalization",
+      "explanation": "EG states that if φ holds for a constant c, then ∃x φ holds.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Inference Rules"
+    },
+    {
+      "questionText": "Which quantifier is represented by the upside‑down A?",
+      "options": [
+        "Existential",
+        "Universal",
+        "Both",
+        "None"
+      ],
+      "correctAnswer": "Universal",
+      "explanation": "The symbol ∀ denotes the universal quantifier.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Quantifiers"
+    },
+    {
+      "questionText": "In the sentence ∀x (P(x) → ∃y (L(y) ∧ A(x,y))), which quantifier is nested inside the other?",
+      "options": [
+        "∀x inside ∃y",
+        "∃y inside ∀x",
+        "Both at same level",
+        "None"
+      ],
+      "correctAnswer": "∃y inside ∀x",
+      "explanation": "The existential quantifier ∃y appears within the scope of the universal ∀x.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nested Quantifiers"
+    },
+    {
+      "questionText": "If the domain D were empty, what would be the truth value of ∀x P(x)?",
+      "options": [
+        "True",
+        "False",
+        "Undefined",
+        "Depends on P"
+      ],
+      "correctAnswer": "True",
+      "explanation": "With no elements, the universal statement is vacuously true.",
+      "targetDifficulty": "Hard",
+      "subtopic": "Empty Domain Edge Case"
+    },
+    {
+      "questionText": "Which of the following is NOT a correct interpretation of a 1‑place predicate?",
+      "options": [
+        "I(P) is a set of elements of D",
+        "I(P) is a set of 1‑tuples of elements of D",
+        "I(P) is a function from D to D",
+        "I(P) is a single element of D"
+      ],
+      "correctAnswer": "I(P) is a function from D to D",
+      "explanation": "A predicate is interpreted as a set of tuples, not a function.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Interpretation Function"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 1,
+    "maxAttemptsAllowed": 1,
+    "cumulativeInputTokens": 1431,
+    "cumulativeOutputTokens": 831,
+    "maxTokenBudgetPerCall": 3000,
+    "totalTokenBudget": 3000,
+    "latencyMs": 2938
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "Quota fulfilled"
+  },
+  "timestamp": "2026-11-05T20:28:20.917Z"
+}

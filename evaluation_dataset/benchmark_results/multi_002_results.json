@@ -1,0 +1,150 @@
+{
+  "benchmarkPhase": "PHASE_2_MULTI_LECTURE_EXPANSION",
+  "datasetId": "MULTI_002",
+  "subject": "Computer Science and Engineering",
+  "topic": "Operating Systems - Unit 3 Memory Management and Synchronization",
+  "modality": "VOICE_PLUS_MATERIAL",
+  "gitCommit": "4a526909887818a118d25cd2bee8f7cff6d01f2b",
+  "timestamp": "2026-10-29T13:42:31.414Z",
+  "assets": {
+    "audio": {
+      "filename": "audio.mp3",
+      "sha256": "771b073e0877b3fe1ed7166963bfec29f72940b1b5c5ce682c593ef7583d5a6d",
+      "fileSizeBytes": 318253485,
+      "durationSeconds": 7956.31,
+      "transcriptLengthChars": 104952,
+      "compressionTimeSec": 46,
+      "transcriptionTimeSec": 24.6
+    },
+    "material": {
+      "filename": "material.pdf",
+      "sha256": "a65d89ed92dd63bdab9bfe2ad630e8feb4e7e8e33add28f3edb9a4c4bf2d487e",
+      "fileSizeBytes": 1246692,
+      "numPages": 40,
+      "extractedChars": 47051
+    }
+  },
+  "pipelineExecution": {
+    "sessionId": "live_multi002_eval_1793280907741",
+    "requestedCount": 3,
+    "deliveredCount": 2,
+    "generationDurationSec": 435.645,
+    "pipelineStatus": "COMPLETED_WITH_PARTIAL_FULFILLMENT"
+  },
+  "evaluationSummary": {
+    "usableCount": 0,
+    "usableYield": "0 / 2",
+    "usablePercentage": "0.0%",
+    "dimensionPassRates": {
+      "dimension1_Correctness": "2 / 2",
+      "dimension2_Grounding": "0 / 2",
+      "dimension3_CognitiveFit": "2 / 2",
+      "dimension4_StemAlignment": "2 / 2"
+    }
+  },
+  "questions": [
+    {
+      "questionIndex": 1,
+      "difficulty": "Medium",
+      "stem": "In direct communication IPC, what is the primary operational requirement for a sender process to transmit a message?",
+      "options": [
+        "Allocating a dedicated hardware interrupt line",
+        "Broadcasting the message to the system bus",
+        "Enabling shared memory segments for all processes",
+        "Explicitly specifying the destination process ID"
+      ],
+      "correctAnswer": "Explicitly specifying the destination process ID",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 18,
+        "maxOptionWords": 7,
+        "optionLengthRatio": 1.17
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 0,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "primaryDisposition": "UNGROUNDED_EVIDENCE_CLAIM",
+      "groundingAudit": {
+        "status": "FAILED",
+        "reasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM: Candidate asserts \"requirement sender\" process \"message\", but evidence attributes this to \"memory consumer\""
+        ]
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.4,
+        "failureReasons": [
+          "UNGROUNDED_EVIDENCE_CLAIM",
+          "TIER_COGNITIVE_MISMATCH",
+          "FOREIGN_DOMAIN_CONTAMINATION"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option directly names the required operational step (specifying the destination PID) that answers the 'what is the primary operational requirement' question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 2,
+      "difficulty": "Medium",
+      "stem": "If two cooperating processes simultaneously send print jobs to a single printer, violating the default non‑shareable resource rule, what is the most likely result?",
+      "options": [
+        "Their outputs will interleave, producing a corrupted document with mixed pages.",
+        "The operating system will automatically serialize the jobs, preserving each document intact.",
+        "Both processes will print faster because they use the printer concurrently.",
+        "The printer will deadlock, causing both processes to wait indefinitely."
+      ],
+      "correctAnswer": "Their outputs will interleave, producing a corrupted document with mixed pages.",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 24,
+        "maxOptionWords": 12,
+        "optionLengthRatio": 1.2
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 0,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "primaryDisposition": "UNGROUNDED_EVIDENCE_CLAIM",
+      "groundingAudit": {
+        "status": "FAILED",
+        "reasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM: Candidate asserts \"two cooperating\" processes \"simultaneously\", but evidence attributes this to \"multiple\""
+        ]
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.95,
+        "failureReasons": [
+          "FOREIGN_DOMAIN_CONTAMINATION",
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option (A) explicitly describes the most likely result—interleaved, corrupted output—directly answering the 'what is the most likely result?' question.",
+          "mismatchDetails": null
+        }
+      }
+    }
+  ]
+}

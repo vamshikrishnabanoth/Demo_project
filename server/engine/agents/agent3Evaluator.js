@@ -33,6 +33,7 @@ const EVALUATOR_FAILURE_CODES = {
   EVALUATION_CONTRACT_VIOLATION: 'EVALUATION_CONTRACT_VIOLATION',
   UNGROUNDED_EVIDENCE_CLAIM: 'UNGROUNDED_EVIDENCE_CLAIM',
   UNGROUNDED_RELATIONAL_CLAIM: 'UNGROUNDED_RELATIONAL_CLAIM',
+  UNGROUNDED_VARIABLE_CLAIM: 'UNGROUNDED_VARIABLE_CLAIM',
   FACTUAL_CONTRADICTION: 'FACTUAL_CONTRADICTION',
   FOREIGN_DOMAIN_CONTAMINATION: 'FOREIGN_DOMAIN_CONTAMINATION',
   INSUFFICIENT_EVIDENCE_FOR_HARD: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
@@ -40,7 +41,16 @@ const EVALUATOR_FAILURE_CODES = {
   CODE_SYNTAX_ERROR: 'CODE_SYNTAX_ERROR',
   TEACHER_BOUNDARY_VIOLATION: 'TEACHER_BOUNDARY_VIOLATION',
   PEDAGOGICAL_DEFECT: 'PEDAGOGICAL_DEFECT',
-  VERIFICATION_FAILED: 'VERIFICATION_FAILED'
+  VERIFICATION_FAILED: 'VERIFICATION_FAILED',
+  DISTRACTOR_INSUFFICIENT_COGNITIVE_DEMAND: 'DISTRACTOR_INSUFFICIENT_COGNITIVE_DEMAND',
+  DISTRACTOR_ABSURD: 'DISTRACTOR_ABSURD',
+  DISTRACTOR_DUPLICATE_MISCONCEPTION: 'DISTRACTOR_DUPLICATE_MISCONCEPTION',
+  DISTRACTOR_UNSUPPORTED: 'DISTRACTOR_UNSUPPORTED',
+  DISTRACTOR_AMBIGUOUS: 'DISTRACTOR_AMBIGUOUS',
+  DISTRACTOR_FORMAT_ASYMMETRY: 'DISTRACTOR_FORMAT_ASYMMETRY',
+  DISTRACTOR_IMPLAUSIBLE_SUBSET: 'DISTRACTOR_IMPLAUSIBLE_SUBSET',
+  DISTRACTOR_WEAK_FILLER: 'DISTRACTOR_WEAK_FILLER',
+  DISTRACTOR_GENERIC_FILLER: 'DISTRACTOR_GENERIC_FILLER'
 };
 
 const OPTION_VERDICTS = {
@@ -48,7 +58,8 @@ const OPTION_VERDICTS = {
   PLAUSIBLE_DISTRACTOR: 'PLAUSIBLE_DISTRACTOR',
   AMBIGUOUS: 'AMBIGUOUS',
   UNGROUNDED: 'UNGROUNDED',
-  ABSURD: 'ABSURD'
+  ABSURD: 'ABSURD',
+  INSUFFICIENT_DEMAND: 'INSUFFICIENT_DEMAND'
 };
 
 class Agent3Evaluator {
@@ -210,6 +221,8 @@ EVALUATION DIRECTIVES:
      * Hard (APPLY/DIAGNOSE/PREDICT_CONSTRAINT): Concrete scenario diagnosis, constraint resolution, fault prediction.
    - Target Difficulty is "${requestedTier}" and Intended Operation is "${intendedOp}".
    - If the actual cognitive demand does not match the requested tier, reject with TIER_COGNITIVE_MISMATCH.
+6b. TRANSFORMATION OF ANALOGIES INTO TECHNICAL ASSESSMENTS (CRITERION D):
+   - Reject any question that tests trivial recall of a conversational metaphor, analogy, or classroom story (e.g., asking why the teacher mentioned plants or what sunlight represented). Such questions test trivial memory of a casual illustration rather than computer science/academic knowledge. Flag with TRIVIAL_ANALOGY_RECALL.
 7. OUTPUT SCHEMA (Return strictly raw JSON):
 {
   "status": "PASS" or "FAIL",
@@ -254,8 +267,10 @@ EVALUATION DIRECTIVES:
 [TARGET SPECIFICATION]
 Concept: ${target.concept || candidateMCQ.metadata?.concept || 'Target Concept'}
 Subtopic: ${target.subtopic || 'General Topic'}
+Learning Objective: ${target.learningObjective || target.concept || 'Grounded understanding'}
 Target Difficulty: ${requestedTier}
 Intended Cognitive Operation: ${intendedOp}
+Distractor Strategy: ${target.distractorStrategy || 'Calibrate distractors to ' + requestedTier + ' cognitive demand'}
 
 [CANDIDATE MCQ]
 Question: ${candidateMCQ.questionText}
@@ -275,7 +290,7 @@ ${evidenceContext}
         temperature: 0.1,
         model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
         sessionId: evidencePackage?.sessionId,
-        maxTokens: 1400,
+        maxTokens: 2500,
         operation: 'EVALUATION'
       });
       const evalTimeout = new Promise((_, reject) =>
@@ -455,6 +470,57 @@ ${evidenceContext}
       }
     }
 
+    // 4b. Hard enforcement: Deterministic preAudit failures (distractors, grounding, option structure)
+    // must never be overwritten or silently discarded by the LLM Critic
+    if (preAudit && !preAudit.passed && Array.isArray(preAudit.failureReasons) && preAudit.failureReasons.length > 0) {
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      if (!Array.isArray(parsed.failureReasons)) {
+        parsed.failureReasons = [];
+      }
+      for (const reason of preAudit.failureReasons) {
+        if (!parsed.failureReasons.includes(reason)) {
+          parsed.failureReasons.push(reason);
+        }
+      }
+      parsed.failureReason = parsed.failureReasons.join('; ');
+      const synthesizedInstruction = this._synthesizeRepairInstruction(parsed.failureReasons, candidateMCQ, target);
+      parsed.repairInstruction = parsed.repairInstruction
+        ? `${parsed.repairInstruction} ${synthesizedInstruction}`
+        : synthesizedInstruction;
+    }
+
+    const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
+    const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
+
+    // 5.a. Hard-Tier & Distractor Cognitive Quality Gate (Independent of Agent 2)
+    const isHardTierTarget = String(requestedTier).toLowerCase() === 'hard';
+    const hasDistractorFailure = parsed.optionAnalysis.some(o =>
+      !o.isKey && (
+        o.verdict === 'ABSURD' ||
+        o.verdict === 'INSUFFICIENT_DEMAND' ||
+        (isHardTierTarget && o.distractorPlausibility === 'LOW')
+      )
+    );
+
+    if (hasDistractorFailure) {
+      parsed.status = 'FAIL';
+      parsed.passed = false;
+      parsed.verdict = 'FAIL';
+      const code = parsed.optionAnalysis.some(o => o.verdict === 'ABSURD')
+        ? EVALUATOR_FAILURE_CODES.DISTRACTOR_ABSURD
+        : EVALUATOR_FAILURE_CODES.DISTRACTOR_INSUFFICIENT_COGNITIVE_DEMAND;
+      if (!parsed.failureReasons.includes(code)) {
+        parsed.failureReasons.push(code);
+      }
+      const distractorDetail = 'Distractors fail tier-specific cognitive demand (superficial, absurd, or low plausibility options on ' + requestedTier + ' target)';
+      parsed.failureReason = parsed.failureReason ? `${parsed.failureReason}; ${distractorDetail}` : distractorDetail;
+      if (!parsed.repairInstruction) {
+        parsed.repairInstruction = 'REWRITE DISTRACTORS: Replace superficial or weak distractors with technically credible, plausible competing mechanisms appropriate for ' + requestedTier + ' difficulty.';
+      }
+    }
+
     // 5. Ensure distractor plausibility for valid distractors is normalized to HIGH
     if (parsed.optionAnalysis.length > 0) {
       parsed.optionAnalysis.forEach(o => {
@@ -465,8 +531,6 @@ ${evidenceContext}
     }
 
     // 6. Hard enforcement: Deterministic TIER_COGNITIVE_MISMATCH must never be overwritten by LLM Critic
-    const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
-    const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
 
     const hasDeterministicMismatch = Array.isArray(preAudit.failureReasons) &&
       preAudit.failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
@@ -721,7 +785,8 @@ ${evidenceContext}
    */
   _runDeterministicAudit(candidateMCQ, target = {}, evidenceText = '', errorReason = '', evidencePackage = null) {
     const failureReasons = [];
-    const cleanEvidence = (evidenceText || '').replace(/\[[A-Z_\s]{3,}\]/g, ' ').toLowerCase();
+    const evidenceStr = typeof evidenceText === 'string' ? evidenceText : (evidenceText?.unifiedRawContent || evidencePackage?.unifiedRawContent || '');
+    const cleanEvidence = evidenceStr.replace(/\[[A-Z_\s]{3,}\]/g, ' ').toLowerCase();
     const requestedTier = target.targetDifficulty || candidateMCQ.metadata?.targetDifficulty || 'Medium';
     const intendedOp = target.intendedCognitiveOperation || candidateMCQ.metadata?.intendedCognitiveOperation || 
       (requestedTier === 'Easy' ? 'RECALL' : (requestedTier === 'Medium' ? 'COMPARE' : 'DIAGNOSE'));
@@ -831,6 +896,18 @@ ${evidenceContext}
         if (flaw.code === 'GIVEAWAY_LENGTH_BIAS' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR)) {
           failureReasons.push(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR);
         }
+        if (flaw.code === 'ERR_FORMAT_ASYMMETRY' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_FORMAT_ASYMMETRY)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.DISTRACTOR_FORMAT_ASYMMETRY);
+        }
+        if (flaw.code === 'ERR_IMPLAUSIBLE_SUBSET_RULE' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_IMPLAUSIBLE_SUBSET)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.DISTRACTOR_IMPLAUSIBLE_SUBSET);
+        }
+        if (flaw.code === 'ERR_INPUT_SYNTAX_FILLER' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_WEAK_FILLER)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.DISTRACTOR_WEAK_FILLER);
+        }
+        if (flaw.code === 'ERR_GENERIC_NON_DOMAIN_FILLER' && !failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_GENERIC_FILLER)) {
+          failureReasons.push(EVALUATOR_FAILURE_CODES.DISTRACTOR_GENERIC_FILLER);
+        }
       }
     }
 
@@ -852,7 +929,7 @@ ${evidenceContext}
       evidencePackage
     );
     if (!gateCheck.isJustified) {
-      if (gateCheck.reason.includes('UNGROUNDED_RELATIONAL_CLAIM') && !failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_RELATIONAL_CLAIM)) {
+      if ((gateCheck.reason.includes('UNGROUNDED_RELATIONAL_CLAIM') || gateCheck.reason.includes('UNGROUNDED_VARIABLE_CLAIM')) && !failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_RELATIONAL_CLAIM)) {
         failureReasons.push(EVALUATOR_FAILURE_CODES.UNGROUNDED_RELATIONAL_CLAIM);
       }
       if (gateCheck.reason.includes('FACTUAL_CONTRADICTION') && !failureReasons.includes(EVALUATOR_FAILURE_CODES.FACTUAL_CONTRADICTION)) {
@@ -861,6 +938,18 @@ ${evidenceContext}
       if (gateCheck.reason.includes('FOREIGN_TOPIC_CONTAMINATION') && !failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
         failureReasons.push(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION);
       }
+    }
+
+    // 3d-2. Trivial Analogy / Metaphor Recall Gate (Criterion D)
+    const qStemLower = (candidateMCQ.questionText || '').toLowerCase();
+    const isTrivialAnalogyRecall = (
+      /why\s+(?:did\s+)?(?:the\s+)?(?:teacher|instructor|speaker|professor)\s+(?:mention|use|bring\s+up|discuss|talk\s+about)\s+(?:plants?|sunlight|water|gardening|trees?|grocery|store|shopping|car|vehicle|story|anecdote)/i.test(qStemLower) ||
+      /what\s+did\s+(?:the\s+)?(?:teacher|instructor|speaker|professor)\s+compare\s+.*\s+to/i.test(qStemLower) ||
+      /in\s+(?:the\s+)?(?:teacher'?s?|instructor'?s?)\s+(?:analogy|metaphor|story|anecdote)/i.test(qStemLower) ||
+      /in\s+the\s+(?:plant|biological)\s+analogy/i.test(qStemLower)
+    );
+    if (isTrivialAnalogyRecall && !failureReasons.includes('TRIVIAL_ANALOGY_RECALL')) {
+      failureReasons.push('TRIVIAL_ANALOGY_RECALL');
     }
 
     // 3e. Anti-Meta-Question Defect Check (Topic Mode)
@@ -923,35 +1012,63 @@ ${evidenceContext}
     let isCalibrated = true;
     let mismatchDetails = null;
 
-    if (evaluatedDemand === 'UNCERTAIN') {
-      const hasStrictGroundingFailure = failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) ||
-        failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION) ||
-        failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
-
-      if (hasStrictGroundingFailure) {
+    if (requestedTier === 'Hard') {
+      if (evaluatedDemand === 'UNCERTAIN') {
         isCalibrated = false;
-        mismatchDetails = `Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: ${demandReasoning}); failing conservative calibration for requested ${requestedTier} tier (${intendedOp})`;
+        mismatchDetails = `Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: ${demandReasoning}); failing conservative calibration for requested Hard tier (${intendedOp})`;
+        failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      } else if (evaluatedDemand !== 'DIAGNOSE') {
+        // Hard tier strictly requires genuine scenario diagnosis or multi-constraint fault analysis.
+        // Operations like RECALL, EXPLAIN_MECHANISM, COMPARE, or TRACE belong to Easy or Medium tiers.
+        isCalibrated = false;
+        mismatchDetails = `Question demands ${evaluatedDemand} (${demandReasoning}), but Hard tier requires multi-constraint diagnosis or anomaly scenario analysis (${intendedOp})`;
         failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
       } else {
-        // High evidence grounding with valid options: accept as compatible with target tier
-        isCalibrated = true;
+        // Evaluated demand is DIAGNOSE: do not equate label DIAGNOSE with proof of Hard demand.
+        // Verify reasoning actually required against stem, options, and supporting evidence.
+        const optList = Array.isArray(candidateMCQ.options) ? candidateMCQ.options : [];
+        const avgWords = optList.length > 0
+          ? optList.reduce((sum, o) => sum + String(o || '').trim().split(/\s+/).filter(Boolean).length, 0) / optList.length
+          : 0;
+        const isSuperficialPseudoDiagnose = /\b(?:what is the definition|which term|what is called|stands for)\b/i.test(qLower) ||
+          (avgWords <= 3 && !optList.some(o => /\b(?:because|due to|caused by|resulting in)\b/i.test(o || ''))) ||
+          (/\bwhat (?:integer|value|number) (?:must be |is )?(?:printed|returned)\b/i.test(qLower) && optList.every(o => /^(?:[-+]?\d+|zero|one)$/i.test(String(o || '').trim())));
+
+        if (isSuperficialPseudoDiagnose) {
+          isCalibrated = false;
+          mismatchDetails = `Question claims DIAGNOSE demand but interrogative ask is superficial definition or static value lookup; failing Hard calibration`;
+          failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+        } else {
+          isCalibrated = true;
+        }
       }
-    } else if (requestedTier === 'Hard' && evaluatedDemand !== 'DIAGNOSE') {
+    } else if (requestedTier === 'Medium') {
       if (evaluatedDemand === 'RECALL') {
         isCalibrated = false;
-        mismatchDetails = `Question demands only factual definition/recall, but Hard scenario diagnosis (${intendedOp}) was requested`;
+        mismatchDetails = `Question demands only factual definition/recall, but Medium operational mechanism/tradeoff analysis (${intendedOp}) was requested`;
         failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+      } else if (evaluatedDemand === 'UNCERTAIN') {
+        const hasStrictGroundingFailure = failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) ||
+          failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION) ||
+          failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR);
+
+        if (hasStrictGroundingFailure) {
+          isCalibrated = false;
+          mismatchDetails = `Question cognitive demand could not be determined with sufficient confidence (UNCERTAIN: ${demandReasoning}); failing conservative calibration for requested Medium tier (${intendedOp})`;
+          failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
+        } else {
+          isCalibrated = true;
+        }
       } else {
-        // Substantive operational mechanism/comparison: accept as valid application-level question rather than discarding grounded question
         isCalibrated = true;
       }
-    } else if (requestedTier === 'Medium' && evaluatedDemand === 'RECALL') {
-      isCalibrated = false;
-      mismatchDetails = `Question demands only factual definition/recall, but Medium operational mechanism/tradeoff analysis (${intendedOp}) was requested`;
-      failureReasons.push(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH);
-    } else if (requestedTier === 'Easy' && evaluatedDemand !== 'RECALL') {
-      // If an Easy question contains instructional mechanism or simple comparison, accept it rather than failing
-      isCalibrated = true;
+    } else if (requestedTier === 'Easy') {
+      if (evaluatedDemand !== 'RECALL') {
+        // If an Easy question contains simple instructional mechanism, allow it if requested
+        isCalibrated = true;
+      } else {
+        isCalibrated = true;
+      }
     }
 
     // 5. Option-by-Option Breakdown
@@ -1141,7 +1258,7 @@ ${evidenceContext}
    * Returns: { demand: 'RECALL' | 'COMPARE' | 'DIAGNOSE' | 'UNCERTAIN', reasoning: string }
    */
   _evaluateCognitiveDemand(candidateMCQ = {}, target = {}) {
-    const rawQ = String(candidateMCQ.questionText || '');
+    const rawQ = String(candidateMCQ.questionText || candidateMCQ.questionStem || '');
     const qNormalized = rawQ
       .replace(/[\u2010-\u2015\u2212]/g, '-')
       .replace(/[\u2018\u2019]/g, "'")
@@ -1241,6 +1358,15 @@ ${evidenceContext}
       ? options.reduce((sum, o) => sum + String(o || '').trim().split(/\s+/).filter(Boolean).length, 0) / options.length 
       : 0;
 
+    const isRelationalCodeExpression = options.length > 0 && options.every(o => {
+      const trimmed = String(o || '').trim();
+      const hasIndexOrSnippet = /[a-zA-Z0-9_]+\[[^\]]+\]/.test(trimmed) ||
+        DifficultyAwareDistractorValidator.isCodeSnippet(trimmed) ||
+        /\b[a-zA-Z0-9_]+\s*(?:==|!=|<=|>=|<|>)\s*[a-zA-Z0-9_]+/.test(trimmed);
+      const hasRelationalOp = /[<>!=]=?|[+\-*/%]/.test(trimmed);
+      return hasIndexOrSnippet && hasRelationalOp;
+    });
+
     const optionsAreSingleTerms = avgOptionWords <= 3 && !options.some(o => 
       /\b(?:because|caused by|resulting in|due to|when|while|violat)\b/i.test(o || '')
     );
@@ -1251,10 +1377,10 @@ ${evidenceContext}
 
     // B. Comparative Ask:
     const hasComparativeAsk = (
-      /\b(?:compar(?:e|es|ed|ing|ison)|contrast(?:s|ed|ing)?|distinguish(?:es|ed|ing)?|difference(?:s)? between|trade-?off(?:s)?|advantage(?:s)? of .+ over|disadvantage(?:s)? of)\b/i.test(qLower) ||
-      /\b(?:how do .+ differ in|how does .+ differ from|differ(?:s)? in (?:their |its )?(?:adjustment|handling|behavior|recovery|transition|response))\b/i.test(qLower) ||
+      /\b(?:compar(?:e|es|ed|ing|ison)|contrast(?:s|ed|ing)?|distinguish(?:es|ed|ing)?|difference(?:s)? between|trade-?off(?:s)?|advantage(?:s)? of .+ over|disadvantage(?:s)? of|division of responsibility between|roles? (?:of .+ )?diverge|diverge(?:s|d|nce)? between)\b/i.test(qLower) ||
+      /\b(?:how do .+ differ|how does .+ differ from|differ(?:s)? (?:in|during|across))\b/i.test(qLower) ||
       /\b(?:fifo and lru|paging and segmentation|direct mapped and set associative|optimistic .+ and pessimistic|round robin .+ and shortest job first|link-state and distance-vector|clustered and non-clustered)\b/i.test(qLower) ||
-      (options.some(o => /\b(?:while|whereas)\s+[^,\n\r]+?\brequests?\s+(?:are|must|will)\b/i.test(o || '')) && !optionsAreSingleTerms)
+      (options.some(o => /\b(?:while|whereas)\b/i.test(o || '')) && !optionsAreSingleTerms)
     );
 
     // C. Pure Definitional / Terminology Ask:
@@ -1283,7 +1409,10 @@ ${evidenceContext}
       /\bwhat (?:(?:fundamental|core|basic|ordering|structural|key|primary)\s+)*(?:property|rule|invariant|relationship|behavior)\b(?!\s+violation)/i.test(qLower) ||
       /\b(?:what is the (?:key |core |fundamental |primary )?property of)\b/i.test(qLower) ||
       /\b(?:which (?:property|rule|invariant) governs)\b/i.test(qLower) ||
-      /\b(?:why is [a-z0-9_-]+ (?:conceptually )?classified as\b)/i.test(qLower)
+      /\b(?:why is [a-z0-9_-]+ (?:conceptually )?classified as\b)/i.test(qLower) ||
+      /\b(?:what is the (?:exact )?number of (?:edges|vertices|nodes|leaves|elements))\b/i.test(qLower) ||
+      /\b(?:how many (?:edges|vertices|nodes|leaves|elements) (?:are|exist|appear|does))\b/i.test(qLower) ||
+      /\b(?:what formula (?:expresses|calculates|governs))\b/i.test(qLower)
     );
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -1299,7 +1428,7 @@ ${evidenceContext}
     }
 
     // Guardrail 2: Direct terminology recognition or short factual query
-    if (optionsAreSingleTerms && !hasComparativeAsk && !hasDiagnosticAsk && !hasAnomalyOrConflict && !hasConcreteTransactionSchedule && !hasConcreteInstructionSequence && !hasReferenceOrTraversalSequence) {
+    if (optionsAreSingleTerms && !isRelationalCodeExpression && !hasComparativeAsk && !hasDiagnosticAsk && !hasAnomalyOrConflict && !hasConcreteTransactionSchedule && !hasConcreteInstructionSequence && !hasReferenceOrTraversalSequence) {
       return {
         demand: 'RECALL',
         reasoning: 'Direct terminology recognition or factual component identification.'
@@ -1342,6 +1471,20 @@ ${evidenceContext}
       };
     }
 
+    // Condition 4A-2: Algorithmic Code Condition & Transition Tracing (Medium)
+    // Distinguishes relational array comparisons/invariants (e.g. prices[i] < prices[i+1]) from syntax recall
+    const isAlgorithmicCodeLogic = isRelationalCodeExpression ||
+      (/\b(?:condition|transition|predicate|expression|statement|loop|implementation|logic)\b/i.test(qLower) &&
+       /\b(?:determines?|contributes?|increments?|updates?|evaluates?|accumulates?|accumulation|executes?|iterates?|calculat(?:es?|ing)|implements?)\b/i.test(qLower) &&
+       options.some(o => /[a-zA-Z0-9_]+\[[^\]]+\]|[<>!=]=?|[+\-*/%]/.test(o)));
+
+    if (isAlgorithmicCodeLogic) {
+      return {
+        demand: 'TRACE',
+        reasoning: 'Requires operational reasoning about algorithmic state transitions, relational conditions, or loop accumulator updates.'
+      };
+    }
+
     // Check if the comparison is shallow metadata lookup (dates, publication years, author names) rather than operational tradeoffs:
     const hasMetadataAsk = /\b(?:publication\s+years?|publication\s+dates?|release\s+years?|calendar\s+years?|invented\s+in\s+what\s+year|names?\s+of\s+(?:the\s+)?(?:authors?|creators?|inventors?))\b/i.test(qLower) ||
       (/\b(?:publication|release|creation)\s+(?:year|date)\b/i.test(qLower) && /\b(?:identif(?:y|ying)|state|name|which)\b/i.test(qLower));
@@ -1367,7 +1510,7 @@ ${evidenceContext}
     // Condition 4C: Mechanism Explanation (Medium)
     // Requires causal explanation of how or why a rule, invariant, or protocol functions
     const isMechanismExplanation = (
-      (/\b(?:why does|how does|what allows|explain why|how are incoming (?:lock )?requests handled|by what mechanism does|how does .+ (?:ensure|guarantee|prevent|maintain|handle|resolve|eliminate)|why is .+ specifically chosen|why (?:is|are)\s+[^?]+?\b(?:prohibited|prevented|restricted|mandated|forbidden|disallowed)\s+(?:from|to)|what happens when|what occurs when|what occurs during|what is the consequence of|what is the primary effect of|how is .+ (?:managed|handled|updated|rendered|computed|calculated|processed|implemented|executed|optimized)|what steps are taken when|which of the following describes the mechanism|what is the purpose of using .+ to (?:reduce|optimize|prevent|avoid|improve)|what action does .+ take when|what result occurs when)\b/i.test(qLower)) &&
+      (/\b(?:why does|how does|what allows|explain why|how are incoming (?:lock )?requests handled|by what mechanism does|how does .+ (?:ensure|guarantee|prevent|maintain|handle|resolve|eliminate|affect|impact|change|alter|influence|modify)|why is .+ specifically chosen|why (?:is|are)\s+[^?]+?\b(?:prohibited|prevented|restricted|mandated|forbidden|disallowed|excluded|omitted|ignored|bypassed|skipped|dropped)\s*(?:from|to|in|by)?|what happens when|what occurs when|what occurs during|what is the consequence of|what is the primary effect of|how is .+ (?:managed|handled|updated|rendered|computed|calculated|processed|implemented|executed|optimized)|what steps are taken when|which of the following describes the mechanism|what is the purpose of using .+ to (?:reduce|optimize|prevent|avoid|improve)|what action does .+ take when|what result occurs when)\b/i.test(qLower)) &&
       !hasDefinitionalAsk &&
       !optionsAreSingleTerms &&
       !hasComparativeAsk
@@ -1377,6 +1520,19 @@ ${evidenceContext}
       return {
         demand: 'EXPLAIN_MECHANISM',
         reasoning: 'Requires causal explanation of how or why an invariant, protocol rule, or system mechanism produces an operational outcome.'
+      };
+    }
+
+    // Guardrail: Static constant output lookup (Easy)
+    // Direct integer/string constant return queries without mathematical derivation or causal mechanism
+    const isStaticOutputLookup = /\bwhat (?:integer|value|number|constant) (?:must be |is )?(?:printed|returned)\b/i.test(qLower) &&
+      options.every(o => /^(?:[-+]?\d+|zero|one|null|true|false)$/i.test(String(o || '').trim())) &&
+      !/\b(?:calculate|compute|derive|sum of|total profit|difference between)\b/i.test(qLower);
+
+    if (isStaticOutputLookup) {
+      return {
+        demand: 'RECALL',
+        reasoning: 'Direct static output constant lookup without mathematical calculation or causal explanation.'
       };
     }
 
@@ -1465,6 +1621,18 @@ ${evidenceContext}
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.CORRECT_ANSWER_NOT_IN_OPTIONS)) {
       instructions.push('Ensure correctAnswer matches one of the 4 options verbatim.');
+    }
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_FORMAT_ASYMMETRY)) {
+      instructions.push('Maintain strict option format parallelism: if the correct answer is formatted as code syntax, all distractors must also be formatted as code syntax, not prose explanations.');
+    }
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_IMPLAUSIBLE_SUBSET)) {
+      instructions.push('Ensure distractors are mathematically plausible: do not claim single elements cannot form a valid subset without an explicit minimum-size constraint.');
+    }
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_WEAK_FILLER)) {
+      instructions.push('Do not use arbitrary competitive programming input line numbers or input stream tokens as distractors; formulate authentic algorithmic misconceptions.');
+    }
+    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_GENERIC_FILLER)) {
+      instructions.push('Do not use generic boolean flags or transaction counters when testing numeric price, cost, or distance variables.');
     }
     return instructions.length > 0 ? instructions.join(' ') : 'Ensure question is unambiguous, grounded, and matches requested difficulty.';
   }

@@ -30,7 +30,7 @@ export const STAGE_DEFINITIONS = [
   {
     id: 'pdi',
     order: '02B',
-    name: 'PDI Representation Router',
+    name: 'Modality Representation Router',
     subtitle: 'SUMMARY / BLUEPRINT / UNIFIED',
     icon: GitBranch,
     backendStage: 'EVIDENCE_PACKAGE',

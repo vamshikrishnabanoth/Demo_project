@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "During the reversible isothermal expansion (process 1→2) of an ideal‑gas working fluid in the Carnot cycle, why is the heat absorbed (Q_H) equal to the work done by the gas?",
+      "options": [
+        "Because the temperature remains constant, making the internal energy change ΔU equal to zero",
+        "Because the pressure remains constant throughout the expansion",
+        "Because the volume remains constant during the process",
+        "Because the entropy of the gas decreases during the expansion"
+      ],
+      "correctAnswer": "Because the temperature remains constant, making the internal energy change ΔU equal to zero",
+      "explanation": "For an ideal gas, internal energy depends only on temperature. In an isothermal process ΔU=0, so by the First Law Q = W.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Carnot cycle – Isothermal expansion"
+    },
+    {
+      "questionText": "How does the derivation show that the volume ratio V2/V1 equals V3/V4 in the Carnot cycle?",
+      "options": [
+        "By equating the work done during the isothermal processes",
+        "By applying the ideal gas law at constant temperature",
+        "By dividing the two adiabatic relations T_H V2^{γ-1}=T_C V3^{γ-1} and T_H V1^{γ-1}=T_C V4^{γ-1}",
+        "By assuming the heat capacities are identical at the hot and cold reservoirs"
+      ],
+      "correctAnswer": "By dividing the two adiabatic relations T_H V2^{γ-1}=T_C V3^{γ-1} and T_H V1^{γ-1}=T_C V4^{γ-1}",
+      "explanation": "Dividing the adiabatic equations for processes 2→3 and 4→1 eliminates T_H and T_C, yielding (V2/V1)^{γ-1}=(V3/V4)^{γ-1}, so V2/V1=V3/V4.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Adiabatic relationships in Carnot cycle"
+    },
+    {
+      "questionText": "In a reversible Carnot cycle, the ratio of the heat rejected (Q_C) to the heat absorbed (Q_H) is equal to:",
+      "options": [
+        "T_H / T_C",
+        "T_C / T_H",
+        "Q_H / Q_C",
+        "W / Q_H"
+      ],
+      "correctAnswer": "T_C / T_H",
+      "explanation": "For a reversible Carnot cycle, the heat transfers satisfy Q_C/Q_H = T_C/T_H, reflecting that entropy change over the cycle is zero.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Carnot cycle efficiency"
+    },
+    {
+      "questionText": "Which statement correctly describes the effect of mechanical friction, turbulence, and finite‑temperature heat transfer on the cyclic integral \\(\\oint \\frac{dQ}{T}\\) for a real thermodynamic cycle?",
+      "options": [
+        "They cause the integral to be greater than zero.",
+        "They have no effect; the integral remains zero.",
+        "They make the integral negative, i.e., \\(\\oint \\frac{dQ}{T}<0\\).",
+        "They reverse the direction of heat flow, making the integral positive."
+      ],
+      "correctAnswer": "They make the integral negative, i.e., \\(\\oint \\frac{dQ}{T}<0\\).",
+      "explanation": "Irreversibilities such as friction, turbulence, and finite‑temperature heat transfer generate internal entropy, so the Clausius inequality gives \\(\\oint dQ/T\\le0\\) with strict inequality for real (irreversible) cycles.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Clausius inequality and entropy generation"
+    },
+    {
+      "questionText": "During the reversible isothermal expansion (process 1→2) of an ideal gas in the Carnot cycle, why is the change in internal energy \\(\\Delta U\\) equal to zero?",
+      "options": [
+        "Because temperature is constant and the internal energy of an ideal gas depends only on temperature",
+        "Because the gas does no work during the expansion",
+        "Because no heat is transferred to the gas",
+        "Because the volume of the gas remains unchanged"
+      ],
+      "correctAnswer": "Because temperature is constant and the internal energy of an ideal gas depends only on temperature",
+      "explanation": "For an ideal gas, internal energy is a function of temperature alone. In an isothermal process the temperature does not change, so \\(\\Delta U=0\\) regardless of heat or work exchange.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Isothermal process in the Carnot cycle"
+    },
+    {
+      "questionText": "In the derivation of the Carnot efficiency, which relationship between the volume ratios is obtained by comparing the two reversible adiabatic processes?",
+      "options": [
+        "V2/V1 = V3/V4",
+        "V2/V1 = (V3/V4)^{γ}",
+        "V2·V1 = V3·V4",
+        "V2/V1 = V4/V3"
+      ],
+      "correctAnswer": "V2/V1 = V3/V4",
+      "explanation": "Dividing the adiabatic equations T_H V2^{γ-1}=T_C V3^{γ-1} and T_H V1^{γ-1}=T_C V4^{γ-1} gives (V2/V1)^{γ-1}=(V3/V4)^{γ-1}, so the bases are equal: V2/V1 = V3/V4.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Adiabatic relations in Carnot cycle"
+    },
+    {
+      "questionText": "Based on the derivation of the Carnot efficiency and the definition of entropy provided in the lecture, which of the following statements correctly identifies the condition under which the cyclic integral of dQ_rev/T equals zero, and what physical quantity does this imply dQ_rev/T is an exact differential of?",
+      "options": [
+        "The integral equals zero for any real cycle, implying dQ_rev/T is an exact differential of Work.",
+        "The integral equals zero for a reversible cycle, implying dQ_rev/T is an exact differential of Entropy.",
+        "The integral equals zero for an irreversible cycle, implying dQ_rev/T is an exact differential of Enthalpy.",
+        "The integral equals zero only when T_C is zero, implying dQ_rev/T is an exact differential of Internal Energy."
+      ],
+      "correctAnswer": "The integral equals zero for a reversible cycle, implying dQ_rev/T is an exact differential of Entropy.",
+      "explanation": "The excerpt explicitly states that for a reversible cycle, the cyclic integral of dQ_rev over T equals zero. It further explains that this property proves dQ_rev/T is an exact differential of a state property defined by Clausius as Entropy (S).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Definition of Entropy and Reversible Cycles"
+    },
+    {
+      "questionText": "In real engines, why is the cyclic integral \\(\\oint \\frac{dQ}{T}\\) typically less than zero rather than equal to zero?",
+      "options": [
+        "Because heat is transferred at a single temperature throughout the cycle.",
+        "Because mechanical friction, turbulence, and finite-temperature heat transfer generate internal entropy.",
+        "Because the working substance is an ideal gas with constant internal energy.",
+        "Because the Carnot efficiency formula assumes zero entropy production."
+      ],
+      "correctAnswer": "Because mechanical friction, turbulence, and finite-temperature heat transfer generate internal entropy.",
+      "explanation": "Irreversibilities such as friction, turbulence, and heat transfer across finite temperature differences create internal entropy, making \\(\\oint dQ/T < 0\\) as stated by the Clausius inequality.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Clausius inequality / Irreversibility"
+    },
+    {
+      "questionText": "According to the excerpt, why does the internal energy change \\(\\Delta U\\) equal zero during the reversible isothermal expansion of an ideal gas?",
+      "options": [
+        "Because temperature is constant and for an ideal gas internal energy depends only on temperature",
+        "Because the gas does no work during the expansion",
+        "Because no heat is transferred to the system",
+        "Because the volume of the gas remains unchanged"
+      ],
+      "correctAnswer": "Because temperature is constant and for an ideal gas internal energy depends only on temperature",
+      "explanation": "For an ideal gas, internal energy is a function of temperature only. In an isothermal process the temperature does not change, so \\(\\Delta U=0\\).",
+      "targetDifficulty": "Easy",
+      "subtopic": "Isothermal process in the Carnot cycle"
+    },
+    {
+      "questionText": "In the derivation of the Carnot efficiency presented in the excerpt, why do the logarithmic volume terms ln(V3/V4) and ln(V2/V1) cancel out in the expression for Q_C/Q_H?",
+      "options": [
+        "Because the working fluid is assumed to be an ideal gas, making the gas constant R independent of temperature.",
+        "Because the adiabatic processes imply that the ratio of volumes for the isothermal expansion equals the ratio of volumes for the isothermal compression (V2/V1 = V3/V4).",
+        "Because the heat rejected Q_C is always equal to the heat absorbed Q_H in a reversible cycle.",
+        "Because the temperatures T_H and T_C are constant during the adiabatic processes, causing the volume changes to be negligible."
+      ],
+      "correctAnswer": "Because the adiabatic processes imply that the ratio of volumes for the isothermal expansion equals the ratio of volumes for the isothermal compression (V2/V1 = V3/V4).",
+      "explanation": "The excerpt explicitly states that by dividing the adiabatic relations for processes 2-3 and 4-1, one obtains (V2/V1)^(gamma-1) = (V3/V4)^(gamma-1), which leads to V2/V1 = V3/V4. Consequently, the logarithmic terms are identical and cancel out, leaving efficiency dependent only on temperatures.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Derivation of Carnot Efficiency"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6310,
+    "cumulativeOutputTokens": 2160,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 27240
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 4,
+  "timestamp": "2026-11-05T20:27:25.353Z"
+}

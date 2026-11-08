@@ -1,0 +1,60 @@
+{
+  "system": "System 1: Zero-Shot AQG",
+  "questions": [
+    {
+      "questionText": "Which of the following is NOT one of the four Coffman conditions required for a deadlock to occur?",
+      "options": [
+        "Mutual Exclusion",
+        "Hold and Wait",
+        "Preemption",
+        "Circular Wait"
+      ],
+      "correctAnswer": "Preemption",
+      "explanation": "The four Coffman conditions are Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. 'Preemption' is the opposite of the required condition 'No Preemption'.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Coffman Conditions"
+    },
+    {
+      "questionText": "In the context of deadlock prevention, how can the 'Circular Wait' condition be eliminated?",
+      "options": [
+        "By allowing the OS to forcibly take resources from processes",
+        "By requiring processes to release all resources before requesting new ones",
+        "By assigning a global ordering to resources and requiring requests in ascending order",
+        "By ensuring all resources are shareable"
+      ],
+      "correctAnswer": "By assigning a global ordering to resources and requiring requests in ascending order",
+      "explanation": "The lecture states that to break Circular Wait, a global integer ordering F(R) is assigned to resources, and processes must request them in strictly ascending numerical order, which prevents cycles.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Deadlock Prevention"
+    },
+    {
+      "questionText": "What is the primary requirement for an operating system to implement Deadlock Avoidance using the Banker's Algorithm?",
+      "options": [
+        "The OS must be able to preempt resources from processes",
+        "The OS must know the maximum resources each process will ever claim in advance",
+        "The OS must detect cycles in the wait-for graph at runtime",
+        "The OS must ensure that no process holds more than one resource at a time"
+      ],
+      "correctAnswer": "The OS must know the maximum resources each process will ever claim in advance",
+      "explanation": "Deadlock Avoidance requires advance knowledge of the maximum resources each process will claim to evaluate if a state is safe before granting a request.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Deadlock Avoidance"
+    },
+    {
+      "questionText": "In the Banker's Algorithm, how is the 'Need' matrix calculated?",
+      "options": [
+        "Need[i, j] = Max[i, j] + Allocation[i, j]",
+        "Need[i, j] = Max[i, j] - Allocation[i, j]",
+        "Need[i, j] = Available[j] - Allocation[i, j]",
+        "Need[i, j] = Allocation[i, j] - Max[i, j]"
+      ],
+      "correctAnswer": "Need[i, j] = Max[i, j] - Allocation[i, j]",
+      "explanation": "The lecture defines Need[i, j] as the remaining resources Pi may request, calculated by subtracting the currently allocated resources from the maximum demand.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Banker's Algorithm Data Structures"
+    }
+  ],
+  "durationMs": 2357,
+  "rawResponseLength": 2875,
+  "timestamp": "2026-11-05T19:28:17.175Z"
+}

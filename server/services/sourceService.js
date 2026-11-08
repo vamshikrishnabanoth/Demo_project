@@ -31,8 +31,15 @@ class SourceService {
       let extractedText = '';
 
       if (mimeType === '.pdf') {
-        const data = await pdfParse(fileBuffer);
-        extractedText = data.text;
+        try {
+          const PdfMultimodalExtractor = require('../engine/documentRouter/pdfMultimodalExtractor');
+          const docModel = await PdfMultimodalExtractor.extract(fileBuffer, { filename: path.basename(filePath) });
+          extractedText = docModel.toUnifiedText();
+        } catch (pdfErr) {
+          console.warn(`⚠️ [SourceService] PdfMultimodalExtractor notice: ${pdfErr.message}. Falling back to default pdfParse.`);
+          const data = await pdfParse(fileBuffer);
+          extractedText = data.text;
+        }
       } else if (mimeType === '.docx') {
         const result = await mammoth.extractRawText({ buffer: fileBuffer });
         extractedText = result.value;

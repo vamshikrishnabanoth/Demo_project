@@ -1,0 +1,526 @@
+{
+  "benchmarkPhase": "PRIORITY_3_QUANTITY_SCALING",
+  "runId": "RUN_2_MULTI001_N10",
+  "datasetId": "MULTI_001",
+  "subject": "Computer Organization and Architecture (COA)",
+  "topic": "Memory Hierarchy, Cache, Paging, and Virtual Memory",
+  "gitCommit": "4a526909887818a118d25cd2bee8f7cff6d01f2b",
+  "timestamp": "2026-10-31T01:36:28.860Z",
+  "parameters": {
+    "requestedCount": 10,
+    "deliveredCount": 10,
+    "difficulty": "Balanced",
+    "generationDurationSec": 732
+  },
+  "scalingMetrics": {
+    "capacityFulfillmentRate": "100.0%",
+    "usableYieldDelivered": "4 / 10",
+    "usablePercentageDelivered": "40.0%",
+    "usableYieldRequested": "4 / 10",
+    "usablePercentageRequested": "40.0%",
+    "latencySecondsTotal": 732,
+    "latencySecondsPerDeliveredQuestion": 73.2,
+    "uniqueConceptsCount": 10,
+    "redundancy": {
+      "totalPairs": 45,
+      "moderateSimilarityPairsCount": 0,
+      "highSimilarityNearDuplicatesCount": 0,
+      "nearDuplicateRate": "0.0%"
+    },
+    "difficultyDistribution": {
+      "Easy": 5,
+      "Medium": 3,
+      "Hard": 2
+    },
+    "topicBreadthDistribution": {
+      "Cache Architecture & Mapping": 4,
+      "Memory Hierarchy & Hardware Performance": 2,
+      "General Computer Architecture": 4
+    },
+    "automatedScriptYield": "4 / 10 (40.0%)",
+    "auditedProductionUsableYield": "8 / 10 (80.0%)",
+    "auditedGroundTruthUsableYield": "9 / 10 (90.0%)",
+    "strictDeduplicatedUsableYield": "8 / 10 (80.0%)",
+    "auditNotes": "Script heuristic flagged Q1 falsely for parallel leading words and missed D4 for 5 Easy items due to DETERMINISTIC_RECALL_FAST_PATH omitting LLM record. Production engine strictly yields 8/10 (Q3 fails distractor exclusivity, Q10 fails production grounding gate). Ground truth yields 9/10 (Q10 is 100% grounded in lecture transcript, failed by validator relational false positive)."
+  },
+  "dimensionPassRates": {
+    "dimension1_Correctness": "8 / 10",
+    "dimension2_Grounding": "9 / 10",
+    "dimension3_CognitiveFit": "10 / 10",
+    "dimension4_StemAlignment": "5 / 10"
+  },
+  "questions": [
+    {
+      "questionIndex": 1,
+      "difficulty": "Easy",
+      "topicClassification": "Cache Architecture & Mapping",
+      "concept": "Auxiliary (secondary) memory provides non‑volatile permanent storage",
+      "intendedCognitiveOperation": "RECALL",
+      "stem": "Which of the following statements correctly defines auxiliary (secondary) memory?",
+      "options": [
+        "Auxiliary memory is directly accessed by the CPU for immediate execution",
+        "Auxiliary memory is volatile and loses its contents when power is removed",
+        "Auxiliary memory provides non‑volatile permanent storage for programs and data",
+        "Auxiliary memory stores temporary cache data to accelerate CPU operations"
+      ],
+      "correctAnswer": "Auxiliary memory provides non‑volatile permanent storage for programs and data",
+      "correctKey": "C",
+      "wordCounts": {
+        "stemWords": 10,
+        "maxOptionWords": 12,
+        "optionLengthRatio": 1.2
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": "Option collision between C and D on key entity \"auxiliary\"",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": []
+      },
+      "auditAnalysis": "D1 is valid (parallel distractor phrasing Auxiliary memory... is standard, C and D do not collide in meaning). D4 is valid (DETERMINISTIC_RECALL_FAST_PATH omitted LLM stemAnswerAlignment, but option C directly answers which statement defines auxiliary memory)."
+    },
+    {
+      "questionIndex": 2,
+      "difficulty": "Easy",
+      "topicClassification": "Cache Architecture & Mapping",
+      "concept": "CPU can execute a program only when the program resides in main memory; OS/DMA transfers it from secondary storage",
+      "intendedCognitiveOperation": "RECALL",
+      "stem": "What happens if a program remains in secondary storage and the CPU attempts to execute it?",
+      "options": [
+        "The operating system will pause execution until the program loads",
+        "The CPU cannot execute the program because it is not in main memory",
+        "DMA will automatically move the program into cache and execution continues",
+        "The CPU will fetch instructions directly from secondary storage"
+      ],
+      "correctAnswer": "The CPU cannot execute the program because it is not in main memory",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 16,
+        "maxOptionWords": 13,
+        "optionLengthRatio": 1.44
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": []
+      },
+      "auditAnalysis": "D4 is valid (DETERMINISTIC_RECALL_FAST_PATH omitted LLM record, but option B directly answers what happens)."
+    },
+    {
+      "questionIndex": 3,
+      "difficulty": "Easy",
+      "topicClassification": "Memory Hierarchy & Hardware Performance",
+      "concept": "Main memory is volatile primary memory required for CPU to execute programs",
+      "intendedCognitiveOperation": "RECALL",
+      "stem": "Which statement accurately describes main memory’s role compared to secondary memory?",
+      "options": [
+        "Main memory is volatile primary storage that the CPU must access to run programs.",
+        "Main memory permanently retains program code even after the computer is shut down.",
+        "Main memory stores data temporarily and loses it when power is removed.",
+        "Secondary memory provides fast access for the CPU during program execution."
+      ],
+      "correctAnswer": "Main memory is volatile primary storage that the CPU must access to run programs.",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 11,
+        "maxOptionWords": 14,
+        "optionLengthRatio": 1.27
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 0,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "ACCIDENTAL_CORRECT_DISTRACTOR"
+      ],
+      "primaryDisposition": "ACCIDENTAL_CORRECT_DISTRACTOR",
+      "optionOverlapDefect": "Option collision between A and C on key entity \"main\"",
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": []
+      },
+      "auditAnalysis": "Genuine distractor defect: Option C (Main memory stores data temporarily and loses it when power is removed) is factually true about main memory, creating distractor ambiguity against Option A."
+    },
+    {
+      "questionIndex": 4,
+      "difficulty": "Medium",
+      "topicClassification": "Cache Architecture & Mapping",
+      "concept": "Control command line selects read or write operation for an I/O device",
+      "intendedCognitiveOperation": "COMPARE",
+      "stem": "If the CPU issues a control command to perform a write operation while the device is idle, how does the activated control line differ from that used for a read operation?",
+      "options": [
+        "The data line is activated, transmitting data to the CPU.",
+        "The write control line is activated, preparing the device for a write operation.",
+        "The status register is rechecked, delaying the device response.",
+        "Both read and write control lines are activated, causing undefined behavior."
+      ],
+      "correctAnswer": "The write control line is activated, preparing the device for a write operation.",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 31,
+        "maxOptionWords": 13,
+        "optionLengthRatio": 1.44
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks how the activated control line for a write differs from that for a read. The keyed answer states that the write control line is activated, directly identifying the differing line and its purpose, thus fully answering the question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 5,
+      "difficulty": "Medium",
+      "topicClassification": "General Computer Architecture",
+      "concept": "CPU checks the status register to determine if an I/O device is busy or free before sending a request",
+      "intendedCognitiveOperation": "COMPARE",
+      "stem": "Given the following CPU routine that polls the status register before issuing a read, which option best describes the difference in CPU behavior when using a status command versus directly issuing a control command without checking the status register?\n```\nwhile (status_register == 0) {\n    // busy wait\n}\nread_data = data_register;\n```",
+      "options": [
+        "CPU sends the request immediately, regardless of the device's current state.",
+        "CPU loops until the device signals ready before sending the request.",
+        "CPU triggers an interrupt that wakes the device to process the request.",
+        "CPU resets the device's status register to zero before issuing the request."
+      ],
+      "correctAnswer": "CPU loops until the device signals ready before sending the request.",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 53,
+        "maxOptionWords": 12,
+        "optionLengthRatio": 1.09
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks which option best describes the difference between using a status command (which checks the status register) and issuing a control command without checking. Option B explicitly states that the CPU loops until the device signals ready before sending the request, which captures the behavior of the status‑command path and implicitly contrasts it with the immediate request behavior of a control command. Thus the keyed option directly answers the identification question.",
+          "mismatchDetails": null
+        }
+      }
+    },
+    {
+      "questionIndex": 6,
+      "difficulty": "Hard",
+      "topicClassification": "General Computer Architecture",
+      "concept": "Interrupts",
+      "intendedCognitiveOperation": "COMPARISON___TRADEOFF",
+      "stem": "When multiple devices simultaneously request service, why is a hardware-based parallel priority encoder preferred over a software-based polling approach for interrupt handling?",
+      "options": [
+        "Polling requires less complex circuitry than parallel priority encoders",
+        "Polling allows for dynamic priority reassignment during the interrupt cycle",
+        "Software polling supports more concurrent devices than hardware encoders",
+        "Hardware encoders reduce the time required to identify the interrupting device"
+      ],
+      "correctAnswer": "Hardware encoders reduce the time required to identify the interrupting device",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 22,
+        "maxOptionWords": 11,
+        "optionLengthRatio": 1.22
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0.85,
+        "failureReasons": [
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "Option D directly explains that hardware encoders reduce the time needed to identify the interrupting device, which answers the 'why' question posed by the stem.",
+          "mismatchDetails": null
+        }
+      },
+      "auditAnalysis": "Genuine Hard question analyzing architectural trade-offs between hardware priority encoding (O(1) parallel combinational logic) and software polling (O(N) sequential status loop). Passed in pipeline generation."
+    },
+    {
+      "questionIndex": 7,
+      "difficulty": "Easy",
+      "topicClassification": "Memory Hierarchy & Hardware Performance",
+      "concept": "Main Memory",
+      "intendedCognitiveOperation": "APPLICATION",
+      "stem": "In the memory hierarchy, what is the primary operational role of main memory relative to the CPU?",
+      "options": [
+        "Serves as the fastest temporary buffer for immediate CPU access",
+        "Provides permanent, non-volatile storage for long-term data retention",
+        "Functions as the primary interface for direct user input processing",
+        "Acts as the central storage unit for active programs and data"
+      ],
+      "correctAnswer": "Acts as the central storage unit for active programs and data",
+      "correctKey": "D",
+      "wordCounts": {
+        "stemWords": 17,
+        "maxOptionWords": 11,
+        "optionLengthRatio": 1.38
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": []
+      },
+      "auditAnalysis": "D4 is valid (DETERMINISTIC_RECALL_FAST_PATH omitted LLM record, but option D directly answers the primary operational role)."
+    },
+    {
+      "questionIndex": 8,
+      "difficulty": "Medium",
+      "topicClassification": "Cache Architecture & Mapping",
+      "concept": "Registers",
+      "intendedCognitiveOperation": "SCENARIO_ANALYSIS",
+      "stem": "In a system with two registers—argument and content—where the argument register holds an employee number used to index an associative memory of employee details, what happens if the argument register is changed to hold the employee name instead?",
+      "options": [
+        "The system will automatically reindex the associative memory by employee name.",
+        "Search fails because the key no longer matches the associative memory index.",
+        "The content register will hold the employee name, causing a type mismatch error.",
+        "The argument register will be ignored, and the CPU will use a default key."
+      ],
+      "correctAnswer": "Search fails because the key no longer matches the associative memory index.",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 38,
+        "maxOptionWords": 14,
+        "optionLengthRatio": 1.27
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "FAIL",
+        "verdict": "FAIL",
+        "confidenceScore": 0,
+        "failureReasons": [
+          "UNGROUNDED_EVIDENCE_CLAIM",
+          "FOREIGN_DOMAIN_CONTAMINATION",
+          "TIER_COGNITIVE_MISMATCH"
+        ],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "EXPLANATORY_WHY",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The keyed option directly states the outcome ('Search fails because the key no longer matches the associative memory index'), which answers the 'what happens' question.",
+          "mismatchDetails": null
+        }
+      },
+      "auditAnalysis": "Fully grounded in lecture transcript: teacher explicitly used the employee number in argument register example for associative memory across 15+ transcript segments."
+    },
+    {
+      "questionIndex": 9,
+      "difficulty": "Easy",
+      "topicClassification": "General Computer Architecture",
+      "concept": "Interface",
+      "intendedCognitiveOperation": "FLOW___TRACE",
+      "stem": "What is the primary purpose of an input‑output interface?",
+      "options": [
+        "To resolve differences between CPU and I/O devices",
+        "To provide a direct memory address",
+        "To store user data permanently",
+        "To synchronize CPU and peripheral speeds"
+      ],
+      "correctAnswer": "To resolve differences between CPU and I/O devices",
+      "correctKey": "A",
+      "wordCounts": {
+        "stemWords": 9,
+        "maxOptionWords": 8,
+        "optionLengthRatio": 1.6
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 1,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": true,
+      "defectLabels": [],
+      "primaryDisposition": "USABLE_PASS",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "PASSED",
+        "reasons": []
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.95,
+        "failureReasons": []
+      },
+      "auditAnalysis": "D4 is valid (DETERMINISTIC_RECALL_FAST_PATH omitted LLM record, but option A directly answers what is the primary purpose)."
+    },
+    {
+      "questionIndex": 10,
+      "difficulty": "Hard",
+      "topicClassification": "General Computer Architecture",
+      "concept": "Interrupt Service Routine",
+      "intendedCognitiveOperation": "PREDICTION",
+      "stem": "A CPU is executing a main program when a keyboard interrupt arrives. The ISR completes, clears the IEM flag, and returns. What specific state restoration occurs to resume the main program?",
+      "options": [
+        "IEM is set to 1 to enable further interrupts",
+        "PC is restored from the stack to the saved address",
+        "Vector address 256 is loaded into the PC",
+        "PC is reloaded from the interrupt vector table"
+      ],
+      "correctAnswer": "PC is restored from the stack to the saved address",
+      "correctKey": "B",
+      "wordCounts": {
+        "stemWords": 31,
+        "maxOptionWords": 10,
+        "optionLengthRatio": 1.25
+      },
+      "dimensionScores": {
+        "dimension1_Correctness": 1,
+        "dimension2_Grounding": 0,
+        "dimension3_CognitiveFit": 1,
+        "dimension4_StemAlignment": 1
+      },
+      "overallPass": false,
+      "defectLabels": [
+        "UNGROUNDED_EVIDENCE_CLAIM"
+      ],
+      "primaryDisposition": "UNGROUNDED_EVIDENCE_CLAIM",
+      "optionOverlapDefect": null,
+      "groundingAudit": {
+        "status": "FAILED",
+        "reasons": [
+          "UNGROUNDED_RELATIONAL_CLAIM: Candidate asserts \"cpu\" executing \"main\", but evidence attributes this to \"needed\""
+        ]
+      },
+      "agent3Ledger": {
+        "status": "PASS",
+        "verdict": "PASS",
+        "confidenceScore": 0.92,
+        "failureReasons": [],
+        "stemAnswerAlignment": {
+          "interrogativeMood": "IDENTIFICATION_WHICH",
+          "isDirectlyResponsive": true,
+          "interrogativeMatch": true,
+          "responsivenessAnalysis": "The stem asks for the specific state restoration mechanism to resume the main program. The keyed option 'PC is restored from the stack to the saved address' directly identifies this mechanism, which is the standard procedure for returning from an interrupt (RTI/IRET instruction pops the saved PC).",
+          "mismatchDetails": null
+        }
+      },
+      "auditAnalysis": "Production engine rejected on Grounding Gate relational claim (cpu executing main vs needed). In ground truth, this is a confirmed false positive: teacher transcript explicitly states CPU stores PC in stack on interrupt, executes ISR, clears IEM, and restores PC from stack on return."
+    }
+  ],
+  "dimensionPassRatesAudited": {
+    "dimension1_Correctness": "9 / 10",
+    "dimension2_Grounding_Production": "9 / 10",
+    "dimension2_Grounding_GroundTruth": "10 / 10",
+    "dimension3_CognitiveFit": "10 / 10",
+    "dimension4_StemAlignment": "10 / 10"
+  }
+}

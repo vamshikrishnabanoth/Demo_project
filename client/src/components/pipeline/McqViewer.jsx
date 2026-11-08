@@ -46,6 +46,17 @@ export default function McqViewer({ questions = [], activeTarget = null, targetR
         </div>
       )}
 
+      {/* Curriculum Coverage Warning Banner */}
+      {displayQuestions.some(q => q.metadata?.capacityReport?.capacityWarning) && (
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-3.5 flex items-start gap-2.5 text-xs text-amber-900 shadow-2xs">
+          <HelpCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <div className="font-bold text-amber-950">Curriculum Coverage Limitation Notice</div>
+            <div className="mt-0.5 leading-relaxed">{displayQuestions.find(q => q.metadata?.capacityReport?.capacityWarning)?.metadata?.capacityReport?.capacityWarning}</div>
+          </div>
+        </div>
+      )}
+
       {/* Question Selector Tabs */}
       {displayQuestions.length > 1 && (
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -91,8 +102,48 @@ export default function McqViewer({ questions = [], activeTarget = null, targetR
                   {activeQ.metadata.targetDifficulty}
                 </span>
               )}
+              {(() => {
+                const prov = activeQ.provenance || activeQ.metadata?.provenance;
+                const isSupp = activeQ.isSupplementary || activeQ.metadata?.isSupplementary || prov === 'SCOPE_SUPPLEMENTARY';
+                if (isSupp || prov === 'SCOPE_SUPPLEMENTARY') {
+                  return (
+                    <span className="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded">
+                      Supplementary Scope
+                    </span>
+                  );
+                }
+                if (prov === 'DOCUMENT_GROUNDED' || activeQ.metadata?.sourceOrigin?.includes('DOCUMENT')) {
+                  return (
+                    <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">
+                      Document Grounded
+                    </span>
+                  );
+                }
+                return (
+                  <span className="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded">
+                    Lecture Grounded
+                  </span>
+                );
+              })()}
+              {(activeQ.metadata?.repeatedTarget || activeQ.repeatedTarget) && (
+                <span className="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">
+                  Repeated Target (Occ {activeQ.metadata?.targetOccurrence || activeQ.targetOccurrence || 2})
+                </span>
+              )}
+              {(activeQ.metadata?.cognitiveApproach || activeQ.cognitiveApproach) && (
+                <span className="text-[10px] font-mono font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded">
+                  {activeQ.metadata?.cognitiveApproach || activeQ.cognitiveApproach}
+                </span>
+              )}
             </div>
           </div>
+
+          {(activeQ.isSupplementary || activeQ.metadata?.isSupplementary || activeQ.provenance === 'SCOPE_SUPPLEMENTARY' || activeQ.metadata?.provenance === 'SCOPE_SUPPLEMENTARY') && (
+            <div className="bg-amber-50/70 border border-amber-300 rounded-lg p-2.5 text-xs text-amber-900 flex items-center gap-2">
+              <Sparkles size={14} className="text-amber-600 shrink-0" />
+              <span><strong>Curriculum Supplementary:</strong> Formulated from authorized course topic scope to meet requested assessment count. Not presented as spoken in the recorded lecture.</span>
+            </div>
+          )}
 
           {/* Stem — now using FormattedQuestionText for code block support */}
           <div className="space-y-1">

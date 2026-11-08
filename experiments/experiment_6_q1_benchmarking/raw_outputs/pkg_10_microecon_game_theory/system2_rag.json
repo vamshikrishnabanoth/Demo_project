@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "According to the definition of strict dominance in a static game, a strategy s_i' for player i is strictly dominated when:",
+      "options": [
+        "There exists another strategy s_i'' such that u_i(s_i'',s_{-i})>u_i(s_i',s_{-i}) for every possible opponent strategy profile s_{-i}.",
+        "There exists another strategy s_i'' such that u_i(s_i'',s_{-i})≥u_i(s_i',s_{-i}) for every possible opponent strategy profile s_{-i}, with strict inequality for at least one profile.",
+        "For some opponent strategy profile s_{-i}, u_i(s_i'',s_{-i})>u_i(s_i',s_{-i}) holds, but not necessarily for all profiles.",
+        "No other strategy yields a higher payoff against any opponent strategy profile."
+      ],
+      "correctAnswer": "There exists another strategy s_i'' such that u_i(s_i'',s_{-i})>u_i(s_i',s_{-i}) for every possible opponent strategy profile s_{-i}.",
+      "explanation": "Strict dominance requires a single alternative strategy that yields a higher payoff than the dominated strategy against every possible combination of opponents' actions, i.e., the inequality is strict for all opponent profiles.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Strict Dominance"
+    },
+    {
+      "questionText": "Which of the following cells in the Prisoner's Dilemma payoff matrix represents a pure Nash equilibrium?",
+      "options": [
+        "The cell where both players cooperate (C, C)",
+        "The cell where both players defect (D, D)",
+        "The cell where Player 1 cooperates and Player 2 defects (C, D)",
+        "The cell where Player 1 defects and Player 2 cooperates (D, C)"
+      ],
+      "correctAnswer": "The cell where both players defect (D, D)",
+      "explanation": "In a Nash equilibrium each player’s strategy is a best response to the other’s. In the Prisoner’s Dilemma, if Player 2 defects, Player 1’s best response is to defect; similarly, if Player 1 defects, Player 2’s best response is to defect. Thus (D, D) is the only cell where both payoffs are mutual best responses.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Nash Equilibrium"
+    },
+    {
+      "questionText": "In the Prisoner's Dilemma described, how does the Nash equilibrium (Defect, Defect) compare to the outcome (Cooperate, Cooperate) in terms of Pareto efficiency?",
+      "options": [
+        "The Nash equilibrium (Defect, Defect) is Pareto superior to (Cooperate, Cooperate).",
+        "The outcome (Cooperate, Cooperate) is Pareto superior to the Nash equilibrium (Defect, Defect).",
+        "Both outcomes are Pareto efficient.",
+        "Neither outcome is Pareto efficient."
+      ],
+      "correctAnswer": "The outcome (Cooperate, Cooperate) is Pareto superior to the Nash equilibrium (Defect, Defect).",
+      "explanation": "(Cooperate, Cooperate) yields payoffs (3, 3), which are higher for both players than the Nash equilibrium payoffs (1, 1); thus the Nash equilibrium is Pareto‑inferior.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Pareto efficiency in Prisoner's Dilemma"
+    },
+    {
+      "questionText": "In a finite static game where players iteratively eliminate strictly dominated strategies, which statement about the order of elimination is correct?",
+      "options": [
+        "The final set of surviving strategies can differ depending on the elimination order.",
+        "The final set of surviving strategies is independent of the elimination order.",
+        "The order matters only when mixed strategies are considered.",
+        "The order matters only for games with more than two players."
+      ],
+      "correctAnswer": "The final set of surviving strategies is independent of the elimination order.",
+      "explanation": "With strict dominance in finite games, iterated elimination yields the same surviving set regardless of the sequence of deletions.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Iterated Elimination of Strictly Dominated Strategies"
+    },
+    {
+      "questionText": "According to the best response method described, which statement correctly describes the relationship between strict dominance and the Nash equilibrium in the Prisoner's Dilemma?",
+      "options": [
+        "The strictly dominant strategy leads to a Pareto efficient outcome.",
+        "The strictly dominant strategy leads to a Pareto inferior outcome.",
+        "The strictly dominant strategy is not a Nash equilibrium.",
+        "The strictly dominant strategy is only a weak Nash equilibrium."
+      ],
+      "correctAnswer": "The strictly dominant strategy leads to a Pareto inferior outcome.",
+      "explanation": "Defect strictly dominates cooperate for both players, but the resulting (Defect,Defect) payoff (1,1) is Pareto inferior to the cooperative outcome (3,3).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Strict Dominance and Pareto Efficiency"
+    },
+    {
+      "questionText": "According to the excerpt, what is the result of applying iterated elimination of strictly dominated strategies (IESDS) to the Prisoner's Dilemma game described?",
+      "options": [
+        "Both players end up cooperating, yielding payoffs (3, 3).",
+        "Both players end up defecting, yielding payoffs (1, 1).",
+        "One player defects while the other cooperates, yielding payoffs (0, 2) or (2, 0).",
+        "The game has no pure‑strategy Nash equilibrium after IESDS."
+      ],
+      "correctAnswer": "Both players end up defecting, yielding payoffs (1, 1).",
+      "explanation": "Defect strictly dominates Cooperate for each player, so Cooperate is eliminated in the first round of IESDS. The remaining strategy profile is (Defect, Defect), which is also the unique Nash equilibrium with payoffs (1, 1).",
+      "targetDifficulty": "Easy",
+      "subtopic": "Strict Dominance and IESDS in Prisoner's Dilemma"
+    },
+    {
+      "questionText": "In a static game of complete information, a strategy s_i' for player i is strictly dominated if:",
+      "options": [
+        "There exists another strategy s_i'' such that u_i(s_i'',s_{-i}) ≥ u_i(s_i',s_{-i}) for all opponent profiles and > for at least one",
+        "There exists another strategy s_i'' such that u_i(s_i'',s_{-i}) > u_i(s_i',s_{-i}) for all opponent profiles",
+        "It yields a lower payoff than any mixed strategy of the opponent",
+        "It is never a best response to any opponent strategy"
+      ],
+      "correctAnswer": "There exists another strategy s_i'' such that u_i(s_i'',s_{-i}) > u_i(s_i',s_{-i}) for all opponent profiles",
+      "explanation": "Strict dominance requires the alternative strategy to give a higher payoff for every possible opponent action, i.e., a strict inequality everywhere.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Strict Dominance"
+    },
+    {
+      "questionText": "According to the best response method described, which cell in the Prisoner's Dilemma payoff matrix represents a pure Nash equilibrium?",
+      "options": [
+        "(Cooperate, Cooperate)",
+        "(Cooperate, Defect)",
+        "(Defect, Cooperate)",
+        "(Defect, Defect)"
+      ],
+      "correctAnswer": "(Defect, Defect)",
+      "explanation": "The best response method underlines each player’s highest payoff for every column and row. The only cell where both players’ payoffs are underlined is (Defect, Defect), indicating a mutual best response and thus a pure Nash equilibrium.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Best Response Method"
+    },
+    {
+      "questionText": "According to the excerpt, why is the outcome (Defect, Defect) considered socially suboptimal?",
+      "options": [
+        "It yields lower payoffs than (Cooperate, Cooperate).",
+        "It is not a Nash equilibrium.",
+        "It is a mixed‑strategy equilibrium.",
+        "It maximizes total welfare."
+      ],
+      "correctAnswer": "It yields lower payoffs than (Cooperate, Cooperate).",
+      "explanation": "The excerpt notes that (1,1) from (Defect,Defect) is strictly Pareto inferior to (3,3) from (Cooperate,Cooperate), making it socially suboptimal.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Pareto efficiency in Prisoner's Dilemma"
+    },
+    {
+      "questionText": "Which statement about Iterated Elimination of Strictly Dominated Strategies (IESDS) in finite static games is correct?",
+      "options": [
+        "The order of elimination can change the final set of surviving strategies.",
+        "IESDS always yields a unique Nash equilibrium.",
+        "The process may remove strategies that belong to a Nash equilibrium.",
+        "The order of elimination does not affect the final surviving set when only strictly dominated strategies are eliminated."
+      ],
+      "correctAnswer": "The order of elimination does not affect the final surviving set when only strictly dominated strategies are eliminated.",
+      "explanation": "In finite games, eliminating strictly dominated strategies iteratively yields the same surviving set regardless of the elimination order.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Iterated Elimination of Strictly Dominated Strategies"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6610,
+    "cumulativeOutputTokens": 2065,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 23718
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:26:51.562Z"
+}

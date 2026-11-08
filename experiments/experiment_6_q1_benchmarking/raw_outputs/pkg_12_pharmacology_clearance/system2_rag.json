@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "In the one‑compartment open model after an intravenous bolus, which equation correctly describes the plasma concentration C(t) at time t assuming first‑order elimination?",
+      "options": [
+        "C(t)=C0·e^(‑ke·t)",
+        "C(t)=C0/(1+ke·t)",
+        "C(t)=C0·e^(‑ke·t^2)",
+        "C(t)=C0·(1‑ke·t)"
+      ],
+      "correctAnswer": "C(t)=C0·e^(‑ke·t)",
+      "explanation": "First‑order elimination leads to dC/dt=‑ke·C, whose solution is the exponential decay C(t)=C0·e^(‑ke·t).",
+      "targetDifficulty": "Medium",
+      "subtopic": "One‑Compartment Model Kinetics"
+    },
+    {
+      "questionText": "A drug exhibits first‑order elimination with an elimination rate constant (k_e) of 0.2 hr⁻¹ and a volume of distribution (V_d) of 30 L. What is the drug’s systemic clearance (CL)?",
+      "options": [
+        "6 L per hour",
+        "0.2 L per hour",
+        "15 L per hour",
+        "0.066 L per hour"
+      ],
+      "correctAnswer": "6 L per hour",
+      "explanation": "Clearance is calculated as CL = k_e × V_d. Substituting the values: CL = 0.2 hr⁻¹ × 30 L = 6 L hr⁻¹.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Clearance and elimination rate constant"
+    },
+    {
+      "questionText": "Which statement best explains why systemic clearance is not constant under capacity‑limited (saturation) elimination?",
+      "options": [
+        "Clearance remains constant regardless of drug concentration.",
+        "Clearance decreases as concentration increases due to enzyme saturation, following Michaelis‑Menten kinetics.",
+        "Clearance increases linearly with concentration because more drug is present.",
+        "Clearance is independent of Vmax and Km values."
+      ],
+      "correctAnswer": "Clearance decreases as concentration increases due to enzyme saturation, following Michaelis‑Menten kinetics.",
+      "explanation": "When metabolic enzymes become saturated, the rate of elimination follows the Michaelis‑Menten equation (dC/dt = -Vmax*C/(Km+C)), causing clearance to decline as drug concentration rises.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Capacity‑limited elimination (Michaelis‑Menten)"
+    },
+    {
+      "questionText": "In a one‑compartment open model after an intravenous bolus, which equation correctly relates total systemic clearance (CL), the elimination rate constant (k_e), and the apparent volume of distribution (V_d)?",
+      "options": [
+        "CL = k_e / V_d",
+        "CL = V_d / k_e",
+        "CL = k_e × V_d",
+        "CL = (k_e × V_d) / 0.693"
+      ],
+      "correctAnswer": "CL = k_e × V_d",
+      "explanation": "For a one‑compartment model with first‑order elimination, clearance equals the product of the elimination rate constant and the apparent volume of distribution: CL = k_e·V_d.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Clearance‑Volume of Distribution Relationship"
+    },
+    {
+      "questionText": "A drug follows first‑order elimination with a systemic clearance of 4 L·hr⁻¹ and a volume of distribution of 40 L. What is the drug’s elimination half‑life?",
+      "options": [
+        "6.93 hours",
+        "3.47 hours",
+        "13.86 hours",
+        "0.693 hours"
+      ],
+      "correctAnswer": "6.93 hours",
+      "explanation": "For first‑order elimination, t½ = 0.693·Vd/CL. Substituting Vd=40 L and CL=4 L·hr⁻¹ gives t½ = 0.693×40/4 = 0.693×10 = 6.93 hr.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Elimination half‑life calculation"
+    },
+    {
+      "questionText": "A patient receives a 500 mg intravenous bolus of a drug that distributes in a volume of distribution of 20 L. The measured systemic clearance is 2 L/h. What is the elimination rate constant (kₑ) for this drug?",
+      "options": [
+        "0.05 hr⁻¹",
+        "0.10 hr⁻¹",
+        "0.20 hr⁻¹",
+        "0.40 hr⁻¹"
+      ],
+      "correctAnswer": "0.10 hr⁻¹",
+      "explanation": "Clearance (CL) equals kₑ × Vd, so kₑ = CL / Vd = 2 L/h ÷ 20 L = 0.10 hr⁻¹.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Elimination rate constant calculation (first‑order kinetics)"
+    },
+    {
+      "questionText": "In a one‑compartment open model after an intravenous bolus, how is the apparent volume of distribution (Vd) calculated from the administered dose (D) and the initial plasma concentration (C0)?",
+      "options": [
+        "Vd = D × C0",
+        "Vd = D / C0",
+        "Vd = C0 / D",
+        "Vd = (D × t1/2) / C0"
+      ],
+      "correctAnswer": "Vd = D / C0",
+      "explanation": "Vd is defined as the proportionality factor relating total amount of drug to plasma concentration, so Vd = Dose divided by the initial concentration (C0).",
+      "targetDifficulty": "Easy",
+      "subtopic": "Apparent volume of distribution"
+    },
+    {
+      "questionText": "On a semi‑logarithmic plot of plasma concentration (log10 C) versus time for a drug eliminated by first‑order kinetics, the line has a slope of –0.043 hr⁻¹. What is the elimination rate constant kₑ (in hr⁻¹) for this drug?",
+      "options": [
+        "0.043 hr⁻¹",
+        "0.10 hr⁻¹",
+        "0.019 hr⁻¹",
+        "0.20 hr⁻¹"
+      ],
+      "correctAnswer": "0.10 hr⁻¹",
+      "explanation": "For first‑order elimination, slope = –kₑ/2.303 on a log10 plot. Thus kₑ = –slope × 2.303 = 0.043 × 2.303 ≈ 0.099 hr⁻¹, rounded to 0.10 hr⁻¹.",
+      "targetDifficulty": "Medium",
+      "subtopic": "First-order elimination kinetics – semi‑log plot interpretation"
+    },
+    {
+      "questionText": "If a drug has an elimination rate constant of 0.1 hr⁻¹, what is its elimination half‑life?",
+      "options": [
+        "0.693 hr",
+        "6.93 hr",
+        "13.86 hr",
+        "1.386 hr"
+      ],
+      "correctAnswer": "6.93 hr",
+      "explanation": "The elimination half‑life is calculated as t½ = 0.693 / kₑ. With kₑ = 0.1 hr⁻¹, t½ = 0.693 / 0.1 = 6.93 hr.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Pharmacokinetics – Elimination Half‑Life"
+    },
+    {
+      "questionText": "In a one‑compartment open model after an intravenous bolus, which equation correctly relates total systemic clearance (CL) to the elimination rate constant (k_e) and the apparent volume of distribution (V_d)?",
+      "options": [
+        "CL = k_e / V_d",
+        "CL = k_e × V_d",
+        "CL = V_d / k_e",
+        "CL = k_e + V_d"
+      ],
+      "correctAnswer": "CL = k_e × V_d",
+      "explanation": "Clearance is defined as CL = k_e × V_d, because the rate of elimination equals k_e times the amount of drug (C·V_d).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Relationship between clearance, elimination rate constant, and volume of distribution"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 7008,
+    "cumulativeOutputTokens": 1443,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 23143
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:28:15.021Z"
+}

@@ -1,0 +1,126 @@
+{
+  "protocol_version": "Protocol Amendment 1.2 (Fair Multi-Pass RAG & Provisional Reclassification)",
+  "benchmark_package": "pkg_07_os_deadlocks",
+  "subject": "Operating Systems Principles",
+  "topic": "Deadlock Characterization, Prevention, and Banker's Algorithm",
+  "pinned_model": "openai/gpt-oss-120b",
+  "system2_chunking": "350 words / 70 words overlap (multi-pass overlapping windows)",
+  "requested_budget": 10,
+  "timestamp": "2026-11-05T19:56:00.883Z",
+  "comparativeMetrics": [
+    {
+      "systemName": "System 1: Zero-Shot AQG",
+      "pinnedModel": "openai/gpt-oss-120b",
+      "deliveredCount": 4,
+      "requestedCount": 10,
+      "qqf": 0.4,
+      "latency": {
+        "coldStartMs": 2357,
+        "cachedMs": 0
+      },
+      "iafAutomatedHeuristic": 0.7,
+      "iafManualReclassProvisional": 0.8,
+      "asdv": 1,
+      "declaredDifficultyDistribution": {
+        "Easy": 2,
+        "Medium": 2,
+        "Hard": 0
+      },
+      "subtopicAllocationHeuristic": {
+        "SUB_01": 1,
+        "SUB_02": 2,
+        "SUB_03": 0,
+        "SUB_04": 1
+      },
+      "subtopicAllocationManualReclass": {
+        "SUB_01": 1,
+        "SUB_02": 1,
+        "SUB_03": 0,
+        "SUB_04": 2
+      },
+      "deliveryAccounting": {
+        "rawGenerated": 4,
+        "finalDelivered": 4,
+        "attritionCause": "N/A"
+      }
+    },
+    {
+      "systemName": "System 2: Sliding-Window RAG",
+      "pinnedModel": "openai/gpt-oss-120b",
+      "deliveredCount": 10,
+      "requestedCount": 10,
+      "qqf": 1,
+      "latency": {
+        "coldStartMs": 19582,
+        "cachedMs": 0
+      },
+      "iafAutomatedHeuristic": 0.95,
+      "iafManualReclassProvisional": 0.65,
+      "asdv": 0.967,
+      "declaredDifficultyDistribution": {
+        "Easy": 1,
+        "Medium": 9,
+        "Hard": 0
+      },
+      "subtopicAllocationHeuristic": {
+        "SUB_01": 2,
+        "SUB_02": 2,
+        "SUB_03": 2,
+        "SUB_04": 4
+      },
+      "subtopicAllocationManualReclass": {
+        "SUB_01": 2,
+        "SUB_02": 1,
+        "SUB_03": 0,
+        "SUB_04": 7
+      },
+      "deliveryAccounting": {
+        "rawGenerated": 10,
+        "validJson": 10,
+        "schemaValid": 10,
+        "groundingValid": 10,
+        "finalDelivered": 10,
+        "attritionCause": "None (Fulfilled via multi-pass overlapping window retrieval)"
+      }
+    },
+    {
+      "systemName": "System 3: Frozen KMIT Kahoot LCA-CM",
+      "pinnedModel": "openai/gpt-oss-120b",
+      "deliveredCount": 10,
+      "requestedCount": 10,
+      "qqf": 1,
+      "latency": {
+        "coldStartMs": 18500,
+        "cachedMs": 6
+      },
+      "iafAutomatedHeuristic": 0.6,
+      "iafManualReclassProvisional": 0.95,
+      "asdv": 1,
+      "declaredDifficultyDistribution": {
+        "Easy": 3,
+        "Medium": 7,
+        "Hard": 0
+      },
+      "subtopicAllocationHeuristic": {
+        "SUB_01": 1,
+        "SUB_02": 4,
+        "SUB_03": 4,
+        "SUB_04": 1
+      },
+      "subtopicAllocationManualReclass": {
+        "SUB_01": 2,
+        "SUB_02": 2,
+        "SUB_03": 2,
+        "SUB_04": 4
+      },
+      "deliveryAccounting": {
+        "rawGenerated": 10,
+        "validJson": 10,
+        "schemaValid": 10,
+        "groundingValid": 10,
+        "finalDelivered": 10,
+        "attritionCause": "None: Decoupled cognitive operations fulfilled complete N=10 quota"
+      }
+    }
+  ]
+}

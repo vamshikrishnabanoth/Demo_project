@@ -1,0 +1,154 @@
+{
+  "system": "System 2: Sliding-Window RAG",
+  "model": "openai/gpt-oss-120b",
+  "chunking": "350 words / 70 words overlap (multi-pass)",
+  "questions": [
+    {
+      "questionText": "Which of the following formulas is logically equivalent to the negation of a universal statement ¬∀x H(x)?",
+      "options": [
+        "∃x H(x)",
+        "∀x ¬H(x)",
+        "∃x ¬H(x)",
+        "¬∃x H(x)"
+      ],
+      "correctAnswer": "∃x ¬H(x)",
+      "explanation": "Negating a universal quantifier yields an existential quantifier with the predicate negated: ¬∀x H(x) ≡ ∃x ¬H(x).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Quantifier Negation Duality"
+    },
+    {
+      "questionText": "Given the model M with domain D={p1,l1,l2}, interpretation I(P)={p1}, I(L)={l1,l2}, and I(A)={(p1,l1)}, what is the truth value of the sentence “There exists a philosopher who admires every logician” in M?",
+      "options": [
+        "True in M",
+        "False in M",
+        "Both true and false in M",
+        "Cannot be determined from the given information"
+      ],
+      "correctAnswer": "False in M",
+      "explanation": "The sentence translates to ∃x(P(x) ∧ ∀y(L(y) → A(x,y))). The only philosopher is p1, but A(p1,l2) is false, so the universal condition fails; thus the existential statement is false in M.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Quantifier order and model evaluation"
+    },
+    {
+      "questionText": "If the domain D were empty, which of the following statements would be true?",
+      "options": [
+        "∀x P(x) is true.",
+        "∃x P(x) is true.",
+        "Both ∀x P(x) and ∃x P(x) are true.",
+        "Neither ∀x P(x) nor ∃x P(x) is true."
+      ],
+      "correctAnswer": "∀x P(x) is true.",
+      "explanation": "In an empty domain, a universal quantification is vacuously true because there is no element that could falsify it, whereas an existential quantification is false because there is no element to satisfy it.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Vacuous Quantification / Empty Domain"
+    },
+    {
+      "questionText": "In the formula ∀x (H(x) → M(x)), which of the following statements is true regarding the variable x?",
+      "options": [
+        "x is free.",
+        "x is bound by the universal quantifier.",
+        "x is bound only in the antecedent H(x).",
+        "x is bound only in the consequent M(x)."
+      ],
+      "correctAnswer": "x is bound by the universal quantifier.",
+      "explanation": "The variable x appears within the scope of the universal quantifier ∀x, so it is bound throughout the formula.",
+      "targetDifficulty": "Easy",
+      "subtopic": "Scope and Binding"
+    },
+    {
+      "questionText": "In the model M with domain D={p1,l1,l2}, where I(P)={p1}, I(L)={l1,l2}, and I(A)={(p1,l1)}, what is the truth value of the sentence “Every philosopher admires some logician”?",
+      "options": [
+        "True",
+        "False",
+        "Both true and false",
+        "Cannot be determined from the information given"
+      ],
+      "correctAnswer": "True",
+      "explanation": "The only philosopher is p1. There exists a logician (l1) such that (p1,l1)∈I(A), so the existential condition is satisfied for p1, making the universal statement true.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Quantifier translation and model evaluation"
+    },
+    {
+      "questionText": "Given the model M described (Domain D={p1,l1,l2}, I(P)={p1}, I(L)={l1,l2}, I(A)={(p1,l1)}), which of the following formulas is a correct result of applying Universal Instantiation to the sentence ∀x (P(x) → ∃y (L(y) ∧ A(x,y)))?",
+      "options": [
+        "P(p1) → ∃y (L(y) ∧ A(p1,y))",
+        "P(l1) → ∃y (L(y) ∧ A(l1,y))",
+        "∃y (L(y) ∧ A(p1,y))",
+        "∀y (L(y) → A(p1,y))"
+      ],
+      "correctAnswer": "P(p1) → ∃y (L(y) ∧ A(p1,y))",
+      "explanation": "Universal Instantiation permits replacing the universally quantified variable x with any constant from the language; substituting x with the constant p1 yields the formula in option A.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Universal Instantiation"
+    },
+    {
+      "questionText": "Which of the following statements correctly expresses the logical equivalence that results from negating a universal quantifier?",
+      "options": [
+        "¬∀x H(x) is equivalent to ∀x ¬H(x)",
+        "¬∀x H(x) is equivalent to ∃x ¬H(x)",
+        "¬∃x H(x) is equivalent to ∃x ¬H(x)",
+        "¬∃x H(x) is equivalent to ∀x H(x)"
+      ],
+      "correctAnswer": "¬∀x H(x) is equivalent to ∃x ¬H(x)",
+      "explanation": "Negating a universal statement yields an existential statement with the predicate negated: ¬∀x H(x) ⇔ ∃x ¬H(x).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Quantifier Negation Duality"
+    },
+    {
+      "questionText": "Which of the following first‑order formulas is logically equivalent to the English sentence “No philosopher is a logician”?",
+      "options": [
+        "¬∃x (P(x) ∧ L(x))",
+        "∀x (P(x) ∧ ¬L(x))",
+        "∀x (P(x) → ¬L(x))",
+        "∃x (P(x) → ¬L(x))"
+      ],
+      "correctAnswer": "¬∃x (P(x) ∧ L(x))",
+      "explanation": "‘No philosopher is a logician’ means there is no object that is both a philosopher and a logician, which is expressed as the negation of an existential claim: ¬∃x (P(x) ∧ L(x)). This is equivalent to ∀x (P(x) → ¬L(x)), but the directly equivalent form listed is the negated existential.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Quantifier Negation"
+    },
+    {
+      "questionText": "In the deductive system described, which rule permits deriving ∃x φ(x) from a formula φ(c) where c is a constant?",
+      "options": [
+        "Universal Instantiation (UI)",
+        "Existential Generalization (EG)",
+        "Modus Ponens (MP)",
+        "Universal Generalization (UG)"
+      ],
+      "correctAnswer": "Existential Generalization (EG)",
+      "explanation": "Existential Generalization allows one to infer ∃x φ(x) from a specific instance φ(c).",
+      "targetDifficulty": "Medium",
+      "subtopic": "Inference Rules"
+    },
+    {
+      "questionText": "Which of the following first‑order formulas is a closed sentence (contains no free variables)?",
+      "options": [
+        "∀x (H(x) → M(x))",
+        "∃y (A(x, y) ∧ H(y))",
+        "H(z) → ∀x M(x)",
+        "∀x (A(x, y) → H(x))"
+      ],
+      "correctAnswer": "∀x (H(x) → M(x))",
+      "explanation": "In option A the only variable x is bound by the universal quantifier, so the formula has no free variables. The other options each contain at least one variable (x, z, or y) that is not bound by any quantifier, making them open formulas.",
+      "targetDifficulty": "Medium",
+      "subtopic": "Free and Bound Variables"
+    }
+  ],
+  "resourceAccounting": {
+    "apiCalls": 10,
+    "maxAttemptsAllowed": 15,
+    "cumulativeInputTokens": 6803,
+    "cumulativeOutputTokens": 1420,
+    "maxTokenBudgetPerCall": 800,
+    "totalTokenBudget": 12000,
+    "latencyMs": 28582
+  },
+  "deliveryAccounting": {
+    "rawGenerated": 10,
+    "finalDelivered": 10,
+    "qqf": 1,
+    "attritionCause": "None (Fulfilled)"
+  },
+  "totalChunks": 3,
+  "timestamp": "2026-11-05T20:28:50.315Z"
+}
