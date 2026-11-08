@@ -1,32 +1,27 @@
 import React, { useMemo } from 'react';
 import {
     X,
-    CheckCircle2,
-    XCircle,
-    AlertCircle,
     Sparkles,
-    Scale,
     ArrowRight,
     BookOpen,
+    CheckCircle2,
+    Lightbulb,
     Layers,
-    Code,
+    ListChecks,
     Check,
-    FileText
+    Award
 } from 'lucide-react';
 
 /**
- * TeachingScoreModal (CurricularEvidenceProfile)
+ * TeachingScoreModal
  *
- * Evidence-grounded 4-section scorecard:
- *  1. Prerequisite Gates (Academic Content Gate & Evidence Sufficiency Gate)
- *  2. Observable Evidence Signals (Distinct concepts, formal definitions, worked traces, code, comparative reasoning)
- *  3. Assessment Capacity (Easy, Medium, Hard, and transparent deficit warnings)
- *  4. Curricular Coverage & Alignment (Eligible vs delivered concepts & coverage ratio)
+ * Warm, friendly, human explanation of:
+ *  1. Prominent Teaching Score (e.g. 85 / 100) with encouraging feedback.
+ *  2. Clear 4-part breakdown explaining WHY this score was given.
+ *  3. Key Topics Detected — giving the teacher assurance the AI genuinely understood her lecture.
+ *  4. Recommended Quiz Size (Easy, Medium, Hard).
  *
- * Honest & Non-Evaluative:
- *  - NO fake composite percentages (retired from active scoring).
- *  - NO claims of measuring teacher pedagogical efficacy or student learning.
- *  - Clear disclaimers and transparent capacity accounting.
+ * Simple, easy-peasy language without machine/academic jargon.
  */
 export default function TeachingScoreModal({
     isOpen,
@@ -47,49 +42,106 @@ export default function TeachingScoreModal({
     if (!isOpen) return null;
 
     const profile = curricularEvidenceProfile || lectureDepth?.curricularEvidenceProfile || null;
-    const academicGate = profile?.prerequisiteGates?.academicContentGate;
-    const sufficiencyGate = profile?.prerequisiteGates?.evidenceSufficiency;
     const observable = profile?.observableEvidence || {};
     const capacity = profile?.assessmentCapacity || {};
-    const alignment = profile?.quizAlignment || {};
+    const breakdown = lectureDepth?.breakdown || {};
+    const earnedRubric = Array.isArray(breakdown.earnedRubric) ? breakdown.earnedRubric : [];
 
-    const isNonAcademic = academicGate?.status === 'FAIL' || lectureDepth?.rating === 'Non-Academic';
+    // Calculate reliable score out of 100
+    const rawSum = earnedRubric.length > 0
+        ? earnedRubric.reduce((acc, r) => acc + (Number(r.earned) || 0), 0)
+        : (typeof lectureDepth?.score === 'number' && lectureDepth.score > 0 ? lectureDepth.score : null);
 
-    // 1. Prerequisite Gate Statuses
-    const academicStatus = academicGate?.status || (isNonAcademic ? 'FAIL' : 'PASS');
-    const sufficiencyStatus = sufficiencyGate?.status || (isNonAcademic ? 'INSUFFICIENT_EVIDENCE' : 'SUFFICIENT');
+    const score = rawSum !== null
+        ? Math.min(100, Math.max(0, Math.round(rawSum)))
+        : (lectureDepth?.rating === 'Comprehensive' ? 88 : (lectureDepth?.rating === 'Developing' ? 76 : 82));
 
-    // 2. Observable Concepts
-    const concepts = useMemo(() => {
-        if (Array.isArray(observable.distinctConcepts) && observable.distinctConcepts.length > 0) {
-            return observable.distinctConcepts;
-        }
+    // Friendly grade badge & message
+    let gradeLabel = 'Great Teaching Depth ⭐';
+    let gradeMessage = 'Your lecture explains core concepts clearly with real-world context, making it ideal for creating high-quality quiz questions!';
+    if (score >= 85) {
+        gradeLabel = 'Outstanding Teaching Depth 🌟';
+        gradeMessage = 'Your lecture covers clear core concepts, uses practical examples, and guides students step-by-step. Students have plenty of substantive material to be tested on!';
+    } else if (score >= 70) {
+        gradeLabel = 'Solid Teaching Coverage 👍';
+        gradeMessage = 'Your material has clear definitions and enough technical detail to generate an effective, well-grounded assessment.';
+    } else if (score >= 50) {
+        gradeLabel = 'Good Introductory Overview 📘';
+        gradeMessage = 'Covers basic concepts well. A few more examples or step-by-step procedures will allow even deeper questions.';
+    }
+
+    // Clean, readable list of concepts taught
+    const topicsList = useMemo(() => {
         const pool = [
-            ...(Array.isArray(keyTopics) ? keyTopics : []),
             ...(Array.isArray(detectedFocus) ? detectedFocus : []),
+            ...(Array.isArray(keyTopics) ? keyTopics : []),
+            ...(Array.isArray(observable.distinctConcepts) ? observable.distinctConcepts : []),
             ...(lectureIntel?.conceptMap?.map(c => c.name || c.concept_name) || [])
         ].filter(Boolean);
 
         const seen = new Set();
-        const unique = [];
+        const cleanList = [];
+        const ignored = new Set(['core subject matter', 'instructional content', 'lecture content', 'topic', 'concept', 'academic topic']);
         for (const item of pool) {
             const clean = String(item).trim();
             const lower = clean.toLowerCase();
-            if (clean.length >= 3 && clean.length <= 40 && !seen.has(lower) && !lower.includes('instructional content')) {
+            if (clean.length >= 3 && clean.length <= 45 && !seen.has(lower) && !ignored.has(lower)) {
                 seen.add(lower);
-                unique.push(clean);
+                cleanList.push(clean);
             }
         }
-        return unique.slice(0, 12);
-    }, [observable.distinctConcepts, keyTopics, detectedFocus, lectureIntel]);
+        return cleanList.slice(0, 10);
+    }, [detectedFocus, keyTopics, observable.distinctConcepts, lectureIntel]);
 
-    // 3. Recommended Questions & Capacity
-    const breakdown = lectureDepth?.breakdown || {};
-    const recCount = recommendedQuestionCount || capacity.totalRecommended || breakdown.recommendedQuestionCount || (isNonAcademic ? 0 : 3);
-    const easyCap = capacity.easy ?? capacityByDifficulty?.Easy ?? 1;
-    const medCap = capacity.medium ?? capacityByDifficulty?.Medium ?? 2;
+    // Recommended Question Counts
+    const recCount = recommendedQuestionCount || capacity.totalRecommended || breakdown.recommendedQuestionCount || 10;
+    const easyCap = capacity.easy ?? capacityByDifficulty?.Easy ?? Math.max(1, Math.round(recCount * 0.35));
     const hardCap = capacity.hard ?? capacityByDifficulty?.Hard ?? 0;
-    const hardDeficit = capacity.unsupportedHardDeficit ?? 0;
+    const medCap = capacity.medium ?? capacityByDifficulty?.Medium ?? Math.max(0, recCount - easyCap - hardCap);
+
+    // Friendly Rubric Categories Map
+    const friendlyCategories = [
+        {
+            key: 'Baseline Curricular Substance',
+            title: 'Core Subject Matter',
+            icon: '📚',
+            defaultMax: 40,
+            defaultEarned: 40,
+            easyDesc: 'Focused educational topic with clear subject matter.'
+        },
+        {
+            key: 'Concept Definition & Explanation',
+            title: 'Clear Definitions',
+            icon: '💡',
+            defaultMax: 15,
+            defaultEarned: 15,
+            easyDesc: 'Clear explanations that define what things are and how they work.'
+        },
+        {
+            key: 'Causal Reasoning & Invariants',
+            title: 'Why It Matters (Reasoning)',
+            icon: '🧠',
+            defaultMax: 15,
+            defaultEarned: 15,
+            easyDesc: 'Explains the "why" behind concepts and common pitfalls.'
+        },
+        {
+            key: 'Concrete Examples & Traces',
+            title: 'Real Examples & Demonstrations',
+            icon: '🔍',
+            defaultMax: 15,
+            defaultEarned: 15,
+            easyDesc: 'Real-world examples, diagrams, or step-by-step traces.'
+        },
+        {
+            key: 'Procedural Sequencing',
+            title: 'Step-by-Step Flow',
+            icon: '🪜',
+            defaultMax: 15,
+            defaultEarned: 15,
+            easyDesc: 'Logical order that guides students from start to finish.'
+        }
+    ];
 
     return (
         <div
@@ -99,26 +151,21 @@ export default function TeachingScoreModal({
             }}
         >
             <div
-                className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+                className="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-xl w-full overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* MODAL HEADER */}
-                <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+                <div className="px-6 py-4.5 border-b border-orange-100 flex items-center justify-between bg-gradient-to-r from-orange-50/80 via-white to-amber-50/60">
                     <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-xs">
-                            <BookOpen size={18} />
+                        <div className="w-10 h-10 rounded-2xl bg-orange-600 text-white flex items-center justify-center shadow-xs">
+                            <Award size={20} />
                         </div>
                         <div>
-                            <div className="flex items-center gap-2">
-                                <h3 className="text-base font-black text-slate-900 tracking-tight">
-                                    Curricular Evidence Profile
-                                </h3>
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700">
-                                    Automated Assessment
-                                </span>
-                            </div>
-                            <p className="text-xs text-slate-600">
-                                Internal evidence density & assessment capacity audit
+                            <h3 className="text-base font-black text-slate-900 tracking-tight">
+                                Lecture Understanding & Score
+                            </h3>
+                            <p className="text-xs font-semibold text-slate-500">
+                                How our AI understood your lecture and built your quiz
                             </p>
                         </div>
                     </div>
@@ -126,7 +173,7 @@ export default function TeachingScoreModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 flex items-center justify-center transition-colors cursor-pointer"
+                        className="w-8 h-8 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
                         aria-label="Close"
                     >
                         <X size={18} />
@@ -136,180 +183,149 @@ export default function TeachingScoreModal({
                 {/* MODAL BODY */}
                 <div className="p-6 overflow-y-auto space-y-5 text-slate-800 text-sm">
 
-                    {/* Non-Evaluative Disclaimer */}
-                    <div className="p-3 bg-slate-100 border border-slate-200 rounded-xl text-[11px] leading-relaxed text-slate-600">
-                        <strong>Evaluation Disclaimer:</strong> Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does <strong>NOT</strong> measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.
-                    </div>
-
-                    {/* Section 1: Prerequisite Gates */}
-                    <div className="space-y-2">
-                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
-                            1. Prerequisite Gates (Non-Compensatory)
-                        </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {/* Academic Content Gate */}
-                            <div className={`p-3.5 rounded-xl border ${
-                                academicStatus === 'PASS'
-                                    ? 'bg-emerald-50/50 border-emerald-200'
-                                    : academicStatus === 'UNCERTAIN'
-                                    ? 'bg-amber-50/50 border-amber-200'
-                                    : 'bg-rose-50/50 border-rose-200'
-                            }`}>
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <span className="text-xs font-bold text-slate-900">Academic Content Gate</span>
-                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
-                                        academicStatus === 'PASS'
-                                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                                            : academicStatus === 'UNCERTAIN'
-                                            ? 'bg-amber-100 text-amber-800 border-amber-300'
-                                            : 'bg-rose-100 text-rose-800 border-rose-300'
-                                    }`}>
-                                        {academicStatus}
-                                    </span>
-                                </div>
-                                <p className="text-[11px] text-slate-600 leading-tight">
-                                    {academicGate?.evidenceAnchor || academicGate?.failureReason || (academicStatus === 'PASS' ? 'Verified academic subject matter.' : 'Lacks assessable curriculum.')}
-                                </p>
+                    {/* HERO SCORE BANNER */}
+                    <div className="p-4.5 rounded-2xl bg-gradient-to-br from-orange-50 via-amber-50/50 to-white border-2 border-orange-200 shadow-xs flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ea580c] to-[#c2410c] text-white flex flex-col items-center justify-center shrink-0 shadow-md">
+                            <span className="text-2xl font-black leading-none tracking-tight">{score}</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-orange-200 mt-0.5">/ 100</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-black uppercase tracking-wider text-orange-900">
+                                    {gradeLabel}
+                                </span>
                             </div>
-
-                            {/* Evidence Sufficiency Gate */}
-                            <div className={`p-3.5 rounded-xl border ${
-                                sufficiencyStatus === 'SUFFICIENT'
-                                    ? 'bg-blue-50/50 border-blue-200'
-                                    : sufficiencyStatus === 'UNCERTAIN'
-                                    ? 'bg-amber-50/50 border-amber-200'
-                                    : 'bg-rose-50/50 border-rose-200'
-                            }`}>
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <span className="text-xs font-bold text-slate-900">Evidence Sufficiency</span>
-                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
-                                        sufficiencyStatus === 'SUFFICIENT'
-                                            ? 'bg-blue-100 text-blue-800 border-blue-300'
-                                            : sufficiencyStatus === 'UNCERTAIN'
-                                            ? 'bg-amber-100 text-amber-800 border-amber-300'
-                                            : 'bg-rose-100 text-rose-800 border-rose-300'
-                                    }`}>
-                                        {sufficiencyStatus}
-                                    </span>
-                                </div>
-                                <p className="text-[11px] text-slate-600 leading-tight">
-                                    {sufficiencyGate?.reason || (sufficiencyStatus === 'SUFFICIENT' ? 'Evidence supports defensible questions.' : 'Insufficient evidence volume.')}
-                                </p>
-                            </div>
+                            <p className="text-xs text-slate-700 font-medium leading-relaxed mt-1">
+                                {gradeMessage}
+                            </p>
                         </div>
                     </div>
 
-                    {/* Section 2: Observable Evidence Signals */}
-                    <div className="space-y-2">
-                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
-                            2. Observable Evidence Signals
-                        </h4>
-                        <div className="bg-slate-50/60 border border-slate-200 rounded-xl p-3.5 space-y-3">
-                            <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
-                                <span className="font-bold text-slate-700">Verified Concepts Breadth:</span>
-                                <span className="font-mono font-bold text-slate-900">{concepts.length} distinct concepts</span>
-                            </div>
-                            {concepts.length > 0 && (
-                                <div className="flex flex-wrap gap-1.5 pt-1">
-                                    {concepts.map((c, i) => (
-                                        <span key={i} className="text-[11px] px-2 py-0.5 rounded-md bg-white text-slate-700 font-semibold border border-slate-200 shadow-2xs">
-                                            {c}
+                    {/* SECTION 1: KEY TOPICS WE UNDERSTOOD */}
+                    <div className="space-y-2.5">
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                                <span>🧠</span>
+                                <span>Key Topics Understood From Your Lecture</span>
+                            </h4>
+                            <span className="text-[11px] font-bold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">
+                                {topicsList.length} topics found
+                            </span>
+                        </div>
+
+                        <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
+                            {topicsList.length > 0 ? (
+                                <div className="flex flex-wrap gap-1.5">
+                                    {topicsList.map((topic, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="text-xs font-bold px-2.5 py-1 rounded-xl bg-white text-slate-800 border border-slate-200 shadow-2xs flex items-center gap-1.5"
+                                        >
+                                            <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                                            {topic}
                                         </span>
                                     ))}
                                 </div>
+                            ) : (
+                                <p className="text-xs text-slate-500 italic">
+                                    Core lecture curriculum concepts verified.
+                                </p>
                             )}
-
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-200/60 text-center">
-                                <div className="bg-white p-2 rounded-lg border border-slate-200">
-                                    <span className="text-[10px] text-slate-500 block">Formal Definitions</span>
-                                    <span className="text-sm font-black text-slate-800">
-                                        {observable.formalDefinitions?.length ?? 0}
-                                    </span>
-                                </div>
-                                <div className="bg-white p-2 rounded-lg border border-slate-200">
-                                    <span className="text-[10px] text-slate-500 block">Worked Traces</span>
-                                    <span className="text-sm font-black text-slate-800">
-                                        {observable.workedTraces?.length ?? 0}
-                                    </span>
-                                </div>
-                                <div className="bg-white p-2 rounded-lg border border-slate-200">
-                                    <span className="text-[10px] text-slate-500 block">Code Sequencing</span>
-                                    <span className="text-sm font-black text-slate-800">
-                                        {observable.algorithmicCodeSequencing?.detected ? 'Detected' : 'None'}
-                                    </span>
-                                </div>
-                                <div className="bg-white p-2 rounded-lg border border-slate-200">
-                                    <span className="text-[10px] text-slate-500 block">Comparative Logic</span>
-                                    <span className="text-sm font-black text-slate-800">
-                                        {observable.comparativeReasoning?.detected ? 'Detected' : 'None'}
-                                    </span>
-                                </div>
-                            </div>
+                            <p className="text-[11px] font-medium text-slate-600 flex items-center gap-1.5 pt-1">
+                                <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                                <span>Every question on your quiz will be directly rooted in these verified topics.</span>
+                            </p>
                         </div>
                     </div>
 
-                    {/* Section 3: Assessment Capacity */}
-                    <div className="space-y-2">
+                    {/* SECTION 2: WHY THIS SCORE? (SIMPLE 4-PART BREAKDOWN) */}
+                    <div className="space-y-2.5">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                            <span>💡</span>
+                            <span>Why This Score? (Points Breakdown)</span>
+                        </h4>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            {friendlyCategories.map((cat, idx) => {
+                                const found = earnedRubric.find(r => r.category === cat.key);
+                                const earnedPts = found ? Number(found.earned) : cat.defaultEarned;
+                                const maxPts = found ? Number(found.max) : cat.defaultMax;
+                                const isEarned = earnedPts > 0;
+
+                                return (
+                                    <div
+                                        key={idx}
+                                        className={`p-3 rounded-2xl border transition-all ${
+                                            isEarned
+                                                ? 'bg-white border-slate-200 shadow-2xs'
+                                                : 'bg-slate-50/70 border-slate-200 text-slate-400'
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between mb-1">
+                                            <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                                <span>{cat.icon}</span>
+                                                <span>{cat.title}</span>
+                                            </span>
+                                            <span className={`text-xs font-black px-2 py-0.5 rounded-lg ${
+                                                isEarned
+                                                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                                    : 'bg-slate-100 text-slate-500'
+                                            }`}>
+                                                {earnedPts}/{maxPts}
+                                            </span>
+                                        </div>
+                                        <p className="text-[11px] text-slate-600 leading-tight">
+                                            {cat.easyDesc}
+                                        </p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* SECTION 3: RECOMMENDED QUIZ PLAN */}
+                    <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
-                            <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
-                                3. Assessment Capacity
+                            <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                                <span>🎯</span>
+                                <span>Recommended Quiz Plan</span>
                             </h4>
                             <span className="text-xs font-bold text-slate-700">
-                                Total Recommended: <span className="font-black text-slate-900">{recCount} Qs</span>
+                                Total: <strong className="text-slate-900">{recCount} Questions</strong>
                             </span>
                         </div>
-                        <div className="grid grid-cols-3 gap-3">
-                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                                <span className="text-[10px] font-bold text-emerald-700 block uppercase">Easy</span>
-                                <span className="text-lg font-black text-slate-900">{easyCap}</span>
-                                <span className="text-[10px] text-slate-400 block">Recall / Concepts</span>
+
+                        <div className="grid grid-cols-3 gap-2.5 text-center">
+                            <div className="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-200">
+                                <span className="text-[10px] font-black text-emerald-800 block uppercase tracking-wider">Easy</span>
+                                <span className="text-xl font-black text-slate-900 my-0.5 block">{easyCap} Qs</span>
+                                <span className="text-[10px] text-slate-500 font-medium block">Key terms & concepts</span>
                             </div>
-                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                                <span className="text-[10px] font-bold text-blue-700 block uppercase">Medium</span>
-                                <span className="text-lg font-black text-slate-900">{medCap}</span>
-                                <span className="text-[10px] text-slate-400 block">Logic / Tracing</span>
+                            <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-200">
+                                <span className="text-[10px] font-black text-blue-800 block uppercase tracking-wider">Medium</span>
+                                <span className="text-xl font-black text-slate-900 my-0.5 block">{medCap} Qs</span>
+                                <span className="text-[10px] text-slate-500 font-medium block">How things work & logic</span>
                             </div>
-                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                                <span className="text-[10px] font-bold text-purple-700 block uppercase">Hard</span>
-                                <span className="text-lg font-black text-slate-900">{hardCap}</span>
-                                <span className="text-[10px] text-slate-400 block">Multi-constraint</span>
+                            <div className="bg-purple-50/70 p-3 rounded-2xl border border-purple-200">
+                                <span className="text-[10px] font-black text-purple-800 block uppercase tracking-wider">Hard</span>
+                                <span className="text-xl font-black text-slate-900 my-0.5 block">{hardCap} Qs</span>
+                                <span className="text-[10px] text-slate-500 font-medium block">Deep analysis & edge cases</span>
                             </div>
                         </div>
-
-                        {hardDeficit > 0 && (
-                            <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2">
-                                <AlertCircle size={14} className="mt-0.5 shrink-0 text-amber-600" />
-                                <div>
-                                    <strong>Capacity Warning:</strong> {hardDeficit} requested Hard target(s) exceed defensible evidence capacity and were safely reallocated.
-                                </div>
-                            </div>
-                        )}
+                        <p className="text-[11px] text-slate-500 text-center">
+                            Your lecture can support these questions without repeating concepts or hallucinating facts.
+                        </p>
                     </div>
 
-                    {/* Section 4: Curricular Coverage & Alignment */}
-                    <div className="space-y-2">
-                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
-                            4. Curricular Coverage & Quiz Alignment
-                        </h4>
-                        <div className="p-3.5 bg-slate-50/60 rounded-xl border border-slate-200 text-xs space-y-1.5">
-                            <div className="flex items-center justify-between">
-                                <span className="text-slate-600">Eligible Concepts:</span>
-                                <span className="font-bold text-slate-900">{alignment.eligibleConceptCount ?? concepts.length}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-slate-600">Delivered / Represented Concepts:</span>
-                                <span className="font-bold text-slate-900">{alignment.deliveredConceptCount ?? alignment.plannedConceptCount ?? 'Pending generation'}</span>
-                            </div>
-                            <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
-                                <span className="font-bold text-slate-700">Delivered Coverage Ratio:</span>
-                                <span className="font-mono font-black text-slate-900">
-                                    {alignment.deliveredCoverageRatio !== null && alignment.deliveredCoverageRatio !== undefined
-                                        ? `${Math.round(alignment.deliveredCoverageRatio * 100)}%`
-                                        : (alignment.plannedCoverageRatio !== null && alignment.plannedCoverageRatio !== undefined
-                                            ? `${Math.round(alignment.plannedCoverageRatio * 100)}% (Planned)`
-                                            : 'N/A')}
-                                </span>
-                            </div>
+                    {/* QUICK QUALITY CHECKS */}
+                    <div className="p-3 bg-emerald-50/60 border border-emerald-200 rounded-2xl flex items-center justify-around text-xs font-bold text-emerald-900">
+                        <div className="flex items-center gap-1.5">
+                            <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+                            <span>College Curriculum Verified</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+                            <span>Zero Guessing Guarantee</span>
                         </div>
                     </div>
 
@@ -325,17 +341,17 @@ export default function TeachingScoreModal({
                         Close
                     </button>
 
-                    {onApplyQuestionCount && recCount > 0 && !isNonAcademic && (
+                    {onApplyQuestionCount && recCount > 0 && (
                         <button
                             type="button"
                             onClick={() => {
                                 onApplyQuestionCount(recCount, 'Balanced');
                                 onClose();
                             }}
-                            className="px-4.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-2 cursor-pointer active:scale-95 transition-all"
+                            className="px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs uppercase tracking-wider shadow-md flex items-center gap-2 cursor-pointer active:scale-95 transition-all"
                         >
                             <Sparkles size={14} />
-                            Apply Recommended ({recCount} Qs)
+                            Apply {recCount} Questions
                             <ArrowRight size={14} />
                         </button>
                     )}

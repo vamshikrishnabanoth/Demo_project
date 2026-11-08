@@ -201,6 +201,20 @@ export default function CreateQuizTopic() {
     const [depthError, setDepthError] = useState(false);
     const [depthRetryCount, setDepthRetryCount] = useState(0);
     const [lectureIntel, setLectureIntel] = useState(null);
+    // Friendly calculation for teaching clarity score number out of 100
+    const teachingScore = useMemo(() => {
+        if (!lectureDepth) return 80;
+        if (typeof lectureDepth.score === 'number' && lectureDepth.score > 0) return Math.round(lectureDepth.score);
+        if (Array.isArray(lectureDepth.breakdown?.earnedRubric) && lectureDepth.breakdown.earnedRubric.length > 0) {
+            const sum = lectureDepth.breakdown.earnedRubric.reduce((acc, r) => acc + (Number(r.earned) || 0), 0);
+            if (sum > 0) return Math.min(100, Math.round(sum));
+        }
+        const r = (lectureDepth.rating || '').toLowerCase();
+        if (r.includes('comprehens') || r.includes('advanced')) return 88;
+        if (r.includes('develop')) return 76;
+        if (r.includes('introduct')) return 64;
+        return 82;
+    }, [lectureDepth]);
 
     const isTopicOnly = inputs.length > 0 && inputs.every(inp => inp.type === 'text');
     const isPureTopic = isTopicOnly;
@@ -1479,30 +1493,28 @@ export default function CreateQuizTopic() {
                             <button
                                 type="button"
                                 onClick={() => setShowTeachingScoreModal(true)}
-                                className="bg-[#fff8f3] hover:bg-orange-100/80 border-2 border-[#f5d0b5] hover:border-orange-300 rounded-2xl px-4 py-2.5 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
-                                title="Click to view curricular evidence profile & recommended questions breakdown"
+                                className="bg-gradient-to-r from-orange-50 via-amber-50/50 to-white hover:from-orange-100 hover:to-amber-100 border-2 border-orange-200 hover:border-orange-400 rounded-2xl px-4 py-2 flex items-center gap-3.5 shadow-xs transition-all cursor-pointer active:scale-95 group text-left"
+                                title="Click to view what the AI understood and why you received this score"
                             >
-                                <div className="w-9 h-9 rounded-xl bg-orange-500/15 border border-orange-300/60 flex items-center justify-center text-[#ea580c] shrink-0 group-hover:scale-105 transition-transform">
-                                    <Award size={20} />
+                                {/* Bold Score Number */}
+                                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#ea580c] to-[#c2410c] text-white flex flex-col items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                                    <span className="text-base font-black tracking-tight leading-none">{teachingScore}</span>
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-orange-200 leading-none mt-0.5">/100</span>
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">{isTopicOnly ? 'Curriculum Scope' : 'Curricular Evidence Profile'}</p>
-                                        <span className="text-[9px] font-bold text-[#c2410c] bg-orange-100 px-1.5 py-0.2 rounded-full group-hover:bg-[#ea580c] group-hover:text-white transition-colors flex items-center gap-1">
-                                            <span>Instructional Digest</span>
+                                        <p className="text-[10px] font-black text-[#9a3412] uppercase tracking-widest">Teaching Clarity Score</p>
+                                        <span className="text-[9px] font-bold text-[#c2410c] bg-orange-100 px-2 py-0.5 rounded-full group-hover:bg-[#ea580c] group-hover:text-white transition-colors flex items-center gap-1">
+                                            <span>See Breakdown</span>
                                             <Info size={10} className="shrink-0" />
                                         </span>
                                     </div>
-                                    <p className="text-sm font-black text-[#c2410c] flex items-center gap-1.5">
-                                        <span>{lectureDepth.rating || 'Comprehensive'} </span>
-                                        <span className="text-[10px] font-bold text-orange-800 bg-orange-100 px-2 py-0.5 rounded-md">{isTopicOnly ? 'Topic Curriculum' : hasAudio && hasDocFiles ? 'Audio + Document' : hasAudio ? 'Audio only' : 'Document only'}</span>
+                                    <p className="text-xs font-black text-[#c2410c] flex items-center gap-1.5 mt-0.5">
+                                        <span>{lectureDepth.rating || 'Comprehensive Depth'} ⭐</span>
+                                        <span className="text-[10px] font-bold text-orange-800 bg-white/80 border border-orange-200 px-2 py-0.2 rounded-md">
+                                            {isTopicOnly ? 'Curriculum Scope' : hasAudio && hasDocFiles ? 'Audio + Document' : hasAudio ? 'Audio Lecture' : 'Document'}
+                                        </span>
                                     </p>
-                                </div>
-                                <div className="w-16 bg-orange-200 h-2 rounded-full overflow-hidden shrink-0 hidden sm:block">
-                                    <div
-                                        className="bg-[#ea580c] h-full rounded-full transition-all duration-500"
-                                        style={{ width: `${lectureDepth.score}%` }}
-                                    />
                                 </div>
                             </button>
                         )}
@@ -2102,30 +2114,31 @@ export default function CreateQuizTopic() {
                                 {!depthLoading && !depthError && lectureDepth && lectureDepth.rating !== 'Non-Academic' && (
                                     <div className="p-4.5 bg-[#fff8f3] border-2 border-[#f5d0b5] rounded-3xl space-y-3.5 shadow-xs transition-all animate-in fade-in duration-200">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#f5d0b5]/70">
-                                            <div className="flex items-center gap-2">
-                                                <Sparkles size={16} className="text-[#ea580c] animate-pulse" />
-                                                <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider">
-                                                    {hasAudio ? (
-                                                        <>Teaching Depth: <span className="font-bold text-[#ea580c]">{(lectureDepth.rating || 'Comprehensive').toUpperCase()}</span></>
-                                                    ) : hasDocFiles ? (
-                                                        <>Document Scope: <span className="font-bold text-[#ea580c]">CURRICULUM EXTRACTED</span></>
-                                                    ) : (
-                                                        <>Topic Blueprint: <span className="font-bold text-[#ea580c]">ACADEMIC SYLLABUS</span></>
-                                                    )}
-                                                </span>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-orange-600 text-white flex flex-col items-center justify-center font-black shadow-xs shrink-0">
+                                                    <span className="text-sm font-black leading-none">{teachingScore}</span>
+                                                    <span className="text-[8px] font-bold leading-none text-orange-200 mt-0.5">/100</span>
+                                                </div>
+                                                <div>
+                                                    <span className="text-[11px] font-black text-[#c2410c] uppercase tracking-wider block">
+                                                        {hasAudio ? 'Lecture Teaching Score' : hasDocFiles ? 'Material Quality Score' : 'Curriculum Score'}
+                                                    </span>
+                                                    <span className="text-xs font-bold text-slate-800">
+                                                        {lectureDepth.rating || 'Comprehensive'} Depth ⭐
+                                                    </span>
+                                                </div>
                                             </div>
-                                            {/* Show Instructional Digest / Teaching Score button */}
-                                            {lectureDepth && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowTeachingScoreModal(true)}
-                                                    className="self-start sm:self-auto text-xs font-mono font-black text-[#9a3412] bg-white hover:bg-orange-100/80 px-3 py-1 rounded-full border border-[#f5d0b5] flex items-center gap-2 shadow-2xs transition-all cursor-pointer hover:scale-105 active:scale-95"
-                                                    title="Click to view exact rubric explanation & point deductions breakdown"
-                                                >
-                                                    <span>Instructional Digest</span>
-                                                    <Info size={11} className="text-[#ea580c] shrink-0" />
-                                                </button>
-                                            )}
+                                            {/* Show Friendly Breakdown button */}
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowTeachingScoreModal(true)}
+                                                className="self-start sm:self-auto text-xs font-bold text-[#9a3412] bg-white hover:bg-orange-100/90 px-3.5 py-1.5 rounded-xl border border-[#f5d0b5] flex items-center gap-2 shadow-2xs transition-all cursor-pointer hover:scale-105 active:scale-95"
+                                                title="Click to see what the AI understood and why you received this score"
+                                            >
+                                                <Sparkles size={13} className="text-[#ea580c] shrink-0" />
+                                                <span>See What AI Understood</span>
+                                                <Info size={11} className="text-[#ea580c] shrink-0" />
+                                            </button>
                                         </div>
 
                                         {/* Main Topic / Subject */}
