@@ -34,19 +34,19 @@
       ]
     },
     "change1": {
-      "totalDefensibleCapacity": 42,
+      "totalDefensibleCapacity": 22,
       "recommendedQuestionCount": 5,
-      "distinctConceptCount": 17,
+      "distinctConceptCount": 11,
       "capacityByDifficulty": {
-        "easy": 17,
-        "medium": 17,
-        "hard": 8,
-        "balanced": 42
+        "easy": 11,
+        "medium": 11,
+        "hard": 0,
+        "balanced": 22
       },
       "recommendedByDifficulty": {
         "easy": 5,
         "medium": 5,
-        "hard": 5,
+        "hard": 0,
         "balanced": 5
       },
       "plannedTargetsTotal": 10,
@@ -66,19 +66,19 @@
       "actionOptions": []
     },
     "change1": {
-      "totalDefensibleCapacity": 58,
+      "totalDefensibleCapacity": 53,
       "recommendedQuestionCount": 20,
       "distinctConceptCount": 24,
       "capacityByDifficulty": {
-        "easy": 23,
-        "medium": 22,
-        "hard": 13,
-        "balanced": 58
+        "easy": 24,
+        "medium": 23,
+        "hard": 6,
+        "balanced": 53
       },
       "recommendedByDifficulty": {
-        "easy": 18,
+        "easy": 19,
         "medium": 17,
-        "hard": 10,
+        "hard": 5,
         "balanced": 20
       },
       "plannedTargetsTotal": 10,

@@ -165,6 +165,13 @@ class LectureIntelligence {
     const reasoning = pedagogicalCritique?.reasoningDepth || [];
     const demonstrations = pedagogicalCritique?.practicalDemonstrations || [];
 
+    // Explicit Hard Infeasibility Gate from depth analyzer prerequisite gates or instructional profile
+    const isHardExplicitlyInfeasible = options.hardFeasible === false ||
+      options.hardFeasibility?.hardFeasible === false ||
+      options.overrideProfile?.hardFeasibility?.hardFeasible === false ||
+      pedagogicalCritique?.hardFeasible === false ||
+      (options.curricularEvidenceProfile?.assessmentCapacity && options.curricularEvidenceProfile.assessmentCapacity.hard === 0);
+
     const hasMechanismsInLecture = explanatory.includes('OPERATIONAL_MECHANISM') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION');
     const hasPracticalTraces = demonstrations.includes('WORKED_TRACE_OR_CODE');
     const hasInvariantsInLecture = reasoning.includes('INVARIANT_AND_CAUSAL') || explanatory.includes('THEORETICAL_DERIVATION') || explanatory.includes('CRITIQUE_AND_EVALUATION') || hasPracticalTraces || (hasMechanismsInLecture && (options.wordCount || 0) >= 150);
@@ -338,8 +345,12 @@ class LectureIntelligence {
           });
         }
 
-        // Worked code trace / multi-step diagnostic scenario (discounted if code excluded)
-        const isCodeTrace = !isCodeExcluded && (hasPracticalTraces && hasConceptMechanism && (def.length >= 40 || (def.length + mech.length >= 60)));
+        // Worked code trace / multi-step diagnostic scenario (discounted if code excluded or Hard is infeasible)
+        // Strictly requires code mutation, invariant assertion, or diagnostic defect analysis to qualify as Hard
+        const isCodeTrace = !isCodeExcluded && !isHardExplicitlyInfeasible && (
+          hasPracticalTraces && hasConceptMechanism &&
+          /\b(mutation|invariant|boundary|defect|bug|overflow|underflow|pointer|recursion|exception|state transition|off-by-one|step-by-step trace)\b/i.test(`${name} ${def} ${mech}`)
+        );
         if (isCodeTrace) {
           codeTraceCount += 1;
           operationEvidenceTrail.push({
@@ -382,6 +393,23 @@ class LectureIntelligence {
       if (totalHard === 0 && substantiveConceptCount >= 2 && hasInvariantsInLecture) {
         // Substantive academic lecture with reasoning or mechanisms supports hard assessment via tradeoffs
         totalHard = Math.max(1, Math.min(8, Math.round(substantiveConceptCount * 0.35)));
+      }
+    }
+
+    if (isHardExplicitlyInfeasible) {
+      totalHard = 0;
+    }
+
+    if (!isBriefExcerpt && options.curricularEvidenceProfile?.assessmentCapacity) {
+      const cepCap = options.curricularEvidenceProfile.assessmentCapacity;
+      if (typeof cepCap.easy === 'number') {
+        totalEasy = Math.min(totalEasy, Math.max(cepCap.easy, substantiveConceptCount));
+      }
+      if (typeof cepCap.medium === 'number') {
+        totalMedium = Math.min(totalMedium, Math.max(cepCap.medium, substantiveConceptCount));
+      }
+      if (typeof cepCap.hard === 'number' && !isHardExplicitlyInfeasible) {
+        totalHard = Math.min(totalHard, cepCap.hard);
       }
     }
 
@@ -954,8 +982,24 @@ class LectureIntelligence {
       const hasSubstantiveMech = ['RULE_OR_CONDITION', 'FORMAL_DERIVATION', 'CRITIQUE_OR_INTERPRETATION', 'MECHANISM', 'COMPARISON'].includes(substanceType);
       const anchorId = `seg_${i + 1}`;
 
+      let existingMatchKey = null;
       if (conceptMap.has(normKey)) {
-        const existing = conceptMap.get(normKey);
+        existingMatchKey = normKey;
+      } else {
+        const candWords = candidateName.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 3 && !['the', 'and', 'for', 'with', 'this', 'that', 'what', 'how', 'have', 'from'].includes(w));
+        for (const [key, val] of conceptMap.entries()) {
+          const keyWords = key.replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 3 && !['the', 'and', 'for', 'with', 'this', 'that', 'what', 'how', 'have', 'from'].includes(w));
+          const hasSharedStem = candWords.some(cw => keyWords.some(kw => cw.startsWith(kw) || kw.startsWith(cw)));
+          const isSubstring = key.includes(normKey) || normKey.includes(key);
+          if (hasSharedStem || isSubstring) {
+            existingMatchKey = key;
+            break;
+          }
+        }
+      }
+
+      if (existingMatchKey) {
+        const existing = conceptMap.get(existingMatchKey);
         if (!existing.sourceAnchors.includes(anchorId)) {
           existing.sourceAnchors.push(anchorId);
         }
@@ -1065,7 +1109,9 @@ class LectureIntelligence {
         wordCount,
         isCurricular: depthResult.isCurricular,
         curricularSegmentsCount: depthResult.curricularSegments?.length || 0,
-        negativeBoundaries: Array.isArray(negativeBoundaries) ? negativeBoundaries : []
+        negativeBoundaries: Array.isArray(negativeBoundaries) ? negativeBoundaries : [],
+        curricularEvidenceProfile: depthResult.curricularEvidenceProfile,
+        hardFeasibility: depthResult.hardFeasibility || (depthResult.curricularEvidenceProfile?.assessmentCapacity?.hard === 0 ? { hardFeasible: false, deficitReason: 'Zero Hard-tier reasoning operations or invariants observed.' } : null)
       }),
       auditTrail: {
         modelUsed: 'deterministic-depth-analyzer-v1',

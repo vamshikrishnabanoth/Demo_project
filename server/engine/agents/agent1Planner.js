@@ -11,7 +11,7 @@
 
 'use strict';
 
-const PLANNER_SCHEMA_VERSION = 'v8_lcacm_compact_planning';
+const PLANNER_SCHEMA_VERSION = 'v8_1_lcacm_capacity_enforcement';
 
 const ASSESSMENT_ANGLES = Object.freeze({
   CONCEPTUAL: 'CONCEPTUAL',
@@ -4650,91 +4650,31 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
         continue;
       }
 
-      // Full question fulfillment across cognitive dimensions without artificial truncation:
-      // totalDefensibleCapacity represents distinct concept capacity, not a hard ceiling on delivered count.
-      // If Hard mode is requested without FILL_WITH_MEDIUM and evidence is lacking, record explicit Hard deficit.
-      // In Balanced, Medium, and Easy modes, fulfill requested count and visibly label repeated targets.
+      // Full question fulfillment bounded strictly by evidence defensibility:
+      // When nonDeficitCount reaches totalDefensibleCapacity, remaining requested slots
+      // must become explicit capacity deficits to prevent artificial question inflation.
       if (!isTopicMode && nonDeficitCount >= allowedTotalRemaining) {
-        if (capacityPolicy === 'STRICT_SOURCE_ONLY') {
-          const deficitReason = cap.diagnosticReason || `Defensible source evidence capacity of ${cap.totalDefensibleCapacity} question(s) reached. STRICT_SOURCE_ONLY prohibits expanding beyond verified lecture/document material.`;
-          target.targetDifficulty = target.targetDifficulty || (diffLower === 'hard' ? 'Hard' : (diffLower === 'easy' ? 'Easy' : 'Medium'));
-          target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
-          target.isCapacityLimited = true;
-          target.bloomLevel = diffLower === 'hard' ? 'Evaluate / Synthesize' : 'Understand / Apply';
-          target.operationalGuidance = 'Capacity deficit: total defensible source evidence capacity reached under STRICT_SOURCE_ONLY policy.';
-          target.instruction = deficitReason;
-          target.capacityLimitation = {
-            status: 'INSUFFICIENT_SOURCE_CAPACITY',
-            reason: deficitReason
-          };
-          target.negativeBoundaries = negativeBoundaries;
-          capacityLimitations.push({
-            targetId: target.targetId,
-            concept: target.concept,
-            requestedDifficulty: target.targetDifficulty,
-            limitationType: 'INSUFFICIENT_SOURCE_CAPACITY',
-            message: deficitReason
-          });
-          updatedTargets.push(target);
-          continue;
-        }
-
-        if (diffLower === 'hard' && deficitPolicy !== 'FILL_WITH_MEDIUM') {
-          const deficitReason = cap.diagnosticReason || `Defensible lecture capacity limit of ${cap.totalDefensibleCapacity} question(s) reached for Hard tier. Remaining slots withheld to prevent hallucination.`;
-          target.targetDifficulty = target.targetDifficulty || 'Hard';
-          target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
-          target.isCapacityLimited = true;
-          target.bloomLevel = 'Evaluate / Synthesize';
-          target.operationalGuidance = 'Capacity deficit: total defensible lecture capacity reached for Hard difficulty.';
-          target.instruction = deficitReason;
-          target.capacityLimitation = {
-            status: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            reason: deficitReason
-          };
-          target.negativeBoundaries = negativeBoundaries;
-          capacityLimitations.push({
-            targetId: target.targetId,
-            concept: target.concept,
-            requestedDifficulty: target.targetDifficulty,
-            limitationType: 'INSUFFICIENT_EVIDENCE_FOR_HARD',
-            message: deficitReason
-          });
-          updatedTargets.push(target);
-          continue;
-        } else if (capacityPolicy === 'ALLOW_SCOPE_SUPPLEMENTARY') {
-          target.isCapacityLimited = false;
-          delete target.capacityLimitation;
-          target.isSupplementary = true;
-          target.provenance = 'SCOPE_SUPPLEMENTARY';
-          target.repeatedTarget = false;
-          target.isRepeatedTarget = false;
-          target.operationalGuidance = 'Generate question strictly within the authorized topic scope using general domain knowledge. Do not cite lecture lines or claim this was stated in the recorded lecture.';
-          target.groundingVerification = 'SCOPE_SUPPLEMENTARY';
-          if (target.concept && target.concept.includes(' (')) {
-            target.concept = target.primaryConcept || target.concept.split(' (')[0];
-          }
-          nonDeficitCount++;
-          target.negativeBoundaries = negativeBoundaries;
-          updatedTargets.push(target);
-          continue;
-        } else {
-          target.isCapacityLimited = false;
-          target.isRepeatedTarget = true;
-          target.repeatedTarget = true;
-          delete target.capacityLimitation;
-          const occ = target.targetOccurrence || (Math.floor(nonDeficitCount / Math.max(1, cap.totalDefensibleCapacity || 5)) + 1);
-          target.targetOccurrence = occ;
-          if (!target.cognitiveApproach) {
-            const app = this.getCognitiveApproachForOccurrence(occ, target.targetDifficulty || 'Medium', target.concept);
-            target.cognitiveApproach = app.approach;
-            target.intendedCognitiveOperation = app.op;
-            target.operationalGuidance = app.guidance;
-          }
-          nonDeficitCount++;
-          target.negativeBoundaries = negativeBoundaries;
-          updatedTargets.push(target);
-          continue;
-        }
+        const deficitReason = cap.diagnosticReason || `Defensible source evidence capacity of ${cap.totalDefensibleCapacity} question(s) reached. Remaining slots withheld to prevent artificial question inflation.`;
+        target.targetDifficulty = target.targetDifficulty || (diffLower === 'hard' ? 'Hard' : (diffLower === 'easy' ? 'Easy' : 'Medium'));
+        target.intendedCognitiveOperation = 'UNFULFILLED_CAPACITY_DEFICIT';
+        target.isCapacityLimited = true;
+        target.bloomLevel = diffLower === 'hard' ? 'Evaluate / Synthesize' : 'Understand / Apply';
+        target.operationalGuidance = 'Capacity deficit: total defensible source evidence capacity reached.';
+        target.instruction = deficitReason;
+        target.capacityLimitation = {
+          status: diffLower === 'hard' ? 'INSUFFICIENT_EVIDENCE_FOR_HARD' : 'INSUFFICIENT_SOURCE_CAPACITY',
+          reason: deficitReason
+        };
+        target.negativeBoundaries = negativeBoundaries;
+        capacityLimitations.push({
+          targetId: target.targetId,
+          concept: target.concept,
+          requestedDifficulty: target.targetDifficulty,
+          limitationType: diffLower === 'hard' ? 'INSUFFICIENT_EVIDENCE_FOR_HARD' : 'INSUFFICIENT_SOURCE_CAPACITY',
+          message: deficitReason
+        });
+        updatedTargets.push(target);
+        continue;
       }
 
       // Check if target is attempting Hard difficulty

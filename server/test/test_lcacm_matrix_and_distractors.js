@@ -238,8 +238,8 @@ runTest('C2: Valid Hard question with competing technical mechanisms passes vali
     options: [
       'The snapshot of index.js as it existed when git add was run, leaving subsequent working tree modifications unstaged.',
       'The latest working tree version of index.js, because git commit automatically captures current disk changes for tracked files.',
-      'The commit is rejected with an error requiring the developer to resolve or stage the modified working tree changes before committing.',
-      'The staged snapshot is committed, but Git resets index.js in the working tree back to the staged state, discarding subsequent edits.'
+      'The commit fails with an error requiring the developer to stage working tree changes before committing.',
+      'The staged snapshot is committed, but Git resets index.js in the working tree, discarding subsequent edits.'
     ],
     correctAnswer: 'The snapshot of index.js as it existed when git add was run, leaving subsequent working tree modifications unstaged.'
   };

@@ -1687,7 +1687,7 @@ class PipelineOrchestrator {
 
       const capacityOptions = (hasDeficit || requestedCount > defensibleCapacity) ? [
         { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${deliveredCount} ${requestedDifficulty} Question${deliveredCount === 1 ? '' : 's'}` },
-        ...(defensibleCapacity !== deliveredCount ? [{ action: 'ACCEPT_DEFENSIBLE_COUNT', label: `Accept defensible question count (${defensibleCapacity} questions)` }] : []),
+        ...(defensibleCapacity < deliveredCount ? [{ action: 'ACCEPT_DEFENSIBLE_COUNT', label: `Accept defensible question count (${defensibleCapacity} questions)` }] : []),
         ...(totalDeficit > 0 && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM' ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficit} with Deep Medium Questions` }] : []),
         ...(recommendedCount !== deliveredCount ? [{ action: 'ACCEPT_RECOMMENDED_COUNT', label: `Accept recommended quiz size (${recommendedCount} questions)` }] : []),
         { action: 'ADD_MATERIALS', label: 'Provide additional lecture materials' },
