@@ -374,12 +374,50 @@ class DeterministicValidator {
       errors.push(`CONVERSATIONAL_DISFLUENCY_CONTAMINATION: ${disfluencyCheck.reason}`);
     }
 
+    // Deterministic technical invariants check
+    const invariantCheck = this.validateTechnicalInvariants(mcq);
+    if (!invariantCheck.isValid) {
+      errors.push(...invariantCheck.errors);
+    }
+
     return {
       isValid: errors.length === 0,
       errors: errors,
       warnings: warnings,
       optionMetrics: optionSetResult.metrics,
       detailedErrors: optionSetResult.errors
+    };
+  }
+
+  /**
+   * Evaluates deterministic technical invariants for recognized mathematical and domain rules.
+   *
+   * @param {Object} mcq - MCQ object with stem/questionText, options, and correctAnswer
+   * @returns {Object} { isValid: boolean, errors: Array<string> }
+   */
+  validateTechnicalInvariants(mcq) {
+    const errors = [];
+    if (!mcq || typeof mcq !== 'object') return { isValid: true, errors: [] };
+
+    const stem = String(mcq.questionText || mcq.stem || '');
+    const key = String(mcq.correctAnswer || '').trim();
+
+    // Check for explicit attribution safe harbor
+    const isAttributed = /\b(?:according to (?:the )?(?:lecture|instructor|teacher)|in the (?:classroom )?(?:analogy|metaphor|illustration|story)|as explained by the instructor)\b/i.test(stem);
+    if (isAttributed) {
+      return { isValid: true, errors: [] };
+    }
+
+    // 1. N-gram Markov context length invariant (off-by-one check)
+    if (/\b(?:n-gram|bigram|trigram|markov)\b/i.test(stem) && /\b(?:how many|number of)\s+(?:preceding|previous|prior)\s+(?:words|tokens)/i.test(stem)) {
+      if (/^n$/i.test(key) || /\b(?:uses?|exactly)\s+n\s+(?:preceding|previous|prior)\b/i.test(key) || /^\s*n\s*$/i.test(key)) {
+        errors.push('DETERMINISTIC_INVARIANT_VIOLATION: In an N-gram language model, predicting the next word conditions on N - 1 preceding words, not N.');
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
     };
   }
 

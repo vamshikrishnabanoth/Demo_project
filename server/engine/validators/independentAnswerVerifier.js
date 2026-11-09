@@ -152,6 +152,104 @@ class IndependentAnswerVerifier {
       });
     }
 
+    // Safe Harbor Check: If the question stem explicitly attributes the claim or illustration
+    // to the instructor or lecture (e.g. "According to the lecture analogy...", "As illustrated by the instructor..."),
+    // assess as source comprehension rather than a universal canonical technical assertion.
+    const isAttributedComprehension = /\b(?:according to (?:the )?(?:lecture|instructor|teacher)|in the (?:classroom )?(?:analogy|metaphor|illustration|story)|as explained by the instructor)\b/i.test(stem);
+
+    if (!isAttributedComprehension) {
+      // Check 4: N-gram Markov Context Length Invariant (Off-by-One Error)
+      const isNGramQuestion = /\b(?:n-gram|bigram|trigram|markov)\b/i.test(stem) &&
+        /\b(?:preceding|previous|prior|context)\s+(?:words|tokens|history)\b/i.test(stem);
+      if (isNGramQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase().trim();
+          // False Claim: Next word prediction conditions on N preceding words rather than N - 1
+          if (/^n$/i.test(lower) || /\b(?:uses?|exactly)\s+n\s+(?:preceding|previous|prior)\b/i.test(lower) || /^\s*n\s*$/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'N_GRAM_MARKOV_INVARIANT_VIOLATION',
+              details: 'In an N-gram language model, predicting the next word conditions on N - 1 preceding words, not N.'
+            });
+          }
+        });
+      }
+
+      // Check 5: Predictive AI vs Generative AI Definition Inversion
+      const isAiParadigmQuestion = /\b(?:generative\s+ai|predictive\s+ai)\b/i.test(stem) &&
+        /\b(?:difference|distinction|compare|versus|vs\.?|focuses on|characteri[zs]ed by)\b/i.test(stem);
+      if (isAiParadigmQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Generative AI executes actions or Predictive AI results then and there
+          if (/\bgenerative\s+ai\b.*?\b(?:executes?\s+actions?|acts\s+directly)\b/i.test(lower) ||
+              /\bpredictive\s+ai\b.*?\b(?:results?\s+then\s+and\s+there|executes?\s+actions?)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'INVERTED',
+              rule: 'CANONICAL_DEFINITION_INVERTED',
+              details: 'Inverts foundational AI paradigms: Generative AI models data distribution P(X) to produce novel content; it is not defined as executing actions.'
+            });
+          }
+        });
+      }
+
+      // Check 6: GAN Nash Equilibrium vs Winner/Defeat Collision
+      const isGanEquilibriumQuestion = /\b(?:gan|generative adversarial|generator|discriminator)\b/i.test(stem) &&
+        /\b(?:nash equilibrium|game equilibrium|convergence|equilibrium)\b/i.test(stem);
+      if (isGanEquilibriumQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Nash equilibrium means generator wins or defeats discriminator
+          if (/\b(?:generator\s+(?:wins|completely\s+defeats|overcomes)|discriminator\s+is\s+(?:completely\s+)?defeated)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'NASH_EQUILIBRIUM_WINNER_COLLISION',
+              details: 'Nash equilibrium in GANs is a minimax saddle point where pg = pdata and D(x) = 0.5, not a state where the generator wins.'
+            });
+          }
+        });
+      }
+
+      // Check 7: Modern LLM Autoregressive Architecture Misclassification
+      const isLlmArchitectureQuestion = /\b(?:large language model|llm|modern llms|autoregressive)\b/i.test(stem) &&
+        /\b(?:architecture|topology|paired|transformer)\b/i.test(stem);
+      if (isLlmArchitectureQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Modern LLMs are universally paired encoder-decoder
+          if (/\b(?:paired\s+)?encoder-decoder\b/i.test(lower) && /\b(?:defining|standard|modern\s+llms|primary\s+architecture)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'ARCHITECTURAL_TOPOLOGY_MISCLASSIFICATION',
+              details: 'Modern autoregressive LLMs (e.g. GPT, LLaMA) are decoder-only Transformer architectures, not paired encoder-decoder architectures.'
+            });
+          }
+        });
+      }
+
+      // Check 8: Word-Level Language Generation Casual Intuition vs Technical Generalization
+      const isWordGenerationQuestion = /\b(?:word(?:-level)?\s+generation|character(?:-level)?\s+generation)\b/i.test(stem) &&
+        /\b(?:meaningless|avoid|produce|advantage|why)\b/i.test(stem);
+      if (isWordGenerationQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Word generation avoids producing meaningless data as absolute rule
+          if (/\b(?:avoids?\s+producing\s+meaningless\s+data|guarantees?\s+meaningful|cannot\s+produce\s+meaningless)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'UNSUPPORTED_GENERALIZATION_CASUAL_INTUITION',
+              details: 'Treats oral classroom intuition as a universal technical claim; word-level models do not inherently prevent meaningless outputs and modern NLP uses subword tokenization (BPE).'
+            });
+          }
+        });
+      }
+    }
+
     return {
       checks,
       ambiguityDetected,

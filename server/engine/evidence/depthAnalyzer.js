@@ -480,7 +480,7 @@ class DepthAnalyzer {
       /\b(stop talking|settle down|be quiet|silence in the (?:class|back))\b/i,
       /\b(roll number(?:s)?|stand up|sit down|attendance|absent|present)\b/i,
       /\b(exam will be (?:held|conducted)|mid-term examination|bring your (?:id|hall tickets|identity cards|calculator))\b/i,
-      /\b(had lunch|cafeteria|traffic was|metro station|weather is nice|yesterday movie|funny haha|party|shopping)\b/i,
+      /\b(tea break|coffee break|take a break|break for tea|lunch break|canteen|cafeteria|had lunch|traffic was|metro station|weather is nice|yesterday movie|funny haha|party|shopping)\b/i,
       /\b(listen carefully|pay attention in the back|benches|can you hear me|mic check|am i audible|silence your phones)\b/i,
       /\b(assignments?\s+submit|submit (?:the|your)?\s*(?:lab\s+)?(?:reports?|assignments?|papers?|homework)|(?:late\s+)?submissions?\s+(?:will\s+)?receive\s+(?:zero\s+)?marks?|deadline\s+is\s+(?:tomorrow|friday|monday|tonight|\w+)|next\s+class\s+we\s+will)\b/i,
       /\b(announcement is (?:very\s+)?important for (?:your\s+)?(?:final\s+)?grades?|important for the (?:exam|test|quiz)|will be (?:on|in) the (?:exam|test)|final grades?|exam marks?)\b/i,
@@ -488,6 +488,17 @@ class DepthAnalyzer {
     ];
     for (const pat of adminPatterns) {
       if (pat.test(lower)) {
+        // Safe Harbor: If an administrative attention cue introduces a genuine academic explanation,
+        // preserve the instructional content rather than discarding the entire segment.
+        const extractedConcepts = this._extractConceptsFromSegment(cleanSeg);
+        const hasInstructionalDef = /\b(is an?|are\s+(?!(?:not|you|we|they|always|never|just|really|actually|simply|sitting|laughing|standing|doing|talking|going)\b)[a-z]+|means|defined as|works by|happens when|occurs when|causes|prevents|guarantees|enforces)\b/i.test(lower);
+        const hasAcademicCore = extractedConcepts.length > 0 && (hasInstructionalDef || this._hasAcademicDomainWord(lower) || this._isCodeOrTechnicalSnippet(cleanSeg));
+
+        if (hasAcademicCore) {
+          // Do not discard! Fall through to allow Step 8 to classify the academic explanation.
+          break;
+        }
+
         return {
           type: 'ADMINISTRATIVE',
           teaching_value: 0.05,
@@ -606,7 +617,7 @@ class DepthAnalyzer {
     // ──────────────────────────────────────────────────────────────────────────
     // Step 8: Core Instructional / Academic Explanations, Rules, Mechanisms
     // ──────────────────────────────────────────────────────────────────────────
-    const hasDefRelation = /\b(is an?|are(?: words)?|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|come in .* types|known as|named as|classified into|provides?(?:\s+an?)?|delivers?(?:\s+an?)?|acts as|serves as|used (?:to|as|in)|is (?:formally |strictly |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?|symbolizes?|illustrates?|explores?|depicts?|conveys?|embodies?|signifies?|articulates?|examines?)\b/i.test(lower);
+    const hasDefRelation = /\b(is an?|are\s+(?!(?:not|you|we|they|always|never|just|really|actually|simply|sitting|laughing|standing|doing|talking|going)\b)[a-z]+|means|defined as|refers to|represents|stands for|consists of|composed of|characterized by|types of|come in .* types|known as|named as|classified into|provides?(?:\s+an?)?|delivers?(?:\s+an?)?|acts as|serves as|used (?:to|as|in)|is (?:formally |strictly |mathematically )?(?:defined|characterized|denoted|formulated) as|exists (?:in|as)|enforces?|satisfies?|guarantees?|symbolizes?|illustrates?|explores?|depicts?|conveys?|embodies?|signifies?|articulates?|examines?)\b/i.test(lower);
     const hasMechRelation = /\b(works by|applies|extract(?:s|ed|ing)?|transform(?:s|ed|ing)?|comput(?:es|ed|ing)?|divid(?:es|ed|ing)?|multiplie(?:s|d)?|calculat(?:es|ed|ing)?|connect(?:s|ed|ing)?|execut(?:es|ed|ing)?|process(?:es|ed|ing)?|generat(?:es|ed|ing)?|allocat(?:es|ed|ing)?|modifie(?:s|d|ying)?|conduc(?:ts|ted|ting)?|converts?|eliminat(?:es|ed|ing)?|reduc(?:es|ed|ing)?|increas(?:es|ed|ing)?|decreas(?:es|ed|ing)?|stores?|retrieves?|passes?|takes?|outputs?|returns?|handles?|implements?|travers(?:es|ed|ing)?|select(?:s|ed|ing)?|partition(?:s|ed|ing)?|discard(?:s|ed|ing)?|project(?:s|ed|ing)?|encod(?:es|ed|ing)?|decod(?:es|ed|ing)?|superpos(?:es|ed|ing)?|entangl(?:es|ed|ing)?|borrow(?:s|ed|ing)?|catalyzes?|inhibits?|regulates?|binds?|secretes?|synthesizes?|activates?|mediates?|triggers?|escalates?|ratifies?|mobilizes?|governs?|produce(?:s|d|ing)?|construct(?:s|ed|ing)?|break(?:s|ing)?|halt(?:s|ed|ing)?|tripl(?:e|es|ed|ing)?|doubl(?:e|es|ed|ing)?|erupt(?:s|ed|ing)?|paralyz(?:e|es|ed|ing)?|enact(?:s|ed|ing)?|ration(?:s|ed|ing)?)\b/i.test(lower);
     const hasRuleRelation = /\b(whenever|therefore|in order to|leads to|results in|prevents|causes|so that|guarantees?|ensures?|requires?|depends on|condition|conditions|properties|invariants?|safe and idempotent|idempotent|greater than|less than|equal to|temporarily changes|cannot have both|trade-offs?|trade off|choice between|consequently|forced to|mathematically impossible|as a result|due to|led to|must\s+(?:return|have|be|start|contain|group)|naming\s+convention)\b/i.test(lower) || /^(?:when|because|faced with)\b.*,/i.test(lower);
     const hasComparisonRelation = /\b(in contrast|compared to|difference between|between .* and|neither .* nor|whereas|while\\s+(?:in\\s+contrast|on\\s+the\\s+other\\s+hand)|faster than|slower than|preferred over|differs? from|unlike|similar to|contrasted with|conflicts? with|counterpart|at the cost of|trade-offs?|trade off)\b/i.test(lower);
@@ -626,7 +637,10 @@ class DepthAnalyzer {
     const hasInstructionalSignal = hasDefRelation || hasMechRelation || hasRuleRelation || hasComparisonRelation || hasDemonstrative || hasTraceExample || hasSocraticCurricular || hasProcRelation || hasDeductiveRelation || hasAlgorithmicRelation || hasCritiqueRelation;
 
     const extractedConcepts = this._extractConceptsFromSegment(cleanSeg);
-    const hasAcademicConcept = extractedConcepts.length > 0 || this._hasAcademicDomainWord(lower) || hasFormalAcademicStructure || hasDeductiveRelation || hasAlgorithmicRelation || hasCritiqueRelation;
+    const hasInstructionalMechanism = hasDefRelation || hasMechRelation || hasComparisonRelation || hasRuleRelation || hasDeductiveRelation || hasAlgorithmicRelation || hasProcRelation;
+    const hasAcademicDomain = this._hasAcademicDomainWord(lower) || hasFormalAcademicStructure || this._isCodeOrTechnicalSnippet(cleanSeg);
+    const hasPedagogicalConcept = extractedConcepts.length > 0 && (hasAcademicDomain || hasInstructionalMechanism);
+    const hasAcademicConcept = hasAcademicDomain || hasPedagogicalConcept || hasCritiqueRelation;
 
     if (hasInstructionalSignal && hasSubstantiveLength && hasAcademicConcept) {
       let contentType = 'CORE_EXPLANATION';
@@ -765,7 +779,10 @@ class DepthAnalyzer {
       'try', 'trying', 'tried', 'put', 'putting', 'check', 'checking', 'checked',
       'ask', 'asking', 'asked', 'say', 'saying', 'said', 'start', 'starting', 'started',
       'stop', 'stopping', 'stopped', 'guess', 'guessing', 'wonder', 'wondering',
-      'suppose', 'supposing', 'supposed', 'remember', 'remembering', 'agree', 'disagree'
+      'suppose', 'supposing', 'supposed', 'remember', 'remembering', 'agree', 'disagree',
+      'hey', 'hello', 'hi', 'bye', 'learn', 'learning', 'learned', 'study', 'studying', 'studied',
+      'something', 'nothing', 'anything', 'everything', 'someone', 'anyone', 'nobody',
+      'people', 'person', 'guys', 'guy', 'folks', 'many', 'few', 'several', 'lot', 'lots'
     ]);
 
     const genericSingleWords = new Set([
@@ -785,7 +802,7 @@ class DepthAnalyzer {
     let phrase = raw.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
     
     // Strip conversational, prepositional, possessive, and auxiliary prefixes iteratively
-    const prefixRegex = /^(?:the|a|an|about|to|in|out|up|down|off|over|under|for|of|and|or|but|if|then|so|yes|yeah|no|into|onto|from|with|by|some|our|your|their|its|his|her|my|let|lets|we|you|now|just|well|look|looks|see|what|which|when|where|why|how|this|that|these|those|there|here|i\s+think|you\s+know|is|are|was|were|be|been|being|have|has|had)\s+/i;
+    const prefixRegex = /^(?:the|a|an|about|to|in|out|up|down|off|over|under|for|of|and|or|but|if|then|so|yes|yeah|no|hey|hello|hi|bye|into|onto|from|with|by|some|our|your|their|its|his|her|my|let|lets|we|you|now|just|well|look|looks|see|what|which|when|where|why|how|this|that|these|those|there|here|i\s+think|you\s+know|is|are|was|were|be|been|being|have|has|had)\s+/i;
     while (prefixRegex.test(phrase)) {
       phrase = phrase.replace(prefixRegex, '').trim();
     }
@@ -800,6 +817,32 @@ class DepthAnalyzer {
     // Filter colloquial contractions or fragment markers (e.g. "s not allowed", "it's done")
     if (/\b(?:isn't|aren't|wasn't|weren't|don't|doesn't|didn't|can't|couldn't|won't|wouldn't|shouldn't|it's|that's|there's|here's|what's|who's)\b/i.test(phrase)) {
       return '';
+    }
+
+    // Filter conversational structures, imperative directives, casual verbs/gerunds, and non-academic venues
+    const lowerTrim = phrase.toLowerCase().trim();
+    const isDomainTermException = lowerTrim === 'not gate' || lowerTrim === 'nosql';
+
+    if (!isDomainTermException) {
+      // 1. Filter conversational action verbs / gerunds (e.g. "sitting", "laughing", "talking", "doing")
+      if (/\b(?:laughing|sitting|talking|joking|sleeping|shouting|standing|wasting|doing|enjoy|enjoying|relax|relaxing|chatting|gossiping|bunking|playing|hanging)\b/i.test(phrase)) {
+        return '';
+      }
+
+      // 2. Filter conversational adverbs or negations at start (e.g. "not doing", "always sitting", "never coming")
+      if (/^(?:not|no|never|always|sometimes|often|rarely|usually|hardly|barely|actually|basically|really)\b/i.test(phrase)) {
+        return '';
+      }
+
+      // 3. Filter imperative classroom directives or conversational prompts
+      if (/^(?:enjoy|have\s+fun|relax|chill|listen|look|see|watch|keep|stop|shut|attend|bunk)\b/i.test(phrase)) {
+        return '';
+      }
+
+      // 4. Filter casual non-academic venues / activities / school administration
+      if (/\b(?:weekend|holidays?|vacations?|cricket|cinema|movies?|canteen|cafeteria|tea\s+break|coffee\s+break|hostels?|homework|last\s+row|first\s+row|back\s+bench|continuous\s+classes|bunking\s+classes?|attending\s+classes?)\b/i.test(phrase)) {
+        return '';
+      }
     }
 
     // Strip trailing predicate adverbs/adjectives (e.g., "mathematically impossible", "available")

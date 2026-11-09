@@ -2010,7 +2010,7 @@ Generate a single grounded multiple-choice question testing the assessment targe
         signal: evidencePackage?.abortSignal || target?.abortSignal
       });
       const genTimeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Agent 2 LLM generation timed out after 15s')), genTimeoutMs)
+        setTimeout(() => reject(new Error('Agent 2 LLM generation timed out after 35s')), genTimeoutMs)
       );
       responseText = await Promise.race([genPromise, genTimeout]);
     } catch (llmErr) {

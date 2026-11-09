@@ -387,35 +387,74 @@ class LLMRouter {
               }
 
               if (isRateLimit) {
-                const retryAfterSec = err.response?.headers?.['retry-after']
-                  ? parseFloat(err.response.headers['retry-after'])
-                  : null;
+                // Parse standard RFC Retry-After header supporting both integer seconds and HTTP-date formats
+                let retryAfterSec = null;
+                const rawRetryAfter = err.response?.headers?.['retry-after'];
+                if (rawRetryAfter) {
+                  const asNum = parseFloat(rawRetryAfter);
+                  if (!isNaN(asNum)) {
+                    retryAfterSec = asNum;
+                  } else {
+                    const parsedDate = Date.parse(rawRetryAfter);
+                    if (!isNaN(parsedDate)) {
+                      retryAfterSec = Math.max(0, Math.ceil((parsedDate - Date.now()) / 1000));
+                    }
+                  }
+                }
+
+                // Check provider-specific reset headers (e.g., x-ratelimit-reset-tokens, x-ratelimit-reset-requests)
+                const parseResetVal = (val) => {
+                  if (!val) return null;
+                  const str = String(val).trim();
+                  const num = parseFloat(str);
+                  if (!isNaN(num) && /^\d+(\.\d+)?s?$/.test(str)) return num;
+                  let sec = 0;
+                  const m = str.match(/(\d+)\s*m/);
+                  if (m) sec += parseInt(m[1], 10) * 60;
+                  const s = str.match(/(\d+(?:\.\d+)?)\s*s/);
+                  if (s) sec += parseFloat(s[1]);
+                  return sec > 0 ? sec : null;
+                };
+
+                const resetHeaderSec = parseResetVal(err.response?.headers?.['x-ratelimit-reset-tokens']) ||
+                  parseResetVal(err.response?.headers?.['x-ratelimit-reset-requests']);
+
                 const retryMatch = errorMsg.match(/try again in ([\d\.]+)s/i);
-                const extractedWaitSec = retryAfterSec || (retryMatch ? parseFloat(retryMatch[1]) : null);
+                const extractedWaitSec = retryAfterSec !== null ? retryAfterSec : (resetHeaderSec !== null ? resetHeaderSec : (retryMatch ? parseFloat(retryMatch[1]) : null));
                 const parsedWaitMs = extractedWaitSec ? Math.ceil(extractedWaitSec * 1000) + 400 : null;
 
-                const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 2500), 12000) : 3000;
-                this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
-                this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + cooldownMs);
                 if (isTPD) {
-                  const tpdDurationMs = 12 * 60 * 60 * 1000; // 12 hours
+                  // Prefer actual quota-reset information over assumed fixed 12-hour duration
+                  const tpdDurationMs = parsedWaitMs ? Math.max(parsedWaitMs, 60000) : (12 * 60 * 60 * 1000);
                   this.tpdExhaustedRoutes.set(`${keyIdx}_${currentModel}`, Date.now() + tpdDurationMs);
-                  console.warn(`⚡ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Route marked unavailable for 12h.`);
+                  this.keyCooldowns.set(keyIdx, Date.now() + Math.min(tpdDurationMs, 3600000));
+                  console.warn(`⚡ [LLMRouter] Groq Key-${keyIdx + 1} model '${currentModel}' daily token quota exhausted (TPD). Route marked unavailable for ${Math.round(tpdDurationMs / 1000)}s.`);
                 } else {
-                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} hit rate limit (${extractedWaitSec || 'N/A'}s). Advancing to next key pool...`);
+                  // Short-term RPM/TPM limit: apply bounded dynamic backoff to key and route
+                  const cooldownMs = parsedWaitMs ? Math.min(Math.max(parsedWaitMs, 2500), 60000) : 3000;
+                  this.keyCooldowns.set(keyIdx, Date.now() + cooldownMs);
+                  this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + cooldownMs);
+                  console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} hit temporary rate limit (${extractedWaitSec !== null ? extractedWaitSec : 'N/A'}s). Immediate failover to next key in pool...`);
                 }
                 break; // Break model loop to advance to next key in pool immediately
               } else if (status === 413) {
                 console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} request payload exceeded limits (413). Failing over to cloud fallback provider immediately.`);
                 throw new Error('Groq request payload too large (413)');
               } else if (status === 401 || status === 403) {
-                console.warn(`🚨 [LLMRouter] Groq Key-${keyIdx + 1} authentication/permission failed (${status}). Marking key invalid.`);
+                // Auth/Permission failures invalidate only this specific key; do not treat as daily quota or invalidate whole organization
+                console.warn(`🚨 [LLMRouter] Groq Key-${keyIdx + 1} authentication/permission failed (${status}). Marking only Key-${keyIdx + 1} invalid.`);
                 this.invalidKeys.add(keyIdx);
                 productionMetrics.inc('provider_failure_count');
                 break;
               } else if (status === 404) {
                 console.warn(`⚠️ [LLMRouter] Model '${currentModel}' not found (404). Marking model unavailable on Key-${keyIdx + 1}.`);
                 this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 3600000);
+                productionMetrics.inc('provider_failure_count');
+                break;
+              } else if (status >= 500 && status < 600) {
+                // Transient server error: brief cooldown on route, immediate failover to alternative key
+                console.warn(`⚠️ [LLMRouter] Groq Key-${keyIdx + 1} upstream server error (${status}). Immediate failover to next key...`);
+                this.modelCooldowns.set(`${keyIdx}_${currentModel}`, Date.now() + 5000);
                 productionMetrics.inc('provider_failure_count');
                 break;
               } else {
