@@ -32,6 +32,8 @@
 
 'use strict';
 
+const disfluencySanitizer = require('../intelligence/disfluencySanitizer');
+
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -828,7 +830,9 @@ class DepthAnalyzer {
     if (conversationalStopwords.has(words[0].toLowerCase())) return '';
     if (conversationalStopwords.has(words[words.length - 1].toLowerCase())) return '';
 
-    return words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+    const candidate = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+    if (!disfluencySanitizer.isValidConceptPhrase(candidate)) return '';
+    return candidate;
   }
 
   /**

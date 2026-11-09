@@ -13,6 +13,7 @@
 const crypto = require('crypto');
 const { OPTION_SET_CONTRACT } = require('../contracts/pipelineContracts');
 const DifficultyAwareDistractorValidator = require('./difficultyAwareDistractorValidator');
+const disfluencySanitizer = require('../intelligence/disfluencySanitizer');
 
 const SCHEMA_PLACEHOLDER_OPTIONS = new Set([
   'contrasting algorithmic approach or property',
@@ -362,6 +363,15 @@ class DeterministicValidator {
       errors.push('correctAnswer is required and must be a string');
     } else if (Array.isArray(mcq.options) && !mcq.options.includes(mcq.correctAnswer)) {
       errors.push('correctAnswer does not match any of the 4 provided options');
+    }
+
+    // Explicit disfluency contamination pre-check
+    const disfluencyCheck = disfluencySanitizer.detectDisfluencyViolation(
+      mcq.questionText || mcq.stem || '',
+      mcq.options || []
+    );
+    if (disfluencyCheck.hasViolation) {
+      errors.push(`CONVERSATIONAL_DISFLUENCY_CONTAMINATION: ${disfluencyCheck.reason}`);
     }
 
     return {

@@ -16,6 +16,7 @@ const { safeParseJson } = require('../utils/jsonParser');
 const { getTargetEvidenceContext } = require('../evidence/evidenceContextSelector');
 const kmitStyleContract = require('../../config/kmitStyleContract');
 const deterministicValidator = require('../validators/deterministicValidator');
+const disfluencySanitizer = require('../intelligence/disfluencySanitizer');
 
 const DISTRACTOR_ARCHETYPES = {
   MISCONCEPTION_INVERSION: {
@@ -1650,6 +1651,25 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
       };
     }
 
+    if (target.concept && !disfluencySanitizer.isValidConceptPhrase(target.concept)) {
+      return {
+        targetId: target.targetId,
+        fulfillmentStatus: 'UNFULFILLED_DISFLUENT_TARGET',
+        isUnfulfilled: true,
+        unfulfilledReason: 'CONVERSATIONAL_DISFLUENCY_TARGET',
+        message: `Cannot generate question for "${target.concept}". Target is a conversational speech disfluency rather than an instructional concept entity.`,
+        metadata: {
+          targetDifficulty: tier,
+          achievedDifficulty: null,
+          intendedCognitiveOperation: op,
+          achievedCognitiveOperation: null,
+          concept: target.concept,
+          questionArchetype: targetArchetype,
+          isCapacityLimited: true
+        }
+      };
+    }
+
     let evidenceContext = getTargetEvidenceContext(target, evidencePackage, 2000);
     const directEvidence = target.supportingEvidence ||
       (typeof evidencePackage === 'string' ? evidencePackage : (evidencePackage?.unifiedRawContent || evidencePackage?.curricularContent || ''));
@@ -1743,6 +1763,7 @@ STRICT CONSTRAINTS FOR TOPIC ASSESSMENT:
 3. ABSOLUTE PROHIBITION ON META-QUESTIONS & LECTURE REFERENCES:
    - NEVER ask meta-questions like "Which topic is covered?", "Which of the following was mentioned/identified?", or "Which list contains the topics/paradigms?".
    - NEVER use phrases like "course material", "technical reference", "in the lecture", "according to the lecture", "as discussed", "the speaker", "the slides", or "the syllabus".
+   - CRITICAL ZERO-DISFLUENCY INVARIANT: Never include verbatim spoken conversational disfluencies (e.g. 'um', 'uh', 'basically', 'you know', 'or whatever', speech stutters) in stems or options. State the technical problem directly.
    - The question stem must present a genuine technical question or problem directly.
 
 4. CORE QUALITY CHECKLIST A (THE STEM & THE ANSWER):
@@ -1834,6 +1855,7 @@ JSON SCHEMA:
 STRICT CONSTRAINTS:
 1. Output MUST be strictly raw JSON starting with { and ending with }.
 2. Absolutely NO markdown asterisks, bullet points, definitions, conversational commentary, or headers outside the JSON.
+2b. CRITICAL ZERO-DISFLUENCY INVARIANT: Never include verbatim spoken conversational disfluencies (e.g. 'um', 'uh', 'basically', 'you know', 'or whatever', speech stutters) in stems or options. State the technical problem directly.
 3. CORE QUALITY CHECKLIST A (STEM & ANSWER CRAFTSMANSHIP):
    - PASSES THE "COVER THE OPTIONS" TEST: If a student covers the options with their hand and reads only the question, do they already know what is being asked? The stem MUST be a self-contained, problem-first question. NEVER write lazy, incomplete stems like "Which of the following is true?", "Regarding [Concept]:", or sentence fragments that force the student to inspect the options just to understand the problem.
    - 100% HONEST TO THE MATERIAL (FAIRNESS): "Did the teacher actually teach this?" Every premise, fact, and rule must come straight from the lecture slides, transcript, or provided notes—zero outside trivia, zero un-taught tools.
@@ -2069,12 +2091,13 @@ Generate a single grounded multiple-choice question testing the assessment targe
 
     const cleanPrefix = (str) => {
       if (typeof str !== 'string') return str;
-      return str
+      const stripped = str
         .replace(/^(?:according\s+to\s+the\s+lecture|as\s+discussed\s+in\s+the\s+lecture|in\s+the\s+lecture|based\s+on\s+the\s+lecture|as\s+taught\s+in\s+the\s+lecture|according\s+to\s+the\s+transcript)[,\s:]*/i, '')
         .replace(/^(?:according\s+to\s+the\s+notes|as\s+explained\s+in\s+the\s+lecture|according\s+to\s+the\s+course\s+material|in\s+the\s+course\s+material)[,\s:]*/i, '')
         .replace(/^(?:according\s+to\s+the\s+provided\s+technical\s+reference|in\s+the\s+provided\s+technical\s+reference)[,\s:]*/i, '')
         .replace(/\b(?:explicitly\s+)?(?:identified|mentioned|discussed)\s+in\s+the\s+(?:course\s+material|technical\s+reference|lecture|session|transcript)\b/gi, 'in standard algorithmic theory')
         .replace(/\b(?:in|according\s+to)\s+the\s+(?:course\s+material|technical\s+reference|provided\s+reference)\b/gi, 'in computer science');
+      return disfluencySanitizer.cleanSpokenFiller(stripped);
     };
     if (parsedMCQ.questionText) {
       let q = cleanPrefix(parsedMCQ.questionText).trim();
