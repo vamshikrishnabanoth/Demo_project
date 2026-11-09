@@ -14,6 +14,8 @@
 'use strict';
 
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const llmRouter = require('../adapter/llmRouter');
 const { safeParseJson } = require('../utils/jsonParser');
 const depthAnalyzer = require('../evidence/depthAnalyzer');
@@ -48,27 +50,58 @@ class LectureIntelligence {
   }
 
   /**
-   * Retrieve from cache if fresh.
+   * Retrieve from cache if fresh (checks memory and persistent disk).
    */
   getFromCache(cacheKey) {
+    const now = Date.now();
     const entry = this.cache.get(cacheKey);
-    if (!entry) return null;
-    if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    if (entry) {
+      const isMemValid = typeof entry.timestamp === 'number' && Number.isFinite(entry.timestamp) && entry.timestamp <= now && (now - entry.timestamp <= CACHE_TTL_MS);
+      if (isMemValid) {
+        return JSON.parse(JSON.stringify(entry.data));
+      }
       this.cache.delete(cacheKey);
-      return null;
     }
-    return JSON.parse(JSON.stringify(entry.data));
+
+    try {
+      const diskDir = path.resolve(__dirname, '../../data/cache/intelligence');
+      const diskFile = path.join(diskDir, `${cacheKey}.json`);
+      if (fs.existsSync(diskFile)) {
+        const parsed = JSON.parse(fs.readFileSync(diskFile, 'utf8'));
+        const ts = parsed?.timestamp;
+        const isValidDiskTimestamp = typeof ts === 'number' && Number.isFinite(ts) && ts <= now && (now - ts <= CACHE_TTL_MS);
+        if (parsed && parsed.data && isValidDiskTimestamp) {
+          this.cache.set(cacheKey, { data: parsed.data, timestamp: ts });
+          return JSON.parse(JSON.stringify(parsed.data));
+        } else if (fs.existsSync(diskFile)) {
+          // Expired, in the future, missing, or non-finite timestamp -> reject and purge from disk
+          try { fs.unlinkSync(diskFile); } catch (_) {}
+        }
+      }
+    } catch (_) {}
+
+    return null;
   }
 
   /**
-   * Save to cache with LRU eviction.
+   * Save to cache with LRU eviction and persistent disk backing.
    */
   saveToCache(cacheKey, data) {
     if (this.cache.size >= MAX_CACHE_ENTRIES) {
       const oldestKey = this.cache.keys().next().value;
       this.cache.delete(oldestKey);
     }
-    this.cache.set(cacheKey, { data, timestamp: Date.now() });
+    const timestamp = Date.now();
+    this.cache.set(cacheKey, { data, timestamp });
+
+    try {
+      const diskDir = path.resolve(__dirname, '../../data/cache/intelligence');
+      if (!fs.existsSync(diskDir)) {
+        fs.mkdirSync(diskDir, { recursive: true });
+      }
+      const diskFile = path.join(diskDir, `${cacheKey}.json`);
+      fs.writeFileSync(diskFile, JSON.stringify({ data, timestamp }, null, 2), 'utf8');
+    } catch (_) {}
   }
 
   /**
@@ -877,6 +910,53 @@ class LectureIntelligence {
     return chapters;
   }
 
+  _deriveWhatWentWell(depthResult = {}, concepts = []) {
+    const praise = [];
+    const focus = (depthResult.detectedFocus || []).filter(f => f && f !== 'Core Subject Matter');
+    const mainConcept = focus[0] || (concepts[0]?.name) || 'Core Subject';
+
+    if (depthResult.hasDef) {
+      praise.push(`Clear Foundational Exposition: You clearly established the core definitions and terminology for ${mainConcept}.`);
+    }
+    if (depthResult.hasMech) {
+      praise.push(`Mechanistic Depth: You explained how internal processes and operational mechanisms function step-by-step.`);
+    }
+    if (depthResult.hasExp || depthResult.characteristics?.examples === 'Present') {
+      praise.push(`Practical Grounding: You grounded abstract theoretical concepts with concrete worked examples or practical analogies.`);
+    }
+    if (depthResult.hasComp) {
+      praise.push(`Comparative Analysis: You contrasted related mechanisms, helping students distinguish key differences.`);
+    }
+    if (depthResult.hasRule || depthResult.characteristics?.reasoning === 'Strong') {
+      praise.push(`Causal Reasoning: You explained the "why" and underlying invariants behind the concepts.`);
+    }
+    if (praise.length === 0) {
+      praise.push(`Structured Delivery: Clear topic overview with identifiable assessable curriculum.`);
+    }
+    return praise.slice(0, 3);
+  }
+
+  _deriveGrowthOpportunities(depthResult = {}, concepts = []) {
+    const opportunities = [];
+    const chars = depthResult.characteristics || {};
+    const focus = (depthResult.detectedFocus || []).filter(f => f && f !== 'Core Subject Matter');
+    const secondConcept = focus[1] || (concepts[1]?.name) || null;
+
+    if (chars.reasoning !== 'Strong' && !depthResult.hasRule) {
+      opportunities.push(`Causal Invariants: In a follow-up class, discussing runtime invariants or failure edge cases will unlock deeper analytical questions.`);
+    }
+    if (chars.examples !== 'Present' && !depthResult.hasExp) {
+      opportunities.push(`Worked Demonstrations: Adding a sample dataset walkthrough or code trace will reinforce operational understanding.`);
+    }
+    if (secondConcept) {
+      opportunities.push(`Cross-Concept Synthesis: Linking ${focus[0] || 'the main concept'} to ${secondConcept} in a follow-up session will support comparative questions.`);
+    }
+    if (opportunities.length === 0) {
+      opportunities.push(`Advanced Extensions: Exploring boundary conditions and corner cases will further challenge advanced students.`);
+    }
+    return opportunities.slice(0, 2);
+  }
+
   buildPartialFallback(opts = {}) {
     const inputOpts = typeof opts === 'string' ? { evidenceText: opts } : (opts || {});
     const { evidenceText, rawText: inputRaw, text: inputText, modality = 'VOICE_ONLY', hasTimingData = false, decoyFilename = null, fileName = null, duration = null, segments = [], slides = [], errorReason = 'LLM analysis unavailable', negativeBoundaries = [] } = inputOpts;
@@ -918,7 +998,11 @@ class LectureIntelligence {
           totalDefensibleCapacity: 0,
           advisoryRationale: 'No questions recommended: Recording contains no assessable instructional curriculum.'
         },
-        auditTrail: {
+        teachingFeedback: {
+        whatWentWell: this._deriveWhatWentWell(depthResult, concepts),
+        growthOpportunities: this._deriveGrowthOpportunities(depthResult, concepts)
+      },
+      auditTrail: {
           modelUsed: 'deterministic-depth-analyzer-v1',
           analyzedAt: new Date().toISOString(),
           inputWordCount: (rawText.split(/\s+/).filter(Boolean)).length,
@@ -1348,6 +1432,10 @@ ${promptEvidence}`;
         const hasValidConcepts = Array.isArray(parsed.conceptMap) && parsed.conceptMap.length > 0;
         const timingOnlyError = !val.valid && Array.isArray(val.errors) && val.errors.every(e => e.includes('timestamp') || e.includes('start_seconds') || e.includes('end_seconds'));
         if ((val.valid || timingOnlyError) && hasValidConcepts) {
+          parsed.teachingFeedback = {
+            whatWentWell: this._deriveWhatWentWell(depthAnalyzer.analyzeLecture(rawText), parsed.conceptMap),
+            growthOpportunities: this._deriveGrowthOpportunities(depthAnalyzer.analyzeLecture(rawText), parsed.conceptMap)
+          };
           this.saveToCache(cacheKey, parsed);
           return parsed;
         } else {
@@ -1415,8 +1503,14 @@ ${promptEvidence}`;
     lockedProvider = null,
     lockedModel = null
   } = {}) {
-    const provider = lockedProvider || process.env.DEFAULT_LLM_PROVIDER || 'groq';
-    const model = lockedModel || process.env.DEFAULT_LLM_MODEL || 'openai/gpt-oss-20b';
+    const provider = lockedProvider || process.env.DEFAULT_LLM_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : 'gemini');
+    let defaultModel = 'openai/gpt-oss-20b';
+    if (provider === 'gemini') {
+      defaultModel = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
+    } else if (provider === 'groq') {
+      defaultModel = process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
+    }
+    const model = lockedModel || (provider === 'gemini' ? (process.env.GEMINI_MODEL || defaultModel) : (process.env.DEFAULT_LLM_MODEL || defaultModel));
     const promptVersion = 'v1.0.0-overlapping-parents';
 
     // 1. Check Content-Hash LRU Cache
@@ -1562,19 +1656,26 @@ Respond with a JSON object in this format:
       const systemPrompt = "You are a pedagogical evidence extraction engine. You must respond with a JSON object containing a 'units' array of verified teaching units with exact verbatim quotes.";
 
       let responseStr = null;
-      try {
-        responseStr = await llmRouter.complete({
-          prompt,
-          systemPrompt,
-          temperature: 0.1,
-          responseFormat: 'json',
-          maxTokens: 4096,
-          model,
-          sessionId,
-          operation: 'TEACHING_UNIT_EXTRACTION'
-        });
-      } catch (winErr) {
-        console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} extraction error: ${winErr.message}. Continuing with neighboring windows.`);
+      let attempts = 0;
+      while (attempts < 2 && !responseStr) {
+        attempts++;
+        try {
+          responseStr = await llmRouter.complete({
+            prompt,
+            systemPrompt,
+            temperature: 0.1,
+            responseFormat: 'json',
+            maxTokens: 4096,
+            model,
+            sessionId,
+            operation: 'TEACHING_UNIT_EXTRACTION'
+          });
+        } catch (winErr) {
+          console.warn(`[LectureIntelligence] Window ${win.windowIndex + 1} extraction attempt ${attempts} error: ${winErr.message}.`);
+          if (attempts < 2) {
+            await new Promise(r => setTimeout(r, 2000));
+          }
+        }
       }
 
       if (!responseStr || typeof responseStr !== 'string' || responseStr.trim().length === 0) {
@@ -1600,19 +1701,28 @@ Respond with a JSON object in this format:
 
       const rawUnits = Array.isArray(parsed?.units) ? parsed.units : (Array.isArray(parsed?.teachingUnits) ? parsed.teachingUnits : (Array.isArray(parsed) ? parsed : []));
 
-      return rawUnits.filter(raw => raw && (raw.statement || raw.subtopic)).map(raw => ({
-        ...raw,
-        windowIndex: win.windowIndex
-      }));
+      return rawUnits
+        .filter(raw => raw && (raw.statement || raw.transcriptExcerpt || raw.verbatim_quote))
+        .map(raw => ({
+          ...raw,
+          statement: raw.statement || raw.verbatim_quote || raw.transcriptExcerpt,
+          subtopic: raw.subtopic || raw.concept || raw.topic || 'Core Subject',
+          transcriptExcerpt: raw.transcriptExcerpt || raw.verbatim_quote || raw.quote || null,
+          isSyntheticFallback: false,
+          windowIndex: win.windowIndex
+        }));
     };
 
-    // Execute with controlled concurrency of 2 to balance latency and rate-limits
-    const concurrency = 2;
+    // Execute sequentially to respect single-key Groq TPM limits (8,000 TPM)
+    const concurrency = 1;
     for (let i = 0; i < windows.length; i += concurrency) {
       const chunk = windows.slice(i, i + concurrency);
       const results = await Promise.all(chunk.map(win => extractSingleWindow(win)));
       for (const resList of results) {
         allExtractedUnits.push(...resList);
+      }
+      if (i + concurrency < windows.length) {
+        await new Promise(r => setTimeout(r, 1500));
       }
     }
 

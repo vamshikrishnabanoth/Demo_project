@@ -229,7 +229,7 @@ class DepthAnalyzer {
     const rawSegments = cleaned.split(/(?<=[.?!;])\s+|\n+/);
     return rawSegments
       .map(s => s.trim())
-      .filter(s => s.length > 3);
+      .filter(s => s.length > 3 && !/^\[(?:VOICE TRANSCRIPT|DOCUMENT CONTENT|CODE SNIPPETS|BOARD OCR)\]$/i.test(s));
   }
 
   /**
@@ -1315,12 +1315,19 @@ class DepthAnalyzer {
         isAcademic: true,
         isCurricular: true,
         academicClassification: 'ACADEMIC_TOPIC',
-        teachingValueScore: 90,
+        teachingValueScore: null,
         lectureDepth: {
-          rating: 'Advanced Curriculum',
-          score: 90,
-          characteristics: { conceptExplanation: 'Strong', reasoning: 'Strong', examples: 'Present', procedures: 'Strong' },
-          breakdown: { recommendedQuestionCount: 10, recommendedQuestionsRationale: 'Standard academic curriculum scope' }
+          assessmentType: 'CURRICULAR_SCOPE_ONLY',
+          disclaimer: 'Curriculum topic scope without instructional lecture or document evidence. No teaching depth evaluated.',
+          rating: 'Curriculum Scope Only',
+          score: null,
+          characteristics: { conceptExplanation: 'Syllabus Topic', reasoning: 'Unobserved', examples: 'Unobserved', procedures: 'Unobserved' },
+          breakdown: {
+            recommendedQuestionCount: 10,
+            recommendedQuestionsRationale: 'Standard academic curriculum scope based on entered topic',
+            earnedRubric: [],
+            deductions: []
+          }
         },
         detectedFocus: [raw],
         retainedSegments: [{ text: raw }],
@@ -1337,10 +1344,10 @@ class DepthAnalyzer {
         isCurricular: false,
         academicClassification: 'UNCERTAIN',
         reason: 'Question generation : Non-academic content detected. The provided material is too short to evaluate.',
-        teachingValueScore: 0,
+        teachingValueScore: null,
         lectureDepth: {
           rating: 'Non-Academic',
-          score: 0,
+          score: null,
           characteristics: { conceptExplanation: 'None', reasoning: 'None', examples: 'None', procedures: 'None' }
         },
         detectedFocus: [],
@@ -1628,25 +1635,39 @@ class DepthAnalyzer {
       reasoning = 'Moderate';
     }
 
-    // 3. Multi-Signal Progression
-    const chronoMarkers = ['first', 'second', 'third', 'fourth', 'fifth', 'finally', 'then', 'step', 'after', 'before', 'next', 'pauses', 'transfers', 'restores', 'resumes', 'consequently', 'subsequently', 'ultimately'];
-    const algoMarkers = ['initialize', 'instantiate', 'push', 'pop', 'enqueue', 'dequeue', 'relax', 'swap', 'update', 'traverse', 'iterate', 'while', 'terminate', 'return', 'synthesize', 'catalyze', 'regulate', 'bind', 'secrete', 'convert', 'transport', 'mobilize', 'ratify', 'conclude', 'collapse', 'escalate', 'govern', 'deploy'];
+    // 3. Multi-Signal Progression (Distinguish described operations vs demonstrated multi-step procedures)
+    const chronoMarkers = ['first', 'second', 'third', 'fourth', 'finally', 'then', 'step', 'after', 'before', 'next', 'subsequently', 'ultimately', 'sequentially'];
+    const algoMarkers = ['initialize', 'instantiate', 'push', 'pop', 'enqueue', 'dequeue', 'relax', 'swap', 'update', 'traverse', 'iterate', 'while', 'terminate', 'synthesize', 'catalyze', 'regulate', 'bind', 'secrete', 'convert', 'transport', 'mobilize'];
     const chronoCount = chronoMarkers.filter(m => lowerCurricular.includes(m)).length;
     const algoCount = algoMarkers.filter(m => lowerCurricular.includes(m)).length;
-    const hasAlgorithmicProgression = algoCount >= 3 || (algoCount >= 2 && chronoCount >= 1) || hasAlgorithmicTrace || (hasMech && chronoCount >= 2);
-    const hasProofProgression = hasFormalProof && deductiveCount >= 2;
+    const hasDemonstratedProcedure = hasAlgorithmicTrace || (chronoCount >= 2 && algoCount >= 1) || (chronoCount >= 2 && lowerCurricular.includes('then')) || (chronoCount >= 3);
+    const hasDescribedProcedure = chronoCount >= 1 || algoCount >= 1 || hasMech;
 
     let procedures = 'Light';
-    if (hasAlgorithmicProgression || hasProofProgression || chronoCount >= 3) {
+    if (hasDemonstratedProcedure) {
       procedures = conceptExp === 'Developing' ? 'Moderate' : 'Strong'; // Capped if concept depth is trivial!
-    } else if (chronoCount + algoCount >= 1) {
+    } else if (hasDescribedProcedure) {
       procedures = 'Moderate';
     }
 
-    // 4. Examples & Traces
-    const exampleMarkers = ['for example', 'for instance', 'consider', 'suppose', 'like when', 'example', 'trace', 'given array', 'notice', 'look at'];
-    const hasExplicitExample = exampleMarkers.some(m => lowerCurricular.includes(m));
-    const isAcademicTrace = ((hasTrace || hasExplicitExample) && conceptExp !== 'Developing') || hasExp || hasAnalogy || hasAlgorithmicProgression || (hasFormalProof && deductiveCount >= 2);
+    // 4. Concrete Examples & Traces (Requires concrete data/input progression or genuine execution demonstration)
+    // - Generic example mentions without concrete values are NOT worked examples.
+    // - Analogies alone are NOT worked traces.
+    // - Technical specifications alone are NOT worked traces.
+    const hasConcreteDataProgression = /\b(?:\d+\s*(?:,|->|\.\.)\s*\d+|\b(?:input|sample|values?|trace|dataset)\s*[:=]\s*\[?[0-9a-zA-Z_\s,]*\d+[0-9a-zA-Z_\s,]*\]?|\binsert\s+[a-zA-Z0-9_]+\s*(?:,|then|\s+into)\b|\b(?:given array|trace table|walkthrough of)\b)/i.test(lowerCurricular) ||
+      (/\b(?:for example|for instance|consider|suppose)\b/i.test(lowerCurricular) && /\b\d+\b/.test(lowerCurricular));
+
+    // A plain code listing/type declaration (e.g., struct Node { int key; };) is a structural specification, NOT a worked trace.
+    // Genuine code execution demonstration requires concrete execution calls with arguments/data, formatted I/O with sample data, assertions with values, or step traces.
+    // Bare printf() with variables (e.g. printf("%d", result)), bare 'test' word, bare assert/main declarations do NOT qualify as worked demonstrations without concrete input/output values.
+    const hasGenuineCodeExecutionDemonstration = hasCodeOrTechnical && (
+      /(?:printf\s*\(\s*"[^"]*%[a-z0-9][^"]*"\s*,\s*[^)]*\b\d+\b[^)]*\)|(?:console\.log|System\.out\.print(?:ln)?)\s*\([^)]*\b(?:\d+|"[^"]+"\s*,\s*[^)]*\b\d+\b[^)]*)\)|cout\s*<<\s*[^;]*\b\d+\b[^;]*|\b(?:insert|search|delete|push|pop|enqueue|dequeue|solve|compute|calculate|add|find)\s*\([^)]*\b\d+\b[^)]*\)|\.[a-zA-Z0-9_]+\s*\([^)]*\b\d+\b[^)]*\)|\bassert(?:True|False|Equal|\.strictEqual|\s*\()\s*[^)]*(?:==|!=|<=|>=|<|>)\s*[^)]*\b\d+\b|\bassert\s*\([^)]*\b\d+\b|\b(?:sample_input|sample_output)\s*[:=]\s*[^;\n]+|\b(?:returns?|yields?|prints?|outputs?)\s*[:=]\s*\[?[0-9a-zA-Z_"',\s]*\d+[0-9a-zA-Z_"',\s]*\]?|\b(?:\/\/|#|\/\*)\s*(?:step\s+\d+|trace\s*[:=]|execution|walkthrough\s*[:=])\b)/i.test(lowerCurricular)
+    );
+
+    const hasVerifiedTraceDemonstration = curricularSegments.some(s => s.classification.substanceType === 'ALGORITHMIC_TRACE' || s.classification.substanceType === 'WORKED_EXAMPLE') && /\b(?:\d+|sample|input|output)\b/i.test(lowerCurricular);
+
+    const isAcademicTrace = (hasConcreteDataProgression || hasGenuineCodeExecutionDemonstration || hasVerifiedTraceDemonstration) && conceptExp !== 'Developing';
+
     let examples = 'Light';
     if (isAcademicTrace) {
       examples = 'Present';
@@ -1659,7 +1680,7 @@ class DepthAnalyzer {
     const procedurePoints = procedures === 'Strong' ? 15 : (procedures === 'Moderate' ? 8 : 0);
 
     let depthScore = basePoints + conceptPoints + reasoningPoints + examplePoints + procedurePoints;
-    depthScore = Math.min(100, Math.max(40, depthScore));
+    depthScore = Math.min(100, Math.max(0, depthScore));
 
     const deductions = [];
     if (conceptPoints < 15) {
@@ -1986,7 +2007,7 @@ class DepthAnalyzer {
       isCurricular: true,
       academicClassification: 'ACADEMIC',
       reason: null,
-      teachingValueScore: null, // RETIRED (DEF-TC-01, DEF-TC-04)
+      teachingValueScore: depthScore,
       curricularEvidenceProfile, // THE AUTHORITATIVE OBJECTIVE 4 CONTRACT
       hasDef,
       hasMech,
@@ -2003,8 +2024,8 @@ class DepthAnalyzer {
         assessmentType: 'INTERNAL_CURRICULAR_ANALYSIS',
         disclaimer: 'Automated software estimate derived strictly from transcript text and uploaded materials. Evaluates internal evidence density and assessment capacity. Does NOT measure teacher pedagogical efficacy, delivery quality, or student learning outcomes.',
         rating,
-        score: null, // RETIRED COMPOSITE SCORE (DEF-TC-01, DEF-TC-02, DEF-TC-04)
-        isDeprecated: true,
+        score: depthScore,
+        isDeprecated: false,
         characteristics: {
           conceptExplanation: conceptExp,
           reasoning,

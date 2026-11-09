@@ -184,6 +184,7 @@ class Agent3Evaluator {
       preAudit.passed = false;
       preAudit.status = 'FAIL';
       preAudit.verdict = 'FAIL';
+      preAudit.isFullVerification = false;
       preAudit.score = 0.1;
       if (!preAudit.failureReasons.includes(iavResult.failureReason)) {
         preAudit.failureReasons.push(iavResult.failureReason || 'INDEPENDENT_VERIFICATION_FAILED');
@@ -198,6 +199,7 @@ class Agent3Evaluator {
       preAudit.verificationMethod = 'DETERMINISTIC_AUDIT';
       preAudit.isFallback = false;
       preAudit.isLLMVerified = false;
+      preAudit.isFullVerification = false;
       return preAudit;
     }
 
@@ -217,6 +219,7 @@ class Agent3Evaluator {
       preAudit.verificationMethod = 'DETERMINISTIC_RECALL_FAST_PATH';
       preAudit.isFallback = false;
       preAudit.isLLMVerified = false;
+      preAudit.isFullVerification = false;
       preAudit.verifiedProgrammatically = Boolean(candidateMCQ.verificationRecord?.verifiedProgrammatically);
       preAudit.verificationStatus = candidateMCQ.verificationRecord?.verificationStatus || 'MODEL_ASSERTED';
       return preAudit;
@@ -334,21 +337,44 @@ Correct Answer Key: ${candidateMCQ.correctAnswerKey || candidateMCQ.correct_answ
 ${evidenceContext}
 `;
 
+    let timeoutHandle = null;
+    const internalAbortController = new AbortController();
+    const externalSignals = [target?.abortSignal, evidencePackage?.abortSignal].filter(Boolean);
+    const cleanupFns = [];
+
+    for (const sig of externalSignals) {
+      if (sig.aborted) {
+        internalAbortController.abort(sig.reason);
+      } else {
+        const handler = () => {
+          try { internalAbortController.abort(sig.reason); } catch (_) {}
+        };
+        sig.addEventListener('abort', handler, { once: true });
+        cleanupFns.push(() => {
+          try { sig.removeEventListener('abort', handler); } catch (_) {}
+        });
+      }
+    }
+    const effectiveSignal = internalAbortController.signal;
+
     try {
-      const evalTimeoutMs = 35000;
+      const evalTimeoutMs = parseInt(process.env.AGENT3_EVAL_TIMEOUT_MS, 10) || 45000;
       const evalPromise = llmRouter.complete({
         prompt: userPrompt,
         systemPrompt: systemPrompt,
         temperature: 0.1,
-        model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
+        model: process.env.AGENT3_MODEL || 'qwen/qwen3.8-27b',
         sessionId: evidencePackage?.sessionId,
-        maxTokens: 4096,
+        maxTokens: 2000,
         operation: 'EVALUATION',
-        signal: evidencePackage?.abortSignal || target?.abortSignal
+        signal: effectiveSignal
       });
-      const evalTimeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Agent 3 LLM evaluation timed out after 35s')), evalTimeoutMs)
-      );
+      const evalTimeout = new Promise((_, reject) => {
+        timeoutHandle = setTimeout(() => {
+          try { internalAbortController.abort('Agent 3 evaluation timeout'); } catch (_) {}
+          reject(new Error(`Agent 3 LLM evaluation timed out after ${Math.round(evalTimeoutMs / 1000)}s`));
+        }, evalTimeoutMs);
+      });
       const responseText = await Promise.race([evalPromise, evalTimeout]);
 
       return this._parseAndEnforceEvaluationResponse(responseText, preAudit, candidateMCQ, target);
@@ -359,6 +385,7 @@ ${evidenceContext}
       fallbackResult.verificationMethod = 'UNAUDITED_HEURISTIC_FALLBACK';
       fallbackResult.isFallback = true;
       fallbackResult.isLLMVerified = false;
+      fallbackResult.isFullVerification = false;
       fallbackResult.criticUnavailable = true;
       fallbackResult.criticUnavailableReason = err.message;
 
@@ -437,6 +464,11 @@ ${evidenceContext}
       }
 
       return fallbackResult;
+    } finally {
+      if (timeoutHandle) clearTimeout(timeoutHandle);
+      for (const cleanup of cleanupFns) {
+        try { cleanup(); } catch (_) {}
+      }
     }
   }
 
@@ -471,6 +503,7 @@ ${evidenceContext}
     parsed.verificationMethod = 'LLM_EVALUATION';
     parsed.isFallback = false;
     parsed.isLLMVerified = true;
+    parsed.isFullVerification = true;
     parsed.tier = parsed.tier || parsed.evidenceGrounding?.tier || 'DIRECT_EVIDENCE';
     parsed.groundingScore = typeof parsed.groundingScore === 'number' ? parsed.groundingScore : (parsed.evidenceGrounding?.groundingScore || 0.95);
     parsed.repair = { attempted: false, successful: false, repairAttempts: 0, instruction: null };

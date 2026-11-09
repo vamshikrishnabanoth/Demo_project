@@ -321,7 +321,20 @@ const conditionB = JSON.parse(fs.readFileSync(bCorpusPath, 'utf8'));
           reserveTargets: []
         });
       }
-      return '{}';
+      return JSON.stringify({
+        title: 'Greedy Stock Trading',
+        domain: { field: 'Computer Science', subfield: 'Algorithms' },
+        academicClassification: 'ACADEMIC',
+        isAcademic: true,
+        isCurricular: true,
+        chapters: [{ title: 'Greedy Trading', summary: 'Greedy stock trading loops' }],
+        keyConcepts: [{ name: 'Profit Calculation', definition: 'Single-day profit calculation' }],
+        advisoryRecommendation: {
+          recommendedQuestionCount: 1,
+          totalDefensibleCapacity: 1,
+          capacityByDifficulty: { easy: 1, medium: 1, hard: 0, balanced: 1 }
+        }
+      });
     };
 
     agent2Generator.generateQuestion = async (target, evidencePkg, repairInstruction) => {

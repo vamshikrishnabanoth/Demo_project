@@ -2181,7 +2181,7 @@ export default function CreateQuizTopic() {
                                         {(lectureIntel?.title || whatWasTaught || inputs[0]?.source_name) && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Tag size={13} className="text-[#c2410c] shrink-0" /> {hasAudio ? 'Main Lecture Topic' : hasDocFiles ? 'Document Subject' : 'Topic Subject'}
+                                                    <Tag size={13} className="text-[#c2410c] shrink-0" /> {hasAudio ? "Today's Lecture" : hasDocFiles ? 'Document Subject' : 'Topic Subject'}
                                                 </p>
                                                 <p className="text-xs font-bold text-slate-900 leading-snug">
                                                     {lectureIntel?.title || inputs[0]?.source_name || 'Academic Subject'}
@@ -2193,7 +2193,7 @@ export default function CreateQuizTopic() {
                                         {(lectureIntel?.summary || whatWasTaught) && (
                                             <div className="bg-white/95 p-3 rounded-2xl border border-orange-200/70 shadow-2xs space-y-1">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> {hasAudio ? 'Goal of Lecture' : 'Curriculum Overview'}
+                                                    <Target size={13} className="text-[#c2410c] shrink-0" /> {hasAudio ? 'What You Taught Today' : hasDocFiles ? 'What the Material Covers' : 'Curriculum Scope'}
                                                 </p>
                                                 <p className="text-xs font-medium text-slate-700 leading-relaxed">
                                                     {lectureIntel?.summary || whatWasTaught}
@@ -2205,7 +2205,7 @@ export default function CreateQuizTopic() {
                                         {hasAudio && lectureIntel?.chapters && lectureIntel.chapters.length > 0 && (
                                             <div className="bg-white/95 p-3.5 rounded-2xl border border-orange-200/70 shadow-2xs space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-wider text-[#c2410c] flex items-center gap-1.5">
-                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Covered in Lecture
+                                                    <ListOrdered size={13} className="text-[#c2410c] shrink-0" /> Topics Covered Today
                                                 </p>
                                                 <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                                                     {lectureIntel.chapters.map((ch, idx) => (
@@ -2229,7 +2229,7 @@ export default function CreateQuizTopic() {
                                                     <Link2 size={13} className="text-[#ea580c] shrink-0" /> Linked Source Materials
                                                 </p>
                                                 <p className="text-xs text-slate-700 font-medium leading-snug">
-                                                    Supporting materials <span className="font-bold text-slate-900">({inputs.filter(i => i.type !== 'voice' && i.type !== 'audio' && (i.file || i.documentId)).map(d => d.source_name || d.file?.name || 'Document').join(', ')})</span> are cross-aligned with the spoken lecture. Code, definitions, and formulas are linked to lecture timeline chapters.
+                                                    Your uploaded notes and slides <span className="font-bold text-slate-900">({inputs.filter(i => i.type !== 'voice' && i.type !== 'audio' && (i.file || i.documentId)).map(d => d.source_name || d.file?.name || 'Document').join(', ')})</span> are linked to the lecture chapters. Questions will be grounded in both.
                                                 </p>
                                             </div>
                                         )}

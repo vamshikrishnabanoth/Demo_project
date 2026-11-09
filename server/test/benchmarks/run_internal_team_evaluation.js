@@ -42,13 +42,22 @@ if (!process.env.GENERATION_CONCURRENCY) {
   process.env.GENERATION_CONCURRENCY = '1';
 }
 
+// Calibrate model settings for reliable benchmark generation
+process.env.DEFAULT_LLM_PROVIDER = 'gemini';
+process.env.DEFAULT_LLM_MODEL = 'gemini-flash-lite-latest';
+process.env.GEMINI_MODEL = 'gemini-flash-lite-latest';
+process.env.AGENT2_MODEL = 'gemini-flash-lite-latest';
+process.env.AGENT3_MODEL = 'gemini-flash-lite-latest';
+process.env.GENERATOR_MODEL = 'gemini-flash-lite-latest';
+delete process.env.DISABLE_GEMINI;
+
 // Rate-limiting, pacing, and token budget guard for Groq on_demand tier
 let lastCallTime = 0;
 axios.interceptors.request.use(async (config) => {
   if (config.url && config.url.includes('api.groq.com')) {
-    // 1. Pacing: maintain 2.5s between Groq calls
+    // 1. Pacing: maintain 4.2s between calls to strictly respect provider RPM windows
     const now = Date.now();
-    const minInterval = 2500;
+    const minInterval = 4200;
     const wait = Math.max(0, minInterval - (now - lastCallTime));
     if (wait > 0) {
       await new Promise(r => setTimeout(r, wait));
@@ -64,9 +73,10 @@ axios.interceptors.request.use(async (config) => {
           const totalPromptChars = payload.messages.reduce((sum, m) => sum + (m.content || '').length, 0);
           const estPromptTokens = Math.ceil(totalPromptChars / 3.8);
           const currentMaxTokens = payload.max_tokens || 2048;
-          const safeBudget = 7200; // Leave 800 tokens buffer below 8,000 TPM limit
+          const safeBudget = 7800; // Leave 200 tokens buffer below 8,000 TPM limit
           if (estPromptTokens + currentMaxTokens > safeBudget) {
-            const adjustedMaxTokens = Math.max(800, safeBudget - estPromptTokens);
+            const remainingBudget = Math.max(0, safeBudget - estPromptTokens);
+            const adjustedMaxTokens = remainingBudget < 350 ? remainingBudget : Math.min(currentMaxTokens, remainingBudget);
             payload.max_tokens = adjustedMaxTokens;
             config.data = typeof config.data === 'string' ? JSON.stringify(payload) : payload;
             console.log(`🔧 [Token Budget Guard] Adjusted max_tokens: ${currentMaxTokens} -> ${adjustedMaxTokens} (est prompt tokens: ${estPromptTokens})`);

@@ -132,9 +132,15 @@ class PipelineOrchestrator {
       if (hardDelivered < maxDefensibleHard && hasSpecificEvidence && reserveDepth.supportsHard) {
         return 'Hard';
       }
-      // If Hard cannot be fulfilled, allow eligible Medium reserve to fill the deficit when policy permits
-      console.log(`ℹ️ [Orchestrator] Hard reserve ${reserve.targetId} ("${reserve.concept}") cannot be fulfilled at Hard (hardDelivered: ${hardDelivered}/${maxDefensibleHard}, hasSpecificEvidence: ${hasSpecificEvidence}, supportsHard: ${reserveDepth.supportsHard}). Recalibrating to Medium deficit fill.`);
-      return 'Medium';
+      // If Hard cannot be fulfilled:
+      // In a Balanced assessment, agreed policy allows eligible Medium reserve to fill the deficit rather than leaving the quiz incomplete.
+      if (requestedDifficulty === 'Balanced') {
+        console.log(`ℹ️ [Orchestrator] Hard reserve ${reserve.targetId} ("${reserve.concept}") cannot be fulfilled at Hard (hardDelivered: ${hardDelivered}/${maxDefensibleHard}, hasSpecificEvidence: ${hasSpecificEvidence}, supportsHard: ${reserveDepth.supportsHard}). Recalibrating to Medium deficit fill for Balanced assessment.`);
+        return 'Medium';
+      }
+      // When teacher explicitly requested 'Hard', NEVER silently downgrade to Medium!
+      console.log(`ℹ️ [Orchestrator] Hard reserve ${reserve.targetId} ("${reserve.concept}") cannot be fulfilled at Hard and requestedDifficulty is '${requestedDifficulty}'. Preserving explicit Hard request without silent Medium substitution.`);
+      return 'Hard';
     }
 
     return authoritativePlannedDifficulty;

@@ -21,6 +21,7 @@
 'use strict';
 
 const { CalculationEngine } = require('./calculationEngine');
+const { safeParseJson } = require('../utils/jsonParser');
 const llmRouter = require('../adapter/llmRouter');
 
 class IndependentAnswerVerifier {
@@ -376,7 +377,10 @@ class IndependentAnswerVerifier {
    */
   async _solveQuestionBlindly({ stem, randomizedOptions, evidenceContext, route, target }) {
     const slotLetters = ['A', 'B', 'C', 'D'];
-    const optionsBlock = randomizedOptions.map((opt, i) => `[Option ${slotLetters[i]}]: ${opt}`).join('\n');
+    const optionsBlock = randomizedOptions.map((opt, i) => {
+      const text = (typeof opt === 'object' && opt !== null) ? (opt.text || opt.optionText || opt.value || JSON.stringify(opt)) : String(opt);
+      return `[Option ${slotLetters[i]}]: ${text}`;
+    }).join('\n');
 
     const systemPrompt = `You are the Independent Academic Blind Solver & Truthfulness Verifier.
 You are given an assessment question, four randomized options, and verified lecture evidence.
@@ -441,14 +445,26 @@ Concept: ${target.concept || 'Academic Concept'}
         systemPrompt,
         temperature: 0.0,
         model: process.env.AGENT3_MODEL || 'openai/gpt-oss-120b',
-        maxTokens: 2500,
+        maxTokens: 2000,
         operation: 'INDEPENDENT_ANSWER_VERIFICATION'
       });
 
       let parsed = null;
       if (typeof resp === 'string') {
-        const jsonMatch = resp.match(/\{[\s\S]*\}/);
-        if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
+        try {
+          parsed = safeParseJson(resp);
+        } catch (_) {
+          const jsonMatch = resp.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            try {
+              parsed = JSON.parse(jsonMatch[0]);
+            } catch (e2) {
+              try {
+                parsed = safeParseJson(jsonMatch[0]);
+              } catch (_) {}
+            }
+          }
+        }
       } else if (resp && typeof resp === 'object') {
         parsed = resp;
       }
@@ -473,7 +489,7 @@ Concept: ${target.concept || 'Academic Concept'}
       };
     }
 
-    const stem = String(candidateMCQ.questionText || candidateMCQ.stem || '').trim();
+    const stem = String(candidateMCQ.questionText || candidateMCQ.questionStem || candidateMCQ.stem || '').trim();
     const rawOptions = Array.isArray(candidateMCQ.options) ? [...candidateMCQ.options] : [];
 
     if (!stem || rawOptions.length < 2) {
@@ -545,6 +561,18 @@ Concept: ${target.concept || 'Academic Concept'}
     });
 
     // 4. Blind First-Principles Solving
+    const isDeterministicMode = Boolean(options.skipLLM || process.env.AGENT3_MODE === 'deterministic_only');
+    if (isDeterministicMode) {
+      return {
+        passed: true,
+        status: 'PASS_DOMAIN_GATES_ONLY',
+        route,
+        isFullVerification: false,
+        verificationMethod: 'DETERMINISTIC_DOMAIN_GATE_ONLY',
+        domainChecks: domainChecks.checks
+      };
+    }
+
     const blindEvidence = typeof evidenceContext === 'string' ? evidenceContext : (evidenceContext?.unifiedRawContent || '');
     const solverResult = await this._solveQuestionBlindly({
       stem,
