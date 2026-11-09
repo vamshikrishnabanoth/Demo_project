@@ -76,7 +76,7 @@ class LLMRouter {
           systemPrompt,
           temperature,
           responseFormat,
-          model: (model && String(model).startsWith('gemini')) ? model : (process.env.GEMINI_MODEL || 'gemini-2.5-flash'),
+          model: (model && String(model).startsWith('gemini')) ? model : (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite'),
           sessionId,
           maxTokens,
           operation,
@@ -503,6 +503,11 @@ class LLMRouter {
         if (process.env.ALLOW_MOCK_FALLBACK === 'true' && process.env.NODE_ENV !== 'production') {
           break;
         }
+        const hasGemini = Boolean(this.geminiApiKey || process.env.GEMINI_API_KEY);
+        if (hasGemini) {
+          console.warn('⚡ [LLMRouter] Groq keys throttled by TPM. Fast-failing over to Gemini immediately (0ms delay)...');
+          break;
+        }
         const now = Date.now();
         const shortCooldowns = Array.from(this.modelCooldowns.values()).filter(t => t - now <= 20000 && t - now > 0);
         const waitMs = shortCooldowns.length > 0 ? Math.min(Math.max(...shortCooldowns) - now + 300, 15000) : 3000;
@@ -552,10 +557,10 @@ class LLMRouter {
     const candidateModels = Array.from(new Set([
       process.env.GEMINI_MODEL,
       model && typeof model === 'string' && model.startsWith('gemini') ? model : null,
-      'gemini-2.5-flash',
-      'gemini-3.5-flash-lite',
-      'gemini-3.5-flash',
-      'gemma-4-26b-a4b-it'
+      'gemini-3.1-flash-lite',
+      'gemini-3-flash-preview',
+      'gemini-3.1-flash-lite-preview',
+      'gemini-2.5-flash'
     ].filter(Boolean)));
 
     let lastErr = null;
@@ -615,9 +620,13 @@ class LLMRouter {
         const status = err.status || (msg.includes('429') ? 429 : (msg.includes('403') ? 403 : (msg.includes('404') ? 404 : 500)));
 
         if (status === 429 || msg.includes('RESOURCE_EXHAUSTED')) {
-          const cooldownMs = 4000;
+          if (msg.includes('PerDay') || msg.includes('limit: 20') || msg.includes('per day')) {
+            console.warn(`⚡ [LLMRouter] Gemini model '${geminiModelName}' daily limit reached. Fast-failing over to next candidate model...`);
+            continue;
+          }
+          const cooldownMs = 2500;
           this.geminiCooldownUntil = Date.now() + cooldownMs;
-          console.warn(`⚠️ [LLMRouter] Gemini hit transient rate limit (429). Bounded cooldown ${cooldownMs}ms...`);
+          console.warn(`⚠️ [LLMRouter] Gemini model '${geminiModelName}' hit transient rate limit (429). Bounded cooldown ${cooldownMs}ms...`);
           await this._sleep(cooldownMs);
           continue;
         } else if (status === 403 || msg.includes('PERMISSION_DENIED') || msg.includes('leaked') || msg.includes('API key')) {

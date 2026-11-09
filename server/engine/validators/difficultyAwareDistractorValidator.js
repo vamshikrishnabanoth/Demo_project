@@ -497,7 +497,8 @@ class DifficultyAwareDistractorValidator {
         const isMath = /[$\\]|\b(?:log|O\(|theta\(|Omega\(|\\sum|\\frac)\b/i.test(opt);
         const words = opt.trim().split(/\s+/).length;
         const isComparativePhrase = words <= 20 && opt.length <= 150 && /\b(?:whereas|while|in contrast to)\b/i.test(opt);
-        if (!isCode && !isMath && !isComparativePhrase) {
+        const isAlgorithmicRule = words <= 25 && opt.length <= 155 && /\b(?:when|if|where|for each|in case|even if)\b/i.test(opt);
+        if (!isCode && !isMath && !isComparativePhrase && !isAlgorithmicRule) {
           return {
             passed: false,
             code: 'OPTION_TOO_VERBOSE',

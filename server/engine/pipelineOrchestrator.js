@@ -1931,23 +1931,24 @@ class PipelineOrchestrator {
           };
           return profile;
         })(),
-        tcScore: null,
+        tcScore: (evidencePackage?.hasVoice || Boolean(evidencePackage?.voiceTranscript || evidencePackage?.voiceAnalysis)) ? (plan?.tcScore?.overallScore ?? evidencePackage?.lectureIntelligence?.tcScore ?? evidencePackage?.voiceAnalysis?.teachingValueScore ?? null) : null,
         pdi: (evidencePackage?.pdi !== undefined && evidencePackage?.pdi !== null)
           ? evidencePackage.pdi
           : (evidencePackage?.lectureIntelligence?.pedagogicalDeficitIndex ?? null),
-        teacherAnalysis: (evidencePackage?.voiceAnalysis?.lectureDepth || evidencePackage?.lectureDepth) ? {
-          score: null,
-          isDeprecated: true,
-          rating: (evidencePackage?.voiceAnalysis?.lectureDepth?.rating ?? evidencePackage?.lectureDepth?.rating),
-          characteristics: (evidencePackage?.voiceAnalysis?.lectureDepth?.characteristics ?? evidencePackage?.lectureDepth?.characteristics),
+        teacherAnalysis: (evidencePackage?.voiceAnalysis?.lectureDepth || evidencePackage?.lectureDepth || plan?.tcScore) ? {
+          score: plan?.tcScore?.overallScore ?? evidencePackage?.voiceAnalysis?.lectureDepth?.score ?? null,
+          rating: plan?.tcScore?.rating ?? (evidencePackage?.voiceAnalysis?.lectureDepth?.rating ?? 'Proficient Curricular Delivery'),
+          strengths: plan?.tcScore?.strengths ?? [],
+          suggestions: plan?.tcScore?.suggestions ?? [],
+          characteristics: (evidencePackage?.voiceAnalysis?.lectureDepth?.characteristics ?? evidencePackage?.lectureDepth?.characteristics ?? []),
           deductions: (evidencePackage?.voiceAnalysis?.lectureDepth?.deductions ?? evidencePackage?.lectureDepth?.deductions ?? []),
-          breakdown: (evidencePackage?.voiceAnalysis?.lectureDepth?.breakdown ?? evidencePackage?.lectureDepth?.breakdown ?? null),
+          breakdown: plan?.tcScore?.breakdown ?? (evidencePackage?.voiceAnalysis?.lectureDepth?.breakdown ?? null),
           pedagogicalCritique: evidencePackage?.lectureIntelligence?.pedagogicalCritique || null,
           chapters: evidencePackage?.lectureIntelligence?.chapters || [],
           conceptMap: evidencePackage?.lectureIntelligence?.conceptMap || [],
           evidenceCapacity: evidencePackage?.lectureIntelligence?.evidenceCapacity || null,
           pdi: evidencePackage?.lectureIntelligence?.pedagogicalDeficitIndex ?? evidencePackage?.pdi ?? null,
-          tcScore: null
+          tcScore: (evidencePackage?.hasVoice || Boolean(evidencePackage?.voiceTranscript || evidencePackage?.voiceAnalysis)) ? (plan?.tcScore?.overallScore ?? null) : null
         } : null,
         quizEvaluation: quizEval,
         capacityReport: finalCapacityReport,
