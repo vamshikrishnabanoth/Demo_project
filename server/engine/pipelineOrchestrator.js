@@ -1685,10 +1685,27 @@ class PipelineOrchestrator {
         capacityWarning = capacityWarning ? `${capacityWarning} ${reallocationWarning}` : reallocationWarning;
       }
 
+      // FILL_WITH_MEDIUM feasibility verification:
+      // Must only be offered when:
+      // 1. Deficit includes Hard questions
+      // 2. Caller has not already applied FILL_WITH_MEDIUM
+      // 3. Sufficient unused, distinct, defensible Medium opportunities or reserves exist
+      const hardDeficitCount = hardCapacityDeficit > 0 ? hardCapacityDeficit : (requestedDifficulty === 'Hard' ? totalDeficit : 0);
+      const mediumCap = evidencePackage?.lectureIntelligence?.evidenceCapacity?.capacityByDifficulty?.medium ??
+        plan?.capacityDeficitReport?.capacityByDifficulty?.medium ??
+        null;
+      const deliveredMediumCount = validatedQuestions.filter(q => (q.difficulty || q.target?.targetDifficulty || q.metadata?.targetDifficulty) === 'Medium').length;
+      const unusedMediumCapacity = mediumCap !== null ? Math.max(0, mediumCap - deliveredMediumCount) : Infinity;
+      const rawMediumReserves = activeReservePool.filter(r => (r.targetDifficulty === 'Medium' || r.dimension === 'Operational Trace' || r.intendedCognitiveOperation === 'EXPLAIN_MECHANISM')).length;
+      const defensibleMediumReserves = (mediumCap !== null && isFinite(unusedMediumCapacity)) ? Math.min(rawMediumReserves, unusedMediumCapacity) : rawMediumReserves;
+
+      const isFillWithMediumFeasible = hardDeficitCount > 0 &&
+        sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM' &&
+        (unusedMediumCapacity >= hardDeficitCount || defensibleMediumReserves >= hardDeficitCount);
+
       const capacityOptions = (hasDeficit || requestedCount > defensibleCapacity) ? [
         { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${deliveredCount} ${requestedDifficulty} Question${deliveredCount === 1 ? '' : 's'}` },
-        ...(defensibleCapacity < deliveredCount ? [{ action: 'ACCEPT_DEFENSIBLE_COUNT', label: `Accept defensible question count (${defensibleCapacity} questions)` }] : []),
-        ...(totalDeficit > 0 && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM' ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficit} with Deep Medium Questions` }] : []),
+        ...(isFillWithMediumFeasible ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${hardDeficitCount} with Deep Medium Questions` }] : []),
         ...(recommendedCount !== deliveredCount ? [{ action: 'ACCEPT_RECOMMENDED_COUNT', label: `Accept recommended quiz size (${recommendedCount} questions)` }] : []),
         { action: 'ADD_MATERIALS', label: 'Provide additional lecture materials' },
         { action: 'EXPAND_SCOPE', label: 'Expand lecture scope' },

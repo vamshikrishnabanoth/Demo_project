@@ -34,17 +34,17 @@
       ]
     },
     "change1": {
-      "totalDefensibleCapacity": 22,
+      "totalDefensibleCapacity": 12,
       "recommendedQuestionCount": 5,
       "distinctConceptCount": 11,
       "capacityByDifficulty": {
-        "easy": 11,
-        "medium": 11,
+        "easy": 4,
+        "medium": 8,
         "hard": 0,
-        "balanced": 22
+        "balanced": 12
       },
       "recommendedByDifficulty": {
-        "easy": 5,
+        "easy": 3,
         "medium": 5,
         "hard": 0,
         "balanced": 5
@@ -66,18 +66,18 @@
       "actionOptions": []
     },
     "change1": {
-      "totalDefensibleCapacity": 53,
+      "totalDefensibleCapacity": 25,
       "recommendedQuestionCount": 20,
       "distinctConceptCount": 24,
       "capacityByDifficulty": {
-        "easy": 24,
-        "medium": 23,
+        "easy": 9,
+        "medium": 10,
         "hard": 6,
-        "balanced": 53
+        "balanced": 25
       },
       "recommendedByDifficulty": {
-        "easy": 19,
-        "medium": 17,
+        "easy": 7,
+        "medium": 8,
         "hard": 5,
         "balanced": 20
       },

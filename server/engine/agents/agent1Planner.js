@@ -3065,6 +3065,12 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     const difficultyDeficit = (blueprint.requestedDifficulty?.toLowerCase() === 'hard') ? Math.max(0, requestedHardCount - supportedHardCount) : 0;
     const totalCapacityDeficit = Math.max(difficultyDeficit, countDeficit);
     const hasDeficit = totalCapacityDeficit > 0;
+    const medCapIR = (typeof cap.mediumCap === 'number') ? cap.mediumCap : (typeof cap.capacityByDifficulty?.medium === 'number' ? cap.capacityByDifficulty.medium : null);
+    const unusedMedium = (medCapIR !== null ? Math.max(0, medCapIR - allocatedMedium) : Infinity);
+    const availMedRes = Array.isArray(planData.reserveTargets) ? planData.reserveTargets.filter(r => r.targetDifficulty === 'Medium').length : 0;
+    const defensibleMedRes = (medCapIR !== null && isFinite(unusedMedium)) ? Math.min(availMedRes, unusedMedium) : availMedRes;
+    const isFillWithMedFeasible = (totalCapacityDeficit > 0) && (unusedMedium >= totalCapacityDeficit || defensibleMedRes >= totalCapacityDeficit);
+
     planData.capacityDeficitReport = {
       requestedCount,
       generatedCount: requestedCount - (deficitPolicy === 'FILL_WITH_MEDIUM' ? countDeficit : totalCapacityDeficit),
@@ -3080,7 +3086,7 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
       teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
       options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
         { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${supportedHardCount} Hard Question${supportedHardCount === 1 ? '' : 's'}` },
-        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalCapacityDeficit} with Deep Medium Questions` },
+        ...(isFillWithMedFeasible ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalCapacityDeficit} with Deep Medium Questions` }] : []),
         { action: 'CANCEL', label: 'Cancel / Adjust Request' }
       ] : []
     };
@@ -3589,6 +3595,12 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     const totalHardDeficit = (diffLower === 'hard') ? Math.max(0, requestedHard - allocatedHard) : 0;
     const totalCapacityDeficit = Math.max(totalHardDeficit, countDeficit);
     const hasDeficit = totalCapacityDeficit > 0;
+    const medCapBp = (typeof cap.mediumCap === 'number') ? cap.mediumCap : (typeof cap.capacityByDifficulty?.medium === 'number' ? cap.capacityByDifficulty.medium : null);
+    const unusedMedInBp = (medCapBp !== null ? Math.max(0, medCapBp - allocatedMedium) : Infinity);
+    const availMedResBp = Array.isArray(planData.reserveTargets) ? planData.reserveTargets.filter(r => r.targetDifficulty === 'Medium').length : 0;
+    const defensibleMedResBp = (medCapBp !== null && isFinite(unusedMedInBp)) ? Math.min(availMedResBp, unusedMedInBp) : availMedResBp;
+    const isFillWithMedFeasibleBp = (totalCapacityDeficit > 0) && (unusedMedInBp >= totalCapacityDeficit || defensibleMedResBp >= totalCapacityDeficit);
+
     planData.capacityDeficitReport = {
       requestedCount,
       generatedCount: requestedCount - (deficitPolicy === 'FILL_WITH_MEDIUM' ? countDeficit : totalCapacityDeficit),
@@ -3604,7 +3616,7 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
       teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
       options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
         { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${requestedCount - totalCapacityDeficit} Question${(requestedCount - totalCapacityDeficit) === 1 ? '' : 's'}` },
-        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalCapacityDeficit} with Deep Medium Questions` },
+        ...(isFillWithMedFeasibleBp ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalCapacityDeficit} with Deep Medium Questions` }] : []),
         { action: 'CANCEL', label: 'Cancel / Adjust Request' }
       ] : []
     };
@@ -4292,16 +4304,30 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
           : null
       };
 
+      const totalDeficitInPed = planData.topicDifficultyMatrix.globalAllocated.Deficit;
+      const generatedInPed = planData.assessmentTargets.filter(t => !t.isCapacityLimited).length;
+      const hasDeficitInPed = totalDeficitInPed > 0;
+      const medCapPed = (typeof cap.mediumCap === 'number') ? cap.mediumCap : (typeof cap.capacityByDifficulty?.medium === 'number' ? cap.capacityByDifficulty.medium : null);
+      const unusedMediumInPed = (medCapPed !== null ? Math.max(0, medCapPed - planData.topicDifficultyMatrix.globalAllocated.Medium) : Infinity);
+      const availMedResInPed = Array.isArray(planData.reserveTargets) ? planData.reserveTargets.filter(r => r.targetDifficulty === 'Medium').length : 0;
+      const defensibleMedResInPed = (medCapPed !== null && isFinite(unusedMediumInPed)) ? Math.min(availMedResInPed, unusedMediumInPed) : availMedResInPed;
+      const isFillWithMedFeasibleInPed = (totalDeficitInPed > 0) && (unusedMediumInPed >= totalDeficitInPed || defensibleMedResInPed >= totalDeficitInPed);
+
       planData.capacityDeficitReport = {
         requestedCount: N,
-        generatedCount: planData.assessmentTargets.filter(t => !t.isCapacityLimited).length,
+        generatedCount: generatedInPed,
         requestedDifficulty,
-        capacityDeficit: planData.topicDifficultyMatrix.globalAllocated.Deficit,
+        capacityDeficit: totalDeficitInPed,
         deficitPolicyApplied: deficitPolicy === 'FILL_WITH_MEDIUM' ? 'FILL_WITH_MEDIUM' : null,
-        deficitReason: planData.topicDifficultyMatrix.globalAllocated.Deficit > 0
-          ? `Insufficient lecture evidence for ${planData.topicDifficultyMatrix.globalAllocated.Deficit} additional distinct ${requestedDifficulty} question(s) without hallucination.`
+        deficitReason: hasDeficitInPed
+          ? `Insufficient lecture evidence for ${totalDeficitInPed} additional distinct ${requestedDifficulty} question(s) without hallucination.`
           : null,
-        teacherActionRequired: planData.topicDifficultyMatrix.globalAllocated.Deficit > 0 && deficitPolicy !== 'FILL_WITH_MEDIUM'
+        teacherActionRequired: hasDeficitInPed && deficitPolicy !== 'FILL_WITH_MEDIUM',
+        options: (hasDeficitInPed && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
+          { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${generatedInPed} Question${generatedInPed === 1 ? '' : 's'}` },
+          ...(isFillWithMedFeasibleInPed ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficitInPed} with Deep Medium Questions` }] : []),
+          { action: 'CANCEL', label: 'Cancel / Adjust Request' }
+        ] : []
       };
 
       // Blueprint reserve targets
@@ -4464,6 +4490,9 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     let reserveIdx = 1;
     subtopicsList.forEach(name => {
       ['Medium', 'Easy', 'Hard'].forEach(tier => {
+        // Enforce evidence defensibility: never build reserves for tiers with zero capacity
+        if (tier === 'Hard' && cap.effectiveHardCap <= 0) return;
+        if (tier === 'Medium' && cap.mediumCap !== null && cap.mediumCap <= 0) return;
         reserveTargets.push({
           targetId: `R${String(reserveIdx++).padStart(2, '0')}`,
           subtopic: name,
@@ -4534,16 +4563,30 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
         : null
     };
 
+    const totalDeficitInLcacm = planData.topicDifficultyMatrix.globalAllocated.Deficit;
+    const generatedInLcacm = finalTargets.filter(t => !t.isCapacityLimited).length;
+    const hasDeficitInLcacm = totalDeficitInLcacm > 0;
+    const medCapLcacm = (typeof cap.mediumCap === 'number') ? cap.mediumCap : (typeof cap.capacityByDifficulty?.medium === 'number' ? cap.capacityByDifficulty.medium : null);
+    const unusedMediumInLcacm = (medCapLcacm !== null ? Math.max(0, medCapLcacm - planData.topicDifficultyMatrix.globalAllocated.Medium) : Infinity);
+    const availMedResInLcacm = Array.isArray(planData.reserveTargets) ? planData.reserveTargets.filter(r => r.targetDifficulty === 'Medium').length : 0;
+    const defensibleMedResInLcacm = (medCapLcacm !== null && isFinite(unusedMediumInLcacm)) ? Math.min(availMedResInLcacm, unusedMediumInLcacm) : availMedResInLcacm;
+    const isFillWithMedFeasibleInLcacm = (totalDeficitInLcacm > 0) && (unusedMediumInLcacm >= totalDeficitInLcacm || defensibleMedResInLcacm >= totalDeficitInLcacm);
+
     planData.capacityDeficitReport = {
       requestedCount: N,
-      generatedCount: finalTargets.filter(t => !t.isCapacityLimited).length,
+      generatedCount: generatedInLcacm,
       requestedDifficulty,
-      capacityDeficit: planData.topicDifficultyMatrix.globalAllocated.Deficit,
+      capacityDeficit: totalDeficitInLcacm,
       deficitPolicyApplied: deficitPolicy === 'FILL_WITH_MEDIUM' ? 'FILL_WITH_MEDIUM' : null,
-      deficitReason: planData.topicDifficultyMatrix.globalAllocated.Deficit > 0
-        ? `Insufficient lecture evidence for ${planData.topicDifficultyMatrix.globalAllocated.Deficit} additional distinct ${requestedDifficulty} question(s) without hallucination.`
+      deficitReason: hasDeficitInLcacm
+        ? `Insufficient lecture evidence for ${totalDeficitInLcacm} additional distinct ${requestedDifficulty} question(s) without hallucination.`
         : null,
-      teacherActionRequired: planData.topicDifficultyMatrix.globalAllocated.Deficit > 0 && deficitPolicy !== 'FILL_WITH_MEDIUM'
+      teacherActionRequired: hasDeficitInLcacm && deficitPolicy !== 'FILL_WITH_MEDIUM',
+      options: (hasDeficitInLcacm && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
+        { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${generatedInLcacm} Question${generatedInLcacm === 1 ? '' : 's'}` },
+        ...(isFillWithMedFeasibleInLcacm ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficitInLcacm} with Deep Medium Questions` }] : []),
+        { action: 'CANCEL', label: 'Cancel / Adjust Request' }
+      ] : []
     };
 
     return planData;
@@ -5009,6 +5052,13 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     const finalDistinctTargetCount = new Set(finalGenerated.map(t => (t.primaryConcept || t.concept || '').toLowerCase().trim())).size;
     const finalRepeatedTargetCount = finalGenerated.filter(t => (t.repeatedTarget || t.isRepeatedTarget) && !t.isSupplementary).length;
 
+    const mediumCap = (typeof cap.mediumCap === 'number') ? cap.mediumCap : (typeof cap.capacityByDifficulty?.medium === 'number' ? cap.capacityByDifficulty.medium : Infinity);
+    const plannedMedium = finalGenerated.filter(t => t.targetDifficulty === 'Medium').length;
+    const unusedMedCap = (mediumCap !== Infinity) ? Math.max(0, mediumCap - plannedMedium) : Infinity;
+    const availMedReserves = Array.isArray(planData.reserveTargets) ? planData.reserveTargets.filter(r => r.targetDifficulty === 'Medium').length : 0;
+    const defensibleMedReserves = (mediumCap !== Infinity && isFinite(unusedMedCap)) ? Math.min(availMedReserves, unusedMedCap) : availMedReserves;
+    const isFillWithMedFeasible = (requestedHard > 0 || diffLower === 'hard') && totalDeficitCount > 0 && (unusedMedCap >= totalDeficitCount || defensibleMedReserves >= totalDeficitCount);
+
     planData.capacityDeficitReport = {
       status: hasDeficit ? 'CAPACITY_DEFICIT' : (finalSupplementaryCount > 0 ? 'SUPPLEMENTARY_EXPANSION_APPLIED' : (finalRepeatedTargetCount > 0 ? 'REPEATED_TARGETS_GENERATED' : 'SUFFICIENT_CAPACITY')),
       requestedCount: count,
@@ -5043,7 +5093,7 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
       teacherActionRequired: hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM',
       options: (hasDeficit && deficitPolicy !== 'FILL_WITH_MEDIUM') ? [
         { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${finalGenerated.length} Question${finalGenerated.length === 1 ? '' : 's'}` },
-        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficitCount} with Deep Medium Questions` },
+        ...(isFillWithMedFeasible ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficitCount} with Deep Medium Questions` }] : []),
         { action: 'CANCEL', label: 'Cancel / Adjust Request' }
       ] : []
     };

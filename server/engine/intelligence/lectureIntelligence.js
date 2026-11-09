@@ -403,10 +403,10 @@ class LectureIntelligence {
     if (!isBriefExcerpt && options.curricularEvidenceProfile?.assessmentCapacity) {
       const cepCap = options.curricularEvidenceProfile.assessmentCapacity;
       if (typeof cepCap.easy === 'number') {
-        totalEasy = Math.min(totalEasy, Math.max(cepCap.easy, substantiveConceptCount));
+        totalEasy = Math.min(totalEasy, cepCap.easy);
       }
       if (typeof cepCap.medium === 'number') {
-        totalMedium = Math.min(totalMedium, Math.max(cepCap.medium, substantiveConceptCount));
+        totalMedium = Math.min(totalMedium, cepCap.medium);
       }
       if (typeof cepCap.hard === 'number' && !isHardExplicitlyInfeasible) {
         totalHard = Math.min(totalHard, cepCap.hard);
