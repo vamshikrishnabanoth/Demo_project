@@ -633,12 +633,19 @@ class DeterministicValidator {
         this.calculateSimilarity(normCandConcept, normExistConcept) >= 0.70
       );
 
-      // 1. Extreme verbatim duplicate stem
-      if (sim >= 0.70) {
+      // 1. Extreme verbatim duplicate stem OR Comparative-frame duplicate (threshold 0.65)
+      const isComparativeFrame = (text) => {
+        return /\b(?:fundamentally differ|differ from|differ between|in contrast to|compared to|comparative tradeoff|how do (?:their|they) differ|when comparing)\b/i.test(text);
+      };
+      const isComparativePair = isComparativeFrame(candText) && isComparativeFrame(existingText);
+
+      if (sim >= 0.70 || (isComparativePair && sim >= 0.65)) {
         return {
           isDuplicate: true,
           similarity: sim,
-          reason: 'VERBATIM_DUPLICATE: Text similarity exceeds 0.70',
+          reason: isComparativePair && sim < 0.70
+            ? `COMPARATIVE_STEM_DUPLICATE: Comparative-frame text similarity (${(sim * 100).toFixed(1)}%) exceeds 0.65 threshold`
+            : 'VERBATIM_DUPLICATE: Text similarity exceeds 0.70',
           duplicateWith: existing.questionText
         };
       }
@@ -805,6 +812,104 @@ class DeterministicValidator {
           }
         }
       }
+
+      // 5e. Same-Concept High-Level Functional Purpose Collision (with Strict Cognitive Protection)
+      if (sameConcept) {
+        // High-level functional inquiry detector
+        const isFunctionalAsk = (text) => {
+          return /\b(?:primary (?:function|role|purpose|objective)|main purpose|what is the (?:primary )?function|what does it do)\b/i.test(text) ||
+                 /\bhow does (?:the )?[a-z\s]+ fundamentally (?:alter|change|transform|improve) (?:information processing|processing|architecture|learning)\b/i.test(text);
+        };
+
+        // COGNITIVE PROTECTION SHIELD:
+        // Discrete operational tasks on the same data structure / topic MUST COEXIST:
+        // 1. Ordering / property vs search vs deletion vs rotation vs code trace
+        const isDiscreteOperation = (text) => {
+          return /\b(?:ordering|valid(?:ity)?|invariant|search(?:ing)?|lookup|worst-case|delete|deletion|successor|predecessor|rotat\w+|balance\s+factor|avl|red-black|code|snippet|trace|iteration|loop)\b/i.test(text);
+        };
+
+        // 2. Mathematical loss / formula vs architectural / functional role
+        const isMathDynamics = (text, ans) => {
+          return /\b(?:loss|gradient|vanishing|saturat\w+|derivative|formula|backprop|divergence|minimax|arithmetic|calculate|algebra)\b/i.test((text || '') + ' ' + (ans || ''));
+        };
+
+        const candIsMath = isMathDynamics(candText, candidateMCQ.correctAnswer);
+        const existIsMath = isMathDynamics(existingText, existing.correctAnswer);
+
+        const candIsDiscrete = isDiscreteOperation(candText);
+        const existIsDiscrete = isDiscreteOperation(existingText);
+
+        // Only consider for functional duplicate if NEITHER tests a discrete operation AND NEITHER differs in math vs architecture
+        if (!candIsDiscrete && !existIsDiscrete && (candIsMath === existIsMath)) {
+          if (isFunctionalAsk(candText) && isFunctionalAsk(existingText)) {
+            // Check if both correct answers assert identical operational mechanism
+            // For Attention: both asserting modeling / computing relationships across tokens / input elements
+            const assertsAttentionRelation = (ans) => {
+              return /\b(?:model|comput\w+|captur\w+|evaluat\w+|connect\w*)\s+(?:relationship\w*|dependenc\w*|interaction\w*)\s+(?:across|between|among)\s+(?:tokens|elements|words|inputs)\b/i.test(ans) ||
+                     /\b(?:relationships? (?:between|across)|context across (?:tokens|elements))\b/i.test(ans);
+            };
+
+            const candAnsRel = assertsAttentionRelation(candidateMCQ.correctAnswer || '');
+            const existAnsRel = assertsAttentionRelation(existing.correctAnswer || '');
+
+            const ansSim = this.calculateSimilarity(candidateMCQ.correctAnswer || '', existing.correctAnswer || '');
+
+            if ((candAnsRel && existAnsRel) || ansSim >= 0.40) {
+              return {
+                isDuplicate: true,
+                similarity: sim,
+                reason: `SAME_CONCEPT_FUNCTIONAL_DUPLICATE: Both questions test identical high-level functional purpose and operational mechanism for "${normCandConcept}"`,
+                duplicateWith: existing.questionText
+              };
+            }
+          }
+        }
+      }
+
+      // 5f. Cross-Concept Operational Competency Collision
+      // Detects when questions across related / divergent labels test the identical runtime mechanism and outcome
+      const isModelForwardAsk = (text) => {
+        return /\b(?:what happens|what occurs|what is the (?:primary )?(?:outcome|result)|how does the system respond)\b/i.test(text) &&
+               /\bmodel\b/i.test(text) &&
+               /\bforward(?:ed|ing)?\b/i.test(text);
+      };
+
+      const assertsModelShaping = (ans) => {
+        return /\b(?:shape|shapes|shaping|dimension)\b/i.test(ans);
+      };
+
+      if (isModelForwardAsk(candText) && isModelForwardAsk(existingText)) {
+        if (assertsModelShaping(candidateMCQ.correctAnswer || '') && assertsModelShaping(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: sim,
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical runtime outcome (dynamic layer/tensor shaping) upon model forwarding',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
+
+      // General cross-concept token generation competency check (Next-token prediction vs Text generation)
+      const isTokenGenAsk = (text) => {
+        return /\b(?:how does (?:token|text) generation|standard text generation|next-token prediction)\b/i.test(text) &&
+               /\b(?:large language models?|llms?)\b/i.test(text);
+      };
+      const assertsSequentialProbability = (ans) => {
+        return /\b(?:iterative|sequential|step-by-step)\b/i.test(ans) &&
+               /\b(?:probability|probabilities)\b/i.test(ans) &&
+               /\b(?:token|word|prediction)\b/i.test(ans);
+      };
+
+      if (isTokenGenAsk(candText) && isTokenGenAsk(existingText)) {
+        if (assertsSequentialProbability(candidateMCQ.correctAnswer || '') && assertsSequentialProbability(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: sim,
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical operational competency (sequential probability-based token generation)',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
     }
 
     return { isDuplicate: false, similarity: 0 };
@@ -862,14 +967,22 @@ class DeterministicValidator {
         };
       }
 
-      // Case 2: Substantive verbatim distractor collision (length >= 20 chars or >= 4 words)
+      // Case 2: Substantive verbatim distractor collision (Conservative handling)
+      // Per safeguard: Do not reject questions merely because they share a plausible distractor.
+      // Only reject if:
+      // (a) The shared distractor is an extensive verbatim boilerplate template (>= 8 words AND >= 45 chars)
+      // (b) OR the two questions also share significant stem similarity (stemSim >= 0.25)
       for (const s of shared) {
         const wordCount = s.split(/\s+/).filter(Boolean).length;
-        if (s.length >= 20 || wordCount >= 4) {
+        const stemSim = this.calculateSimilarity(candidateMCQ.questionText || '', existing.questionText || '');
+        const isLongBoilerplate = s.length >= 45 && wordCount >= 8;
+        const isSharedWithStemContext = (s.length >= 25 || wordCount >= 5) && stemSim >= 0.25;
+
+        if (isLongBoilerplate || isSharedWithStemContext) {
           return {
             hasCollision: true,
             type: 'VERBATIM_DISTRACTOR_COLLISION',
-            reason: `Substantive distractor "${s}" is identical to a distractor in Question ${qIdx + 1}`,
+            reason: `Substantive distractor "${s}" exhibits verbatim redundancy with Question ${qIdx + 1} (stem similarity: ${(stemSim * 100).toFixed(0)}%)`,
             collidedWith: existing.questionText || `Question ${qIdx + 1}`,
             sharedDistractors: [s]
           };
