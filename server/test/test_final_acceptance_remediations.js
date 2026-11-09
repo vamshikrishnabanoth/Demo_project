@@ -270,6 +270,56 @@ test('16. AVL Distractor Plausibility: Repaired item with genuine algorithmic mi
   assert.strictEqual(report.verdict, 'PASS', 'Repaired AVL item with authentic misconceptions must PASS');
 });
 
+test('17. Deduplication: Autoregressive token sequence appending duplicate (Q1 vs Q5) is DETECTED', () => {
+  const q1 = {
+    questionText: 'When an LLM generates a multi-word sentence, how does the operational mechanism of the model evolve after each individual token is produced?',
+    correctAnswer: 'The newly generated token is appended to the input sequence, which is then re-processed to predict the next token.',
+    concept: 'Text Generation Mechanism'
+  };
+  const q5 = {
+    questionText: 'How does the autoregressive generation process evolve the input sequence during inference when producing a multi-token output?',
+    correctAnswer: 'Each newly predicted token is appended to the input before the next iteration.',
+    concept: 'Autoregressive Next-Token Prediction'
+  };
+  const res = deterministicValidator.checkDuplicateQuestion(q5, [q1], { concept: 'Autoregressive Next-Token Prediction' });
+  assert.strictEqual(res.isDuplicate, true, 'Must detect autoregressive token appending duplicate');
+  assert(res.reason.includes('OPERATIONAL_COMPETENCY_DUPLICATE') || res.reason.includes('autoregressive'), 'Must state operational duplicate reason');
+});
+
+test('18. Deduplication: Transformer attention vs sequential processing duplicate (Q2 vs Q10) is DETECTED', () => {
+  const q2 = {
+    questionText: 'How does the attention mechanism in Transformer models fundamentally differ from traditional sequential processing during the training of large language models?',
+    correctAnswer: 'It enables parallel processing of sequence data through self-attention matrix operations',
+    concept: 'Transformer Architecture'
+  };
+  const q10 = {
+    questionText: 'How does the Transformer\'s attention mechanism fundamentally differ from sequential processing models when modeling relationships between tokens in a sentence?',
+    correctAnswer: 'It enables parallel computation by modeling relationships across all tokens simultaneously.',
+    concept: 'Transformers'
+  };
+  const res = deterministicValidator.checkDuplicateQuestion(q10, [q2], { concept: 'Transformers' });
+  assert.strictEqual(res.isDuplicate, true, 'Must detect comparative Transformer parallelism duplicate');
+  assert(res.reason.includes('COMPARATIVE_STEM_DUPLICATE') || res.reason.includes('OPERATIONAL_COMPETENCY_DUPLICATE'), 'Must state comparative duplicate reason');
+});
+
+test('19. Distractor Quality: Cross-paradigm environment interaction distractor in Transformer question is REJECTED', () => {
+  const qTransWithEnv = {
+    questionText: 'How does the attention mechanism in Transformer models fundamentally differ from traditional sequential processing during the training of large language models?',
+    correctAnswer: 'It enables parallel processing of sequence data through self-attention matrix operations',
+    options: [
+      'It requires external environment interaction to validate generated content artifacts',
+      'It forces models to process tokens strictly in a linear, one-by-one order',
+      'It enables parallel processing of sequence data through self-attention matrix operations',
+      'It restricts the model to only accessing the most recent token in memory'
+    ]
+  };
+  const target = { targetDifficulty: 'Medium', concept: 'Transformer Architecture' };
+  const report = DifficultyAwareDistractorValidator.validate(qTransWithEnv, target);
+  assert.strictEqual(report.verdict, 'REJECT', 'Cross-paradigm distractor must be REJECTED');
+  const crossFlaw = report.flaws.find(f => f.code === 'ERR_CROSS_PARADIGM_DISTRACTOR');
+  assert(crossFlaw, 'Must flag ERR_CROSS_PARADIGM_DISTRACTOR');
+});
+
 console.log('\n========================================================================');
 console.log(`🏁 TEST SUMMARY: ${passCount} / ${totalCount} TESTS PASSED CLEANLY (100%)`);
 console.log('========================================================================\n');

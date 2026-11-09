@@ -95,6 +95,13 @@ class DifficultyAwareDistractorValidator {
       condition: (stem) => /\b(?:neural network|training|loss|optimization|model|gradient)\b/i.test(stem),
       code: 'ERR_CORRUPTED_ASR_DISTRACTOR',
       reason: 'Distractor contains an acoustic ASR transcript corruption in neural network context'
+    },
+    // Cross-paradigm / out-of-domain distractor contamination
+    {
+      pattern: /\b(?:external environment interaction|reinforcement learning|environment interaction)\b/i,
+      condition: (stem) => !/\b(?:reinforcement|agent|policy|environment|action space)\b/i.test(stem),
+      code: 'ERR_CROSS_PARADIGM_DISTRACTOR',
+      reason: 'Distractor injects an irrelevant reinforcement learning / environment interaction concept into a non-agentic question'
     }
   ];
 
@@ -241,7 +248,8 @@ class DifficultyAwareDistractorValidator {
       'ERR_GIVEAWAY_EXTREME_ADVERB',
       'ERR_ARBITRARY_NON_MECHANISM',
       'ERR_IMPLAUSIBLE_TREE_DISTRACTOR',
-      'ERR_CORRUPTED_ASR_DISTRACTOR'
+      'ERR_CORRUPTED_ASR_DISTRACTOR',
+      'ERR_CROSS_PARADIGM_DISTRACTOR'
     ];
     const hasFatalFlaw = flaws.some(f => fatalCodes.includes(f.code));
 

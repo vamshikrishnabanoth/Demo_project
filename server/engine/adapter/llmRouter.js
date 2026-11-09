@@ -183,7 +183,8 @@ class LLMRouter {
   }
 
   /** Call Groq Cloud API with configured model, multi-key pool, and bounded rate-limit backoff */
-  async _callGroqWithRetry({ prompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null }) {
+  async _callGroqWithRetry({ prompt, userPrompt, systemPrompt, temperature, primaryModel, fallbackModel, sessionId = null, maxTokens = null, operation = null, signal = null, abortSignal = null }) {
+    prompt = prompt || userPrompt || '';
     const effectiveSignal = signal || abortSignal;
     let resolvedMaxTokens = parseInt(maxTokens, 10);
     if (isNaN(resolvedMaxTokens) || resolvedMaxTokens <= 0) {

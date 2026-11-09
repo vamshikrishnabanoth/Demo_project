@@ -686,8 +686,8 @@ class DeterministicValidator {
           .replace(/\s+/g, ' ')
           .trim();
       };
-      const normCandConcept = normalizeConcept(candidateMCQ.metadata?.concept || currentTarget.concept || '');
-      const normExistConcept = normalizeConcept(existing.metadata?.concept || '');
+      const normCandConcept = normalizeConcept(candidateMCQ.concept || candidateMCQ.metadata?.concept || currentTarget.concept || '');
+      const normExistConcept = normalizeConcept(existing.concept || existing.metadata?.concept || '');
       const sameConcept = normCandConcept.length > 3 && (
         normCandConcept === normExistConcept ||
         this.calculateSimilarity(normCandConcept, normExistConcept) >= 0.70
@@ -699,12 +699,12 @@ class DeterministicValidator {
       };
       const isComparativePair = isComparativeFrame(candText) && isComparativeFrame(existingText);
 
-      if (sim >= 0.70 || (isComparativePair && sim >= 0.65)) {
+      if (sim >= 0.70 || (isComparativePair && sim >= 0.45)) {
         return {
           isDuplicate: true,
           similarity: sim,
           reason: isComparativePair && sim < 0.70
-            ? `COMPARATIVE_STEM_DUPLICATE: Comparative-frame text similarity (${(sim * 100).toFixed(1)}%) exceeds 0.65 threshold`
+            ? `COMPARATIVE_STEM_DUPLICATE: Comparative-frame text similarity (${(sim * 100).toFixed(1)}%) exceeds 0.45 threshold`
             : 'VERBATIM_DUPLICATE: Text similarity exceeds 0.70',
           duplicateWith: existing.questionText
         };
@@ -991,6 +991,55 @@ class DeterministicValidator {
             isDuplicate: true,
             similarity: Math.max(sim, 0.45),
             reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical architectural invariant (converging 8 hidden neurons into 1 output signal)',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
+
+      // 5h. Autoregressive Sequence Appending & Token Generation Invariant Duplicate Check
+      const isAutoregressiveAsk = (text, concept) => {
+        return /\b(?:autoregressive|next-token|token generation|generates? a (?:multi-word )?sentence|multi-token output)\b/i.test(`${text} ${concept}`) &&
+               /\b(?:evolve|input sequence|predict(?:ing)? (?:the )?next|operational mechanism|append)\b/i.test(text);
+      };
+      const assertsTokenAppending = (ans) => {
+        const norm = String(ans || '').toLowerCase();
+        const hasAppend = /\b(?:append\w*|add\w*|feed\w*|re-feed\w*|combin\w*)\b/i.test(norm);
+        const hasTokenInput = /\b(?:token|word|output)\b/i.test(norm) && /\b(?:input|sequence)\b/i.test(norm);
+        const hasNextPredict = /\b(?:predict\w*|next\w*|iteration|re-process\w*)\b/i.test(norm);
+        return hasAppend && hasTokenInput && hasNextPredict;
+      };
+
+      if (isAutoregressiveAsk(candText, normCandConcept) && isAutoregressiveAsk(existingText, normExistConcept)) {
+        if (assertsTokenAppending(candidateMCQ.correctAnswer || '') && assertsTokenAppending(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: Math.max(sim, 0.45),
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical autoregressive mechanism (appending generated token to input to predict next token)',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
+
+      // 5i. Transformer Attention vs Sequential Processing Invariant Duplicate Check
+      const isTransformerVsSequentialAsk = (text, concept) => {
+        const hasTransformer = /\b(?:transformer|self-attention|attention mechanism)\b/i.test(`${text} ${concept}`);
+        const hasSequential = /\b(?:sequential|rnn|recurrent|traditional)\b/i.test(text);
+        const hasComparison = /\b(?:differ|contrast|overcome|bottleneck|versus|vs)\b/i.test(text);
+        return hasTransformer && hasSequential && hasComparison;
+      };
+      const assertsParallelComputation = (ans) => {
+        const norm = String(ans || '').toLowerCase();
+        const hasParallel = /\b(?:parallel|simultaneous\w*|matrix)\b/i.test(norm);
+        const hasComputeTokens = /\b(?:comput\w*|process\w*|relat\w*|sequence|token)\b/i.test(norm);
+        return hasParallel && hasComputeTokens;
+      };
+
+      if (isTransformerVsSequentialAsk(candText, normCandConcept) && isTransformerVsSequentialAsk(existingText, normExistConcept)) {
+        if (assertsParallelComputation(candidateMCQ.correctAnswer || '') && assertsParallelComputation(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: Math.max(sim, 0.45),
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical comparative invariant (Transformer parallel matrix self-attention vs sequential token processing)',
             duplicateWith: existing.questionText
           };
         }
