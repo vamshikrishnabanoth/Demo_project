@@ -5060,8 +5060,8 @@ Ensure targets are distributed across Easy, Medium, and Hard according to the re
     const hasCoverageLimitation = count > defensibleLimit || hasDeficit;
     const capacityWarning = hasCoverageLimitation
       ? (hasDeficit
-          ? `This lecture supports approximately ${defensibleLimit} distinct assessment targets. Insufficient evidence for ${totalDeficitCount} Hard question(s). Recommended count: ${recommendedCount}.`
-          : `This lecture supports approximately ${defensibleLimit} distinct assessment targets. Generating ${count} questions assesses these targets across multiple distinct cognitive approaches (${repeatedTargetCount} repeated targets). Review repeated target labels below.`)
+          ? `This lecture supports up to ${defensibleLimit} distinct evidence-grounded questions. Insufficient evidence for ${totalDeficitCount} Hard question(s). Recommended quiz size: ${recommendedCount} questions.`
+          : `This lecture supports up to ${defensibleLimit} distinct assessment targets. Generating ${count} questions assesses these targets across multiple distinct cognitive approaches (${repeatedTargetCount} repeated targets). Review repeated target labels below.`)
       : null;
 
     const finalGroundedCount = finalGenerated.filter(t => !t.isSupplementary && t.provenance !== 'SCOPE_SUPPLEMENTARY').length;

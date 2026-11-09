@@ -1677,8 +1677,8 @@ class PipelineOrchestrator {
 
       let capacityWarning = hasCoverageLimitation
         ? (hasDeficit
-            ? `This lecture supports approximately ${defensibleCapacity} distinct assessment targets. Insufficient evidence for ${totalDeficit} Hard question(s). Recommended count: ${recommendedCount}.`
-            : `This lecture supports approximately ${defensibleCapacity} distinct assessment targets. Generating ${requestedCount} questions assesses these targets across multiple distinct cognitive approaches (${repeatedTargetCount} repeated targets). Review repeated target labels below.`)
+            ? `This lecture supports up to ${defensibleCapacity} distinct evidence-grounded questions. Insufficient evidence for ${totalDeficit} Hard question(s). Recommended quiz size: ${recommendedCount} questions.`
+            : `This lecture supports up to ${defensibleCapacity} distinct assessment targets. Generating ${requestedCount} questions assesses these targets across multiple distinct cognitive approaches (${repeatedTargetCount} repeated targets). Review repeated target labels below.`)
         : null;
 
       if (reallocationWarning) {
@@ -1686,9 +1686,10 @@ class PipelineOrchestrator {
       }
 
       const capacityOptions = (hasDeficit || requestedCount > defensibleCapacity) ? [
-        { action: 'ACCEPT_DEFENSIBLE_COUNT', label: `Accept defensible question count (${defensibleCapacity} questions)` },
         { action: 'ACCEPT_FEASIBLE_COUNT', label: `Accept ${deliveredCount} ${requestedDifficulty} Question${deliveredCount === 1 ? '' : 's'}` },
-        { action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficit} with Deep Medium Questions` },
+        ...(defensibleCapacity !== deliveredCount ? [{ action: 'ACCEPT_DEFENSIBLE_COUNT', label: `Accept defensible question count (${defensibleCapacity} questions)` }] : []),
+        ...(totalDeficit > 0 && sessionInputs.deficitPolicy !== 'FILL_WITH_MEDIUM' ? [{ action: 'FILL_WITH_MEDIUM', label: `Fill Remaining ${totalDeficit} with Deep Medium Questions` }] : []),
+        ...(recommendedCount !== deliveredCount ? [{ action: 'ACCEPT_RECOMMENDED_COUNT', label: `Accept recommended quiz size (${recommendedCount} questions)` }] : []),
         { action: 'ADD_MATERIALS', label: 'Provide additional lecture materials' },
         { action: 'EXPAND_SCOPE', label: 'Expand lecture scope' },
         { action: 'CANCEL', label: 'Cancel / Adjust Request' }

@@ -205,37 +205,44 @@ class LectureIntelligence {
 
       // Identify mechanism, comparison, and rule characteristics
       const hasConceptMechanism = Boolean(mech && mech !== 'NOT_OBSERVED' && mech !== 'null' && mech.length >= 15);
-      const isComparison = substanceType === 'COMPARISON' || /\b(versus|vs|difference|compare|tradeoff|unlike)\b/i.test(`${name} ${def}`);
-      const isRuleOrProcedure = substanceType === 'RULE' || substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM' || /\b(algorithm|steps?|compute|formula|condition|pointer)\b/i.test(`${def} ${mech}`);
+      const isComparison = substanceType === 'COMPARISON' || /\b(versus|vs\.?|difference|compare|tradeoff|unlike|diverge|divergence)\b/i.test(`${name} ${def}`);
+      const isRuleOrProcedure = substanceType === 'RULE' || substanceType === 'RULE_OR_CONDITION' || substanceType === 'MECHANISM' || /\b(algorithm|steps?|compute|formula|condition|pointer|execution|workflow)\b/i.test(`${def} ${mech}`);
 
       // Cognitive Operation 1: Easy Angle (Recall / Recognize / Define)
-      // Angle 1: Primary definition / terminology recall
+      // Grounded in primary definition or terminology anchor
       const supportsEasy = def.length >= 10 || anchors.length > 0;
-      let conceptEasyAngles = 0;
-      if (supportsEasy) {
-        conceptEasyAngles += 1;
-        // Angle 2: Key property, characteristic, syntax, or parameter identification
-        // Grounded in verified mechanisms, rules, or comparative properties within the concept
-        const hasSemanticSubstance = (hasConceptMechanism && def.length >= 35) ||
-          (isRuleOrProcedure && def.length >= 40) ||
-          (isComparison && def.length >= 35);
-        if (hasSemanticSubstance) {
-          conceptEasyAngles += 1;
-        }
-      }
-      totalEasy += conceptEasyAngles;
+      let conceptEasyAngles = supportsEasy ? 1 : 0;
 
       // Cognitive Operation 2: Medium Angles (Mechanism / Trace / Comparison)
-
+      // Grounded strictly in verified operational mechanisms, procedural rules, or explicit comparative tradeoffs
       let conceptMediumAngles = 0;
-      if (hasConceptMechanism || isRuleOrProcedure || (hasMechanismsInLecture && def.length >= 40)) {
+      const hasOperationalDepth = hasConceptMechanism || isRuleOrProcedure || (hasMechanismsInLecture && def.length >= 35);
+      if (hasOperationalDepth) {
         conceptMediumAngles += 1; // Operational mechanism / execution trace angle (Op 2)
       }
-      if (isComparison || substantiveList.length >= 2) {
+      if (isComparison) {
         conceptMediumAngles += 1; // Comparative distinction / tradeoff angle (Op 3)
       }
-      // Cap medium angles per single concept to 2 distinct operations
-      totalMedium += Math.min(conceptMediumAngles, 2);
+
+      // Mutual non-redundancy: A concept without separate multi-facet evidence supports at most 1 primary angle.
+      // It supports an additional angle only if it exhibits both an explicit definition AND separate operational/comparative depth.
+      const hasDistinctMultiFacetEvidence = supportsEasy && (hasOperationalDepth || isComparison) && (def.length >= 35 || mech.length >= 25);
+      if (!hasDistinctMultiFacetEvidence) {
+        // Single-facet concept: allocate to its highest qualified cognitive depth
+        if (conceptMediumAngles > 0) {
+          conceptEasyAngles = 0;
+          conceptMediumAngles = Math.min(conceptMediumAngles, 1);
+        } else {
+          conceptEasyAngles = Math.min(conceptEasyAngles, 1);
+        }
+      } else {
+        // Multi-facet concept: supports 1 definition angle and 1 mechanism/comparison angle
+        conceptEasyAngles = Math.min(conceptEasyAngles, 1);
+        conceptMediumAngles = Math.min(conceptMediumAngles, 1);
+      }
+
+      totalEasy += conceptEasyAngles;
+      totalMedium += conceptMediumAngles;
 
       // Negative boundary enforcement: if teacher explicitly excluded code or math, discount those angles
       const negBoundaries = Array.isArray(options.negativeBoundaries) ? options.negativeBoundaries : (Array.isArray(pedagogicalCritique?.negativeBoundaries) ? pedagogicalCritique.negativeBoundaries : []);
