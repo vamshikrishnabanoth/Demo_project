@@ -582,6 +582,26 @@ class DeterministicValidator {
   /**
    * Tokenize text into meaningful content words with basic stemming.
    */
+  /**
+   * Normalizes number words to standardized digit representations
+   * so that e.g. "8" and "eight", "1" and "one" evaluate as equivalent tokens.
+   */
+  _normalizeNumberWords(text = '') {
+    const numMap = {
+      'zero': 'num_0', 'one': 'num_1', 'two': 'num_2', 'three': 'num_3', 'four': 'num_4',
+      'five': 'num_5', 'six': 'num_6', 'seven': 'num_7', 'eight': 'num_8', 'nine': 'num_9', 'ten': 'num_10',
+      '0': 'num_0', '1': 'num_1', '2': 'num_2', '3': 'num_3', '4': 'num_4',
+      '5': 'num_5', '6': 'num_6', '7': 'num_7', '8': 'num_8', '9': 'num_9', '10': 'num_10'
+    };
+    return String(text || '').replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]|10)\b/gi, (m) => {
+      const lower = m.toLowerCase();
+      return numMap[lower] || m;
+    });
+  }
+
+  /**
+   * Tokenize text into meaningful content words with basic stemming.
+   */
   _tokenize(text = '') {
     const stopwords = new Set([
       'the', 'and', 'for', 'which', 'what', 'that', 'with', 'this', 'from',
@@ -591,12 +611,14 @@ class DeterministicValidator {
       'why', 'can', 'are', 'were'
     ]);
 
+    const normalized = this._normalizeNumberWords(text);
+
     return new Set(
-      String(text || '')
+      normalized
         .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/[^a-z0-9_\s]/g, ' ')
         .split(/\s+/)
-        .filter(w => w.length > 2 && !stopwords.has(w))
+        .filter(w => (w.length > 2 || /^num_\d+$/.test(w)) && !stopwords.has(w))
         .map(w => this._stem(w))
     );
   }
@@ -944,6 +966,31 @@ class DeterministicValidator {
             isDuplicate: true,
             similarity: sim,
             reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical operational competency (sequential probability-based token generation)',
+            duplicateWith: existing.questionText
+          };
+        }
+      }
+
+      // 5g. Cross-Concept Output Layer & Convergence Invariant Duplicate Check
+      // Catches when candidate and existing questions both assess converging 8 hidden neurons into 1 output signal
+      const isOutputLayerAsk = (text, concept) => {
+        return /\b(?:output layer|output unit|final layer|output signal)\b/i.test(`${text} ${concept}`) &&
+               /\b(?:neuron|signal|unit|connect|converge|preceding|hidden)\b/i.test(text);
+      };
+      const assertsOutputConvergence = (ans) => {
+        const norm = this._normalizeNumberWords(String(ans || '').toLowerCase());
+        const has8Neurons = /\bnum_8\s+(?:hidden\s+)?neurons?\b/i.test(norm) || (/\bnum_8\b/i.test(norm) && /\bneurons?\b/i.test(norm));
+        const has1Signal = /\bnum_1\s+(?:output\s+)?(?:signal|unit|neuron)\b/i.test(norm) || (/\bnum_1\b/i.test(norm) && /\bsignal\b/i.test(norm));
+        const hasConvergenceVerb = /\b(?:connect\w*|converge\w*|map\w*|combin\w*|join\w*)\b/i.test(norm);
+        return has8Neurons && has1Signal && hasConvergenceVerb;
+      };
+
+      if (isOutputLayerAsk(candText, normCandConcept) && isOutputLayerAsk(existingText, normExistConcept)) {
+        if (assertsOutputConvergence(candidateMCQ.correctAnswer || '') && assertsOutputConvergence(existing.correctAnswer || '')) {
+          return {
+            isDuplicate: true,
+            similarity: Math.max(sim, 0.45),
+            reason: 'OPERATIONAL_COMPETENCY_DUPLICATE: Both questions assess identical architectural invariant (converging 8 hidden neurons into 1 output signal)',
             duplicateWith: existing.questionText
           };
         }

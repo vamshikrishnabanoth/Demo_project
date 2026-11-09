@@ -71,6 +71,11 @@ class DisfluencySanitizer {
       return false;
     }
 
+    // Reject unmistakable ASR phonetic corruptions in candidate concepts
+    if (/\b(?:background\s+rotation|100\s+airpods?|every\s+airport)\b/i.test(trimmed)) {
+      return false;
+    }
+
     // Reject phrases that begin or end with dangling connectors, function words, or relational predicates
     if (DANGLING_CONCEPT_TERMINATORS.has(words[0]) || DANGLING_CONCEPT_TERMINATORS.has(words[words.length - 1])) {
       return false;
@@ -168,6 +173,53 @@ class DisfluencySanitizer {
         hasViolation: true,
         reason: `Contaminated with verbatim spoken transcript idiom "${idiomMatch[0]}"`
       };
+    }
+
+    // 5. Check for contextual ASR corruptions in technical context
+    const asrCorruption = this.detectContextualAsrCorruption(stem, options);
+    if (asrCorruption.hasViolation) {
+      return asrCorruption;
+    }
+
+    return { hasViolation: false, reason: null };
+  }
+
+  /**
+   * Evaluates whether text contains contextual ASR phonetic corruptions
+   * (e.g. speech-to-text acoustic mis-transcriptions like 'airpods' for 'epochs' in ML training).
+   * Context-aware: does not reject valid domain terms (e.g. camera pose estimation, audio earphone hardware, MTS in telecoms).
+   */
+  detectContextualAsrCorruption(stem = '', options = []) {
+    const textToCheck = [stem, ...(Array.isArray(options) ? options : [])].join(' ').toLowerCase();
+
+    // 1. ML / Neural Network training context
+    const hasMlTrainingContext = /\b(?:neural network|training|loss|weights?|iteration|epoch|optimization|optimizer|backpropagation|gradient|forward pass)\b/i.test(textToCheck);
+
+    if (hasMlTrainingContext) {
+      // Acoustic corruption: "airpod(s)" or "airport(s)" used in place of "epoch(s)" or training iterations
+      const airpodMatch = textToCheck.match(/\b(?:airpods?|airports?)\b/i);
+      if (airpodMatch) {
+        return {
+          hasViolation: true,
+          reason: `Contextual ASR acoustic corruption: "${airpodMatch[0]}" appears in neural network optimization/training context (phonetic distortion of "epoch")`
+        };
+      }
+
+      // Acoustic corruption: "model pose" used in place of "model plot" / "loss curve" / "checkpoint"
+      if (/\b(?:model pose|create (?:the|a) pose)\b/i.test(textToCheck) && /\b(?:loss|iteration|saving|optimization)\b/i.test(textToCheck)) {
+        return {
+          hasViolation: true,
+          reason: 'Contextual ASR acoustic corruption: "model pose" appears in loss optimization/saving context (phonetic distortion of model plot/curve)'
+        };
+      }
+
+      // Acoustic corruption: "background rotation" used in place of "backward propagation"
+      if (/\b(?:background rotation)\b/i.test(textToCheck)) {
+        return {
+          hasViolation: true,
+          reason: 'Contextual ASR acoustic corruption: "background rotation" appears in neural network context (phonetic distortion of "backward propagation")'
+        };
+      }
     }
 
     return { hasViolation: false, reason: null };

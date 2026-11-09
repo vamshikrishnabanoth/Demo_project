@@ -82,6 +82,19 @@ class DifficultyAwareDistractorValidator {
       pattern: /\b(?:shifts\s+to\s+(?:an\s+)?(?:entirely\s+)?unrelated|random\s+unrelated\s+tokens?|arbitrary\s+external\s+substitutions?)\b/i,
       code: 'ERR_ARBITRARY_NON_MECHANISM',
       reason: 'Distractor introduces an implausible arbitrary non-mechanism'
+    },
+    // Implausible or absurd tree distractors
+    {
+      pattern: /\b(?:avoids?\s+all\s+node\s+comparisons|replaces?\s+(?:the\s+)?in-order\s+successor\s+with\s+a\s+leaf)\b/i,
+      code: 'ERR_IMPLAUSIBLE_TREE_DISTRACTOR',
+      reason: 'Distractor uses an absurd or irrelevant tree operation rather than a plausible algorithmic misconception'
+    },
+    // Corrupted ASR distractor in neural network context
+    {
+      pattern: /\b(?:airpods?|airports?|model\s+pose|background\s+rotation)\b/i,
+      condition: (stem) => /\b(?:neural network|training|loss|optimization|model|gradient)\b/i.test(stem),
+      code: 'ERR_CORRUPTED_ASR_DISTRACTOR',
+      reason: 'Distractor contains an acoustic ASR transcript corruption in neural network context'
     }
   ];
 
@@ -226,7 +239,9 @@ class DifficultyAwareDistractorValidator {
       'ERR_INPUT_SYNTAX_FILLER',
       'ERR_GENERIC_NON_DOMAIN_FILLER',
       'ERR_GIVEAWAY_EXTREME_ADVERB',
-      'ERR_ARBITRARY_NON_MECHANISM'
+      'ERR_ARBITRARY_NON_MECHANISM',
+      'ERR_IMPLAUSIBLE_TREE_DISTRACTOR',
+      'ERR_CORRUPTED_ASR_DISTRACTOR'
     ];
     const hasFatalFlaw = flaws.some(f => fatalCodes.includes(f.code));
 

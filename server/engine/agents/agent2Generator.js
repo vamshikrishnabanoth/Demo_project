@@ -1870,6 +1870,12 @@ STRICT CONSTRAINTS:
    - NO FORMULAIC POLAR ROLE INVERSIONS: Absolutely NEVER construct 3 distractors by rephrasing the same comparative polar flip (e.g. repeatedly inverting Subject A vs Subject B). Each distractor must embody a distinct, independent conceptual trap.
    - NO ACCIDENTAL FACTUAL TRUTHS UNDER STEM CONDITIONS: Distractors must be factually and conceptually FALSE under the stem's conditions. Never write a distractor that states an actual real-world truth answering the prompt's question merely because it wasn't in this introductory lecture.
    - CRITICAL ANTI-PERMUTATION RULE: Absolutely NEVER generate options that are merely permutations or trivial paraphrases of another option. All 4 choices must present fundamentally distinct technical ideas or distinct misconceptions.
+   - DOMAIN-SPECIFIC TECHNICAL PRECISION INVARIANTS:
+     * Transformers vs RNNs: Transformer sequence parallelism applies strictly during training and prompt encoding (prefill) via self-attention matrix multiplication. Autoregressive token generation at inference time remains strictly sequential. Do not state that inference decoding is fully parallel.
+     * Generative AI vs Predictive AI: Generative AI models data distributions to synthesize novel content artifacts (text, synthetic data, images, code). Do NOT describe generative AI as executing automated actions or interacting with an environment (actions are agentic/RL properties).
+     * Model Class Instantiation: In Python/PyTorch, assigning a class without parentheses binds a reference to the class object; building the layer graph and initializing weights occurs only when invoking the constructor (e.g., 'model = MyModel()').
+     * AVL Tree Distractors: Distractors for AVL tree balance and height must represent genuine algorithmic misconceptions (e.g. confusing AVL balance |h_L - h_R| <= 1 with complete binary tree depth equality, or applying rotations only at the root) rather than absurd throwaways (such as "avoids all node comparisons" or "replaces in-order successor with a leaf").
+     * Zero Corrupted Transcript Artifacts: Never include ASR phonetic corruptions (e.g. "airpods", "airports", "model pose", "background rotation") in stems or options.
 
 3b. CORE QUALITY CHECKLIST B (DISTRACTOR QUALITY - THE 3 WRONG OPTIONS):
    - LOOKS REAL TO SOMEONE WHO GUESSED: Plausible, authentic-sounding alternatives that attract a student who did not study or only skimmed the surface.

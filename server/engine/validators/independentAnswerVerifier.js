@@ -248,6 +248,102 @@ class IndependentAnswerVerifier {
           }
         });
       }
+
+      // Check 9: Transformer Execution Parallelism Invariant
+      const isTransformerParallelismQuestion = /\b(?:transformer|rnn|recurrent)\b/i.test(stem) &&
+        /\b(?:parallel|parallelism|sequential|execution|differ)\b/i.test(stem);
+      if (isTransformerParallelismQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: Transformers execute autoregressive token generation entirely in parallel at inference time
+          if (/\b(?:entirely in parallel|fully parallel)\b/i.test(lower) && /\b(?:autoregressive|generation|inference)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'TRANSFORMER_PARALLELISM_OVERSPECIFIED',
+              details: 'Transformer parallelism applies during training and prompt encoding (prefill) via self-attention; autoregressive generation at inference time remains strictly sequential.'
+            });
+          }
+        });
+      }
+
+      // Check 10: Generative AI vs Agentic Action Invariant
+      const isGenAiDefinition = /\b(?:generative\s+(?:ai|models?))\b/i.test(stem);
+      if (isGenAiDefinition) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // Reject defining Generative AI as executing automated actions / environment tasks
+          if (/\bgenerative\s+models?\s+(?:create\s+.*?\s+actions?|execute\s+actions?|perform\s+actions?)\b/i.test(lower) ||
+              /\bgenerative\s+ai\s+(?:creates?\s+.*?\s+actions?|executes?\s+actions?)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'GENERATIVE_AI_CONFLATED_WITH_ACTIONS',
+              details: 'Generative AI produces novel content/artifacts (text, images, synthetic data); executing actions in an environment is an agentic / reinforcement learning property.'
+            });
+          }
+        });
+      }
+
+      // Check 11: Python/PyTorch Class Instantiation vs Reference Assignment
+      const isModelClassInstantiation = /\b(?:class|model)\b/i.test(stem) &&
+        /\b(?:instantiat|assigned to a variable|creation|constructor)\b/i.test(stem);
+      if (isModelClassInstantiation) {
+        if (/\bassigned\s+(?:to\s+a\s+variable\s+)?without\s+(?:calling|parentheses)|\bassigning\s+the\s+class\s+reference\b|\bwithout\s+calling\b/i.test(stem)) {
+          options.forEach((optText, idx) => {
+            const lower = optText.toLowerCase();
+            if (/\b(?:initiates?\s+the\s+class|builds?\s+the\s+network|calls?\s+init)\b/i.test(lower)) {
+              checks.push({
+                optionIndex: idx,
+                status: 'CONTRADICTED',
+                rule: 'CLASS_REFERENCE_CONFUSED_WITH_INSTANTIATION',
+                details: 'Assigning a class reference without invoking constructor does not initialize the instance or construct network layers.'
+              });
+            }
+          });
+        }
+      }
+
+      // Check 12: Contextual Neural Network ASR Corruption Rejection
+      const isNeuralNetContext = /\b(?:neural network|training|loss|weights?|optimization|model)\b/i.test(stem);
+      if (isNeuralNetContext) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          if (/\b(?:airpods?|airports?)\b/i.test(lower) && /\b(?:iteration|epoch|training|batch|step)\b/i.test(`${stem} ${lower}`)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'CORRUPTED_TRANSCRIPT_ARTIFACT',
+              details: 'Contains corrupted ASR acoustic artifact ("airpods"/"airports" in training loop context).'
+            });
+          }
+          if (/\b(?:model pose|create (?:the|a) pose)\b/i.test(lower) && /\b(?:loss|saving|iteration)\b/i.test(`${stem} ${lower}`)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'CORRUPTED_TRANSCRIPT_ARTIFACT',
+              details: 'Contains corrupted ASR acoustic artifact ("model pose" in loss optimization context).'
+            });
+          }
+        });
+      }
+
+      // Check 13: AVL Tree Height Invariants & Distractor Plausibility
+      const isAvlHeightQuestion = /\b(?:avl|balance factor)\b/i.test(stem) &&
+        /\b(?:height|worst-case|sorted|insertion|complexity)\b/i.test(stem);
+      if (isAvlHeightQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          if (/\b(?:avoids?\s+all\s+node\s+comparisons|replaces?\s+(?:the\s+)?in-order\s+successor\s+withs+a\s+leaf)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'IMPLAUSIBLE_TRIVIAL_DISTRACTOR',
+              details: 'Distractor is an absurd or irrelevant distraction rather than a plausible student algorithmic misconception.'
+            });
+          }
+        });
+      }
     }
 
     return {
