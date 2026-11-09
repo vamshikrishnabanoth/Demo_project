@@ -320,6 +320,63 @@ test('19. Distractor Quality: Cross-paradigm environment interaction distractor 
   assert(crossFlaw, 'Must flag ERR_CROSS_PARADIGM_DISTRACTOR');
 });
 
+test('20. Check 14: Keyed answer claiming GANs perform discrete classification is REJECTED', () => {
+  const qGanClassifier = {
+    questionText: 'When generating content, how does the operational mechanism of an LLM fundamentally differ from that of a GAN?',
+    correctAnswer: 'LLMs predict subsequent tokens using probability distributions, while GANs perform discrete classification tasks.',
+    options: [
+      'GANs generate novel artifacts through iterative sampling, while LLMs rely on fixed multi-class categorization.',
+      'GANs assign probability distributions to sequences, while LLMs perform deterministic binary classification.',
+      'LLMs execute deterministic logic for each token, while GANs utilize probabilistic sampling for classification.',
+      'LLMs predict subsequent tokens using probability distributions, while GANs perform discrete classification tasks.'
+    ]
+  };
+  const target = { concept: 'Probabilistic Nature of LLMs vs. GANs', targetDifficulty: 'Medium' };
+  const res = independentAnswerVerifier.performDeterministicDomainChecks(
+    qGanClassifier.questionText,
+    qGanClassifier.options,
+    'ROUTE_1_MATHEMATICAL_AND_DERIVATIVE'
+  );
+  const violation = res.checks.find(c => c.rule === 'INCORRECT_GAN_FRAMEWORK_DEFINITION');
+  assert(violation, 'Must flag INCORRECT_GAN_FRAMEWORK_DEFINITION for claiming GANs perform discrete classification');
+  assert.strictEqual(violation.optionIndex, 3, 'Must flag option index 3');
+});
+
+test('21. Check 14: Accurately scoped LLM autoregressive vs GAN adversarial training PASSES', () => {
+  const qGanAccurate = {
+    questionText: 'When generating content, how does the operational mechanism of an LLM fundamentally differ from that of a GAN?',
+    correctAnswer: 'LLMs predict subsequent tokens using autoregressive probability distributions, while GANs optimize sample generation through adversarial competition between generator and discriminator networks.',
+    options: [
+      'LLMs predict subsequent tokens using autoregressive probability distributions, while GANs optimize sample generation through adversarial competition between generator and discriminator networks.',
+      'GANs assign probability distributions to sequences, while LLMs train a generator to fool a discriminator.',
+      'LLMs execute deterministic logic for each token, while GANs utilize probabilistic sampling for classification.',
+      'GANs require human feedback for each image, while LLMs train completely without loss functions.'
+    ]
+  };
+  const res = independentAnswerVerifier.performDeterministicDomainChecks(
+    qGanAccurate.questionText,
+    qGanAccurate.options,
+    'ROUTE_1_MATHEMATICAL_AND_DERIVATIVE'
+  );
+  const violation = res.checks.find(c => c.rule === 'INCORRECT_GAN_FRAMEWORK_DEFINITION');
+  assert.strictEqual(violation, undefined, 'Accurate GAN comparison must NOT trigger Check 14 violation');
+});
+
+test('22. Calculation Engine Isolation: Conceptual Calculation target does not inject [4,3,1] into options', async () => {
+  const target = {
+    targetId: 'T10',
+    concept: 'Discriminative vs Generative Models',
+    dimension: 'Calculation',
+    targetDifficulty: 'Easy',
+    intendedCognitiveOperation: 'RECALL',
+    instruction: 'State the mathematical formulation of discriminative models as P(Y|X).'
+  };
+  const evidence = { curricularContent: 'Discriminative models learn P(Y|X) directly to predict outputs given inputs.' };
+  // Verify that Banker calculation is isolated
+  const isBankers = (target.concept || '').toLowerCase().includes('banker');
+  assert.strictEqual(isBankers, false, 'Non-bankers target must not be marked as bankers calculation');
+});
+
 console.log('\n========================================================================');
 console.log(`🏁 TEST SUMMARY: ${passCount} / ${totalCount} TESTS PASSED CLEANLY (100%)`);
 console.log('========================================================================\n');

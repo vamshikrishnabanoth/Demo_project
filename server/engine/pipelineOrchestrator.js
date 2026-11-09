@@ -573,6 +573,33 @@ class PipelineOrchestrator {
         ...primaryTargets.map(t => normConceptSig(t.concept)),
         ...activeReservePool.map(r => normConceptSig(r.concept))
       ].filter(Boolean));
+      let dynamicReserveCounter = 0;
+      const replenishReservePoolIfEmpty = () => {
+        if (activeReservePool.length === 0 && passingQuestions.length < requestedCount) {
+          const unusedUnits = (evidencePackage?.teachingUnits || []).filter(u => {
+            const sig = normConceptSig(u.concept || u.topic);
+            return sig && !seenConcepts.has(sig);
+          });
+          if (unusedUnits.length > 0) {
+            const nextUnit = unusedUnits[0];
+            const unitConcept = nextUnit.concept || nextUnit.topic;
+            seenConcepts.add(normConceptSig(unitConcept));
+            dynamicReserveCounter++;
+            const newResId = `R${String(reservePool.length + dynamicReserveCounter).padStart(2, '0')}`;
+            activeReservePool.push({
+              targetId: newResId,
+              concept: unitConcept,
+              subtopic: nextUnit.subtopic || nextUnit.topic || 'Core Mechanism',
+              targetDifficulty: 'Medium',
+              dimension: 'Conceptual',
+              cognitiveLevel: 'Understand',
+              supportingEvidence: nextUnit.verbatimQuote || nextUnit.text || '',
+              instruction: `Require operational reasoning about mechanisms. Test concept: ${unitConcept}.`
+            });
+            console.log(`🔄 [Orchestrator] Replenished activeReservePool with unused teaching unit: "${unitConcept}" (${newResId})`);
+          }
+        }
+      };
       let iterationCount = 0;
       const targetAttemptBudget = primaryTargets.length + activeReservePool.length;
       const MAX_TOTAL_ITERATIONS = this.calculateAttemptCeiling(requestedCount, primaryTargets.length, activeReservePool.length);
@@ -808,6 +835,7 @@ class PipelineOrchestrator {
           }
 
           // Auto-promote reserve target to fulfill question count
+          replenishReservePoolIfEmpty();
           if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             const nextReserve = activeReservePool.shift();
             const allocatedTier = determineFeasibleReserveTier(nextReserve, tier);
@@ -1066,6 +1094,7 @@ class PipelineOrchestrator {
           });
 
           // Auto-promote reserve target to fulfill question count!
+          replenishReservePoolIfEmpty();
           if (passingQuestions.length < requestedCount && activeReservePool.length > 0) {
             // Determine tier to maintain balance while respecting evidence-supported concept depth:
             let preferredTier = requestedDifficulty;

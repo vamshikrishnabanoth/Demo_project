@@ -1601,10 +1601,11 @@ ${target.distractorMisconceptions.map(m => `- ${m.concept}: ${m.description}`).j
     const isTopicMode = target.isTopicMode ||
       evidencePackage?.inputModality === 'TOPIC_SYNTHESIS' ||
       evidencePackage?.representationMode === 'TOPIC_BLUEPRINT';
-    const isCalculation = target.dimension === 'Calculation' || (target.concept || '').toLowerCase().includes('banker');
+    const isBankersTarget = (target.concept || '').toLowerCase().includes('banker') ||
+      (target.supportingEvidence || '').toLowerCase().includes('banker');
 
     let calculatedData = null;
-    if (isCalculation) {
+    if (isBankersTarget) {
       calculatedData = calculationEngine.evaluateCalculation(target, { max: [7, 5, 3], allocation: [3, 2, 2] });
     }
 
@@ -1876,6 +1877,9 @@ STRICT CONSTRAINTS:
      * Model Class Instantiation: In Python/PyTorch, assigning a class without parentheses binds a reference to the class object; building the layer graph and initializing weights occurs only when invoking the constructor (e.g., 'model = MyModel()').
      * AVL Tree Distractors: Distractors for AVL tree balance and height must represent genuine algorithmic misconceptions (e.g. confusing AVL balance |h_L - h_R| <= 1 with complete binary tree depth equality, or applying rotations only at the root) rather than absurd throwaways (such as "avoids all node comparisons" or "replaces in-order successor with a leaf").
      * N-gram Language Models: Distractors for unigram, bigram, and trigram comparisons must test Markov context window bounds (conditioning on 0, 1, or 2 prior words) and statistical count estimation vs dense representation, NOT vague fillers about computational accuracy or processing sentences as single units.
+     * GANs vs LLMs Architecture & Mechanics: A GAN is a generative framework where two neural networks (a generator producing synthetic samples and a discriminator evaluating real vs synthetic samples) compete in an adversarial minimax game to synthesize realistic data. NEVER describe the entire GAN as a discrete classifier or as performing discrete classification tasks (only the discriminator component classifies real vs synthetic samples). When contrasting LLMs and GANs, contrast their actual generative mechanisms:
+       - LLMs generate content via autoregressive next-token probability distribution modeling.
+       - GANs generate content through adversarial training competition between generator and discriminator networks.
      * Zero Corrupted Transcript Artifacts: Never include ASR phonetic corruptions (e.g. "airpods", "airports", "model pose", "background rotation") in stems or options.
 
 3b. CORE QUALITY CHECKLIST B (DISTRACTOR QUALITY - THE 3 WRONG OPTIONS):

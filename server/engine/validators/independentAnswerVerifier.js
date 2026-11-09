@@ -328,6 +328,24 @@ class IndependentAnswerVerifier {
         });
       }
 
+      // Check 14: GAN Generative Framework vs Classifier Invariant
+      const isGanComparisonQuestion = /\b(?:gans?|generative adversarial)\b/i.test(stem) &&
+        /\b(?:llms?|language models?|operational|mechanism|differ|predictive|generat)\b/i.test(stem);
+      if (isGanComparisonQuestion) {
+        options.forEach((optText, idx) => {
+          const lower = optText.toLowerCase();
+          // False Claim: GANs perform discrete classification tasks or function as discrete classifiers
+          if (/\bgans?\s+(?:perform\s+(?:discrete\s+)?classification(?:\s+tasks?)?|are\s+(?:discrete\s+)?classifiers?|function\s+as\s+(?:discrete\s+)?classifiers?|rely\s+on\s+(?:discrete\s+)?classification)\b/i.test(lower)) {
+            checks.push({
+              optionIndex: idx,
+              status: 'CONTRADICTED',
+              rule: 'INCORRECT_GAN_FRAMEWORK_DEFINITION',
+              details: 'Inaccurately describes GANs as performing discrete classification. A GAN is a generative model using adversarial competition between a generator and discriminator; only the discriminator classifies.'
+            });
+          }
+        });
+      }
+
       // Check 13: AVL Tree Height Invariants & Distractor Plausibility
       const isAvlHeightQuestion = /\b(?:avl|balance factor)\b/i.test(stem) &&
         /\b(?:height|worst-case|sorted|insertion|complexity)\b/i.test(stem);
