@@ -11,7 +11,7 @@
 
 'use strict';
 
-const PLANNER_SCHEMA_VERSION = 'v8_1_lcacm_capacity_enforcement';
+const PLANNER_SCHEMA_VERSION = 'v8_2_lcacm_capacity_reconciled';
 
 const ASSESSMENT_ANGLES = Object.freeze({
   CONCEPTUAL: 'CONCEPTUAL',
