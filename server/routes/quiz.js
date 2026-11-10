@@ -125,11 +125,11 @@ const storage = multer.diskStorage({
 });
 
 // File upload security: Strict types, size limits, and path traversal protection
-// Infrastructure protection: generous 1 GB technical ceiling (product rules governed by duration)
+// Reconciled production ceiling: 50 MB maximum per upload (verified with reverse proxy and deployment specs)
 const upload = multer({ 
     storage: storage,
     limits: {
-        fileSize: 1024 * 1024 * 1024, // 1 GB infrastructure protection ceiling
+        fileSize: 50 * 1024 * 1024, // 50 MB production deployment ceiling
         files: 10, // Maximum 10 files per request (for mixed RAG ingestion)
     },
     fileFilter: (req, file, cb) => {

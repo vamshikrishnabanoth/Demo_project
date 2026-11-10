@@ -224,18 +224,31 @@ class DeterministicValidator {
             const jaccard = unionSize > 0 ? (intersection / unionSize) : 0;
 
             if (isExactWordPermutation) {
-              errors.push({
-                code: this.OPTION_SET_CONTRACT.hardRejectionCodes.PERMUTED_DUPLICATE_OPTION || 'PERMUTED_DUPLICATE_OPTION',
-                message: `Permuted duplicate option choices detected: "${options[i]}" and "${options[j]}" contain identical words in permuted order`,
-                details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j] }
-              });
-            } else if (jaccard >= 0.60 || (intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.65)) {
-              const containment = intersection / Math.min(t1.size, t2.size);
-              errors.push({
-                code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SYNONYMOUS_DISTRACTOR_OPTION || 'SYNONYMOUS_DISTRACTOR_OPTION',
-                message: `Synonymous duplicate option choices detected: "${options[i]}" and "${options[j]}" share ${(containment * 100).toFixed(0)}% core vocabulary`,
-                details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j], jaccard, containment }
-              });
+              const isDistinctOps = this._isDistinctOperationalPair(options[i], options[j], stem);
+              if (!isDistinctOps) {
+                errors.push({
+                  code: this.OPTION_SET_CONTRACT.hardRejectionCodes.PERMUTED_DUPLICATE_OPTION || 'PERMUTED_DUPLICATE_OPTION',
+                  message: `Permuted duplicate option choices detected: "${options[i]}" and "${options[j]}" contain identical words in permuted order`,
+                  details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j] }
+                });
+              }
+            } else {
+              const hasSharedComplexity = [...t1].some(t => t.startsWith('complexity_') && t2.has(t));
+              const isSynonymousThreshold = jaccard >= 0.60 ||
+                (intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.65) ||
+                (hasSharedComplexity && intersection >= 3 && (intersection / Math.min(t1.size, t2.size)) >= 0.50);
+
+              if (isSynonymousThreshold) {
+                const isDistinctOps = this._isDistinctOperationalPair(options[i], options[j], stem);
+                if (!isDistinctOps) {
+                  const containment = intersection / Math.min(t1.size, t2.size);
+                  errors.push({
+                    code: this.OPTION_SET_CONTRACT.hardRejectionCodes.SYNONYMOUS_DISTRACTOR_OPTION || 'SYNONYMOUS_DISTRACTOR_OPTION',
+                    message: `Synonymous duplicate option choices detected: "${options[i]}" and "${options[j]}" share ${(containment * 100).toFixed(0)}% core vocabulary`,
+                    details: { indexA: i, indexB: j, optionA: options[i], optionB: options[j], jaccard, containment }
+                  });
+                }
+              }
             }
           }
         }
@@ -307,6 +320,38 @@ class DeterministicValidator {
           });
         }
       }
+
+      // 8. Stem-Option Comparison Alignment Check
+      // Catches distinction/contrast stems paired with isolated single-entity definition options
+      const comparisonMatch = stem.match(/\b(?:distinguish(?:es)?|contrast(?:s)?|difference between)\s+(?:a|an|the)?\s*([a-zA-Z0-9_\s-]+?)\s+(?:from|and|with)\s+(?:a|an|the)?\s*([a-zA-Z0-9_\s-]+?)(?:\?|\.|\s|$)/i);
+      if (comparisonMatch && correctAnswer && typeof correctAnswer === 'string') {
+        const rawEntityA = comparisonMatch[1].trim().toLowerCase();
+        const rawEntityB = comparisonMatch[2].trim().toLowerCase();
+        const cleanEntity = (str) => str.replace(/^(?:a|an|the)\s+/, '').trim();
+        const entityA = cleanEntity(rawEntityA);
+        const entityB = cleanEntity(rawEntityB);
+
+        if (entityA.length >= 3 && entityB.length >= 3 && entityA !== entityB) {
+          const ansLower = correctAnswer.toLowerCase();
+          const tokensA = entityA.split(/\s+/).filter(w => w.length >= 4);
+          const tokensB = entityB.split(/\s+/).filter(w => w.length >= 4);
+
+          const mentionsA = ansLower.includes(entityA) || (tokensA.length > 0 && tokensA.some(t => ansLower.includes(t)));
+          const mentionsB = ansLower.includes(entityB) || (tokensB.length > 0 && tokensB.some(t => ansLower.includes(t)));
+
+          const hasComparativeMarkers = /\b(?:whereas|while|unlike|compared to|in contrast|differs|different|only|instead of|rather than|conversely|vice versa|but)\b/i.test(correctAnswer) ||
+            /;\s+/i.test(correctAnswer);
+
+          const isRelationalComparison = (mentionsA && mentionsB) || hasComparativeMarkers;
+
+          if (!isRelationalComparison) {
+            errors.push({
+              code: 'STEM_COMPARISON_MISALIGNMENT',
+              message: `Question stem asks to distinguish "${entityA}" from "${entityB}", but the correct option provides only an isolated single-entity description without comparative relation.`
+            });
+          }
+        }
+      }
     }
     return {
       isValid: errors.length === 0,
@@ -336,10 +381,16 @@ class DeterministicValidator {
       return { isValid: false, errors: ['MCQ payload is null or not an object'], warnings: [] };
     }
 
+    // Normalize and synchronize prompt text across question, questionText, stem, prompt
+    const prompt = String(mcq.question || mcq.questionText || mcq.stem || mcq.prompt || '').trim();
+    mcq.question = prompt;
+    mcq.questionText = prompt;
+    mcq.stem = prompt;
+
     // Normalize correctAnswer before validating
     this.normalizeCorrectAnswer(mcq);
 
-    if (!mcq.questionText || typeof mcq.questionText !== 'string' || mcq.questionText.trim().length < 10) {
+    if (!prompt || prompt.length < 10) {
       errors.push('questionText must be a string with at least 10 characters');
     }
 
@@ -576,27 +627,90 @@ class DeterministicValidator {
     if (word.endsWith('s') && !word.endsWith('ss')) return word.slice(0, -1);
     if (word.endsWith('ing') && word.length > 5) return word.slice(0, -3);
     if (word.endsWith('ed') && word.length > 4) return word.slice(0, -2);
+    if (word.endsWith('ically') && word.length > 7) return word.slice(0, -6);
+    if (word.endsWith('ly') && word.length > 4) return word.slice(0, -2);
     return word;
   }
 
   /**
-   * Tokenize text into meaningful content words with basic stemming.
-   */
-  /**
    * Normalizes number words to standardized digit representations
-   * so that e.g. "8" and "eight", "1" and "one" evaluate as equivalent tokens.
+   * so that e.g. "8" and "eight", "1" and "one", "20" and "30" evaluate as distinct, preserved numeric tokens.
    */
   _normalizeNumberWords(text = '') {
     const numMap = {
       'zero': 'num_0', 'one': 'num_1', 'two': 'num_2', 'three': 'num_3', 'four': 'num_4',
-      'five': 'num_5', 'six': 'num_6', 'seven': 'num_7', 'eight': 'num_8', 'nine': 'num_9', 'ten': 'num_10',
-      '0': 'num_0', '1': 'num_1', '2': 'num_2', '3': 'num_3', '4': 'num_4',
-      '5': 'num_5', '6': 'num_6', '7': 'num_7', '8': 'num_8', '9': 'num_9', '10': 'num_10'
+      'five': 'num_5', 'six': 'num_6', 'seven': 'num_7', 'eight': 'num_8', 'nine': 'num_9', 'ten': 'num_10'
     };
-    return String(text || '').replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]|10)\b/gi, (m) => {
+    let normalized = String(text || '').replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi, (m) => {
       const lower = m.toLowerCase();
       return numMap[lower] || m;
     });
+    // Normalize all numeric digits so node identifiers like 20, 30 are preserved as num_20, num_30 rather than dropped by length <= 2
+    normalized = normalized.replace(/\b\d+\b/g, m => `num_${m}`);
+    return normalized;
+  }
+
+  /**
+   * Domain-aware operational distinction check:
+   * Determines whether high token overlap represents genuine mutually exclusive operational choices
+   * (e.g. Left vs Right rotation, operation sequence permutation, distinct node numbers)
+   * while rejecting semantic duplicates (e.g. relational inversions A < B vs B > A, commutative formulas).
+   */
+  _isDistinctOperationalPair(optA, optB, stem = '') {
+    const a = String(optA || '').toLowerCase();
+    const b = String(optB || '').toLowerCase();
+
+    // 1. Relational Inversion Guard (NEGATIVE CASE):
+    // "left subtree < root" vs "root > left subtree" are identical claims.
+    const isRelationalA = /\b(?:less than|greater than|smaller than|larger than)\b/i.test(a);
+    const isRelationalB = /\b(?:less than|greater than|smaller than|larger than)\b/i.test(b);
+    if (isRelationalA && isRelationalB) {
+      const hasLessA = /\b(?:less than|smaller than)\b/i.test(a);
+      const hasGreaterA = /\b(?:greater than|larger than)\b/i.test(a);
+      const hasLessB = /\b(?:less than|smaller than)\b/i.test(b);
+      const hasGreaterB = /\b(?:greater than|larger than)\b/i.test(b);
+      if ((hasLessA && hasGreaterB) || (hasGreaterA && hasLessB)) {
+        return false; // Inverted relational statements are semantically equivalent duplicates -> FAIL
+      }
+    }
+
+    // 2. Commutative Formula Equivalence Guard (NEGATIVE CASE):
+    // "N + 2" vs "2 + N"
+    const normFormula = s => s.replace(/\s+/g, '').replace(/(\w+)\+(\w+)/g, (m, p1, p2) => [p1, p2].sort().join('+'));
+    if (normFormula(a) === normFormula(b)) {
+      return false; // Semantically identical formula -> FAIL
+    }
+
+    // 3. Operational Sequencing (e.g. LR vs RL rotation order: "left... then right..." vs "right... then left..."):
+    const seqConnectors = /\b(then|after|followed by|first|second)\b/i;
+    if (seqConnectors.test(a) && seqConnectors.test(b)) {
+      const dirA = (a.match(/\b(left|right|clockwise|counter-clockwise)\b/gi) || []).join('->');
+      const dirB = (b.match(/\b(left|right|clockwise|counter-clockwise)\b/gi) || []).join('->');
+      if (dirA && dirB && dirA !== dirB) {
+        return true; // Mutually exclusive sequence of operations -> PASS
+      }
+    }
+
+    // 4. Directional Rotation Operation (Left vs Right):
+    const hasRotate = /\b(rotat\w*)\b/i.test(a) && /\b(rotat\w*)\b/i.test(b);
+    if (hasRotate) {
+      const hasLeftA = /\bleft\b/i.test(a);
+      const hasRightA = /\bright\b/i.test(a);
+      const hasLeftB = /\bleft\b/i.test(b);
+      const hasRightB = /\bright\b/i.test(b);
+      if ((hasLeftA && !hasRightA && !hasLeftB && hasRightB) || (!hasLeftA && hasRightA && hasLeftB && !hasRightB)) {
+        return true; // Single left vs single right rotation: mutually exclusive -> PASS
+      }
+    }
+
+    // 5. Distinct Target Node Identifiers / Numbers from fixture:
+    const numTokensA = a.match(/\bnum_\d+\b/g) || a.match(/\b\d+\b/g) || [];
+    const numTokensB = b.match(/\bnum_\d+\b/g) || b.match(/\b\d+\b/g) || [];
+    if (numTokensA.length > 0 && numTokensB.length > 0 && numTokensA.join(',') !== numTokensB.join(',')) {
+      return true; // Refers to different node values or parameters in the problem fixture -> PASS
+    }
+
+    return false;
   }
 
   /**
@@ -611,14 +725,20 @@ class DeterministicValidator {
       'why', 'can', 'are', 'were'
     ]);
 
-    const normalized = this._normalizeNumberWords(text);
+    let normalized = this._normalizeNumberWords(text);
+
+    // Canonicalize standard algorithmic asymptotic complexity notations to detect paraphrased duplicates
+    normalized = normalized
+      .replace(/\b(?:o\s*\(\s*log\s*n\s*\)|logarithmic(?:ally)?\b)/gi, 'complexity_log_n')
+      .replace(/\b(?:o\s*\(\s*n\s*\)|linear(?:ly)?\b)/gi, 'complexity_linear_n')
+      .replace(/\b(?:o\s*\(\s*1\s*\)|constant(?:ly)?\b)/gi, 'complexity_constant_1');
 
     return new Set(
       normalized
         .toLowerCase()
         .replace(/[^a-z0-9_\s]/g, ' ')
         .split(/\s+/)
-        .filter(w => (w.length > 2 || /^num_\d+$/.test(w)) && !stopwords.has(w))
+        .filter(w => (w.length > 2 || /^num_\d+$/.test(w) || /^complexity_/.test(w)) && !stopwords.has(w))
         .map(w => this._stem(w))
     );
   }

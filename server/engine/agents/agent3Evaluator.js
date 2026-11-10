@@ -170,11 +170,24 @@ class Agent3Evaluator {
     const preAudit = this._runDeterministicAudit(candidateMCQ, target, evidenceContext, '', evidencePackage);
 
     // 4a. Mandatory Independent Answer Verification Gate (Blind Solver Protocol)
+    const iavOptions = { ...options };
+    // Optimized Provider Efficiency (Requirement 9): When Agent 3 runs its comprehensive
+    // option-by-option LLM audit downstream, run IAV's 14 deterministic domain checks first,
+    // reserving blind LLM solver dispatch for complex algorithmic routes or when explicitly requested.
+    if (!iavOptions.fullSolver && process.env.AGENT3_UNIFIED_EVAL !== 'false') {
+      const isRoute1Or2 = ['ROUTE_1_MATHEMATICAL_AND_DERIVATIVE', 'ROUTE_2_ALGORITHMIC_AND_STATE_INVARIANT'].includes(
+        independentAnswerVerifier.classifyVerificationRoute(candidateMCQ.questionText, candidateMCQ.options)
+      );
+      if (!isRoute1Or2 && !options.requireBlindSolver) {
+        iavOptions.skipLLM = true;
+      }
+    }
+
     const iavResult = await independentAnswerVerifier.verifyAnswerIndependently(
       candidateMCQ,
       target,
       evidenceContext,
-      options
+      iavOptions
     );
 
     candidateMCQ.independentVerification = iavResult;
@@ -703,7 +716,7 @@ ${evidenceContext}
    * @param {Object} generator - Agent 2 Generator instance
    * @returns {Object} Final evaluation result with repair metadata
    */
-  async evaluateAndRepairQuestion(candidateMCQ, target, evidencePackage, generator = null) {
+  async evaluateAndRepairQuestion(candidateMCQ, target, evidencePackage, generator = null, options = {}) {
     // 0. If candidate is null or not an object, fail immediately as unfulfilled without attempting repair
     if (!candidateMCQ || typeof candidateMCQ !== 'object') {
       return {
@@ -743,8 +756,8 @@ ${evidenceContext}
       };
     }
 
-    // 3. If generator is not provided, return failed evaluation directly
-    if (!generator || typeof generator.generateQuestion !== 'function') {
+    // 3. If generator is not provided or repair budget exhausted, return failed evaluation directly without repair
+    if (options.allowRepair === false || !generator || typeof generator.generateQuestion !== 'function') {
       return {
         ...initialEval,
         repaired: false,
@@ -890,7 +903,7 @@ ${evidenceContext}
       ...secondEval,
       passed: false,
       repaired: false,
-      mcq: candidateMCQ,
+      mcq: repairedMCQ,
       repair: {
         attempted: true,
         successful: false,
@@ -1737,7 +1750,7 @@ ${evidenceContext}
       instructions.push('REGENERATE AS TECHNICAL QUESTION: Question must test actual engineering mechanisms, algorithms, state transitions, or complexity without referencing "course material" or "technical reference".');
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.OPTION_VALIDATION_ERROR)) {
-      instructions.push('Format with exactly 4 distinct, balanced options without superficial formatting variants.');
+      instructions.push('Provide exactly 4 distinct, mutually exclusive operational alternatives. Ensure distractors represent distinct errors or outcomes, not synonymous or permuted word variants.');
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.AMBIGUOUS_DISTRACTOR) || failureReasons.includes(EVALUATOR_FAILURE_CODES.ACCIDENTAL_CORRECT_DISTRACTOR)) {
       instructions.push('Ensure options are mutually exclusive alternatives; eliminate command subsets or parameter extensions that could also be correct.');
@@ -1751,7 +1764,7 @@ ${evidenceContext}
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.TIER_COGNITIVE_MISMATCH)) {
       const tier = target.targetDifficulty || 'Medium';
       if (tier === 'Hard') {
-        instructions.push('Increase cognitive depth: require scenario diagnosis, fault prediction, or constraint analysis with concrete state parameters instead of simple recall or abstract definition.');
+        instructions.push('CRITICAL COGNITIVE DEPTH REPAIR: Switch from asking a definition or property recall to tracing a concrete numeric sequence, subtree heights, or balance factor violation. Provide initial tree or code fixture.');
       } else if (tier === 'Easy') {
         instructions.push('Simplify cognitive demand: test direct terminology definition or explicit recognition only.');
       } else {
@@ -1761,8 +1774,8 @@ ${evidenceContext}
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.UNGROUNDED_EVIDENCE_CLAIM) || failureReasons.includes(EVALUATOR_FAILURE_CODES.FOREIGN_DOMAIN_CONTAMINATION)) {
       instructions.push(`Ground all options strictly in lecture evidence for "${target.concept || 'target'}"; do not introduce external or foreign domain concepts.`);
     }
-    if (failureReasons.includes(EVALUATOR_FAILURE_CODES.CORRECT_ANSWER_NOT_IN_OPTIONS)) {
-      instructions.push('Ensure correctAnswer matches one of the 4 options verbatim.');
+    if (failureReasons.includes('CORRECT_ANSWER_INDEX_CONFLICT') || failureReasons.includes(EVALUATOR_FAILURE_CODES.CORRECT_ANSWER_NOT_IN_OPTIONS)) {
+      instructions.push('Ensure correctAnswer matches one of the 4 options verbatim, and correctAnswerIndex corresponds exactly to that option.');
     }
     if (failureReasons.includes(EVALUATOR_FAILURE_CODES.DISTRACTOR_FORMAT_ASYMMETRY)) {
       instructions.push('Maintain strict option format parallelism: if the correct answer is formatted as code syntax, all distractors must also be formatted as code syntax, not prose explanations.');
